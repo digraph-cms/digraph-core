@@ -1,23 +1,23 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d66dd0a69b7f87abb0beef1d6ea76994",
+    "content-hash": "782a1b0a14fc3a31e93146a97af62085",
     "packages": [
         {
             "name": "byjoby/destructr",
-            "version": "v0.1.0.x-dev",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://gitlab.com/byjoby/destructr.git",
-                "reference": "1c2a355a5a4c6ff8e75fb07ceabdc3b151652862"
+                "reference": "a42374239e4e3fdda7bbc5cfabdab6b25c56ec0c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/byjoby%2Fdestructr/repository/archive.zip?sha=1c2a355a5a4c6ff8e75fb07ceabdc3b151652862",
-                "reference": "1c2a355a5a4c6ff8e75fb07ceabdc3b151652862",
+                "url": "https://gitlab.com/api/v4/projects/byjoby%2Fdestructr/repository/archive.zip?sha=a42374239e4e3fdda7bbc5cfabdab6b25c56ec0c",
+                "reference": "a42374239e4e3fdda7bbc5cfabdab6b25c56ec0c",
                 "shasum": ""
             },
             "require": {
@@ -32,7 +32,7 @@
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "Destructr\\": "src/"
+                    "Digraph\\Destructr\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -40,20 +40,20 @@
                 "MIT"
             ],
             "description": "A library for storing a mix of structured and unstructured data in relational databases",
-            "time": "2018-08-17T22:32:26+00:00"
+            "time": "2018-08-17T17:36:09+00:00"
         },
         {
             "name": "byjoby/flatrr",
-            "version": "v0.1.0.x-dev",
+            "version": "v0.1.0",
             "source": {
                 "type": "git",
                 "url": "https://gitlab.com/byjoby/flatrr.git",
-                "reference": "521446349bb2971206abe831e2cc58038d366d10"
+                "reference": "03113a23aa226af75521a183261d468e91c24555"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/byjoby%2Fflatrr/repository/archive.zip?sha=521446349bb2971206abe831e2cc58038d366d10",
-                "reference": "521446349bb2971206abe831e2cc58038d366d10",
+                "url": "https://gitlab.com/api/v4/projects/byjoby%2Fflatrr/repository/archive.zip?sha=03113a23aa226af75521a183261d468e91c24555",
+                "reference": "03113a23aa226af75521a183261d468e91c24555",
                 "shasum": ""
             },
             "require": {
@@ -79,7 +79,7 @@
                 }
             ],
             "description": "A library for working with multi-dimensional arrays through flattened keys",
-            "time": "2018-08-17T22:21:05+00:00"
+            "time": "2018-08-18T15:38:01+00:00"
         },
         {
             "name": "digraphcms/forms",
@@ -1924,13 +1924,12 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "byjoby/flatrr": 20,
         "byjoby/destructr": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.1"
+        "php": ">=7.0"
     },
     "platform-dev": []
 }
