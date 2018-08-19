@@ -1,5 +1,5 @@
 {
-    "name": "digraphcms/digraph",
+    "name": "byjoby/digraph-core",
     "description": "PHP CMS with an emphasis on flexibility and URL permanence.",
     "type": "project",
     "license": "MIT",
