@@ -1,0 +1,19 @@
+module:
+  name:             digraph_system
+  namespace:        \Digraph\Modules\${module.name}
+
+templates:
+  paths:
+    digraph_system: ${module.path}/templates
+
+routing:
+  paths:
+    digraph_system: ${module.path}/routes
+
+noun:
+  types:
+    page:
+      class:        default
+  defaults:
+    dso:
+      type:         page
