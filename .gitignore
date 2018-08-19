@@ -1,0 +1,14 @@
+#composer libraries
+/digraph/lib
+/digraph/lib/**/.git
+
+#environment-specific config and modules
+env.yaml
+env.json
+digraph/env/*
+digraph/cache/*
+digraph/storage/*
+modules/*
+
+*.ignore
+!.keep
