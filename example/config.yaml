@@ -1,0 +1,14 @@
+url:
+  protocol:        //
+  domain:          localhost
+  path:            /digraph-core/example/
+
+bootstrap:
+  credentials:
+    driver:
+      # dsn:       'sqlite:"${paths.storage}/digraph.sqlite"'
+      dsn:         sqlite:storage/digraph.sqlite
+  drivers:
+    default:
+      class:       \Destructr\LegacyDrivers\SQLiteDriver
+      credentials: driver

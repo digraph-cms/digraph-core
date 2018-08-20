@@ -19,6 +19,14 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         'response.content'
     ];
 
+    public function get(string $name = null, bool $raw = false)
+    {
+        if (isset($unfiltered[$name])) {
+            $raw = true;
+        }
+        return parent::get($name, $raw);
+    }
+
     public function &cms(CMS &$set = null) : ?CMS
     {
         if ($set) {

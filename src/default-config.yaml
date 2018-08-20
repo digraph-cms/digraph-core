@@ -5,10 +5,13 @@ url:
   base:             ${url.protocol}${url.domain}${url.path}
 
 paths:
-  storage:          ${paths.system}/storage
-  cache:            ${paths.system}/cache
+  storage:          ${paths.site}/storage
+  cache:            ${paths.site}/cache
 
 templates:
+  paths:
+    core:           ${paths.core}/templates
+    site:           ${paths.site}/templates
   twigconfig:
     cache:          false
 
@@ -16,10 +19,9 @@ routing:
   paths:            []
 
 modules:
-  ignore:           []
   paths:
-    000-core:       ${paths.system}/modules
-    100-site:       ${paths.site}/modules
+    core:           ${paths.core}/modules
+    site:           ${paths.site}/modules
 
 fullmunge:
   - build

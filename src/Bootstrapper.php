@@ -13,6 +13,7 @@ class Bootstrapper
 
     public static function bootstrap(ConfigInterface &$config)
     {
+        //set up new CMS
         $cms = new CMS($config);
         $cms->log('Bootstrapper::bootstrap starting');
         //set up drivers
