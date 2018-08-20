@@ -1,6 +1,5 @@
 #composer libraries
-/digraph/lib
-/digraph/lib/**/.git
+/vendor
 composer.lock
 
 #environment-specific config and modules

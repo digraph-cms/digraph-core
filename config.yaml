@@ -1,0 +1,114 @@
+url:
+  protocol:         ''
+  domain:           ''
+  path:             ''
+  base:             ${url.protocol}${url.domain}${url.path}
+
+paths:
+  storage:          ${paths.system}/storage
+  cache:            ${paths.system}/cache
+
+templates:
+  twigconfig:
+    cache:          false
+
+routing:
+  paths:            []
+
+modules:
+  ignore:           []
+  paths:
+    000-core:       ${paths.system}/modules
+    100-site:       ${paths.site}/modules
+
+fullmunge:
+  - build
+  - error
+  - template
+  - finalize
+  - render
+
+mungers:
+  build:
+    100-initialize: Digraph\Mungers\Build\Initialize
+    200-locate:     Digraph\Mungers\Build\Locate
+    300-route:      Digraph\Mungers\Build\Route
+    400-execute:    Digraph\Mungers\Build\Execute
+  error:
+    100-error:      Digraph\Mungers\Error\Error
+  template:
+    100-templates:  Digraph\Mungers\Templates\Templates
+  finalize:
+    100-headers:    Digraph\Mungers\Finalize\Headers
+  render:
+    100-headers:    Digraph\Mungers\Render\Headers
+    200-output:     Digraph\Mungers\Render\Output
+
+helpers:
+  classes:
+    urls:           Digraph\Urls\UrlHelper
+    modules:        Digraph\Helpers\Modules
+    routing:        Digraph\Helpers\Routing
+    forms:          Digraph\Forms\FormHelper
+    templates:      Digraph\Helpers\Templates
+    notifications:  Digraph\Helpers\Notifications
+
+forms:
+  defaultmap:
+    digraph_name:
+      field:        digraph.name
+      label:        Display name
+      class:        Digraph\Forms\Fields\Input
+      required:     true
+    digraph_title:
+      field:        digraph.name
+      label:        Display title
+      class:        Digraph\Forms\Fields\Input
+    digraph_slug:
+      field:        digraph.slug
+      label:        Url Slug
+      class:        Digraph\Forms\Fields\Slug
+    digraph_body:
+      field:        digraph.body
+      label:        Body content
+      class:        Digraph\Forms\Fields\Textarea
+
+noun:
+  types:            []
+  defaults:         []
+
+mungerhooks:
+  build:            []
+  render:           []
+
+package:
+  defaults:
+    request:
+      namespace:    public
+    response:
+      status:       200
+      ttl:          60
+      cacheable:    true
+      content:      ''
+      ready:        false
+      mime:         text/html
+      charset:      utf-8
+      disposition:  inline
+      template:     default
+
+# bootstrap settings are used by the Bootstrapper class, and are then removed
+# from the config used in the created CMS. This is a nice secure way to handle
+# setting up drivers and factories, and you should use it if at all possible.
+bootstrap:
+  drivers:
+    default:
+      credentials:  driver
+  factories:
+    content:
+      class:        \Digraph\DSO\ContentFactory
+      driver:       default
+      table:        digraph_content
+    system:
+      class:        \Destructr\Factory
+      driver:       default
+      table:        digraph_system
