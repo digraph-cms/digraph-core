@@ -1,10 +1,13 @@
-#composer libraries
+#composer
 /vendor
 composer.lock
 
 #environment-specific config and modules
 env.yaml
 env.json
+example/cache/*
+example/storage/*
 
 *.ignore
+*.sqlite
 !.keep
