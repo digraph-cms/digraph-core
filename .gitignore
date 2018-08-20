@@ -1,6 +1,7 @@
 #composer libraries
 /digraph/lib
 /digraph/lib/**/.git
+composer.lock
 
 #environment-specific config and modules
 env.yaml
