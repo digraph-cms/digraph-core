@@ -1,27 +1,28 @@
 url:
-  protocol:          ''
-  domain:            ''
-  path:              ''
-  base:              ${url.protocol}${url.domain}${url.path}
+  protocol:         null
+  domain:           null
+  path:             /
+  base:             ${url.protocol}${url.domain}${url.path}
 
 paths:
-  storage:           ${paths.site}/storage
-  cache:             ${paths.site}/cache
+  storage:          ${paths.site}/storage
+  cache:            ${paths.site}/cache
 
 templates:
   paths:
-    core:            ${paths.core}/templates
-    site:            ${paths.site}/templates
+    core:           ${paths.core}/templates
+    site:           ${paths.site}/templates
   twigconfig:
-    cache:           false
+    cache:          ${paths.cache}/twig
 
 routing:
-  paths:             []
+  paths:
+    site:           ${paths.site}/routes
 
 modules:
   paths:
-    core:            ${paths.core}/modules
-    site:            ${paths.site}/modules
+    core:           ${paths.core}/modules
+    site:           ${paths.site}/modules
 
 fullmunge:
   - build
@@ -32,71 +33,74 @@ fullmunge:
 
 mungers:
   build:
-    100-initialize:  Digraph\Mungers\Build\Initialize
-    200-locate:      Digraph\Mungers\Build\Locate
-    300-route:       Digraph\Mungers\Build\Route
-    400-execute:     Digraph\Mungers\Build\Execute
+    100-initialize: Digraph\Mungers\Build\Initialize
+    200-locate:     Digraph\Mungers\Build\Locate
+    300-route:      Digraph\Mungers\Build\Route
+    400-execute:    Digraph\Mungers\Build\Execute
   error:
-    100-error:       Digraph\Mungers\Error\Error
+    100-error:      Digraph\Mungers\Error\Error
   template:
-    100-templates:   Digraph\Mungers\Templates\Templates
+    100-templates:  Digraph\Mungers\Templates\Templates
   finalize:
-    100-headers:     Digraph\Mungers\Finalize\Headers
+    100-headers:    Digraph\Mungers\Finalize\Headers
   render:
-    100-headers:     Digraph\Mungers\Render\Headers
-    200-output:      Digraph\Mungers\Render\Output
+    100-headers:    Digraph\Mungers\Render\Headers
+    200-output:     Digraph\Mungers\Render\Output
 
 helpers:
   classes:
-    urls:            Digraph\Urls\UrlHelper
-    modules:         Digraph\Helpers\Modules
-    routing:         Digraph\Helpers\Routing
-    forms:           Digraph\Forms\FormHelper
-    templates:       Digraph\Helpers\Templates
-    notifications:   Digraph\Helpers\Notifications
+    urls:           Digraph\Urls\UrlHelper
+    modules:        Digraph\Helpers\Modules
+    routing:        Digraph\Helpers\Routing
+    forms:          Digraph\Forms\FormHelper
+    templates:      Digraph\Helpers\Templates
+    notifications:  Digraph\Helpers\Notifications
 
 forms:
   defaultmap:
     digraph_name:
-      field:         digraph.name
-      label:         Display name
-      class:         Formward\Fields\Input
-      required:      true
+      field:        digraph.name
+      label:        Display name
+      class:        Formward\Fields\Input
+      required:     true
     digraph_title:
-      field:         digraph.name
-      label:         Display title
-      class:         Formward\Fields\Input
+      field:        digraph.name
+      label:        Display title
+      class:        Formward\Fields\Input
     digraph_slug:
-      field:         digraph.slug
-      label:         Url Slug
-      class:         Digraph\Forms\Fields\Slug
+      field:        digraph.slug
+      label:        Url Slug
+      class:        Digraph\Forms\Fields\Slug
     digraph_body:
-      field:         digraph.body
-      label:         Body content
-      class:         Formward\Fields\Textarea
+      field:        digraph.body
+      label:        Body content
+      class:        Formward\Fields\Textarea
 
 noun:
-  types:             []
-  defaults:          []
+  types:            []
+  defaults:         []
 
 mungerhooks:
-  build:             []
-  render:            []
+  build:            []
+  render:           []
 
 package:
   defaults:
+    fields:
+      page_title:   ${page_name}
+      page_name:    Untitled
     request:
-      namespace:     public
+      namespace:    public
     response:
-      status:        200
-      ttl:           60
-      cacheable:     true
-      content:       ''
-      ready:         false
-      mime:          text/html
-      charset:       utf-8
-      disposition:   inline
-      template:      default
+      status:       200
+      ttl:          60
+      cacheable:    true
+      content:      ''
+      ready:        false
+      mime:         text/html
+      charset:      utf-8
+      disposition:  inline
+      template:     default
 
 # bootstrap settings are used by the Bootstrapper class, and are then removed
 # from the config used in the created CMS. This is a nice secure way to handle
@@ -104,13 +108,13 @@ package:
 bootstrap:
   drivers:
     default:
-      credentials:   driver
+      credentials:  driver
   factories:
     content:
-      class:         \Digraph\DSO\ContentFactory
-      driver:        default
-      table:         digraph_content
+      class:        \Digraph\DSO\ContentFactory
+      driver:       default
+      table:        digraph_content
     system:
-      class:         \Destructr\Factory
-      driver:        default
-      table:         digraph_system
+      class:        \Destructr\Factory
+      driver:       default
+      table:        digraph_system

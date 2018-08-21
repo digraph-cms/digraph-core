@@ -30,6 +30,14 @@ class Noun extends DSO implements NounInterface
         return $this->name();
     }
 
+    public function body()
+    {
+        if ($this->get('digraph.body')) {
+            return $this->get('digraph.body');
+        }
+        return $this->name();
+    }
+
     public function url(string $verb=null, array $args=null, bool $canonical=false)
     {
         $url = $this->factory->cms()->helper('urls')->url();

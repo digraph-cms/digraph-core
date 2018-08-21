@@ -3,6 +3,7 @@
 namespace Digraph\Helpers;
 
 use Digraph\Helpers\AbstractHelper;
+use Flatrr\SelfReferencingFlatArray;
 
 class Templates extends AbstractHelper
 {
@@ -37,10 +38,11 @@ class Templates extends AbstractHelper
         $template .= '.twig';
         $env = $this->env();
         //merge fields
-        $fields = array_replace_recursive($this->fields, $fields);
+        $fields = new SelfReferencingFlatArray($fields);
+        $fields->merge($this->fields);
         //check that template exists, then render
         if ($template = $env->load($template)) {
-            return $template->render($fields);
+            return $template->render($fields->get());
         }
         //return null by default, if template doesn't exist
         return null;

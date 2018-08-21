@@ -14,6 +14,9 @@ class Templates extends AbstractMunger
         }
         $t = $package->cms()->helper('templates');
         $t->field('package', $package);
+        foreach ($package->get('fields', true) as $key => $value) {
+            $t->field($key, $value);
+        }
         $package->set(
             'response.content',
             $t->render(
@@ -21,6 +24,7 @@ class Templates extends AbstractMunger
                 []
             )
         );
+        $package->set('response.templated', true);
     }
 
     protected function doConstruct($name)

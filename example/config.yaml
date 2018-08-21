@@ -1,14 +1,41 @@
+# url settings
 url:
-  protocol:        //
-  domain:          localhost
-  path:            /digraph-core/example/
+  # // is usually fine, but you can specify either http:// or https:// if you like
+  protocol:      //
+  # fully qualified domain name of server
+  domain:        localhost
+  # path to Digraph installation should have leading/trailing slashes
+  path:          /digraph-core/example/
 
-bootstrap:
-  credentials:
-    driver:
-      # dsn:       'sqlite:"${paths.storage}/digraph.sqlite"'
-      dsn:         sqlite:storage/digraph.sqlite
-  drivers:
-    default:
-      class:       \Destructr\LegacyDrivers\SQLiteDriver
-      credentials: driver
+# Generally if you want to move your storage/cache directories you should keep
+# them somehow relative to paths.site
+paths:
+  storage:       ${paths.site}/storage
+  cache:         ${paths.site}/cache
+
+# Template helper options
+templates:
+  # Additional paths can be added here, they will be used in the reverse of the
+  # order they're listed here
+  paths:
+    site:        ${paths.site}/templates
+  twigconfig:
+    cache:       ${paths.cache}/twig
+
+# Location of a site-specific route is the only default route. Other paths will
+# be added to routing.paths by modules
+routing:
+  paths:
+    site:        ${paths.site}/routes
+
+# Configure module directories for site and environment-specific modules (this
+# is useful for things like debugging modules during development)
+modules:
+  paths:
+    env:         ${paths.site}/modules_env
+    site:        ${paths.site}/modules
+
+package:
+  defaults:
+    fields:
+      site_name: Digraph example site
