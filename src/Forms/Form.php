@@ -2,7 +2,7 @@
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
 namespace Digraph\Forms;
 
-use Digraph\Forms\FieldInterface;
+use Formward\FieldInterface;
 use Digraph\DSO\NounInterface;
 
 class Form extends \Digraph\Forms\Form
