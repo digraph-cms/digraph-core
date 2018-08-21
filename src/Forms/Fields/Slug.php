@@ -2,8 +2,8 @@
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
 namespace Digraph\Forms\Fields;
 
-use Digraph\Forms\Fields\Input;
-use Digraph\Forms\FieldInterface;
+use Formward\Fields\Input;
+use Formward\FieldInterface;
 
 class Slug extends Input
 {

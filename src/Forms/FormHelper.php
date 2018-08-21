@@ -4,7 +4,7 @@ namespace Digraph\Forms;
 
 use Digraph\Helpers\AbstractHelper;
 use Digraph\DSO\NounInterface;
-use Digraph\FlatArray\FlatArray;
+use Flatrr\FlatArray;
 
 class FormHelper extends AbstractHelper
 {

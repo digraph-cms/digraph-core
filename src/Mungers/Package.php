@@ -5,6 +5,7 @@ namespace Digraph\Mungers;
 use Flatrr\SelfReferencingFlatArray;
 use Digraph\CMS;
 use Digraph\Urls\Url;
+use Digraph\DSO\NounInterface;
 
 class Package extends SelfReferencingFlatArray implements PackageInterface, \Serializable
 {
