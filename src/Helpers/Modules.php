@@ -7,9 +7,13 @@ use Flatrr\Config\Config;
 
 class Modules extends AbstractHelper
 {
+    protected $autoloader;
+
     public function initialize()
     {
         $this->cms->log('ModuleManager initializing');
+        $this->autoloader = new Modules\Autoloader();
+        $this->autoloader->register();
         $paths = $this->cms->config['modules.paths'];
         ksort($paths);
         foreach ($paths as $path) {
@@ -33,6 +37,13 @@ class Modules extends AbstractHelper
             'module.path' => dirname($module),
             'module.namespace' => '\\Digraph\\Modules\\${module.name}'
         ]);
+        //register with autoloader
+        if (is_dir($config['module.path'].'/src')) {
+            $this->autoloader->addNamespace(
+                $config['module.namespace'],
+                $config['module.path'].'/src'
+            );
+        }
         //unset module portion and merge everything else back into main CMS config
         $config = $config->get();
         unset($config['module']);

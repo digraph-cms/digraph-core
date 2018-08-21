@@ -54,8 +54,21 @@ class CMS
                 $tree->add($munger, $name);
             }
             // set up munger hooks
-            if (@ksort($this->config['mungerhooks'][$treeName])) {
-                //TODO: set up hooks
+            if ($hooks = $this->config['mungerhooks.'.$treeName]) {
+                foreach ($hooks as $hookName => $mungerHooks) {
+                    foreach ($mungerHooks as $hookPos => $hookClasses) {
+                        foreach ($hookClasses as $hookClassName => $hookClass) {
+                            if ($hookPos == 'pre') {
+                                $newHook = new $hookClass($hookClassName);
+                                $tree->pre($munger, $newHook);
+                            }
+                            if ($hookPos == 'post') {
+                                $newHook = new $hookClass($hookClassName);
+                                $tree->post($munger, $newHook);
+                            }
+                        }
+                    }
+                }
             }
             // set munger into CMS
             $this->munger($treeName, $tree);

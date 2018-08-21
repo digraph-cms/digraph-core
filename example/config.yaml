@@ -32,8 +32,8 @@ routing:
 # is useful for things like debugging modules during development)
 modules:
   paths:
-    env:         ${paths.site}/modules_env
     site:        ${paths.site}/modules
+    env:         ${paths.site}/modules_env
 
 package:
   defaults:
