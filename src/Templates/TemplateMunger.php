@@ -1,10 +1,10 @@
 <?php
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
-namespace Digraph\Mungers\Templates;
+namespace Digraph\Templates;
 
 use Digraph\Mungers\AbstractMunger;
 
-class Templates extends AbstractMunger
+class TemplateMunger extends AbstractMunger
 {
     protected function doMunge(&$package)
     {

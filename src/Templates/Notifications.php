@@ -1,6 +1,6 @@
 <?php
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
-namespace Digraph\Helpers;
+namespace Digraph\Templates;
 
 use Digraph\Helpers\AbstractHelper;
 use Digraph\Session\SessionTrait;

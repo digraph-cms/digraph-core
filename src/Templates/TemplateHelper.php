@@ -1,11 +1,11 @@
 <?php
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
-namespace Digraph\Helpers;
+namespace Digraph\Templates;
 
 use Digraph\Helpers\AbstractHelper;
 use Flatrr\SelfReferencingFlatArray;
 
-class Templates extends AbstractHelper
+class TemplateHelper extends AbstractHelper
 {
     protected $twig;
     protected $loader;

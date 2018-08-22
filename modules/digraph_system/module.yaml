@@ -1,15 +1,9 @@
 module:
-  name:              digraph_system
-  namespace:         \Digraph\Modules\${module.name}
+  author:     Joby Elliott <joby@byjoby.com>
 
-routing:
-  paths:
-    digraph_system:  ${module.path}/routes
+types:
+  page:
+    class:    default
 
-noun:
-  types:
-    page:
-      class:         default
-  defaults:
-    dso:
-      type:          page
+defaultnoun:
+  type:       page

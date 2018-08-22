@@ -34,17 +34,35 @@ class Modules extends AbstractHelper
         $config = new Config();
         $config->readFile($module);
         $config->merge([
+            'module.name' => basename(dirname($module)),
             'module.path' => dirname($module),
             'module.namespace' => '\\Digraph\\Modules\\${module.name}'
         ]);
-        //register with autoloader
+        /*
+        Automatically add default paths to config if they exists
+         */
+        // src: register with autoloader
         if (is_dir($config['module.path'].'/src')) {
             $this->autoloader->addNamespace(
                 $config['module.namespace'],
                 $config['module.path'].'/src'
             );
         }
-        //unset module portion and merge everything else back into main CMS config
+        // routes: add to routes config
+        if (is_dir($config['module.path'].'/routes')) {
+            $config['routing.paths.'.$config['module.name']] = $config['module.path'].'/routes';
+        }
+        // templates: add to templates config
+        if (is_dir($config['module.path'].'/templates')) {
+            $config['templates.paths.'.$config['module.name']] = $config['module.path'].'/templates';
+        }
+        // media: add to media config
+        if (is_dir($config['module.path'].'/media')) {
+            $config['media.paths.'.$config['module.name']] = $config['module.path'].'/media';
+        }
+        /*
+        Unset module portion of config and merge what remains back into main config
+         */
         $config = $config->get();
         unset($config['module']);
         $this->cms->config->merge($config, null);

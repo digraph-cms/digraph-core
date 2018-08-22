@@ -58,7 +58,7 @@ class Routing extends AbstractHelper
         }
         //general candidates shouldn't be used if the type doesn't exist
         //otherwise we've just made basically all URLs valid
-        if (!$this->cms->config['noun.types.'.$type]) {
+        if (!$this->cms->config['types.'.$type]) {
             $candidatesGeneral = array();
         }
         //append general to specific candidates, because specific should take priority

@@ -34,13 +34,14 @@ fullmunge:
 mungers:
   build:
     100-initialize: Digraph\Mungers\Build\Initialize
-    200-locate:     Digraph\Mungers\Build\Locate
-    300-route:      Digraph\Mungers\Build\Route
-    400-execute:    Digraph\Mungers\Build\Execute
+    200-media:      Digraph\Media\MediaMunger
+    300-locate:     Digraph\Mungers\Build\Locate
+    400-route:      Digraph\Mungers\Build\Route
+    500-execute:    Digraph\Mungers\Build\Execute
   error:
     100-error:      Digraph\Mungers\Error\Error
   template:
-    100-templates:  Digraph\Mungers\Templates\Templates
+    100-templates:  Digraph\Templates\TemplateMunger
   finalize:
     100-headers:    Digraph\Mungers\Finalize\Headers
   render:
@@ -53,8 +54,9 @@ helpers:
     modules:        Digraph\Helpers\Modules
     routing:        Digraph\Helpers\Routing
     forms:          Digraph\Forms\FormHelper
-    templates:      Digraph\Helpers\Templates
+    templates:      Digraph\Templates\TemplateHelper
     notifications:  Digraph\Helpers\Notifications
+    media:          Digraph\Media\MediaHelper
 
 forms:
   defaultmap:
@@ -83,6 +85,9 @@ noun:
 mungerhooks:
   build:            []
   render:           []
+
+media:
+  paths:            []
 
 package:
   defaults:
