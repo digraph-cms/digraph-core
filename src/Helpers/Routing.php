@@ -56,14 +56,13 @@ class Routing extends AbstractHelper
                 $candidatesSpecific[$module.':specific:'.$i++] = "$path/$commonNoun$filename";
             }
         }
-        //general candidates shouldn't be used if the common noun doesn't exist
+        //general candidates shouldn't be used if the type doesn't exist
         //otherwise we've just made basically all URLs valid
-        // if (!$this->cms()->contentFactory()->getClass($type)) {
-        //     $candidatesGeneral = array();
-        // }
+        if (!$this->cms->config['noun.types.'.$type]) {
+            $candidatesGeneral = array();
+        }
         //append general to specific candidates, because specific should take priority
         $candidates = array_merge($candidatesSpecific, $candidatesGeneral);
-        // var_dump($candidates);
         //search from the front of the array, returning the first matching file
         //this makes specific candidates go first, with later-added search paths taking secondary priority
         $return = array();
