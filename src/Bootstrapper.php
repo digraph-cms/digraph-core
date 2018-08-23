@@ -3,6 +3,7 @@
 namespace Digraph;
 
 use Flatrr\Config\ConfigInterface;
+use Destructr\DriverFactory;
 
 class Bootstrapper
 {
@@ -20,12 +21,21 @@ class Bootstrapper
         foreach ($config['bootstrap.drivers'] as $k => $c) {
             $class = $c['class'];
             $cred = $config['bootstrap.credentials.'.$c['credentials']];
-            $driver = new $class(
+            if ($class == 'default') {
+              $driver = DriverFactory::factory(
                 $cred['dsn'],
-                $cred['username'],
-                $cred['password'],
-                $cred['options']
-            );
+                @$cred['username'],
+                @$cred['password'],
+                @$cred['options']
+              );
+            }else {
+              $driver = new $class(
+                  $cred['dsn'],
+                  @$cred['username'],
+                  @$cred['password'],
+                  @$cred['options']
+              );
+            }
             $cms->driver($k, $driver);
         }
         //set up factories

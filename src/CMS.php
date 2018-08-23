@@ -90,7 +90,7 @@ class CMS
         } elseif (!$this->valueFunction('helper/'.$name)) {
             if ($class = $this->config['helpers.classes.'.$name]) {
                 $this->log('Instantiating helper '.$name);
-                $this->helper($name, new $class($this));
+                @$this->helper($name, new $class($this));
             }
         }
         return $this->valueFunction('helper/'.$name, $set);
@@ -130,7 +130,7 @@ class CMS
         return $this->valueFunction('factory/'.$name, $set);
     }
 
-    protected function valueFunction(string $name, $value=null, $default=null)
+    protected function &valueFunction(string $name, &$value=null, $default=null)
     {
         if ($value !== null) {
             $this->values[$name] = $value;

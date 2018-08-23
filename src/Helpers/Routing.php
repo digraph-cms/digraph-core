@@ -52,8 +52,8 @@ class Routing extends AbstractHelper
                 $candidatesSpecific[$module.':specific:'.$i++] = "$path/$type/@all/$filename";
                 $candidatesSpecific[$module.':specific:'.$i++] = "$path/$type@all/$filename";
             }
-            if (substr($filename, 0, 6) == '@hook/') {
-                $candidatesSpecific[$module.':specific:'.$i++] = "$path/$commonNoun$filename";
+            if (preg_match('/^@.+\//',$filename)) {
+                $candidatesSpecific[$module.':specific:'.$i++] = "$path/$type$filename";
             }
         }
         //general candidates shouldn't be used if the type doesn't exist

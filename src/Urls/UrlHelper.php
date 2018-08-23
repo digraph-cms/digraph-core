@@ -10,7 +10,7 @@ class UrlHelper extends AbstractHelper
     {
         $url = new Url();
         //break the URL into its parts
-        list($path, $args) = explode(Url::ARGINITIALSEPARATOR, $input, 2);
+        @list($path, $args) = explode(Url::ARGINITIALSEPARATOR, $input, 2);
         $path = preg_replace('/\/$/', '', $path);
         if (!strpos($path, '/')) {
             $path .= '/';

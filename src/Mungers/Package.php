@@ -20,7 +20,7 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         'response.content'
     ];
 
-    public function get(string $name = null, bool $raw = false)
+    public function get(string $name = null, bool $raw = false, $unescape = true)
     {
         if (isset($unfiltered[$name])) {
             $raw = true;
@@ -44,7 +44,7 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         return $this->noun;
     }
 
-    public function &url(Url &$set = null) : ?Url
+    public function url(Url $set = null) : ?Url
     {
         if ($set) {
             $this->url = $set;
