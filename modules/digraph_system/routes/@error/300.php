@@ -1,4 +1,6 @@
-<h1>Multiple options</h1>
+<?php
+$package['fields.page_name'] = 'Multiple options';
+?>
 <p>This URL can be resolved to more than one destination. Please choose an option below:</p>
 <?php
 foreach ($package['temp.300options'] as $opt) {

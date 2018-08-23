@@ -21,7 +21,7 @@ class TemplateMunger extends AbstractMunger
             'response.content',
             $t->render(
                 $package->get('response.template'),
-                []
+                $package->get('fields')
             )
         );
         $package->set('response.templated', true);

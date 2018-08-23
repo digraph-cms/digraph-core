@@ -1,1 +1,2 @@
-<h1>404 not found</h1>
+<?php
+$package['fields.page_name'] = '404 not found';

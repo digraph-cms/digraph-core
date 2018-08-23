@@ -7,6 +7,7 @@ use Digraph\CMS;
 
 class ContentFactory extends Factory
 {
+    const ID_LENGTH = 8;
     protected $cms;
 
     protected $virtualColumns = [

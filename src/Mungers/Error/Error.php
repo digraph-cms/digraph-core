@@ -10,6 +10,7 @@ class Error extends AbstractMunger
     {
         $status = $package['response.status'];
         if ($status != 200) {
+            $package['fields.page_name'] = 'Error '.$status;
             $handlers = [
                 $status,
                 floor($status/100).'xx',

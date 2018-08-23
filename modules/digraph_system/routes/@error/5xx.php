@@ -1,1 +1,2 @@
-<h1>Server error</h1>
+<?php
+$package['fields.page_name'] = 'Server error';

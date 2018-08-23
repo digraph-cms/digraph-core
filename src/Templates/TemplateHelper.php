@@ -10,7 +10,6 @@ class TemplateHelper extends AbstractHelper
     protected $twig;
     protected $loader;
     protected $fields = [];
-    protected $context;
 
     public function link($slug, $text=null)
     {
@@ -58,7 +57,11 @@ class TemplateHelper extends AbstractHelper
         $fields->merge([
             'helper' => &$this
         ]);
-        $this->context = $fields['package'];
+        $fields->merge(
+            $fields['package']->get('fields'),
+            null,
+            true
+        );
         //check that template exists, then render
         if ($template = $env->load($template)) {
             return $template->render($fields->get());

@@ -14,7 +14,7 @@ class Noun extends DSO implements NounInterface
         $this->resetChanges();
     }
 
-    public function name()
+    public function name($verb=null)
     {
         if ($this->get('digraph.name')) {
             return $this->get('digraph.name');
@@ -22,12 +22,12 @@ class Noun extends DSO implements NounInterface
         return $this->get('dso.type').' '.$this->get('dso.id');
     }
 
-    public function title()
+    public function title($verb=null)
     {
         if ($this->get('digraph.title')) {
             return $this->get('digraph.title');
         }
-        return $this->name();
+        return $this->name($verb);
     }
 
     public function body()

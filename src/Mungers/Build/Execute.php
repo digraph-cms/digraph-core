@@ -10,6 +10,16 @@ class Execute extends AbstractMunger
 
     protected function doMunge(&$package)
     {
+        if ($package->noun()) {
+            $package->merge(
+                [
+                    'page_name' => $package->noun()->name($package->url()['verb']),
+                    'page_title' => $package->noun()->title($package->url()['verb'])
+                ],
+                'fields',
+                true
+            );
+        }
         $this->package = $package;
         $this->execute();
     }
@@ -22,6 +32,7 @@ class Execute extends AbstractMunger
     {
         if (file_exists($this->package['response.handler.file'])) {
             ob_start();
+            $package = $this->package;
             include $this->package['response.handler.file'];
             $this->package['response.content'] = ob_get_contents();
             ob_end_clean();
