@@ -1,3 +1,12 @@
-{% for slug in package.cms.config.nav %}
-  {{helper.link(slug,null)|raw}}
-{% endfor %}
+{% if package.cms.config.nav %}
+  <nav role="navigation">
+    <div role="menubar">
+      {% for slug in package.cms.config.nav %}
+        {% set link = helper.link(slug) %}
+        {% do 
+          link.attr('role', 'menuitem') %}
+        {{link|raw}}
+      {% endfor %}
+    </div>
+  </nav>
+{% endif %}

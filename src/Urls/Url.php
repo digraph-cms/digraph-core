@@ -3,6 +3,7 @@
 namespace Digraph\Urls;
 
 use Flatrr\SelfReferencingFlatArray;
+use HtmlObjectStrings\A;
 
 class Url extends SelfReferencingFlatArray
 {
@@ -42,21 +43,15 @@ class Url extends SelfReferencingFlatArray
         return $out;
     }
 
-    public function html(string $text = null, $class=null, $target=null, $other=null)
+    public function html(string $text = null)
     {
         if (!$text) {
             $text = $this->text();
         }
-        if ($class) {
-            $class = " class=\"$class\"";
-        }
-        if ($target) {
-            $target = " target=\"$target\"";
-        }
-        if ($other) {
-            $other = " $other";
-        }
-        return "<a href=\"$this\"$class$target$other>$text</a>";
+        $a = new A();
+        $a->attr('href', "$this");
+        $a['content'] = $text;
+        return $a;
     }
 
     public function string() : string

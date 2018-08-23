@@ -15,14 +15,15 @@ class TemplateHelper extends AbstractHelper
     public function link($slug, $text=null)
     {
         if ($url = $this->cms->helper('urls')->parse($slug)) {
-            return $this->urlHtml($url, $text);
+            return $this->urlLinkObject($url, $text);
         }
         return '['.$slug.' not found]';
     }
 
-    public function urlHtml($url, $text)
+    public function urlLinkObject($url, $text)
     {
-        return $url->html($text);
+        $a = $url->html($text);
+        return $a;
     }
 
     public function field(string $name, $value)
