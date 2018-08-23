@@ -10,6 +10,20 @@ class TemplateHelper extends AbstractHelper
     protected $twig;
     protected $loader;
     protected $fields = [];
+    protected $context;
+
+    public function link($slug, $text=null)
+    {
+        if ($url = $this->cms->helper('urls')->parse($slug)) {
+            return $this->urlHtml($url, $text);
+        }
+        return '['.$slug.' not found]';
+    }
+
+    public function urlHtml($url, $text)
+    {
+        return $url->html($text);
+    }
 
     public function field(string $name, $value)
     {
@@ -40,6 +54,10 @@ class TemplateHelper extends AbstractHelper
         //merge fields
         $fields = new SelfReferencingFlatArray($fields);
         $fields->merge($this->fields);
+        $fields->merge([
+            'helper' => &$this
+        ]);
+        $this->context = $fields['package'];
         //check that template exists, then render
         if ($template = $env->load($template)) {
             return $template->render($fields->get());

@@ -12,9 +12,14 @@ class MediaMunger extends AbstractMunger
         if ($f = $m->get($package->url())) {
             $package->log('media located: '.$f['path']);
             //set package to output this file
-            $package['response.content'] = null;
+            if ($f['content'] !== null) {
+                $package['response.content'] = $f['content'];
+                unset($package['response.readfile']);
+            } else {
+                $package['response.readfile'] = $f['path'];
+                unset($package['response.content']);
+            }
             $package['response.mime'] = $f['mime'];
-            $package['response.readfile'] = $f['path'];
             $package['response.filename'] = $f['filename'];
             //skip everything up until rendering
             $package->skipGlob('build**');

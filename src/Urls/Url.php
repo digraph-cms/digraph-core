@@ -42,12 +42,21 @@ class Url extends SelfReferencingFlatArray
         return $out;
     }
 
-    public function html(string $text = null)
+    public function html(string $text = null, $class=null, $target=null, $other=null)
     {
         if (!$text) {
             $text = $this->text();
         }
-        return "<a href=\"$this\">$text</a>";
+        if ($class) {
+            $class = " class=\"$class\"";
+        }
+        if ($target) {
+            $target = " target=\"$target\"";
+        }
+        if ($other) {
+            $other = " $other";
+        }
+        return "<a href=\"$this\"$class$target$other>$text</a>";
     }
 
     public function string() : string

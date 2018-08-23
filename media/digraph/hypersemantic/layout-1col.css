@@ -1,0 +1,45 @@
+body {
+  margin: 0;
+}
+
+*[role="banner"], *[role="navigation"], *[role="main"] {
+  margin: 20pt auto;
+}
+
+*[role="banner"], *[role="navigation"], footer {
+  text-align: center;
+}
+
+*[role="banner"], *[role="navigation"], footer {
+  background: #eee;
+}
+
+*[role="banner"] {
+  margin: 0;
+  padding: 10pt;
+}
+
+*[role="navigation"] {
+  margin-top: 0;
+}
+
+footer {
+  margin-bottom: 0;
+  padding: 20pt 10pt;
+}
+
+/* menu */
+
+*[role="menubar"] *[role="menuitem"][aria-selected="true"], *[role="menu"] *[role="menuitem"][aria-selected="true"] {
+  background: #fff;
+}
+
+/* screen layouts */
+
+@media screen {
+  *[role="main"] {
+    max-width: 35em;
+    padding-left: 10pt;
+    padding-right: 10pt;
+  }
+}

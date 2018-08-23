@@ -7,6 +7,9 @@ url:
   # path to Digraph installation should have leading/trailing slashes
   path:          /digraph-core/example/
 
+nav:
+  home:          home/
+
 # Generally if you want to move your storage/cache directories you should keep
 # them somehow relative to paths.site
 paths:

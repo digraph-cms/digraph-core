@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>
+      {% block title %}
+        {{page_name}}
+        ::
+        {{site_name}}
+      {% endblock %}
+    </title>
+    {% include 'digraph/partials/head.twig' %}
+  </head>
+  <body>
+    {% block admin %}
+      {% include 'digraph/partials/actionbar.twig' %}
+    {% endblock %}
+
+    {% block banner %}
+      <header role="banner">
+        <h1>Default template</h1>
+      </header>
+    {% endblock %}
+
+    {% block navigation %}
+      {% include 'digraph/partials/mainmenu.twig' %}
+    {% endblock %}
+
+    {% block body %}
+      <div id="content" role="main">
+        {% include 'digraph/partials/breadcrumb.twig' %}
+        {% include 'digraph/partials/notifications.twig' %}
+        <article>
+          <h1>{{page_title}}</h1>
+          <div class="package-response-content">
+            {{package.response.content|raw}}
+          </div>
+        </article>
+      </div>
+    {% endblock %}
+
+    {% block footer %}
+      <footer role="contentinfo">
+        footer
+      </footer>
+    {% endblock %}
+
+    {% include 'digraph/partials/foot.twig' %}
+  </body>
+</html>

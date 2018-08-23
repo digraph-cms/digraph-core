@@ -1,0 +1,32 @@
+.notifications {
+  max-height: 20em;
+  overflow: auto;
+}
+
+.notification {
+  background: #666;
+  color: #fff;
+  padding: 5pt;
+  margin: 5pt 0;
+}
+
+.notifications .notification a {
+  color: #fff !important;
+  font-weight: bold;
+}
+
+.notifications .notification-confirmation {
+  background-color: #689F38;
+}
+
+.notifications .notification-notice {
+  background-color: #1976D2;
+}
+
+.notifications .notification-warning {
+  background-color: #EF6C00;
+}
+
+.notifications .notification-error {
+  background-color: #d32f2f;
+}

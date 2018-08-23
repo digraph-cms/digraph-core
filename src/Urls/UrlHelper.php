@@ -6,7 +6,7 @@ use Digraph\Helpers\AbstractHelper;
 
 class UrlHelper extends AbstractHelper
 {
-    public function parse(string $input) : ?Url
+    public function parse(string $input, bool $fast = false) : ?Url
     {
         $url = new Url();
         //break the URL into its parts
@@ -33,6 +33,33 @@ class UrlHelper extends AbstractHelper
                 $argarr[$key] = $value?$value:true;
             }
             $url['args'] = $argarr;
+        }
+        //if fast wasn't requested, look up slug
+        if (!$fast) {
+            //create list of possible noun/verb combinations
+            $slugs = [];
+            if ($url->pathString() == '') {
+                $slugs = [['home',null]];
+            } else {
+                $slugs = [[$url->pathString(),null]];
+                if (strpos($url->pathString(), '/') !== false) {
+                    $path = explode('/', $url->pathString());
+                    $verb = array_pop($path);
+                    $slugs[] = [implode('/', $path),$verb];
+                }
+            }
+            //search for possible slug matches
+            foreach ($slugs as $slug) {
+                list($slug, $verb) = $slug;
+                $search = $this->cms->factory()->search();
+                $search->where('${digraph.slug} = :slug');
+                foreach ($search->execute([':slug'=>$slug]) as $dso) {
+                    $url = $dso->url($verb);
+                    return $url;
+                }
+            }
+            //if no DSO could be found, return null
+            return null;
         }
         //return
         $url['base'] = $this->cms->config['url.base'];

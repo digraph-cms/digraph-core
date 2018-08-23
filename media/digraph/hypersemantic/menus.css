@@ -1,0 +1,47 @@
+*[role="menubar"], *[role="menu"] {
+  margin: 20pt 0;
+  padding: 0;
+  font-size: 0;
+  line-height: 0;
+}
+
+*[role="menubar"]:first-child, *[role="menu"]:first-child {
+  margin-top: 0;
+}
+
+*[role="menubar"]:last-child, *[role="menu"]:last-child {
+  margin-bottom: 0;
+}
+
+/* menu items */
+
+*[role="menubar"] *[role="menuitem"], *[role="menu"] *[role="menuitem"] {
+  background: #eee;
+  padding: 10pt;
+  display: inline-block;
+  font-size: 12pt;
+  line-height: 20pt;
+}
+
+*[role="menubar"] *[role="menuitem"]:hover, *[role="menu"] *[role="menuitem"]:hover {
+  background: #fafafa;
+}
+
+*[role="menubar"] *[role="menuitem"][aria-selected="true"], *[role="menu"] *[role="menuitem"][aria-selected="true"] {
+  background: #fafafa;
+  color: red;
+  text-decoration: none;
+}
+
+*[role="menubar"] *[role="menuitem"][aria-disabled="true"], *[role="menu"] *[role="menuitem"][aria-disabled="true"] {
+  background: #eee;
+  color: #999;
+  text-decoration: none;
+  cursor: default;
+}
+
+/* only a small tweak to apply styles to vertical menus */
+
+*[role="menu"] *[role="menuitem"] {
+  display: block;
+}

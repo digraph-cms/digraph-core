@@ -1,0 +1,64 @@
+#content .breadcrumb {
+  font-size: 0.8em;
+}
+
+.breadcrumb-item:after {
+  content: ' / ';
+  display: inline;
+}
+
+.breadcrumb-item:last-of-type a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.breadcrumb-item:last-of-type:after {
+  display: none;
+}
+
+.digraph-actionbar {
+  background: #1565C0;
+  color: #fff;
+  padding: 5pt;
+  font-size: 0.8em;
+}
+
+.digraph-actionbar:after {
+  content: '';
+  display: block;
+  clear: both;
+  height: 0;
+}
+
+.digraph-actionbar .digraph-action-group-name {
+  opacity: 0.6;
+  display: inline-block;
+  margin-left: 1em;
+}
+
+.digraph-actionbar .digraph-action-group-name:after {
+  content: ':';
+}
+
+.digraph-actionbar a {
+  color: #fff !important;
+  opacity: 0.8;
+  text-decoration: none;
+  display: inline-block;
+  padding: 0 0.5em;
+}
+
+.digraph-actionbar a:hover, .digraph-actionbar a[aria-selected="true"] {
+  background: #fff;
+  color: #1565C0 !important;
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.digraph-actionbar .digraph-action-group {
+  display: inline-block;
+}
+
+.digraph-actionbar .digraph-action-group-user {
+  float: right;
+}

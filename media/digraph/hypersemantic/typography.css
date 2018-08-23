@@ -1,0 +1,215 @@
+/* font selections and sizes */
+
+body {
+  font-size: 14pt;
+  line-height: 1.4em;
+}
+
+header, footer, nav, h1, h2, h3, h4, h5, h6 {
+  margin: 20pt 0;
+}
+
+*[role="banner"] h1 {
+  font-size: 20pt;
+  font-weight: normal;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.2em;
+}
+
+h1 {
+  font-size: 28pt;
+}
+
+h2 {
+  font-size: 20pt;
+}
+
+h3 {
+  font-size: 18pt;
+  font-weight: normal;
+}
+
+h4 {
+  font-size: 17pt;
+  font-weight: normal;
+}
+
+h5 {
+  font-size: 16pt;
+  font-weight: normal;
+}
+
+h6 {
+  font-size: 15pt;
+  font-weight: normal;
+}
+
+/* spacing */
+
+h1, h2, h3, h4, h5, h6, p, aside, figure, ul, ol, blockquote, pre, address {
+  margin: 10pt 0;
+}
+
+h1:first-child, h2:first-child, h3:first-child, h4:first-child, h5:first-child, h6:first-child, p:first-child, aside:first-child, figure:first-child, ul:first-child, ol:first-child, blockquote:first-child, pre:first-child, address:first-child {
+  margin-top: 0;
+}
+
+h1:last-child, h2:last-child, h3:last-child, h4:last-child, h5:last-child, h6:last-child, p:last-child, aside:last-child, figure:last-child, ul:last-child, ol:last-child, blockquote:last-child, pre:last-child, address:last-child {
+  margin-bottom: 0;
+}
+
+/* specific element styles */
+
+ul ul, ul ol, ol ul, ol ol, li ul, li ol {
+  margin-top: 0;
+}
+
+blockquote, pre, aside, figure {
+  background: #fafafa;
+  border: 1px solid #eee;
+  padding: 10pt;
+}
+
+code {
+  font-family: monospace;
+  font-weight: bold;
+}
+
+pre {
+  font-family: monospace;
+}
+
+pre code {
+  color: #ee6600;
+  font-weight: normal;
+}
+
+footer {
+  margin: 20pt 0;
+  font-size: 10pt;
+}
+
+nav {
+  font-size: 12pt;
+}
+
+/* asides and figures */
+
+aside, figure {
+  font-size: 12pt;
+}
+
+figure img {
+  max-width: 100%;
+  height: auto !important;
+  border: 2px solid #ddd;
+}
+
+aside h1, aside h2, aside h3, aside h4, aside h5, aside h6 {
+  font-style: italic;
+}
+
+aside h1 {
+  font-size: 19pt;
+}
+
+aside h2 {
+  font-size: 18pt;
+  font-weight: normal;
+}
+
+aside h3 {
+  font-size: 17pt;
+  font-weight: normal;
+}
+
+aside h4 {
+  font-size: 16pt;
+  font-weight: normal;
+}
+
+aside h5 {
+  font-size: 15pt;
+  font-weight: normal;
+}
+
+aside h6 {
+  font-size: 14pt;
+  font-weight: normal;
+}
+
+aside h1, aside h2, aside h3, aside h4, aside h5, aside h6, aside p, aside aside, aside ul, aside ol, aside blockquote, aside pre, aside address {
+  margin: 10pt 0;
+}
+
+*[role="main"] figure.block, *[role="main"] aside.block {
+  max-width: 100%;
+  width: 100%;
+  float: none;
+  margin-left: 0;
+}
+
+*[role="main"] figure.block {
+  text-align: center;
+}
+
+/* aria roles */
+
+*[aria-hidden="true"], *[hidden] {
+  display: none;
+}
+
+/* medium size */
+
+@media (min-width: 40em) {
+  *[role="main"]:after {
+    content: "";
+    display: block;
+    clear: both;
+  }
+  *[role="main"] aside, *[role="main"] figure {
+    max-width: 50%;
+    float: right;
+    clear: right;
+    margin-left: 10pt;
+    margin-top: 0;
+  }
+}
+
+figure:last-child, aside:last-child {
+  width: 100%;
+  float: none;
+  max-width: 100%;
+  margin-left: 0;
+  margin-top: 10pt;
+}
+
+dt {
+  font-weight: bold;
+  font-size: 0.8em;
+}
+
+/* print improvements */
+
+@media print {
+  *[role="navigation"] {
+    display: none;
+  }
+  blockquote, pre, aside {
+    outline: 1pt solid #eee;
+    page-break-inside: avoid;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+    page-break-inside: avoid;
+  }
+  *[role="main"] aside {
+    max-width: 50%;
+    float: right;
+    clear: right;
+    margin-left: 10pt;
+    margin-top: 0;
+  }
+}

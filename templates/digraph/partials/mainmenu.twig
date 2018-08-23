@@ -1,0 +1,3 @@
+{% for slug in package.cms.config.nav %}
+  {{helper.link(slug,null)|raw}}
+{% endfor %}
