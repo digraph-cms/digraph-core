@@ -44,6 +44,8 @@ class MediaHelper extends AbstractHelper
     protected function prepare_text_css($out)
     {
         $original = $content = file_get_contents($out['path']);
+        //preprocess {{base_url}}
+        $content = str_replace('{{base_url}}', $this->cms->config['url.base'], $content);
         //preprocess bundles
         $content = preg_replace_callback(
             '/\\/\*{bundle\:([^\}]+)\}\*\//',

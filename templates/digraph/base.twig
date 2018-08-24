@@ -9,7 +9,9 @@
         {{site_name}}
       {% endblock %}
     </title>
-    {% include 'digraph/partials/head.twig' %}
+    {% block head %}
+      {% include 'digraph/partials/head.twig' %}
+    {% endblock %}
   </head>
   <body>
     {% block admin %}
