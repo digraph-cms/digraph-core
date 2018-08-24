@@ -4,7 +4,7 @@ a:after {
   font-size: 75%;
   display: inline-block;
   vertical-align: top;
-  font-family: FontAwesome;
+  font-family: "Font Awesome 5 Free";
 }
 
 a[target]:after {
@@ -22,7 +22,7 @@ a[href^="#"]:after {
 /* header anchor icons */
 
 h1>a[name]:after, h1[id]:after, h2>a[name]:after, h2[id]:after, h3>a[name]:after, h3[id]:after, h4>a[name]:after, h4[id]:after, h5>a[name]:after, h5[id]:after, h6>a[name]:after, h6[id]:after {
-  font-family: FontAwesome;
+  font-family: "Font Awesome 5 Free";
   content: "\00A0\00A0\f13d";
   font-size: 50%;
   opacity: 0.5;
