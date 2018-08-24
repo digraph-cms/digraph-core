@@ -50,7 +50,7 @@ class Url extends SelfReferencingFlatArray
         }
         $a = new A();
         $a->attr('href', "$this");
-        $a['content'] = $text;
+        $a->content = $text;
         return $a;
     }
 
