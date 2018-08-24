@@ -22,6 +22,7 @@ templates:
       hypersemantic:      digraph/hypersemantic/bundle.css
       core_navigation:    digraph/core/navigation.css
       core_notifications: digraph/core/notifications.css
+      core_forms:         digraph/core/forms.css
     hypersemantic:
       typography:         digraph/hypersemantic/typography.css
       menus:              digraph/hypersemantic/menus.css
