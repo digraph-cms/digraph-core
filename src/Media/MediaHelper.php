@@ -8,7 +8,13 @@ use Digraph\Urls\Url;
 class MediaHelper extends AbstractHelper
 {
     protected $mimes = [
-        'css' => 'text/css'
+        'css' => 'text/css',
+        'eot' => 'application/vnd.ms-fontobject',
+        'woff' => 'application/font-woff',
+        'woff2' => 'application/font-woff2',
+        'ttf' => 'application/x-font-truetype',
+        'svg' => 'image/svg+xml',
+        'otf' => 'application/x-font-opentype'
     ];
 
     public function get($search)

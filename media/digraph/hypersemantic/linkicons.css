@@ -4,7 +4,7 @@ a:after {
   font-size: 75%;
   display: inline-block;
   vertical-align: top;
-  font-family: "Font Awesome 5 Free";
+  font-family: "Font Awesome 5 Brands";
 }
 
 a[target]:after {
@@ -36,42 +36,52 @@ h1>a[name]:target, h1[id]:target, h2>a[name]:target, h2[id]:target, h3>a[name]:t
 /* link file type icons */
 
 a[href$=".pdf"]:after {
+  font-family: "Font Awesome 5 Free";
   content: "\00A0\f1c1";
 }
 
 a[href$=".zip"]:after, a[href$=".gz"]:after, a[href$=".tar"]:after, a[href$=".7z"]:after, a[href$=".rar"]:after {
+  font-family: "Font Awesome 5 Free";
   content: "\00A0\f1c6";
 }
 
 a[href$=".doc"]:after, a[href$=".docx"]:after, a[href$=".dot"]:after, a[href$=".dotx"]:after, a[href$=".docm"]:after, a[href$=".odt"]:after, a[href$=".rtf"]:after, a[href$=".uot"]:after, a[href$=".uof"]:after {
+  font-family: "Font Awesome 5 Free";
   content: "\00A0\f1c2";
 }
 
 a[href$=".ppt"]:after, a[href$=".pps"]:after, a[href$=".pot"]:after, a[href$=".pptx"]:after, a[href$=".pptm"]:after, a[href$=".potx"]:after, a[href$=".potm"]:after {
+  font-family: "Font Awesome 5 Free";
   content: "\00A0\f1c4";
 }
 
 a[href$=".xls"]:after, a[href$=".xlw"]:after, a[href$=".xlt"]:after, a[href$=".xlsx"]:after, a[href$=".xlsm"]:after, a[href$=".xltx"]:after, a[href$=".xltm"]:after, a[href$=".xlsb"]:after, a[href$=".csv"]:after {
+  font-family: "Font Awesome 5 Free";
   content: "\00A0\f1c3";
 }
 
 a[href$=".jpg"]:after, a[href$=".jpeg"]:after, a[href$=".gif"]:after, a[href$=".png"]:after, a[href$=".tif"]:after, a[href$=".tiff"]:after, a[href$=".bmp"]:after, a[href$=".svg"]:after, a[href$=".webp"]:after {
+  font-family: "Font Awesome 5 Free";
   content: "\00A0\f1c5";
 }
 
 a[href$=".webm"]:after, a[href$=".mkv"]:after, a[href$=".flv"]:after, a[href$=".avi"]:after, a[href$=".mov"]:after, a[href$=".wmv"]:after, a[href$=".asf"]:after, a[href$=".mpg"]:after, a[href$=".mpeg"]:after, a[href$=".m2v"]:after, a[href$=".m4v"]:after {
+  font-family: "Font Awesome 5 Free";
   content: "\00A0\f1c8";
 }
 
 a[href$=".aac"]:after, a[href$=".aiff"]:after, a[href$=".flac"]:after, a[href$=".m4a"]:after, a[href$=".mp3"]:after, a[href$=".ogg"]:after, a[href$=".oga"]:after, a[href$=".wav"]:after, a[href$=".wma"]:after {
+  font-family: "Font Awesome 5 Free";
   content: "\00A0\f1c7";
 }
 
 a[href$=".git"]:after {
+  font-family: "Font Awesome 5 Free";
   content: "\00A0\f1d2";
 }
 
 a[href^="magnet:"]:after {
+  font-family: "Font Awesome 5 Free";
   content: "\00A0\f076";
 }
 
@@ -110,7 +120,7 @@ a[href*="//dropbox.com"]:after, a[href*="//www.dropbox.com"]:after {
 }
 
 a[href*="//facebook.com"]:after, a[href*="//www.facebook.com"]:after {
-  content: "\00A0\f230";
+  content: "\00A0\f09a";
 }
 
 a[href*="//flickr.com"]:after, a[href*="//www.flickr.com"]:after {
