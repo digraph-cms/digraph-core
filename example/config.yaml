@@ -14,7 +14,6 @@ nav:
 # them somehow relative to paths.site
 paths:
   storage:       ${paths.site}/storage
-  cache:         ${paths.site}/cache
 
 # Template helper options
 templates:

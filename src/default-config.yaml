@@ -6,7 +6,6 @@ url:
 
 paths:
   storage:                 ${paths.site}/storage
-  cache:                   ${paths.site}/cache
 
 templates:
   paths:
