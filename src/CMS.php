@@ -9,6 +9,7 @@ use Destructr\Drivers\DSODriverInterface;
 use Destructr\DSOFactoryInterface;
 use Digraph\Mungers\MungerInterface;
 use Digraph\Mungers\MungerTree;
+use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 
 class CMS
 {
@@ -128,6 +129,33 @@ class CMS
             }
         }
         return $this->valueFunction('factory/'.$name, $set);
+    }
+
+    public function &cache(?string $name = 'default', TagAwareAdapterInterface &$set=null) : ?TagAwareAdapterInterface
+    {
+        if ($set) {
+            $this->log('Setting cache '.$name.': '.get_class($set));
+        } elseif (!$this->valueFunction('cache/'.$name)) {
+            if ($conf = $this->config['cache.adapters.'.$name]) {
+                $this->log('Instantiating cache '.$name);
+                $items = @$conf['items']['class'];
+                $tags = @$conf['tags']['class'];
+                //set up items interface
+                $reflector = new \ReflectionClass($items);
+                $items = $reflector->newInstanceArgs($conf['items']['args']);
+                //set up tags interface
+                if ($tags) {
+                    $reflector = new \ReflectionClass($tags);
+                    $tags = $reflector->newInstanceArgs($conf['tags']['args']);
+                }
+                $cache = new \Symfony\Component\Cache\Adapter\TagAwareAdapter(
+                    $items,
+                    $tags
+                );
+                $this->cache($name, $cache);
+            }
+        }
+        return $this->valueFunction('cache/'.$name, $set);
     }
 
     protected function &valueFunction(string $name, &$value=null, $default=null)

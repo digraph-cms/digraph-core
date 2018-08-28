@@ -38,6 +38,14 @@ modules:
     site:        ${paths.site}/modules
     env:         ${paths.site}/modules_env
 
+# configure cache settings
+cache:
+  # factorycache caches the results of storage queries
+  factorycache:
+    adapter:     default
+    threshold:   10 #ms duration a query must take to be cached
+
+# Default contents of packages
 package:
   defaults:
     fields:

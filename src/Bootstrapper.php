@@ -22,19 +22,19 @@ class Bootstrapper
             $class = $c['class'];
             $cred = $config['bootstrap.credentials.'.$c['credentials']];
             if ($class == 'default') {
-              $driver = DriverFactory::factory(
-                $cred['dsn'],
-                @$cred['username'],
-                @$cred['password'],
-                @$cred['options']
-              );
-            }else {
-              $driver = new $class(
-                  $cred['dsn'],
-                  @$cred['username'],
-                  @$cred['password'],
-                  @$cred['options']
-              );
+                $driver = DriverFactory::factory(
+                    $cred['dsn'],
+                    @$cred['username'],
+                    @$cred['password'],
+                    @$cred['options']
+                );
+            } else {
+                $driver = new $class(
+                    $cred['dsn'],
+                    @$cred['username'],
+                    @$cred['password'],
+                    @$cred['options']
+                );
             }
             $cms->driver($k, $driver);
         }
