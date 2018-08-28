@@ -20,7 +20,6 @@ modules.paths.env = ${paths.site}/modules_env
 routes.paths.site = ${paths.site}/routes
 
 So the default folder structure in the root of an installation should be:
-    /cache       [system read/write, visitor denied]
     /modules     [system read, visitor denied]
     /modules_env [system read, visitor denied]
     /routes      [system read, visitor denied]
@@ -28,6 +27,11 @@ So the default folder structure in the root of an installation should be:
     /templates   [system read, visitor denied]
  */
 $config['paths.site'] = realpath(__DIR__);
+
+/*
+Set cache path to system temp
+ */
+$config['paths.cache'] = sys_get_temp_dir().'/digraph-cache';
 
 /*
 Run bootstrapper. Everything the bootstrapper does can be done manually, but

@@ -136,7 +136,7 @@ cache:
         args:
           namespace:       'default'
           defaultlifetime: 60
-          directory:       null # you can set a directory here, but leaving it null uses the system temp directory which is good
+          directory:       ${paths.cache}/defaultcache
       tags:                null
 
 package:
