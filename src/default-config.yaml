@@ -92,6 +92,7 @@ helpers:
     media:                 Digraph\Media\MediaHelper
     permissions:           Digraph\Permissions\PermissionsHelper
     session:               Digraph\Helpers\Session
+    users:                 Digraph\Users\UserHelper
 
 forms:
   defaultmap:
