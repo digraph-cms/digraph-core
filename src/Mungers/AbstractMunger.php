@@ -40,7 +40,7 @@ abstract class AbstractMunger implements MungerInterface
             $this->doMunge($package);
             $duration = 1000*(microtime(true)-$start);
             $package->log('mungercache: took '.$duration.'ms');
-            if ($cache && $package['response.cacheable'] && $duration > $this->cms->config['cache.mungercache.threshold']) {
+            if ($cache && $package['response.cacheable'] && $duration > $package->cms()->config['cache.mungercache.threshold']) {
                 $package->log('mungercache: saving');
                 $citem = $cache->getItem($id);
                 $citem->set($package->serialize());
