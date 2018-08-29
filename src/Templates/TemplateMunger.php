@@ -6,6 +6,8 @@ use Digraph\Mungers\AbstractMunger;
 
 class TemplateMunger extends AbstractMunger
 {
+    const CACHE_ENABLED = true;
+
     protected function doMunge(&$package)
     {
         if ($package['response.mime'] != 'text/html') {

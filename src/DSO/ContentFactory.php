@@ -66,7 +66,7 @@ class ContentFactory extends Factory
         $search = $this->preprocessSearch($search, $deleted);
         //get cache
         $cache = $this->cms->cache($this->cms->config['cache.factorycache.adapter']);
-        $id = md5(serialize([$search,$params,$deleted]));
+        $id = 'factorycache.'.md5(serialize([$search,$params,$deleted]));
         //check cache for results
         if ($cache && $cache->hasItem($id)) {
             //load result from cache

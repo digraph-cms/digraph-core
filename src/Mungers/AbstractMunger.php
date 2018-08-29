@@ -4,11 +4,50 @@ namespace Digraph\Mungers;
 
 abstract class AbstractMunger implements MungerInterface
 {
+    const CACHE_ENABLED = false;
     protected $parent;
     protected $name;
 
     abstract protected function doMunge(&$package);
     abstract protected function doConstruct($name);
+
+    protected function cacheHash(&$package)
+    {
+        return $package->hash();
+    }
+
+    protected function doMunge_cached(&$package)
+    {
+        //if cache isn't enabled, just run doMunge
+        if (!static::CACHE_ENABLED || !$package['response.cacheable']) {
+            $package->log('mungercache: disabled');
+            $this->doMunge($package);
+            return;
+        }
+        //use cache if possible
+        $cache = $package->cms()->cache($package->cms()->config['cache.mungercache.adapter']);
+        $id = 'mungercache.'.md5(serialize([$this->cacheHash($package),get_called_class()]));
+        if ($cache && $cache->hasItem($id)) {
+            //load result from cache
+            $start = microtime(true);
+            $r = $cache->getItem($id)->get();
+            $package->unserialize($r);
+            $duration = 1000*(microtime(true)-$start);
+            $package->log('mungercache: hit loaded in '.$duration.'ms');
+        } else {
+            $package->log('mungercache: running '.get_called_class());
+            $start = microtime(true);
+            $this->doMunge($package);
+            $duration = 1000*(microtime(true)-$start);
+            $package->log('mungercache: took '.$duration.'ms');
+            if ($cache && $package['response.cacheable'] && $duration > $this->cms->config['cache.mungercache.threshold']) {
+                $package->log('mungercache: saving');
+                $citem = $cache->getItem($id);
+                $citem->set($package->serialize());
+                $cache->save($citem);
+            }
+        }
+    }
 
     public function __construct(string $name, MungerInterface $parent = null)
     {
@@ -23,7 +62,7 @@ abstract class AbstractMunger implements MungerInterface
             $package->log($this->name().': skipped');
         } else {
             $package->mungeStart($this);
-            $this->doMunge($package);
+            $this->doMunge_cached($package);
             $package->mungeFinished($this);
         }
     }

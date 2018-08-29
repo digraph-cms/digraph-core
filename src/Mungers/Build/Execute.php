@@ -6,6 +6,7 @@ use Digraph\Mungers\AbstractMunger;
 
 class Execute extends AbstractMunger
 {
+    const CACHE_ENABLED = true;
     protected $package;
 
     protected function doMunge(&$package)

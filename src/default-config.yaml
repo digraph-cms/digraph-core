@@ -126,9 +126,12 @@ media:
     digraph_core:          ${paths.core}/media
 
 cache:
+  mungercache:
+    adapter:               default
+    threshold:             100 #ms
   factorycache:
     adapter:               default
-    threshold:             10 #ms
+    threshold:             5 #ms
   adapters:
     default:
       items:

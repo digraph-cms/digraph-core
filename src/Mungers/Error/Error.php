@@ -6,6 +6,11 @@ use Digraph\Mungers\AbstractMunger;
 
 class Error extends AbstractMunger
 {
+    protected function cacheHash(&$package)
+    {
+        return $package->hash('response');
+    }
+
     protected function doMunge(&$package)
     {
         $status = $package['response.status'];
