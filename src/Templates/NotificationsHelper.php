@@ -5,7 +5,7 @@ namespace Digraph\Templates;
 use Digraph\Helpers\AbstractHelper;
 use Digraph\Session\SessionTrait;
 
-class Notifications extends AbstractHelper
+class NotificationsHelper extends AbstractHelper
 {
     use SessionTrait;
 

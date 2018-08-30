@@ -8,9 +8,9 @@ class Route extends AbstractMunger
 {
     protected function doMunge(&$package)
     {
-        $noun = $package->url['noun'];
-        $verb = $package->url['verb'];
-        $args = $package->url['args'];
+        $noun = $package['url.noun'];
+        $verb = $package['url.verb'];
+        $args = $package['url.args'];
         if ($package->noun()) {
             $proper = true;
             $noun = $package->noun()['dso.id'];

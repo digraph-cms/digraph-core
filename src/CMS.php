@@ -17,6 +17,7 @@ class CMS
     protected $start;
     protected $log = [];
     protected $values = [];
+    protected $readCache = [];
 
     public function __construct(ConfigInterface $config)
     {
@@ -25,6 +26,21 @@ class CMS
         $this->config->readFile(__DIR__.'/default-config.yaml');
         $this->config['paths.core'] = realpath(__DIR__.'/..');
         $this->log('CMS::__construct finished');
+    }
+
+    public function read(string $q, bool $slugs = true)
+    {
+        $id = md5(serialize([$q,$slugs]));
+        if (!isset($this->readCache[$id])) {
+            $search = $this->factory()->search();
+            if ($slugs) {
+                $search->where('${dso.id} = :search OR ${digraph.slug} = :search');
+            } else {
+                $search->where('${dso.id} = :search');
+            }
+            $this->readCache[$id] = array_shift($search->execute([':search'=>$q]));
+        }
+        return $this->readCache[$id];
     }
 
     public function fullMunge(Package &$package)
@@ -156,6 +172,11 @@ class CMS
             }
         }
         return $this->valueFunction('cache/'.$name, $set);
+    }
+
+    public function invalidateCache(string $dso_id)
+    {
+        $this->cache()->invalidateTags([$dso_id]);
     }
 
     protected function &valueFunction(string $name, &$value=null, $default=null)

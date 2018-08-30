@@ -10,16 +10,17 @@ class PermissionsHelper extends AbstractHelper
     public function checkUrl(Url $url) : bool
     {
         $path = '';
-        if ($url['dso']) {
+        $dso = $this->cms->helper('urls')->dso($url);
+        if ($dso) {
             //use dso type as start of path
-            $path = $url['dso']['dso.type'];
+            $path = $dso['dso.type'];
         } else {
             //use url noun
             $path = $url['noun'];
         }
         $path .= '/'.$url['verb'];
-        if ($url['dso']) {
-            $path .= '/'.$url['dso']['dso.id'];
+        if ($dso) {
+            $path .= '/'.$dso['dso.id'];
         }
         return $this->check($path);
     }

@@ -6,6 +6,13 @@ use Digraph\Helpers\AbstractHelper;
 
 class UrlHelper extends AbstractHelper
 {
+    public function dso($url)
+    {
+        if ($url['dso']) {
+            return $this->cms->read($url['dso']);
+        }
+    }
+
     public function parse(string $input, bool $fast = false) : ?Url
     {
         $url = new Url();

@@ -15,9 +15,10 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
     protected $skips = [];
     protected $log = [];
     protected $cms;
-    protected $noun;
     protected $unfiltered = [
-        'response.content'
+        'response.content',
+        'noun',
+        'url'
     ];
 
     public function get(string $name = null, bool $raw = false, $unescape = true)
@@ -36,20 +37,24 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         return $this->cms;
     }
 
-    public function &noun(NounInterface &$set = null) : ?NounInterface
+    public function noun(NounInterface $set = null) : ?NounInterface
     {
         if ($set) {
-            $this->noun = $set;
+            $this['noun'] = $set->get();
         }
-        return $this->noun;
+        if ($this['noun']) {
+            return $this->cms->factory()->create($this['noun']);
+        } else {
+            return null;
+        }
     }
 
     public function url(Url $set = null) : ?Url
     {
         if ($set) {
-            $this->url = $set;
+            $this['url']= $set->get();
         }
-        return $this->url;
+        return new Url($this['url']);
     }
 
     public function redirect($url, int $code=302)
@@ -62,6 +67,7 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
 
     public function error(int $code, string $message='Unspecified error')
     {
+        $this->log("Error $code: $message");
         $this->skipGlob('build/');
         $this['response.status'] = $code;
         $this['response.error'] = $message;

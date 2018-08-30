@@ -6,4 +6,5 @@ types:
     class:    default
 
 defaultnoun:
-  type:       page
+  digraph:
+    type:     page

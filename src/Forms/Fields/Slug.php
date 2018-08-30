@@ -18,6 +18,9 @@ class Slug extends Input
             'validurl',
             function (&$field) {
                 $value = $field->value();
+                if (!$value) {
+                    return true;
+                }
                 if (strpos('//', $value) !== false) {
                     return 'Slug can\'t have more than one slash in a row';
                 }

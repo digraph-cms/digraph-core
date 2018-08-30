@@ -14,6 +14,37 @@ class Noun extends DSO implements NounInterface
         $this->resetChanges();
     }
 
+    public function addParent($dso)
+    {
+        $this->unshift('digraph.parents', $dso);
+        $parents = [];
+        foreach (array_unique($this['digraph.parents']) as $i) {
+            $parents[] = $i;
+        }
+        unset($this['digraph.parents']);
+        $this['digraph.parents'] = $parents;
+        $this['digraph.parents_string'] = '|'.implode('|', $this['digraph.parents']).'|';
+    }
+
+    public function parents()
+    {
+        if (!$this['digraph.parents']) {
+            return [];
+        }
+        $parents = [];
+        foreach ($this['digraph.parents'] as $id) {
+            $parents[] = $this->factory->read($id);
+        }
+        return $parents;
+    }
+
+    public function children()
+    {
+        $search = $this->factory->search();
+        $search->where('${digraph.parents_string} LIKE :pattern');
+        return $search->execute([':pattern'=>'%|'.$this['dso.id'].'|%']);
+    }
+
     public function name($verb=null)
     {
         if ($this->get('digraph.name')) {
@@ -42,7 +73,6 @@ class Noun extends DSO implements NounInterface
     {
         $url = $this->factory->cms()->helper('urls')->url();
         $url['canonicalnoun'] = $this->get('dso.id');
-        $url->dso($this);
         if ($this->get('digraph.slug') && !$canonical) {
             $url['noun'] = $this->get('digraph.slug');
         } else {
@@ -54,6 +84,13 @@ class Noun extends DSO implements NounInterface
         if ($args) {
             $url['args'] = $args;
         }
+        $url['text'] = $this->urlText($verb, $args);
+        $url['dso'] = $this['dso.id'];
         return $url;
+    }
+
+    public function urlText($verb, $args)
+    {
+        return $this->name();
     }
 }

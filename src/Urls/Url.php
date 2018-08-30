@@ -14,12 +14,6 @@ class Url extends SelfReferencingFlatArray
     const DEFAULTVERB = 'display';
     const HOMEALIAS = 'home';
 
-    public function dso(&$dso = null)
-    {
-        $this->set('dso', $dso);
-        return $this->get('dso');
-    }
-
     public function __construct(array $data = null)
     {
         parent::__construct($data);
@@ -27,26 +21,15 @@ class Url extends SelfReferencingFlatArray
             'base' => '/',
             'noun' => 'home',
             'verb' => static::DEFAULTVERB,
-            'args' => []
+            'args' => [],
+            'text' => 'untitled link'
         ]);
-    }
-
-    public function text()
-    {
-        $out = $this->routeString();
-        if ($this['dso']) {
-            $out = $this['dso']->name();
-        }
-        if (!$out) {
-            $out = '[none]';
-        }
-        return $out;
     }
 
     public function html(string $text = null)
     {
         if (!$text) {
-            $text = $this->text();
+            $text = $this['text'];
         }
         $a = new A();
         $a->attr('href', "$this");
