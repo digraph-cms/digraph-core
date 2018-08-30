@@ -38,7 +38,7 @@ class CMS
             } else {
                 $search->where('${dso.id} = :search');
             }
-            $this->readCache[$id] = array_shift($search->execute([':search'=>$q]));
+            $this->readCache[$id] = @array_shift($search->execute([':search'=>$q]));
         }
         return $this->readCache[$id];
     }
