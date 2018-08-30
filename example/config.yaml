@@ -41,8 +41,10 @@ modules:
 cache:
   # factorycache caches the results of storage queries
   factorycache:
-    adapter:     default
     threshold:   10 #ms duration a query must take to be cached
+  # mungercache caches the results of mungers (for mungers where it's enabled)
+  mungercache:
+    threshold:   10 #ms duration munging must take to be cached
 
 # Default contents of packages
 package:
