@@ -20,7 +20,6 @@ abstract class AbstractMunger implements MungerInterface
     {
         //if cache isn't enabled, just run doMunge
         if (!static::CACHE_ENABLED || !$package['response.cacheable']) {
-            $package->log('mungercache: disabled');
             $this->doMunge($package);
             return;
         }
@@ -43,6 +42,7 @@ abstract class AbstractMunger implements MungerInterface
             if ($cache && $package['response.cacheable'] && $duration > $package->cms()->config['cache.mungercache.threshold']) {
                 $package->log('mungercache: saving');
                 $citem = $cache->getItem($id);
+                $citem->expiresAfter($package['response.ttl']);
                 $citem->set($package->serialize());
                 $cache->save($citem);
             }

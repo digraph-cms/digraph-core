@@ -9,7 +9,7 @@ class UrlHelper extends AbstractHelper
     public function dso($url)
     {
         if ($url['dso']) {
-            return $this->cms->factory()->read($url['dso']);
+            return $this->cms->read($url['dso']);
         }
     }
 

@@ -1,8 +1,8 @@
-{% if package.cms.config.nav %}
+{% if package.cms.helper('navigation').menu('main') %}
   <nav role="navigation">
     <div role="menubar">
-      {% for slug in package.cms.config.nav %}
-        {% set link = helper.link(slug) %}
+      {% for link in package.cms.helper('navigation').menu('main') %}
+        {% set link = helper.link(link) %}
         {% do 
           link.attr('role', 'menuitem') %}
         {{link|raw}}

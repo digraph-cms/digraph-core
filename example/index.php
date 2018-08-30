@@ -49,7 +49,7 @@ GET variable 'url' indicating the original request path
 $url = $_SERVER['QUERY_STRING'];
 $url = preg_replace('/.*url=/U', '', $url);
 $package = new Digraph\Mungers\Package([
-    'request.url.original' => $url
+    'request.url' => $url
 ]);
 
 /*

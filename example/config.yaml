@@ -7,8 +7,16 @@ url:
   # path to Digraph installation should have leading/trailing slashes
   path:          /digraph-core/example/
 
-nav:
-  home:          home/
+# Default contents of packages
+package:
+  defaults:
+    fields:
+      site_name: Digraph example site
+
+# Navigation settings
+navigation:
+  menus:
+    main:        home
 
 # Generally if you want to move your storage/cache directories you should keep
 # them somehow relative to paths.site
@@ -41,11 +49,7 @@ modules:
 cache:
   # factorycache caches the results of storage queries
   factorycache:
-    adapter:     default
     threshold:   10 #ms duration a query must take to be cached
-
-# Default contents of packages
-package:
-  defaults:
-    fields:
-      site_name: Digraph example site
+  # mungercache caches the results of munging layers
+  mungercache:
+    threshold:   10 #ms duration a munger must take to be cached

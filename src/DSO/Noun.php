@@ -14,6 +14,13 @@ class Noun extends DSO implements NounInterface
         $this->resetChanges();
     }
 
+    public function children()
+    {
+        $search = $this->factory->search();
+        $search->where('${digraph.parents} LIKE :pattern');
+        return $search->execute([':pattern'=>'%'.$this['dso.id'].'%']);
+    }
+
     public function name($verb=null)
     {
         if ($this->get('digraph.name')) {

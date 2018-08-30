@@ -52,8 +52,9 @@ permissions:
     '*':
       - deny all
 
-nav:
-  home:                    home/
+navigation:
+  menus:
+    main:                  from:home
 
 fullmunge:
   - build
@@ -67,8 +68,8 @@ mungers:
     100-initialize:        Digraph\Mungers\Build\Initialize
     200-media:             Digraph\Media\MediaMunger
     300-locate:            Digraph\Mungers\Build\Locate
-    400-permissions:       Digraph\Permissions\PermissionsMunger
-    500-route:             Digraph\Mungers\Build\Route
+    400-route:             Digraph\Mungers\Build\Route
+    500-permissions:       Digraph\Permissions\PermissionsMunger
     600-execute:           Digraph\Mungers\Build\Execute
   error:
     100-error:             Digraph\Mungers\Error\Error
@@ -87,7 +88,8 @@ helpers:
     routing:               Digraph\Helpers\Routing
     forms:                 Digraph\Forms\FormHelper
     templates:             Digraph\Templates\TemplateHelper
-    notifications:         Digraph\Helpers\Notifications
+    notifications:         Digraph\Templates\NotificationsHelper
+    navigation:            Digraph\Templates\NavigationHelper
     media:                 Digraph\Media\MediaHelper
     permissions:           Digraph\Permissions\PermissionsHelper
     session:               Digraph\Helpers\Session

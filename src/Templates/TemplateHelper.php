@@ -3,6 +3,7 @@
 namespace Digraph\Templates;
 
 use Digraph\Helpers\AbstractHelper;
+use Digraph\Urls\Url;
 use Flatrr\SelfReferencingFlatArray;
 
 class TemplateHelper extends AbstractHelper
@@ -13,7 +14,9 @@ class TemplateHelper extends AbstractHelper
 
     public function link($slug, $text=null)
     {
-        if ($url = $this->cms->helper('urls')->parse($slug)) {
+        if ($slug instanceof Url) {
+            return $this->urlLinkObject($slug, $text);
+        } elseif ($url = $this->cms->helper('urls')->parse($slug)) {
             return $this->urlLinkObject($url, $text);
         }
         return '['.$slug.' not found]';

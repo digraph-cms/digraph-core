@@ -36,9 +36,9 @@ class FormHelper extends AbstractHelper
                 }
             }
             if ($insert) {
-                $noun->insert();
+                var_dump($noun->insert());
             } else {
-                $noun->update();
+                var_dump($noun->update());
             }
         };
     }
@@ -53,7 +53,7 @@ class FormHelper extends AbstractHelper
 
     public function editNoun(NounInterface &$noun) : Form
     {
-        $form = new Form('edit', 'edit-'.$noun['dso.id']);
+        $form = new Form('', 'edit-'.$noun['dso.id']);
         $this->mapNoun(
             $noun,
             $form,
@@ -65,7 +65,7 @@ class FormHelper extends AbstractHelper
     public function addNoun(string $type) : Form
     {
         $noun = $this->cms->factory()->create(['dso.type'=>$type]);
-        $form = new Form('edit', 'add-'.$type);
+        $form = new Form('', 'add-'.$type);
         $this->mapNoun(
             $noun,
             $form,

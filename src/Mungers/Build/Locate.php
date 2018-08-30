@@ -6,12 +6,16 @@ use Digraph\Mungers\AbstractMunger;
 
 class Locate extends AbstractMunger
 {
+    const CACHE_ENABLED = true;
+
     protected function doMunge(&$package)
     {
         $url = $package->url();
-        if ($noun = $package->cms()->factory()->read($url['noun'])) {
+        if ($noun = $package->cms()->read($url['noun'], false)) {
+            //we're using a canonical url
             $package->noun($noun);
         } else {
+            //we appear to not be using a canonical url
             if ($url->pathString() == '') {
                 $slugs = [['home',null]];
             } else {
@@ -52,7 +56,7 @@ class Locate extends AbstractMunger
             //this is used for both ensuring that nouns (including slugs)
             //have trailing slashes, and that arguments are in alphabetical
             //order (which is important for caching)
-            if ($package->url()->routeString() != $package['request.url.original']) {
+            if ($package->url()->routeString() != $package['request.url']) {
                 $package['response.cacheable'] = false;
                 $package->redirect($package->url()->string(), 301);
                 return;
