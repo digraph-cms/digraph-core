@@ -132,7 +132,7 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         if ($message) {
             $prefix = $this->msElapsed().': ';
             $prefix .= str_repeat('  ', $this->treeLevel);
-            $this->log[] = $message;
+            $this->log[] = $prefix.$message;
         }
         return $this->log;
     }

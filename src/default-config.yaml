@@ -94,9 +94,8 @@ mungers:
   # Builds content of error pages if status isn't 200
   error:
     # Builds error pages based on status
-    # uses @error route folder, but doesn't use the same environment as Execute
-    # TODO Error may be able to extend the execute munger, which would make it
-    # present the same environment to handler files
+    # uses @error route folder, and extends teh Execute munger so it presents
+    # the same environment to handlers
     100-error:             Digraph\Mungers\Error\Error
   # Applies templates
   template:

@@ -11,16 +11,14 @@ foreach ($this->helper('routing')->allHookFiles($noun['dso.type'], 'form_edit.ph
     include $file['file'];
 }
 
-if ($form->handle()) {
-    $package->cms()->invalidateCache($form->noun['dso.id']);
+$form->handle(function (&$form) use ($package,$noun) {
     $package->redirect($form->noun->url()->string());
     foreach ($this->helper('routing')->allHookFiles($noun['dso.type'], 'form_handled.php') as $file) {
         include $file['file'];
     }
-    foreach ($this->helper('routing')->allHookFiles($noun['dso.type'], 'form_edit_handled.php') as $file) {
+    foreach ($this->helper('routing')->allHookFiles($noun['dso.type'], 'form_add_handled.php') as $file) {
         include $file['file'];
     }
-    return;
-}
+});
 
 echo $form;
