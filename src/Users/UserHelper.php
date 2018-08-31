@@ -11,22 +11,22 @@ class UserHelper extends AbstractHelper
         $this->cms->helper('session')->deauthorize();
     }
 
-    public function userID(string $set = null) : ?string
+    public function id(string $set = null) : ?string
     {
         return $this->cms->helper('session')->userID($set);
     }
 
-    public function userName()
+    public function username()
     {
-        if ($id = $this->userID()) {
+        if ($id = $this->id()) {
             return @array_pop(explode('/', $id));
         }
         return null;
     }
 
-    public function userGroups()
+    public function groups()
     {
         //TODO: implement groups
-        return [];
+        return ['users'];
     }
 }
