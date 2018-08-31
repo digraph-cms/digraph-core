@@ -13,8 +13,8 @@ class NavigationHelper extends AbstractHelper
         if ($conf) {
             $urls = $this->cms->helper('urls');
             if (is_array($conf)) {
-                foreach ($conf as $key => $value) {
-                    $menu[] = $urls->parse($value);
+                foreach ($conf as $url) {
+                    $menu[] = $urls->parse($url);
                 }
             } else {
                 $menu[] = $root = $urls->parse($conf);

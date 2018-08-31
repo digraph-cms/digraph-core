@@ -57,16 +57,11 @@ class UrlHelper extends AbstractHelper
             }
             //search for possible slug matches
             foreach ($slugs as $slug) {
-                list($slug, $verb) = $slug;
-                $search = $this->cms->factory()->search();
-                $search->where('${digraph.slug} = :slug');
-                foreach ($search->execute([':slug'=>$slug]) as $dso) {
-                    $url = $dso->url($verb);
+                if ($dso = $this->cms->read($slug[0])) {
+                    $url = $dso->url($slug[1]);
                     return $url;
                 }
             }
-            //if no DSO could be found, return null
-            return null;
         }
         //return
         $url['base'] = $this->cms->config['url.base'];

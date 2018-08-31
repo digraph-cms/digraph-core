@@ -91,6 +91,10 @@ class Noun extends DSO implements NounInterface
 
     public function urlText($verb, $args)
     {
-        return $this->name();
+        $text = $this->name();
+        if ($verb != 'display') {
+            $text .= ' '.$verb;
+        }
+        return $text;
     }
 }

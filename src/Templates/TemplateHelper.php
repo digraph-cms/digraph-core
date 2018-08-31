@@ -16,7 +16,7 @@ class TemplateHelper extends AbstractHelper
     {
         if ($slug instanceof Url) {
             return $this->urlLinkObject($slug, $text);
-        } elseif ($url = $this->cms->helper('urls')->parse($slug)) {
+        } elseif ($slug && $url = $this->cms->helper('urls')->parse($slug)) {
             return $this->urlLinkObject($url, $text);
         }
         return '['.$slug.' not found]';

@@ -41,6 +41,7 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
     {
         if ($set) {
             $this['noun'] = $set->get();
+            $this->url($set->url($this['url.verb'], $this['url.args']));
         }
         if ($this['noun']) {
             return $this->cms->factory()->create($this['noun']);
@@ -53,6 +54,7 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
     {
         if ($set) {
             $this['url']= $set->get();
+            $this['fields.page_name'] = $set['text'];
         }
         return new Url($this['url']);
     }

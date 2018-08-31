@@ -22,7 +22,7 @@ class Url extends SelfReferencingFlatArray
             'noun' => 'home',
             'verb' => static::DEFAULTVERB,
             'args' => [],
-            'text' => 'untitled link'
+            'text' => '${noun} ${verb}'
         ]);
     }
 
