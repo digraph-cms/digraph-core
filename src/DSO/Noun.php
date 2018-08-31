@@ -85,7 +85,7 @@ class Noun extends DSO implements NounInterface
             $url['args'] = $args;
         }
         $url['text'] = $this->urlText($verb, $args);
-        $url['dso'] = $this['dso.id'];
+        $url['object'] = $this['dso.id'];
         return $url;
     }
 

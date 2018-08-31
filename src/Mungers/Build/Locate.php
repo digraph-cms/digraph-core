@@ -13,6 +13,7 @@ class Locate extends AbstractMunger
         $url = $package->url();
         if ($noun = $package->cms()->read($url['noun'], false)) {
             //we're using a canonical url
+            $package['url.object'] = $noun['dso.id'];
             $package->noun($noun);
         } else {
             //we appear to not be using a canonical url

@@ -4,25 +4,31 @@ namespace Digraph\Permissions;
 
 use Digraph\Helpers\AbstractHelper;
 use Digraph\Urls\Url;
+use Digraph\DSO\Noun;
 
 class PermissionsHelper extends AbstractHelper
 {
     public function checkUrl(Url $url) : bool
     {
         $path = '';
-        $dso = $this->cms->helper('urls')->dso($url);
-        if ($dso) {
+        $noun = $this->cms->helper('urls')->noun($url);
+        if ($noun) {
             //use dso type as start of path
-            $path = $dso['dso.type'];
+            $path = $noun['dso.type'];
         } else {
             //use url noun
             $path = $url['noun'];
         }
         $path .= '/'.$url['verb'];
-        if ($dso) {
-            $path .= '/'.$dso['dso.id'];
+        return $this->check($path) && (!$noun || $this->checkNoun($noun, $url['verb']));
+    }
+
+    public function checkNoun(Noun &$noun, string $verb) : bool
+    {
+        if (method_exists($noun, 'checkPermissions')) {
+            return $noun->checkPermissions($this->cms->helper('users')->user(), $verb);
         }
-        return $this->check($path);
+        return true;
     }
 
     public function check(string $path, string $category='url') : bool

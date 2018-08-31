@@ -6,10 +6,10 @@ use Digraph\Helpers\AbstractHelper;
 
 class UrlHelper extends AbstractHelper
 {
-    public function dso($url)
+    public function noun($url)
     {
-        if ($url['dso']) {
-            return $this->cms->read($url['dso']);
+        if ($url['object']) {
+            return $this->cms->read($url['object']);
         }
     }
 
