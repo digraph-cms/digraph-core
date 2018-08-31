@@ -21,6 +21,8 @@ class MediaMunger extends AbstractMunger
             }
             $package['response.mime'] = $f['mime'];
             $package['response.filename'] = $f['filename'];
+            //set up media-specific package defaults
+            $package->merge($package->cms()->config['media.package'], null, true);
             //skip everything up until rendering
             $package->skipGlob('build**');
             $package->skipGlob('error**');

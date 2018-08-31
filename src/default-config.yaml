@@ -161,6 +161,13 @@ mungerhooks:
   render:                  []
 
 media:
+  package:
+    response:
+      ttl:                 86400
+      headers:
+        cache-control:     public
+        pragma:            public
+
   paths:
     digraph_core:          ${paths.core}/media
 

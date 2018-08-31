@@ -3,40 +3,44 @@
 namespace Digraph\Mungers\Finalize;
 
 use Digraph\Mungers\AbstractMunger;
+use Flatrr\FlatArray;
 
 class Headers extends AbstractMunger
 {
     protected function doMunge(&$package)
     {
+        $headers = new FlatArray();
         // cache control
-        $package['response.headers.date'] = gmdate('D, d M Y H:i:s T', time());
-        $package['response.headers.cache-control'] = $this->cacheControl($package);
-        $package['response.headers.pragma'] = $this->pragma($package);
+        $headers['date'] = gmdate('D, d M Y H:i:s T', time());
+        $headers['cache-control'] = $this->cacheControl($package);
+        $headers['pragma'] = $this->pragma($package);
         if ($ttl = $package['response.ttl']) {
-            $package['response.headers.expires'] = gmdate('D, d M Y H:i:s T', time()+$ttl);
+            $headers['expires'] = gmdate('D, d M Y H:i:s T', time()+$ttl);
         }
         // content-type/encoding
         if ($package['response.mime'] == 'text/html') {
             //include charset for text/html
-            $package['response.headers.content-type'] = '${response.mime}; charset=${response.charset}';
+            $headers['content-type'] = '${response.mime}; charset=${response.charset}';
         } else {
             //not for other content types
-            $package['response.headers.content-type'] = '${response.mime}';
+            $headers['content-type'] = '${response.mime}';
         }
         //content disposition/name
-        $package['response.headers.content-disposition'] = '${response.disposition}';
+        $headers['content-disposition'] = '${response.disposition}';
         if ($package['response.filename']) {
             $fn = urlencode($package['response.filename']);
-            $package['response.headers.content-disposition'] = $package['response.headers.content-disposition']."; filename=\"$fn\"";
+            $headers['content-disposition'] = $headers['content-disposition']."; filename=\"$fn\"";
         }
         //redirection
         if ($package['response.redirect']) {
-            $package['response.headers.location'] = '${response.redirect}';
+            $headers['location'] = '${response.redirect}';
         }
         //canonical url
         if ($package['response.canonicalurl']) {
-            $package['response.headers.link'] = '<${response.canonicalurl}>; rel="canonical"';
+            $headers['link'] = '<${response.canonicalurl}>; rel="canonical"';
         }
+        //merge into package, not overwriting so that previous mungers can set headers
+        $package->merge($headers->get(), 'response.headers');
     }
 
     protected function pragma($package)
