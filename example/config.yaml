@@ -32,12 +32,6 @@ templates:
   twigconfig:
     cache:       ${paths.cache}/twig
 
-# Location of a site-specific route is the only default route. Other paths will
-# be added to routing.paths by modules
-routing:
-  paths:
-    site:        ${paths.site}/routes
-
 # Configure module directories for site and environment-specific modules (this
 # is useful for things like debugging modules during development)
 modules:

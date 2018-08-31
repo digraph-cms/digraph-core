@@ -52,7 +52,7 @@ class Routing extends AbstractHelper
                 $candidatesSpecific[$module.':specific:'.$i++] = "$path/$type/@all/$filename";
                 $candidatesSpecific[$module.':specific:'.$i++] = "$path/$type@all/$filename";
             }
-            if (preg_match('/^@.+\//',$filename)) {
+            if (preg_match('/^@.+\//', $filename)) {
                 $candidatesSpecific[$module.':specific:'.$i++] = "$path/$type$filename";
             }
         }

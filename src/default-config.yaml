@@ -35,11 +35,10 @@ templates:
 
 routing:
   paths:
-    site:                  ${paths.site}/routes
+    core:                  ${paths.core}/routes
 
 modules:
   paths:
-    core:                  ${paths.core}/modules
     site:                  ${paths.site}/modules
 
 users:
@@ -149,9 +148,13 @@ forms:
       label:               Body content
       class:               Formward\Fields\Textarea
 
-noun:
-  types:                   []
-  defaults:                []
+types:
+  page:
+    class:                 default
+
+defaultnoun:
+  digraph:
+    type:                  page
 
 mungerhooks:
   build:                   []
