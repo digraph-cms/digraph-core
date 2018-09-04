@@ -14,6 +14,17 @@ class Noun extends DSO implements NounInterface
         $this->resetChanges();
     }
 
+    public function parentUrl($verb='display')
+    {
+        if ($verb != 'display') {
+            return $this->url();
+        }
+        if ($parent = @$this->parents()[0]) {
+            return $parent->url();
+        }
+        return null;
+    }
+
     public function addParent($dso)
     {
         $this->unshift('digraph.parents', $dso);
