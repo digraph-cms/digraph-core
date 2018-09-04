@@ -28,7 +28,11 @@ class TemplateHelper extends AbstractHelper
             if ($url->pathString() == '' && count($breadcrumb) > 1) {
                 return $link;
             }
-            $link->addClass('active');
+            if ($breadcrumb["$url"] == end($breadcrumb)) {
+                $link->addClass('active-page');
+            } else {
+                $link->addClass('active-path');
+            }
             $link->attr('aria-selected', 'true');
         }
         //return link

@@ -29,8 +29,15 @@
 
 *[role="menubar"] *[role="menuitem"][aria-selected="true"], *[role="menu"] *[role="menuitem"][aria-selected="true"] {
   background: #fafafa;
-  color: red;
+}
+
+*[role="menubar"] *[role="menuitem"][aria-selected="true"].active-path, *[role="menu"] *[role="menuitem"][aria-selected="true"].active-path {
+  color: #933;
+}
+
+*[role="menubar"] *[role="menuitem"][aria-selected="true"].active-page, *[role="menu"] *[role="menuitem"][aria-selected="true"].active-page {
   text-decoration: none;
+  color: #f00;
 }
 
 *[role="menubar"] *[role="menuitem"][aria-disabled="true"], *[role="menu"] *[role="menuitem"][aria-disabled="true"] {
