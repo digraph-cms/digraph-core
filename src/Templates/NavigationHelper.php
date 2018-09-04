@@ -33,12 +33,55 @@ class NavigationHelper extends AbstractHelper
         return $this->bcBuilder($bc);
     }
 
+    protected function getConfiguredParent($url)
+    {
+        $vars = [
+            'noun' => $url['noun'],
+            'verb' => $url['verb'],
+            'args' => $url->argString()
+        ];
+        foreach ($url['args'] as $key => $value) {
+            $vars['arg_'.$key] = $value;
+        }
+        $nouns = $verbs = [];
+        $nouns[] = $url['noun'];
+        $verbs[] = $url['verb'];
+        $type = 'common';
+        if ($url['object'] && $object = $this->cms->read($url['object'])) {
+            $type = 'proper';
+            $nouns[] = $object['dso.id'];
+            $nouns[] = $object['dso.type'];
+        }
+        $nouns[] = '*';
+        $verbs[] = '*';
+        $nouns = array_unique($nouns);
+        $verbs = array_unique($verbs);
+        foreach ($nouns as $noun) {
+            foreach ($verbs as $verb) {
+                if ($path = $this->cms->config["navigation.parents.$type.$noun/$verb"]) {
+                    foreach ($vars as $key => $value) {
+                        $path = str_replace('?'.$key, $value, $path);
+                    }
+                    return $this->cms->helper('urls')->parse($path);
+                } elseif ($path === false) {
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
+
     protected function parentOf($url)
     {
         if (!isset($this->parentOfCache["$url"])) {
             $parent = null;
-            if ($url['object'] && $object = $this->cms->read($url['object'])) {
+            if ($parent = $this->getConfiguredParent($url)) {
+                //do nothing, we found the parent in navigation.parents
+            } elseif ($url['object'] && $object = $this->cms->read($url['object'])) {
+                //ask object for parent
                 $parent = $object->parentUrl($url['verb']);
+            } else {
+                $parent = $this->cms->helper('urls')->parse($this->cms->config['navigation.parents.fallback']);
             }
             $this->parentOfCache["$url"] = $parent;
         }

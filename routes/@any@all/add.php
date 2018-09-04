@@ -18,7 +18,6 @@ foreach ($this->helper('routing')->allHookFiles($type, 'form_add.php') as $file)
 }
 
 $form->handle(function (&$form) use ($package,$parent,$type) {
-    $package->redirect($form->noun->url()->string());
     if ($parent) {
         $form->noun->addParent($parent['dso.id']);
     }
@@ -29,5 +28,8 @@ $form->handle(function (&$form) use ($package,$parent,$type) {
         include $file['file'];
     }
 });
+if ($form->handle()) {
+    $package->redirect($form->noun->url()->string());
+}
 
 echo $form;

@@ -2,10 +2,10 @@
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
 namespace Digraph\Urls;
 
-use Flatrr\SelfReferencingFlatArray;
+use Flatrr\FlatArray;
 use HtmlObjectStrings\A;
 
-class Url extends SelfReferencingFlatArray
+class Url extends FlatArray
 {
     const VERBSEPARATOR = '/';
     const ARGINITIALSEPARATOR = '@';
@@ -22,7 +22,7 @@ class Url extends SelfReferencingFlatArray
             'noun' => 'home',
             'verb' => static::DEFAULTVERB,
             'args' => [],
-            'text' => '${noun} ${verb}'
+            'text' => 'untitled'
         ]);
     }
 

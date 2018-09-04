@@ -19,11 +19,17 @@ class Locate extends AbstractMunger
             if ($url->pathString() == '') {
                 $slugs = [['home',null]];
             } else {
-                $slugs = [[$url->pathString(),null]];
+                $slugs = [];
+                $new = [trim($url->pathString(), "/ \t\n\r\0\x0B"),null];
+                $slugs[md5(serialize($new))] = $new;
                 if (strpos($url->pathString(), '/') !== false) {
                     $path = explode('/', $url->pathString());
                     $verb = array_pop($path);
-                    $slugs[] = [implode('/', $path),$verb];
+                    if (!$verb) {
+                        $verb = null;
+                    }
+                    $new = [trim(implode('/', $path), "/ \t\n\r\0\x0B"),$verb];
+                    $slugs[md5(serialize($new))] = $new;
                 }
             }
             //search for possible slug matches
@@ -59,7 +65,6 @@ class Locate extends AbstractMunger
             if ($package->url()->routeString() != $package['request.url']) {
                 $package['response.cacheable'] = false;
                 $package->redirect($package->url()->string(), 301);
-                return;
             }
         }
     }

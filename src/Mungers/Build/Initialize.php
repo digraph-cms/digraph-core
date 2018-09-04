@@ -10,7 +10,7 @@ class Initialize extends AbstractMunger
     {
         //parse url
         $package->merge($package->cms()->config['package.defaults']);
-        if (!($parsed = $package->cms()->helper('urls')->parse($package['request.url'], true))) {
+        if (!($parsed = $package->cms()->helper('urls')->parse($package['request.url']))) {
             $package->error(404, 'Couldn\'t parse URL');
             return;
         }

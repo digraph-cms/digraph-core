@@ -84,6 +84,10 @@ class ContentFactory extends Factory
             );
             $duration = 1000*(microtime(true)-$start);
             $this->cms->log('query took '.$duration.'ms');
+            $this->cms->log('  '.$search->where());
+            foreach ($params as $key => $value) {
+                $this->cms->log('  '.$key.' = '.$value);
+            }
             if ($cache && $duration > $this->cms->config['cache.factorycache.threshold']) {
                 $this->cms->log('saving results into factorycache');
                 //build list of tags from dso_id

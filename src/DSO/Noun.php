@@ -44,7 +44,7 @@ class Noun extends DSO implements NounInterface
         }
         $parents = [];
         foreach ($this['digraph.parents'] as $id) {
-            $parents[] = $this->factory->read($id);
+            $parents[] = $this->factory->cms()->read($id);
         }
         return $parents;
     }
@@ -80,32 +80,23 @@ class Noun extends DSO implements NounInterface
         return $this->name();
     }
 
-    public function url(string $verb=null, array $args=null, bool $canonical=false)
+    public function url(string $verb=null, array $args=[], bool $canonical=false)
     {
-        $url = $this->factory->cms()->helper('urls')->url();
-        $url['canonicalnoun'] = $this->get('dso.id');
-        if ($this->get('digraph.slug') && !$canonical) {
-            $url['noun'] = $this->get('digraph.slug');
-        } else {
-            $url['noun'] = $this->get('dso.id');
+        if (!$verb) {
+            $verb = 'display';
         }
-        if ($verb) {
-            $url['verb'] = $verb;
+        $noun = null;
+        if ($this->get('digraph.slug') && !$canonical) {
+            $noun = $this->get('digraph.slug');
+        } else {
+            $noun = $this->get('dso.id');
         }
         if ($args) {
-            $url['args'] = $args;
+            $args = $args;
         }
-        $url['text'] = $this->urlText($verb, $args);
+        $url = $this->factory->cms()->helper('urls')->url($noun, $verb, $args);
         $url['object'] = $this['dso.id'];
-        return $url;
-    }
-
-    public function urlText($verb, $args)
-    {
-        $text = $this->name();
-        if ($verb != 'display') {
-            $text .= ' '.$verb;
-        }
-        return $text;
+        $url['canonicalnoun'] = $this->get('dso.id');
+        return $this->factory->cms()->helper('urls')->addText($url);
     }
 }

@@ -30,10 +30,9 @@ class CMS
 
     public function read(string $q, bool $slugs = true)
     {
-        $this->log('read: '.$q);
+        $q = trim($q, "/ \t\n\r\0\x0B");
         $id = md5(serialize([$q,$slugs]));
         if (!isset($this->readCache[$id])) {
-            $this->log('read: not cached');
             $search = $this->factory()->search();
             if ($slugs) {
                 $search->where('${dso.id} = :search OR ${digraph.slug} = :search');

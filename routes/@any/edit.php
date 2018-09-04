@@ -20,5 +20,8 @@ $form->handle(function (&$form) use ($package,$noun) {
         include $file['file'];
     }
 });
+if ($form->handle()) {
+    $package->redirect($form->noun->url()->string());
+}
 
 echo $form;
