@@ -40,6 +40,7 @@ it isn't adviseable to do it that way.
 $cms = \Digraph\Bootstrapper::bootstrap($config);
 //TODO: run createTable by way of installation scripts
 $cms->factory()->createTable();
+$cms->factory('system')->createTable();
 
 /*
 Set up request/response package, in this case assuming that we're using Apache
