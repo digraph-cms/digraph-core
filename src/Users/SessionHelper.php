@@ -1,10 +1,11 @@
 <?php
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
-namespace Digraph\Helpers;
+namespace Digraph\Users;
 
 use Digraph\CMS;
+use Digraph\Helpers\AbstractHelper;
 
-class Session extends AbstractHelper
+class SessionHelper extends AbstractHelper
 {
     protected $session;
 
@@ -22,6 +23,6 @@ class Session extends AbstractHelper
     public function __construct(CMS &$cms)
     {
         parent::__construct($cms);
-        $this->session = \Sesh\Session::getInstance();
+        $this->session = Session::getInstance();
     }
 }

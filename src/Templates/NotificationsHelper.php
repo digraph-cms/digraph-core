@@ -3,7 +3,8 @@
 namespace Digraph\Templates;
 
 use Digraph\Helpers\AbstractHelper;
-use Digraph\Session\SessionTrait;
+
+use Sesh\SessionTrait;
 
 class NotificationsHelper extends AbstractHelper
 {

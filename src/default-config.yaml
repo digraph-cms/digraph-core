@@ -1,12 +1,3 @@
-url:
-  protocol:                null
-  domain:                  null
-  path:                    /
-  base:                    ${url.protocol}${url.domain}${url.path}
-
-paths:
-  storage:                 ${paths.site}/storage
-
 # settings regarding urls
 urls:
   # aliases
@@ -23,6 +14,49 @@ urls:
       '*/display':         ?noun
       '*/add':             Add ?noun
       '*/*':               ?noun ?verb
+      'user/signin':       Sign in
+      'user/signout':      Sign out
+      'user/signup':       Sign up
+
+permissions:
+  url:
+    '*':
+      - deny all
+    '*/display':
+      - allow all
+    'user/*':
+      - allow all
+  action:
+    '*':
+      - deny all
+
+navigation:
+  menus:
+    main:                  from:home
+  # Define parentage rules for breadcrumbs
+  parents:
+    # fallback parent is used when nothing else can be found, this will almost
+    # always wind up the root of the breadcrumb
+    fallback:              home
+    # rules for noun/verb combinations with proper nouns
+    proper:
+      '*/display':         false
+      '*/*':               ?noun/display
+    # rules for noun/verb combinations with common nouns
+    common:
+      '*/display':         false
+      '*/add':             ?arg_parent
+      '*/*':               ?noun/display
+      'user/*':            false
+
+url:
+  protocol:                null
+  domain:                  null
+  path:                    /
+  base:                    ${url.protocol}${url.domain}${url.path}
+
+paths:
+  storage:                 ${paths.site}/storage
 
 # template/display configuration options
 templates:
@@ -67,6 +101,18 @@ modules:
     site:                  ${paths.site}/modules
 
 users:
+  defaultmanager:          simple
+  managers:
+    simple:
+      name:                Built-in
+      class:               Digraph\Users\Managers\Simple\SimpleUserManager
+      signup:              true
+      signin:              true
+    'null':
+      name:                'Null'
+      class:               Digraph\Users\Managers\Null\NullUserManager
+      signup:              false
+      signin:              false
   namespacing:
     # possible values for users.namespacing.mode
     # auth:                one namespace for public, one for authenticated users
@@ -74,34 +120,6 @@ users:
     # username:            just the username portion, which *should* all be the same person via different auth methods
     # groups:              namespaced based on full list of groups users belong to, groups can be ignored by adding them to users.namespacing.ignore
     mode:                  groups
-
-permissions:
-  url:
-    '*':
-      - deny all
-    '*/display':
-      - allow all
-  action:
-    '*':
-      - deny all
-
-navigation:
-  menus:
-    main:                  from:home
-  # Define parentage rules for breadcrumbs
-  parents:
-    # fallback parent is used when nothing else can be found, this will almost
-    # always wind up the root of the breadcrumb
-    fallback:              home
-    # rules for noun/verb combinations with proper nouns
-    proper:
-      '*/display':         false
-      '*/*':               ?noun/display
-    # rules for noun/verb combinations with common nouns
-    common:
-      '*/display':         false
-      '*/add':             ?arg_parent
-      '*/*':               ?noun/display
 
 fullmunge:
   - build
@@ -162,7 +180,7 @@ helpers:
     notifications:         Digraph\Templates\NotificationsHelper
     permissions:           Digraph\Permissions\PermissionsHelper
     routing:               Digraph\Helpers\Routing
-    session:               Digraph\Helpers\Session
+    session:               Digraph\Users\SessionHelper
     templates:             Digraph\Templates\TemplateHelper
     urls:                  Digraph\Urls\UrlHelper
     users:                 Digraph\Users\UserHelper
