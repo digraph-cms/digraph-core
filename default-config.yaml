@@ -1,22 +1,17 @@
 # settings regarding urls
 urls:
   # aliases
-  aliases:
-    '?arg_parent/':        home
+  aliases:                 []
   # rules for naming URLs
   names:
     # rules for noun/verb combinations with proper nouns
     proper:
       '*/display':         ?name
       '*/*':               ?name ?verb
-    # rules for noun/verb combinations with common nouns
+    # rules for noun/verb combinations with common nounsF
     common:
       '*/display':         ?noun
-      '*/add':             Add ?noun
       '*/*':               ?noun ?verb
-      'user/signin':       Sign in
-      'user/signout':      Sign out
-      'user/signup':       Sign up
 
 permissions:
   url:
@@ -45,7 +40,6 @@ navigation:
     # rules for noun/verb combinations with common nouns
     common:
       '*/display':         false
-      '*/add':             ?arg_parent
       '*/*':               ?noun/display
       'user/*':            false
 
@@ -91,6 +85,20 @@ templates:
     foot:                  []
   # js bundles can be included the same way as css bundles
   jsbundles:               []
+
+# Language settings
+lang:
+  # language settings are loaded after modules/config, so they can be overridden
+  # by either. They load in an order that makes later ones in this array take
+  # precedence. So sites can add to this array to load their own language files.
+  load:
+    fallback:              eng
+    preferred:             eng
+  # all language files are loaded from all language paths, so sites and modules
+  # with their own versions of a language file will supplement the core language
+  # files rather than replace them.
+  paths:
+    core:                  ${paths.core}/languages
 
 routing:
   paths:
@@ -171,9 +179,13 @@ mungers:
     200-output:            Digraph\Mungers\Render\Output
 
 helpers:
+  initialized:
+    modules:               true
+    lang:                  true
   classes:
     actions:               Digraph\Templates\ActionsHelper
     forms:                 Digraph\Forms\FormHelper
+    lang:                  Digraph\Helpers\Languages
     media:                 Digraph\Media\MediaHelper
     modules:               Digraph\Helpers\Modules
     navigation:            Digraph\Templates\NavigationHelper
@@ -189,25 +201,28 @@ forms:
   defaultmap:
     digraph_name:
       field:               digraph.name
-      label:               Display name
+      label:               ${lang.strings.forms.digraph_name_label}
       class:               Formward\Fields\Input
       required:            true
     digraph_title:
       field:               digraph.title
-      label:               Display title
+      label:               ${lang.strings.forms.digraph_title_label}
       class:               Formward\Fields\Input
     digraph_slug:
       field:               digraph.slug
-      label:               Url Slug
+      label:               ${lang.strings.forms.slug_label}
       class:               Digraph\Forms\Fields\Slug
     digraph_body:
       field:               digraph.body
-      label:               Body content
+      label:               ${lang.strings.forms.digraph_body_label}
       class:               Formward\Fields\Textarea
 
 types:
   page:
     class:                 default
+    add:
+      detached:            true
+      under:               '*'
 
 defaultnoun:
   digraph:
@@ -249,7 +264,6 @@ package:
   defaults:
     fields:
       page_title:          ${page_name}
-      page_name:           Untitled
     request:
       namespace:           public
     response:

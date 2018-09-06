@@ -80,7 +80,7 @@ class Noun extends DSO implements NounInterface
         return $this->name();
     }
 
-    public function url(string $verb=null, array $args=[], bool $canonical=false)
+    public function url(string $verb=null, array $args=null, bool $canonical=false)
     {
         if (!$verb) {
             $verb = 'display';

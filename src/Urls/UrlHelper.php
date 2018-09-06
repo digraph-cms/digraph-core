@@ -57,7 +57,7 @@ class UrlHelper extends AbstractHelper
         //search for possible slug matches
         foreach ($slugs as $slug) {
             if ($dso = $this->cms->read($slug[0])) {
-                $url = $dso->url($slug[1]);
+                $url = $dso->url($slug[1], $argarr);
                 return $this->addText($url);
             }
         }

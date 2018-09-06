@@ -1,5 +1,5 @@
 <!-- TODO: write breadcrumb template -->
-{% if package.cms.helper('navigation').breadcrumb(package.url()) | length > 1 %}
+{% if package.response.status == 200 and package.cms.helper('navigation').breadcrumb(package.url()) | length > 1 %}
   <div class="breadcrumb">
     {% for link in package.cms.helper('navigation').breadcrumb(package.url()) %}
       <span class="breadcrumb-item">

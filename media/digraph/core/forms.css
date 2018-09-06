@@ -18,15 +18,6 @@
   margin: 0.5rem 0;
 }
 
-.Form .validation-messages:before {
-  content: "Please correct the following";
-  display: block;
-  color: #fff;
-  margin-top: 0.5rem;
-  font-weight: bold;
-  font-size: 0.75rem;
-}
-
 .Form .validation-message {
   background: #fff;
   padding: 0.5rem;
@@ -68,17 +59,11 @@
 
 .FieldWrapper-required label:after {
   display: inline;
-  content: '\2605';
+  content: '\2055';
   color: #39f;
   margin-left: 0.5rem;
   font-size: 0.75rem;
-}
-
-.Form>label:after {
-  display: block;
-  content: '\2605  indicates a required field';
-  color: #39f;
-  font-size: 0.75rem;
+  vertical-align: middle;
 }
 
 .Form .Button {

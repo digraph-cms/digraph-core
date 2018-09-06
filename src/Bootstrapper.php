@@ -49,10 +49,8 @@ class Bootstrapper
         }
         //unset bootstrap settings
         unset($config['bootstrap']);
-        //initialize modules
-        $cms->helper('modules')->initialize();
-        //initialize mungers
-        $cms->initializeMungers();
+        //tell CMS it's time to initialize
+        $cms->initialize();
         //return
         $cms->log('Bootstrapper::bootstrap finished');
         return $cms;

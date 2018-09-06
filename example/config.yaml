@@ -13,6 +13,13 @@ package:
     fields:
       site_name: Digraph example site
 
+# Language settings
+lang:
+  # default fallback language is eng, additional languages can be added, and
+  # languages later in lang.load will take precedence.
+  load:
+    preferred:   eng
+
 # Navigation settings
 navigation:
   menus:

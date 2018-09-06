@@ -22,6 +22,12 @@ class TemplateHelper extends AbstractHelper
         } else {
             return '['.$url.' not found]';
         }
+        //short circuit for error pages
+        //making the output of error pages predictable helps make munger caching
+        //as efficient as possible
+        if ($this->package['response.status'] != 200) {
+            return $link;
+        }
         //add active status based on breadcrumb
         $breadcrumb = @$this->cms->helper('navigation')->breadcrumb($this->package->url());
         if (@isset($breadcrumb["$url"])) {

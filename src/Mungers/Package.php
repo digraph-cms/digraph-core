@@ -70,7 +70,7 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
     public function error(int $code, string $message='Unspecified error')
     {
         $this->log("Error $code: $message");
-        $this->skipGlob('build/');
+        $this->skipGlob('build**');
         $this['response.status'] = $code;
         $this['response.error'] = $message;
     }

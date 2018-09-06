@@ -1,0 +1,15 @@
+urls:
+  attached_add:        Add ?arg_type
+  signin:              Sign in
+  signout:             Sign out
+  signup:              Sign up
+  site_admin:          Site administration
+  detached_add:        Add detached ?arg_type
+forms:
+  edit_title:          Edit ?type
+  digraph_name_label:  Display name
+  digraph_title_label: Display title
+  digraph_body_label:  Body content
+  slug_label:          URL slug
+notifications:
+  add_no_parent:       Creating content with no parent. Be advised that this will not necessarily be accessible through normal site navigation.

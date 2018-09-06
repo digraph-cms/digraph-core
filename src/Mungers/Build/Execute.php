@@ -12,7 +12,7 @@ class Execute extends AbstractMunger
     protected function doMunge(&$package)
     {
         try {
-            if ($package->noun()) {
+            if ($package->noun() && $package['response.status'] == 200) {
                 $package->merge(
                     [
                         'page_name' => $package->noun()->name($package->url()['verb']),

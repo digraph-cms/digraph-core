@@ -23,9 +23,29 @@ class CMS
     {
         $this->start = microtime(true);
         $this->config = $config;
-        $this->config->readFile(__DIR__.'/default-config.yaml');
+        $this->config->readFile(__DIR__.'/../default-config.yaml');
         $this->config['paths.core'] = realpath(__DIR__.'/..');
         $this->log('CMS::__construct finished');
+    }
+
+    /**
+     * Uses the names in config[helpers.initialized] to initialize any helpers
+     * that should be prepared right off the bat. This is useful for things like
+     * having the modules helper initialize to load all modules, or having the
+     * lang helper initialize immediately to load language config.
+     *
+     * Also initializes mungers
+     */
+    public function initialize()
+    {
+        //initialize modules
+        foreach ($this->config['helpers.initialized'] as $name => $i) {
+            if ($i) {
+                $this->helper($name)->initialize();
+            }
+        }
+        //initialize mungers
+        $this->initializeMungers();
     }
 
     public function read(string $q, bool $slugs = true)

@@ -1,0 +1,15 @@
+urls:
+  names:
+    proper:
+      '*/add':         ${lang.strings.urls.attached_add}
+    common:
+      'user/signin':   ${lang.strings.urls.signin}
+      'user/signout':  ${lang.strings.urls.signout}
+      'user/signup':   ${lang.strings.urls.signup}
+      'admin/display': ${lang.strings.urls.site_admin}
+      'admin/add':     ${lang.strings.urls.detached_add}
+
+package:
+  defaults:
+    fields:
+      page_name:       Untitled

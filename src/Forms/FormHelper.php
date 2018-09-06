@@ -37,6 +37,7 @@ class FormHelper extends AbstractHelper
             }
             if ($insert) {
                 var_dump($noun->insert());
+                var_dump($this->cms->driver()->errorInfo());
             } else {
                 var_dump($noun->update());
             }
@@ -53,7 +54,10 @@ class FormHelper extends AbstractHelper
 
     public function editNoun(NounInterface &$noun) : Form
     {
-        $form = new Form('', 'edit-'.$noun['dso.id']);
+        $form = new Form(
+            $this->cms->helper('lang')->string('forms.edit_title', ['type'=>$noun['dso.type']]),
+            'edit-'.$noun['dso.id']
+        );
         $this->mapNoun(
             $noun,
             $form,
