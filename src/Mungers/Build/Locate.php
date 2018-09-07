@@ -56,13 +56,19 @@ class Locate extends AbstractMunger
             } else {
                 //multiple results, produce a 300 page
                 $package->error(300, 'Multiple options found');
-                $package['temp.300options'] = $opts;
+                $package['response.300'] = [];
+                foreach ($opts as $opt) {
+                    $package->push('response.300', [
+                        'object' => $opt[0]['dso.id'],
+                        'link' => $opt[0]->url($opt[1], $url['args'])->html(null, true)->string()
+                    ]);
+                }
             }
             //redirect if parsed URL doesn't match original request
             //this is used for both ensuring that nouns (including slugs)
             //have trailing slashes, and that arguments are in alphabetical
             //order (which is important for caching)
-            if ($package->url()->routeString() != $package['request.url']) {
+            if ($package->url()->routeString() != $package['request.url'] && $package->url()->routeString(true) != $package['request.url']) {
                 $package['response.cacheable'] = false;
                 $package->redirect($package->url()->string(), 301);
             }

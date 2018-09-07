@@ -2,7 +2,10 @@ urls:
   names:
     proper:
       '*/add':         ${lang.strings.urls.attached_add}
+      '*/edit':        ${lang.strings.urls.edit}
+      '*/delete':      ${lang.strings.urls.delete}
     common:
+      '*/display':     ${lang.strings.urls.common_display}
       'user/signin':   ${lang.strings.urls.signin}
       'user/signout':  ${lang.strings.urls.signout}
       'user/signup':   ${lang.strings.urls.signup}

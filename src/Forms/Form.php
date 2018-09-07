@@ -7,8 +7,8 @@ use Digraph\DSO\NounInterface;
 
 class Form extends \Formward\Form
 {
-    public $writeDSOfn;
-    public $dso;
+    public $writeObjectFn;
+    public $object;
 
     public function __construct(string $label, string $name=null, FieldInterface $parent=null)
     {
@@ -18,8 +18,8 @@ class Form extends \Formward\Form
     public function handle(callable $validFn = null, callable $invalidFn = null, callable $notSubmittedFn = null) : ?bool
     {
         if ($out = parent::handle($validFn, $invalidFn, $notSubmittedFn)) {
-            if ($this->writeDSOfn) {
-                ($this->writeDSOfn)();
+            if ($this->writeObjectFn) {
+                ($this->writeObjectFn)();
             }
         }
         return $out;

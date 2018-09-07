@@ -23,8 +23,8 @@ class FormHelper extends AbstractHelper
             $field->default($noun[$opt['field']]);
             $form[$name] = $field;
         }
-        $form->noun = $noun;
-        $form->writeDSOfn = function () use ($noun,$form,$map,$insert) {
+        $form->object = $noun;
+        $form->writeObjectFn = function () use ($noun,$form,$map,$insert) {
             foreach ($map as $name => $opt) {
                 if (!$opt) {
                     continue;
@@ -36,10 +36,13 @@ class FormHelper extends AbstractHelper
                 }
             }
             if ($insert) {
-                var_dump($noun->insert());
-                var_dump($this->cms->driver()->errorInfo());
+                if (!$noun->insert()) {
+                    throw new \Exception("Error inserting object", 1);
+                }
             } else {
-                var_dump($noun->update());
+                if (!$noun->update()) {
+                    throw new \Exception("Error updating object", 1);
+                }
             }
         };
     }

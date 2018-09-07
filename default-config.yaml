@@ -6,11 +6,10 @@ urls:
   names:
     # rules for noun/verb combinations with proper nouns
     proper:
+      '*/*':               ?verb
       '*/display':         ?name
-      '*/*':               ?name ?verb
-    # rules for noun/verb combinations with common nounsF
+    # rules for noun/verb combinations with common nouns
     common:
-      '*/display':         ?noun
       '*/*':               ?noun ?verb
 
 permissions:
@@ -35,12 +34,12 @@ navigation:
     fallback:              home
     # rules for noun/verb combinations with proper nouns
     proper:
-      '*/display':         false
       '*/*':               ?noun/display
+      '*/display':         false
     # rules for noun/verb combinations with common nouns
     common:
-      '*/display':         false
       '*/*':               ?noun/display
+      '*/display':         false
       'user/*':            false
 
 url:

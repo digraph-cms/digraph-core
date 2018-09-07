@@ -26,30 +26,33 @@ class Url extends FlatArray
         ]);
     }
 
-    public function html(string $text = null)
+    public function html(string $text = null, bool $canonical = false)
     {
         if (!$text) {
             $text = $this['text'];
         }
         $a = new A();
-        $a->attr('href', "$this");
+        $a->attr('href', $this->string($canonical));
         $a->content = $text;
         return $a;
     }
 
-    public function string() : string
+    public function string(bool $canonical = false) : string
     {
-        return $this->get('base').$this->routeString();
+        return $this->get('base').$this->routeString($canonical);
     }
 
-    public function routeString() : string
+    public function routeString(bool $canonical = false) : string
     {
-        return $this->pathString().$this->argString();
+        return $this->pathString($canonical).$this->argString();
     }
 
-    public function pathString() : string
+    public function pathString(bool $canonical = false) : string
     {
         $noun = $this->get('noun');
+        if ($canonical && $this->get('canonicalnoun')) {
+            $noun = $this->get('canonicalnoun');
+        }
         $verb = $this->get('verb');
         if ($noun == static::HOMEALIAS && $verb == static::DEFAULTVERB) {
             return '';

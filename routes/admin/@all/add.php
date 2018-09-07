@@ -28,7 +28,7 @@ $form->handle(function (&$form) use ($package,$type) {
     }
 });
 if ($form->handle()) {
-    // $package->redirect($form->noun->url()->string());
+    $package->redirect($form->noun->url()->string());
 }
 
 echo $form;

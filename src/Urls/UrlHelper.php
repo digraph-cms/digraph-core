@@ -15,7 +15,7 @@ class UrlHelper extends AbstractHelper
 
     public function parse(string $input) : ?Url
     {
-        $url = new Url();
+        $url = $this->url();
         //break the URL into its parts
         @list($path, $args) = explode(Url::ARGINITIALSEPARATOR, $input, 2);
         $path = preg_replace('/\/$/', '', $path);
@@ -57,7 +57,7 @@ class UrlHelper extends AbstractHelper
         //search for possible slug matches
         foreach ($slugs as $slug) {
             if ($dso = $this->cms->read($slug[0])) {
-                $url = $dso->url($slug[1], $argarr);
+                $url['object'] = $url['canonicalurl'] = $dso['dso.id'];
                 return $this->addText($url);
             }
         }

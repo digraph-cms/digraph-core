@@ -1,6 +1,4 @@
 <?php
-$package['fields.page_name'] = 'Content list';
-
 $search = $this->cms()->factory()->search();
 $search->where('${digraph.type} = :type');
 $search->order('${dso.modified.date} desc');

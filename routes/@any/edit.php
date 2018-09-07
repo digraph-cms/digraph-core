@@ -12,7 +12,6 @@ foreach ($this->helper('routing')->allHookFiles($noun['dso.type'], 'form_edit.ph
 }
 
 $form->handle(function (&$form) use ($package,$noun) {
-    $package->redirect($form->noun->url()->string());
     foreach ($this->helper('routing')->allHookFiles($noun['dso.type'], 'form_handled.php') as $file) {
         include $file['file'];
     }
@@ -21,7 +20,7 @@ $form->handle(function (&$form) use ($package,$noun) {
     }
 });
 if ($form->handle()) {
-    $package->redirect($form->noun->url()->string());
+    $package->redirect($form->object->url()->string());
 }
 
 echo $form;
