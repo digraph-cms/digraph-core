@@ -58,5 +58,3 @@ Calling fullMunge() will apply the mungers specified in config.fullmunge
 By default this means building a response and also rendering it
  */
 $cms->fullMunge($package);
-
-var_dump($package->log());
