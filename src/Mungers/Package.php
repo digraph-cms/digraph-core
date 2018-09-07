@@ -21,6 +21,15 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         'url'
     ];
 
+    public function makeMediaFile(string $filename, string $mime = null)
+    {
+        $this['response.filename'] = $filename;
+        if (!$mime) {
+            $mime = $this->cms->helper('media')->mime($filename);
+        }
+        $this['response.mime'] = $mime;
+    }
+
     public function get(string $name = null, bool $raw = false, $unescape = true)
     {
         if (isset($unfiltered[$name])) {

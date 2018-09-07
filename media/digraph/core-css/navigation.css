@@ -1,0 +1,17 @@
+#content .breadcrumb {
+  font-size: 0.8em;
+}
+
+.breadcrumb-item:after {
+  content: ' / ';
+  display: inline;
+}
+
+.breadcrumb-item:last-of-type a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.breadcrumb-item:last-of-type:after {
+  display: none;
+}

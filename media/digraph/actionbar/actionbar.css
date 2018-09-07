@@ -1,26 +1,12 @@
-#content .breadcrumb {
-  font-size: 0.8em;
-}
-
-.breadcrumb-item:after {
-  content: ' / ';
-  display: inline;
-}
-
-.breadcrumb-item:last-of-type a {
-  text-decoration: none;
-  color: inherit;
-}
-
-.breadcrumb-item:last-of-type:after {
-  display: none;
-}
-
 .digraph-actionbar {
   background: #1565C0;
   color: #fff;
   padding: 5pt;
   font-size: 0.8em;
+}
+
+.digraph-actionbar.inactive {
+  display: none;
 }
 
 .digraph-actionbar:after {

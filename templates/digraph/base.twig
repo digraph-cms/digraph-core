@@ -15,7 +15,7 @@
   </head>
   <body>
     {% block admin %}
-      {% include 'digraph/partials/actionbar.twig' %}
+      <div class="digraph-actionbar digraph-main-actionbar inactive" data-id="{{package.noun.dso.id}}"></div>
     {% endblock %}
 
     {% block banner %}

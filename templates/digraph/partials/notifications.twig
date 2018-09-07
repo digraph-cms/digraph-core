@@ -1,5 +1,5 @@
-{% if package.cms.helper('notifications').all %}
-  <div class="notifications">
+<div id="digraph-notifications" class="notifications">
+  {% if package.cms.helper('notifications').all %}
     {% for category, notifications in package.cms.helper('notifications').all %}
       {% for message in notifications %}
         <div class="notification notification-{{category}}">
@@ -7,5 +7,5 @@
         </div>
       {% endfor %}
     {% endfor %}
-  </div>
-{% endif %}
+  {% endif %}
+</div>

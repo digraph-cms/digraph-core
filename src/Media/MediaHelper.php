@@ -7,15 +7,7 @@ use Digraph\Urls\Url;
 
 class MediaHelper extends AbstractHelper
 {
-    protected $mimes = [
-        'css' => 'text/css',
-        'eot' => 'application/vnd.ms-fontobject',
-        'woff' => 'application/font-woff',
-        'woff2' => 'application/font-woff2',
-        'ttf' => 'application/x-font-truetype',
-        'svg' => 'image/svg+xml',
-        'otf' => 'application/x-font-opentype'
-    ];
+    protected $mimes = null;
 
     public function get($search)
     {
@@ -50,8 +42,8 @@ class MediaHelper extends AbstractHelper
     protected function prepare_text_css($out)
     {
         $original = $content = file_get_contents($out['path']);
-        //preprocess {{base_url}}
-        $content = str_replace('{{base_url}}', $this->cms->config['url.base'], $content);
+        //preprocess {{digraph_base_url}}
+        $content = str_replace('{{digraph_base_url}}', $this->cms->config['url.base'], $content);
         //preprocess bundles
         $content = preg_replace_callback(
             '/\\/\*{bundle\:([^\}]+)\}\*\//',
@@ -94,18 +86,80 @@ class MediaHelper extends AbstractHelper
         return $out;
     }
 
+    protected function prepare_application_javascript($out)
+    {
+        $original = $content = file_get_contents($out['path']);
+        //preprocess {{digraph_base_url}}
+        $content = str_replace('{{digraph_base_url}}', $this->cms->config['url.base'], $content);
+        //preprocess bundles
+        $content = preg_replace_callback(
+            '/\\/\*{bundle\:([^\}]+)\}\*\//',
+            function ($matches) {
+                $name = $matches[1];
+                if ($bundle = $this->cms->config['templates.jsbundles.'.$name]) {
+                    $out = ['/* begin bundle: '.$name.' */'];
+                    foreach ($bundle as $file) {
+                        $out[] = '/*{include:'.$file.'}*/';
+                    }
+                    $out[] = '/* end bundle: '.$name.' */';
+                    return implode(PHP_EOL, $out);
+                }
+                return '/* NOTICE: bundle '.$name.' not found */';
+            },
+            $content
+        );
+        //preprocess files
+        $content = preg_replace_callback(
+            '/\\/\*{include\:([^\}]+)\}\*\//',
+            function ($matches) {
+                $name = $matches[1];
+                if (!($file = $this->cms->config['templates.js.'.$name])) {
+                    $file = $name;
+                }
+                if ($content = $this->getContent($file)) {
+                    $out = ['/* begin include: '.$name.' */'];
+                    $out[] = $content;
+                    $out[] = '/* end include: '.$name.' */';
+                    return implode(PHP_EOL, $out);
+                }
+                return '/* NOTICE: file '.$name.' not found */';
+            },
+            $content
+        );
+        //set content
+        if ($original != $content) {
+            $out['content'] = $content;
+        }
+        return $out;
+    }
+
+    public function mime(string $filename)
+    {
+        //build mime list from apache mime.types (included in repo)
+        if (!$this->mimes) {
+            foreach (@explode("\n", @file_get_contents(__DIR__.'/mime.types'))as $x) {
+                if (isset($x[0]) && $x[0]!=='#' && preg_match_all('#([^\s]+)#', $x, $out) && isset($out[1]) && ($c=count($out[1])) > 1) {
+                    for ($i=1;$i<$c;$i++) {
+                        $this->mimes[$out[1][$i]] = $out[1][0];
+                    }
+                }
+            }
+        }
+        //set mime from extension list
+        $ext = strtolower(preg_replace('/^.*\./', '', $filename));
+        if (isset($this->mimes[$ext])) {
+            return $this->mimes[$ext];
+        }
+        return mime_content_type($filename);
+    }
+
     protected function prepare($file, $mime=null, $filename=null)
     {
         if (!$filename) {
             $filename = basename($file);
         }
         //set mime from extension list
-        $ext = strtolower(preg_replace('/^.*\./', '', $filename));
-        if (isset($this->mimes[$ext])) {
-            $mime = $this->mimes[$ext];
-        } else {
-            $mime = mime_content_type($file);
-        }
+        $mime = $this->mime($filename);
         //set up default output
         $out = [
             'path' => $file,

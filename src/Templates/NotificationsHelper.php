@@ -18,15 +18,21 @@ class NotificationsHelper extends AbstractHelper
         $this->sessionTraitInit();
     }
 
-    public function all()
+    public function flashes()
     {
+        $out = [];
         foreach (['confirmation','notice','warning','error'] as $type) {
             if ($flashes = $this->sessionGetFlash($type)) {
                 foreach ($flashes as $message) {
-                    $this->add($type, $message);
+                    $out[$type][] = $message;
                 }
             }
         }
+        return $out;
+    }
+
+    public function all()
+    {
         return $this->notifications;
     }
 

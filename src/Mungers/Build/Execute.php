@@ -9,6 +9,19 @@ class Execute extends AbstractMunger
     const CACHE_ENABLED = true;
     protected $package;
 
+    public function arg(string $name)
+    {
+        return $this->package["url.args.$name"];
+    }
+
+    public function argObject(string $name)
+    {
+        if (!($id = $this->arg($name))) {
+            return null;
+        }
+        return $this->package->cms()->read($id);
+    }
+
     protected function doMunge(&$package)
     {
         try {
