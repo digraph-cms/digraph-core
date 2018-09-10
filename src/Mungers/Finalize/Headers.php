@@ -9,6 +9,11 @@ class Headers extends AbstractMunger
 {
     protected function doMunge(&$package)
     {
+        //record memory use
+        $package['peak_memory_use'] = (round(memory_get_peak_usage()/1024/1024*100)/100).'MB';
+        /*
+        Set up headers
+         */
         $headers = new FlatArray();
         // cache control
         $headers['date'] = gmdate('D, d M Y H:i:s T', time());
