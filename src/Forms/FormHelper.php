@@ -36,13 +36,9 @@ class FormHelper extends AbstractHelper
                 }
             }
             if ($insert) {
-                if (!$noun->insert()) {
-                    throw new \Exception("Error inserting object", 1);
-                }
+                return $noun->insert();
             } else {
-                if (!$noun->update()) {
-                    throw new \Exception("Error updating object", 1);
-                }
+                return $noun->update();
             }
         };
     }

@@ -1,9 +1,12 @@
-/* {% if config.actions.enabledforguests or cms.helper('users').id() %} */
 .digraph-actionbar {
   background: #1565C0;
   color: #fff;
   padding: 5pt;
-  font-size: 0.8em;
+}
+
+body>.digraph-actionbar {
+  position: relative;
+  z-index: 100;
 }
 
 .digraph-actionbar.inactive {
@@ -41,5 +44,3 @@
   content: ':';
   display: inline;
 }
-
-/* {% endif %} */
