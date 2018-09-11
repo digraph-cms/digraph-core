@@ -41,6 +41,12 @@ class Locate extends AbstractMunger
                 foreach ($search->execute([':slug'=>$slug]) as $dso) {
                     $opts[] = [$dso,$verb];
                 }
+                //break when a result is found, so that slugs that are a prefix
+                //of the found slug don't produce 300 pages linking to
+                //nonexistent verbs of parent pages
+                if ($opts) {
+                    break;
+                }
             }
             //deal with whatever was found
             if (!$opts) {
