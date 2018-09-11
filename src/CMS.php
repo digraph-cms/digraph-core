@@ -48,8 +48,11 @@ class CMS
         $this->initializeMungers();
     }
 
-    public function read(string $q, bool $slugs = true)
+    public function read(string $q = null, bool $slugs = true)
     {
+        if (!$q) {
+            return null;
+        }
         $q = trim($q, "/ \t\n\r\0\x0B");
         $id = md5(serialize([$q,$slugs]));
         if (!isset($this->readCache[$id])) {

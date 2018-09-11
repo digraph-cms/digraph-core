@@ -99,10 +99,16 @@ class NavigationHelper extends AbstractHelper
                     $menu[] = $urls->parse($url);
                 }
             } else {
-                $menu[] = $root = $urls->parse($conf);
-                $rootDSO = $this->cms->read($root['object']);
-                foreach ($rootDSO->children() as $child) {
-                    $menu[] = $child->url();
+                list($mode, $arg) = explode(':', $conf, 2);
+                switch ($mode) {
+                    case 'from':
+                        $menu[] = $root = $urls->parse($arg);
+                        if ($rootDSO = $this->cms->read($root['object'])) {
+                            foreach ($rootDSO->children() as $child) {
+                                $menu[] = $child->url();
+                            }
+                        }
+                        break;
                 }
             }
         }
