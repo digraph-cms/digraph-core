@@ -1,3 +1,4 @@
+/* {% if config.actions.enabledforguests or cms.helper('users').id() %} */
 .digraph-actionbar {
   background: #1565C0;
   color: #fff;
@@ -16,16 +17,6 @@
   height: 0;
 }
 
-.digraph-actionbar .digraph-action-group-name {
-  opacity: 0.6;
-  display: inline-block;
-  margin-left: 1em;
-}
-
-.digraph-actionbar .digraph-action-group-name:after {
-  content: ':';
-}
-
 .digraph-actionbar a {
   color: #fff !important;
   opacity: 0.8;
@@ -41,10 +32,14 @@
   text-decoration: underline;
 }
 
-.digraph-actionbar .digraph-action-group {
-  display: inline-block;
+.digraph-actionbar-title {
+  font-weight: bold;
+  display: inline;
 }
 
-.digraph-actionbar .digraph-action-group-user {
-  float: right;
+.digraph-actionbar-title:after {
+  content: ':';
+  display: inline;
 }
+
+/* {% endif %} */

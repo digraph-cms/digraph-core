@@ -1,5 +1,5 @@
 urls:
-  attached_add:                Add ?arg_type
+  attached_add:                Add sub-?arg_type
   common_display:              'Type: ?noun'
   delete:                      Delete ?type
   detached_add:                Add detached ?arg_type

@@ -42,8 +42,6 @@ class MediaHelper extends AbstractHelper
     protected function prepare_text_css($out)
     {
         $original = $content = file_get_contents($out['path']);
-        //preprocess {{digraph_base_url}}
-        $content = str_replace('{{digraph_base_url}}', $this->cms->config['url.base'], $content);
         //preprocess bundles
         $content = preg_replace_callback(
             '/\\/\*{bundle\:([^\}]+)\}\*\//',
@@ -79,6 +77,8 @@ class MediaHelper extends AbstractHelper
             },
             $content
         );
+        //run through template helper
+        $content = $this->cms->helper('templates')->renderString($content, $this->fields());
         //set content
         if ($original != $content) {
             $out['content'] = $content;
@@ -89,8 +89,6 @@ class MediaHelper extends AbstractHelper
     protected function prepare_application_javascript($out)
     {
         $original = $content = file_get_contents($out['path']);
-        //preprocess {{digraph_base_url}}
-        $content = str_replace('{{digraph_base_url}}', $this->cms->config['url.base'], $content);
         //preprocess bundles
         $content = preg_replace_callback(
             '/\\/\*{bundle\:([^\}]+)\}\*\//',
@@ -126,6 +124,8 @@ class MediaHelper extends AbstractHelper
             },
             $content
         );
+        //run through template helper
+        $content = $this->cms->helper('templates')->renderString($content, $this->fields());
         //set content
         if ($original != $content) {
             $out['content'] = $content;
@@ -173,5 +173,10 @@ class MediaHelper extends AbstractHelper
         }
         //return output
         return $out;
+    }
+
+    protected function fields()
+    {
+        return ['digraph_media_token'=>md5($this->cms->helper('users')->id())];
     }
 }

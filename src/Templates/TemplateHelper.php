@@ -9,6 +9,8 @@ use Flatrr\SelfReferencingFlatArray;
 class TemplateHelper extends AbstractHelper
 {
     protected $twig;
+    protected $fsLoader;
+    protected $arrayLoader;
     protected $loader;
     protected $fields = [];
     protected $package = null;
@@ -60,9 +62,14 @@ class TemplateHelper extends AbstractHelper
     {
         if (!$this->loader) {
             //set up loader
-            $this->loader = new \Twig_Loader_Filesystem(
+            $this->fsLoader = new \Twig_Loader_Filesystem(
                 array_reverse($this->cms->config['templates.paths'])//array of paths to look for templates in
             );
+            $this->arrayLoader = new \Twig_Loader_Array();
+            $this->loader = new \Twig_Loader_Chain([
+                $this->fsLoader,
+                $this->arrayLoader
+            ]);
             //set up twig environment with loader and config from cms config
             $this->twig = new \Twig_Environment(
                 $this->loader,
@@ -70,6 +77,16 @@ class TemplateHelper extends AbstractHelper
             );
         }
         return $this->twig;
+    }
+
+    public function renderString(string $template, $fields=array())
+    {
+        //add to arrayLoader
+        $this->env();
+        $id = 'digraph_arrayloader_'.md5($template);
+        $this->arrayLoader->setTemplate("{$id}.twig", $template);
+        //pass off to normal rendering
+        return $this->render($id, $fields);
     }
 
     public function render($template = 'default', $fields=array())
@@ -81,13 +98,17 @@ class TemplateHelper extends AbstractHelper
         $fields = new SelfReferencingFlatArray($fields);
         $fields->merge($this->fields);
         $fields->merge([
-            'helper' => &$this
+            'helper' => &$this,
+            'config' => $this->cms->config,
+            'cms' => $this->cms
         ]);
-        $fields->merge(
-            $fields['package']->get('fields'),
-            null,
-            true
-        );
+        if ($fields['package']) {
+            $fields->merge(
+                $fields['package']->get('fields'),
+                null,
+                true
+            );
+        }
         //check that template exists, then render
         if ($template = $env->load($template)) {
             $package = $this->package;

@@ -12,6 +12,16 @@ urls:
     common:
       '*/*':               ?noun ?verb
 
+actions:
+  enabledforguests:        false
+  proper:
+    '*':
+      010-edit:            ?noun/edit
+      020-delete:          ?noun/delete
+      100-add-page:        ?noun/add@type:page
+  common:
+    '*':                   []
+
 permissions:
   url:
     '*':
@@ -22,9 +32,6 @@ permissions:
       - allow all
     'api/*':
       - allow all
-  action:
-    '*':
-      - deny all
 
 navigation:
   menus:
@@ -189,6 +196,7 @@ helpers:
     modules:               true
     lang:                  true
   classes:
+    actions:               Digraph\Helpers\Actions
     forms:                 Digraph\Forms\FormHelper
     lang:                  Digraph\Helpers\Languages
     media:                 Digraph\Media\MediaHelper
@@ -225,9 +233,6 @@ forms:
 types:
   page:
     class:                 default
-    add:
-      detached:            true
-      under:               '*'
 
 defaultnoun:
   digraph:

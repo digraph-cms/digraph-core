@@ -15,7 +15,13 @@
   </head>
   <body>
     {% block admin %}
-      <div class="digraph-actionbar digraph-main-actionbar inactive" data-id="{{package.noun.dso.id}}"></div>
+      {% if config.actions.enabledforguests or cms.helper('users').id() %}
+        <div class="digraph-actionbar inactive" data-id="{{package.url.noun}}">
+          {% if package.noun %}
+            <div class="digraph-actionbar-title">{{package.noun().url().html()|raw}}</div>
+          {% endif %}
+        </div>
+      {% endif %}
     {% endblock %}
 
     {% block banner %}

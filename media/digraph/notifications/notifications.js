@@ -6,7 +6,7 @@
  */
 document.addEventListener("DOMContentLoaded", function(event) {
   if (container = document.getElementById('digraph-notifications')) {
-    fetch('{{digraph_base_url}}json/user-notifications.json')
+    fetch('{{config.url.base}}user/notifications.json@u:{{digraph_media_token}}')
       //turn into json
       .then(function(response) {
         return response.json();
