@@ -107,8 +107,6 @@ class UrlHelper extends AbstractHelper
                     }
                     $url['text'] = $text;
                     return $url;
-                } elseif ($path === false) {
-                    return $url;
                 }
             }
         }
