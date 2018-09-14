@@ -16,33 +16,33 @@ class Headers extends AbstractMunger
          */
         $headers = new FlatArray();
         // cache control
-        $headers['date'] = gmdate('D, d M Y H:i:s T', time());
-        $headers['cache-control'] = $this->cacheControl($package);
-        $headers['pragma'] = $this->pragma($package);
+        $headers['Date'] = gmdate('D, d M Y H:i:s T', time());
+        $headers['Cache-Control'] = $this->cacheControl($package);
+        $headers['Pragma'] = $this->pragma($package);
         if ($ttl = $package['response.ttl']) {
-            $headers['expires'] = gmdate('D, d M Y H:i:s T', time()+$ttl);
+            $headers['Expires'] = gmdate('D, d M Y H:i:s T', time()+$ttl);
         }
-        // content-type/encoding
+        // Content-Type/encoding
         if ($package['response.mime'] == 'text/html') {
             //include charset for text/html
-            $headers['content-type'] = '${response.mime}; charset=${response.charset}';
+            $headers['Content-Type'] = '${response.mime}; charset=${response.charset}';
         } else {
             //not for other content types
-            $headers['content-type'] = '${response.mime}';
+            $headers['Content-Type'] = '${response.mime}';
         }
         //content disposition/name
-        $headers['content-disposition'] = '${response.disposition}';
+        $headers['Content-Disposition'] = '${response.disposition}';
         if ($package['response.filename']) {
             $fn = urlencode($package['response.filename']);
-            $headers['content-disposition'] = $headers['content-disposition']."; filename=\"$fn\"";
+            $headers['Content-Disposition'] = $headers['Content-Disposition']."; filename=\"$fn\"";
         }
         //redirection
         if ($package['response.redirect']) {
-            $headers['location'] = '${response.redirect}';
+            $headers['Location'] = '${response.redirect}';
         }
         //canonical url
         if ($package['response.canonicalurl']) {
-            $headers['link'] = '<${response.canonicalurl}>; rel="canonical"';
+            $headers['Link'] = '<${response.canonicalurl}>; rel="canonical"';
         }
         //merge into package, not overwriting so that previous mungers can set headers
         $package->merge($headers->get(), 'response.headers');

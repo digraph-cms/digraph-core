@@ -9,9 +9,9 @@
     }],
     "require": {
         "php": ">=7.1",
-        "twig/twig": "^2.5",
+        "twig/twig": "^2.0",
         "phpmailer/phpmailer": "^6.0",
-        "byjoby/destructr": "dev-master",
+        "byjoby/destructr": "^1",
         "byjoby/formward": "dev-master",
         "byjoby/html-object-strings": "dev-master",
         "symfony/cache": "^4.0"
