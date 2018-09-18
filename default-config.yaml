@@ -51,6 +51,14 @@ navigation:
       '*/display':           false
       'user/*':              false
 
+types:
+  system:
+    user:                    \Digraph\Users\User
+    default:                 \Destructr\DSO
+  content:
+    page:                    ${types.content.default}
+    default:                 \Digraph\DSO\Noun
+
 url:
   protocol:                  null
   domain:                    null
@@ -229,10 +237,6 @@ forms:
       field:                 digraph.body
       label:                 ${lang.strings.forms.digraph_body_label}
       class:                 Formward\Fields\Textarea
-
-types:
-  page:
-    class:                   default
 
 defaultnoun:
   digraph:
