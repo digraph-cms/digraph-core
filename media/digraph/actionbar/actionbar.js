@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
   var actionbars = document.getElementsByClassName('digraph-actionbar');
   for (var i = 0; i < actionbars.length; i++) {
     let actionbar = actionbars[i];
-    fetch('{{config.url.base}}user/actionbar.json@id:' + actionbar.getAttribute('data-id') + '@u:{{digraph_media_token}}')
+    fetch('{{config.url.base}}user/actionbar.json?id=' + actionbar.getAttribute('data-id') + '&u={{digraph_media_token}}')
       //turn into json
       .then(function(response) {
         return response.json();

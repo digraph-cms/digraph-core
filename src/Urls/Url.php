@@ -8,9 +8,9 @@ use HtmlObjectStrings\A;
 class Url extends FlatArray
 {
     const VERBSEPARATOR = '/';
-    const ARGINITIALSEPARATOR = '@';
-    const ARGSEPARATOR = '@';
-    const ARGVALUESEPARATOR = ':';
+    const ARGINITIALSEPARATOR = '?';
+    const ARGSEPARATOR = '&';
+    const ARGVALUESEPARATOR = '=';
     const DEFAULTVERB = 'display';
     const HOMEALIAS = 'home';
 
