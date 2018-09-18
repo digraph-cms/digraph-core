@@ -10,7 +10,9 @@ if (!$managerName) {
 
 //check for pre hooks
 foreach ($this->helper('routing')->allHookFiles('user', $managerName.'/signout_pre.php') as $file) {
-    include($file['file']);
+    if (include($file['file']) === false) {
+        return;
+    }
 }
 
 //do signout
@@ -18,7 +20,9 @@ $package->cms()->helper('users')->signout();
 
 //check for post hooks
 foreach ($this->helper('routing')->allHookFiles('user', $managerName.'/signout_post.php') as $file) {
-    include($file['file']);
+    if (include($file['file']) === false) {
+        return;
+    }
 }
 
 $cms->helper('notifications')->flashConfirmation('You are now signed out');
