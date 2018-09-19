@@ -1,23 +1,23 @@
 urls:
-  attached_add:                Add sub-?arg_type
-  common_display:              'Type: ?noun'
-  delete:                      Delete ?type
-  detached_add:                Add detached ?arg_type
-  edit:                        Edit ?type
-  signin:                      Sign in
-  signout:                     Sign out
-  signup:                      Sign up
-  site_admin:                  Site administration
+  attached_add:                 Add sub-!arg_type
+  common_display:               'Type: !noun'
+  delete:                       Delete !type
+  detached_add:                 Add detached !arg_type
+  edit:                         Edit !type
+  signin:                       Sign in
+  signout:                      Sign out
+  signup:                       Sign up
+  site_admin:                   Site administration
 forms:
-  confirm_button:              Confirm
-  confirm_delete_confirmation: Successfully deleted
-  confirm_delete_field:        Confirm deletion by typing the object's ID, <code>?0</code>, here
-  confirm_delete_title:        Are you sure you want to delete ?0?
-  confirm_delete_match_error:  The entered ID doesn't match the target object's ID
-  digraph_body_label:          Body content
-  digraph_name_label:          Display name
-  digraph_title_label:         Display title
-  edit_title:                  Edit ?type
-  slug_label:                  URL slug
+  confirm_button:               Confirm
+  confirm_delete_confirmation:  Successfully deleted
+  confirm_delete_field:         Confirm deletion by typing the object's ID, <code>!0</code>, here
+  confirm_delete_title:         Are you sure you want to delete !0?
+  confirm_delete_match_error:   The entered ID doesn't match the target object's ID
+  digraph_body_label:           Body content
+  digraph_name_label:           Display name
+  digraph_title_label:          Display title
+  edit_title:                   Edit ?type
+  slug_label:                   URL slug
 notifications:
-  add_no_parent:               Creating content with no parent. Be advised that this will not necessarily be accessible through normal site navigation.
+  add_no_parent:                Creating content with no parent. Be advised that this will not necessarily be accessible through normal site navigation.

@@ -43,18 +43,11 @@ $cms->factory()->createTable();
 $cms->factory('system')->createTable();
 
 /*
-Set up request/response package, in this case assuming that we're using Apache
-with mod_rewrite redirecting all nonexistent requests to this script with the
-GET variable 'url' indicating the original request path
+Set up request/response package, using the Bootstrapper url() method for parsing
+the URL out of the query string
  */
-$url = $_SERVER['QUERY_STRING'];
-$url = preg_replace('/.*url=/U', '', $url);
-$pos = strpos($url, '&');
-if ($pos !== false) {
-    $url = substr_replace($url, '?', $pos, 1);
-}
 $package = new Digraph\Mungers\Package([
-    'request.url' => $url
+    'request.url' => \Digraph\Bootstrapper::url()
 ]);
 
 /*

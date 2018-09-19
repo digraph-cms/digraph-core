@@ -12,6 +12,21 @@ class Bootstrapper
         //static class, shouldn't be constructed
     }
 
+    /**
+     * Used to extract the request URL from the querystring, this is designed
+     * to work with the example site's Apache/.htaccess url rewriting
+     */
+    public static function url()
+    {
+        $url = $_SERVER['QUERY_STRING'];
+        $url = preg_replace('/^.*url=/U', '', $url);
+        $pos = strpos($url, '&');
+        if ($pos !== false) {
+            $url = substr_replace($url, '?', $pos, 1);
+        }
+        return $url;
+    }
+
     public static function bootstrap(ConfigInterface &$config)
     {
         //set up new CMS

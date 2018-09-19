@@ -30,7 +30,7 @@ class Actions extends AbstractHelper
         $links = array_map(
             function ($e) use ($vars) {
                 foreach ($vars as $key => $value) {
-                    $e = str_replace("?$key", $value, $e);
+                    $e = str_replace("!$key", $value, $e);
                 }
                 return $e;
             },

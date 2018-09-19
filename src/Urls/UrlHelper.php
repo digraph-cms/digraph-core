@@ -103,7 +103,7 @@ class UrlHelper extends AbstractHelper
             foreach ($verbs as $verb) {
                 if ($text = $this->cms->config["urls.names.$type.$noun/$verb"]) {
                     foreach ($vars as $key => $value) {
-                        $text = str_replace('?'.$key, $value, $text);
+                        $text = str_replace('!'.$key, $value, $text);
                     }
                     $url['text'] = $text;
                     return $url;
