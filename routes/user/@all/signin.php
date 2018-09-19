@@ -18,9 +18,7 @@ $form = new Formward\Form('', 'signin-'.$managerName);
 
 //check for form pre-hooks
 foreach ($this->helper('routing')->allHookFiles('user', $managerName.'/signin_form_pre.php') as $file) {
-    if (include($file['file']) === false) {
-        return;
-    }
+    include $file['file'];
 }
 
 $form['email'] = new Formward\Fields\Email('Email address');
@@ -30,9 +28,7 @@ $form['password']->required();
 
 //check for form post-hooks
 foreach ($this->helper('routing')->allHookFiles('user', $managerName.'/signin_form_post.php') as $file) {
-    if (include($file['file']) === false) {
-        return;
-    }
+    include $file['file'];
 }
 
 echo $form;
