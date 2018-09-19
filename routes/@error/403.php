@@ -1,2 +1,9 @@
+<p>You have been denied access to this page.</p>
 <?php
 $package['fields.page_name'] = 'Access denied';
+
+if ($user = $this->helper('users')->username()) {
+    echo "<p>You are currently signed in as <code>$user</code>. If this isn't you, please sign out and try again</p>";
+} else {
+    echo "<p>You are not signed in. If you have an account, you should sign in and try again.</p>";
+}
