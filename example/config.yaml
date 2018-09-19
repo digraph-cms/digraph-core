@@ -21,9 +21,9 @@ lang:
     preferred:   eng
 
 # Navigation settings
-navigation:
-  menus:
-    main:        home
+# navigation:
+#   menus:
+#     main:      home
 
 # Generally if you want to move your storage/cache directories you should keep
 # them somehow relative to paths.site

@@ -88,27 +88,25 @@ class NavigationHelper extends AbstractHelper
         return @$this->parentOfCache["$url"];
     }
 
-    public function menu($name) : array
+    public function menu($conf) : array
     {
         $menu = [];
-        $conf = $this->cms->config['navigation.menus.'.$name];
+        if (!is_array($conf)) {
+            $conf = $this->cms->config['navigation.menus.'.$conf];
+        }
         if ($conf) {
             $urls = $this->cms->helper('urls');
-            if (is_array($conf)) {
-                foreach ($conf as $url) {
-                    $menu[] = $urls->parse($url);
-                }
-            } else {
-                list($mode, $arg) = explode(':', $conf, 2);
-                switch ($mode) {
-                    case 'from':
-                        $menu[] = $root = $urls->parse($arg);
-                        if ($rootDSO = $this->cms->read($root['object'])) {
-                            foreach ($rootDSO->children() as $child) {
-                                $menu[] = $child->url();
-                            }
+            foreach ($conf as $url) {
+                if (is_array($url)) {
+                    //array entries afford a great deal of control
+                    if ($p = $this->cms->read(@$url['children'])) {
+                        foreach ($p->children() as $c) {
+                            $menu[] = $c->url();
                         }
-                        break;
+                    }
+                } else {
+                    //string entries just parse as internal URLs
+                    $menu[] = $urls->parse($url);
                 }
             }
         }

@@ -37,7 +37,7 @@ class Languages extends AbstractHelper
     {
         if ($string = $this->cms->config['lang.strings.'.$name]) {
             foreach ($args as $key => $value) {
-                $string = str_replace('?'.$key, $value, $string);
+                $string = str_replace('!'.$key, $value, $string);
             }
             return $string;
         }
