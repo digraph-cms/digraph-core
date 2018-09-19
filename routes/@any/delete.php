@@ -26,6 +26,7 @@ if ($form->handle()) {
     $package->cms()->helper('notifications')->confirmation(
         $this->helper('lang')->string('forms.confirm_delete_confirmation')
     );
+    return;
 }
 
 echo $form;
