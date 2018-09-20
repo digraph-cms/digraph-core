@@ -132,6 +132,8 @@ modules:
     site:                    ${paths.site}/modules
 
 users:
+  reservednames:
+    root:                    true
   defaultmanager:            simple
   managers:
     simple:

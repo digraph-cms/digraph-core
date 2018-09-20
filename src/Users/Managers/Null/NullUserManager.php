@@ -3,11 +3,21 @@
 namespace Digraph\Users\Managers\Null;
 
 use Digraph\Users\Managers\AbstractUserManager;
+use Digraph\Users\UserInterface;
 
 class NullUserManager extends AbstractUserManager
 {
-    public function create(string $username, string $email, string $password) : bool
+    const USERCLASS = NullUser::class;
+
+    public function getByIdentifier(string $identifier) : ?UserInterface
     {
-        return false;
+        $class = static::USERCLASS;
+        return new $class($identifier);
+    }
+
+    public function getByEmail(string $email) : ?UserInterface
+    {
+        //Null users don't have emails
+        return null;
     }
 }

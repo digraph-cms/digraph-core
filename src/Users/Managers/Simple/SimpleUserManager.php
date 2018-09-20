@@ -3,11 +3,21 @@
 namespace Digraph\Users\Managers\Simple;
 
 use Digraph\Users\Managers\AbstractUserManager;
+use Digraph\Users\UserInterface;
 
 class SimpleUserManager extends AbstractUserManager
 {
-    public function create(string $username, string $email, string $password) : bool
+    const USERCLASS = SimpleUser::class;
+
+    public function getByIdentifier(string $identifier) : ?UserInterface
     {
-        return false;
+        //TODO: search
+        return null;
+    }
+
+    public function getByEmail(string $email) : ?UserInterface
+    {
+        //TODO: search
+        return null;
     }
 }

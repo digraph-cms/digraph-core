@@ -21,21 +21,6 @@ class UserMunger extends AbstractMunger
             case 'id':
                 $package['request.namespace'] = 'id/'.$users->id();
                 return;
-            case 'username':
-                $package['request.namespace'] = 'username/'.$users->username();
-                return;
-            case 'groups':
-                $groups = $users->groups();
-                if ($ignore = @$conf['ignore']) {
-                    $groups = array_filter(
-                        $groups,
-                        function ($e) use ($ignore) {
-                            return !in_array($e, $ignore);
-                        }
-                    );
-                }
-                $package['request.namespace'] = 'groups/'.implode(';', $groups);
-                return;
         }
     }
 

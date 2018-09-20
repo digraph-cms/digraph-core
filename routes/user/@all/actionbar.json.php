@@ -3,7 +3,7 @@
 $package->makeMediaFile('actionbar.json');
 
 //return empty array for non-signed-in users
-if (!$this->helper('users')->username()) {
+if (!$this->helper('users')->id()) {
     echo '[]';
     return;
 }

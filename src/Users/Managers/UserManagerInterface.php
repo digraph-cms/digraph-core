@@ -3,9 +3,11 @@
 namespace Digraph\Users\Managers;
 
 use Digraph\CMS;
+use Digraph\Users\UserInterface;
 
 interface UserManagerInterface
 {
     public function __construct(CMS &$cms);
-    public function create(string $username, string $email, string $password) : bool;
+    public function getByIdentifier(string $identifier) : ?UserInterface;
+    public function getByEmail(string $email) : ?UserInterface;
 }

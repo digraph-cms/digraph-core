@@ -64,7 +64,7 @@ class PermissionsHelper extends AbstractHelper
         }
         //always allow root user
         if (!$allow) {
-            if ($this->cms->helper('users')->userName() == 'root') {
+            if ($this->cms->helper('users')->userIdentifier() == 'root') {
                 $this->cms->log('permissions denial skipped for root user');
                 $allow = true;
             }

@@ -5,6 +5,7 @@ namespace Digraph\DSO;
 use Destructr\Factory;
 use Digraph\CMS;
 use Destructr\Search;
+use Destructr\DSOInterface;
 
 class SystemFactory extends Factory
 {
@@ -30,6 +31,29 @@ class SystemFactory extends Factory
             'index'=>'BTREE'
         ]
     ];
+
+    protected function hook_create(DSOInterface &$dso)
+    {
+        parent::hook_create($dso);
+        if (!isset($dso['dso.created.user.id'])) {
+            if ($id = $this->cms->helper('users')->id()) {
+                $dso['dso.created.user.id'] = $id;
+            } else {
+                $dso['dso.created.user.id'] = 'guest';
+            }
+        }
+    }
+
+    protected function hook_update(DSOInterface &$dso)
+    {
+        parent::hook_update($dso);
+        if ($id = $this->cms->helper('users')->id()) {
+            $dso['dso.modified.user.id'] = $id;
+        } else {
+            $dso['dso.modified.user.id'] = 'guest';
+        }
+    }
+
 
     public function class(array $data) : ?string
     {

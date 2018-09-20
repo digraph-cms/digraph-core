@@ -8,9 +8,27 @@ class UserHelper extends AbstractHelper
 {
     protected $managers = [];
 
+    public function validateIdentifier(string $identifier) : bool
+    {
+        if (preg_match('/[@]/', $identifier)) {
+            return false;
+        }
+        return true;
+    }
+
     public function signout()
     {
         $this->cms->helper('session')->deauthorize();
+    }
+
+    public function user(string $id = null) : ?UserInterface
+    {
+        $manager = $this->userManager($id);
+        $identifier = $this->userIdentifier($id);
+        if ($m = $this->manager($manager)) {
+            return $m->getByIdentifier($identifier);
+        }
+        return null;
     }
 
     public function id(string $set = null) : ?string
@@ -18,26 +36,20 @@ class UserHelper extends AbstractHelper
         return $this->cms->helper('session')->userID($set);
     }
 
-    public function userManager() : ?string
+    public function userManager($id = null) : ?string
     {
         if ($id = $this->id()) {
-            return @array_shift(explode('/', $id));
+            return @array_pop(explode('@', $id));
         }
         return null;
     }
 
-    public function username() : ?string
+    public function userIdentifier($id = null) : ?string
     {
         if ($id = $this->id()) {
-            return @array_pop(explode('/', $id));
+            return @array_shift(explode('@', $id));
         }
         return null;
-    }
-
-    public function groups() : array
-    {
-        //TODO: implement groups
-        return ['users'];
     }
 
     public function manager($name = null) : ?Managers\UserManagerInterface
