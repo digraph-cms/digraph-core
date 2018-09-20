@@ -16,34 +16,52 @@ if (!$this->helper("users")->signinAllowed($managerName)) {
 //build form
 $form = new Formward\Form('', 'signin-'.$managerName);
 
-//check for form pre-hooks
+//check for form setup pre-hooks
 foreach ($this->helper('routing')->allHookFiles('user', $managerName.'/signin_form_pre.php') as $file) {
     include $file['file'];
 }
-
-$form['email'] = new Formward\Fields\Email('Email address');
-$form['email']->required();
-$form['password'] = new Formward\Fields\Password('Password');
-$form['password']->required();
-
-//check for form post-hooks
-foreach ($this->helper('routing')->allHookFiles('user', $managerName.'/signin_form_post.php') as $file) {
+foreach ($this->helper('routing')->allHookFiles('user', 'signin_form_pre.php') as $file) {
     include $file['file'];
 }
 
-echo $form;
+if ($form) {
+    //default form settings
+    $form['email'] = new Formward\Fields\Email('Email address');
+    $form['email']->required();
+    $form['password'] = new Formward\Fields\Password('Password');
+    $form['password']->required();
+}
 
-if ($form->handle()) {
-    //check for handle pre hooks
-    foreach ($this->helper('routing')->allHookFiles('user', $managerName.'/signin_handle_pre.php') as $file) {
-        if (include($file['file']) === false) {
-            return;
-        }
+//check for form setup post-hooks
+foreach ($this->helper('routing')->allHookFiles('user', $managerName.'/signin_form_post.php') as $file) {
+    include $file['file'];
+}
+foreach ($this->helper('routing')->allHookFiles('user', 'signin_form_post.php') as $file) {
+    include $file['file'];
+}
+
+//output form
+if ($form) {
+    echo $form;
+}
+
+if ($form && $form->handle()) {
+    //check for handle hooks
+    foreach ($this->helper('routing')->allHookFiles('user', $managerName.'/signin_handle.php') as $file) {
+        include $file['file'];
     }
-    //check for handle post hooks
-    foreach ($this->helper('routing')->allHookFiles('user', $managerName.'/signin_handle_post.php') as $file) {
-        if (include($file['file']) === false) {
-            return;
-        }
+    foreach ($this->helper('routing')->allHookFiles('user', 'signin_handle.php') as $file) {
+        include $file['file'];
+    }
+}
+
+//check for hooks regarding user being signed in
+if ($users->id()) {
+    //check for signed in hooks
+    foreach ($this->helper('routing')->allHookFiles('user', $managerName.'/signin_complete.php') as $file) {
+        include $file['file'];
+    }
+    foreach ($this->helper('routing')->allHookFiles('user', 'signin_complete.php') as $file) {
+        include $file['file'];
     }
 }

@@ -12,12 +12,18 @@ if (!$managerName) {
 foreach ($this->helper('routing')->allHookFiles('user', $managerName.'/signout_pre.php') as $file) {
     include $file['file'];
 }
+foreach ($this->helper('routing')->allHookFiles('user', 'signout_pre.php') as $file) {
+    include $file['file'];
+}
 
 //do signout
 $package->cms()->helper('users')->signout();
 
 //check for post hooks
 foreach ($this->helper('routing')->allHookFiles('user', $managerName.'/signout_post.php') as $file) {
+    include $file['file'];
+}
+foreach ($this->helper('routing')->allHookFiles('user', 'signout_post.php') as $file) {
     include $file['file'];
 }
 

@@ -20,41 +20,40 @@ $form = new Formward\Form('', 'signup-'.$managerName);
 foreach ($this->helper('routing')->allHookFiles('user', $managerName.'/signup_form_pre.php') as $file) {
     include $file['file'];
 }
+foreach ($this->helper('routing')->allHookFiles('user', 'signup_form_pre.php') as $file) {
+    include $file['file'];
+}
 
-$form['email'] = new Formward\Fields\Email('Email address');
-$form['email']->required();
-$form['username'] = new Formward\Fields\Input('Username');
-$form['username']->required();
-$form['password'] = new Formward\Fields\ConfirmedPassword('');
-$form['password']->required();
+if ($form) {
+    $form['email'] = new Formward\Fields\Email('Email address');
+    $form['email']->required();
+    $form['username'] = new Formward\Fields\Input('Username');
+    $form['username']->required();
+    $form['password'] = new Formward\Fields\ConfirmedPassword('');
+    $form['password']->required();
 
-//set up validators
-// $form['email']->addValidatorFunction('unique',function());
+    //set up validators
+    // $form['email']->addValidatorFunction('unique',function());
+}
 
 //check for form post-hooks
 foreach ($this->helper('routing')->allHookFiles('user', $managerName.'/signup_form_post.php') as $file) {
     include $file['file'];
 }
+foreach ($this->helper('routing')->allHookFiles('user', 'signup_form_post.php') as $file) {
+    include $file['file'];
+}
 
-echo $form;
+if ($form) {
+    echo $form;
+}
 
-if ($form->handle()) {
+if ($form && $form->handle()) {
     //check for handle pre hooks
-    foreach ($this->helper('routing')->allHookFiles('user', $managerName.'/signup_handle_pre.php') as $file) {
-        if (include($file['file']) === false) {
-            return;
-        }
+    foreach ($this->helper('routing')->allHookFiles('user', $managerName.'/signup_handle.php') as $file) {
+        include $file['file'];
     }
-    //create user
-    $manager->create(
-        $form['username']->value(),
-        $form['email']->value(),
-        $form['password']->value()
-    );
-    //check for handle post hooks
-    foreach ($this->helper('routing')->allHookFiles('user', $managerName.'/signup_handle_post.php') as $file) {
-        if (include($file['file']) === false) {
-            return;
-        }
+    foreach ($this->helper('routing')->allHookFiles('user', 'signup_handle.php') as $file) {
+        include $file['file'];
     }
 }
