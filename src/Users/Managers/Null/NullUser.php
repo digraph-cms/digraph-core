@@ -7,10 +7,17 @@ use Digraph\Users\UserInterface;
 class NullUser implements UserInterface
 {
     protected $identifier;
+    protected $manager;
 
-    public function __construct(string $identifier)
+    public function __construct(string $identifier, string $manager = 'null')
     {
         $this->identifier = $identifier;
+        $this->manager = $manager;
+    }
+
+    public function id() : string
+    {
+        return $this->identifier.'@'.$this->manager;
     }
 
     public function identifier() : string
