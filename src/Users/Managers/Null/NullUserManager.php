@@ -8,12 +8,11 @@ use Digraph\Users\UserInterface;
 class NullUserManager extends AbstractUserManager
 {
     const USERCLASS = NullUser::class;
-    const MANAGER = 'null';
 
     public function getByIdentifier(string $identifier) : ?UserInterface
     {
         $class = static::USERCLASS;
-        return new $class($identifier, static::MANAGER);
+        return new $class($identifier, $this->name);
     }
 
     public function getByEmail(string $email) : ?UserInterface

@@ -10,4 +10,5 @@ interface UserManagerInterface
     public function __construct(CMS &$cms);
     public function getByIdentifier(string $identifier) : ?UserInterface;
     public function getByEmail(string $email) : ?UserInterface;
+    public function name(string $set) : string;
 }

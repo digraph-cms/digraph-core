@@ -53,6 +53,26 @@ if ($form && $form->handle()) {
     foreach ($this->helper('routing')->allHookFiles('user', 'signin_handle.php') as $file) {
         include $file['file'];
     }
+    //do default signin with password if none of the above completed a signin
+    if (!$users->id() && $form) {
+        $matches = $users->getByEmail($form['email']->value());
+        $done = false;
+        foreach ($matches as $u) {
+            if ($u->checkPassword($form['password']->value())) {
+                //sign in was successful
+                var_dump($u);
+                $users->id($u->id());
+                $done = true;
+                break;
+            }
+        }
+        //sign in failed
+        if (!$done) {
+            $this->helper('notifications')->error(
+                $this->helper('lang')->string('notifications.signin_failed')
+            );
+        }
+    }
 }
 
 //check for hooks regarding user being signed in

@@ -38,9 +38,6 @@ Run bootstrapper. Everything the bootstrapper does can be done manually, but
 it isn't adviseable to do it that way.
  */
 $cms = \Digraph\Bootstrapper::bootstrap($config);
-//TODO: run createTable by way of installation scripts
-$cms->factory()->createTable();
-$cms->factory('system')->createTable();
 
 /*
 Set up request/response package, using the Bootstrapper url() method for parsing

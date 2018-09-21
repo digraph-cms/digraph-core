@@ -7,7 +7,14 @@ use Digraph\Users\UserInterface;
 
 class SimpleUserManager extends AbstractUserManager
 {
-    const USERCLASS = SimpleUser::class;
+    public function create() : ?UserInterface
+    {
+        $user = $this->cms->factory('users')->create([
+            'dso.type' => 'user'
+        ]);
+        $user->managerName($this->name());
+        return $user;
+    }
 
     public function getByIdentifier(string $identifier) : ?UserInterface
     {
@@ -17,7 +24,17 @@ class SimpleUserManager extends AbstractUserManager
 
     public function getByEmail(string $email) : ?UserInterface
     {
-        //TODO: search
+        $email = strtolower($email);
+        $search = $this->cms->factory('users')->search();
+        $search->where('${email.primary} = :email');
+        $res = $search->execute([
+            'email' => $email
+        ]);
+        if ($res) {
+            $out = array_pop($res);
+            $out->managerName($this->name());
+            return $out;
+        }
         return null;
     }
 }

@@ -172,6 +172,8 @@ class CMS
             if (method_exists($set, 'cms')) {
                 $set->cms($this);
             }
+            $set->name($name);
+            $set->createTable();
         }
         return $this->valueFunction('factory/'.$name, $set);
     }

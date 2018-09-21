@@ -27,13 +27,28 @@ foreach ($this->helper('routing')->allHookFiles('user', 'signup_form_pre.php') a
 if ($form) {
     $form['email'] = new Formward\Fields\Email('Email address');
     $form['email']->required();
-    $form['username'] = new Formward\Fields\Input('Username');
-    $form['username']->required();
+    $form['displayname'] = new Formward\Fields\Input('Display name');
+    $form['displayname']->required();
     $form['password'] = new Formward\Fields\ConfirmedPassword('');
     $form['password']->required();
 
     //set up validators
-    // $form['email']->addValidatorFunction('unique',function());
+    $form['email']->addValidatorFunction(
+        'unique',
+        function (&$field) {
+            $value = $field->value();
+            if ($this->helper('users')->getByEmail($field->value())) {
+                $this->helper('notifications')->notice(
+                    $this->helper('lang')->string(
+                        'notifications.account_recovery',
+                        ['link' => $this->helper('urls')->parse('user/recover')->html()]
+                    )
+                );
+                return $this->helper('lang')->string('forms.signup_email_taken');
+            }
+            return true;
+        }
+    );
 }
 
 //check for form post-hooks
@@ -49,11 +64,20 @@ if ($form) {
 }
 
 if ($form && $form->handle()) {
+    //set up new user
+    $user = $manager->create();
+    $user->name($form['displayname']->value());
+    $user->addEmail($form['email']->value());
+    $user->setPassword($form['password']->value());
     //check for handle pre hooks
     foreach ($this->helper('routing')->allHookFiles('user', $managerName.'/signup_handle.php') as $file) {
         include $file['file'];
     }
     foreach ($this->helper('routing')->allHookFiles('user', 'signup_handle.php') as $file) {
         include $file['file'];
+    }
+    //save new user
+    if (!$user->insert()) {
+        $package->error(500, 'Failed to insert user');
     }
 }

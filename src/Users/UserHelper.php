@@ -16,6 +16,17 @@ class UserHelper extends AbstractHelper
         return true;
     }
 
+    public function getByEmail(string $email)
+    {
+        $out = [];
+        foreach ($this->managers as $manager) {
+            if ($user = $manager->getByEmail($email)) {
+                $out[$user->identifier()] = $user;
+            }
+        }
+        return $out;
+    }
+
     public function signout()
     {
         $this->cms->helper('session')->deauthorize();
@@ -62,6 +73,7 @@ class UserHelper extends AbstractHelper
                 $class = $this->cms->config['users.managers.'.$name.'.class'];
                 $this->cms->log('Instantiating user manager '.$name.': '.$class);
                 $this->managers[$name] = new $class($this->cms);
+                $this->managers[$name]->name($name);
             }
         }
         return @$this->managers[$name];

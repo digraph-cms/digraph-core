@@ -6,19 +6,29 @@ use Destructr\Factory;
 use Digraph\CMS;
 use Destructr\Search;
 use Destructr\DSOInterface;
+use Flatrr\FlatArray;
 
-class SystemFactory extends Factory
+class DigraphFactory extends Factory
 {
     const ID_LENGTH = 8;
-    const TYPE = 'system';
     protected $cms;
+    protected $name = 'system';
+
+    public function name($set = null) : string
+    {
+        if ($set) {
+            $this->name = $set;
+        }
+        return $this->name;
+    }
 
     protected $virtualColumns = [
         'dso.id' => [
             'name'=>'dso_id',
             'type'=>'VARCHAR(16)',
             'index' => 'BTREE',
-            'unique' => true
+            'unique' => true,
+            'primary' => true
         ],
         'dso.type' => [
             'name'=>'dso_type',
@@ -57,11 +67,15 @@ class SystemFactory extends Factory
 
     public function class(array $data) : ?string
     {
-        $type = !$data['digraph']['type'];
-        if (!$type || !isset($this->cms->config['types.'.$this::TYPE.'.'.$type])) {
+        $data = new FlatArray($data);
+        $type = $data['dso.type'];
+        if (!$type || !isset($this->cms->config['types.'.$this->name.'.'.$type])) {
             $type = 'default';
         }
-        return $this->cms->config['types.'.$this::TYPE.'.'.$type];
+        if ($class = $this->cms->config['types.'.$this->name.'.'.$type]) {
+            return $class;
+        }
+        throw new \Exception("No class could be found for factory ".$this->name.", type ".$data['digraph']['type'], 1);
     }
 
     public function &cms(CMS &$set=null) : CMS

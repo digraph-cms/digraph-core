@@ -1,11 +1,13 @@
 <?php
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
-namespace Digraph\DSO;
+namespace Digraph\Users;
 
-class ContentFactory extends DigraphFactory
+use Digraph\DSO\DigraphFactory;
+
+class UserFactory extends DigraphFactory
 {
-    const ID_LENGTH = 8;
-    const TYPE = 'content';
+    const ID_LENGTH = 10;
+    protected $name = 'users';
 
     protected $virtualColumns = [
         'dso.id' => [
@@ -25,14 +27,15 @@ class ContentFactory extends DigraphFactory
             'type'=>'BIGINT',
             'index'=>'BTREE'
         ],
-        'digraph.slug' => [
-            'name'=>'digraph_slug',
-            'type'=>'VARCHAR(100)',
-            'index'=>'BTREE'
+        'email.primary' => [
+            'name'=>'email_primary',
+            'type'=>'VARCHAR(255)',
+            'index'=>'BTREE',
+            'unique'=>true
         ],
-        'digraph.parent.0' => [
-            'name'=>'digraph_parent_0',
-            'type'=>'VARCHAR(100)',
+        'email.pending.address' => [
+            'name'=>'email_pending',
+            'type'=>'VARCHAR(255)',
             'index'=>'BTREE'
         ]
     ];

@@ -1,7 +1,7 @@
 <?php
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
 declare(strict_types=1);
-namespace Formward\Fields;
+namespace Digraph\Forms\Fields;
 
 use PHPUnit\Framework\TestCase;
 
