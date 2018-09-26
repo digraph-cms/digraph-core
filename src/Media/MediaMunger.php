@@ -12,7 +12,7 @@ class MediaMunger extends AbstractMunger
         if ($f = $m->get($package->url())) {
             $package->log('media located: '.$f['path']);
             //set package to output this file
-            if ($f['content'] !== null) {
+            if (@$f['content'] !== null) {
                 $package['response.content'] = $f['content'];
                 unset($package['response.readfile']);
             } else {
