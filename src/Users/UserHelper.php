@@ -34,12 +34,39 @@ class UserHelper extends AbstractHelper
 
     public function user(string $id = null) : ?UserInterface
     {
+        if ($id === null) {
+            $id = $this->id();
+        }
+        if (!$id) {
+            return null;
+        }
         $manager = $this->userManager($id);
         $identifier = $this->userIdentifier($id);
         if ($m = $this->manager($manager)) {
             return $m->getByIdentifier($identifier);
         }
         return null;
+    }
+
+    public function groups(string $id = null) : ?array
+    {
+        //load current id if null
+        if (!$id) {
+            $id = $this->id();
+        }
+        //return empty array if user is still null
+        if (!$id) {
+            return [];
+        }
+        //default list is empty
+        $groups = [];
+        //load groups from config
+        if (isset($this->cms->config['groups.'.$id])) {
+            $groups = $this->cms->config['groups.'.$id];
+        }
+        //TODO: make groups somehow configurable on the user side
+        //return list
+        return $groups;
     }
 
     public function id(string $set = null) : ?string
@@ -57,7 +84,10 @@ class UserHelper extends AbstractHelper
 
     public function userIdentifier($id = null) : ?string
     {
-        if ($id = $this->id()) {
+        if (!$id == null) {
+            $id = $this->id();
+        }
+        if ($id !== null) {
             return @array_shift(explode('@', $id));
         }
         return null;

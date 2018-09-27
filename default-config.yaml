@@ -22,6 +22,8 @@ actions:
   common:
     '*':                     []
 
+groups:                      []
+
 permissions:
   url:
     '*':

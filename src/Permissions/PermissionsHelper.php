@@ -8,7 +8,7 @@ use Digraph\DSO\Noun;
 
 class PermissionsHelper extends AbstractHelper
 {
-    public function checkUrl(Url $url) : bool
+    public function checkUrl(Url $url, string $userID = null) : bool
     {
         $path = '';
         $noun = $this->cms->helper('urls')->noun($url);
@@ -20,21 +20,17 @@ class PermissionsHelper extends AbstractHelper
             $path = $url['noun'];
         }
         $path .= '/'.$url['verb'];
-        return $this->check($path) && (!$noun || $this->checkNoun($noun, $url['verb']));
+        return $this->check($path, 'url', $userID);
     }
 
-    public function checkNoun(Noun &$noun, string $verb) : bool
-    {
-        if (method_exists($noun, 'checkPermissions')) {
-            return $noun->checkPermissions($this->cms->helper('users')->user(), $verb);
-        }
-        return true;
-    }
-
-    public function check(string $path, string $category='url') : bool
+    public function check(string $path, string $category='url', string $userID = null) : bool
     {
         $allow = false;
         $rules = @$this->cms->config['permissions'][$category];
+        if ($userID === null) {
+            $userID = $this->cms->helper('users')->id();
+        }
+        $groups = $this->cms->helper('users')->groups($userID);
         if ($rules) {
             $path = explode('/', $path);
             $matchingKeys = [];
@@ -54,7 +50,7 @@ class PermissionsHelper extends AbstractHelper
             foreach ($matchingKeys as $key) {
                 if (isset($rules[$key])) {
                     foreach ($rules[$key] as $rule) {
-                        $new = $this->checkRule($rule);
+                        $new = $this->checkRule($rule, $userID, $groups);
                         if ($new !== null) {
                             $allow = $new;
                         }
@@ -62,17 +58,10 @@ class PermissionsHelper extends AbstractHelper
                 }
             }
         }
-        //always allow root user
-        if (!$allow) {
-            if ($this->cms->helper('users')->id() == 'root@system') {
-                $this->cms->log('permissions denial skipped for root@system');
-                $allow = true;
-            }
-        }
         return $allow;
     }
 
-    public function checkRule($rule)
+    protected function checkRule($rule, $userID, $groups)
     {
         $rule = strtolower(trim($rule));
         if ($rule == 'allow all') {
@@ -80,16 +69,16 @@ class PermissionsHelper extends AbstractHelper
         } elseif ($rule == 'deny all') {
             return false;
         } else {
-            if ($this->cms->helper('users')->userID()) {
+            if ($userID) {
                 list($mode, $type, $list) = explode(' ', $rule, 3);
                 $list = preg_split('/ *, */', $list);
                 if ($type == 'user') {
-                    if (in_array($this->cms->helper('users')->userName(), $list)) {
+                    if (in_array($userID, $list)) {
                         return $mode == 'allow';
                     }
                 }
                 if ($type == 'group') {
-                    foreach ($this->cms->helper('users')->userGroups() as $group) {
+                    foreach ($groups as $group) {
                         if (in_array($group, $list)) {
                             return $mode == 'allow';
                         }
