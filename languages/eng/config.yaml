@@ -1,19 +1,21 @@
 urls:
   names:
     proper:
-      '*/add':         ${lang.strings.urls.attached_add}
-      '*/edit':        ${lang.strings.urls.edit}
-      '*/delete':      ${lang.strings.urls.delete}
+      '*/add':          ${lang.strings.urls.attached_add}
+      '*/edit':         ${lang.strings.urls.edit}
+      '*/delete':       ${lang.strings.urls.delete}
     common:
-      '*/display':     ${lang.strings.urls.common_display}
-      'user/signin':   ${lang.strings.urls.signin}
-      'user/signout':  ${lang.strings.urls.signout}
-      'user/signup':   ${lang.strings.urls.signup}
-      'user/recover':  ${lang.strings.urls.recover_account}
-      'admin/display': ${lang.strings.urls.site_admin}
-      'admin/add':     ${lang.strings.urls.detached_add}
+      '*/display':      ${lang.strings.urls.common_display}
+      'user/signin':    ${lang.strings.urls.signin}
+      'user/signout':   ${lang.strings.urls.signout}
+      'user/signup':    ${lang.strings.urls.signup}
+      'user/signedin':  ${lang.strings.urls.signedin}
+      'user/signedup':  ${lang.strings.urls.signedup}
+      'user/recover':   ${lang.strings.urls.recover_account}
+      'admin/display':  ${lang.strings.urls.site_admin}
+      'admin/add':      ${lang.strings.urls.detached_add}
 
 package:
   defaults:
     fields:
-      page_name:       Untitled
+      page_name:        Untitled

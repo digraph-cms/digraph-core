@@ -60,9 +60,11 @@ if ($form && $form->handle()) {
         foreach ($matches as $u) {
             if ($u->checkPassword($form['password']->value())) {
                 //sign in was successful
-                var_dump($u);
                 $users->id($u->id());
                 $done = true;
+                $package->redirect(
+                    $this->helper('urls')->parse('user/signedin')
+                );
                 break;
             }
         }

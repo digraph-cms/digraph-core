@@ -80,4 +80,8 @@ if ($form && $form->handle()) {
     if (!$user->insert()) {
         $package->error(500, 'Failed to insert user');
     }
+    //redirect
+    $package->redirect(
+        $this->helper('urls')->parse('user/signedup')
+    );
 }

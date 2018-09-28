@@ -18,8 +18,11 @@ class SimpleUserManager extends AbstractUserManager
 
     public function getByIdentifier(string $identifier) : ?UserInterface
     {
-        //TODO: search
-        return null;
+        $out = $this->cms->factory('users')->read($identifier);
+        if ($out) {
+            $out->managerName($this->name());
+        }
+        return $out;
     }
 
     public function getByEmail(string $email) : ?UserInterface
