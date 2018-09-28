@@ -23,6 +23,6 @@ class SessionHelper extends AbstractHelper
     public function __construct(CMS &$cms)
     {
         parent::__construct($cms);
-        $this->session = Session::getInstance();
+        $this->session = Session::getInstance($cms->config['site_id']);
     }
 }

@@ -12,6 +12,8 @@ urls:
     common:
       '*/*':                 !noun !verb
 
+site_id:                     ${url.base}
+
 actions:
   enabledforguests:          false
   proper:
@@ -25,6 +27,9 @@ actions:
 groups:                      []
 
 permissions:
+  action:
+    '*':
+      - deny all
   url:
     '*':
       - deny all

@@ -14,7 +14,8 @@
         "byjoby/destructr": "^1",
         "byjoby/formward": "dev-master",
         "byjoby/html-object-strings": "dev-master",
-        "symfony/cache": "^4.0"
+        "symfony/cache": "^4.0",
+        "byjoby/sesh": "^0.1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^7.3"
