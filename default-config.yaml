@@ -72,8 +72,8 @@ types:
     default:                 ${types.users.simple}
 
 url:
-  protocol:                  null
-  domain:                    null
+  protocol:                  ''
+  domain:                    ''
   path:                      /
   base:                      ${url.protocol}${url.domain}${url.path}
 
@@ -138,8 +138,9 @@ routing:
     core:                    ${paths.core}/routes
 
 modules:
-  paths:
-    site:                    ${paths.site}/modules
+  sources:                   []
+    # this is how you load a class-based module
+    # 100-system:            class \Digraph\Modules\DigraphSystem\Module
 
 users:
   defaultmanager:            default
@@ -225,7 +226,7 @@ helpers:
     forms:                   Digraph\Forms\FormHelper
     lang:                    Digraph\Helpers\Languages
     media:                   Digraph\Media\MediaHelper
-    modules:                 Digraph\Helpers\Modules
+    modules:                 Digraph\Modules\ModuleHelper
     navigation:              Digraph\Templates\NavigationHelper
     notifications:           Digraph\Templates\NotificationsHelper
     permissions:             Digraph\Permissions\PermissionsHelper

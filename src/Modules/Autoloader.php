@@ -7,7 +7,7 @@
  * Digraph in the future, but at the moment it does everything it needs to just
  * the way it is.
  */
-namespace Digraph\Helpers\Modules;
+namespace Digraph\Modules;
 
 /**
  * An example of a general-purpose implementation that includes the optional

@@ -42,9 +42,9 @@ templates:
 # Configure module directories for site and environment-specific modules (this
 # is useful for things like debugging modules during development)
 modules:
-  paths:
-    site:        ${paths.site}/modules
-    env:         ${paths.site}/modules_env
+  sources:
+    200-site:    dir ${paths.site}/modules
+    300-env:     dir ${paths.site}/modules_env
 
 # configure cache settings
 cache:

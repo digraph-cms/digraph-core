@@ -1,24 +1,39 @@
 <?php
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
-namespace Digraph\Helpers;
+namespace Digraph\Modules;
 
 use Digraph\Helpers\AbstractHelper;
 use Flatrr\Config\Config;
 
-class Modules extends AbstractHelper
+class ModuleHelper extends AbstractHelper
 {
     protected $autoloader;
 
     public function initialize()
     {
         $this->cms->log('ModuleManager initializing');
-        $this->autoloader = new Modules\Autoloader();
+        $this->autoloader = new Autoloader();
         $this->autoloader->register();
-        $paths = $this->cms->config['modules.paths'];
-        ksort($paths);
-        foreach ($paths as $path) {
-            $this->loadModuleDirectory($path);
+        $sources = $this->cms->config['modules.sources'];
+        ksort($sources);
+        foreach ($sources as $source) {
+            list($type, $source) = explode(' ', $source, 2);
+            if ($type == 'class') {
+                $this->loadModuleClass($source);
+            } elseif ($type == 'dir') {
+                $this->loadModuleDirectory($source);
+            } elseif ($type == 'file') {
+                $this->loadModule($source);
+            } else {
+                throw new \Exception("Unknown module type: $type");
+            }
         }
+    }
+
+    public function loadModuleClass($class)
+    {
+        $module = new $class();
+        $this->loadModule($module->getYAMLPath(), $module->getConfig());
     }
 
     public function loadModuleDirectory($path)
@@ -28,10 +43,10 @@ class Modules extends AbstractHelper
         }
     }
 
-    public function loadModule($module)
+    public function loadModule($module, array $config=[])
     {
         $this->cms->log('ModuleManager: loading '.$module);
-        $config = new Config();
+        $config = new Config($config);
         $config->readFile($module);
         $config->merge([
             'module.name' => basename(dirname($module)),
