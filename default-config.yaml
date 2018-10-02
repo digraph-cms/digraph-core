@@ -1,30 +1,30 @@
 # settings regarding urls
 urls:
   # aliases
-  aliases:                   []
+  aliases:                     []
   # rules for naming URLs
   names:
     # rules for noun/verb combinations with proper nouns
     proper:
-      '*/*':                 !verb
-      '*/display':           !name
+      '*/*':                   !verb
+      '*/display':             !name
     # rules for noun/verb combinations with common nouns
     common:
-      '*/*':                 !noun !verb
+      '*/*':                   !noun !verb
 
-site_id:                     ${url.base}
+site_id:                       ${url.base}
 
 actions:
-  enabledforguests:          false
+  enabledforguests:            false
   proper:
     '*':
-      010-edit:              !noun/edit
-      020-delete:            !noun/delete
-      100-add-page:          !noun/add?type=page
+      010-edit:                !noun/edit
+      020-delete:              !noun/delete
+      100-add-page:            !noun/add?type=page
   common:
-    '*':                     []
+    '*':                       []
 
-groups:                      []
+groups:                        []
 
 permissions:
   action:
@@ -44,80 +44,80 @@ navigation:
   menus:
     main:
       - home
-      - {children:           home}
+      - {children:             home}
   # Define parentage rules for breadcrumbs
   parents:
     # fallback parent is used when nothing else can be found, this will almost
     # always wind up the root of the breadcrumb
-    fallback:                home
+    fallback:                  home
     # rules for noun/verb combinations with proper nouns
     proper:
-      '*/*':                 ?noun/display
-      '*/display':           false
+      '*/*':                   ?noun/display
+      '*/display':             false
     # rules for noun/verb combinations with common nouns
     common:
-      '*/*':                 ?noun/display
-      '*/display':           false
-      'user/*':              false
+      '*/*':                   ?noun/display
+      '*/display':             false
+      'user/*':                false
 
 types:
   system:
-    user:                    \Digraph\Users\
-    default:                 \Destructr\DSO
+    user:                      \Digraph\Users\
+    default:                   \Destructr\DSO
   content:
-    page:                    ${types.content.default}
-    default:                 \Digraph\DSO\Noun
+    page:                      ${types.content.default}
+    default:                   \Digraph\DSO\Noun
   users:
-    simple:                  \Digraph\Users\Managers\Simple\SimpleUser
-    default:                 ${types.users.simple}
+    simple:                    \Digraph\Users\Managers\Simple\SimpleUser
+    default:                   ${types.users.simple}
 
 url:
-  protocol:                  ''
-  domain:                    ''
-  path:                      /
-  base:                      ${url.protocol}${url.domain}${url.path}
+  protocol:                    ''
+  domain:                      ''
+  path:                        /
+  base:                        ${url.protocol}${url.domain}${url.path}
 
 paths:
-  storage:                   ${paths.site}/storage
+  storage:                     ${paths.site}/storage
 
 # template/display configuration options
 templates:
   # paths where we should look for templates -- later items win
   paths:
-    core:                    ${paths.core}/templates
-    site:                    ${paths.site}/templates
+    core:                      ${paths.core}/templates
+    site:                      ${paths.site}/templates
   # config options passed to twig environment
   twigconfig:
-    cache:                   ${paths.cache}/twig
-    auto_reload:             true
+    cache:                     ${paths.cache}/twig
+    auto_reload:               true
   # css urls to be linked in the head
   css:
-    digraph_core:            ${url.base}digraph/core.css
-    fontawesome:             ${url.base}fontawesome/css/all.min.css
+    digraph_core:              ${url.base}digraph/core.css
+    fontawesome:               ${url.base}fontawesome/css/all.min.css
   # css bundles can be included all at once in media-driven css files, with
-  # syntax like:             /*${bundle:digraph_core}*/
+  # syntax like:               /*${bundle:digraph_core}*/
   cssbundles:
     digraph_core:
-      core_hypersemantic:    digraph/hypersemantic/bundle.css
-      core_navigation:       digraph/core-css/navigation.css
-      core_notifications:    digraph/notifications/notifications.css
-      core_forms:            digraph/core-css/forms.css
-      core_actionbar:        digraph/actionbar/actionbar.css
+      core_hypersemantic:      digraph/hypersemantic/bundle.css
+      core_navigation:         digraph/core-css/navigation.css
+      core_notifications:      digraph/notifications/notifications.css
+      core_forms:              digraph/core-css/forms.css
+      core_actionbar:          digraph/actionbar/actionbar.css
     hypersemantic:
-      typography:            digraph/hypersemantic/typography.css
-      menus:                 digraph/hypersemantic/menus.css
-      linkicons:             digraph/hypersemantic/linkicons.css
-      layout:                digraph/hypersemantic/layout-1col.css
+      typography:              digraph/hypersemantic/typography.css
+      menus:                   digraph/hypersemantic/menus.css
+      linkicons:               digraph/hypersemantic/linkicons.css
+      layout:                  digraph/hypersemantic/layout-1col.css
   # js files are included at either the head or foot of the page
   js:
-    head:                    []
+    head:                      []
     foot:
-      digraph_core:          ${url.base}digraph/core.js
+      digraph_core:            ${url.base}digraph/core.js
   # js bundles can be included the same way as css bundles
   jsbundles:
     digraph_core:
-      core_notifications:    digraph/notifications/notifications.js
-      core_actionbar:        digraph/actionbar/actionbar.js
+      core_notifications:      digraph/notifications/notifications.js
+      core_actionbar:          digraph/actionbar/actionbar.js
 
 # Language settings
 lang:
@@ -125,48 +125,48 @@ lang:
   # by either. They load in an order that makes later ones in this array take
   # precedence. So sites can add to this array to load their own language files.
   load:
-    fallback:                eng
-    preferred:               eng
+    fallback:                  eng
+    preferred:                 eng
   # all language files are loaded from all language paths, so sites and modules
   # with their own versions of a language file will supplement the core language
   # files rather than replace them.
   paths:
-    core:                    ${paths.core}/languages
+    core:                      ${paths.core}/languages
 
 routing:
   paths:
-    core:                    ${paths.core}/routes
+    core:                      ${paths.core}/routes
 
 modules:
-  sources:                   []
+  sources:                     []
     # this is how you load a class-based module
-    # 100-system:            class \Digraph\Modules\DigraphSystem\Module
+    # 100-system:              class \Digraph\Modules\DigraphSystem\Module
 
 users:
-  defaultmanager:            default
+  defaultmanager:              default
   managers:
     default:
-      name:                  Built-in
-      class:                 Digraph\Users\Managers\Simple\SimpleUserManager
-      signup:                true
-      signin:                true
+      name:                    Built-in
+      class:                   Digraph\Users\Managers\Simple\SimpleUserManager
+      signup:                  true
+      signin:                  true
     'null':
-      name:                  Null users
-      class:                 Digraph\Users\Managers\Null\NullUserManager
-      signup:                false
-      signin:                false
+      name:                    Null users
+      class:                   Digraph\Users\Managers\Null\NullUserManager
+      signup:                  false
+      signin:                  false
     system:
-      name:                  System users
-      class:                 Digraph\Users\Managers\Null\NullUserManager
-      signup:                false
-      signin:                false
+      name:                    System users
+      class:                   Digraph\Users\Managers\Null\NullUserManager
+      signup:                  false
+      signin:                  false
   namespacing:
     # possible values for users.namespacing.mode
-    # auth:                  one namespace for public, one for authenticated users
-    # id:                    full user ID, which is guaranteed to be unique
-    # username:              just the username portion, which *should* all be the same person via different auth methods
-    # groups:                namespaced based on full list of groups users belong to, groups can be ignored by adding them to users.namespacing.ignore
-    mode:                    groups
+    # auth:                    one namespace for public, one for authenticated users
+    # id:                      full user ID, which is guaranteed to be unique
+    # username:                just the username portion, which *should* all be the same person via different auth methods
+    # groups:                  namespaced based on full list of groups users belong to, groups can be ignored by adding them to users.namespacing.ignore
+    mode:                      groups
 
 fullmunge:
   - build
@@ -179,151 +179,153 @@ mungers:
   # Constructs the content of a URL, based on initial URL and current user
   build:
     # Initializes namespace based on current user and users.namespacing config
-    100-userinitialize:      Digraph\Users\UserMunger
+    100-userinitialize:        Digraph\Users\UserMunger
     # Loads package defaults and builds the hash
-    110-initialize:          Digraph\Mungers\Build\Initialize
+    110-initialize:            Digraph\Mungers\Build\Initialize
     # Checks for mediahelper hits on the current url
-    200-media:               Digraph\Media\MediaMunger
+    200-media:                 Digraph\Media\MediaMunger
     # Resolves slugs and identifies the object that is being referenced, if any
     # This is also where 300 pages are triggered, if slugs resolve to multiple pages
     # This is also where redirects are triggered for normalizing URLs
-    300-locate:              Digraph\Mungers\Build\Locate
+    300-locate:                Digraph\Mungers\Build\Locate
     # Tries to match verb/noun to a route handler file
     # this is where 404 errors originate
-    400-route:               Digraph\Mungers\Build\Route
+    400-route:                 Digraph\Mungers\Build\Route
     # Checks permissions, throws 403 errors
-    500-permissions:         Digraph\Permissions\PermissionsMunger
+    500-permissions:           Digraph\Permissions\PermissionsMunger
     # Executes handler files and puts their output into the package
-    600-execute:             Digraph\Mungers\Build\Execute
+    600-execute:               Digraph\Mungers\Build\Execute
   # Builds content of error pages if status isn't 200
   error:
     # Builds error pages based on status
     # uses @error route folder, and extends teh Execute munger so it presents
     # the same environment to handlers
-    100-error:               Digraph\Mungers\Error\Error
+    100-error:                 Digraph\Mungers\Error\Error
   # Applies templates
   template:
     # Applies templates based on package.response.template and package.fields
-    100-templates:           Digraph\Templates\TemplateMunger
+    100-templates:             Digraph\Templates\TemplateMunger
   # Any final preparation before output
   finalize:
     # Builds HTTP headers, but doesn't output them, saves them in response.headers
-    100-headers:             Digraph\Mungers\Finalize\Headers
+    100-headers:               Digraph\Mungers\Finalize\Headers
   # Outputs package to the browser
   render:
     # Outputs headers from response.headers
-    100-headers:             Digraph\Mungers\Render\Headers
+    100-headers:               Digraph\Mungers\Render\Headers
     # Outputs with readfile() if response.readfile is set, otherwise just echoes
     # response.content
-    200-output:              Digraph\Mungers\Render\Output
+    200-output:                Digraph\Mungers\Render\Output
 
 helpers:
   initialized:
-    modules:                 true
-    lang:                    true
+    modules:                   true
+    lang:                      true
   classes:
-    actions:                 Digraph\Helpers\Actions
-    forms:                   Digraph\Forms\FormHelper
-    lang:                    Digraph\Helpers\Languages
-    media:                   Digraph\Media\MediaHelper
-    modules:                 Digraph\Modules\ModuleHelper
-    navigation:              Digraph\Templates\NavigationHelper
-    notifications:           Digraph\Templates\NotificationsHelper
-    permissions:             Digraph\Permissions\PermissionsHelper
-    routing:                 Digraph\Helpers\Routing
-    session:                 Digraph\Users\SessionHelper
-    templates:               Digraph\Templates\TemplateHelper
-    urls:                    Digraph\Urls\UrlHelper
-    users:                   Digraph\Users\UserHelper
+    actions:                   Digraph\Helpers\Actions
+    forms:                     Digraph\Forms\FormHelper
+    lang:                      Digraph\Helpers\Languages
+    media:                     Digraph\Media\MediaHelper
+    modules:                   Digraph\Modules\ModuleHelper
+    navigation:                Digraph\Templates\NavigationHelper
+    notifications:             Digraph\Templates\NotificationsHelper
+    permissions:               Digraph\Permissions\PermissionsHelper
+    routing:                   Digraph\Helpers\Routing
+    session:                   Digraph\Users\SessionHelper
+    templates:                 Digraph\Templates\TemplateHelper
+    urls:                      Digraph\Urls\UrlHelper
+    users:                     Digraph\Users\UserHelper
 
 forms:
   defaultmap:
     digraph_name:
-      field:                 digraph.name
-      label:                 ${lang.strings.forms.digraph_name_label}
-      class:                 Formward\Fields\Input
-      required:              true
+      field:                   digraph.name
+      label:                   ${lang.strings.forms.digraph_name_label}
+      class:                   Formward\Fields\Input
+      required:                true
     digraph_title:
-      field:                 digraph.title
-      label:                 ${lang.strings.forms.digraph_title_label}
-      class:                 Formward\Fields\Input
+      field:                   digraph.title
+      label:                   ${lang.strings.forms.digraph_title_label}
+      class:                   Formward\Fields\Input
     digraph_slug:
-      field:                 digraph.slug
-      label:                 ${lang.strings.forms.slug_label}
-      class:                 Digraph\Forms\Fields\Slug
+      field:                   digraph.slug
+      label:                   ${lang.strings.forms.slug_label}
+      class:                   Digraph\Forms\Fields\Slug
     digraph_body:
-      field:                 digraph.body
-      label:                 ${lang.strings.forms.digraph_body_label}
-      class:                 Formward\Fields\Textarea
+      field:                   digraph.body
+      label:                   ${lang.strings.forms.digraph_body_label}
+      class:                   Formward\Fields\Textarea
 
 defaultnoun:
   dso:
-    type:                    page
+    type:                      page
 
 mungerhooks:
-  build:                     []
-  render:                    []
+  build:                       []
+  render:                      []
 
 media:
   package:
     response:
-      ttl:                   86400
+      ttl:                     86400
       headers:
-        cache-control:       public
-        pragma:              public
+        cache-control:         public
+        pragma:                public
 
   paths:
-    digraph_core:            ${paths.core}/media
+    digraph_core:              ${paths.core}/media
 
 cache:
   mungercache:
-    adapter:                 default
-    threshold:               100 #ms
+    adapter:                   default
+    threshold:                 100 #ms
   factorycache:
-    adapter:                 default
-    threshold:               5 #ms
+    adapter:                   default
+    threshold:                 5 #ms
   adapters:
     default:
       items:
-        class:               \Symfony\Component\Cache\Adapter\FilesystemAdapter
+        class:                 \Symfony\Component\Cache\Adapter\FilesystemAdapter
         args:
-          namespace:         'default'
-          defaultlifetime:   60
-          directory:         ${paths.cache}/defaultcache
-      tags:                  null
+          namespace:           'default'
+          defaultlifetime:     60
+          directory:           ${paths.cache}/defaultcache
+      tags:                    null
 
 package:
   defaults:
     fields:
-      page_title:            ${page_name}
+      page_title:              ${page_name}
     request:
-      namespace:             public
+      namespace:               public
     response:
-      status:                200
-      ttl:                   60
-      cacheable:             true
-      content:               ''
-      ready:                 false
-      mime:                  text/html
-      charset:               utf-8
-      disposition:           inline
-      template:              default
+      status:                  200
+      ttl:                     60
+      cacheable:               true
+      content:                 ''
+      ready:                   false
+      mime:                    text/html
+      charset:                 utf-8
+      disposition:             inline
+      template:                default
 
 # bootstrap settings are used by the Bootstrapper class, and are then removed
 # from the config used in the created CMS. This is a nice secure way to handle
 # setting up drivers and factories, and you should use it if at all possible.
 bootstrap:
+  credentials:
+    default:                   []
   drivers:
     default:
-      credentials:           driver
+      credentials:             default
   factories:
     content:
-      class:                 \Digraph\DSO\ContentFactory
-      driver:                default
-      table:                 digraph_content
+      class:                   \Digraph\DSO\ContentFactory
+      driver:                  default
+      table:                   digraph_content
     users:
-      class:                 \Digraph\Users\UserFactory
-      driver:                default
-      table:                 digraph_users
+      class:                   \Digraph\Users\UserFactory
+      driver:                  default
+      table:                   digraph_users
 
-send-content-length-header:  true
+send-content-length-header:    true
