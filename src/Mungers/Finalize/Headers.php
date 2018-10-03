@@ -21,6 +21,8 @@ class Headers extends AbstractMunger
         $headers['Pragma'] = $this->pragma($package);
         if ($ttl = $package['response.ttl']) {
             $headers['Expires'] = gmdate('D, d M Y H:i:s T', time()+$ttl);
+        } else {
+            $headers['Expires'] = gmdate('D, d M Y H:i:s T', 0);
         }
         // Content-Type/encoding
         if ($package['response.mime'] == 'text/html') {
