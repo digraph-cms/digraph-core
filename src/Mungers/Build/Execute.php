@@ -38,6 +38,7 @@ class Execute extends AbstractMunger
             $this->package = $package;
             $this->execute();
         } catch (\Throwable $e) {
+            ob_end_clean();
             $package->error(500, get_class($e).": ".$e->getMessage().": ".$e->getFile().": ".$e->getLine());
             $package->set('error_trace', $e->getTrace());
         }
