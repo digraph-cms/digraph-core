@@ -74,10 +74,14 @@ class Noun extends DSO implements NounInterface
 
     public function body()
     {
-        if ($this->get('digraph.body')) {
-            return $this->get('digraph.body');
+        if ($this->get('digraph.body.text')) {
+            $text = $this->factory->cms()->helper('filters')->filterPreset(
+                $this->get('digraph.body.text'),
+                $this->get('digraph.body.filter')
+            );
+            return $text;
         }
-        return $this->name();
+        return '[no body content found]';
     }
 
     public function url(string $verb=null, array $args=null, bool $canonical=false)

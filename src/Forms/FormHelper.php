@@ -15,7 +15,7 @@ class FormHelper extends AbstractHelper
                 continue;
             }
             $class = $opt['class'];
-            $field = new $class($opt['label']);
+            $field = new $class($opt['label'], null, null, $this->cms);
             if (@$opt['required']) {
                 $field->required(true);
             }
@@ -57,6 +57,7 @@ class FormHelper extends AbstractHelper
             $this->cms->helper('lang')->string('forms.edit_title', ['type'=>$noun['dso.type']]),
             'edit-'.$noun['dso.id']
         );
+        $form->cms($this->cms);
         $this->mapNoun(
             $noun,
             $form,
@@ -69,6 +70,7 @@ class FormHelper extends AbstractHelper
     {
         $noun = $this->cms->factory()->create(['dso.type'=>$type]);
         $form = new Form('', 'add-'.$type);
+        $form->cms($this->cms);
         $this->mapNoun(
             $noun,
             $form,

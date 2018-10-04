@@ -106,3 +106,14 @@
 .Form .Button.Submit:active {
   background: #00C853;
 }
+
+.Form .Container.class-Content .FieldWrapper label {
+  display:none;
+}
+
+.Form .Container.class-Content textarea {
+  box-sizing:border-box;
+  display:block;
+  width:100%;
+  height:25em;
+}
