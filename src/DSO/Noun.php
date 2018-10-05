@@ -72,18 +72,6 @@ class Noun extends DSO implements NounInterface
         return $this->name($verb);
     }
 
-    public function body()
-    {
-        if ($this->get('digraph.body.text')) {
-            $text = $this->factory->cms()->helper('filters')->filterPreset(
-                $this->get('digraph.body.text'),
-                $this->get('digraph.body.filter')
-            );
-            return $text;
-        }
-        return '[no body content found]';
-    }
-
     public function url(string $verb=null, array $args=null, bool $canonical=false)
     {
         if (!$verb) {

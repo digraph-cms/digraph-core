@@ -81,6 +81,15 @@
   font-weight: bold;
 }
 
+.Form .Field.class-Checkbox {
+  vertical-align: middle;
+}
+
+.Form .Field.class-Checkbox+label {
+  display: inline-block;
+  vartical-align: middle;
+}
+
 .Form .Button:hover {
   background: #2196F3;
   box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.5);
@@ -107,13 +116,13 @@
   background: #00C853;
 }
 
-.Form .Container.class-Content .FieldWrapper label {
-  display:none;
+.Form .Container.class-Content .FieldWrapper-class-ContentFilter label {
+  display: none;
 }
 
 .Form .Container.class-Content textarea {
-  box-sizing:border-box;
-  display:block;
-  width:100%;
-  height:25em;
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  height: 25em;
 }

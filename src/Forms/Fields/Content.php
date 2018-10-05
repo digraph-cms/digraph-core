@@ -5,6 +5,7 @@ namespace Digraph\Forms\Fields;
 use Formward\Fields\Container;
 use Formward\FieldInterface;
 use Digraph\CMS;
+use Formward\Fields\Checkbox;
 
 class Content extends Container
 {
@@ -34,5 +35,10 @@ class Content extends Container
             $options[$key] = $name;
         }
         $this['filter']->options($options);
+        $this['filter']->required(true);
+        //options for enabling/disabling digraph tag filters
+        $this['links'] = new Checkbox('Enable Digraph link tags');
+        $this['embeds'] = new Checkbox('Enable Digraph embed tags');
+        $this['templates'] = new Checkbox('Enable Digraph template tags');
     }
 }

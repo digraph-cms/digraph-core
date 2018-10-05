@@ -8,6 +8,21 @@ class FilterHelper extends AbstractHelper
 {
     protected $filters = [];
 
+    public function filterContentField(array $content) : string
+    {
+        $text = $this->filterPreset($content['text'], @$content['filter']);
+        if (@$content['links']) {
+            $text = $this->links($text);
+        }
+        if (@$content['embeds']) {
+            $text = $this->embeds($text);
+        }
+        if (@$content['templates']) {
+            $text = $this->templates($text);
+        }
+        return $text;
+    }
+
     public function &filter(string $name, FilterInterface &$set = null) : ?FilterInterface
     {
         if (!isset($this->filters[$name])) {
@@ -18,6 +33,21 @@ class FilterHelper extends AbstractHelper
             }
         }
         return @$this->filters[$name];
+    }
+
+    public function links(string $text) : string
+    {
+        return $this->filter('digraph_links')->filter($text);
+    }
+
+    public function embeds(string $text) : string
+    {
+        return $this->filter('digraph_embeds')->filter($text);
+    }
+
+    public function templates(string $text) : string
+    {
+        return $this->filter('digraph_templates')->filter($text);
     }
 
     public function filterPreset(string $text, string $name = null) : string

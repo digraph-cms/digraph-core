@@ -1,3 +1,3 @@
 <?php
 $noun = $this->package->noun();
-echo $noun->body();
+echo $this->helper('filters')->filterContentField($noun['digraph.body']);
