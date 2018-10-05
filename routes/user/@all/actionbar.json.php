@@ -8,10 +8,6 @@ if (!$this->helper('users')->id()) {
     return;
 }
 
-//not cacheable for signed-in users, so that actions are unique to each user
-$package['response.cacheable'] = false;
-$package['response.ttl'] = 30;
-
 //build list of links
 $links = $package->cms()->helper('actions')->get($package['url.args.id']);
 

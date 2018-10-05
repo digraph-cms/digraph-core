@@ -1,4 +1,3 @@
-/*{% if config.actions.enabledforguests or cms.helper('users').id() %}*/
 /**
  * Actions are loaded from a JSON file, by scanning the page for objects with
  * the CSS class digraph-actionbar
@@ -12,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
   var actionbars = document.getElementsByClassName('digraph-actionbar');
   for (var i = 0; i < actionbars.length; i++) {
     let actionbar = actionbars[i];
-    fetch('{{config.url.base}}user/actionbar.json?id=' + actionbar.getAttribute('data-id') + '&u={{digraph_media_token}}')
+    fetch('{{config.url.base}}user/actionbar.json?id=' + actionbar.getAttribute('data-id') + '&sid=' + digraph.user.sid)
       //turn into json
       .then(function(response) {
         return response.json();
@@ -26,4 +25,3 @@ document.addEventListener("DOMContentLoaded", function(event) {
       });
   }
 });
-/*{% endif %}*/

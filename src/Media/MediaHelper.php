@@ -177,6 +177,6 @@ class MediaHelper extends AbstractHelper
 
     protected function fields()
     {
-        return ['digraph_media_token'=>md5($this->cms->helper('users')->id())];
+        return [];
     }
 }

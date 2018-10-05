@@ -142,7 +142,9 @@ templates:
       layout:                digraph/hypersemantic/layout-1col.css
   # js files are included at either the head or foot of the page
   js:
-    head:                    []
+    head:
+      digraph_obj:           ${url.base}digraph/init.js
+      digraph_user:          ${url.base}user/user.js
     foot:
       digraph_core:          ${url.base}digraph/core.js
   # js bundles can be included the same way as css bundles

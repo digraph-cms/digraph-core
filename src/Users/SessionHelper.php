@@ -14,11 +14,15 @@ class SessionHelper extends AbstractHelper
         return $this->session->userID($id);
     }
 
+    public function userSID(string $id = null) : ?string
+    {
+        return $this->session->userSID($id);
+    }
+
     public function deauthorize()
     {
         $this->session->deauthorize();
     }
-
 
     public function __construct(CMS &$cms)
     {
