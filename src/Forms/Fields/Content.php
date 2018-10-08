@@ -21,6 +21,22 @@ class Content extends Container
         return $this->cms;
     }
 
+    public function default($default = null)
+    {
+        if (!is_array($default)) {
+            return [];
+        }
+        return parent::default($default);
+    }
+
+    public function value($value = null)
+    {
+        if (!is_array($default)) {
+            return [];
+        }
+        return parent::value($value);
+    }
+
     public function __construct(string $label, string $name=null, FieldInterface $parent=null, CMS &$cms=null)
     {
         parent::__construct($label, $name, $parent);
