@@ -70,6 +70,12 @@
   vertical-align: middle;
 }
 
+.Form input {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+}
+
 .Form .Button {
   display: inline-block;
   font-size: 1.5rem;
@@ -82,12 +88,34 @@
 }
 
 .Form .Field.class-Checkbox {
-  vertical-align: middle;
+  display: none;
 }
 
 .Form .Field.class-Checkbox+label {
   display: inline-block;
   vartical-align: middle;
+  cursor: pointer;
+}
+
+.Form .Field.class-Checkbox+label:hover {
+  color: #06c;
+}
+
+.Form .Field.class-Checkbox+label:before {
+  font-family: 'Font Awesome 5 Free';
+  content: '\f0c8\00A0';
+  display: inline-block;
+  opacity: 0.25;
+}
+
+.Form .Field.class-Checkbox:checked+label {
+  color: #090;
+}
+
+.Form .Field.class-Checkbox:checked+label:before {
+  color: #090;
+  content: '\f14a\00A0';
+  opacity: 1;
 }
 
 .Form .Button:hover {
