@@ -23,6 +23,11 @@ class Content extends Container
 
     public function default($default = null)
     {
+        if (is_string($default)) {
+            $default = [
+                'text' => $default
+            ];
+        }
         if (!is_array($default)) {
             return [];
         }
@@ -31,7 +36,12 @@ class Content extends Container
 
     public function value($value = null)
     {
-        if (!is_array($default)) {
+        if (is_string($value)) {
+            $value = [
+                'text' => $value
+            ];
+        }
+        if (!is_array($value)) {
             return [];
         }
         return parent::value($value);
