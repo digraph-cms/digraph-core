@@ -28,9 +28,6 @@ class Content extends Container
                 'text' => $default
             ];
         }
-        if (!is_array($default)) {
-            return [];
-        }
         return parent::default($default);
     }
 
@@ -40,9 +37,6 @@ class Content extends Container
             $value = [
                 'text' => $value
             ];
-        }
-        if (!is_array($value)) {
-            return [];
         }
         return parent::value($value);
     }
