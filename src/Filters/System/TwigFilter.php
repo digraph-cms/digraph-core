@@ -2,15 +2,10 @@
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
 namespace Digraph\Filters\System;
 
-class TemplatesFilter extends AbstractSystemFilter
+class TwigFilter extends AbstractSystemFilter
 {
-    public function tag_template($primary, $text, $args)
+    public function tag_twig($primary, $text, $args)
     {
-        $t = $this->cms->helper('templates');
-        $template = 'tags/'.$text;
-        if (!$t->exists($template)) {
-            return "[template $template not found]";
-        }
         $fields = $args;
         $fields['noun'] = $this->cms->read($primary);
         if (!$fields['noun']) {

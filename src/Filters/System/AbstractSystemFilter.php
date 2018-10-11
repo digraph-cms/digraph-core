@@ -31,7 +31,6 @@ abstract class AbstractSystemFilter extends AbstractFilter
                     // var_dump($args);
                     //send to method
                     $out = $this->$method(
-                        @$matches[1],//tag
                         @$matches[3],//primary
                         @$matches[8],//text
                         $args

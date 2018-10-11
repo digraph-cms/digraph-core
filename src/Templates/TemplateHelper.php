@@ -24,8 +24,8 @@ class TemplateHelper extends AbstractHelper
         } else {
             return '['.$url.' not found]';
         }
-        //short circuit for error pages
-        //making the output of error pages predictable helps make munger caching
+        //short circuit for error pages, so they don't have any active-* classes
+        //making the output of error pages consistent helps make munger caching
         //as efficient as possible
         if ($this->package['response.status'] != 200) {
             return $link;
@@ -89,6 +89,13 @@ class TemplateHelper extends AbstractHelper
         return $this->render($id, $fields);
     }
 
+    public function exists($template = 'default')
+    {
+        $template .= '.twig';
+        $this->env();
+        return $this->loader->exists($template);
+    }
+
     public function render($template = 'default', $fields=array())
     {
         //set template name and get environment
@@ -107,6 +114,11 @@ class TemplateHelper extends AbstractHelper
                 $fields['package']->get('fields'),
                 null,
                 true
+            );
+            $fields->merge(
+                ['noun'=>$fields['package']->noun()],
+                null,
+                false
             );
         }
         //check that template exists, then render

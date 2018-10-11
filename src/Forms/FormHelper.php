@@ -45,8 +45,11 @@ class FormHelper extends AbstractHelper
 
     public function getMap(NounInterface &$noun, string $action = 'all')
     {
-        $map = new FlatArray($this->cms->config['forms.defaultmap']);
+        //load default map
+        $map = new FlatArray($this->cms->config['forms.maps.default']);
+        //load type map
         $map->merge($this->cms->config['forms.maps.'.$noun['dso.type'].'.all'], null, true);
+        //load type/action map
         $map->merge($this->cms->config['forms.maps'.$noun['dso.type'].'.'.$action], null, true);
         return $map->get();
     }

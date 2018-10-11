@@ -2,10 +2,16 @@
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
 namespace Digraph\Filters\System;
 
-/**
- * This abstract filter locates and processes Digraph system tags, and is
- * meant to be extended to build all the system tag filters.
- */
 class EmbedsFilter extends AbstractSystemFilter
 {
+    public function tag_embed($primary, $text, $args)
+    {
+        $noun = $this->cms->read($primary);
+        if (!$noun) {
+            return false;
+        }
+        if (method_exists($noun, 'tagEmbed')) {
+            return $noun->tagEmbed($args);
+        }
+    }
 }

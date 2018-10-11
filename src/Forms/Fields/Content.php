@@ -48,17 +48,31 @@ class Content extends Container
         $this['filter'] = new ContentFilter('Filter');
         //load filters from cms
         $this->cms = $cms;
+        $options = [];
         foreach ($this->cms->config['filters.presets'] as $key => $value) {
-            if (!($name = $this->cms->config['filters.names.'.$key])) {
-                $name = $key;
+            if ($this->cms->helper('permissions')->check('preset/'.$key, 'filters')) {
+                if (!($name = $this->cms->config['filters.names.'.$key])) {
+                    $name = $key;
+                }
+                $options[$key] = $name;
             }
-            $options[$key] = $name;
         }
         $this['filter']->options($options);
         $this['filter']->required(true);
-        //options for enabling/disabling digraph tag filters
-        $this['links'] = new Checkbox('Enable Digraph link tags');
-        $this['embeds'] = new Checkbox('Enable Digraph embed tags');
-        $this['templates'] = new Checkbox('Enable Digraph template tags');
+        if (count($options) == 1) {
+            $this['filter']->addClass('hidden');
+        }
+        //options for enabling/disabling extra filters
+        $extrasAllowed = false;
+        $extras = new Container('Extra filters');
+        foreach ($this->cms->config['filters.extras'] as $name => $label) {
+            if ($this->cms->helper('permissions')->check('extra/'.$name, 'filters')) {
+                $extras[$name] = new Checkbox($label);
+                $extrasAllowed = true;
+            }
+        }
+        if ($extrasAllowed) {
+            $this['extra'] = $extras;
+        }
     }
 }

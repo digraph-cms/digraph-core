@@ -2,19 +2,19 @@
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
 namespace Digraph\Filters\System;
 
-/**
- * This abstract filter locates and processes Digraph system tags, and is
- * meant to be extended to build all the system tag filters.
- */
 class LinksFilter extends AbstractSystemFilter
 {
-    public function tag_link($tag, $primary, $text, $args)
+    public function tag_link($primary, $text, $args)
     {
-        $url = $this->cms->helper('urls')->parse($primary);
-        if (!$url) {
+        $noun = $this->cms->read($primary);
+        if (!$noun) {
             return false;
         }
-        $link = $url->html();
+        if (method_exists($noun, 'tagLink')) {
+            $link = $noun->tagLink($args);
+        } else {
+            $link = $noun->url(@$args['verb'])->html();
+        }
         if ($text) {
             $link->content = $text;
         }

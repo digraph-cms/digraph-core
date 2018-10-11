@@ -21,6 +21,7 @@ actions:
       010-edit:              !noun/edit
       020-delete:            !noun/delete
       100-add-page:          !noun/add?type=page
+      100-add-link:          !noun/add?type=link
   common:
     '*':                     []
 
@@ -35,6 +36,11 @@ filters:
     markdown-unsafe:         Markdown (unsafe)
     html-safe:               Filtered HTML
     html-unsafe:             Raw HTML (unsafe)
+  extras:
+    digraph_links:           Digraph link tags
+    digraph_embeds:          Digraph embed tags
+    digraph_templates:       Digraph template tags
+    digraph_twig:            Digraph twig tags
   presets:
     default:
       - [preset,markdown-safe]
@@ -51,7 +57,6 @@ filters:
     html-safe:
       - [class,html]
     html-unsafe:             []
-
   classes:
     striphtml:               Digraph\Filters\HTMLFilter
     markdown:                Digraph\Filters\MarkdownFilter
@@ -60,14 +65,23 @@ filters:
     digraph_links:           Digraph\Filters\System\LinksFilter
     digraph_embeds:          Digraph\Filters\System\EmbedsFilter
     digraph_templates:       Digraph\Filters\System\TemplatesFilter
+    digraph_twig:            Digraph\Filters\System\TwigFilter
 
 permissions:
+  filters:
+    '*':
+      - deny all
+      - allow group webmaster, root
+    'preset/default':
+      - allow all
   action:
     '*':
       - deny all
+      - allow group root
   url:
     '*':
       - deny all
+      - allow group root
     '*/display':
       - allow all
     'user/*':
@@ -100,7 +114,8 @@ types:
     user:                    \Digraph\Users\
     default:                 \Destructr\DSO
   content:
-    page:                    ${types.content.default}
+    page:                    \Digraph\Nouns\Page
+    link:                    \Digraph\Nouns\Link
     default:                 \Digraph\DSO\Noun
   users:
     simple:                  \Digraph\Users\Managers\Simple\SimpleUser
@@ -275,24 +290,35 @@ helpers:
     users:                   Digraph\Users\UserHelper
 
 forms:
-  defaultmap:
-    digraph_name:
-      field:                 digraph.name
-      label:                 ${lang.strings.forms.digraph_name_label}
-      class:                 Formward\Fields\Input
-      required:              true
-    digraph_title:
-      field:                 digraph.title
-      label:                 ${lang.strings.forms.digraph_title_label}
-      class:                 Formward\Fields\Input
-    digraph_slug:
-      field:                 digraph.slug
-      label:                 ${lang.strings.forms.slug_label}
-      class:                 Digraph\Forms\Fields\Slug
-    digraph_body:
-      field:                 digraph.body
-      label:                 ${lang.strings.forms.digraph_body_label}
-      class:                 Digraph\Forms\Fields\Content
+  maps:
+    default:
+      digraph_name:
+        field:               digraph.name
+        label:               ${lang.strings.forms.digraph_name_label}
+        class:               Formward\Fields\Input
+        required:            true
+      digraph_title:
+        field:               digraph.title
+        label:               ${lang.strings.forms.digraph_title_label}
+        class:               Formward\Fields\Input
+      digraph_slug:
+        field:               digraph.slug
+        label:               ${lang.strings.forms.slug_label}
+        class:               Digraph\Forms\Fields\Slug
+      digraph_body:
+        field:               digraph.body
+        label:               ${lang.strings.forms.digraph_body_label}
+        class:               Digraph\Forms\Fields\Content
+    link:
+      all:
+        digraph_title:       false
+        digraph_body:
+          label:             ${lang.strings.forms.digraph_description_label}
+        url:
+          field:             url
+          label:             ${lang.strings.forms.url_label}
+          class:             Formward\Fields\Url
+          required:          true
 
 defaultnoun:
   dso:
