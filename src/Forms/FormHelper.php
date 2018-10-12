@@ -16,6 +16,9 @@ class FormHelper extends AbstractHelper
             }
             $class = $opt['class'];
             $field = new $class($opt['label'], null, null, $this->cms);
+            if (method_exists($field, 'dsoNoun')) {
+                $field->dsoNoun($noun);
+            }
             if (@$opt['required']) {
                 $field->required(true);
             }
@@ -69,9 +72,12 @@ class FormHelper extends AbstractHelper
         return $form;
     }
 
-    public function addNoun(string $type) : Form
+    public function addNoun(string $type, string $parent = null) : Form
     {
         $noun = $this->cms->factory()->create(['dso.type'=>$type]);
+        if ($parent) {
+            $noun->addParent($parent);
+        }
         $form = new Form('', 'add-'.$type);
         $form->cms($this->cms);
         $this->mapNoun(

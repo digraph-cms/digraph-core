@@ -10,7 +10,7 @@ class FilterHelper extends AbstractHelper
 
     public function filterContentField(array $content) : string
     {
-        $text = $this->filterPreset($content['text'], @$content['filter']);
+        $text = $this->filterPreset(@$content['text'], @$content['filter']);
         if (@$content['extra']) {
             foreach ($content['extra'] as $name => $value) {
                 if ($value) {
@@ -48,8 +48,11 @@ class FilterHelper extends AbstractHelper
         return $this->filter('digraph_templates')->filter($text);
     }
 
-    public function filterPreset(string $text, string $name = null) : string
+    public function filterPreset(?string $text, string $name = null) : string
     {
+        if ($text === null) {
+            $text = '';
+        }
         if (!isset($this->cms->config['filters.presets.'.$name])) {
             $name = 'default';
         }
