@@ -11,7 +11,7 @@ class FilterHelper extends AbstractHelper
     public function filterContentField(array $content) : string
     {
         $text = $this->filterPreset($content['text'], @$content['filter']);
-        if ($content['extra']) {
+        if (@$content['extra']) {
             foreach ($content['extra'] as $name => $value) {
                 if ($value) {
                     $text = $this->filter($name)->filter($text);
@@ -21,7 +21,7 @@ class FilterHelper extends AbstractHelper
         return $text;
     }
 
-    public function &filter(string $name, FilterInterface &$set = null) : ?FilterInterface
+    public function filter(string $name, FilterInterface &$set = null) : ?FilterInterface
     {
         if (!isset($this->filters[$name])) {
             if (isset($this->cms->config['filters.classes.'.$name])) {
