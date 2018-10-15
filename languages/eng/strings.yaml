@@ -22,7 +22,7 @@ forms:
   digraph_name_label:          Display name
   digraph_title_label:         Display title
   edit_title:                  Edit !type
-  slug_label:                  Custom URL
+  slug_label:                  Url
   signup_email_taken:          That email address is already registered.
   url_label:                   URL
 notifications:

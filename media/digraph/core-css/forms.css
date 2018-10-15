@@ -11,6 +11,12 @@
   background: #fff;
 }
 
+.Form .tips {
+  font-size: 0.75em;
+  line-height: 1.2em;
+  opacity: 0.75;
+}
+
 .Form .validation-messages {
   /* background: #c33;
   padding: 0 0.5rem;
@@ -156,5 +162,34 @@
 }
 
 .Form .FieldWrapper-hidden {
-  display:none;
+  display: none !important;
+}
+
+.Form .Container.class-Slug {
+  padding-bottom: 0.5rem;
+}
+
+.Form .Container.class-Slug>label {
+  margin-bottom: 0;
+}
+
+.Form .Container.class-Slug .FieldWrapper {
+  display: inline;
+  margin-bottom: 0;
+}
+
+.Form .Container.class-Slug .FieldWrapper-class-Input label {
+  display: none;
+}
+
+.Form .Container.class-Slug input.class-Input {
+  display: inline-block;
+  width: auto;
+  max-width: 20em;
+  vertical-align: middle;
+}
+
+.Form .Container.class-Slug .FieldWrapper-class-Checkbox {
+  display: inline-block;
+  vertical-align: middle;
 }

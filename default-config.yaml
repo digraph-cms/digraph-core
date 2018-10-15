@@ -37,10 +37,10 @@ filters:
     html-safe:               Filtered HTML
     html-unsafe:             Raw HTML (unsafe)
   extras:
-    digraph_links:           Digraph link tags
-    digraph_embeds:          Digraph embed tags
-    digraph_templates:       Digraph template tags
-    digraph_twig:            Digraph twig tags
+    digraph_links:           '[link] tags'
+    digraph_embeds:          '[embed] tags'
+    digraph_templates:       '[template] tags'
+    digraph_twig:            '[twig] tags'
   presets:
     default:
       - [preset,markdown-safe]

@@ -17,8 +17,8 @@ class Slug extends Container
     public function __construct(string $label, string $name=null, FieldInterface $parent=null)
     {
         parent::__construct($label, $name, $parent);
-        $this['enable'] = new Checkbox('Enable custom URL');
         $this['parent_slug'] = new Checkbox('[parent]/');
+        $this['parent_slug']->addTip('Parent slug');
         $this['parent_slug']->default(true);
         $this['my_slug'] = new Input('');
         //add a validator to trim slugs and ensure they're valid
@@ -42,7 +42,7 @@ class Slug extends Container
 
     public function dsoValue()
     {
-        if (!$this['enable']->value()) {
+        if (!$this['my_slug']->value()) {
             return null;
         }
         $slug = $this['parent_slug']->value()?$this['parent_slug']->label():'';
@@ -54,6 +54,9 @@ class Slug extends Container
     public function dsoNoun(&$noun)
     {
         $this->noun = $noun;
+        //set up my slug
+        $this['my_slug']->default($noun['dso.id']);
+        //set up parent slug
         $url = $noun->parentUrl();
         $this['parent_slug']->label($url['noun'].'/');
         if ($this['parent_slug']->label() == 'home/' || $this['parent_slug']->label() == '/') {
@@ -66,7 +69,6 @@ class Slug extends Container
     {
         if (is_string($value)) {
             if ($value) {
-                $this['enable']->value(true);
                 if ($this['parent_slug']->label() && strpos($value, $this['parent_slug']->label()) === 0) {
                     $this['parent_slug']->default(true);
                     $this['my_slug']->default(substr($value, strlen($this['parent_slug']->label())));
@@ -78,6 +80,11 @@ class Slug extends Container
         } else {
             parent::default($value);
         }
+        if (!$this['parent_slug']->label()) {
+            $this['parent_slug']->addClass('hidden');
+        } else {
+            $this['parent_slug']->removeClass('hidden');
+        }
         return parent::default();
     }
 
@@ -85,12 +92,26 @@ class Slug extends Container
     public function value($value = null)
     {
         if (is_string($value)) {
+            if ($value) {
+                if ($this['parent_slug']->label() && strpos($value, $this['parent_slug']->label()) === 0) {
+                    $this['parent_slug']->value(true);
+                    $this['my_slug']->value(substr($value, strlen($this['parent_slug']->label())));
+                } else {
+                    $this['parent_slug']->value(false);
+                    $this['my_slug']->value($value);
+                }
+            }
         } else {
             parent::value($value);
         }
         $this['my_slug']->value(
             trim($this['my_slug']->value(), "\/ \t\n\r\0\x0B")
         );
+        if (!$this['parent_slug']->label()) {
+            $this['parent_slug']->addClass('hidden');
+        } else {
+            $this['parent_slug']->removeClass('hidden');
+        }
         return parent::value();
     }
 }
