@@ -18,7 +18,6 @@ class Slug extends Container
     {
         parent::__construct($label, $name, $parent);
         $this['parent_slug'] = new Checkbox('[parent]/');
-        $this['parent_slug']->addTip('Parent slug');
         $this['parent_slug']->default(true);
         $this['my_slug'] = new Input('');
         //add a validator to trim slugs and ensure they're valid

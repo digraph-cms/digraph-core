@@ -56,7 +56,6 @@ class Locate extends AbstractMunger
                 //single result, just set noun to it
                 list($noun, $verb) = array_pop($opts);
                 $package->noun($noun);
-                $package['response.canonicalurl'] = $package->noun()->url($verb, $url['args'], true)->string();
                 //make sure URL has the correct trailing slashes
                 $package->url($package->noun()->url($verb, $url['args']));
             } else {

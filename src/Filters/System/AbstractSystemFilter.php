@@ -43,7 +43,7 @@ abstract class AbstractSystemFilter extends AbstractFilter
         return $text;
     }
 
-    protected function regex($tag)
+    protected function regex($tag, $multiline=false)
     {
         $regex = '';
         $regex .= '\[('.$tag.')';//open opening tag
@@ -52,6 +52,6 @@ abstract class AbstractSystemFilter extends AbstractFilter
         $regex .= ' *\]';//close opening tag
         $regex .= '((.*?)';//content
         $regex .= '\[\/'.$tag.'\])?';//closing tag
-        return '/'.$regex.'/i';
+        return '/'.$regex.'/i'.($multiline?'ms':'');
     }
 }

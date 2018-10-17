@@ -175,7 +175,7 @@
 
 .Form .Container.class-Slug .FieldWrapper {
   display: inline;
-  margin-bottom: 0;
+  margin: 0;
 }
 
 .Form .Container.class-Slug .FieldWrapper-class-Input label {
