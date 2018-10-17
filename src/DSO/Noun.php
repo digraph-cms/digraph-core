@@ -72,6 +72,15 @@ class Noun extends DSO implements NounInterface
         return $this->name($verb);
     }
 
+    public function link(string $text=null, string $verb=null, array $args=null, bool $canonical=false)
+    {
+        if (method_exists($this, 'tagLink')) {
+            $args = [];
+            return $this->tagLink($args);
+        }
+        return $this->url($verb, $args, $canonical)->html($text);
+    }
+
     public function url(string $verb=null, array $args=null, bool $canonical=false)
     {
         if (!$verb) {

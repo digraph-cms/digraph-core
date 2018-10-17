@@ -30,8 +30,12 @@ abstract class AbstractSystemFilter extends AbstractFilter
                     }
                     // var_dump($args);
                     //send to method
+                    $context = @$matches[3];
+                    if (!$context) {
+                        $context = $this->context;
+                    }
                     $out = $this->$method(
-                        @$matches[3],//primary
+                        $context,//context
                         @$matches[8],//text
                         $args
                     );
@@ -47,7 +51,7 @@ abstract class AbstractSystemFilter extends AbstractFilter
     {
         $regex = '';
         $regex .= '\[('.$tag.')';//open opening tag
-        $regex .= '(:([^\] ]+))?';//primary argument
+        $regex .= '(:([^\] ]+))?';//context argument
         $regex .= '(( [a-z0-9\-_]+(=.+?)?)*)';//named args
         $regex .= ' *\]';//close opening tag
         $regex .= '((.*?)';//content

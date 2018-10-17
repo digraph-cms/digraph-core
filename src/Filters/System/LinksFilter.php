@@ -4,9 +4,9 @@ namespace Digraph\Filters\System;
 
 class LinksFilter extends AbstractSystemFilter
 {
-    public function tag_link($primary, $text, $args)
+    public function tag_link($context, $text, $args)
     {
-        $noun = $this->cms->read($primary);
+        $noun = $this->cms->read($context);
         if (!$noun) {
             return false;
         }

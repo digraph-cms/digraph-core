@@ -7,9 +7,11 @@ use Digraph\Helpers\AbstractHelper;
 class FilterHelper extends AbstractHelper
 {
     protected $filters = [];
+    protected $context = null;
 
-    public function filterContentField(array $content) : string
+    public function filterContentField(array $content, string $context) : string
     {
+        $this->context($context);
         $text = $this->filterPreset(@$content['text'], @$content['filter']);
         if (@$content['extra']) {
             foreach ($content['extra'] as $name => $value) {
@@ -21,6 +23,14 @@ class FilterHelper extends AbstractHelper
         return $text;
     }
 
+    public function context(string $context = null) : ?string
+    {
+        if ($context !== null) {
+            $this->context = $context;
+        }
+        return $this->context;
+    }
+
     public function filter(string $name, FilterInterface &$set = null) : ?FilterInterface
     {
         if (!isset($this->filters[$name])) {
@@ -30,7 +40,11 @@ class FilterHelper extends AbstractHelper
                 $this->filters[$name] = new $class($this->cms);
             }
         }
-        return @$this->filters[$name];
+        if (!isset($this->filters[$name])) {
+            return null;
+        }
+        $this->filters[$name]->context($this->context);
+        return $this->filters[$name];
     }
 
     public function links(string $text) : string
