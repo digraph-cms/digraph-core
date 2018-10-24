@@ -19,7 +19,10 @@ class UserMunger extends AbstractMunger
                 $package['request.namespace'] = 'auth/'.($users->id()?'true':'false');
                 return;
             case 'id':
-                $package['request.namespace'] = 'id/'.$users->id();
+                $package['request.namespace'] = 'id/'.$users->userIdentifier();
+                return;
+            case 'groups':
+                $package['request.namespace'] = 'groups/'.implode(',', $users->groups());
                 return;
         }
     }

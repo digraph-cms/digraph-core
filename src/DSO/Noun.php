@@ -14,6 +14,32 @@ class Noun extends DSO implements NounInterface
         $this->resetChanges();
     }
 
+    public function isPublished()
+    {
+        //no information
+        if (!$this['digraph.published']) {
+            return true;
+        }
+        //forced unpublished
+        if ($this['digraph.published.force'] == 'unpublished') {
+            return false;
+        }
+        //forced published
+        if ($this['digraph.published.force'] == 'published') {
+            return true;
+        }
+        //check start date
+        if ($this['digraph.published.start'] && time() < $this['digraph.published.start']) {
+            return false;
+        }
+        //check end date
+        if ($this['digraph.published.end'] && time() >= $this['digraph.published.end']) {
+            return false;
+        }
+        //default is to return true
+        return true;
+    }
+
     public function parentUrl($verb='display')
     {
         if ($verb != 'display') {

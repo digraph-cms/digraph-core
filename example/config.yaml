@@ -1,56 +1,58 @@
 # url settings
 url:
   # // is usually fine, but you can specify either http:// or https:// if you like
-  protocol:      //
+  protocol:       //
   # fully qualified domain name of server
-  domain:        localhost
+  domain:         localhost
   # path to Digraph installation should have leading/trailing slashes
-  path:          /digraph-core/example/
+  path:           /digraph-core/example/
+
+timezone:         America/Denver
 
 # Default contents of packages
 package:
   defaults:
     fields:
-      site_name: Digraph example site
+      site_name:  Digraph example site
 
 # Language settings
 lang:
   # default fallback language is eng, additional languages can be added, and
   # languages later in lang.load will take precedence.
   load:
-    preferred:   eng
+    preferred:    eng
 
 # Navigation settings
 # navigation:
 #   menus:
-#     main:      home
+#     main:       home
 
 # Generally if you want to move your storage/cache directories you should keep
 # them somehow relative to paths.site
 paths:
-  storage:       ${paths.site}/storage
+  storage:        ${paths.site}/storage
 
 # Template helper options
 templates:
   # Additional paths can be added here, they will be used in the reverse of the
   # order they're listed here
   paths:
-    site:        ${paths.site}/templates
+    site:         ${paths.site}/templates
   twigconfig:
-    cache:       ${paths.cache}/twig
+    cache:        ${paths.cache}/twig
 
 # Configure module directories for site and environment-specific modules (this
 # is useful for things like debugging modules during development)
 modules:
   sources:
-    200-site:    dir ${paths.site}/modules
-    300-env:     dir ${paths.site}/modules_env
+    200-site:     dir ${paths.site}/modules
+    300-env:      dir ${paths.site}/modules_env
 
 # configure cache settings
 cache:
   # factorycache caches the results of storage queries
   factorycache:
-    threshold:   10 #ms duration a query must take to be cached
+    threshold:    10 #ms duration a query must take to be cached
   # mungercache caches the results of munging layers
   mungercache:
-    threshold:   10 #ms duration a munger must take to be cached
+    threshold:    10 #ms duration a munger must take to be cached

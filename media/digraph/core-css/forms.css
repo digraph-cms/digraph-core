@@ -161,10 +161,16 @@
   height: 25em;
 }
 
-.Form .FieldWrapper-hidden {
+.Form .FieldWrapper-hidden,
+.Form .FieldWrapper.hidden,
+.Form .Container-hidden,
+.Form .Container.hidden {
   display: none !important;
 }
 
+/*
+Slug fields
+ */
 .Form .Container.class-Slug {
   padding-bottom: 0.5rem;
 }
@@ -192,4 +198,41 @@
 .Form .Container.class-Slug .FieldWrapper-class-Checkbox {
   display: inline-block;
   vertical-align: middle;
+}
+
+/*
+DateAndTime fields
+ */
+.Form .Container.class-DateAndTime {
+  border: 0;
+  padding: 0;
+}
+
+.Form .Container.class-DateAndTime>label {
+  margin-bottom: 0;
+}
+
+.Form .Container.class-DateAndTime input {
+  width: auto;
+  display: inline-block;
+}
+
+/*
+Publication settings field
+ */
+.Form .Container.class-Published>label {
+  display: none;
+}
+
+.Form .Container.class-Published {
+  padding-bottom: 0.5rem;
+}
+
+.Form .Container.class-Published>.FieldWrapper {
+  margin-bottom: 0;
+}
+
+.Form .Container.class-Published>.Container {
+  display: inline-block;
+  margin: 0;
 }

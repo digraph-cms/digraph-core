@@ -54,7 +54,9 @@ class FormHelper extends AbstractHelper
         $map->merge($this->cms->config['forms.maps.'.$noun['dso.type'].'.all'], null, true);
         //load type/action map
         $map->merge($this->cms->config['forms.maps'.$noun['dso.type'].'.'.$action], null, true);
-        return $map->get();
+        $map = $map->get();
+        ksort($map);
+        return $map;
     }
 
     public function editNoun(NounInterface &$noun) : Form
