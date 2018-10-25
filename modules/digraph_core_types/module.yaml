@@ -1,0 +1,29 @@
+# This module holds the core system content types and their configurations
+name: Digraph Core Types
+
+actions:
+  proper:
+    '*':
+      100-add-page: !noun/add?type=page
+
+types:
+  content:
+    page: \Digraph\Modules\digraph_core_types\Page
+    link: \Digraph\Modules\digraph_core_types\Link
+
+forms:
+  maps:
+    link:
+      all:
+        digraph_title: false
+        digraph_body:
+          label: ${lang.strings.forms.digraph_description_label}
+        url:
+          field: url
+          label: ${lang.strings.forms.url_label}
+          class: Formward\Fields\Url
+          required: true
+
+defaultnoun:
+  dso:
+    type: page

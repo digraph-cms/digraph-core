@@ -1,6 +1,6 @@
 <?php
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
-namespace Digraph\Nouns;
+namespace Digraph\Modules\digraph_core_types;
 
 use Digraph\DSO\Noun;
 use HtmlObjectStrings\A;
