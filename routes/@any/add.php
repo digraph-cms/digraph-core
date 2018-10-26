@@ -21,6 +21,9 @@ $form->handle(function (&$form) use ($package,$type) {
     }
 });
 if ($form->handle()) {
+    $cms->helper('notifications')->flashConfirmation(
+        $cms->helper('strings')->string('notifications.add.confirmation', ['name'=>$form->object->name()])
+    );
     $package->redirect($form->object->url()->string());
 }
 

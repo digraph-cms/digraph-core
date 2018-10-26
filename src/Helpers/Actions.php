@@ -6,6 +6,27 @@ use Digraph\Helpers\AbstractHelper;
 
 class Actions extends AbstractHelper
 {
+    public function addable($search)
+    {
+        $types = [];
+        $rules = $this->cms->config['actions.addable'];
+        // loop through rules, the first key is a type that can be added,
+        // and the following keys are the types the first key can be added under
+        foreach ($rules as $type => $typeRules) {
+            $allowed = false;
+            foreach ($typeRules as $rule => $value) {
+                if ($rule == '*' || $rule == $search) {
+                    $allowed = $value;
+                }
+            }
+            if ($allowed) {
+                $types[] = $type;
+            }
+        }
+        //return results
+        return $types;
+    }
+
     public function get($noun)
     {
         $links = [];
@@ -16,6 +37,7 @@ class Actions extends AbstractHelper
             $proper = true;
             $rules = $this->cms->config['actions.proper'];
             $vars['type'] = $noun = $object['dso.type'];
+            $vars['id'] = $object['dso.id'];
         } else {
             $proper = false;
             $rules = $this->cms->config['actions.common'];

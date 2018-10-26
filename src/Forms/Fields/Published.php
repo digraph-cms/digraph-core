@@ -13,15 +13,24 @@ class Published extends Container
     public function __construct(string $label, string $name=null, FieldInterface $parent=null)
     {
         parent::__construct($label, $name, $parent);
-        $this['mode'] = new Select('Publish mode');
+        $this['mode'] = new Select('publish');
         $this['mode']->required(true);
         $this['mode']->options([
-            'on' => 'Published',
-            'off' => 'Unpublished',
-            'date' => 'By date'
+            'on' => 'on',
+            'off' => 'off',
+            'date' => 'date'
         ]);
-        $this['start'] = new DateAndTime('Start date');
-        $this['end'] = new DateAndTime('End date');
+        $this['start'] = new DateAndTime('start');
+        $this['end'] = new DateAndTime('end');
+    }
+
+    public function cms(&$cms)
+    {
+        $s = $cms->helper('strings');
+        $this['mode']->label($s->string('forms.digraph_published.label'));
+        $this['mode']->options($cms->config['strings.forms.digraph_published.options']);
+        $this['start']->label($s->string('forms.digraph_published.label_start'));
+        $this['end']->label($s->string('forms.digraph_published.label_end'));
     }
 
     public function dsoValue()

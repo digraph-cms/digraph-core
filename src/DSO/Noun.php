@@ -75,11 +75,29 @@ class Noun extends DSO implements NounInterface
         return $parents;
     }
 
+    public function parent()
+    {
+        if (!$this['digraph.parents']) {
+            return null;
+        }
+        return $this->factory->cms()->read($this['digraph.parents.0']);
+    }
+
     public function children()
     {
         $search = $this->factory->search();
-        $search->where('${digraph.parents_string} LIKE :pattern');
-        return $search->execute([':pattern'=>'%|'.$this['dso.id'].'|%']);
+        $exclusions = '';
+        $params = [':pattern'=>'%|'.$this['dso.id'].'|%'];
+        $i = 0;
+        foreach ($this->factory->cms()->config['excluded_child_types'] as $type => $value) {
+            if ($value) {
+                $i++;
+                $exclusions .= ' AND ${dso.type} <> :type_'.$i;
+                $params[':type_'.$i] = $type;
+            }
+        }
+        $search->where('${digraph.parents_string} LIKE :pattern'.$exclusions);
+        return $search->execute($params);
     }
 
     public function name($verb=null)

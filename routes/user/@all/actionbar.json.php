@@ -32,8 +32,20 @@ $links = array_map(
     $links
 );
 
-//sort links
-ksort($links);
+//set up addables and addable_url if object exists
+$addable = [];
+$type = null;
+$addable_url = null;
+if ($object = $package->cms()->read($package['url.args.id'])) {
+    $type = $object['dso.type'];
+    $addable = $package->cms()->helper('actions')->addable($object['dso.type']);
+    $addable_url = $object->url('add', [], true)->string();
+}
 
 //include object title
-echo json_encode(array_values($links));
+echo json_encode([
+    'links' => array_values($links),
+    'addable' => $addable,
+    'addable_url' => $addable_url,
+    'type' => $type
+]);

@@ -62,7 +62,7 @@ class FormHelper extends AbstractHelper
     public function editNoun(NounInterface &$noun) : Form
     {
         $form = new Form(
-            $this->cms->helper('lang')->string('forms.edit_title', ['type'=>$noun['dso.type']]),
+            $this->cms->helper('strings')->string('forms.edit_title', ['type'=>$noun['dso.type']]),
             'edit-'.$noun['dso.id']
         );
         $form->cms($this->cms);

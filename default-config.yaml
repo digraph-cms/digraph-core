@@ -1,47 +1,39 @@
+send-content-length-header: true
+site_id: ${url.base}
+timezone: GMT-0
+
 # settings regarding urls
 urls:
   # aliases
   aliases: []
-  # rules for naming URLs
-  names:
-    # rules for noun/verb combinations with proper nouns
-    proper:
-      '*/*': !verb
-      '*/display': !name
-    # rules for noun/verb combinations with common nouns
-    common:
-      '*/*': !noun !verb
-
-timezone: GMT-0
-site_id: ${url.base}
 
 actions:
   enabledforguests: false
   proper:
     '*':
-      010-edit: !noun/edit
-      020-delete: !noun/delete
-    versioned:
-      100-add-version: !noun/add?type=version
+      edit: !id/edit
+      delete: !id/delete
   common:
     '*': []
 
 groups: []
 
+excluded_child_types: []
+
 filters:
   names:
-    default: Default (Markdown sanitized)
-    text-safe: Basic text sanitized
-    text-unsafe: Basic text (unsafe)
-    markdown-safe: Markdown sanitized
-    markdown-unsafe: Markdown (unsafe)
-    html-safe: Filtered HTML
-    html-unsafe: Raw HTML (unsafe)
+    default: ${strings.filters.default}
+    text-safe: ${strings.filters.text-safe}
+    text-unsafe: ${strings.filters.text-unsafe}
+    markdown-safe: ${strings.filters.markdown-safe}
+    markdown-unsafe: ${strings.filters.markdown-unsafe}
+    html-safe: ${strings.filters.html-safe}
+    html-unsafe: ${strings.filters.html-unsafe}
   extras:
-    digraph_links: '[link] tags'
-    digraph_embeds: '[embed] tags'
-    digraph_templates: '[template] tags'
-    digraph_twig: '[twig] tags'
+    digraph_links: ${strings.forms.digraph_content.extras.link_tag}
+    digraph_embeds: ${strings.forms.digraph_content.extras.embed_tag}
+    digraph_templates: ${strings.forms.digraph_content.extras.template_tag}
+    digraph_twig: ${strings.forms.digraph_content.extras.twig_tag}
   presets:
     default:
       - [preset,markdown-safe]
@@ -169,20 +161,7 @@ templates:
     digraph_core:
       core_notifications: digraph/notifications/notifications.js
       core_actionbar: digraph/actionbar/actionbar.js
-
-# Language settings
-lang:
-  # language settings are loaded after modules/config, so they can be overridden
-  # by either. They load in an order that makes later ones in this array take
-  # precedence. So sites can add to this array to load their own language files.
-  load:
-    fallback: eng
-    preferred: eng
-  # all language files are loaded from all language paths, so sites and modules
-  # with their own versions of a language file will supplement the core language
-  # files rather than replace them.
-  paths:
-    core: ${paths.core}/languages
+      core_forms: digraph/core-js/forms.js
 
 routing:
   paths:
@@ -272,12 +251,11 @@ mungers:
 helpers:
   initialized:
     modules: true
-    lang: true
   classes:
     actions: Digraph\Helpers\Actions
     filters: Digraph\Filters\FilterHelper
     forms: Digraph\Forms\FormHelper
-    lang: Digraph\Helpers\Languages
+    strings: Digraph\Helpers\Strings
     media: Digraph\Media\MediaHelper
     modules: Digraph\Modules\ModuleHelper
     navigation: Digraph\Templates\NavigationHelper
@@ -294,24 +272,24 @@ forms:
     default:
       000_digraph_name:
         field: digraph.name
-        label: ${lang.strings.forms.digraph_name_label}
+        label: ${strings.forms.digraph_name_label}
         class: Formward\Fields\Input
         required: true
       001_digraph_title:
         field: digraph.title
-        label: ${lang.strings.forms.digraph_title_label}
+        label: ${strings.forms.digraph_title_label}
         class: Formward\Fields\Input
       100_digraph_slug:
         field: digraph.slug
-        label: ${lang.strings.forms.slug_label}
+        label: ${strings.forms.slug_label}
         class: Digraph\Forms\Fields\Slug
       900_digraph_published:
         field: digraph.published
-        label: ${lang.strings.forms.published_label}
+        label: ${strings.forms.published_label}
         class: Digraph\Forms\Fields\Published
       500_digraph_body:
         field: digraph.body
-        label: ${lang.strings.forms.digraph_body_label}
+        label: ${strings.forms.digraph_body_label}
         class: Digraph\Forms\Fields\Content
 
 defaultnoun: []
@@ -383,5 +361,3 @@ bootstrap:
       class: \Digraph\Users\UserFactory
       driver: default
       table: digraph_users
-
-send-content-length-header: true

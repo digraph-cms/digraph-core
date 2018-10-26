@@ -20,6 +20,9 @@ $form->handle(function (&$form) use ($package,$noun) {
     }
 });
 if ($form->handle()) {
+    $cms->helper('notifications')->flashConfirmation(
+        $cms->helper('strings')->string('notifications.edit.confirmation', ['name'=>$form->object->name()])
+    );
     $package->redirect($form->object->url()->string());
 }
 

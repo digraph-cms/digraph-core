@@ -28,6 +28,11 @@ body>.digraph-actionbar {
   padding: 0 0.5em;
 }
 
+.digraph-actionbar .actionbar-adder {
+  margin: 0 1em;
+
+}
+
 .digraph-actionbar a:hover, .digraph-actionbar a[aria-selected="true"] {
   background: #fff;
   color: #1565C0 !important;

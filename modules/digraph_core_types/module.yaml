@@ -3,26 +3,65 @@ name: Digraph Core Types
 
 actions:
   proper:
-    '*':
-      100-add-page: !noun/add?type=page
+    versioned:
+      versions: !id/versions
+  addable:
+    page:
+      '*': true
+    link:
+      '*': true
+    versioned:
+      '*': true
+    version:
+      versioned: true
 
 types:
   content:
     page: \Digraph\Modules\digraph_core_types\Page
     link: \Digraph\Modules\digraph_core_types\Link
+    version: \Digraph\Modules\digraph_core_types\Version
+    versioned: \Digraph\Modules\digraph_core_types\Versioned
+
+excluded_child_types:
+  version: true
+
+templates:
+  jsbundles:
+    digraph_core:
+      core_links: digraph/core-js/links.js
+
+strings:
+  versioned:
+    no_versions: No current versions available
+  version:
+    notice: This page is the permanent URL of one specific version of "!parent_name." If you would like to view or link to the latest version of "!parent_name," you should visit <a href="!parent_url">!parent_url</a> instead.
+    orphaned: This !type is currently orphaned, it should have a versioned content type as its parent.
+  links:
+    explanation: Click the link to continue to this URL
+  forms:
+    links:
+      digraph_body_label: Link description
+      url_label: Link target Url
 
 forms:
   maps:
     link:
       all:
-        digraph_title: false
-        digraph_body:
-          label: ${lang.strings.forms.digraph_description_label}
-        url:
+        001_digraph_title: false
+        500_digraph_body:
+          label: ${strings.forms.links.digraph_body_label}
+        400_link_url:
           field: url
-          label: ${lang.strings.forms.url_label}
+          label: ${strings.forms.links.url_label}
           class: Formward\Fields\Url
           required: true
+    versioned:
+      all:
+        001_digraph_title: false
+        500_digraph_body: false
+    version:
+      all:
+        100_digraph_slug: false
 
 defaultnoun:
   dso:

@@ -1,0 +1,53 @@
+date:
+  format:
+    date: F j, Y
+    datetime: F j, Y, g:i a T
+notifications:
+  edit:
+    confirmation: Edited !name
+  add:
+    confirmation: Added !name
+forms:
+  digraph_body_label: Body content
+  digraph_name_label: Short display name
+  digraph_title_label: Long display title
+  edit_title: Edit !type
+  slug_label: Url slug
+  digraph_content:
+    label: Body content
+    label_text: Content
+    label_filter: Filter preset
+    label_extras: Extra standalone filters
+    extras:
+      link_tag: '[link] tags'
+      embed_tag: '[embed] tags'
+      template_tag: '[template] tags'
+      twig_tag: '[twig] tags'
+  digraph_published:
+    label: Publication settings
+    label_start: Start date
+    label_end: End date
+    options:
+      on: Published
+      off: Unpublished
+      date: Scheduled
+actionbar:
+  adder_cue: Add child here...
+  adder_item: Add !type here
+filters:
+  default: Default (Markdown sanitized)
+  text-safe: Basic text sanitized
+  text-unsafe: Basic text (unsafe)
+  markdown-safe: Markdown sanitized
+  markdown-unsafe: Markdown (unsafe)
+  html-safe: Filtered HTML
+  html-unsafe: Raw HTML (unsafe)
+urls:
+  # rules for noun/verb combinations with proper nouns
+  proper:
+    '*/*': !verb
+    '*/display': !name
+    '*/add': add child !arg_type
+  # rules for noun/verb combinations with common nouns
+  common:
+    '*/*': !noun !verb

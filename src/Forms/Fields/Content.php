@@ -9,17 +9,8 @@ use Formward\Fields\Checkbox;
 
 class Content extends Container
 {
-    protected $cms;
     //The characters allowed in addition to alphanumerics and slashes
     const CHARS = '$-_.+!*\'(),';
-
-    public function &cms(CMS &$set = null) : CMS
-    {
-        if ($set) {
-            $this->cms = $set;
-        }
-        return $this->cms;
-    }
 
     public function default($default = null)
     {
@@ -43,15 +34,15 @@ class Content extends Container
 
     public function __construct(string $label, string $name=null, FieldInterface $parent=null, CMS &$cms=null)
     {
+        $s = $cms->helper('strings');
         parent::__construct($label, $name, $parent);
-        $this['text'] = new ContentTextarea('Text');
-        $this['filter'] = new ContentFilter('Filter');
+        $this['text'] = new ContentTextarea($s->string('forms.digraph_content.label_text'));
+        $this['filter'] = new ContentFilter($s->string('forms.digraph_content.label_filter'));
         //load filters from cms
-        $this->cms = $cms;
         $options = [];
-        foreach ($this->cms->config['filters.presets'] as $key => $value) {
-            if ($this->cms->helper('permissions')->check('preset/'.$key, 'filters')) {
-                if (!($name = $this->cms->config['filters.names.'.$key])) {
+        foreach ($cms->config['filters.presets'] as $key => $value) {
+            if ($cms->helper('permissions')->check('preset/'.$key, 'filters')) {
+                if (!($name = $cms->config['filters.names.'.$key])) {
                     $name = $key;
                 }
                 $options[$key] = $name;
@@ -64,9 +55,9 @@ class Content extends Container
         }
         //options for enabling/disabling extra filters
         $extrasAllowed = false;
-        $extras = new Container('Extra filters');
-        foreach ($this->cms->config['filters.extras'] as $name => $label) {
-            if ($this->cms->helper('permissions')->check('extra/'.$name, 'filters')) {
+        $extras = new Container($s->string('forms.digraph_content.label_extras'));
+        foreach ($cms->config['filters.extras'] as $name => $label) {
+            if ($cms->helper('permissions')->check('extra/'.$name, 'filters')) {
                 $extras[$name] = new Checkbox($label);
                 $extrasAllowed = true;
             }
