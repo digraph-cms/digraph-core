@@ -16,6 +16,7 @@ class Form extends \Formward\Form
     public function __construct(string $label, string $name=null, FieldInterface $parent=null)
     {
         parent::__construct($label, $name, $parent);
+        $this->attr('enctype', 'multipart/form-data');
     }
 
     public function &cms(CMS &$set = null) : CMS

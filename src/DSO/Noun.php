@@ -40,6 +40,11 @@ class Noun extends DSO implements NounInterface
         return true;
     }
 
+    public function isEditable()
+    {
+        return $this->factory->cms()->helper('permissions')->checkUrl($this->url('edit'));
+    }
+
     public function parentUrl($verb='display')
     {
         if ($verb != 'display') {

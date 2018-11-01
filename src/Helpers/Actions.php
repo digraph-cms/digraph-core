@@ -24,7 +24,8 @@ class Actions extends AbstractHelper
             }
         }
         //return results
-        return $types;
+        asort($types);
+        return array_values($types);
     }
 
     public function get($noun)
@@ -69,6 +70,7 @@ class Actions extends AbstractHelper
             }
         );
         //return links
-        return $links;
+        asort($links);
+        return array_values($links);
     }
 }

@@ -9,7 +9,8 @@ class Strings extends AbstractHelper
 {
     public function string($name, array $args=[]) : string
     {
-        if ($string = $this->cms->config['strings.'.$name]) {
+        $string = $this->cms->config['strings.'.$name];
+        if ($string !== null) {
             foreach ($args as $key => $value) {
                 $string = str_replace('!'.$key, $value, $string);
             }

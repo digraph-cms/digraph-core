@@ -10,14 +10,17 @@ class Error extends Execute
     {
         $status = $package['response.status'];
         if ($status != 200) {
+            unset($package['response.filename']);
+            $package['response.mime'] = 'text/html';
             $package['fields.page_name'] = 'Error '.$status;
             $handlers = [
                 "$status",
                 floor($status/100).'xx',
                 'xxx'
             ];
+            unset($package['response.handler']);
             foreach ($handlers as $name) {
-                if ($package['response.handler'] = $package->cms()->helper('routing')->file('@error', true, $name.'.php')) {
+                if ($package['response.handler'] = $package->cms()->helper('routing')->file('@error', false, $name.'.php')) {
                     parent::doMunge($package);
                     return;
                 }

@@ -14,10 +14,21 @@ class FormHelper extends AbstractHelper
             if (!$opt) {
                 continue;
             }
-            $class = $opt['class'];
-            $field = new $class($opt['label'], null, null, $this->cms);
+            $args = [$opt['label'],null,null,&$this->cms];
+            if (@$opt['extraConstructArgs']) {
+                foreach ($opt['extraConstructArgs'] as $a) {
+                    $args[] = $a;
+                }
+            }
+            $r = new \ReflectionClass($opt['class']);
+            $field = $r->newInstanceArgs($args);
             if (method_exists($field, 'dsoNoun')) {
                 $field->dsoNoun($noun);
+            }
+            if (@$map['call']) {
+                foreach ($map['callFns'] as $fn => $args) {
+                    call_user_func_array([$field,$fn], $args);
+                }
             }
             if (@$opt['required']) {
                 $field->required(true);
@@ -32,7 +43,9 @@ class FormHelper extends AbstractHelper
                 if (!$opt) {
                     continue;
                 }
-                if (method_exists($form[$name], 'dsoValue')) {
+                if (method_exists($form[$name], 'hook_formWrite')) {
+                    $form[$name]->hook_formWrite($noun, $opt);
+                } elseif (method_exists($form[$name], 'dsoValue')) {
                     $noun[$opt['field']] = $form[$name]->dsoValue();
                 } else {
                     $noun[$opt['field']] = $form[$name]->value();
@@ -50,6 +63,10 @@ class FormHelper extends AbstractHelper
     {
         //load default map
         $map = new FlatArray($this->cms->config['forms.maps.default']);
+        //load map from object if it has one
+        if (method_exists($noun, 'formMap')) {
+            $map->merge($noun->formMap($action), null, true);
+        }
         //load type map
         $map->merge($this->cms->config['forms.maps.'.$noun['dso.type'].'.all'], null, true);
         //load type/action map
@@ -61,10 +78,7 @@ class FormHelper extends AbstractHelper
 
     public function editNoun(NounInterface &$noun) : Form
     {
-        $form = new Form(
-            $this->cms->helper('strings')->string('forms.edit_title', ['type'=>$noun['dso.type']]),
-            'edit-'.$noun['dso.id']
-        );
+        $form = new Form('', 'edit-'.$noun['dso.id']);
         $form->cms($this->cms);
         $this->mapNoun(
             $noun,

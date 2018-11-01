@@ -1,0 +1,21 @@
+# This module holds the core attached media content types and their configurations
+name: Digraph Core File Attachment Types
+
+types:
+  content:
+    file: \Digraph\Modules\digraph_file_types\File
+
+actions:
+  addable:
+    file:
+      '*': true
+
+strings:
+  forms:
+    file:
+      showpage: Display metadata page instead of immediately beginning download
+      disposition: 'Send Content-Disposition: attachment header to request the browsers prompt users to save the file instead of displaying it in-browser'
+      upload_single:
+        container: Attached file
+        current: ''
+        upload: Upload a new file

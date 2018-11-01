@@ -11,7 +11,6 @@ forms:
   digraph_body_label: Body content
   digraph_name_label: Short display name
   digraph_title_label: Long display title
-  edit_title: Edit !type
   slug_label: Url slug
   digraph_content:
     label: Body content

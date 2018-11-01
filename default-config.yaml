@@ -20,6 +20,11 @@ groups: []
 
 excluded_child_types: []
 
+filestore:
+  chmod:
+    dir: 0o775
+    file: 0o774
+
 filters:
   names:
     default: ${strings.filters.default}
@@ -253,6 +258,7 @@ helpers:
     modules: true
   classes:
     actions: Digraph\Helpers\Actions
+    filestore: Digraph\Helpers\FileStore
     filters: Digraph\Filters\FilterHelper
     forms: Digraph\Forms\FormHelper
     strings: Digraph\Helpers\Strings

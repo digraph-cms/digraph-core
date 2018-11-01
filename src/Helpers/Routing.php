@@ -37,6 +37,12 @@ class Routing extends AbstractHelper
     public function allFiles(string $type, bool $proper, string $filename)
     {
         /**
+         * Verify that type exists, otherwise use "default"
+         */
+        if ($proper && !$this->cms->config['types.content.'.$type]) {
+            $type = 'default';
+        }
+        /**
          * Make a list of all candidate filenames
          */
         $candidatesGeneral = array();

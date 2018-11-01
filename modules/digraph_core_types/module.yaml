@@ -13,6 +13,7 @@ actions:
     versioned:
       '*': true
     version:
+      '*': false #this isn't necessary, false is default, this avoids ambiguity
       versioned: true
 
 types:
