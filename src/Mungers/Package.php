@@ -50,6 +50,7 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
     {
         if ($set) {
             $this['noun'] = $set->get();
+            $this['response.last-modified'] = $set['dso.modified.date'];
             $this->url($set->url($this['url.verb'], $this['url.args']));
         }
         if ($this['noun']) {

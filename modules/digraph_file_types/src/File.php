@@ -7,47 +7,35 @@ use HtmlObjectStrings\A;
 
 class File extends Noun
 {
+    const FILESTORE = true;
     const PATH = 'filefield';
 
     public function handle_display(&$package)
     {
         $fs = $this->factory->cms()->helper('filestore');
         $files = $fs->list($this, static::PATH);
-        $f = array_pop($files);
-        var_dump($f);
-    }
-
-    public function handle_download(&$package)
-    {
-        $f = $package['url.args.f'];
-        if (!$f) {
-            $package->error(404);
+        if (!$files) {
+            $this->factory->cms()->helper('notifications')->error(
+                $this->factory->cms()->helper('strings')->string('file.notifications.nofile')
+            );
             return;
         }
-        //ask filestore for matching files -- note that get() searches by filename OR uniqid
-        $fs = $this->factory->cms()->helper('filestore');
-        $strings = $this->factory->cms()->helper('strings');
-        $files = $fs->get($this, static::PATH, $f);
-        //produce 300 error if multiple results come up
-        if (count($files) > 1) {
-            $package->error(300, 'Multiple files match');
-            $package['response.300'] = [];
-            foreach ($files as $f) {
-                $package->push('response.300', [
-                    'link' => $this->link(
-                        $f->name().' uploaded '.$strings->datetimeHTML($f->time()),//link text
-                        'download',//link verb
-                        ['f'=>$f->uniqid()],//use file uniquid
-                        true//canonical URL
-                    )
-                ]);
+        $f = array_pop($files);
+        //display metadata page if requested, or if user can edit
+        if ($this['file.showpage'] || $this->isEditable()) {
+            //show notice for users who are only seeing metadata page because
+            //they have edit permissions
+            if (!$this['file.showpage']) {
+                $this->factory->cms()->helper('notifications')->notice(
+                    $this->factory->cms()->helper('strings')->string('file.notifications.editbypass')
+                );
             }
+            echo $f->metacard();
+            //dislay metadata page and return so that we skip outputting file
             return;
         }
-        //if everything is good, feed through the file
-        $f = array_pop($files);
-        $package->makeMediaFile($f->name());
-        $package['response.readfile'] = $f->path();
+        //there is a file, send it to the browser
+        $fs->output($package, $f);
     }
 
     public function formMap(string $action) : array
@@ -57,7 +45,7 @@ class File extends Noun
             '002-file' => [
                 // 'field' => 'filestore',
                 'label' => $s->string('forms.file.upload_single.container'),
-                'class' => 'Digraph\\Forms\\Fields\\FileField',
+                'class' => 'Digraph\\Forms\\Fields\\FileStoreFieldSingle',
                 'required' => true,
                 'extraConstructArgs' => [static::PATH]
             ],

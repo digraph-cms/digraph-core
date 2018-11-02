@@ -21,6 +21,29 @@ groups: []
 excluded_child_types: []
 
 filestore:
+  icons:
+    html:
+      archive: <i class="fas fa-file-archive"></i>
+      audio: <i class="fas fa-file-audio"></i>
+      blank: <i class="fas fa-file"></i>
+      code: <i class="fas fa-file-code"></i>
+      csv: <i class="fas fa-file-csv"></i>
+      excel: <i class="fas fa-file-excel"></i>
+      image: <i class="fas fa-file-image"></i>
+      pdf: <i class="fas fa-file-pdf"></i>
+      powerpoint: <i class="fas fa-file-powerpoint"></i>
+      signature: <i class="fas fa-file-signature"></i>
+      text: <i class="fas fa-file-alt"></i>
+      video: <i class="fas fa-file-video"></i>
+      word: <i class="fas fa-file-word"></i>
+    default: ${filestore.icons.html.blank}
+    mime_left:
+      text: ${filestore.icons.html.text}
+      image: ${filestore.icons.html.image}
+    extension:
+      csv: ${filestore.icons.html.csv}
+    # mime_full:
+    #   -
   chmod:
     dir: 0o775
     file: 0o774
@@ -139,7 +162,7 @@ templates:
   # css urls to be linked in the head
   css:
     digraph_core: ${url.base}digraph/core.css
-    fontawesome: ${url.base}fontawesome/css/all.min.css
+    fontawesome: https://use.fontawesome.com/releases/v5.5.0/css/all.css
   # css bundles can be included all at once in media-driven css files, with
   # syntax like: /*${bundle:digraph_core}*/
   cssbundles:
@@ -149,10 +172,11 @@ templates:
       core_notifications: digraph/notifications/notifications.css
       core_forms: digraph/core-css/forms.css
       core_actionbar: digraph/actionbar/actionbar.css
+      core_filestore: digraph/core-css/filestore.css
     hypersemantic:
       typography: digraph/hypersemantic/typography.css
       menus: digraph/hypersemantic/menus.css
-      linkicons: digraph/hypersemantic/linkicons.css
+      # linkicons: digraph/hypersemantic/linkicons.css
       layout: digraph/hypersemantic/layout-1col.css
   # js files are included at either the head or foot of the page
   js:
@@ -258,10 +282,9 @@ helpers:
     modules: true
   classes:
     actions: Digraph\Helpers\Actions
-    filestore: Digraph\Helpers\FileStore
+    filestore: Digraph\FileStore\FileStoreHelper
     filters: Digraph\Filters\FilterHelper
     forms: Digraph\Forms\FormHelper
-    strings: Digraph\Helpers\Strings
     media: Digraph\Media\MediaHelper
     modules: Digraph\Modules\ModuleHelper
     navigation: Digraph\Templates\NavigationHelper
@@ -269,6 +292,7 @@ helpers:
     permissions: Digraph\Permissions\PermissionsHelper
     routing: Digraph\Helpers\Routing
     session: Digraph\Users\SessionHelper
+    strings: Digraph\Helpers\Strings
     templates: Digraph\Templates\TemplateHelper
     urls: Digraph\Urls\UrlHelper
     users: Digraph\Users\UserHelper

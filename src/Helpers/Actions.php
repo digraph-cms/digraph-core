@@ -49,6 +49,10 @@ class Actions extends AbstractHelper
         if (isset($rules[$noun])) {
             $links = array_replace_recursive($links, $rules[$noun]);
         }
+        //allow noun to mess with links if it wants to
+        if (method_exists($object, 'actions')) {
+            $links = $object->actions($links);
+        }
         //apply variables to links
         $links = array_map(
             function ($e) use ($vars) {

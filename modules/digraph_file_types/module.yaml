@@ -11,6 +11,10 @@ actions:
       '*': true
 
 strings:
+  file:
+    notifications:
+      editbypass: This URL normally displays the uploaded file directly. You are being shown the metadata page instead because you have edit permissions.
+      nofile: There is no file attached to this object
   forms:
     file:
       showpage: Display metadata page instead of immediately beginning download

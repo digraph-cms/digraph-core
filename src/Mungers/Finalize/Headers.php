@@ -24,6 +24,10 @@ class Headers extends AbstractMunger
         } else {
             $headers['Expires'] = gmdate('D, d M Y H:i:s T', 0);
         }
+        // last-modified
+        if ($package['response.last-modified']) {
+            $headers['Last-Modified'] = gmdate('D, d M Y H:i:s T', $package['response.last-modified']);
+        }
         // Content-Type/encoding
         if ($package['response.mime'] == 'text/html') {
             //include charset for text/html

@@ -7,11 +7,21 @@ use Destructr\DSOFactoryInterface;
 
 class Noun extends DSO implements NounInterface
 {
+    const FILESTORE = false;
+
     public function __construct(array $data = null, DSOFactoryInterface &$factory = null)
     {
         parent::__construct($data, $factory);
         $this->merge($factory->cms()->config['defaultnoun']);
         $this->resetChanges();
+    }
+
+    public function actions($links)
+    {
+        if (static::FILESTORE) {
+            $links['files'] = '!id/filestore';
+        }
+        return $links;
     }
 
     public function isPublished()

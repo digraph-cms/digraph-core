@@ -40,4 +40,24 @@ class Strings extends AbstractHelper
         $formatted = $this->datetime($time);
         return "<time datetime=\"".date('c', $time)."\">$formatted</time>";
     }
+
+    public function filesize($bytes)
+    {
+        $base = 1024;
+        $size = $bytes;
+        $suffix = 'B';
+        $suffixes = [
+            'KB','MB','GB','TB','PB'
+        ];
+        while ($size >= $base && $suffixes) {
+            $size /= $base;
+            $suffix = array_shift($suffixes);
+        }
+        return (round($size*10)/10).$suffix;
+    }
+
+    public function filesizeHTML($bytes)
+    {
+        return "<a title='".$bytes."B'>".$this->filesize($bytes)."</a>";
+    }
 }

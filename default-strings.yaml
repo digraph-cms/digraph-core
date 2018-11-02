@@ -2,6 +2,11 @@ date:
   format:
     date: F j, Y
     datetime: F j, Y, g:i a T
+filestore:
+  meta:
+    time: Date uploaded
+    size: File size
+    hash: MD5 hash
 notifications:
   edit:
     confirmation: Edited !name
