@@ -55,7 +55,8 @@ class FileStoreFieldSingle extends \Formward\Fields\Container
     {
         if ($this->noun) {
             $fs = $this->cms->helper('filestore');
-            if ($files = $fs->get($this->noun, $this->path)) {
+            if ($files = $fs->list($this->noun, $this->path)) {
+                return array_pop($files);
             }
         }
         return null;
@@ -72,9 +73,14 @@ class FileStoreFieldSingle extends \Formward\Fields\Container
     public function hook_formWrite(Noun &$noun, array $map)
     {
         if ($upload = $this['upload']->value()) {
-            $fs = $this->cms->helper('filestore');
-            $fs->clear($this->noun, $this->path);
-            $fs->import($this->noun, $upload, $this->path);
+            //only import file if value is an array, because this means it's a
+            //new upload -- otherwise it's a FileStoreFile representing a file
+            //that's already in the object
+            if (is_array($upload)) {
+                $fs = $this->cms->helper('filestore');
+                $fs->clear($this->noun, $this->path);
+                $fs->import($this->noun, $upload, $this->path);
+            }
         }
     }
 
@@ -86,6 +92,9 @@ class FileStoreFieldSingle extends \Formward\Fields\Container
     public function dsoNoun(&$noun)
     {
         $this->noun = $noun;
+        if ($file = $this->nounValue()) {
+            $this['current']->content($file->metaCard(false));
+        }
     }
 
     public function default($set = null)

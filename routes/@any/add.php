@@ -1,4 +1,5 @@
 <?php
+$package['fields.page_title'] = $package['url.text'];
 $package['response.cacheable'] = false;
 $package['response.ttl'] = 0;
 
@@ -13,14 +14,16 @@ foreach ($this->helper('routing')->allHookFiles($type, 'form_add.php') as $file)
     include $file['file'];
 }
 
-$form->handle(function (&$form) use ($package,$type) {
-    foreach ($this->helper('routing')->allHookFiles($type, 'form_handled.php') as $file) {
-        include $file['file'];
+$form->handle(
+    function (&$form) use ($package,$type) {
+        foreach ($this->helper('routing')->allHookFiles($type, 'form_handled.php') as $file) {
+            include $file['file'];
+        }
+        foreach ($this->helper('routing')->allHookFiles($type, 'form_add_handled.php') as $file) {
+            include $file['file'];
+        }
     }
-    foreach ($this->helper('routing')->allHookFiles($type, 'form_add_handled.php') as $file) {
-        include $file['file'];
-    }
-});
+);
 if ($form->handle()) {
     $cms->helper('notifications')->flashConfirmation(
         $cms->helper('strings')->string('notifications.add.confirmation', ['name'=>$form->object->name()])

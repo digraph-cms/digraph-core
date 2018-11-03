@@ -55,12 +55,14 @@ class FileStoreHelper extends AbstractHelper
             return $out;
         }
         //get by path
-        return array_values(array_filter(
-            $this->list($noun, $path),
-            function ($file) use ($s) {
-                return $file->name() == $s || $file->uniqid() == $s;
-            }
-        ));
+        return array_values(
+            array_filter(
+                $this->list($noun, $path),
+                function ($file) use ($s) {
+                    return $file->name() == $s || $file->uniqid() == $s;
+                }
+            )
+        );
     }
 
     public function clear(Noun &$noun, string $path = 'default')
@@ -72,9 +74,36 @@ class FileStoreHelper extends AbstractHelper
 
     public function delete($noun, $uniqid)
     {
+        $key = md5($uniqid);
         //loop through paths
         foreach ($noun['filestore'] as $path => $files) {
-            // code...
+            if (isset($files[$key])) {
+                $file = $files[$key];
+                //identify the files we'll need
+                $dir = $this->dir($file['hash']);
+                $storeFile = $dir.'/file';
+                $usesFile = $dir.'/uses';
+                //short-circuit and give up if storefile isn't there
+                if (!is_file($storeFile)) {
+                    return;
+                }
+                //get lock of lock file
+                $lockHandle = fopen($storeFile, 'r');
+                while (!flock($lockHandle, LOCK_EX)) {
+                    usleep(50+random_int(0, 100));
+                }
+                //remove this uniqid from the uses file
+                $uses = file_get_contents($usesFile);
+                if (strpos($uses, $file['uniqid']."\n") !== false) {
+                    $uses = str_replace($file['uniqid']."\n", '', $uses);
+                    file_put_contents($usesFile, $uses);
+                }
+                //release lock on lock file
+                flock($lockHandle, LOCK_UN);
+                //remove from array and save
+                unset($noun["filestore.$path.$key"]);
+                $noun->update();
+            }
         }
     }
 
@@ -83,17 +112,13 @@ class FileStoreHelper extends AbstractHelper
         //hash file, record time
         $file['hash'] = md5_file($file['file']);
         $file['time'] = time();
-        $file['uniqid'] = uniqid().'.'.$noun['dso.id'];
+        $file['uniqid'] = uniqid();
         //identify the files we'll need
         $dir = $this->dir($file['hash']);
         $storeFile = $dir.'/file';
         $usesFile = $dir.'/uses';
-        $lockFile = $dir.'/lock';
         //do nothing if file with this hash already exists
         if (!is_file($storeFile)) {
-            //touch uses file
-            touch($usesFile);
-            touch($lockFile);
             //move/dopy file
             $oldName = $file['file'];
             if (is_uploaded_file($oldName)) {
@@ -111,11 +136,11 @@ class FileStoreHelper extends AbstractHelper
             }
         }
         //get lock of lock file
-        $lockHandle = fopen($lockFile, 'r');
+        $lockHandle = fopen($storeFile, 'r');
         while (!flock($lockHandle, LOCK_EX)) {
             usleep(50+random_int(0, 100));
         }
-        //add this noun's id to the uses file
+        //add this uniqid to the uses file
         $uses = file_get_contents($usesFile);
         if (strpos($uses, $file['uniqid']."\n") === false) {
             $uses .= $file['uniqid']."\n";
@@ -138,12 +163,14 @@ class FileStoreHelper extends AbstractHelper
     public function dir(string $hash) : string
     {
         $shard = substr($hash, 0, 2);
-        $dir = implode('/', [
+        $dir = implode(
+            '/', [
                 $this->cms->config['paths.storage'],
                 'filestore',
                 $shard,
                 $hash
-            ]);
+            ]
+        );
         if (!is_dir($dir) && !mkdir($dir, 0775, true)) {
             throw new \Exception("Error creating filestore directory \"$dir\"");
         }

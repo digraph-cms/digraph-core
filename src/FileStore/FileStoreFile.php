@@ -30,7 +30,7 @@ class FileStoreFile
         $this->time = $e['time'];
     }
 
-    public function metaCard($meta = ['time','size','hash'])
+    public function metaCard($meta = ['time','size'])
     {
         $s = $this->fs->cms()->helper('strings');
         $out = '<div class="filestore-metacard">';
@@ -41,15 +41,15 @@ class FileStoreFile
             $out .= '<dl>';
             foreach ($meta as $i) {
                 switch ($i) {
-                    case 'time':
-                        $out .= $this->metaCard_attr($s->string('filestore.meta.time'), $s->datetimeHTML($this->time()));
-                        break;
-                    case 'size':
-                        $out .= $this->metaCard_attr($s->string('filestore.meta.size'), $s->filesizeHTML($this->size()));
-                        break;
-                    case 'hash':
-                        $out .= $this->metaCard_attr($s->string('filestore.meta.hash'), $this->hash());
-                        break;
+                case 'time':
+                    $out .= $this->metaCard_attr($s->string('filestore.meta.time'), $s->datetimeHTML($this->time()));
+                    break;
+                case 'size':
+                    $out .= $this->metaCard_attr($s->string('filestore.meta.size'), $s->filesizeHTML($this->size()));
+                    break;
+                case 'hash':
+                    $out .= $this->metaCard_attr($s->string('filestore.meta.hash'), $this->hash());
+                    break;
                 }
             }
             $out .= '</dl>';
