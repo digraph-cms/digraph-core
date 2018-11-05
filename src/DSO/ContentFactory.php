@@ -44,7 +44,7 @@ class ContentFactory extends DigraphFactory
         $clause = implode(' AND ', [
             '(${digraph.published.start} is null OR ${digraph.published.start} <= :digraph_current_time)',
             '(${digraph.published.end} is null OR ${digraph.published.end} >= :digraph_current_time)',
-            '(${digraph.published.force} <> "unpublished")'
+            '(${digraph.published.force} <> "unpublished" OR ${digraph.published.force} is null)'
         ]);
         $clause = '(${digraph.published} is null OR ${digraph.published.force} = "published" OR ('.$clause.'))';
         return $clause;
