@@ -4,4 +4,5 @@ namespace Digraph\Modules\digraph_core_types;
 
 class Version extends Page
 {
+    const ROUTING_NOUNS = ['version'];
 }

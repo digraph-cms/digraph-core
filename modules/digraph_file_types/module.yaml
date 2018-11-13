@@ -3,12 +3,33 @@ name: Digraph Core File Attachment Types
 
 types:
   content:
-    file: \Digraph\Modules\digraph_file_types\File
+    file: Digraph\Modules\digraph_file_types\File
+    filebundle: Digraph\Modules\digraph_file_types\FileBundle
+    image: Digraph\Modules\digraph_file_types\Image
 
 actions:
   addable:
     file:
       '*': true
+    filebundle:
+      '*': true
+    image:
+      '*': true
+
+helpers:
+  classes:
+    image: Digraph\Modules\digraph_file_types\ImageHelper
+
+image:
+  always:
+    - sanitize
+  presets:
+    full:
+      - sanitize
+    thumbnail:
+      - cover 200 200
+    embed:
+      - resize 800 800
 
 strings:
   file:
@@ -17,9 +38,6 @@ strings:
       nofile: There is no file attached to this object
   forms:
     file:
-      showpage: Display metadata page instead of immediately beginning download
+      allowed_extensions: 'Allowed file extensions: <code>!exts</code>'
       disposition: 'Send Content-Disposition: attachment header to request the browsers prompt users to save the file instead of displaying it in-browser'
-      upload_single:
-        container: Attached file
-        current: ''
-        upload: Upload a new file
+      showpage: Display metadata page instead of immediately beginning download

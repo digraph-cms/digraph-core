@@ -7,6 +7,11 @@ use Digraph\Helpers\AbstractHelper;
 
 class FileStoreHelper extends AbstractHelper
 {
+    public function imageHelper()
+    {
+        return $this->cms->helper('image');
+    }
+
     public function output(&$package, FileStoreFile $file)
     {
         $package->makeMediaFile($file->nameWithHash());
@@ -15,6 +20,14 @@ class FileStoreHelper extends AbstractHelper
         $package['response.cacheable'] = true;
         $package['response.ttl'] = $this->cms->config['media.package.response.ttl'];
         $package['response.last-modified'] = $file->time();
+    }
+
+    public function listPaths(Noun &$noun) : array
+    {
+        if (!$noun['filestore']) {
+            return [];
+        }
+        return array_keys($noun->get('filestore'));
     }
 
     public function list(Noun &$noun, string $path = 'default') : array
@@ -74,11 +87,10 @@ class FileStoreHelper extends AbstractHelper
 
     public function delete($noun, $uniqid)
     {
-        $key = md5($uniqid);
         //loop through paths
         foreach ($noun['filestore'] as $path => $files) {
-            if (isset($files[$key])) {
-                $file = $files[$key];
+            if (isset($files[$uniqid])) {
+                $file = $files[$uniqid];
                 //identify the files we'll need
                 $dir = $this->dir($file['hash']);
                 $storeFile = $dir.'/file';
@@ -101,7 +113,7 @@ class FileStoreHelper extends AbstractHelper
                 //release lock on lock file
                 flock($lockHandle, LOCK_UN);
                 //remove from array and save
-                unset($noun["filestore.$path.$key"]);
+                unset($noun["filestore.$path.$uniqid"]);
                 $noun->update();
             }
         }
@@ -156,7 +168,7 @@ class FileStoreHelper extends AbstractHelper
             $noun["filestore.$path"] = [];
         }
         //push into noun and save
-        $noun["filestore.$path.".md5($file['uniqid'])] = $file;
+        $noun["filestore.$path.".$file['uniqid']] = $file;
         $noun->update();
     }
 
@@ -164,7 +176,8 @@ class FileStoreHelper extends AbstractHelper
     {
         $shard = substr($hash, 0, 2);
         $dir = implode(
-            '/', [
+            '/',
+            [
                 $this->cms->config['paths.storage'],
                 'filestore',
                 $shard,

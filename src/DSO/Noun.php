@@ -8,6 +8,7 @@ use Destructr\DSOFactoryInterface;
 class Noun extends DSO implements NounInterface
 {
     const FILESTORE = false;
+    const ROUTING_NOUNS = [];
 
     public function __construct(array $data = null, DSOFactoryInterface &$factory = null)
     {
@@ -16,11 +17,26 @@ class Noun extends DSO implements NounInterface
         $this->resetChanges();
     }
 
+    public function fileUrl($id=null, $args=[])
+    {
+        if ($id === null) {
+            $fs = $this->factory->cms()->helper('filestore');
+            $files = $fs->list($this, static::FILESTORE_PATH);
+            if (!$files) {
+                return null;
+            }
+            $f = array_pop($files);
+            $id = $f->uniqid();
+        }
+        $args['f'] = $id;
+        return $this->url(
+            'file',
+            $args
+        );
+    }
+
     public function actions($links)
     {
-        if (static::FILESTORE) {
-            $links['files'] = '!id/filestore';
-        }
         return $links;
     }
 

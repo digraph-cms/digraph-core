@@ -43,23 +43,48 @@ class Routing extends AbstractHelper
             $type = 'default';
         }
         /**
+         * Get a list of all the type names we'll use to search for routes
+         */
+        if ($class = $this->cms->config['types.content.'.$type]) {
+            $types = $class::ROUTING_NOUNS;
+            array_unshift($types, $type);
+            $types = array_unique($types);
+        } else {
+            $types = [$type];
+        }
+        /**
          * Make a list of all candidate filenames
          */
         $candidatesGeneral = array();
         $candidatesSpecific = array();
         $i = 0;
+        /*
+        Build list of type-specific candidates, ordered by type and then by
+        routing path.
+         */
+        foreach ($types as $type) {
+            foreach (array_reverse($this->cms->config['routing.paths']) as $module => $path) {
+                if ($proper) {
+                    $candidatesSpecific[$module.':specific:'.$i++] = "$path/$type/$filename";
+                } else {
+                    $candidatesSpecific[$module.':specific:'.$i++] = "$path/$type/@all/$filename";
+                    $candidatesSpecific[$module.':specific:'.$i++] = "$path/$type@all/$filename";
+                }
+                if (preg_match('/^@.+\//', $filename)) {
+                    $candidatesSpecific[$module.':specific:'.$i++] = "$path/$type$filename";
+                }
+            }
+        }
+        /*
+        Build list of general candidates, ordered by routing path.
+         */
         foreach (array_reverse($this->cms->config['routing.paths']) as $module => $path) {
+            //build general candidates
             if ($proper) {
                 $candidatesGeneral[$module.':general:'.$i++] = "$path/@any/$filename";
-                $candidatesSpecific[$module.':specific:'.$i++] = "$path/$type/$filename";
             } else {
                 $candidatesGeneral[$module.':general:'.$i++] = "$path/@any/@all/$filename";
                 $candidatesGeneral[$module.':general:'.$i++] = "$path/@any@all/$filename";
-                $candidatesSpecific[$module.':specific:'.$i++] = "$path/$type/@all/$filename";
-                $candidatesSpecific[$module.':specific:'.$i++] = "$path/$type@all/$filename";
-            }
-            if (preg_match('/^@.+\//', $filename)) {
-                $candidatesSpecific[$module.':specific:'.$i++] = "$path/$type$filename";
             }
         }
         //general candidates shouldn't be used if the type doesn't exist

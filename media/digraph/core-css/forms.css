@@ -252,3 +252,83 @@ Publication settings field
   display: inline-block;
   margin: 0;
 }
+
+/*
+progressively-enhanced ordering field
+ */
+.FieldWrapper-formward-ordering-field.js-active textarea {
+  display:none;
+}
+
+.FieldWrapper-formward-ordering-field ul {
+  margin: 0;
+  padding: 0;
+  list-style-type:none;
+}
+
+.FieldWrapper-formward-ordering-field li {
+  margin: 0.25em 0;
+  padding: 0.25em;
+  background:#eee;
+  transition:background-color 0.25s linear;
+  cursor: grab;
+  position:relative;
+}
+
+.FieldWrapper-formward-ordering-field li.deleted {
+  background-color:#fee;
+  color:#c00;
+  text-decoration: line-through;
+}
+
+.FieldWrapper-formward-ordering-field li.dragging {
+  background-color:#def;
+  cursor: grabbing;
+}
+
+.FieldWrapper-formward-ordering-field .delete-button {
+  display:none;
+  cursor:pointer;
+  position:absolute;
+  top:0.25em;
+  right:0.25em;
+  bottom:0.25em;
+  color:#c00;
+  overflow:hidden;
+  text-indent:100%;
+  white-space:nowrap;
+  width:1.5em;
+}
+
+.FieldWrapper-formward-ordering-field .delete-button:hover {
+  background:#c00;
+  color:#fff;
+}
+
+.FieldWrapper-formward-ordering-field .delete-button:after {
+  content:"\00D7";
+  text-indent:0;
+  text-align:center;
+  display:block;
+  position:absolute;
+  top:0;
+  left:0;
+  bottom:0;
+  width:1.5em;
+}
+
+.FieldWrapper-formward-ordering-field.FieldWrapper-deletion-allowed .delete-button {
+  display:block;
+}
+
+.FieldWrapper-formward-ordering-field.FieldWrapper-deletion-allowed li {
+  padding-right:2em;
+}
+
+.FieldWrapper-formward-ordering-field .add-item {
+  display:none;
+}
+
+.FieldWrapper-formward-ordering-field.FieldWrapper-addition-allowed .add-item {
+  display:block;
+}

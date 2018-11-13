@@ -34,7 +34,10 @@ class FormHelper extends AbstractHelper
                 $field->required(true);
             }
             $field->default(@$opt['default']);
-            $field->default($noun[$opt['field']]);
+            if (@$opt['field']) {
+                //field isn't actually required
+                $field->default($noun[@$opt['field']]);
+            }
             $form[$name] = $field;
         }
         $form->object = $noun;

@@ -9,6 +9,10 @@ url:
 
 timezone: America/Denver
 
+image:
+  #gd, imagick or gmagick -- gd is the default because it's widely supported
+  driver: gd
+
 # Default contents of packages
 package:
   defaults:

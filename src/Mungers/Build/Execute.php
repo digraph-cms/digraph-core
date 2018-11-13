@@ -51,10 +51,7 @@ class Execute extends AbstractMunger
     protected function execute()
     {
         ob_start();
-        if ($fn = $this->package['response.handler.objectmethod']) {
-            //use object method to generate
-            $this->package->noun()->$fn($this->package);
-        } elseif (file_exists($this->package['response.handler.file'])) {
+        if (file_exists($this->package['response.handler.file'])) {
             //use included file to generate
             $package = $this->package;
             $cms = $package->cms();

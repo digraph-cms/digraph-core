@@ -20,6 +20,23 @@ groups: []
 
 excluded_child_types: []
 
+image:
+  #gd, imagick or gmagick -- gd is the default because it's widely supported
+  driver: gd
+  cache:
+    ttl: 604800 #one week in seconds
+    dir: ${paths.cache}/image
+  preset_base:
+    size: 3840 2160 inset
+    strip_exif: true
+  presets:
+    default: []
+    filestore-thumbnail:
+      size: 88 112 cover
+      extension: jpg
+      save:
+        jpeg_quality: 60
+
 filestore:
   icons:
     html:
@@ -98,12 +115,14 @@ permissions:
   action:
     '*':
       - deny all
-      - allow group root
+      - allow group webmaster, root
   url:
     '*':
       - deny all
       - allow group root
     '*/display':
+      - allow all
+    '*/file':
       - allow all
     'user/*':
       - allow all
@@ -285,6 +304,7 @@ helpers:
     filestore: Digraph\FileStore\FileStoreHelper
     filters: Digraph\Filters\FilterHelper
     forms: Digraph\Forms\FormHelper
+    image: Digraph\FileStore\ImageHelper
     media: Digraph\Media\MediaHelper
     modules: Digraph\Modules\ModuleHelper
     navigation: Digraph\Templates\NavigationHelper

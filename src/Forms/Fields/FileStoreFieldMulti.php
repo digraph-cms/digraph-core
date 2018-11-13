@@ -26,7 +26,7 @@ use Formward\FieldInterface;
  *     extraConstructArgs:
  *       - my-path-name
  */
-class FileStoreFieldSingle extends \Formward\Fields\Container
+class FileStoreFieldMulti extends \Formward\Fields\Container
 {
     protected $cms;
     protected $noun;
@@ -48,12 +48,13 @@ class FileStoreFieldSingle extends \Formward\Fields\Container
         $s = $cms->helper('strings');
         parent::__construct($label, $name, $parent);
         //current file
-        $this['current'] = new \Formward\Fields\DisplayOnly(
-            $s->string('forms.file.upload_single.current')
+        $this['current'] = new \Formward\Fields\Ordering(
+            $s->string('forms.file.upload_multi.current')
         );
+        $this['current']->allowDeletion(true);
         //upload new file
-        $this['upload'] = new \Formward\Fields\File(
-            $s->string('forms.file.upload_single.upload')
+        $this['upload'] = new \Formward\Fields\FileMulti(
+            $s->string('forms.file.upload_multi.upload')
         );
         //set up extension validator
         if ($exts) {
@@ -117,31 +118,49 @@ class FileStoreFieldSingle extends \Formward\Fields\Container
     {
         if ($this->noun) {
             $fs = $this->cms->helper('filestore');
-            if ($files = $fs->list($this->noun, $this->path)) {
-                return array_pop($files);
-            }
+            return $fs->list($this->noun, $this->path);
         }
         return null;
     }
 
     public function value($set = null)
     {
-        if ($upload = $this['upload']->value()) {
-            return $upload;
-        }
-        return $this->nounValue();
+        $value = $this->nounValue();
+        $value = $value + $this['upload']->value();
+        return $value;
     }
 
     public function hook_formWrite(Noun &$noun, array $map)
     {
+        $fs = $this->cms->helper('filestore');
+        /*
+        use the 'current' field to do any deletions
+         */
+        foreach ($this['current']->deleted() as $uniqid) {
+            $fs->delete($noun, $uniqid);
+        }
+        /*
+        use the 'current' field to set the order of the array in the filestore
+        field of the noun
+         */
+        $arr = [];
+        foreach ($this['current']->value() as $uniqid) {
+            $arr[$uniqid] = $noun['filestore.'.$this->path.'.'.$uniqid];
+        }
+        unset($noun['filestore.'.$this->path]);
+        $noun['filestore.'.$this->path] = $arr;
+        $noun->update();
+        /*
+        save uploaded files to the noun using the filestore helper
+         */
         if ($upload = $this['upload']->value()) {
             //only import file if value is an array, because this means it's a
             //new upload -- otherwise it's a FileStoreFile representing a file
             //that's already in the object
             if (is_array($upload)) {
-                $fs = $this->cms->helper('filestore');
-                $fs->clear($this->noun, $this->path);
-                $fs->import($this->noun, $upload, $this->path);
+                foreach ($upload as $f) {
+                    $fs->import($this->noun, $f, $this->path);
+                }
             }
         }
     }
@@ -154,8 +173,12 @@ class FileStoreFieldSingle extends \Formward\Fields\Container
     public function dsoNoun(&$noun)
     {
         $this->noun = $noun;
-        if ($file = $this->nounValue()) {
-            $this['current']->content($file->metaCard(false));
+        if ($files = $this->nounValue()) {
+            $opts = [];
+            foreach ($files as $file) {
+                $opts[$file->uniqid()]= $file->metaCard(false);
+            }
+            $this['current']->opts($opts);
         }
     }
 

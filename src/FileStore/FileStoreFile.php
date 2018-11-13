@@ -90,13 +90,28 @@ class FileStoreFile
         if (isset($conf['extension'][$extension])) {
             $icon = $conf['extension'][$extension];
         }
+        //see if we can make a thumbnail
+        $i = $this->fs->imageHelper();
+        if ($i->supports($extension)) {
+            $icon = '<img src="'.$this->imageUrl('filestore-thumbnail').'">';
+        }
         //return whatever we found
         return $icon;
     }
 
-    public function url()
+    public function imageUrl($preset)
     {
-        return $this->noun->url('file', ['f'=>$this->uniqid()], true);
+        return $this->url(['a'=>$preset]);
+    }
+
+    public function url($args=[])
+    {
+        //decide whether to use name or uniqid as id, use uniqid if name is not unique
+        $id = $this->name();
+        if (count($this->fs->get($this->noun, $id)) > 1) {
+            $id = $this->uniqid();
+        }
+        return $this->noun->fileUrl($id, $args);
     }
 
     public function path()

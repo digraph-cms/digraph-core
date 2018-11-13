@@ -1,5 +1,4 @@
 .filestore-metacard {
-  display: inline-block;
   padding: 1em;
   background: #fafafa;
   box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.25);
@@ -16,6 +15,10 @@
   height: 1em;
 }
 
+.filestore-metacard .filestore-icon img {
+  height: 1em;
+}
+
 .filestore-metacard dl {
   margin: 0;
   margin-top: 0.5em;
@@ -25,12 +28,23 @@
   margin: 0;
 }
 
+.form-ordering-item .filestore-metacard {
+  margin:0;
+}
+
+.form-ordering-item.deleted .filestore-metacard {
+  background:#fcc;
+}
+
+.form-ordering-item.dragging .filestore-metacard {
+  background:#cdf;
+}
+
 /*
  styling just for cards in form fields
 */
 .Form .filestore-metacard {
   text-align:left;
-  display:block;
   padding: 0.5em;
 }
 

@@ -17,6 +17,21 @@ forms:
   digraph_name_label: Short display name
   digraph_title_label: Long display title
   slug_label: Url slug
+  file:
+    extension_invalid: <code>!ext</code> files are not allowed in this field
+    extension_required: File must have an extension
+    max_size_error: File cannot be larger than !max
+    max_size: 'Maximum size <code>!size</code>'
+    upload_single:
+      container: Attached file
+      current: ''
+      upload: Upload a new file
+    upload_multi:
+      container: Attached files
+      current: ''
+      upload: Upload additional files
+  filestore_verb:
+    form_title: Reorder/delete files
   digraph_content:
     label: Body content
     label_text: Content
@@ -52,6 +67,7 @@ urls:
     '*/*': !verb
     '*/display': !name
     '*/add': add child !arg_type
+    '*/file': download !arg_f
   # rules for noun/verb combinations with common nouns
   common:
     '*/*': !noun !verb
