@@ -5,15 +5,12 @@ types:
   content:
     file: Digraph\Modules\digraph_file_types\File
     filebundle: Digraph\Modules\digraph_file_types\FileBundle
-    image: Digraph\Modules\digraph_file_types\Image
 
 actions:
   addable:
     file:
       '*': true
     filebundle:
-      '*': true
-    image:
       '*': true
 
 helpers:

@@ -27,11 +27,6 @@ class File extends Noun
                 'field' => 'file.showpage',
                 'label' => $s->string('forms.file.showpage'),
                 'class' => 'Formward\Fields\Checkbox'
-            ],
-            '004-disposition' => [
-                'field' => 'file.disposition',
-                'label' => $s->string('forms.file.disposition'),
-                'class' => 'Formward\Fields\Checkbox'
             ]
         ];
     }

@@ -43,17 +43,36 @@ class Strings extends AbstractHelper
 
     public function filesize($bytes)
     {
-        $base = 1024;
-        $size = $bytes;
-        $suffix = 'B';
-        $suffixes = [
-            'KB','MB','GB','TB','PB'
+        return $this->unit_string(
+            $bytes,
+            [
+                'B'=>1,
+                'KB'=>1024,
+                'MB'=>1024,
+                'GB'=>1024,
+                'TB'=>1024,
+                'PB'=>1024
+            ]
+        );
+    }
+
+    public function unit_string($size, array $names, bool $prefix=false, int $dec=1)
+    {
+        $names = [
+            'B'=>1,
+            'KB'=>1024,
+            'MB'=>1024,
+            'GB'=>1024,
+            'TB'=>1024,
+            'PB'=>1024
         ];
-        while ($size >= $base && $suffixes) {
+        do {
+            $base = reset($names);
+            $name = key($names);
             $size /= $base;
-            $suffix = array_shift($suffixes);
-        }
-        return (round($size*10)/10).$suffix;
+            array_shift($names);
+        } while ($size >= reset($names) && $names);
+        return (round($size*10^$dec)/10^$dec).$name;
     }
 
     public function filesizeHTML($bytes)

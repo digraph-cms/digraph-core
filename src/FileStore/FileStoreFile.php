@@ -76,6 +76,12 @@ class FileStoreFile
         return $out;
     }
 
+    public function isImage()
+    {
+        $extension = preg_replace('/.+\./', '', $this->name());
+        return $this->fs->imageHelper()->supports($extension);
+    }
+
     public function icon()
     {
         $conf = $this->fs->cms()->config['filestore.icons'];
@@ -91,8 +97,7 @@ class FileStoreFile
             $icon = $conf['extension'][$extension];
         }
         //see if we can make a thumbnail
-        $i = $this->fs->imageHelper();
-        if ($i->supports($extension)) {
+        if ($this->isImage()) {
             $icon = '<img src="'.$this->imageUrl('filestore-thumbnail').'">';
         }
         //return whatever we found

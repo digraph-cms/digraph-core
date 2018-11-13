@@ -38,14 +38,16 @@ function sortablelist_dragOver(e) {
     e.target.parentNode.insertBefore(_sortablelist_el, e.target.nextSibling);
 }
 
-function sortablelist_dragEnd() {
+function sortablelist_dragEnd(e) {
   _sortablelist_el.classList.remove('dragging');
   _sortablelist_el = null;
 }
 
 function sortablelist_dragStart(e) {
   e.dataTransfer.effectAllowed = "move";
-  e.dataTransfer.setData("text/plain", null);
+  var noun = '';
+  if (digraph.noun) noun = ':' + digraph.noun;
+  e.dataTransfer.setData("text/plain", "[file" + noun + " id=\"" + e.target.getAttribute('data-value') + "\"]");
   _sortablelist_el = e.target;
   _sortablelist_el.classList.add('dragging');
 }

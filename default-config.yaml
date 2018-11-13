@@ -31,6 +31,8 @@ image:
     strip_exif: true
   presets:
     default: []
+    tag-embed:
+      size: 800 600 inset
     filestore-thumbnail:
       size: 88 112 cover
       extension: jpg

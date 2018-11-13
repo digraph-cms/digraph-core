@@ -9,15 +9,18 @@ class Versioned extends Noun
     const ROUTING_NOUNS = ['versioned'];
     const VERSION_TYPE = 'version';
 
+    public function actions($links)
+    {
+        $links['version_add'] = '!id/add?type='.static::VERSION_TYPE;
+        $links['version_list'] = '!id/versions';
+        return $links;
+    }
+
     protected function sortVersions($versions)
     {
         $sorted = [];
         foreach ($versions as $v) {
-            if (!$v['digraph.published.force'] && $v['digraph.published.start']) {
-                $sorted[$v['digraph.published.start'].'-'.$v['dso.id']] = $v;
-            } else {
-                $sorted[$v['dso.created.date'].'-'.$v['dso.id']] = $v;
-            }
+            $sorted[$v->effectiveDate().'-'.$v['dso.id']] = $v;
         }
         ksort($sorted);
         return array_reverse($sorted);

@@ -7,12 +7,7 @@ foreach ($versions as $k => $v) {
     echo "<tr>";
     echo "<td>".$v->url()->html()."</td>";
     echo "<td>";
-    if (!$v['digraph.published.force'] && $v['digraph.published.start']) {
-        $date = $v['digraph.published.start'];
-    } else {
-        $date = $v['dso.created.date'].'-'.$v['dso.id'];
-    }
-    echo $cms->helper('strings')->datetimeHTML($date);
+    echo $cms->helper('strings')->datetimeHTML($v->effectiveDate());
     echo "</td>";
     echo "</tr>";
 }

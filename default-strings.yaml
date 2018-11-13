@@ -8,6 +8,7 @@ filestore:
     size: File size
     hash: MD5 hash
 notifications:
+  unpublished: '"!name" is not currently published. Parts of the site may look different for users with lower access permissions than you..'
   edit:
     confirmation: Edited !name
   add:
@@ -66,7 +67,7 @@ urls:
   proper:
     '*/*': !verb
     '*/display': !name
-    '*/add': add child !arg_type
+    '*/add': add !arg_type
     '*/file': download !arg_f
   # rules for noun/verb combinations with common nouns
   common:

@@ -155,6 +155,10 @@ aside h1, aside h2, aside h3, aside h4, aside h5, aside h6, aside p, aside aside
   text-align: center;
 }
 
+img {
+  max-width: 100%;
+}
+
 /* aria roles */
 
 *[aria-hidden="true"], *[hidden] {

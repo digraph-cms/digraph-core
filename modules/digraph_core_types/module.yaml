@@ -2,9 +2,6 @@
 name: Digraph Core Types
 
 actions:
-  proper:
-    versioned:
-      versions: !id/versions
   addable:
     page:
       '*': true
@@ -12,9 +9,6 @@ actions:
       '*': true
     versioned:
       '*': true
-    version:
-      '*': false #this isn't necessary, false is default, this avoids ambiguity
-      versioned: true
 
 types:
   content:
@@ -46,16 +40,6 @@ strings:
 
 forms:
   maps:
-    link:
-      all:
-        001_digraph_title: false
-        500_digraph_body:
-          label: ${strings.forms.links.digraph_body_label}
-        400_link_url:
-          field: url
-          label: ${strings.forms.links.url_label}
-          class: Formward\Fields\Url
-          required: true
     versioned:
       all:
         001_digraph_title: false

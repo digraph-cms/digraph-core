@@ -17,7 +17,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
           if (data.hasOwnProperty(type)) {
             for (var i = 0; i < data[type].length; i++) {
               var n = document.createElement('div');
-              console.log(n);
               n.classList.add('notification');
               n.classList.add('notification-' + type);
               n.append(data[type][i]);

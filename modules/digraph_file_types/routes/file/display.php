@@ -8,6 +8,7 @@ if (!$files) {
     );
     return;
 }
+
 $f = array_pop($files);
 //display metadata page if requested, or if user can edit
 if ($noun['file.showpage'] || $noun->isEditable()) {
@@ -22,5 +23,6 @@ if ($noun['file.showpage'] || $noun->isEditable()) {
     //dislay metadata page and return so that we skip outputting file
     return;
 }
+
 //there is a file, send it to the browser
 $fs->output($package, $f);

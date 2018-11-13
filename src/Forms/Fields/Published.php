@@ -63,6 +63,9 @@ class Published extends Container
 
     public function translateMethod($method, $set)
     {
+        if (!$set) {
+            $set['force'] = 'published';
+        }
         if (@$set['force'] === 'published') {
             $set['mode'] = 'on';
         } elseif (@$set['force'] === 'unpublished') {

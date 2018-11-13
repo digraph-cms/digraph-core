@@ -3,7 +3,6 @@
 namespace Digraph\Modules\digraph_file_types;
 
 use Digraph\DSO\Noun;
-use HtmlObjectStrings\A;
 use Digraph\FileStore\FileStoreFile;
 
 class FileBundle extends Noun

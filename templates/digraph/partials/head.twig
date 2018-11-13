@@ -2,6 +2,10 @@
   <script src="{{url}}"></script>
 {% endfor %}
 
+{% if package.noun.dso.id %}
+<script>digraph.noun = "{{package.noun.dso.id}}";</script>
+{% endif %}
+
 {% for url in package.cms.config.templates.css %}
   <link rel="stylesheet" href="{{url}}">
 {% endfor %}

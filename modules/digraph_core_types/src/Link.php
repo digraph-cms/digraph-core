@@ -7,6 +7,20 @@ use HtmlObjectStrings\A;
 
 class Link extends Noun
 {
+    public function formMap(string $actions) : array
+    {
+        $s = $this->factory->cms()->helper('strings');
+        return [
+            '001_digraph_title' => false,
+            '400_link_url' => [
+                'field' => 'url',
+                'label' => $s->string('forms.links.url_label'),
+                'class' => 'Formward\\Fields\\Url',
+                'required' => true
+            ]
+        ];
+    }
+
     public function tagLink(array $args = [])
     {
         $link = new A();
