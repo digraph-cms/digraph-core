@@ -19,7 +19,6 @@ class Page extends Noun
             '550-files' => [
                 'label' => $s->string('forms.file.upload_multi.container'),
                 'class' => 'Digraph\\Forms\\Fields\\FileStoreFieldMulti',
-                'required' => true,
                 'extraConstructArgs' => [static::FILESTORE_PATH]
             ]
         ];
