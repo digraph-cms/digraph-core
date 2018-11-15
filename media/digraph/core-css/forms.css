@@ -33,9 +33,13 @@
   color: #900;
 }
 
+.Form .validation-message:first-child {
+  margin-top:0;
+}
+
 .Form .validation-message a {
   text-decoration: none;
-  color: #fff;
+  color: #fff !important;
 }
 
 .Form .validation-message a:after {

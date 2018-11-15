@@ -66,6 +66,7 @@ class UserHelper extends AbstractHelper
         }
         //TODO: make groups somehow configurable on the user side
         //return list
+        asort($groups);
         return $groups;
     }
 
