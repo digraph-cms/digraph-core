@@ -39,7 +39,7 @@ class Routing extends AbstractHelper
         /**
          * Verify that type exists, otherwise use "default"
          */
-        if ($proper && !$this->cms->config['types.content.'.$type]) {
+        if ($proper && strpos($filename, '@') !== 0 && !$this->cms->config['types.content.'.$type]) {
             $type = 'default';
         }
         /**
