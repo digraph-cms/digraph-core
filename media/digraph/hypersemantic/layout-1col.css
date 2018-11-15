@@ -38,7 +38,7 @@ footer {
 
 @media screen {
   *[role="main"] {
-    max-width: 35em;
+    max-width: 30em;
     padding-left: 10pt;
     padding-right: 10pt;
   }

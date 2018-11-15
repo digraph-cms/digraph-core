@@ -4,6 +4,8 @@ namespace Digraph\Filters\System;
 
 class TemplatesFilter extends AbstractSystemFilter
 {
+    const TAGS_PROVIDED_STRING = '[template]';
+
     public function tag_template($context, $text, $args)
     {
         $t = $this->cms->helper('templates');

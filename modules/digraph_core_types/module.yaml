@@ -1,21 +1,27 @@
 # This module holds the core system content types and their configurations
 name: Digraph Core Types
 
-actions:
-  addable:
-    page:
-      '*': true
-    link:
-      '*': true
-    versioned:
-      '*': true
-
 types:
   content:
     page: \Digraph\Modules\digraph_core_types\Page
     link: \Digraph\Modules\digraph_core_types\Link
     version: \Digraph\Modules\digraph_core_types\Version
     versioned: \Digraph\Modules\digraph_core_types\Versioned
+
+permissions:
+  url:
+    '*/versions':
+      - allow group webmaster, editors
+  add:
+    # deny adding version under everything
+    '*/version':
+      - deny all
+    # allow adding version under versioned
+    'versioned/version':
+      - allow all
+    # deny adding anything under versions
+    'version/*':
+      - deny all
 
 excluded_child_types:
   version: true

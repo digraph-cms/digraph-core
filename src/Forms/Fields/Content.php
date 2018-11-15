@@ -37,27 +37,20 @@ class Content extends Container
         $s = $cms->helper('strings');
         parent::__construct($label, $name, $parent);
         $this['text'] = new ContentTextarea($s->string('forms.digraph_content.label_text'));
-        $this['filter'] = new ContentFilter($s->string('forms.digraph_content.label_filter'));
-        //load filters from cms
-        $options = [];
-        foreach ($cms->config['filters.presets'] as $key => $value) {
-            if ($cms->helper('permissions')->check('preset/'.$key, 'filters')) {
-                if (!($name = $cms->config['filters.names.'.$key])) {
-                    $name = $key;
-                }
-                $options[$key] = $name;
-            }
-        }
-        $this['filter']->options($options);
-        $this['filter']->required(true);
-        if (count($options) == 1) {
-            $this['filter']->addClass('hidden');
-        }
+        $this['filter'] = new ContentFilter($s->string('forms.digraph_content.label_filter'), null, null, $cms);
         //options for enabling/disabling extra filters
         $extrasAllowed = false;
         $extras = new Container($s->string('forms.digraph_content.label_extras'));
-        foreach ($cms->config['filters.extras'] as $name => $label) {
-            if ($cms->helper('permissions')->check('extra/'.$name, 'filters')) {
+        foreach ($cms->config['filters.extras'] as $name => $enabled) {
+            if (!$enabled) {
+                continue;
+            }
+            $class = $cms->config['filters.classes.'.$name];
+            $label = $class::TAGS_PROVIDED_STRING;
+            if ($cms->config['strings.forms.digraph_content.extras.'.$name]) {
+                $label = $s->string('forms.digraph_content.extras.'.$name, ['tags'=>$label]);
+            }
+            if ($cms->helper('permissions')->check('extra/'.$name, 'filter')) {
                 $extras[$name] = new Checkbox($label);
                 $extrasAllowed = true;
             }

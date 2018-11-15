@@ -37,12 +37,12 @@ forms:
     label: Body content
     label_text: Content
     label_filter: Filter preset
-    label_extras: Extra standalone filters
+    label_extras: Enable BBCode-style tags
     extras:
-      link_tag: '[link] tags'
-      embed_tag: '[embed] tags'
-      template_tag: '[template] tags'
-      twig_tag: '[twig] tags'
+      digraph_safe_tags: 'Basic tags: !tags'
+      digraph_embeds: 'Embedding tags: !tags'
+      digraph_template_tags: !tags (unsafe)
+      digraph_twig_tags: !tags (unsafe)
   digraph_published:
     label: Publication settings
     label_start: Start date
@@ -56,11 +56,11 @@ actionbar:
   adder_item: Add !type here
 filters:
   default: Default (Markdown sanitized)
-  text-safe: Basic text sanitized
+  text: Basic text sanitized
   text-unsafe: Basic text (unsafe)
-  markdown-safe: Markdown sanitized
+  markdown: Markdown sanitized
   markdown-unsafe: Markdown (unsafe)
-  html-safe: Filtered HTML
+  html: Filtered HTML
   html-unsafe: Raw HTML (unsafe)
 urls:
   # rules for noun/verb combinations with proper nouns

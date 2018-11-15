@@ -37,6 +37,10 @@ templates:
     site: ${paths.site}/templates
   twigconfig:
     cache: ${paths.cache}/twig
+#uncomment this block to enable the dark variant of the base theme
+#   cssbundles:
+#     site_styles:
+#       variant-dark: digraph/site_styles/variant-dark.css
 
 # Configure module directories for site and environment-specific modules (this
 # is useful for things like debugging modules during development)

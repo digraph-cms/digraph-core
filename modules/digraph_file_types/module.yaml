@@ -6,13 +6,6 @@ types:
     file: Digraph\Modules\digraph_file_types\File
     filebundle: Digraph\Modules\digraph_file_types\FileBundle
 
-actions:
-  addable:
-    file:
-      '*': true
-    filebundle:
-      '*': true
-
 helpers:
   classes:
     image: Digraph\Modules\digraph_file_types\ImageHelper

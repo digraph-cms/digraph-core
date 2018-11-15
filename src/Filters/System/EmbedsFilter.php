@@ -4,6 +4,8 @@ namespace Digraph\Filters\System;
 
 class EmbedsFilter extends AbstractSystemFilter
 {
+    const TAGS_PROVIDED_STRING = '[embed], [file]';
+
     public function tag_embed($context, $text, $args)
     {
         $noun = $this->cms->read($context);

@@ -1,0 +1,55 @@
+body {
+  color: #fff;
+}
+
+a[href] {
+  color: #9cf;
+}
+a:visited {
+  color: #fcf;
+}
+a[href]:hover {
+  color: #fc3;
+}
+a[href]:active {
+  color: #f33;
+}
+
+pre,
+.filestore-metacard {
+  background: #333;
+}
+
+[role="banner"],
+[role="navigation"],
+footer {
+  background: #111;
+}
+
+[role="menubar"] [role="menuitem"],
+[role="menu"] [role="menuitem"] {
+  background: #111;
+  padding: 10pt;
+  display: inline-block;
+  font-size: 12pt;
+  line-height: 20pt;
+}
+
+body,
+[role="menubar"] [role="menuitem"]:hover,
+[role="menu"] [role="menuitem"]:hover,
+[role="menubar"] [role="menuitem"][aria-selected="true"].active-page,
+[role="menu"] [role="menuitem"][aria-selected="true"].active-page {
+  background:#222;
+}
+
+[role="menubar"] [role="menuitem"][aria-selected="true"].active-page,
+[role="menu"] [role="menuitem"][aria-selected="true"].active-page
+{
+  color:#fff;
+}
+
+.Form {
+  padding:0.5rem;
+  color: #000;
+}

@@ -68,33 +68,33 @@ filestore:
     file: 0o774
 
 filters:
-  names:
+  labels:
     default: ${strings.filters.default}
-    text-safe: ${strings.filters.text-safe}
+    text: ${strings.filters.text}
     text-unsafe: ${strings.filters.text-unsafe}
-    markdown-safe: ${strings.filters.markdown-safe}
+    markdown: ${strings.filters.markdown}
     markdown-unsafe: ${strings.filters.markdown-unsafe}
-    html-safe: ${strings.filters.html-safe}
+    html: ${strings.filters.html}
     html-unsafe: ${strings.filters.html-unsafe}
   extras:
-    digraph_links: ${strings.forms.digraph_content.extras.link_tag}
-    digraph_embeds: ${strings.forms.digraph_content.extras.embed_tag}
-    digraph_templates: ${strings.forms.digraph_content.extras.template_tag}
-    digraph_twig: ${strings.forms.digraph_content.extras.twig_tag}
+    digraph_safe_tags: true
+    digraph_embeds: true
+    digraph_templates: true
+    digraph_twig: true
   presets:
     default:
-      - [preset,markdown-safe]
-    text-safe:
+      - [preset,markdown]
+    text:
       - [class,sanitize]
       - [class,text]
     text-unsafe:
       - [class,text]
-    markdown-safe:
+    markdown:
       - [class,sanitize]
       - [class,markdown]
     markdown-unsafe:
       - [class,markdown]
-    html-safe:
+    html:
       - [class,html]
     html-unsafe: []
   classes:
@@ -102,22 +102,12 @@ filters:
     markdown: Digraph\Filters\MarkdownFilter
     sanitize: Digraph\Filters\SanitizeFilter
     text: Digraph\Filters\TextFilter
-    digraph_links: Digraph\Filters\System\LinksFilter
+    digraph_safe_tags: Digraph\Filters\System\SafeTagsFilter
     digraph_embeds: Digraph\Filters\System\EmbedsFilter
     digraph_templates: Digraph\Filters\System\TemplatesFilter
     digraph_twig: Digraph\Filters\System\TwigFilter
 
 permissions:
-  filters:
-    '*':
-      - deny all
-      - allow group webmaster, root
-    'preset/default':
-      - allow all
-  action:
-    '*':
-      - deny all
-      - allow group webmaster, root
   url:
     '*':
       - deny all
@@ -130,6 +120,31 @@ permissions:
       - allow all
     'api/*':
       - allow all
+    '*/edit':
+      - allow group webmaster, editor
+    '*/add':
+      - allow group webmaster, editor
+  add:
+    '*':
+      - allow all
+    # '*/file':
+    #   - deny all
+  filter:
+    '*':
+      - deny all
+      - allow group webmaster, root
+    'preset/default':
+      - allow all
+    'unsafe':
+      - deny all
+      - allow group webmaster, root
+    'extra/*':
+      - deny all
+      - allow group webmaster, root
+    'extra/digraph_safe_tags':
+      - allow all
+    'extra/digraph_embeds':
+      - allow group editor, webmaster, root
 
 navigation:
   menus:
@@ -194,11 +209,12 @@ templates:
       core_forms: digraph/core-css/forms.css
       core_actionbar: digraph/actionbar/actionbar.css
       core_filestore: digraph/core-css/filestore.css
+      core_site_styles: digraph/site_styles/bundle.css
     hypersemantic:
       typography: digraph/hypersemantic/typography.css
       menus: digraph/hypersemantic/menus.css
-      # linkicons: digraph/hypersemantic/linkicons.css
       layout: digraph/hypersemantic/layout-1col.css
+    site_styles: []
   # js files are included at either the head or foot of the page
   js:
     head:

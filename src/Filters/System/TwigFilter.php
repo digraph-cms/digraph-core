@@ -4,7 +4,9 @@ namespace Digraph\Filters\System;
 
 class TwigFilter extends AbstractSystemFilter
 {
-    public function tag_twig($context, $text, $args)
+    const TAGS_PROVIDED_STRING = '[twig]';
+
+    public function tag_ml_twig($context, $text, $args)
     {
         $fields = $args;
         $fields['noun'] = $this->cms->read($context);

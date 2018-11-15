@@ -2,7 +2,20 @@
 
 body {
   font-size: 14pt;
-  line-height: 1.4em;
+  line-height: 1.6em;
+}
+
+a[href] {
+  color: #03f;
+}
+a:visited {
+  color: #c0c;
+}
+a[href]:hover {
+  color: #f90;
+}
+a[href]:active {
+  color: #c00;
 }
 
 header, footer, nav, h1, h2, h3, h4, h5, h6 {
@@ -68,22 +81,15 @@ ul ul, ul ol, ol ul, ol ol, li ul, li ol {
 
 blockquote, pre, aside, figure {
   background: #fafafa;
-  border: 1px solid #eee;
   padding: 10pt;
 }
 
 code {
   font-family: monospace;
-  font-weight: bold;
 }
 
 pre {
   font-family: monospace;
-}
-
-pre code {
-  color: #ee6600;
-  font-weight: normal;
 }
 
 footer {

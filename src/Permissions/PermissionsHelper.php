@@ -13,6 +13,10 @@ class PermissionsHelper extends AbstractHelper
         $path = '';
         $noun = $this->cms->helper('urls')->noun($url);
         if ($noun) {
+            //pass off to checkAddPermissions if verb is "add"
+            if ($url['verb'] == 'add') {
+                return $this->checkAddPermissions($noun, $url['args']['type'], $userID);
+            }
             //use dso type as start of path
             $path = $noun['dso.type'];
         } else {
@@ -21,6 +25,19 @@ class PermissionsHelper extends AbstractHelper
         }
         $path .= '/'.$url['verb'];
         return $this->check($path, 'url', $userID);
+    }
+
+    public function checkAddPermissions(&$parentOrType, $type, string $userID=null) : bool
+    {
+        if ($parentOrType instanceof Noun) {
+            $parentType = $parentOrType['dso.type'];
+        } else {
+            $parentType = $parentOrType;
+        }
+        return
+            //user must have all the following permissions
+            $this->check($parentType.'/add', 'url', $userID) &&//url add verb permission
+            $this->check($parentType.'/'.$type, 'add', $userID);//add type under parent type
     }
 
     public function check(string $path, string $category='url', string $userID = null) : bool

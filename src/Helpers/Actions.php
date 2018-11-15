@@ -8,21 +8,22 @@ class Actions extends AbstractHelper
 {
     public function addable($search)
     {
+        //make a list of all types
         $types = [];
-        $rules = $this->cms->config['actions.addable'];
-        // loop through rules, the first key is a type that can be added,
-        // and the following keys are the types the first key can be added under
-        foreach ($rules as $type => $typeRules) {
-            $allowed = false;
-            foreach ($typeRules as $rule => $value) {
-                if ($rule == '*' || $rule == $search) {
-                    $allowed = $value;
-                }
+        foreach ($this->cms->config['types.content'] as $type => $class) {
+            if ($type == 'default') {
+                continue;
             }
-            if ($allowed) {
-                $types[] = $type;
-            }
+            $types[] = $type;
         }
+        //filter with permissions helper
+        $p = $this->cms->helper('permissions');
+        $types = array_filter(
+            $types,
+            function ($e) use ($p,$search) {
+                return $p->checkAddPermissions($search, $e);
+            }
+        );
         //return results
         asort($types);
         return array_values($types);

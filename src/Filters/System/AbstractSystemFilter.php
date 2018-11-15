@@ -14,8 +14,13 @@ abstract class AbstractSystemFilter extends AbstractFilter
     {
         foreach (preg_grep('/^tag_/', get_class_methods($this)) as $method) {
             $tag = substr($method, 4);
+            $multiline = false;
+            if (substr($tag, 0, 3) == 'ml_') {
+                $multiline = true;
+                $tag = substr($tag, 3);
+            }
             $text = preg_replace_callback(
-                $this->regex($tag),
+                $this->regex($tag, $multiline),
                 function ($matches) use ($method) {
                     // var_dump($matches);
                     //parse args
@@ -52,9 +57,9 @@ abstract class AbstractSystemFilter extends AbstractFilter
         $regex = '';
         $regex .= '\[('.$tag.')';//open opening tag
         $regex .= '(:([^\] ]+))?';//context argument
-        $regex .= '(( [a-z0-9\-_]+(=.+?)?)*)';//named args
+        $regex .= '(( +[a-z0-9\-_]+(=.+?)?)*)';//named args
         $regex .= ' *\]';//close opening tag
-        $regex .= '((.*?)';//content
+        $regex .= '((.*?)';//content -- plus opening paren for making closing tag optional
         $regex .= '\[\/'.$tag.'\])?';//closing tag
         return '/'.$regex.'/i'.($multiline?'ms':'');
     }
