@@ -20,19 +20,40 @@ $form['id']->addValidatorFunction('match', function (&$field) use ($s) {
     return true;
 });
 
-$form['children'] = new Formward\Fields\Checkbox(
+$form['recurse'] = new Formward\Fields\Checkbox(
     $s->string('forms.delete.confirm_delete_children')
 );
 
 //submit button
 $form->submitButton()->label($s->string('forms.confirm_button'));
 
+//delete function
+function do_delete(&$noun, &$cms, $recurse=false)
+{
+    //recurse if necessary
+    if ($recurse) {
+        foreach ($noun->children() as $child) {
+            do_delete($child, $cms, $recurse);
+        }
+    }
+    //delete this noun
+    if ($noun->delete()) {
+        $cms->helper('notifications')->confirmation(
+            $cms->helper('strings')->string('forms.delete.confirm_deleted', [$noun->name()])
+        );
+    } else {
+        $cms->helper('notifications')->error(
+            $cms->helper('strings')->string('forms.delete.confirm_deleted_error', [$noun->name()])
+        );
+    }
+    return;
+}
+
 //do deletion
 if ($form->handle()) {
-    $package->noun()->delete();
-    $package->cms()->helper('notifications')->confirmation(
-        $s->string('forms.confirm_delete_confirmation')
-    );
+    $n = $package->cms()->helper('notifications');
+    $noun = $package->noun();
+    do_delete($noun, $package->cms(), $form['recurse']->value());
     return;
 }
 

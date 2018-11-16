@@ -24,6 +24,8 @@ forms:
     confirm_field_label: Type the content ID <code>!0</code> to confirm
     confirm_form_title: Confirm deletion of "!0"
     confirm_match_error: The ID you entered doesn't match. Please double check it and try again.
+    confirm_deleted: Successfully deleted "!0"
+    confirm_deleted_error: Error deleting "!0"
   file:
     extension_invalid: <code>!ext</code> files are not allowed in this field
     extension_required: File must have an extension

@@ -1,6 +1,3 @@
-# This module holds the core attached media content types and their configurations
-name: Digraph Core File Attachment Types
-
 types:
   content:
     file: Digraph\Modules\digraph_file_types\File
@@ -11,11 +8,8 @@ helpers:
     image: Digraph\Modules\digraph_file_types\ImageHelper
 
 image:
-  always:
-    - sanitize
   presets:
-    full:
-      - sanitize
+    full: []
     thumbnail:
       - cover 200 200
     embed:

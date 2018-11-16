@@ -17,6 +17,14 @@ class Noun extends DSO implements NounInterface
         $this->resetChanges();
     }
 
+    public function delete(bool $permanent=false) : bool
+    {
+        if (static::FILESTORE && $permanent) {
+            exit("TODO: clear files when nouns are permanently deleted");
+        }
+        return parent::delete($permanent);
+    }
+
     public function fileUrl($id=null, $args=[])
     {
         if ($id === null) {

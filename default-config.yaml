@@ -124,6 +124,11 @@ permissions:
       - allow group webmaster, editor
     '*/add':
       - allow group webmaster, editor
+    '*/delete':
+      - allow group webmaster, editor
+    'admin/*':
+      - deny all
+      - allow group webmaster
   add:
     '*':
       - allow all
@@ -165,6 +170,7 @@ navigation:
       '*/*': ?noun/display
       '*/display': false
       'user/*': false
+      'admin/trash-item': admin/trash
 
 types:
   system:
@@ -257,6 +263,8 @@ users:
       class: Digraph\Users\Managers\Null\NullUserManager
       signup: false
       signin: false
+  groupsources:
+    config: Digraph\Users\GroupSources\ConfigGroups
   namespacing:
     # possible values for users.namespacing.mode
     # auth: one namespace for public, one for authenticated users

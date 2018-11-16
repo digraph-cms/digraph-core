@@ -7,6 +7,7 @@ use Digraph\Helpers\AbstractHelper;
 class UserHelper extends AbstractHelper
 {
     protected $managers = [];
+    protected $groupSources = [];
 
     public function validateIdentifier(string $identifier) : bool
     {
@@ -48,28 +49,6 @@ class UserHelper extends AbstractHelper
         return null;
     }
 
-    public function groups(string $id = null) : ?array
-    {
-        //load current id if null
-        if (!$id) {
-            $id = $this->id();
-        }
-        //return empty array if user is still null
-        if (!$id) {
-            return [];
-        }
-        //default list is empty
-        $groups = [];
-        //load groups from config
-        if (isset($this->cms->config['groups.'.$id])) {
-            $groups = $this->cms->config['groups.'.$id];
-        }
-        //TODO: make groups somehow configurable on the user side
-        //return list
-        asort($groups);
-        return $groups;
-    }
-
     public function id(string $set = null) : ?string
     {
         return $this->cms->helper('session')->userID($set);
@@ -94,7 +73,7 @@ class UserHelper extends AbstractHelper
         return null;
     }
 
-    public function manager($name = null) : ?Managers\UserManagerInterface
+    public function &manager(string $name = null) : ?Managers\UserManagerInterface
     {
         if (!$name) {
             $name = $this->cms->config['users.defaultmanager'];
@@ -108,6 +87,49 @@ class UserHelper extends AbstractHelper
             }
         }
         return @$this->managers[$name];
+    }
+
+    public function groups(string $id = null) : ?array
+    {
+        //load current id if null
+        if (!$id) {
+            $id = $this->id();
+        }
+        //return empty array if user is still null
+        if (!$id) {
+            return [];
+        }
+        //default list is empty
+        $groups = [];
+        //ask all group sources for groups of this user
+        foreach ($this->allGroupSources() as $source) {
+            $groups = $groups + $source->groups($id);
+        }
+        //return list
+        $groups = array_unique($groups);
+        asort($groups);
+        return $groups;
+    }
+
+    public function allGroupSources()
+    {
+        $out = [];
+        foreach ($this->cms->config['users.groupsources'] as $name => $class) {
+            $out[] = $this->groupSource($name);
+        }
+        return $out;
+    }
+
+    public function &groupSource(string $name)
+    {
+        if (!isset($this->groupSources[$name])) {
+            if (isset($this->cms->config['users.groupsources.'.$name])) {
+                $class = $this->cms->config['users.groupsources.'.$name];
+                $this->cms->log('Instantiating user group source '.$name.': '.$class);
+                $this->groupSources[$name] = new $class($this->cms);
+            }
+        }
+        return @$this->groupSources[$name];
     }
 
     public function signupAllowed(string $name) : ?bool

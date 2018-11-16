@@ -87,6 +87,11 @@ class Execute extends AbstractMunger
         return $this->package->cms();
     }
 
+    protected function url($noun, $verb, $args)
+    {
+        return $this->package->cms()->helper('urls')->url($noun, $verb, $args);
+    }
+
     protected function doConstruct($name)
     {
     }
