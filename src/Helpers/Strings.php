@@ -72,7 +72,7 @@ class Strings extends AbstractHelper
             $size /= $base;
             array_shift($names);
         } while ($size >= reset($names) && $names);
-        return (round($size*10^$dec)/10^$dec).$name;
+        return (round($size*pow(10, $dec))/pow(10, $dec)).$name;
     }
 
     public function filesizeHTML($bytes)

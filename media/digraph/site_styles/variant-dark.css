@@ -6,7 +6,7 @@ a[href] {
   color: #9cf;
 }
 a:visited {
-  color: #fcf;
+  color: #edc;
 }
 a[href]:hover {
   color: #fc3;
@@ -62,4 +62,16 @@ body,
 
 .FieldWrapper-formward-ordering-field li {
   background:#444;
+}
+
+.FieldWrapper-formward-ordering-field li.deleted,
+.FieldWrapper-formward-ordering-field li.deleted .filestore-metacard {
+  color:#fee;
+  background-color:#600;
+}
+
+.FieldWrapper-formward-ordering-field li.dragging,
+.FieldWrapper-formward-ordering-field li.dragging .filestore-metacard {
+  background-color:#329;
+  color:#def;
 }

@@ -24,6 +24,7 @@ class Bootstrapper
         if ($pos !== false) {
             $url = substr_replace($url, '?', $pos, 1);
         }
+        $url = urldecode($url);
         return $url;
     }
 

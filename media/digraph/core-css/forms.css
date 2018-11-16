@@ -13,10 +13,11 @@
   background: #eee;
 }
 
-.Form .tips {
+.Form .tips .tip {
   font-size: 0.75em;
+  opacity: 0.8;
   line-height: 1.2em;
-  opacity: 0.75;
+  margin:0.5rem;
 }
 
 .Form .validation-messages {
@@ -279,13 +280,18 @@ progressively-enhanced ordering field
   position:relative;
 }
 
+.FieldWrapper-formward-ordering-field li a {
+  color:inherit;
+}
+
 .FieldWrapper-formward-ordering-field li.deleted {
   background-color:#fee;
-  color:#c00;
+  color:#600;
   text-decoration: line-through;
 }
 
 .FieldWrapper-formward-ordering-field li.dragging {
+  color:#329;
   background-color:#def;
   cursor: grabbing;
 }

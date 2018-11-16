@@ -56,6 +56,28 @@ class FileStoreFieldMulti extends \Formward\Fields\Container
         $this['upload'] = new \Formward\Fields\FileMulti(
             $s->string('forms.file.upload_multi.upload')
         );
+        //set up tips for indicating max upload rules
+        $this['upload']->addTip(
+            $s->string(
+                'forms.file.tips.limit_count',
+                [ini_get('max_file_uploads')]
+            ),
+            'limit_count'
+        );
+        $this['upload']->addTip(
+            $s->string(
+                'forms.file.tips.limit_size_each',
+                [ini_get('upload_max_filesize')]
+            ),
+            'maxsize'
+        );
+        $this['upload']->addTip(
+            $s->string(
+                'forms.file.tips.limit_size_total',
+                [ini_get('post_max_size')]
+            ),
+            'limit_size_total'
+        );
         //set up extension validator
         if ($exts) {
             $this->allowedExts($exts);
@@ -74,7 +96,7 @@ class FileStoreFieldMulti extends \Formward\Fields\Container
                 'forms.file.max_size',
                 ['size'=>$s->filesizeHTML($size)]
             ),
-            'maxSize'
+            'maxsize'
         );
         $this['upload']->addValidatorFunction('maxSize', function (&$field) use ($size,$s) {
             if (!$field->value()) {

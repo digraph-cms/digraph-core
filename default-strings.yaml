@@ -27,8 +27,11 @@ forms:
   file:
     extension_invalid: <code>!ext</code> files are not allowed in this field
     extension_required: File must have an extension
-    max_size_error: File cannot be larger than !max
-    max_size: 'Maximum size <code>!size</code>'
+    tips:
+      limit_count: Server configuration limits this field to uploading !0 files at a time. If you need to upload more than !0 files, you have to do it in multiple steps.
+      limit_size_each: Server configuration limits each file uploaded here to !0. Larger files can't be uploaded through this form.
+      limit_size_total: Server configuration limits this field to uploading a total of !0 per request. If you need to upload multiple files that combined are bigger than !0, you have to do it in multiple steps.
+      upload_clear_warning: 'Warning: Uploading a new file here will remove the file(s) currently stored in this field.'
     upload_single:
       container: Attached file
       current: ''

@@ -48,12 +48,21 @@ class FileStoreFieldSingle extends \Formward\Fields\Container
         $s = $cms->helper('strings');
         parent::__construct($label, $name, $parent);
         //current file
-        $this['current'] = new \Formward\Fields\DisplayOnly(
+        $this['current'] = new \Formward\Fields\Ordering(
             $s->string('forms.file.upload_single.current')
         );
+        $this['current']->allowDeletion(true);
         //upload new file
         $this['upload'] = new \Formward\Fields\File(
             $s->string('forms.file.upload_single.upload')
+        );
+        //set up filesize limit tip
+        $this['upload']->addTip(
+            $s->string(
+                'forms.file.tips.limit_size_each',
+                [ini_get('upload_max_filesize')]
+            ),
+            'maxsize'
         );
         //set up extension validator
         if ($exts) {
@@ -73,7 +82,7 @@ class FileStoreFieldSingle extends \Formward\Fields\Container
                 'forms.file.max_size',
                 ['size'=>$s->filesizeHTML($size)]
             ),
-            'maxSize'
+            'maxsize'
         );
         $this['upload']->addValidatorFunction('maxSize', function (&$field) use ($size,$s) {
             if (!$field->value()) {
@@ -117,9 +126,7 @@ class FileStoreFieldSingle extends \Formward\Fields\Container
     {
         if ($this->noun) {
             $fs = $this->cms->helper('filestore');
-            if ($files = $fs->list($this->noun, $this->path)) {
-                return array_pop($files);
-            }
+            return $fs->list($this->noun, $this->path);
         }
         return null;
     }
@@ -134,6 +141,27 @@ class FileStoreFieldSingle extends \Formward\Fields\Container
 
     public function hook_formWrite(Noun &$noun, array $map)
     {
+        $fs = $this->cms->helper('filestore');
+        /*
+        use the 'current' field to do any deletions
+         */
+        foreach ($this['current']->deleted() as $uniqid) {
+            $fs->delete($noun, $uniqid);
+        }
+        /*
+        use the 'current' field to set the order of the array in the filestore
+        field of the noun
+         */
+        $arr = [];
+        foreach ($this['current']->value() as $uniqid) {
+            $arr[$uniqid] = $noun['filestore.'.$this->path.'.'.$uniqid];
+        }
+        unset($noun['filestore.'.$this->path]);
+        $noun['filestore.'.$this->path] = $arr;
+        $noun->update();
+        /*
+        save uploaded files to the noun using the filestore helper
+         */
         if ($upload = $this['upload']->value()) {
             //only import file if value is an array, because this means it's a
             //new upload -- otherwise it's a FileStoreFile representing a file
@@ -146,6 +174,7 @@ class FileStoreFieldSingle extends \Formward\Fields\Container
         }
     }
 
+
     public function required($set = null)
     {
         return AbstractField::required($set);
@@ -154,8 +183,17 @@ class FileStoreFieldSingle extends \Formward\Fields\Container
     public function dsoNoun(&$noun)
     {
         $this->noun = $noun;
-        if ($file = $this->nounValue()) {
-            $this['current']->content($file->metaCard(false));
+        if ($files = $this->nounValue()) {
+            //set up the clearing tip
+            $this['upload']->addTip(
+                $this->cms->helper('strings')->string('forms.file.tips.upload_clear_warning')
+            );
+            //set up options
+            $opts = [];
+            foreach ($files as $file) {
+                $opts[$file->uniqid()]= $file->metaCard(false);
+            }
+            $this['current']->opts($opts);
         }
     }
 
