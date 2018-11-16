@@ -75,3 +75,16 @@ body,
   background-color:#329;
   color:#def;
 }
+
+table {
+  background:#111;
+}
+
+th {
+  background:#333;
+  color:#fff;
+}
+
+tr:nth-child(even) {
+  background:#222;
+}

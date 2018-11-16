@@ -201,6 +201,21 @@ dt {
   font-size: 0.8em;
 }
 
+/* table base styles */
+table {
+  background:#efefef;
+  font-size:14pt;
+}
+
+th {
+  background:#666;
+  color:#fff;
+}
+
+tr:nth-child(even) {
+  background:#fafafa;
+}
+
 /* print improvements */
 
 @media print {
