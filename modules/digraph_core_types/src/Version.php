@@ -13,4 +13,37 @@ class Version extends Page
         }
         return $this['dso.created.date'];
     }
+
+    public function formMap(string $action) : array
+    {
+        $s = $this->factory->cms()->helper('strings');
+        $map = parent::formMap($action);
+        $map['000_digraph_name']['default'] = $s->date(time());
+        if ($action == 'add') {
+            if ($parent = $this->parent()) {
+                $map['001_digraph_title']['default'] = $parent->title();
+                if (method_exists($parent, 'currentVersion')) {
+                    if ($prev = $parent->currentVersion()) {
+                        //confirmation indicating field is prepopulated from previous version
+                        $this->factory->cms()->helper('notifications')->confirmation(
+                            $s->string('version.confirm_prepopulated')
+                        );
+                        $map['001_digraph_title']['default'] = $prev->title();
+                        $map['500_digraph_body']['default'] = $prev['digraph.body'];
+                    }
+                } else {
+                    //error indicating that parent isn't a versioned type
+                    $this->factory->cms()->helper('notifications')->warning(
+                        $s->string('version.warning_unversionedparent')
+                    );
+                }
+            } else {
+                //error indicating that there isn't a parent
+                $this->factory->cms()->helper('notifications')->warning(
+                    $s->string('version.warning_noparent')
+                );
+            }
+        }
+        return $map;
+    }
 }

@@ -37,6 +37,9 @@ strings:
   version:
     notice: This page is the permanent URL of one specific version of "!parent_name." If you would like to view or link to the latest version of "!parent_name," you should visit <a href="!parent_url">!parent_url</a> instead.
     orphaned: This !type is currently orphaned, it should have a versioned content type as its parent.
+    warning_noparent: No versioned parent found.
+    warning_unversionedparent: Parent isn't a versioned type.
+    confirm_prepopulated: Form has been pre-filled with the content of the current version.
   links:
     explanation: Click the link to continue to this URL
   forms:

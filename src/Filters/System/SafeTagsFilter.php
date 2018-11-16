@@ -88,6 +88,15 @@ class SafeTagsFilter extends AbstractSystemFilter
         return "$link";
     }
 
+    /**
+     * Including this lets us use the drag/drop file tags, but we short-circuit
+     * and don't let this version handle non-image files.
+     */
+    public function tag_file($context, $text, $args)
+    {
+        return $this->tag_img($context, $text, $args);
+    }
+
     public function tag_img($context, $text, $args)
     {
         $noun = $this->cms->read($context);

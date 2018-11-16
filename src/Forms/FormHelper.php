@@ -102,7 +102,7 @@ class FormHelper extends AbstractHelper
         $this->mapNoun(
             $noun,
             $form,
-            $this->getMap($noun, 'edit'),
+            $this->getMap($noun, 'add'),
             true
         );
         return $form;
