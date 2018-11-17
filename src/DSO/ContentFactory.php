@@ -31,11 +31,6 @@ class ContentFactory extends DigraphFactory
             'name'=>'digraph_slug',
             'type'=>'VARCHAR(100)',
             'index'=>'BTREE'
-        ],
-        'digraph.parent.0' => [
-            'name'=>'digraph_parent_0',
-            'type'=>'VARCHAR(100)',
-            'index'=>'BTREE'
         ]
     ];
 
