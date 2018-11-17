@@ -388,7 +388,7 @@ media:
 cache:
   mungercache:
     adapter: default
-    threshold: 100 #ms
+    threshold: 10 #ms
   factorycache:
     adapter: default
     threshold: 5 #ms
