@@ -26,6 +26,10 @@ footer {
   background: #111;
 }
 
+body > footer {
+  background:transparent;
+}
+
 [role="menubar"] [role="menuitem"],
 [role="menu"] [role="menuitem"] {
   background: #111;
