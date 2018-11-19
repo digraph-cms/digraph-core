@@ -80,7 +80,6 @@ filters:
     digraph_safe_tags: true
     digraph_embeds: true
     digraph_templates: true
-    digraph_twig: true
   presets:
     default:
       - [preset,markdown]
@@ -105,7 +104,6 @@ filters:
     digraph_safe_tags: Digraph\Filters\System\SafeTagsFilter
     digraph_embeds: Digraph\Filters\System\EmbedsFilter
     digraph_templates: Digraph\Filters\System\TemplatesFilter
-    digraph_twig: Digraph\Filters\System\TwigFilter
 
 permissions:
   url:

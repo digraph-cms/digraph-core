@@ -4,7 +4,11 @@ namespace Digraph\Filters\System;
 
 class TemplatesFilter extends AbstractSystemFilter
 {
-    const TAGS_PROVIDED_STRING = '[template]';
+    const TAGS_PROVIDED_STRING = '[template], [block]';
+
+    public function tag_block()
+    {
+    }
 
     public function tag_template($context, $text, $args)
     {
