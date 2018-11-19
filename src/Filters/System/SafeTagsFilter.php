@@ -60,8 +60,8 @@ class SafeTagsFilter extends AbstractSystemFilter
         if (!$noun) {
             return false;
         }
-        if (method_exists($noun, 'tagLink')) {
-            $link = $noun->tagLink($args);
+        if (method_exists($noun, 'tag_link')) {
+            return $noun->tag_link($text, $args);
         } else {
             $link = $noun->url(@$args['verb'])->html();
         }

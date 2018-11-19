@@ -12,8 +12,8 @@ class EmbedsFilter extends AbstractSystemFilter
         if (!$noun) {
             return false;
         }
-        if (method_exists($noun, 'tagEmbed')) {
-            return $noun->tagEmbed($args);
+        if (method_exists($noun, 'tag_embed')) {
+            return $noun->tag_embed($text, $args);
         }
     }
 
@@ -24,8 +24,8 @@ class EmbedsFilter extends AbstractSystemFilter
             return false;
         }
         //use noun's file tag handler, if it exists
-        if (method_exists($noun, 'tagFile')) {
-            return $noun->tagEmbed($args);
+        if (method_exists($noun, 'tag_file')) {
+            return $noun->tag_file($args);
         }
         //default file handler
         $fs = $this->cms->helper('filestore');
