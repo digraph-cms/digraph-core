@@ -5,7 +5,8 @@ timezone: GMT-0
 # settings regarding urls
 urls:
   # aliases
-  aliases: []
+  aliases:
+    '?arg_parent/': home
 
 actions:
   enabledforguests: false
@@ -111,7 +112,6 @@ permissions:
   url:
     '*':
       - deny all
-      - allow group root
     '*/display':
       - allow all
     '*/file':
@@ -137,19 +137,19 @@ permissions:
   filter:
     '*':
       - deny all
-      - allow group webmaster, root
+      - allow group webmaster
     'preset/default':
       - allow all
     'unsafe':
       - deny all
-      - allow group webmaster, root
+      - allow group webmaster
     'extra/*':
       - deny all
-      - allow group webmaster, root
+      - allow group webmaster
     'extra/digraph_safe_tags':
       - allow all
     'extra/digraph_embeds':
-      - allow group editor, webmaster, root
+      - allow group editor, webmaster
 
 navigation:
   menus:
@@ -263,8 +263,13 @@ users:
       class: Digraph\Users\Managers\Null\NullUserManager
       signup: false
       signin: false
-  groupsources:
-    config: Digraph\Users\GroupSources\ConfigGroups
+  groups:
+    canroot:
+      config: false
+    sources:
+      config:
+        class: Digraph\Users\GroupSources\ConfigGroups
+        args: []
   namespacing:
     # possible values for users.namespacing.mode
     # auth: one namespace for public, one for authenticated users

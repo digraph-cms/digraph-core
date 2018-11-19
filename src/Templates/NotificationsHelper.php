@@ -36,53 +36,56 @@ class NotificationsHelper extends AbstractHelper
         return $this->notifications;
     }
 
-    public function flashConfirmation($message)
+    public function flashConfirmation($message, $name=null)
     {
-        $this->flash('confirmation', $message);
+        $this->flash('confirmation', $message, $name);
     }
 
-    public function flashNotice($message)
+    public function flashNotice($message, $name=null)
     {
-        $this->flash('notice', $message);
+        $this->flash('notice', $message, $name);
     }
 
-    public function flashWarning($message)
+    public function flashWarning($message, $name=null)
     {
-        $this->flash('warning', $message);
+        $this->flash('warning', $message, $name);
     }
 
-    public function flashError($message)
+    public function flashError($message, $name=null)
     {
-        $this->flash('error', $message);
+        $this->flash('error', $message, $name);
     }
 
-    public function flash($type, $message)
+    public function flash($type, $message, $name=null)
     {
-        $this->sessionPushFlash($type, $message);
+        $this->sessionPushFlash($type, $message, $name);
     }
 
-    public function confirmation($message)
+    public function confirmation($message, $name=null)
     {
-        $this->add('confirmation', $message);
+        $this->add('confirmation', $message, $name);
     }
 
-    public function notice($message)
+    public function notice($message, $name=null)
     {
-        $this->add('notice', $message);
+        $this->add('notice', $message, $name);
     }
 
-    public function warning($message)
+    public function warning($message, $name=null)
     {
-        $this->add('warning', $message);
+        $this->add('warning', $message, $name);
     }
 
-    public function error($message)
+    public function error($message, $name=null)
     {
-        $this->add('error', $message);
+        $this->add('error', $message, $name);
     }
 
-    public function add($type, $message)
+    public function add($type, $message, $name=null)
     {
-        @$this->notifications[$type][] = $message;
+        if ((!$name)) {
+            $name = uniqid();
+        }
+        @$this->notifications[$type][$name] = $message;
     }
 }

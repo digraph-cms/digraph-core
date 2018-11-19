@@ -48,6 +48,11 @@ class PermissionsHelper extends AbstractHelper
             $userID = $this->cms->helper('users')->id();
         }
         $groups = $this->cms->helper('users')->groups($userID);
+        //short-circuit for root user
+        if ($userID == 'root@system' || in_array('root', $groups)) {
+            return true;
+        }
+        //check rules
         if ($rules) {
             $path = explode('/', $path);
             $matchingKeys = [];
