@@ -21,18 +21,16 @@ class Link extends Noun
         ];
     }
 
-    public function tagLink(array $args = [])
+    public function tag_link($text=null, array $args = [])
     {
         $link = new A();
         $link->attr('href', $this['url']);
         $link->addClass('digraph-link');
         $link->attr('data-digraph-link', $this->url());
         $link->content = $this->name();
+        if ($text) {
+            $link->content = $text;
+        }
         return $link;
-    }
-
-    public function tagEmbed(array $args = [])
-    {
-        return $this->tagLink($args);
     }
 }

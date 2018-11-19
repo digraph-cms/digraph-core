@@ -31,14 +31,11 @@ class SafeTagsFilter extends AbstractSystemFilter
         return "<a href=\"$text\">$text</a>";
     }
 
-    public function tag_ml_quote($context, $text, $args)
+    public function tag_quote($context, $text, $args)
     {
         return "<blockquote>$text</blockquote>";
     }
 
-    /**
-     * First search for inline code, and make a code tag without a PRE tag
-     */
     public function tag_code($context, $text, $args)
     {
         if (!$text) {
@@ -49,26 +46,12 @@ class SafeTagsFilter extends AbstractSystemFilter
             $lang = preg_replace('/[^a-z0-9]/', '', $lang);
             $style = ' style="language-'.$lang.'"';
         }
-        $text = trim($text);
-        return "<code$style>".htmlspecialchars($text)."</code>";
-    }
-
-    /**
-     * Then search for multiline code, and trim its output of extra newlines and
-     * wrap the final out put in a pre tag as well
-     */
-    public function tag_ml_code($context, $text, $args)
-    {
-        if (!$text) {
-            return false;
-        }
-        $style = '';
-        if ($lang = @$args['lang']) {
-            $lang = preg_replace('/[^a-z0-9]/', '', $lang);
-            $style = ' style="language-'.$lang.'"';
-        }
         $text = trim($text, "\r\n");
-        return "<pre><code$style>".htmlspecialchars($text)."</code></pre>";
+        $text = "<code$style>".htmlspecialchars($text)."</code>";
+        if (preg_match('[\r\n]', $text)) {
+            $text = "<pre>$text</pre>";
+        }
+        return $text;
     }
 
     public function tag_link($context, $text, $args)
@@ -77,8 +60,8 @@ class SafeTagsFilter extends AbstractSystemFilter
         if (!$noun) {
             return false;
         }
-        if (method_exists($noun, 'tagLink')) {
-            $link = $noun->tagLink($args);
+        if (method_exists($noun, 'tag_link')) {
+            return $noun->tag_link($text, $args);
         } else {
             $link = $noun->url(@$args['verb'])->html();
         }
