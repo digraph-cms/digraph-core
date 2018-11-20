@@ -5,6 +5,11 @@
   text-align:left;
 }
 
+.layout-extra-column {
+  font-size:0.85rem;
+  line-height:1.4em;
+}
+
 /* one columns */
 
 @media screen {
