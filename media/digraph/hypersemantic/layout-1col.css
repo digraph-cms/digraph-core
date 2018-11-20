@@ -19,7 +19,7 @@ body {
   padding: 0.5rem;
 }
 
-*[role="navigation"] {
+body > nav[role="navigation"] {
   margin-top: 0;
 }
 
