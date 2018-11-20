@@ -17,6 +17,17 @@ class Noun extends DSO implements NounInterface
         $this->resetChanges();
     }
 
+    public function body()
+    {
+        if (!$this['digraph.body']) {
+            return null;
+        }
+        return $this->factory->cms()->helper('filters')->filterContentField(
+            $this['digraph.body'],
+            $this['dso.id']
+        );
+    }
+
     public function delete(bool $permanent=false) : bool
     {
         if (static::FILESTORE && $permanent) {

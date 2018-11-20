@@ -168,7 +168,13 @@ navigation:
       '*/*': ?noun/display
       '*/display': false
       'user/*': false
+      'admin/display': false
       'admin/trash-item': admin/trash
+
+# array of name keys and parse()-able urls to use as the list of admin options
+# used in the admin/display route
+admin:
+  trash: admin/trash
 
 types:
   system:
@@ -213,11 +219,13 @@ templates:
       core_forms: digraph/core-css/forms.css
       core_actionbar: digraph/actionbar/actionbar.css
       core_filestore: digraph/core-css/filestore.css
+      core_blocks: digraph/core-css/blocks.css
       core_site_styles: digraph/site_styles/bundle.css
     hypersemantic:
       typography: digraph/hypersemantic/typography.css
       menus: digraph/hypersemantic/menus.css
       layout: digraph/hypersemantic/layout-1col.css
+      layout2: digraph/hypersemantic/layout-digraph.css
     site_styles: []
   # js files are included at either the head or foot of the page
   js:
@@ -330,6 +338,7 @@ helpers:
     modules: true
   classes:
     actions: Digraph\Helpers\Actions
+    blocks: Digraph\Blocks\BlockHelper
     filestore: Digraph\FileStore\FileStoreHelper
     filters: Digraph\Filters\FilterHelper
     forms: Digraph\Forms\FormHelper

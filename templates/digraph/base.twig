@@ -34,19 +34,33 @@
       {% include 'digraph/partials/mainmenu.twig' %}
     {% endblock %}
 
-    {% block body %}
-      <div id="content" role="main">
-        {% include 'digraph/partials/breadcrumb.twig' %}
-        {% include 'digraph/partials/notifications.twig' %}
-        <article>
-          <h1>{{page_title}}</h1>
-          {% if page_title != package.url.title %}
-            <h2>{{package.url.title}}</h2>
-          {% endif %}
-          <div class="package-response-content">
-            {{package.response.content|raw}}
+      {% block body %}
+        {% if package.cms.helper('blocks').areaFilled('template-layout-extracol') %}
+          <div class="layout-column-wrapper cols-2">
+        {% else %}
+          <div class="layout-column-wrapper cols-1">
+        {% endif %}
+
+        <div id="content" role="main">
+          {% include 'digraph/partials/breadcrumb.twig' %}
+          {% include 'digraph/partials/notifications.twig' %}
+          <article>
+            <h1>{{page_title}}</h1>
+            {% if page_title != package.url.title %}
+              <h2>{{package.url.title}}</h2>
+            {% endif %}
+            <div class="package-response-content">
+              {{package.response.content|raw}}
+            </div>
+          </article>
+        </div>
+
+        {% if package.cms.helper('blocks').areaFilled('template-layout-extracol') %}
+          <div class="layout-extra-column" id="template-layout-extracol">
+            {{package.cms.helper('blocks').block('template-layout-extracol')|raw}}
           </div>
-        </article>
+        {% endif %}
+
       </div>
     {% endblock %}
 

@@ -4,14 +4,11 @@ namespace Digraph\Filters\System;
 
 class TemplatesFilter extends AbstractSystemFilter
 {
-    const TAGS_PROVIDED_STRING = '[template], [block]';
+    const TAGS_PROVIDED_STRING = '[template], [block], [allblocks]';
 
     public function tag_block($context, $text, $args)
     {
-        if (method_exists($context, 'tag_block')) {
-            return $context->tag_block($text, $args);
-        }
-        return '[not a block]';
+        return $this->cms->helper('blocks')->block($context);
     }
 
     public function tag_allblocks($context, $text, $args)

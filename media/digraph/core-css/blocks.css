@@ -1,0 +1,45 @@
+.digraph-block {
+  background:#efefef;
+  padding:0.5rem;
+  margin:0.5rem 0;
+}
+
+.digraph-block:first-child {
+  margin-top:0;
+}
+
+.digraph-block:last-child {
+  margin-bottom:0;
+}
+
+.digraph-block .digraph-block {
+  padding:0;
+  padding-bottom:0.5rem;
+  border-bottom:1px solid #ddd;
+}
+
+.digraph-block .digraph-block:last-child {
+  padding-bottom:0;
+  border-bottom:0;
+}
+
+.digraph-block .digraph-actionbar {
+  font-size:0.8em;
+  line-height:1.4em;
+  opacity:0.6;
+  padding:0.25rem;
+  margin:-0.5rem;
+  margin-bottom:0.5rem;
+}
+
+.digraph-block .digraph-block .digraph-actionbar {
+  margin:0.5rem 0;
+}
+
+.digraph-block .digraph-actionbar:hover {
+  opacity:1;
+}
+
+.digraph-block .actionbar-adder {
+  display:none;
+}

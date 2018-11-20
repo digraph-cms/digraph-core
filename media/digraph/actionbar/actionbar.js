@@ -51,6 +51,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
         //make this actionbar active if necessary
         if (active) {
           actionbar.classList.remove('inactive');
+          actionbar.classList.add('active');
         }
       });
   }

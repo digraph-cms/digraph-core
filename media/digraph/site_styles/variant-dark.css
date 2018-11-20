@@ -15,7 +15,7 @@ a[href]:active {
   color: #f33;
 }
 
-pre,
+blockquote, pre, aside, figure,
 .filestore-metacard {
   background: #333;
 }
@@ -91,4 +91,12 @@ th {
 
 tr:nth-child(even) {
   background:#222;
+}
+
+.digraph-block {
+  background:#333;
+}
+
+.digraph-block .digraph-block {
+  border-bottom:1px solid #222;
 }

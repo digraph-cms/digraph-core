@@ -30,7 +30,6 @@ body>.digraph-actionbar {
 
 .digraph-actionbar .actionbar-adder {
   margin: 0 1em;
-
 }
 
 .digraph-actionbar a:hover, .digraph-actionbar a[aria-selected="true"] {
