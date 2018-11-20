@@ -30,7 +30,7 @@ footer {
 
 /* menu */
 
-*[role="menubar"] *[role="menuitem"][aria-selected="true"], *[role="menu"] *[role="menuitem"][aria-selected="true"] {
+nav.menubar *.menuitem.selected, nav.menu *.menuitem.selected {
   background: #fff;
 }
 

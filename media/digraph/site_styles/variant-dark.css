@@ -30,8 +30,8 @@ body > footer {
   background:transparent;
 }
 
-[role="menubar"] [role="menuitem"],
-[role="menu"] [role="menuitem"] {
+nav.menubar .menuitem,
+nav.menu .menuitem {
   background: #111;
   padding: 10pt;
   display: inline-block;
@@ -40,17 +40,17 @@ body > footer {
 }
 
 body,
-[role="menubar"] [role="menuitem"]:hover,
-[role="menu"] [role="menuitem"]:hover,
-[role="menubar"] [role="menuitem"][aria-selected="true"].active-page,
-[role="menu"] [role="menuitem"][aria-selected="true"].active-page,
-[role="menubar"] [role="menuitem"][aria-selected="true"].active-path,
-[role="menu"] [role="menuitem"][aria-selected="true"].active-path {
+nav.menubar .menuitem:hover,
+nav.menu .menuitem:hover,
+nav.menubar .menuitem.selected.active-page,
+nav.menu .menuitem.selected.active-page,
+nav.menubar .menuitem.selected.active-path,
+nav.menu .menuitem.selected.active-path {
   background:#222;
 }
 
-[role="menubar"] [role="menuitem"][aria-selected="true"].active-page,
-[role="menu"] [role="menuitem"][aria-selected="true"].active-page
+nav.menubar .menuitem.selected.active-page,
+nav.menu .menuitem.selected.active-page
 {
   color:#fff;
 }

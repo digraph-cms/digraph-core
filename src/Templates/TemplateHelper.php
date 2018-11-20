@@ -41,7 +41,7 @@ class TemplateHelper extends AbstractHelper
             } else {
                 $link->addClass('active-path');
             }
-            $link->attr('aria-selected', 'true');
+            $link->addClass('selected');
         }
         //return link
         return $link;
