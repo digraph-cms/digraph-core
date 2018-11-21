@@ -21,7 +21,7 @@ blockquote, pre, aside, figure,
 }
 
 [role="banner"],
-[role="navigation"],
+nav,
 footer {
   background: #111;
 }
@@ -52,7 +52,7 @@ nav.menu .menuitem.selected.active-path {
 nav.menubar .menuitem.selected.active-page,
 nav.menu .menuitem.selected.active-page
 {
-  color:#fff;
+  color:#000;
 }
 
 .Form {

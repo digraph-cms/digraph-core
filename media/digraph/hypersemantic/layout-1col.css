@@ -2,15 +2,15 @@ body {
   margin: 0;
 }
 
-*[role="banner"], *[role="navigation"], *[role="main"] {
+*[role="banner"], nav, *[role="main"] {
   margin: 1rem auto;
 }
 
-*[role="banner"], *[role="navigation"], footer {
+*[role="banner"], nav, footer {
   text-align: center;
 }
 
-*[role="banner"], *[role="navigation"], footer {
+*[role="banner"], nav, footer {
   background: #eee;
 }
 
@@ -19,7 +19,7 @@ body {
   padding: 0.5rem;
 }
 
-body > nav[role="navigation"] {
+body > nav.menubar {
   margin-top: 0;
 }
 

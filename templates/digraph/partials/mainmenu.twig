@@ -1,5 +1,5 @@
 {% if package.cms.helper('navigation').menu('main') %}
-  <nav role="navigation" class="menubar">
+  <nav class="menubar">
     {% for link in package.cms.helper('navigation').menu('main') %}
       {% set link = helper.link(link) %}
       {% do
