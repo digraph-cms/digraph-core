@@ -52,7 +52,13 @@ nav.menu .menuitem.selected.active-path {
 nav.menubar .menuitem.selected.active-page,
 nav.menu .menuitem.selected.active-page
 {
-  color:#000;
+  color:#fff;
+}
+
+nav.menubar .menuitem.selected.active-path,
+nav.menu .menuitem.selected.active-path
+{
+  color:#ccc;
 }
 
 .Form {
