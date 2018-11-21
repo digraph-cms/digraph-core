@@ -14,11 +14,6 @@ class BlockArea extends Noun
         return $this->blockContent();
     }
 
-    public function name($verb = null)
-    {
-        return '[blockarea:'.parent::name().']';
-    }
-
     public function formMap(string $action) : array
     {
         $s = $this->factory->cms()->helper('strings');

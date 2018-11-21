@@ -12,11 +12,6 @@ class Block extends Noun
     const FILESTORE_PATH = 'filefield';
     const FILESTORE_FILE_CLASS = FileStoreFile::class;
 
-    public function name($verb = null)
-    {
-        return '[block:'.parent::name().']';
-    }
-
     public function formMap(string $action) : array
     {
         $s = $this->factory->cms()->helper('strings');

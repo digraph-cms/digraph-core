@@ -85,7 +85,7 @@ urls:
     '*/file': download !arg_f
   # rules for noun/verb combinations with common nouns
   common:
-    'admin/display': Administration
+    'admin/display': Admin
     'admin/add': add !arg_type
     'admin/trash': Trash bin
     'admin/trash-item': Trash bin item

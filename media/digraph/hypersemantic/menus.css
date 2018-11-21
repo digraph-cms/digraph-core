@@ -17,10 +17,10 @@ nav.menubar:last-child, nav.menu:last-child {
 
 nav.menubar *.menuitem, nav.menu *.menuitem {
   background: #eee;
-  padding: 0.5rem;
+  padding: 0.75rem 1rem;
   display: inline-block;
   font-size: 1rem;
-  line-height: 1rem;
+  line-height: 1.2em;
 }
 
 nav.menubar *.menuitem:hover, nav.menu *.menuitem:hover {
