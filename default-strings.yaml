@@ -76,17 +76,26 @@ filters:
   markdown-unsafe: Markdown (unsafe)
   html: Filtered HTML
   html-unsafe: Raw HTML (unsafe)
+user:
+  notsignedin: You are not signed in. !signin
+  signedin: You are signed in as !name. !signout
+  groups: 'Member of groups: !groups'
 urls:
   # rules for noun/verb combinations with proper nouns
   proper:
     '*/*': !verb
-    '*/display': !name
     '*/add': add !arg_type
+    '*/display': !name
     '*/file': download !arg_f
   # rules for noun/verb combinations with common nouns
   common:
-    'admin/display': Admin
-    'admin/add': add !arg_type
-    'admin/trash': Trash bin
-    'admin/trash-item': Trash bin item
     '*/*': !noun !verb
+    'admin/add': add !arg_type
+    'admin/display': Admin
+    'admin/trash-item': Trash bin item
+    'admin/trash': Trash bin
+    'user/display': User
+    'user/signedin': Signed in
+    'user/signin': Sign in
+    'user/signout': Sign out
+    'user/signup': Sign up

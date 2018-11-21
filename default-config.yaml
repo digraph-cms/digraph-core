@@ -167,9 +167,10 @@ navigation:
     common:
       '*/*': ?noun/display
       '*/display': false
-      'user/*': false
       'admin/display': false
       'admin/trash-item': admin/trash
+      'user/*': user/display
+      'user/display': false
 
 # array of name keys and parse()-able urls to use as the list of admin options
 # used in the admin/display route
@@ -270,6 +271,8 @@ users:
       signup: false
       signin: false
   groups:
+    guests: [guest]
+    allusers: [user]
     canroot:
       config: false
     sources:

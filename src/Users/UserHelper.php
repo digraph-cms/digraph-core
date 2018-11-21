@@ -97,30 +97,33 @@ class UserHelper extends AbstractHelper
         }
         //return empty array if user is still null
         if (!$id) {
-            return [];
+            $groups = $this->cms->config['users.groups.guests'];
+            $groups = array_unique($groups);
+            asort($groups);
+            return $groups;
         }
         //default list is empty
-        $groups = [];
+        $groups = $this->cms->config['users.groups.allusers'];
         //ask all group sources for groups of this user
         foreach ($this->allGroupSources() as $name => $source) {
             $nGroups = $source->groups($id);
             //check for illegal providing of root
-            if (in_array('root',$nGroups)) {
+            if (in_array('root', $nGroups)) {
                 if (!$this->cms->config['users.groups.canroot.'.$name]) {
                     $this->cms->helper('notifications')->warning(
-                        $this->cms->helper('strings')->string('notifications.groupsource_illegalroot',[$name]),
+                        $this->cms->helper('strings')->string('notifications.groupsource_illegalroot', [$name]),
                         "groupsource-$name-noroot"
                     );
                     $nGroups = array_filter(
                         $nGroups,
-                        function($e) {
+                        function ($e) {
                             return $e != 'root';
                         }
                     );
                 }
             }
             //add to groups list
-            $groups = $groups + $nGroups;
+            $groups = array_merge($groups, $nGroups);
         }
         //return list
         $groups = array_unique($groups);
@@ -144,7 +147,7 @@ class UserHelper extends AbstractHelper
                 $class = $this->cms->config['users.groups.sources.'.$name.'.class'];
                 $args = $this->cms->config['users.groups.sources.'.$name.'.args'];
                 $this->cms->log('Instantiating user group source '.$name.': '.$class);
-                $this->groupSources[$name] = new $class($this->cms,$args);
+                $this->groupSources[$name] = new $class($this->cms, $args);
             }
         }
         return @$this->groupSources[$name];
