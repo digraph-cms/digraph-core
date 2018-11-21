@@ -95,7 +95,6 @@ urls:
     'admin/trash-item': Trash bin item
     'admin/trash': Trash bin
     'user/display': User
-    'user/signedin': Signed in
     'user/signin': Sign in
     'user/signout': Sign out
     'user/signup': Sign up

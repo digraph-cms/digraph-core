@@ -2,8 +2,11 @@
 include $this->helper('routing')->hookFile('user', 'core_init.php')['file'];
 
 //end if user is already signed in
-if ($users->id()) {
-    $this->helper('notifications')->notice('You are already signed in.');
+if ($users->user()) {
+    $package->redirect(
+        $this->helper('urls')->parse('user'),
+        303
+    );
     return;
 }
 
@@ -63,7 +66,7 @@ if ($form && $form->handle()) {
                 $users->id($u->id());
                 $done = true;
                 $package->redirect(
-                    $this->helper('urls')->parse('user/signedin')
+                    $this->helper('urls')->parse('user')
                 );
                 break;
             }
