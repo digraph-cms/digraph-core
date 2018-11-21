@@ -27,20 +27,19 @@ document.addEventListener("DOMContentLoaded", function(event) {
         //set up adder select box if necessary
         if (data.addable.length > 0) {
           //set up the field
-          let adderID = 'digraph-actionbar-adder-' + i;
-          let html = '<select class="actionbar-adder" id="' + adderID + '">';
-          html += '<option value="">{{cms.helper("strings").string("actionbar.adder_cue")}}</option>';
+          let html = '<option value="">{{cms.helper("strings").string("actionbar.adder_cue")}}</option>';
           for (var i = 0; i < data.addable.length; i++) {
             let type = data.addable[i];
             let label = '{{cms.helper("strings").string("actionbar.adder_item")}}';
             label = label.replace('!type', type);
             html += '<option value="' + type + '">' + label + '</option>';
           }
-          html += '</select>';
-          actionbar.innerHTML += html;
+          let adder = document.createElement('select');
+          adder.classList.add('actionbar-adder');
+          adder.innerHTML = html;
+          actionbar.appendChild(adder);
           active = true;
           //set up the event listener
-          let adder = document.getElementById(adderID);
           adder.addEventListener('change', function(e) {
             if (adder.value != '') {
               let url = data.addable_url + '?type=' + adder.value;
