@@ -11,7 +11,6 @@ class Versioned extends Noun
 
     public function actions($links)
     {
-        $links['version_add'] = '!id/add?type='.static::VERSION_TYPE;
         $links['version_list'] = '!id/versions';
         return $links;
     }
