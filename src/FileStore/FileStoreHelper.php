@@ -12,6 +12,31 @@ class FileStoreHelper extends AbstractHelper
         return $this->cms->helper('image');
     }
 
+    /**
+     * returns an array of all the files that are currently not referenced
+     */
+    public function cleanup() : array
+    {
+        $dirs = glob($this->cms->config['filestore.path'].'/*/*');
+        $out = [];
+        foreach ($dirs as $dir) {
+            if (filesize("$dir/uses") < 1) {
+                $names = [];
+                if ($names = trim(@file_get_contents("$dir/names"))) {
+                    $names = explode("\n", $names);
+                }
+                $out[] = [
+                    'dir' => $dir,
+                    'size' => filesize("$dir/file"),
+                    'hash' => md5_file("$dir/file"),
+                    'mtime' => filemtime("$dir/file"),
+                    'names' => $names
+                ];
+            }
+        }
+        return $out;
+    }
+
     public function output(&$package, FileStoreFile $file)
     {
         $package->makeMediaFile($file->nameWithHash());
@@ -106,8 +131,9 @@ class FileStoreHelper extends AbstractHelper
                 }
                 //remove this uniqid from the uses file
                 $uses = file_get_contents($usesFile);
-                if (strpos($uses, $file['uniqid']."\n") !== false) {
-                    $uses = str_replace($file['uniqid']."\n", '', $uses);
+                $useID = $noun['dso.id'].'.'.$file['uniqid'];
+                if (strpos($uses, $useID."\n") !== false) {
+                    $uses = str_replace($useID."\n", '', $uses);
                     file_put_contents($usesFile, $uses);
                 }
                 //release lock on lock file
@@ -129,6 +155,7 @@ class FileStoreHelper extends AbstractHelper
         $dir = $this->dir($file['hash']);
         $storeFile = $dir.'/file';
         $usesFile = $dir.'/uses';
+        $namesFile = $dir.'/names';
         //do nothing if file with this hash already exists
         if (!is_file($storeFile)) {
             //move/dopy file
@@ -152,10 +179,17 @@ class FileStoreHelper extends AbstractHelper
         while (!flock($lockHandle, LOCK_EX)) {
             usleep(50+random_int(0, 100));
         }
+        //add this filename to the filenames file
+        $uses = @file_get_contents($namesFile);
+        if (strpos($uses, $file['name']."\n") === false) {
+            $uses .= $file['name']."\n";
+            file_put_contents($namesFile, $uses);
+        }
         //add this uniqid to the uses file
-        $uses = file_get_contents($usesFile);
-        if (strpos($uses, $file['uniqid']."\n") === false) {
-            $uses .= $file['uniqid']."\n";
+        $uses = @file_get_contents($usesFile);
+        $useID = $noun['dso.id'].'.'.$file['uniqid'];
+        if (strpos($uses, $useID."\n") === false) {
+            $uses .= $useID."\n";
             file_put_contents($usesFile, $uses);
         }
         //release lock on lock file
@@ -178,8 +212,7 @@ class FileStoreHelper extends AbstractHelper
         $dir = implode(
             '/',
             [
-                $this->cms->config['paths.storage'],
-                'filestore',
+                $this->cms->config['filestore.path'],
                 $shard,
                 $hash
             ]

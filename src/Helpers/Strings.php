@@ -77,6 +77,6 @@ class Strings extends AbstractHelper
 
     public function filesizeHTML($bytes)
     {
-        return "<a title='".$bytes."B'>".$this->filesize($bytes)."</a>";
+        return "<a title='".$bytes." bytes'>".$this->filesize($bytes)."</a>";
     }
 }

@@ -7,6 +7,13 @@ filestore:
     time: Date uploaded
     size: File size
     hash: MD5 hash
+filestore-cleanup:
+  none: There are no unused filestore files to clean up.
+  title: Confirm permanent deletion of the following !count unreferenced files, freeing !size.
+  cardcontent: |
+    !size file uploaded as:<br>
+    !names<br>
+    <a href="!download">download</a>
 notifications:
   unpublished: '"!name" is not currently published. Parts of the site may look different for users with lower access permissions than you..'
   groupsource_illegalroot: Group source "!0" is not allowed to provide root.
@@ -92,6 +99,8 @@ urls:
     '*/*': !noun !verb
     'admin/add': add !arg_type
     'admin/display': Admin
+    'admin/filestore-cleanup-download': Download file
+    'admin/filestore-cleanup': Filestore cleanup
     'admin/trash-item': Trash bin item
     'admin/trash': Trash bin
     'user/display': User

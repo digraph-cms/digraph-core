@@ -41,6 +41,7 @@ image:
         jpeg_quality: 60
 
 filestore:
+  path: ${paths.storage}/filestore
   icons:
     html:
       archive: <i class="fas fa-file-archive"></i>
@@ -64,7 +65,7 @@ filestore:
       csv: ${filestore.icons.html.csv}
     # mime_full:
     #   -
-  chmod:
+  chmod: # note: these are octal
     dir: 0o775
     file: 0o774
 
@@ -169,12 +170,14 @@ navigation:
       '*/display': false
       'admin/display': false
       'admin/trash-item': admin/trash
+      'admin/filestore-cleanup-download': admin/filestore-cleanup
       'user/*': user/display
       'user/display': false
 
 # array of name keys and parse()-able urls to use as the list of admin options
 # used in the admin/display route
 admin:
+  filestore-cleanup: admin/filestore-cleanup
   trash: admin/trash
 
 types:
