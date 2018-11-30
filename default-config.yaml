@@ -133,6 +133,8 @@ permissions:
       - allow all
     '*/edit':
       - allow group webmaster, editor
+    '*/order':
+      - allow group webmaster, editor
     '*/add':
       - allow group webmaster, editor
     '*/delete':
