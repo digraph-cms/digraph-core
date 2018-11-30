@@ -46,7 +46,7 @@ class Strings extends AbstractHelper
         return $this->unit_string(
             $bytes,
             [
-                'B'=>1,
+                ' bytes'=>1,
                 'KB'=>1024,
                 'MB'=>1024,
                 'GB'=>1024,
@@ -58,14 +58,6 @@ class Strings extends AbstractHelper
 
     public function unit_string($size, array $names, bool $prefix=false, int $dec=1)
     {
-        $names = [
-            'B'=>1,
-            'KB'=>1024,
-            'MB'=>1024,
-            'GB'=>1024,
-            'TB'=>1024,
-            'PB'=>1024
-        ];
         do {
             $base = reset($names);
             $name = key($names);

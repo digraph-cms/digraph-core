@@ -7,9 +7,58 @@ use Digraph\Helpers\AbstractHelper;
 
 class FileStoreHelper extends AbstractHelper
 {
+    /**
+     * get the image helper
+     */
     public function imageHelper()
     {
         return $this->cms->helper('image');
+    }
+
+    /**
+     * Retrieve an array of information about a file by its hash
+     */
+    public function getByHash(string $hash)
+    {
+        try {
+            $dir = $this->dir($hash, false);
+        } catch (\Exception $e) {
+            return null;
+        }
+        if (!is_file($dir.'/file')) {
+            return null;
+        }
+        if ($name = trim(@file_get_contents("$dir/names"))) {
+            $name = explode("\n", $name);
+            $name = array_shift($name);
+        } else {
+            $name = $hash;
+        }
+        return [
+            'dir' => $dir,
+            'file' => "$dir/file",
+            'name' => $name
+        ];
+    }
+
+    /**
+     * Call cleanup() and then attempt to actually delete the cleanup-able files
+     */
+    public function cleanupRun() : array
+    {
+        $files = $this->cleanup();
+        $files = array_map(
+            function ($e) {
+                $dir = $e['dir'];
+                $e['deleted'] = unlink("$dir/file")
+                             && unlink("$dir/names")
+                             && unlink("$dir/uses")
+                             && rmdir($dir);
+                return $e;
+            },
+            $files
+        );
+        return $files;
     }
 
     /**
@@ -37,6 +86,9 @@ class FileStoreHelper extends AbstractHelper
         return $out;
     }
 
+    /**
+     * Set up a package to output a FileStoreFile
+     */
     public function output(&$package, FileStoreFile $file)
     {
         $package->makeMediaFile($file->nameWithHash());
@@ -47,6 +99,9 @@ class FileStoreHelper extends AbstractHelper
         $package['response.last-modified'] = $file->time();
     }
 
+    /**
+     * List all the paths (namespaces) in use by a noun
+     */
     public function listPaths(Noun &$noun) : array
     {
         if (!$noun['filestore']) {
@@ -55,6 +110,9 @@ class FileStoreHelper extends AbstractHelper
         return array_keys($noun->get('filestore'));
     }
 
+    /**
+     * List all the files at a particular path in a particular noun
+     */
     public function list(Noun &$noun, string $path = 'default') : array
     {
         //check for array in path
@@ -80,6 +138,10 @@ class FileStoreHelper extends AbstractHelper
         return $this->cms;
     }
 
+    /**
+     * get a file from a noun -- searches by both name and uniqid, and might
+     * return more than one result
+     */
     public function get(Noun &$noun, string $s, string $path = null) : array
     {
         //loop through all paths
@@ -103,6 +165,9 @@ class FileStoreHelper extends AbstractHelper
         );
     }
 
+    /**
+     * clear all files at a particular path in a noun
+     */
     public function clear(Noun &$noun, string $path = 'default')
     {
         foreach ($this->list($noun, $path) as $file) {
@@ -110,6 +175,9 @@ class FileStoreHelper extends AbstractHelper
         }
     }
 
+    /**
+     * Delete a file with a given uniqid from a noun
+     */
     public function delete($noun, $uniqid)
     {
         //loop through paths
@@ -145,6 +213,13 @@ class FileStoreHelper extends AbstractHelper
         }
     }
 
+    /**
+     * Import a file to a noun at a given path. Input array $file must include
+     * the following keys:
+     *  * file - path to the file
+     *  * name - filename to give back to users
+     *  * type - mime type to give back to users
+     */
     public function import(Noun &$noun, array $file, string $path = 'default', $copy = true)
     {
         //hash file, record time
@@ -206,9 +281,13 @@ class FileStoreHelper extends AbstractHelper
         $noun->update();
     }
 
-    public function dir(string $hash) : string
+    /**
+     * Get the directory to be used for storing a given file hash, creating it
+     * by default if necessary
+     */
+    public function dir(string $hash, $create=true) : string
     {
-        $shard = substr($hash, 0, 2);
+        $shard = substr($hash, 0, 1);
         $dir = implode(
             '/',
             [
@@ -217,26 +296,9 @@ class FileStoreHelper extends AbstractHelper
                 $hash
             ]
         );
-        if (!is_dir($dir) && !mkdir($dir, 0775, true)) {
+        if (!is_dir($dir) && $create && !mkdir($dir, 0775, true)) {
             throw new \Exception("Error creating filestore directory \"$dir\"");
         }
         return $dir;
-    }
-
-    protected function rrmdir($dir)
-    {
-        if (is_dir($dir)) {
-            $objects = scandir($dir);
-            foreach ($objects as $object) {
-                if ($object != "." && $object != "..") {
-                    if (is_dir($dir."/".$object)) {
-                        $this->rrmdir($dir."/".$object);
-                    } else {
-                        unlink($dir."/".$object);
-                    }
-                }
-            }
-            rmdir($dir);
-        }
     }
 }

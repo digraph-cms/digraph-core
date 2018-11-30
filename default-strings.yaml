@@ -10,9 +10,12 @@ filestore:
 filestore-cleanup:
   none: There are no unused filestore files to clean up.
   title: Confirm permanent deletion of the following !count unreferenced files, freeing !size.
+  file-error: An error occurred deleting file from !dir
+  error: !errors errors occurred
+  confirmation: Successfully deleted !count files, freeing !size
   cardcontent: |
-    !size file uploaded as:<br>
     !names<br>
+    !size first uploaded !mtime<br>
     <a href="!download">download</a>
 notifications:
   unpublished: '"!name" is not currently published. Parts of the site may look different for users with lower access permissions than you..'

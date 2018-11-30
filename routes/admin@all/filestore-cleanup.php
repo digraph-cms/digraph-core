@@ -6,6 +6,49 @@ $fs = $this->helper('filestore');
 $n = $this->helper('notifications');
 $s = $this->helper('strings');
 
+//set up form
+$form = new \Formward\Form($s->string('filestore-cleanup.title', ['count'=>$count,'size'=>$sizeHR]));
+if ($form->handle()) {
+    $deleted = $fs->cleanupRun();
+    $count = 0;
+    $errors = 0;
+    $size = array_reduce(
+        $deleted,
+        function ($c, $i) use ($s,$n,&$count,&$errors) {
+            //check for errors
+            if (!$i['deleted']) {
+                $n->warning(
+                    $s->string('filestore-cleanup.file-error', $i)
+                );
+                $errors++;
+                return $c;
+            }
+            //return reduce operation
+            $count++;
+            return $c+$i['size'];
+        },
+        0
+    );
+    $sizeHR = $s->filesizeHTML($size);
+    if ($count) {
+        $n->confirmation(
+            $s->string('filestore-cleanup.confirmation', [
+                'count' => $count,
+                'size' => $sizeHR
+            ])
+        );
+    }
+    if ($errors) {
+        $n->error(
+            $s->string('filestore-cleanup.error', [
+                'errors' => $errors
+            ])
+        );
+    }
+    return;
+}
+
+//load current deleted state
 $deleted = $fs->cleanup();
 $size = array_reduce(
     $deleted,
@@ -25,9 +68,6 @@ if (!$count) {
     return;
 }
 
-//display list and confirmation button
-$form = new \Formward\Form($s->string('filestore-cleanup.title', ['count'=>$count,'size'=>$sizeHR]));
-
 //submit button
 $form->submitButton()->label($s->string('forms.confirm_button'));
 
@@ -41,6 +81,7 @@ $form['text']->content(array_reduce(
             [
                 'size' => $s->filesizeHTML($i['size']),
                 'names' => implode(', ', $i['names']),
+                'mtime' => $s->dateHTML($i['mtime']),
                 'download' => $this->url('admin', 'filestore-cleanup-download', ['f'=>$i['hash']])
             ]
         );
