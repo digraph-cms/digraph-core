@@ -14,10 +14,22 @@ actions:
     '*':
       edit: !id/edit
       delete: !id/delete
+      order: !id/order
   common:
     '*': []
 
 groups: []
+
+# rules that can be used for sorting children
+# must be SQL that can be passed to a Search's order() method
+child_sorting:
+  default: ${child_sorting.date_desc}
+  date_asc: ${dso.modified.date} ASC
+  date_desc: ${dso.modified.date} DESC
+  name_asc: ${digraph.name} ASC
+  name_desc: ${digraph.name} DESC
+  manual_before: ${child_sorting.date_desc}
+  manual_after: ${child_sorting.date_asc}
 
 excluded_child_types: []
 

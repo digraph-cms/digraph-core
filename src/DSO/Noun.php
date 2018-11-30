@@ -133,11 +133,13 @@ class Noun extends DSO implements NounInterface
         return $this->factory->cms()->read($this['digraph.parents.0']);
     }
 
-    public function children()
+    public function children(string $sortRule = null)
     {
+        /* set up search */
         $search = $this->factory->search();
         $exclusions = '';
         $params = [':pattern'=>'%|'.$this['dso.id'].'|%'];
+        /* exclude types from config */
         $i = 0;
         foreach ($this->factory->cms()->config['excluded_child_types'] as $type => $value) {
             if ($value) {
@@ -146,8 +148,57 @@ class Noun extends DSO implements NounInterface
                 $params[':type_'.$i] = $type;
             }
         }
+        /* main search, look using LIKE in digraph.parents_string */
         $search->where('${digraph.parents_string} LIKE :pattern'.$exclusions);
-        return $search->execute($params);
+        /* if no sort rule, pull it from our own config */
+        if (!$sortRule) {
+            $sortRule = $this['digraph.order.mode'];
+        }
+        /* pull sort rule based on manual sort rule if necessary -- this allows
+        ordering to be different depending on whether unsorted items are going
+        at the top or bottom */
+        $manualSort = false;
+        if ($sortRule == 'manual' && $this['digraph.order.mode'] == 'manual') {
+            $manualSort = true;
+            if ($this['digraph.order.unsorted'] == 'before') {
+                $unsorted = 'before';
+                $sortRule = 'manual_before';
+            } else {
+                $unsorted = 'after';
+                $sortRule = 'manual_after';
+            }
+        }
+        /* sorting rules */
+        $cms = $this->factory->cms();
+        if (!$sortRule || !$cms->config["child_sorting.$sortRule"]) {
+            $sortRule = 'default';
+        }
+        $rule = $cms->config["child_sorting.$sortRule"];
+        $search->order($rule);
+        /* execute */
+        $children = $search->execute($params);
+        /* manually sort */
+        if ($manualSort) {
+            // add all manually-specified ids to $manuallySorted, removing from
+            // $children as we go
+            $manuallySorted = [];
+            foreach ($this['digraph.order.manual'] as $ov) {
+                foreach ($children as $ck => $cv) {
+                    if ($cv['dso.id'] == $ov) {
+                        $manuallySorted[] = $cv;
+                        unset($children[$ck]);
+                    }
+                }
+            }
+            // append/prepend $children to $manuallySorted
+            if ($unsorted == 'before') {
+                $children = $children+$manuallySorted;
+            } else {
+                $children = $manuallySorted+$children;
+            }
+        }
+        /* return */
+        return $children;
     }
 
     public function name($verb=null)
