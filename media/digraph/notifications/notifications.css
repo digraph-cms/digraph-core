@@ -16,17 +16,17 @@
 }
 
 .notifications .notification-confirmation {
-  background-color: #689F38;
+  background-color: #2E7D32;
 }
 
 .notifications .notification-notice {
-  background-color: #1976D2;
+  background-color: #607D8B;
 }
 
 .notifications .notification-warning {
-  background-color: #EF6C00;
+  background-color: #E65100;
 }
 
 .notifications .notification-error {
-  background-color: #d32f2f;
+  background-color: #b71c1c;
 }
