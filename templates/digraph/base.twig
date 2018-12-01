@@ -27,9 +27,7 @@
     {% endblock %}
 
     {% block banner %}
-      <header role="banner">
-        <h1>Default template</h1>
-      </header>
+      {% include 'digraph/partials/banner.twig' %}
     {% endblock %}
 
     {% block navigation %}
@@ -37,7 +35,7 @@
     {% endblock %}
 
       {% block body %}
-        {% if package.cms.helper('blocks').areaFilled('template-layout-extracol') %}
+        {% if package.cms.helper('blocks').areaFilled('template-extracolumn') %}
           <div class="layout-column-wrapper cols-2">
         {% else %}
           <div class="layout-column-wrapper cols-1">
@@ -46,6 +44,11 @@
         <div id="content" role="main">
           {% include 'digraph/partials/breadcrumb.twig' %}
           {% include 'digraph/partials/notifications.twig' %}
+          {% if package.cms.helper('blocks').areaFilled('template-content-before') %}
+            <div class="template-blockarea template-content-before">
+              {{package.cms.helper('blocks').block('template-content-before')|raw}}
+            </div>
+          {% endif %}
           <article>
             <h1>{{page_title}}</h1>
             {% if page_title != package.url.title %}
@@ -55,11 +58,16 @@
               {{package.response.content|raw}}
             </div>
           </article>
+          {% if package.cms.helper('blocks').areaFilled('template-content-after') %}
+            <div class="template-blockarea template-content-after">
+              {{package.cms.helper('blocks').block('template-content-after')|raw}}
+            </div>
+          {% endif %}
         </div>
 
-        {% if package.cms.helper('blocks').areaFilled('template-layout-extracol') %}
-          <div class="layout-extra-column" id="template-layout-extracol">
-            {{package.cms.helper('blocks').block('template-layout-extracol')|raw}}
+        {% if package.cms.helper('blocks').areaFilled('template-extracolumn') %}
+          <div class="template-blockarea template-extracolumn">
+            {{package.cms.helper('blocks').block('template-extracolumn')|raw}}
           </div>
         {% endif %}
 
@@ -67,9 +75,17 @@
     {% endblock %}
 
     {% block footer %}
-      <footer role="contentinfo">
-        footer
-      </footer>
+      {% if package.cms.helper('blocks').areaFilled('template-footer-before') %}
+        <div class="template-blockarea template-footer-before">
+          {{package.cms.helper('blocks').block('template-footer-before')|raw}}
+        </div>
+      {% endif %}
+      {% include 'theme/partials/footer.twig' %}
+      {% if package.cms.helper('blocks').areaFilled('template-footer-after') %}
+        <div class="template-blockarea template-footer-after">
+          {{package.cms.helper('blocks').block('template-footer-after')|raw}}
+        </div>
+      {% endif %}
     {% endblock %}
 
     {% include 'digraph/partials/foot.twig' %}
