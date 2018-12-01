@@ -11,6 +11,16 @@ class MediaHelper extends AbstractHelper
 
     public function get($search)
     {
+        //load from cache if possible
+        if ($this->cms->config['media.get_cache_ttl']) {
+            $cacheID = 'MediaHelper.get.'.md5($search);
+            $cache = $this->cms->cache();
+            if ($cache->hasItem($cacheID)) {
+                return $cache->getItem($cacheID)->get();
+            }
+        }
+        /* build result */
+        $result = null;
         $args = [];
         $argString = '';
         if ($search instanceof Url) {
@@ -18,13 +28,22 @@ class MediaHelper extends AbstractHelper
             $argString = $search->argString();
             $search = preg_replace('/\/$/', '', $search->pathString());
         }
+        //search in media paths
         foreach (array_reverse($this->cms->config['media.paths']) as $path) {
             $path .= '/'.$search;
             if (is_file($path)) {
-                return $this->prepare($path);
+                $result = $this->prepare($path);
+                break;
             }
         }
-        return null;
+        //save to cache and return
+        if ($this->cms->config['media.get_cache_ttl']) {
+            $citem = $cache->getItem($cacheID);
+            $citem->expiresAfter($this->cms->config['media.get_cache_ttl']);
+            $citem->set($result);
+            $cache->save($citem);
+        }
+        return $result;
     }
 
     public function getContent($search)

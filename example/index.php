@@ -31,7 +31,9 @@ $config['paths.site'] = realpath(__DIR__);
 /*
 Set cache path to system temp
  */
-$config['paths.cache'] = sys_get_temp_dir().'/digraph-cache';
+if (!$config['paths.cache']) {
+    $config['paths.cache'] = sys_get_temp_dir().'/digraph-cache';
+}
 
 /*
 Run bootstrapper. Everything the bootstrapper does can be done manually, but

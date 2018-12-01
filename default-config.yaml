@@ -407,6 +407,7 @@ mungerhooks:
   render: []
 
 media:
+  get_cache_ttl: 60
   package:
     response:
       ttl: 86400
