@@ -52,7 +52,7 @@ class Headers extends AbstractMunger
 
     protected function pragma($package)
     {
-        if ($package['request.namespace'] == 'public') {
+        if ($package['request.namespace'] == 'public' || $package['response.headers.pragma'] == 'public') {
             return 'public';
         } else {
             return 'no-cache';
@@ -64,7 +64,7 @@ class Headers extends AbstractMunger
         //expiration/cache control
         $cacheControl = array();
         //privacy
-        if ($package['request.namespace'] == 'public') {
+        if ($package['request.namespace'] == 'public' || $package['response.headers.pragma'] == 'public') {
             $cacheControl['public'] = true;
         } else {
             $cacheControl['private'] = true;

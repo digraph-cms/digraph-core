@@ -412,7 +412,6 @@ media:
     response:
       ttl: 86400
       headers:
-        cache-control: public
         pragma: public
 
   paths:
