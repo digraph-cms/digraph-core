@@ -10,7 +10,12 @@ class NotificationsHelper extends AbstractHelper
 {
     use SessionTrait;
 
-    protected $notifications = array();
+    protected $notifications = [
+        'error' => [],
+        'confirmation' => [],
+        'warning' => [],
+        'notice' => []
+    ];
 
     public function __construct(\Digraph\CMS &$cms)
     {

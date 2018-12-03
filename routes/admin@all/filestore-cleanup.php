@@ -7,7 +7,7 @@ $n = $this->helper('notifications');
 $s = $this->helper('strings');
 
 //set up form
-$form = new \Formward\Form($s->string('filestore-cleanup.title', ['count'=>$count,'size'=>$sizeHR]));
+$form = new \Formward\Form('');
 if ($form->handle()) {
     $deleted = $fs->cleanupRun();
     $count = 0;
@@ -59,6 +59,7 @@ $size = array_reduce(
 );
 $count = count($deleted);
 $sizeHR = $s->filesizeHTML($size);
+$form->label($s->string('filestore-cleanup.title', ['count'=>$count,'size'=>$sizeHR]));
 
 // notification if there is nothing to clean up
 if (!$count) {
@@ -80,7 +81,7 @@ $form['text']->content(array_reduce(
             'filestore-cleanup.cardcontent',
             [
                 'size' => $s->filesizeHTML($i['size']),
-                'names' => implode(', ', $i['names']),
+                'names' => @implode(', ', $i['names']),
                 'mtime' => $s->dateHTML($i['mtime']),
                 'download' => $this->url('admin', 'filestore-cleanup-download', ['f'=>$i['hash']])
             ]

@@ -46,19 +46,41 @@ class FileStoreHelper extends AbstractHelper
      */
     public function cleanupRun() : array
     {
+        //clean up files
         $files = $this->cleanup();
         $files = array_map(
             function ($e) {
                 $dir = $e['dir'];
-                $e['deleted'] = unlink("$dir/file")
-                             && unlink("$dir/names")
-                             && unlink("$dir/uses")
-                             && rmdir($dir);
+                @unlink("$dir/file");
+                @unlink("$dir/names");
+                @unlink("$dir/uses");
+                $e['deleted'] = @rmdir($dir);
                 return $e;
             },
             $files
         );
+        //clean up empty directories
+        $this->cleanupEmptyDirs();
+        //return file result
         return $files;
+    }
+
+    protected function cleanupEmptyDirs($dir = null)
+    {
+        if ($dir === null) {
+            $dir = $this->cms->config['filestore.path'];
+        }
+        //recurse
+        foreach (glob("$dir/*") as $s) {
+            if (is_dir($s)) {
+                $this->cleanupEmptyDirs($s);
+            }
+        }
+        //remove if empty
+        $children = glob("$dir/*");
+        if (!$children) {
+            rmdir($dir);
+        }
     }
 
     /**
@@ -69,16 +91,16 @@ class FileStoreHelper extends AbstractHelper
         $dirs = glob($this->cms->config['filestore.path'].'/*/*');
         $out = [];
         foreach ($dirs as $dir) {
-            if (filesize("$dir/uses") < 1) {
+            if (@filesize("$dir/uses") < 1) {
                 $names = [];
                 if ($names = trim(@file_get_contents("$dir/names"))) {
                     $names = explode("\n", $names);
                 }
                 $out[] = [
                     'dir' => $dir,
-                    'size' => filesize("$dir/file"),
-                    'hash' => md5_file("$dir/file"),
-                    'mtime' => filemtime("$dir/file"),
+                    'size' => @filesize("$dir/file"),
+                    'hash' => @md5_file("$dir/file"),
+                    'mtime' => @filemtime("$dir/file"),
                     'names' => $names
                 ];
             }
@@ -120,7 +142,7 @@ class FileStoreHelper extends AbstractHelper
             //create FileStoreFile objects from array
             return array_map(
                 function ($e) use ($noun,$path) {
-                    $e['file'] = $this->dir($e['hash']).'/file';
+                    $e['file'] = $this->dir($e['hash'], false).'/file';
                     return new FileStoreFile($e, $noun, $path, $this);
                 },
                 $files
@@ -185,7 +207,7 @@ class FileStoreHelper extends AbstractHelper
             if (isset($files[$uniqid])) {
                 $file = $files[$uniqid];
                 //identify the files we'll need
-                $dir = $this->dir($file['hash']);
+                $dir = $this->dir($file['hash'], false);
                 $storeFile = $dir.'/file';
                 $usesFile = $dir.'/uses';
                 //short-circuit and give up if storefile isn't there
