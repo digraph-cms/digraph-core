@@ -17,6 +17,11 @@ class Noun extends DSO implements NounInterface
         $this->resetChanges();
     }
 
+    public function template($verb=null)
+    {
+        return null;
+    }
+
     public function body()
     {
         if (!$this['digraph.body']) {

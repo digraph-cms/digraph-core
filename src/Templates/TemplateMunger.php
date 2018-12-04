@@ -22,7 +22,7 @@ class TemplateMunger extends AbstractMunger
         $package->set(
             'response.content',
             $t->render(
-                $package->get('response.template'),
+                $package->template(),
                 $package->get('fields')
             )
         );

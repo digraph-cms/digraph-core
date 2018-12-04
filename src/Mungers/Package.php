@@ -21,6 +21,35 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         'url'
     ];
 
+    public function template(string $set = null) : string
+    {
+        if ($set) {
+            $this['response.template'] = $set;
+        }
+        if ($this['response.template']) {
+            return $this['response.template'];
+        }
+        if ($n = $this->noun()) {
+            if ($t = $n['digraph.template']) {
+                if (is_string($t)) {
+                    return $t;
+                }
+                if (is_array($t)) {
+                    if (isset($t[$this['url.verb']])) {
+                        return $t[$this['url.verb']];
+                    }
+                    if (isset($t['*'])) {
+                        return $t['*'];
+                    }
+                }
+            }
+            if ($template = $n->template($this['url.verb'])) {
+                return $template;
+            }
+        }
+        return 'default';
+    }
+
     public function makeMediaFile(string $filename, string $mime = null)
     {
         $this['response.filename'] = $filename;

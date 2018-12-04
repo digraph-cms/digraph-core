@@ -15,7 +15,7 @@
       {% include 'digraph/partials/head.twig' %}
     {% endblock %}
   </head>
-  <body>
+  <body class="template-{{package.template}}">
     {% block admin %}
       {% if config.actions.enabledforguests or cms.helper('users').id() %}
         <div class="digraph-actionbar inactive" data-id="{{package.url.noun}}">
