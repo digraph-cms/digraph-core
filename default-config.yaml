@@ -15,6 +15,8 @@ actions:
       edit: !id/edit
       delete: !id/delete
       order: !id/order
+      rawdump: !id/rawdump
+      rawedit: !id/rawedit
   common:
     '*': []
 
@@ -131,6 +133,10 @@ permissions:
       - allow all
     'api/*':
       - allow all
+    '*/rawdump':
+      - allow group webmaster
+    '*/rawedit':
+      - allow group webmaster
     '*/edit':
       - allow group webmaster, editor
     '*/order':

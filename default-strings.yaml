@@ -119,6 +119,8 @@ urls:
     '*/display': !name
     '*/file': download !arg_f
     '*/order': order children
+    '*/rawdump': raw dump
+    '*/rawedit': raw edit
   # rules for noun/verb combinations with common nouns
   common:
     '*/*': !noun !verb
