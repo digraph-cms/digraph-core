@@ -2,9 +2,38 @@
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
 namespace Digraph\Modules\digraph_core_types;
 
+use League\HTMLToMarkdown\HtmlConverter;
+
 class Version extends Page
 {
     const ROUTING_NOUNS = ['version'];
+    const UNDIFFABLE_TAGS = [
+        'table' => 'table',
+        'img' => 'image'
+    ];
+
+    /**
+     * Needs to produce a markdown version of this version's content, which will
+     * be used in the diff verb to produce diffs. It's fine to strip content
+     * that cannot be accurately represented as markdown.
+     */
+    public function bodyDiffable()
+    {
+        $body = $this->body();
+        //strip undiffable tags
+        foreach (static::UNDIFFABLE_TAGS as $tag => $name) {
+            $body = preg_replace('/<'.$tag.'.*?>(.*?<\/'.$tag.'.*?>)?/i', '['.$name.' can\'t be reliably diffed]', $body);
+        }
+        //strip tags and convert to markdown
+        $body = strip_tags($body, '<p><br><h1><h2><h3><h4><h5><h6><strong><em><i><b><u>');
+        $converter = new HtmlConverter();
+        $converter->getConfig()->setOption('header_style', 'atx');
+        $body = $converter->convert($body);
+        //add spaces to the end of every line
+        $body = preg_replace('/(\r?\n)/m', ' $1', $body);
+        //return
+        return $body;
+    }
 
     public function effectiveDate()
     {
