@@ -74,7 +74,7 @@ if ($form && $form->handle()) {
         //sign in failed
         if (!$done) {
             $this->helper('notifications')->error(
-                $this->helper('lang')->string('notifications.signin_failed')
+                $this->helper('strings')->string('user.signin_failed')
             );
         }
     }

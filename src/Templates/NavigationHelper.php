@@ -51,6 +51,9 @@ class NavigationHelper extends AbstractHelper
             $type = 'proper';
             $nouns[] = $object['dso.id'];
             $nouns[] = $object['dso.type'];
+            if ($parent = $object->parent()) {
+                $vars['parent'] = $parent['dso.id'];
+            }
         }
         $nouns[] = '*';
         $verbs[] = '*';
@@ -60,7 +63,7 @@ class NavigationHelper extends AbstractHelper
             foreach ($verbs as $verb) {
                 if ($path = $this->cms->config["navigation.parents.$type.$noun/$verb"]) {
                     foreach ($vars as $key => $value) {
-                        $path = str_replace('?'.$key, $value, $path);
+                        $path = str_replace('!'.$key, $value, $path);
                     }
                     return $this->cms->helper('urls')->parse($path);
                 } elseif ($path === false) {

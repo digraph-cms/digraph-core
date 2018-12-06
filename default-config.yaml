@@ -182,11 +182,11 @@ navigation:
     fallback: home
     # rules for noun/verb combinations with proper nouns
     proper:
-      '*/*': ?noun/display
+      '*/*': !noun/display
       '*/display': false
     # rules for noun/verb combinations with common nouns
     common:
-      '*/*': ?noun/display
+      '*/*': !noun/display
       '*/display': false
       'admin/display': false
       'admin/trash-item': admin/trash

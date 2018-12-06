@@ -5,9 +5,19 @@ types:
     version: \Digraph\Modules\digraph_core_types\Version
     versioned: \Digraph\Modules\digraph_core_types\Versioned
 
+navigation:
+  parents:
+    proper:
+      '*/version-diff': !noun/versions
+      'version/display': !parent/versions
+
 permissions:
   url:
     '*/versions':
+      - allow group webmaster, editors
+    '*/version-diff':
+      - allow group webmaster, editors
+    'version/*':
       - allow group webmaster, editors
   add:
     # deny adding version under everything
@@ -31,10 +41,18 @@ templates:
 strings:
   versioned:
     no_versions: No current versions available
+    version-diff:
+      intro: |
+        <p>This page displays a summary of the differences between two versions of <a href="!parent_url">!parent_name</a></p>
+        <p>Currently comparing:<p>
+        <ul>
+          <li>!a_date</li>
+          <li>!b_date</li>
+        </ul>
   version:
     confirm_prepopulated: Form has been pre-filled with the content of the current version.
     display_title: Display title
-    notice: This page is the permanent URL of one specific version of "!parent_name." If you would like to view or link to the latest version of "!parent_name," you should visit <a href="!parent_url">!parent_url</a> instead.
+    notice: <p>This page is the permanent URL of the !version_date version of "!parent_name."</p><p>If you would like to view or link to the latest version of "!parent_name," the preferred URL is:<br><a href="!parent_url">!parent_url</a></p>
     orphaned: This !type is currently orphaned, it should have a versioned content type as its parent.
     revision_note: Revision note
     warning_noparent: No versioned parent found.
@@ -45,6 +63,10 @@ strings:
     links:
       digraph_body_label: Link description
       url_label: Link target Url
+  urls:
+    proper:
+      '*/versions': version list
+      '*/version-diff': compare versions
 
 defaultnoun:
   dso:

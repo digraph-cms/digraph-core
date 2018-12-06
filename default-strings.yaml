@@ -111,6 +111,7 @@ user:
   notsignedin: You are not signed in. !signin
   signedin: You are signed in as !name. !signout
   groups: 'Member of groups: !groups'
+  signin_failed: Invalid username or password
 urls:
   # rules for noun/verb combinations with proper nouns
   proper:

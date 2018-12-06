@@ -1,7 +1,7 @@
 <?php
 $versions = $package->noun()->availableVersions();
 
-echo "<form action='".$this->url($package['noun.dso.id'], 'diff', [])."' method='get'>";
+echo "<form action='".$this->url($package['noun.dso.id'], 'version-diff', [])."' method='get'>";
 echo "<table style='width:100%;'>";
 foreach ($versions as $k => $v) {
     echo "<tr>";

@@ -20,6 +20,30 @@ if ($a->effectiveDate() > $b->effectiveDate()) {
     return;
 }
 
+//make sure parents match
+$ap = $a->parent();
+$bp = $b->parent();
+if ($ap['dso.id'] != $bp['dso.id'] || $ap['dso.id'] != $package['noun.dso.id']) {
+    $package->error(404, 'Invalid or mismatched parents');
+    return;
+}
+
+//get helpers
+$s = $cms->helper('strings');
+$n = $cms->helper('notifications');
+
+//information for user
+$n->notice($s->string(
+    'versioned.version-diff.intro',
+    [
+        'parent_name' => $ap->name(),
+        'parent_url' => $ap->url(),
+        'a_date' => $s->datetimeHTML($a->effectiveDate()),
+        'b_date' => $s->datetimeHTML($b->effectiveDate())
+    ]
+));
+
+//display output
 $granularity = new cogpowered\FineDiff\Granularity\Word;
 $diff = new cogpowered\FineDiff\Diff($granularity);
 echo "<div class='diff'>";

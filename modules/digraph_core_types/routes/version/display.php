@@ -6,12 +6,14 @@ if (!$parent) {
         $cms->helper('strings')->string('version.orphaned')
     );
 } else {
+    $s = $cms->helper('strings');
     $cms->helper('notifications')->notice(
-        $cms->helper('strings')->string(
+        $s->string(
             'version.notice',
             [
                 'parent_name' => $noun->parent()->name(),
-                'parent_url' => $noun->parent()->url()
+                'parent_url' => $noun->parent()->url(),
+                'version_date' => $s->datetimeHTML($noun->effectiveDate())
             ]
         )
     );
