@@ -32,27 +32,19 @@ strings:
   versioned:
     no_versions: No current versions available
   version:
+    confirm_prepopulated: Form has been pre-filled with the content of the current version.
+    display_title: Display title
     notice: This page is the permanent URL of one specific version of "!parent_name." If you would like to view or link to the latest version of "!parent_name," you should visit <a href="!parent_url">!parent_url</a> instead.
     orphaned: This !type is currently orphaned, it should have a versioned content type as its parent.
+    revision_note: Revision note
     warning_noparent: No versioned parent found.
     warning_unversionedparent: Parent isn't a versioned type.
-    confirm_prepopulated: Form has been pre-filled with the content of the current version.
   links:
     explanation: Click the link to continue to this URL
   forms:
     links:
       digraph_body_label: Link description
       url_label: Link target Url
-
-forms:
-  maps:
-    versioned:
-      all:
-        001_digraph_title: false
-        500_digraph_body: false
-    version:
-      all:
-        100_digraph_slug: false
 
 defaultnoun:
   dso:

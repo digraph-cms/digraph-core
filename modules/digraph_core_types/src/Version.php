@@ -19,6 +19,10 @@ class Version extends Page
         $s = $this->factory->cms()->helper('strings');
         $map = parent::formMap($action);
         $map['000_digraph_name']['default'] = $s->date(time());
+        $map['000_digraph_name']['label'] = $s->string('version.revision_note');
+        $map['001_digraph_title']['required'] = true;
+        $map['001_digraph_title']['label'] = $s->string('version.display_title');
+        $map['100_digraph_slug'] = false;
         if ($action == 'add') {
             if ($parent = $this->parent()) {
                 $map['001_digraph_title']['default'] = $parent->title();

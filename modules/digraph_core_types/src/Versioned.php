@@ -61,4 +61,12 @@ class Versioned extends Noun
         }
         return null;
     }
+
+    public function formMap(string $actions) : array
+    {
+        return [
+            '001_digraph_title' => false,
+            '500_digraph_body' => false
+        ];
+    }
 }
