@@ -101,11 +101,11 @@ actionbar:
   adder_item: Add !type here
 filters:
   default: Default (Markdown)
-  text: Basic text
+  text-safe: Basic text
   text-unsafe: Basic text (unsanitized)
-  markdown: Markdown
+  markdown-safe: Markdown
   markdown-unsafe: Markdown (unsanitized)
-  html: HTML
+  html: Filtered HTML
   html-unsafe: Raw HTML (unsanitized)
 user:
   notsignedin: You are not signed in. !signin

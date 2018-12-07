@@ -86,9 +86,9 @@ filestore:
 filters:
   labels:
     default: ${strings.filters.default}
-    text-safe: ${strings.filters.text}
+    text-safe: ${strings.filters.text-safe}
     text-unsafe: ${strings.filters.text-unsafe}
-    markdown-safe: ${strings.filters.markdown}
+    markdown-safe: ${strings.filters.markdown-safe}
     markdown-unsafe: ${strings.filters.markdown-unsafe}
     html: ${strings.filters.html}
     html-unsafe: ${strings.filters.html-unsafe}
@@ -98,19 +98,19 @@ filters:
     digraph_templates: true
   presets:
     default:
-      - [preset,markdown]
-    text:
+      - [preset,markdown-safe]
+    text-safe:
       - [class,sanitize]
       - [class,text]
     text-unsafe:
       - [class,text]
-    markdown:
+    markdown-safe:
       - [class,sanitize]
       - [class,markdown]
     markdown-unsafe:
       - [class,markdown]
     html:
-      - [class,html]
+      - [class,striphtml]
     html-unsafe: []
   classes:
     striphtml: Digraph\Filters\HTMLFilter
@@ -120,6 +120,8 @@ filters:
     digraph_safe_tags: Digraph\Filters\System\SafeTagsFilter
     digraph_embeds: Digraph\Filters\System\EmbedsFilter
     digraph_templates: Digraph\Filters\System\TemplatesFilter
+  htmlfilter:
+    allowed: [a,b,blockquote,code,del,dd,dl,em,h1,h2,h3,h4,h5,h6,i,img,kbd,li,ol,p,pre,s,sup,sub,strong,strike,ul,br,hr]
 
 permissions:
   url:
