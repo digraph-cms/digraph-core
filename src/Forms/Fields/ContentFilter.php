@@ -19,7 +19,11 @@ class ContentFilter extends Select
         foreach ($cms->config['filters.presets'] as $key => $value) {
             //basic permissions
             $permission = $cms->helper('permissions')->check('preset/'.$key, 'filter');
-            //safe/unsafe permissions
+            //unsafe permissions
+            if (substr($key, -5) == '-safe') {
+                $permission = $permission || $cms->helper('permissions')->check('safe', 'filter');
+            }
+            //unsafe permissions
             if (substr($key, -7) == '-unsafe') {
                 $permission = $permission && $cms->helper('permissions')->check('unsafe', 'filter');
             }

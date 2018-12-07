@@ -86,9 +86,9 @@ filestore:
 filters:
   labels:
     default: ${strings.filters.default}
-    text: ${strings.filters.text}
+    text-safe: ${strings.filters.text}
     text-unsafe: ${strings.filters.text-unsafe}
-    markdown: ${strings.filters.markdown}
+    markdown-safe: ${strings.filters.markdown}
     markdown-unsafe: ${strings.filters.markdown-unsafe}
     html: ${strings.filters.html}
     html-unsafe: ${strings.filters.html-unsafe}
@@ -151,8 +151,6 @@ permissions:
   add:
     '*':
       - allow all
-    # '*/file':
-    #   - deny all
   filter:
     '*':
       - deny all
@@ -162,6 +160,10 @@ permissions:
     'unsafe':
       - deny all
       - allow group webmaster
+    'safe':
+      - allow all
+    'preset/html':
+      - allow group webmaster, editor
     'extra/*':
       - deny all
       - allow group webmaster
