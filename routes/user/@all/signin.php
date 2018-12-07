@@ -90,3 +90,12 @@ if ($users->id()) {
         include $file['file'];
     }
 }
+
+//redirect if user is signed in
+if ($users->user()) {
+    $package->redirect(
+        $this->helper('urls')->parse('user'),
+        303
+    );
+    return;
+}
