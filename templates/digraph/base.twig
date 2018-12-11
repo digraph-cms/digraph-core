@@ -32,6 +32,8 @@
 
     {% block navigation %}
       {% include 'digraph/partials/mainmenu.twig' %}
+      {% include 'digraph/partials/breadcrumb.twig' %}
+      {% include 'digraph/partials/notifications.twig' %}
     {% endblock %}
 
       {% block body %}
@@ -42,8 +44,6 @@
         {% endif %}
 
         <div id="content" role="main">
-          {% include 'digraph/partials/breadcrumb.twig' %}
-          {% include 'digraph/partials/notifications.twig' %}
           {% if package.cms.helper('blocks').areaFilled('template-content-before') %}
             <div class="template-blockarea template-content-before">
               {{package.cms.helper('blocks').block('template-content-before')|raw}}

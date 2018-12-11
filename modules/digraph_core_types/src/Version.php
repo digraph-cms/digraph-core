@@ -22,7 +22,7 @@ class Version extends Page
         $body = $this->body();
         //strip undiffable tags
         foreach (static::UNDIFFABLE_TAGS as $tag => $name) {
-            $body = preg_replace('/<'.$tag.'.*?>(.*?<\/'.$tag.'.*?>)?/i', '['.$name.' can\'t be reliably diffed]', $body);
+            $body = preg_replace('/<'.$tag.'.*?>(.*?<\/'.$tag.'.*?>)?/i', '['.$name.' can\'t be diffed]', $body);
         }
         //strip tags and convert to markdown
         $body = strip_tags($body, '<p><br><h1><h2><h3><h4><h5><h6><strong><em><i><b><u>');
