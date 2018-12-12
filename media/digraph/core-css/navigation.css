@@ -7,9 +7,13 @@
   border-bottom:1px dotted rgba(127,127,127,0.5);
 }
 
+.breadcrumb-item {
+  display:inline-block;
+}
+
 .breadcrumb-item:after {
   content: '\00BB';
-  display: inline;
+  display: inline-block;
 }
 
 .breadcrumb-item:last-of-type a {
