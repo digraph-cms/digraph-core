@@ -1,23 +1,22 @@
-body > .breadcrumb {
-  font-size: 0.8em;
+.breadcrumb {
+  font-size: 0.8rem;
   margin:0 auto;
-  margin-bottom:1rem;
-  opacity:0.35;
+  margin-bottom:0.5rem;
+  padding-bottom:0.5rem;
   line-height:1.4;
-  text-align: center;
-}
-body > .breadcrumb:hover {
-  opacity:1;
+  border-bottom:1px dotted rgba(127,127,127,0.5);
 }
 
 .breadcrumb-item:after {
-  content: ' / ';
+  content: '\00BB';
   display: inline;
 }
 
 .breadcrumb-item:last-of-type a {
   text-decoration: none;
   color: inherit;
+  font-style:italic;
+  opacity:0.75;
 }
 
 .breadcrumb-item:last-of-type:after {
