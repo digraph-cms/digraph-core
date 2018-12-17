@@ -16,7 +16,9 @@ class FilterHelper extends AbstractHelper
         if (@$content['extra']) {
             foreach ($content['extra'] as $name => $value) {
                 if ($value) {
-                    $text = $this->filter($name)->filter($text);
+                    if ($filter = $this->filter($name)) {
+                        $text = $filter->filter($text);
+                    }
                 }
             }
         }
