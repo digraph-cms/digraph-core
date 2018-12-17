@@ -17,8 +17,8 @@
 }
 
 .breadcrumb-item:last-of-type a {
-  text-decoration: none;
-  color: inherit;
+  text-decoration: inherit !important;
+  color: inherit !important;
   font-style:italic;
   opacity:0.75;
 }
