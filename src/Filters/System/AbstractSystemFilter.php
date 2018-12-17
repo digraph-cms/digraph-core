@@ -14,7 +14,7 @@ abstract class AbstractSystemFilter extends AbstractFilter
     {
         $text = preg_replace_callback(
             $this->regex(),
-            function ($matches) {
+            function ($matches) use ($opts) {
                 //figure out method name
                 $method = 'tag_'.strtolower($matches[1]);
                 if (!method_exists($this, $method)) {
@@ -32,12 +32,15 @@ abstract class AbstractSystemFilter extends AbstractFilter
                 }
                 //send to method
                 $context = @$matches[3];
+                if ($text = @$matches[9]) {
+                    $text = $this->filter($text, $opts);
+                }
                 if (!$context) {
                     $context = $this->context;
                 }
                 $out = $this->$method(
                     $context,//context
-                    @$matches[8],//text
+                    $text,//text
                     $args
                 );
                 return $out?$out:$matches[0];
@@ -53,9 +56,9 @@ abstract class AbstractSystemFilter extends AbstractFilter
         $regex .= '\[([a-z]+)';//open opening tag
         $regex .= '(:([^\] ]+))?';//context argument
         $regex .= '(( +[a-z0-9\-_]+(=.+?)?)*)';//named args
-        $regex .= ' *\]';//close opening tag
+        $regex .= ' *(\/\]|\]';//self-close opening tag, or not self-closed so we might have text
         $regex .= '((.*?)';//content -- plus opening paren for making closing tag optional
-        $regex .= '\[\/\1\])?';//closing tag
+        $regex .= '\[\/\1\])?)';//closing tag
         return '/'.$regex.'/ims';
     }
 }
