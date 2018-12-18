@@ -1,13 +1,10 @@
 .digraph-actionbar {
   background: #1565C0;
   color: #fff;
-  padding: 1pt;
   line-height:1.3em;
-}
-
-body>.digraph-actionbar {
-  position: relative;
-  z-index: 100;
+  font-size:1rem;
+  font-family:sans-serif;
+  padding:0 5pt;
 }
 
 .digraph-actionbar.inactive {
@@ -42,10 +39,26 @@ body>.digraph-actionbar {
 
 .digraph-actionbar-title {
   font-weight: bold;
-  display: inline;
+  display: inline-block;
+  padding: 2pt 5pt;
 }
 
 .digraph-actionbar-title:after {
   content: ':';
   display: inline;
+}
+
+#digraph-primary-actionbar {
+  background: #1565C0;
+  font-size:0;
+}
+#digraph-primary-actionbar:after {
+  content:'';
+  display:block;
+  clear:both;
+}
+#digraph-primary-actionbar .digraph-actionbar-user {
+  float:right;
+  background:rgba(255,255,255,0.25);
+  margin-left:1rem;
 }

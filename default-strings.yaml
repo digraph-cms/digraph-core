@@ -97,6 +97,9 @@ forms:
       off: Unpublished
       date: Scheduled
 actionbar:
+  title:
+    default: Actions
+    guest: Account
   adder_cue: Add child here...
   adder_item: Add !type here
 filters:

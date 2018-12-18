@@ -43,7 +43,6 @@ class Actions extends AbstractHelper
         } else {
             $proper = false;
             $rules = $this->cms->config['actions.common'];
-            $noun = $package['url.noun'];
         }
         //extract matching rules
         $links = $rules['*'];
@@ -51,7 +50,7 @@ class Actions extends AbstractHelper
             $links = array_replace_recursive($links, $rules[$noun]);
         }
         //allow noun to mess with links if it wants to
-        if (method_exists($object, 'actions')) {
+        if ($object && method_exists($object, 'actions')) {
             $links = $object->actions($links);
         }
         //apply variables to links

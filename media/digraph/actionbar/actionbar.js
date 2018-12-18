@@ -19,6 +19,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
       //receive json and put it on the page
       .then(function(data) {
         let active = false;
+        //set up title
+        actionbar.innerHTML = '<div class="digraph-actionbar-title">' + data.title + '</div>';
         //set up links if necessary
         if (data.links.length > 0) {
           actionbar.innerHTML += data.links.join(' ');

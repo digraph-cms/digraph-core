@@ -9,7 +9,7 @@ urls:
     '?arg_parent/': home
 
 actions:
-  enabledforguests: false
+  uiforguests: true
   proper:
     '*':
       edit: !id/edit
@@ -19,6 +19,11 @@ actions:
       rawedit: !id/rawedit
   common:
     '*': []
+    'user/guest':
+      signin: user/signin
+      signup: user/signup
+    'user/signedin':
+      signout: user/signout
 
 groups: []
 
