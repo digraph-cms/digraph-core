@@ -24,12 +24,11 @@
 }
 
 .digraph-block .digraph-actionbar {
-  font-size:0.8em;
-  line-height:1.4em;
+  font-size:0.8rem;
   opacity:0.6;
-  padding:0.25rem;
   margin:-0.5rem;
   margin-bottom:0.5rem;
+  padding:0;
 }
 
 .digraph-block .digraph-block .digraph-actionbar {

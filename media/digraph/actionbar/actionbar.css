@@ -2,7 +2,7 @@
   background: #1565C0;
   color: #fff;
   line-height:1.3em;
-  font-size:1rem;
+  font-size:0.8rem;
   font-family:sans-serif;
   padding:0 5pt;
 }
@@ -27,7 +27,7 @@
 }
 
 .digraph-actionbar .actionbar-adder {
-  margin: 0 10pt;
+  margin: 0 5pt
 }
 
 .digraph-actionbar a:hover, .digraph-actionbar a[aria-selected="true"] {
