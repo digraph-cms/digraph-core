@@ -1,3 +1,7 @@
+<?php
+$package->noCache();
+ ?>
+
 <ul>
 <?php
 $u = $cms->helper('urls');

@@ -188,6 +188,7 @@ navigation:
     proper:
       '*/*': !noun/display
       '*/display': false
+      '*/sitemap': admin/sitemap
     # rules for noun/verb combinations with common nouns
     common:
       '*/*': !noun/display
@@ -202,6 +203,7 @@ navigation:
 # used in the admin/display route
 admin:
   filestore-cleanup: admin/filestore-cleanup
+  sitemap: admin/sitemap
   trash: admin/trash
 
 types:

@@ -21,6 +21,12 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         'url'
     ];
 
+    public function noCache()
+    {
+        $this['response.cacheable'] = false;
+        $this['response.ttl'] = 0;
+    }
+
     public function template(string $set = null) : string
     {
         if ($set) {
