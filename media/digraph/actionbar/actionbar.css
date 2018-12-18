@@ -1,7 +1,8 @@
 .digraph-actionbar {
   background: #1565C0;
   color: #fff;
-  padding: 5pt;
+  padding: 1pt;
+  line-height:1.3em;
 }
 
 body>.digraph-actionbar {
@@ -25,11 +26,11 @@ body>.digraph-actionbar {
   opacity: 0.8;
   text-decoration: none;
   display: inline-block;
-  padding: 0 0.5em;
+  padding: 2pt 5pt;
 }
 
 .digraph-actionbar .actionbar-adder {
-  margin: 0 1em;
+  margin: 0 10pt;
 }
 
 .digraph-actionbar a:hover, .digraph-actionbar a[aria-selected="true"] {
