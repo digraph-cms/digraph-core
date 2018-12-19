@@ -11,7 +11,7 @@ body {
 }
 
 *[role="banner"], nav, footer {
-  background: #eee;
+  background: #fafafa;
 }
 
 *[role="banner"] {
@@ -21,6 +21,7 @@ body {
 
 body > nav.menubar {
   margin: 0;
+  background:#eee;
 }
 
 body > #digraph-notifications {
@@ -35,6 +36,7 @@ body > #digraph-notifications {
 footer {
   margin-bottom: 0;
   padding: 1rem 0.5rem;
+  background:transparent;
 }
 
 /* menu */
