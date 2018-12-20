@@ -18,6 +18,11 @@ class NullUser implements UserInterface
         $this->managerName = $manager;
     }
 
+    public function __toString()
+    {
+        return $this->name();
+    }
+
     public function managerName(string $set = null) : string
     {
         if ($set) {

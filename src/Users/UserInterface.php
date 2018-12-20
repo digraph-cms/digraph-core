@@ -12,6 +12,7 @@ interface UserInterface extends FlatArrayInterface
     public function identifier() : string;
     public function id() : string;
     public function name(string $set = null) : string;
+    public function __toString();
 
     //retrieve current primary email address
     public function email() : ?string;

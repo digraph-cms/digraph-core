@@ -1,10 +1,10 @@
 <?php
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
-namespace Digraph\Filters\System;
+namespace Digraph\Filters\BBCode;
 
-class EmbedsFilter extends AbstractSystemFilter
+class BBCodeAdvancedFilter extends AbstractBBCodeFilter
 {
-    const TAGS_PROVIDED_STRING = '[embed], [file]';
+    const TEMPLATEPREFIX = 'bbcode/advanced/';
 
     public function tag_embed($context, $text, $args)
     {

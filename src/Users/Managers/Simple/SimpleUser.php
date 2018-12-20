@@ -9,6 +9,11 @@ class SimpleUser extends DSO implements UserInterface
 {
     protected $managerName;
 
+    public function __toString()
+    {
+        return $this->name();
+    }
+
     public function managerName(string $set = null) : string
     {
         if ($set) {

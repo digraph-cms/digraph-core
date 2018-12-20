@@ -98,10 +98,9 @@ filters:
     html: ${strings.filters.html}
     html-unsafe: ${strings.filters.html-unsafe}
   extras:
-    digraph_safe_tags: true
-    digraph_safe_templates: true
-    digraph_embeds: true
-    digraph_templates: true
+    bbcode_basic: true
+    bbcode_advanced: true
+    bbcode_unsafe: true
   presets:
     default:
       - [preset,markdown-safe]
@@ -123,10 +122,9 @@ filters:
     markdown: Digraph\Filters\MarkdownFilter
     sanitize: Digraph\Filters\SanitizeFilter
     text: Digraph\Filters\TextFilter
-    digraph_safe_tags: Digraph\Filters\System\SafeTagsFilter
-    digraph_safe_templates: Digraph\Filters\System\SafeTemplatesFilter
-    digraph_embeds: Digraph\Filters\System\EmbedsFilter
-    digraph_templates: Digraph\Filters\System\TemplatesFilter
+    bbcode_basic: Digraph\Filters\BBCode\BBCodeBasicFilter
+    bbcode_advanced: Digraph\Filters\BBCode\BBCodeAdvancedFilter
+    bbcode_unsafe: Digraph\Filters\BBCode\BBCodeUnsafeFilter
   htmlfilter:
     allowed: [a,b,blockquote,code,del,dd,dl,em,h1,h2,h3,h4,h5,h6,i,img,kbd,li,ol,p,pre,s,sup,sub,strong,strike,ul,br,hr]
 
@@ -176,9 +174,9 @@ permissions:
     'extra/*':
       - deny all
       - allow group webmaster
-    'extra/digraph_safe_tags':
+    'extra/digraph_bbcode_basic':
       - allow all
-    'extra/digraph_embeds':
+    'extra/digraph_bbcode_advanced':
       - allow group editor, webmaster
 
 navigation:

@@ -35,6 +35,7 @@ class Content extends Container
     public function __construct(string $label, string $name=null, FieldInterface $parent=null, CMS &$cms=null)
     {
         $s = $cms->helper('strings');
+        $f = $cms->helper('filters');
         parent::__construct($label, $name, $parent);
         $this['text'] = new ContentTextarea($s->string('forms.digraph_content.label_text'));
         $this['filter'] = new ContentFilter($s->string('forms.digraph_content.label_filter'), null, null, $cms);
@@ -45,8 +46,10 @@ class Content extends Container
             if (!$enabled) {
                 continue;
             }
-            $class = $cms->config['filters.classes.'.$name];
-            $label = $class::TAGS_PROVIDED_STRING;
+            if (!($filter = $f->filter($name))) {
+                continue;
+            }
+            $label = $filter->tagsProvidedString();
             if ($cms->config['strings.forms.digraph_content.extras.'.$name]) {
                 $label = $s->string('forms.digraph_content.extras.'.$name, ['tags'=>$label]);
             }

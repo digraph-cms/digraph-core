@@ -17,10 +17,33 @@ class UserHelper extends AbstractHelper
         return true;
     }
 
+    protected function managers() : array
+    {
+        $m = [];
+        foreach ($this->cms->config['users.managers'] as $name => $settings) {
+            $m[$name] = $this->manager($name);
+        }
+        return $m;
+    }
+
+    public function search(string $search)
+    {
+        $out = [];
+        foreach ($this->managers() as $manager) {
+            if ($user = $manager->getByEmail($search)) {
+                $out[$user->identifier()] = $user;
+            }
+            if ($user = $manager->getByIdentifier($this->userIdentifier($search))) {
+                $out[$user->identifier()] = $user;
+            }
+        }
+        return $out;
+    }
+
     public function getByEmail(string $email)
     {
         $out = [];
-        foreach ($this->managers as $manager) {
+        foreach ($this->managers() as $manager) {
             if ($user = $manager->getByEmail($email)) {
                 $out[$user->identifier()] = $user;
             }

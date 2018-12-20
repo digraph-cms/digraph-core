@@ -82,12 +82,11 @@ forms:
     label: Body content
     label_text: Content
     label_filter: Filter preset
-    label_extras: Enable BBCode-style tags
+    label_extras: Enable extra output filters
     extras:
-      digraph_safe_tags: 'Basic tags: !tags'
-      digraph_safe_templates: 'Safe template tags: !tags, any additional templates in templates/tags'
-      digraph_embeds: 'Embedding tags: !tags'
-      digraph_templates: !tags (unsafe, allows any templates or blocks to be included)
+      bbcode_basic: 'Basic BBCode: !tags'
+      bbcode_advanced: 'Advanced BBCode: !tags'
+      bbcode_unsafe: 'Unsafe BBCode: !tags'
   digraph_published:
     label: Publication settings
     label_start: Start date

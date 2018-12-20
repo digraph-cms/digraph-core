@@ -102,6 +102,24 @@ nav {
   font-size: 12pt;
 }
 
+/* blockquotes */
+
+blockquote {
+  padding:0.5rem 1rem;
+}
+
+blockquote > .author {
+  display:block;
+  margin-top:1rem;
+  font-style:italic;
+  text-align:right;
+}
+
+blockquote > .author:before {
+  display:inline;
+  content:'\2015';
+}
+
 /* asides and figures */
 
 aside, figure {
