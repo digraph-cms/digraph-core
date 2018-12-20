@@ -22,7 +22,8 @@ blockquote, pre, aside, figure,
 
 [role="banner"],
 nav,
-footer {
+footer,
+body > nav.menubar {
   background: #111;
 }
 

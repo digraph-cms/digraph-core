@@ -16,9 +16,14 @@ abstract class AbstractSystemFilter extends AbstractFilter
             $this->regex(),
             function ($matches) use ($opts) {
                 //figure out method name
-                $method = 'tag_'.strtolower($matches[1]);
+                $tag = strtolower($matches[1]);
+                $method = 'tag_'.$tag;
                 if (!method_exists($this, $method)) {
-                    return $matches[0];
+                    if (method_exists($this, 'tag')) {
+                        $method = 'tag';
+                    } else {
+                        return $matches[0];
+                    }
                 }
                 //parse args
                 $args = [];
@@ -38,11 +43,22 @@ abstract class AbstractSystemFilter extends AbstractFilter
                 if (!$context) {
                     $context = $this->context;
                 }
-                $out = $this->$method(
-                    $context,//context
-                    $text,//text
-                    $args
-                );
+                if ($method == 'tag') {
+                    //pass tag to generic 'tag' handler method
+                    $out = $this->$method(
+                        $tag,//tag
+                        $context,//context
+                        $text,//text
+                        $args
+                    );
+                } else {
+                    //named method
+                    $out = $this->$method(
+                        $context,//context
+                        $text,//text
+                        $args
+                    );
+                }
                 return $out?$out:$matches[0];
             },
             $text

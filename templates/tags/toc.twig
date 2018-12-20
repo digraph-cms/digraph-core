@@ -3,7 +3,7 @@
     <li class="toc-{{item['dso.id']}}">
       {{item.link|raw}}
       {% if item.children %}
-        {% include 'tags/digraph/toc.twig' with {
+        {% include 'tags/toc.twig' with {
           'noun' : item
         } %}
       {% endif %}

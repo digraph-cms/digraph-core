@@ -99,6 +99,7 @@ filters:
     html-unsafe: ${strings.filters.html-unsafe}
   extras:
     digraph_safe_tags: true
+    digraph_safe_templates: true
     digraph_embeds: true
     digraph_templates: true
   presets:
@@ -123,6 +124,7 @@ filters:
     sanitize: Digraph\Filters\SanitizeFilter
     text: Digraph\Filters\TextFilter
     digraph_safe_tags: Digraph\Filters\System\SafeTagsFilter
+    digraph_safe_templates: Digraph\Filters\System\SafeTemplatesFilter
     digraph_embeds: Digraph\Filters\System\EmbedsFilter
     digraph_templates: Digraph\Filters\System\TemplatesFilter
   htmlfilter:

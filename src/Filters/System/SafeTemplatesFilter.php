@@ -2,29 +2,22 @@
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
 namespace Digraph\Filters\System;
 
-class TemplatesFilter extends AbstractSystemFilter
+class SafeTemplatesFilter extends AbstractSystemFilter
 {
-    const TAGS_PROVIDED_STRING = '[anytemplate], [block], [allblocks]';
+    const TAGS_PROVIDED_STRING = '[template]';
 
-    public function tag_block($context, $text, $args)
+    public function tag($tag, $context, $text, $args)
     {
-        return $this->cms->helper('blocks')->block($context);
+        return $this->tag_template($context, $tag, $args);
     }
 
-    public function tag_allblocks($context, $text, $args)
-    {
-        $out = '<div class="digraph-blocks">';
-        $out += '</div>';
-        return $out;
-    }
-
-    public function tag_anytemplate($context, $text, $args)
+    public function tag_template($context, $text, $args)
     {
         if (preg_match('/[^a-z0-9\-_]/i', $text)) {
-            return '[invalid character in template]';
+            return false;
         }
         $t = $this->cms->helper('templates');
-        $template = $text;
+        $template = 'tags/safe/'.$text;
         if (!$t->exists($template)) {
             return false;
         }

@@ -85,9 +85,9 @@ forms:
     label_extras: Enable BBCode-style tags
     extras:
       digraph_safe_tags: 'Basic tags: !tags'
+      digraph_safe_templates: 'Safe template tags: !tags, any additional templates in templates/tags'
       digraph_embeds: 'Embedding tags: !tags'
-      digraph_template_tags: !tags (unsafe)
-      digraph_twig_tags: !tags (unsafe)
+      digraph_templates: !tags (unsafe, allows any templates or blocks to be included)
   digraph_published:
     label: Publication settings
     label_start: Start date
