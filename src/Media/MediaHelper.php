@@ -51,6 +51,9 @@ class MediaHelper extends AbstractHelper
                         break;
                     }
                 }
+                if ($result) {
+                    break;
+                }
             }
         }
         //save to cache and return
