@@ -36,6 +36,23 @@ class MediaHelper extends AbstractHelper
                 break;
             }
         }
+        //search in theme paths
+        if (!$result) {
+            $searches = [];
+            foreach (array_reverse($this->cms->helper('templates')->theme()) as $theme) {
+                $searches[] = '_themes/'.$theme.'/'.$search;
+            }
+            $searches[] = '_digraph/'.$search;
+            foreach ($searches as $search) {
+                foreach (array_reverse($this->cms->config['media.paths']) as $path) {
+                    $path .= '/'.$search;
+                    if (is_file($path)) {
+                        $result = $this->prepare($path);
+                        break;
+                    }
+                }
+            }
+        }
         //save to cache and return
         if ($this->cms->config['media.get_cache_ttl']) {
             $citem = $cache->getItem($cacheID);
