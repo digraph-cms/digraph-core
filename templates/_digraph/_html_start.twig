@@ -12,7 +12,7 @@
       {% endblock %}
     </title>
     {% block head %}
-      {% include '_digraph/blocks/head.twig' %}
+      {% include cms.helper('templates').themeTemplate('partials/head.twig') %}
     {% endblock %}
   </head>
   <body class="template-{{package.template}}">

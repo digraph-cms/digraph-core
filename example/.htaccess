@@ -1,7 +1,13 @@
+# rewriting to redirect urls to digraph
 <IfModule mod_rewrite.c>
   DirectoryIndex index.php
   RewriteEngine on
   RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule ^([^?]*)$ index.php?url=$1 [NC,L,QSA]
 </IfModule>
+
+# deny access to all yaml files
+<Files ~ "^.*\.yaml$">
+  Order allow,deny
+  Deny from all
+</Files>

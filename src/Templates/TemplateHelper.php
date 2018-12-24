@@ -15,6 +15,51 @@ class TemplateHelper extends AbstractHelper
     protected $fields = [];
     protected $package = null;
 
+    public function themeTemplate($file)
+    {
+        $files = [];
+        foreach (array_reverse($this->theme()) as $theme) {
+            $files[] = "_themes/$theme/$file";
+        }
+        $files[] = "_digraph/$file";
+        foreach ($files as $file) {
+            if ($this->exists($file)) {
+                return $file;
+            }
+        }
+        return "_digraph/_notfound.twig";
+    }
+
+    public function theme()
+    {
+        $theme = $this->cms->config['templates.theme'];
+        if (!$theme) {
+            return [];
+        }
+        if (!is_array($theme)) {
+            return [$theme];
+        }
+        return $theme;
+    }
+
+    public function cssUrls()
+    {
+        $urls = $this->cms->config['templates.css'];
+        return $urls;
+    }
+
+    public function headJSUrls()
+    {
+        $urls = $this->cms->config['templates.js.head'];
+        return $urls;
+    }
+
+    public function footJSUrls()
+    {
+        $urls = $this->cms->config['templates.js.foot'];
+        return $urls;
+    }
+
     public function link($url, $text=null)
     {
         if ($url instanceof Url) {
@@ -84,22 +129,20 @@ class TemplateHelper extends AbstractHelper
         //add to arrayLoader
         $this->env();
         $id = 'digraph_arrayloader_'.md5($template);
-        $this->arrayLoader->setTemplate("{$id}.twig", $template);
+        $this->arrayLoader->setTemplate("{$id}", $template);
         //pass off to normal rendering
         return $this->render($id, $fields);
     }
 
-    public function exists($template = 'default')
+    public function exists($template = 'default.twig')
     {
-        $template .= '.twig';
         $this->env();
         return $this->loader->exists($template);
     }
 
-    public function render($template = 'default', $fields=array())
+    public function render($template = 'default.twig', $fields=array())
     {
         //set template name and get environment
-        $template .= '.twig';
         $env = $this->env();
         //merge fields
         $fields = new SelfReferencingFlatArray($fields);
@@ -121,12 +164,20 @@ class TemplateHelper extends AbstractHelper
                 false
             );
         }
+        //first try to load template from themes, if it exists
+        $templates = [];
+        foreach (array_reverse($this->theme()) as $theme) {
+            $templates[] = "_themes/$theme/$template";
+        }
+        $templates[] = $template;
         //check that template exists, then render
-        if ($template = $env->load($template)) {
-            $package = $this->package;
-            $this->package = $fields['package'];
-            return $template->render($fields->get());
-            $this->package = $package;
+        foreach ($templates as $template) {
+            if ($this->exists($template)) {
+                $template = $env->load($template);
+                $package = $this->package;
+                $this->package = $fields['package'];
+                return $template->render($fields->get());
+            }
         }
         //return null by default, if template doesn't exist
         return null;

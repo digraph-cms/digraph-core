@@ -75,10 +75,6 @@ class ModuleHelper extends AbstractHelper
         if (is_dir($config['module.path'].'/media')) {
             $config['media.paths.'.$config['module.name']] = $config['module.path'].'/media';
         }
-        // media: add to media config
-        if (is_dir($config['module.path'].'/languages')) {
-            $config['languages.paths.'.$config['module.name']] = $config['module.path'].'/languages';
-        }
         /*
         Unset module portion of config and merge what remains back into main config
          */

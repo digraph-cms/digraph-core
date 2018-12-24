@@ -1,4 +1,4 @@
-  {% for url in package.cms.config.templates.js.foot %}
+  {% for url in cms.helper('templates').footJSUrls() %}
     <script src="{{url}}"></script>
   {% endfor %}
 </body>

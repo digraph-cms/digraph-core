@@ -1,4 +1,4 @@
-{% for url in package.cms.config.templates.js.head %}
+{% for url in cms.helper('templates').headJSUrls() %}
   <script src="{{url}}"></script>
 {% endfor %}
 
@@ -6,6 +6,6 @@
 <script>digraph.noun = "{{package.noun.dso.id}}";</script>
 {% endif %}
 
-{% for url in package.cms.config.templates.css %}
+{% for url in cms.helper('templates').cssUrls() %}
   <link rel="stylesheet" href="{{url}}">
 {% endfor %}

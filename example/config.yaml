@@ -3,9 +3,9 @@ url:
   # // is usually fine, but you can specify either http:// or https:// if you like
   protocol: //
   # fully qualified domain name of server
-  domain: localhost
+  domain: yoursite.com
   # path to Digraph installation should have leading/trailing slashes
-  path: /digraph-core/example/
+  path: /
 
 timezone: America/Denver
 
@@ -19,11 +19,6 @@ package:
     fields:
       site_name: Digraph example site
 
-# Navigation settings
-# navigation:
-#   menus:
-#     main: home
-
 # Generally if you want to move your storage/cache directories you should keep
 # them somehow relative to paths.site
 paths:
@@ -31,23 +26,20 @@ paths:
 
 # Template helper options
 templates:
+  # templates.theme can be either a single theme name or an array of theme names
+  # that will have their css/js included after core code, in the given order
+  theme: _digraph_dark
   # Additional paths can be added here, they will be used in the reverse of the
   # order they're listed here
   paths:
     site: ${paths.site}/templates
   twigconfig:
     cache: ${paths.cache}/twig
-#uncomment this block to enable the dark variant of the base theme
-#   cssbundles:
-#     site_styles:
-#       variant-dark: digraph/site_styles/variant-dark.css
 
-# Configure module directories for site and environment-specific modules (this
-# is useful for things like debugging modules during development)
+# Configure module directories for site
 modules:
   sources:
     200-site: dir ${paths.site}/modules
-    300-env: dir ${paths.site}/modules_env
 
 # configure cache settings
 cache:

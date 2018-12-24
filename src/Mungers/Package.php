@@ -36,6 +36,16 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
             return $this['response.template'];
         }
         if ($n = $this->noun()) {
+            /*
+                This section allows template rules to be saved inside nouns, as
+                their data. Setting digraph.template to a template name will
+                request that template name.
+
+                Setting it to an array will allow templates to be specified by
+                verb, including a '*' wildcard key. For example, setting
+                digraph.template.display to 'content-only' would set that object
+                to use the content-only template, but only for the display verb.
+            */
             if ($t = $n['digraph.template']) {
                 if (is_string($t)) {
                     return $t;
@@ -53,7 +63,7 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
                 return $template;
             }
         }
-        return 'default';
+        return $this->cms->config['templates.default'];
     }
 
     public function makeMediaFile(string $filename, string $mime = null)

@@ -1,23 +1,23 @@
-{% include '_digraph/_html_start.twig' %}
+{% include cms.helper('templates').themeTemplate('_html_start.twig') %}
 
 {% block admin %}
-  {% include '_digraph/blocks/admin.twig' %}
+  {% include cms.helper('templates').themeTemplate('sections/admin.twig') %}
 {% endblock %}
 
 {% block banner %}
-  {% include '_digraph/blocks/banner.twig' %}
+  {% include cms.helper('templates').themeTemplate('sections/banner.twig') %}
 {% endblock %}
 
 {% block navigation %}
-  {% include '_digraph/blocks/navigation.twig' %}
+  {% include cms.helper('templates').themeTemplate('sections/navigation.twig') %}
 {% endblock %}
 
 {% block body %}
-  {% include '_digraph/blocks/body.twig' %}
+  {% include cms.helper('templates').themeTemplate('sections/body.twig') %}
 {% endblock %}
 
 {% block footer %}
-  {% include '_digraph/blocks/footer.twig' %}
+  {% include cms.helper('templates').themeTemplate('sections/footer.twig') %}
 {% endblock %}
 
-{% include '_digraph/_html_end.twig' %}
+{% include cms.helper('templates').themeTemplate('_html_end.twig') %}

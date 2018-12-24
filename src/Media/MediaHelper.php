@@ -61,6 +61,19 @@ class MediaHelper extends AbstractHelper
     protected function prepare_text_css($out)
     {
         $original = $content = file_get_contents($out['path']);
+        //preprocess theme
+        $content = preg_replace_callback(
+            '/\\/\*{theme\:([^\}]+)\}\*\//',
+            function ($matches) {
+                $out = [];
+                $name = $matches[1];
+                foreach ($this->cms->helper('templates')->theme() as $theme) {
+                    $out[] = "/*{include:_themes/$theme/$name.css}*/";
+                }
+                return implode(PHP_EOL, $out);
+            },
+            $content
+        );
         //preprocess bundles
         $content = preg_replace_callback(
             '/\\/\*{bundle\:([^\}]+)\}\*\//',
@@ -108,6 +121,19 @@ class MediaHelper extends AbstractHelper
     protected function prepare_application_javascript($out)
     {
         $original = $content = file_get_contents($out['path']);
+        //preprocess theme
+        $content = preg_replace_callback(
+            '/\\/\*{theme\:([^\}]+)\}\*\//',
+            function ($matches) {
+                $out = [];
+                $name = $matches[1];
+                foreach ($this->cms->helper('templates')->theme() as $theme) {
+                    $out[] = "/*{include:_themes/$theme/$name.js}*/";
+                }
+                return implode(PHP_EOL, $out);
+            },
+            $content
+        );
         //preprocess bundles
         $content = preg_replace_callback(
             '/\\/\*{bundle\:([^\}]+)\}\*\//',

@@ -1,0 +1,41 @@
+# example module configuration file
+# You can specify paths
+
+# module-specific settings are only used when parsing this one file
+module: []
+# The following module-specific settings are implied based on the module's
+# folder name/location. They can be overridden if you so desire.
+#   * module.name = example_module
+#   * module.path = [the directory this file is in]
+#   * module.namespace = Digraph\Modules\${module.name}
+#
+# The following directories will be automatically used in a sane way, if they
+# exist in module.path:
+#  * templates: added as a template search path
+#  * routes: added as a routing handler search path
+#  * media: added as a media file search path
+
+# any additional config is merged into the main CMS config. This means modules
+# can alter absolutely any config option.
+
+# add the example verb's permissions
+permissions:
+  proper:
+    '*/example':
+      - allow all
+
+# add the example verb as an action
+actions:
+  proper:
+    '*':
+      example: !id/example
+
+# add the example verb's string
+strings:
+  urls:
+    proper:
+      '*/example': example verb
+
+# use module to set the theme
+templates:
+  theme: _digraph_dark

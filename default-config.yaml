@@ -224,6 +224,11 @@ paths:
 
 # template/display configuration options
 templates:
+  # default template for page rendering
+  default: default.twig
+  # templates.theme can be either a single theme name or an array of theme names
+  # that will have their css/js included after core code, in the given order
+  theme: null
   # paths where we should look for templates -- later items win
   paths:
     core: ${paths.core}/templates
@@ -247,13 +252,11 @@ templates:
       core_actionbar: _digraph/actionbar/actionbar.css
       core_filestore: _digraph/core-css/filestore.css
       core_blocks: _digraph/core-css/blocks.css
-      core_site_styles: _digraph/site_styles/bundle.css
     hypersemantic:
       typography: _digraph/hypersemantic/typography.css
       menus: _digraph/hypersemantic/menus.css
       layout: _digraph/hypersemantic/layout-1col.css
       layout2: _digraph/hypersemantic/layout-digraph.css
-    site_styles: []
   # js files are included at either the head or foot of the page
   js:
     head:
