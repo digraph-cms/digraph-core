@@ -450,6 +450,7 @@ package:
   defaults:
     fields:
       page_title: ${page_name}
+      favicon: ${url.base}favicon/favicon.ico
     request:
       namespace: public
     response:
