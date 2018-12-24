@@ -7,16 +7,6 @@ filestore:
     time: Date uploaded
     size: File size
     hash: MD5 hash
-filestore-cleanup:
-  none: There are no unused filestore files to clean up.
-  title: Confirm permanent deletion of the following !count unreferenced files, freeing !size.
-  file-error: An error occurred deleting file from !dir
-  error: !errors errors occurred
-  confirmation: Successfully deleted !count files, freeing !size
-  cardcontent: |
-    !names<br>
-    !size first uploaded !mtime<br>
-    <a href="!download">download</a>
 notifications:
   confirmation:
     generic: Operation completed successfully
@@ -36,6 +26,11 @@ forms:
   digraph_title_label: Long display title
   slug_label: Slug/alias
   confirm_button: Confirm
+  slug:
+    error:
+      underscore: Slugs beginning with an underscore are reserved for system functions
+      slashes: Slug can't have more than one slash in a row
+      character: Slug contains an invalid character. Allowed characters are alphanumerics, forward slashes, and <code>!0</code>
   order:
     form_title: Control ordering of children
     mode:
@@ -86,6 +81,7 @@ forms:
     extras:
       bbcode_basic: 'Basic BBCode: !tags'
       bbcode_advanced: 'Advanced BBCode: !tags'
+      bbcode_extended: Extended BBCode tags from templates in _bbcode/extended
       bbcode_unsafe: 'Unsafe BBCode: !tags'
   digraph_published:
     label: Publication settings
@@ -124,18 +120,10 @@ urls:
     '*/order': order children
     '*/rawdump': raw dump
     '*/rawedit': raw edit
-    '*/sitemap': !name site map
   # rules for noun/verb combinations with common nouns
   common:
     '*/*': !noun !verb
-    admin/add: add !arg_type
-    admin/display: Admin
-    admin/filestore-cleanup-download: Download file
-    admin/filestore-cleanup: Filestore cleanup
-    admin/sitemap: Site map
-    admin/trash-item: Trash bin item
-    admin/trash: Trash bin
-    user/display: User
-    user/signin: Sign in
-    user/signout: Sign out
-    user/signup: Sign up
+    _user/display: User
+    _user/signin: Sign in
+    _user/signout: Sign out
+    _user/signup: Sign up

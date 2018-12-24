@@ -9,6 +9,11 @@ class FilterHelper extends AbstractHelper
     protected $filters = [];
     protected $context = null;
 
+    public function sanitize($text)
+    {
+        return $this->filterPreset($text, '_sanitize');
+    }
+
     public function filterContentField(array $content, string $context) : string
     {
         $this->context($context);

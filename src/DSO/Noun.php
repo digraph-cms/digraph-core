@@ -209,7 +209,7 @@ class Noun extends DSO implements NounInterface
     public function name($verb=null)
     {
         if ($this->get('digraph.name')) {
-            return $this->get('digraph.name');
+            return $this->factory->cms()->helper('filters')->sanitize($this->get('digraph.name'));
         }
         return $this->get('dso.type').' '.$this->get('dso.id');
     }
@@ -217,7 +217,7 @@ class Noun extends DSO implements NounInterface
     public function title($verb=null)
     {
         if ($this->get('digraph.title')) {
-            return $this->get('digraph.title');
+            return $this->factory->cms()->helper('filters')->sanitize($this->get('digraph.title'));
         }
         return $this->name($verb);
     }

@@ -1,0 +1,5 @@
+{% if package.cms.helper('blocks').areaFilled('template-content-before') %}
+  <div class="template-blockarea template-content-before">
+    {{package.cms.helper('blocks').block('template-content-before')|raw}}
+  </div>
+{% endif %}

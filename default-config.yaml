@@ -19,11 +19,11 @@ actions:
       rawedit: !id/rawedit
   common:
     '*': []
-    'user/guest':
-      signin: user/signin
-      signup: user/signup
-    'user/signedin':
-      signout: user/signout
+    '_user/guest':
+      signin: _user/signin
+      signup: _user/signup
+    '_user/signedin':
+      signout: _user/signout
 
 groups: []
 
@@ -100,6 +100,7 @@ filters:
   extras:
     bbcode_basic: true
     bbcode_advanced: true
+    bbcode_extended: true
     bbcode_unsafe: true
   presets:
     default:
@@ -107,26 +108,35 @@ filters:
     text-safe:
       - [class,sanitize]
       - [class,text]
+      - [class,xss]
     text-unsafe:
       - [class,text]
     markdown-safe:
       - [class,sanitize]
       - [class,markdown]
+      - [class,xss]
     markdown-unsafe:
       - [class,markdown]
     html:
-      - [class,striphtml]
+      - [class,htmlfilter]
+      - [class,xss]
     html-unsafe: []
+    _sanitize:
+      - [class,allhtmlfilter]
+      - [class,xss]
   classes:
-    striphtml: Digraph\Filters\HTMLFilter
+    allhtmlfilter: Digraph\Filters\AllHTMLFilter
+    htmlfilter: Digraph\Filters\HTMLFilter
     markdown: Digraph\Filters\MarkdownFilter
     sanitize: Digraph\Filters\SanitizeFilter
     text: Digraph\Filters\TextFilter
+    xss: Digraph\Filters\XSSFilter
     bbcode_basic: Digraph\Filters\BBCode\BBCodeBasicFilter
     bbcode_advanced: Digraph\Filters\BBCode\BBCodeAdvancedFilter
+    bbcode_extended: Digraph\Filters\BBCode\BBCodeExtendedFilter
     bbcode_unsafe: Digraph\Filters\BBCode\BBCodeUnsafeFilter
   htmlfilter:
-    allowed: [a,b,blockquote,code,del,dd,dl,em,h1,h2,h3,h4,h5,h6,i,img,kbd,li,ol,p,pre,s,sup,sub,strong,strike,ul,br,hr]
+    allowed: [a,b,blockquote,code,del,dd,dl,em,h1,h2,h3,h4,h5,h6,i,img,li,ol,p,pre,s,sup,sub,strong,strike,ul,br,hr]
 
 permissions:
   url:
@@ -136,9 +146,7 @@ permissions:
       - allow all
     '*/file':
       - allow all
-    'user/*':
-      - allow all
-    'api/*':
+    '_user/*':
       - allow all
     '*/rawdump':
       - allow group webmaster
@@ -152,9 +160,6 @@ permissions:
       - allow group webmaster, editor
     '*/delete':
       - allow group webmaster, editor
-    'admin/*':
-      - deny all
-      - allow group webmaster
   add:
     '*':
       - allow all
@@ -193,23 +198,10 @@ navigation:
     proper:
       '*/*': !noun/display
       '*/display': false
-      '*/sitemap': admin/sitemap
     # rules for noun/verb combinations with common nouns
     common:
       '*/*': !noun/display
       '*/display': false
-      'admin/display': false
-      'admin/trash-item': admin/trash
-      'admin/filestore-cleanup-download': admin/filestore-cleanup
-      'user/*': user/display
-      'user/display': false
-
-# array of name keys and parse()-able urls to use as the list of admin options
-# used in the admin/display route
-admin:
-  filestore-cleanup: admin/filestore-cleanup
-  sitemap: admin/sitemap
-  trash: admin/trash
 
 types:
   system:
@@ -242,39 +234,39 @@ templates:
     auto_reload: true
   # css urls to be linked in the head
   css:
-    digraph_core: ${url.base}digraph/core.css
+    digraph_core: ${url.base}_digraph/core.css
     fontawesome: https://use.fontawesome.com/releases/v5.5.0/css/all.css
   # css bundles can be included all at once in media-driven css files, with
   # syntax like: /*${bundle:digraph_core}*/
   cssbundles:
     digraph_core:
-      core_hypersemantic: digraph/hypersemantic/bundle.css
-      core_navigation: digraph/core-css/navigation.css
-      core_notifications: digraph/notifications/notifications.css
-      core_forms: digraph/core-css/forms.css
-      core_actionbar: digraph/actionbar/actionbar.css
-      core_filestore: digraph/core-css/filestore.css
-      core_blocks: digraph/core-css/blocks.css
-      core_site_styles: digraph/site_styles/bundle.css
+      core_hypersemantic: _digraph/hypersemantic/bundle.css
+      core_navigation: _digraph/core-css/navigation.css
+      core_notifications: _digraph/notifications/notifications.css
+      core_forms: _digraph/core-css/forms.css
+      core_actionbar: _digraph/actionbar/actionbar.css
+      core_filestore: _digraph/core-css/filestore.css
+      core_blocks: _digraph/core-css/blocks.css
+      core_site_styles: _digraph/site_styles/bundle.css
     hypersemantic:
-      typography: digraph/hypersemantic/typography.css
-      menus: digraph/hypersemantic/menus.css
-      layout: digraph/hypersemantic/layout-1col.css
-      layout2: digraph/hypersemantic/layout-digraph.css
+      typography: _digraph/hypersemantic/typography.css
+      menus: _digraph/hypersemantic/menus.css
+      layout: _digraph/hypersemantic/layout-1col.css
+      layout2: _digraph/hypersemantic/layout-digraph.css
     site_styles: []
   # js files are included at either the head or foot of the page
   js:
     head:
-      digraph_obj: ${url.base}digraph/init.js
-      digraph_user: ${url.base}user/user.js
+      digraph_obj: ${url.base}_digraph/init.js
+      digraph_user: ${url.base}_user/user.js
     foot:
-      digraph_core: ${url.base}digraph/core.js
+      digraph_core: ${url.base}_digraph/core.js
   # js bundles can be included the same way as css bundles
   jsbundles:
     digraph_core:
-      core_notifications: digraph/notifications/notifications.js
-      core_actionbar: digraph/actionbar/actionbar.js
-      core_forms: digraph/core-js/forms.js
+      core_notifications: _digraph/notifications/notifications.js
+      core_actionbar: _digraph/actionbar/actionbar.js
+      core_forms: _digraph/core-js/forms.js
 
 routing:
   paths:

@@ -13,7 +13,7 @@ permissions:
       - deny all
       - allow group webmaster
     # only allow admin interface to webmaster
-    'blocks/':
+    '_blocks/':
       - deny all
       - allow group webmaster
   add:
@@ -29,18 +29,15 @@ permissions:
     blockarea/block:
       - allow group webmaster
 
-admin:
-  blocks: 'blocks/'
-
 navigation:
   parents:
     common:
-      'blocks/*': blocks/
-      'blocks/display': admin/
+      '_blocks/*': _blocks/display
+      '_blocks/display': _controlpanel/
     proper:
       'blockarea/display': blocks/
 
 strings:
   urls:
     common:
-      'blocks/display': Block management
+      '_blocks/display': Block management

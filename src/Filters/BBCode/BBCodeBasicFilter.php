@@ -4,7 +4,7 @@ namespace Digraph\Filters\BBCode;
 
 class BBCodeBasicFilter extends AbstractBBCodeFilter
 {
-    const TEMPLATEPREFIX = 'bbcode/basic/';
+    const TEMPLATEPREFIX = '_bbcode/basic/';
     const HTMLCOLORS = ["aliceblue","antiquewhite","aqua","aquamarine","azure",
     "beige","bisque","black","blanchedalmond","blue","blueviolet","brown",
     "burlywood","cadetblue","chartreuse","chocolate","coral","cornflowerblue",
@@ -123,6 +123,10 @@ class BBCodeBasicFilter extends AbstractBBCodeFilter
                 }
             }
         }
+        //abort if url isn't valid
+        if (!filter_var($text, FILTER_VALIDATE_URL)) {
+            return false;
+        }
         //return url and text as html
         return "<a href=\"$url\">$text</a>";
     }
@@ -151,7 +155,7 @@ class BBCodeBasicFilter extends AbstractBBCodeFilter
         $style = '';
         if ($lang = @$args['lang']) {
             $lang = preg_replace('/[^a-z0-9]/', '', $lang);
-            $style = ' style="language-'.$lang.'"';
+            $style = ' class="language-'.$lang.'"';
         }
         $text = trim($text, "\r\n");
         $text = "<code$style>".htmlspecialchars($text)."</code>";
@@ -184,15 +188,13 @@ class BBCodeBasicFilter extends AbstractBBCodeFilter
      */
     public function tag_file($context, $text, $args)
     {
-        return $this->tag_image($context, $text, $args);
-    }
-
-    public function tag_img($context, $text, $args)
-    {
         $noun = $this->cms->read($context);
+        if (!$noun) {
+            return false;
+        }
         //use noun's file tag handler, if it exists
-        if (method_exists($noun, 'tagImg')) {
-            return $noun->tagImg($args);
+        if (method_exists($noun, 'tag_file')) {
+            return $noun->tag_file($args);
         }
         //default file handler
         $fs = $this->cms->helper('filestore');
@@ -201,14 +203,47 @@ class BBCodeBasicFilter extends AbstractBBCodeFilter
             return false;
         }
         $file = array_pop($file);
-        //return false for non-image files
-        if (!$file->isImage()) {
-            return false;
+        //return metacard for non-image files and mode=card
+        if (@$args['mode'] == 'card' || !$file->isImage()) {
+            return $file->metaCard();
         }
         //return img tag otherwise
-        $preset = @$args['preset']?$args['preset']:'tag-embed';
-        $url = $file->imageUrl($preset);
+        return $this->tag_img($context, $text, $args);
+    }
+
+    public function tag_img($context, $text, $args)
+    {
         $attr = [];
+        $preset = @$args['preset']?$args['preset']:'tag-embed';
+        //handling depends on whether text is a valid URL
+        if (filter_var($text, FILTER_VALIDATE_URL)) {
+            /* if text is a URL, use that as the src, this is straight bbcode */
+            $url = $text;
+        } else {
+            /* digraph-integrated img tag */
+            $noun = $this->cms->read($context);
+            //use noun's file tag handler, if it exists
+            if (method_exists($noun, 'tagImg')) {
+                return $noun->tagImg($args);
+            }
+            //default file handler
+            $fs = $this->cms->helper('filestore');
+            if (!@$args['id']) {
+                return false;
+            }
+            $file = $fs->get($noun, $args['id']);
+            if (!$file) {
+                return false;
+            }
+            $file = array_pop($file);
+            //return false for non-image files
+            if (!$file->isImage()) {
+                return false;
+            }
+            //use image url otherwise
+            $url = $file->imageUrl($preset);
+        }
+        //build tag
         $attr['src'] = "src=\"$url\"";
         $attr['class'] = "class=\"digraph-image-embed digraph-image-embed_$preset\"";
         return "<img ".implode(' ', $attr).">";

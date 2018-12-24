@@ -8,7 +8,7 @@ $results = $search->execute([], true);
 echo "<table>";
 foreach ($results as $noun) {
     echo "<tr>";
-    echo '<td><a href="'.$this->url('admin', 'trash-item', ['id'=>$noun['dso.id']]).'">'.$noun->name().'</a></td>';
+    echo '<td><a href="'.$this->url('_trash', 'item', ['id'=>$noun['dso.id']]).'">'.$noun->name().'</a></td>';
     echo "</tr>";
 }
 echo "</table>";

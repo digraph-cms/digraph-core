@@ -17,6 +17,10 @@ class ContentFilter extends Select
         //load filters from cms
         $options = [];
         foreach ($cms->config['filters.presets'] as $key => $value) {
+            //leading underscores mean it's a system filter
+            if (substr($key, 0, 1) == '_') {
+                continue;
+            }
             //basic permissions
             $permission = $cms->helper('permissions')->check('preset/'.$key, 'filter');
             //unsafe permissions

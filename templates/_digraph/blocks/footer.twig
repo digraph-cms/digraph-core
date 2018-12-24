@@ -1,0 +1,10 @@
+{% if package.cms.helper('blocks').areaFilled('template-footer-before') %}
+  <div class="template-blockarea template-footer-before">
+    {{package.cms.helper('blocks').block('template-footer-before')|raw}}
+  </div>
+{% endif %}
+{% if package.cms.helper('blocks').areaFilled('template-footer-after') %}
+  <div class="template-blockarea template-footer-after">
+    {{package.cms.helper('blocks').block('template-footer-after')|raw}}
+  </div>
+{% endif %}

@@ -11,7 +11,8 @@ class MarkdownFilter extends AbstractFilter
 {
     public function filter(string $text, array $opts = []) : string
     {
-        $parsedown = new \Parsedown;
-        return $parsedown->text($text);
+        return \Parsedown::instance()
+            ->setUrlsLinked(false)
+            ->text($text);
     }
 }

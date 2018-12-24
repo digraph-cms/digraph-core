@@ -36,9 +36,9 @@ if ($object = $package->cms()->read($package['url.args.id'])) {
     $addable = $package->cms()->helper('actions')->addable($object['dso.type']);
     $addable_url = $object->url('add', [], true)->string();
     $title = $object->name();
-} elseif ($package['url.args.id'] == 'user/guest') {
+} elseif ($package['url.args.id'] == '_user/guest') {
     $title = $cms->helper('strings')->string('actionbar.title.guest');
-} elseif ($package['url.args.id'] == 'user/signedin') {
+} elseif ($package['url.args.id'] == '_user/signedin') {
     $title = $cms->helper('users')->user()->name();
 }
 

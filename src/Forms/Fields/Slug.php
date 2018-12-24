@@ -28,11 +28,14 @@ class Slug extends Container
                 if (!$value) {
                     return true;
                 }
+                if (substr($value, 0, 1) == '_') {
+                    return $this->cms->helper('strings')->string('forms.slug.error.underscore');
+                }
                 if (strpos('//', $value) !== false) {
-                    return 'Slug can\'t have more than one slash in a row';
+                    return $this->cms->helper('strings')->string('forms.slug.error.slashes');
                 }
                 if (preg_match('/[^a-z0-9\/'.preg_quote(static::CHARS).']/i', $value)) {
-                    return 'Slug contains an invalid character. Allowed characters are alphanumerics, forward slashes, and <code>'.static::CHARS.'</code>';
+                    return $this->cms->helper('strings')->string('forms.slug.error.character', [static::CHARS]);
                 }
                 return true;
             }

@@ -1,0 +1,47 @@
+permissions:
+  url:
+    '_controlpanel/*':
+      - deny all
+      - allow group webmaster
+    '_controlpanel/display':
+      - deny all
+      - allow group editor, webmaster
+
+actions:
+  common:
+    '_user/signedin':
+      _controlpanel: _controlpanel/display
+
+navigation:
+  parents:
+    proper:
+      '*/sitemap': _controlpanel/sitemap
+    common:
+      _controlpanel/display: false
+      _trash/filestore-cleanup-download: _trash/filestore-cleanup
+      _trash/item: _trash/display
+      _user/*: _user/display
+      _user/display: false
+
+strings:
+  urls:
+    proper:
+      '*/sitemap': !name site map
+    common:
+      _controlpanel/add: add !arg_type
+      _controlpanel/display: Control panel
+      _controlpanel/sitemap: Site map
+      _filestorecleanup/display: Filestore cleanup
+      _filestorecleanup/download: Download file
+      _trash/trash-item: Trash bin item
+      _trash/trash: Trash bin
+  filestore-cleanup:
+    none: There are no unused filestore files to clean up.
+    title: Confirm permanent deletion of the following !count unreferenced files, freeing !size.
+    file-error: An error occurred deleting file from !dir
+    error: !errors errors occurred
+    confirmation: Successfully deleted !count files, freeing !size
+    cardcontent: |
+      !names<br>
+      !size first uploaded !mtime<br>
+      <a href="!download">download</a>

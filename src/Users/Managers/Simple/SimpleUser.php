@@ -38,7 +38,7 @@ class SimpleUser extends DSO implements UserInterface
             $this['name'] = $set;
         }
         if ($this['name']) {
-            return $this['name'];
+            return $this->factory->cms()->helper('filters')->sanitize($this['name']);
         }
         return "Unnamed user ".$this['dso.id'];
     }
