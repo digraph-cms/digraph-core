@@ -1,10 +1,12 @@
 # url settings
 url:
-  # // is usually fine, but you can specify either http:// or https:// if you like
-  protocol: //
+  # most things will work with "//" but you need to specify either http or https
+  # for url BBCode tags to work right.
+  protocol: http://
   # fully qualified domain name of server
   domain: yoursite.com
-  # path to Digraph installation should have leading/trailing slashes
+  # path to Digraph installation should have leading/trailing slashes, if it's
+  # the root of your domain name, a single slash is required
   path: /
 
 timezone: America/Denver

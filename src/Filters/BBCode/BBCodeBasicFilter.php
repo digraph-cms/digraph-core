@@ -124,7 +124,9 @@ class BBCodeBasicFilter extends AbstractBBCodeFilter
             }
         }
         //abort if url isn't valid
-        if (!filter_var($text, FILTER_VALIDATE_URL)) {
+        //currently this breaks if URLs don't specify http/https
+        $url = "$url";
+        if (!filter_var($url, FILTER_VALIDATE_URL)) {
             return false;
         }
         //return url and text as html
