@@ -1,35 +1,41 @@
-{% extends 'digraph/base.twig' %}
+{% extends '_digraph/base.twig' %}
 
-{% block banner %}
-{% endblock %}
+{% block banner %}{% endblock %}
 
-{% block navigation %}
-{% endblock %}
+{% block navigation %}{% endblock %}
 
-  {% block body %}
+{% block body %}
+  <div class="layout-column-wrapper cols-1">
+
     <div id="content" role="main">
-      {% include 'digraph/partials/notifications.twig' %}
-      {% if package.cms.helper('blocks').areaFilled('template-content-before') %}
-        <div class="template-blockarea template-content-before">
-          {{package.cms.helper('blocks').block('template-content-before')|raw}}
-        </div>
-      {% endif %}
+      {% include cms.helper('templates').themeTemplate('partials/notifications.twig') %}
+      {% include cms.helper('templates').themeTemplate('partials/breadcrumb.twig') %}
+
+      {% include cms.helper('templates').themeTemplate('partials/block.twig')
+        with {blockname:'template-content-before'} %}
+
       <article>
+
         <h1>{{page_title}}</h1>
         {% if page_title != package.url.title %}
           <h2>{{package.url.title}}</h2>
         {% endif %}
+        {% include cms.helper('templates').themeTemplate('partials/block.twig')
+          with {blockname:'template-title-after'} %}
+
         <div class="package-response-content">
           {{package.response.content|raw}}
         </div>
+
       </article>
-      {% if package.cms.helper('blocks').areaFilled('template-content-after') %}
-        <div class="template-blockarea template-content-after">
-          {{package.cms.helper('blocks').block('template-content-after')|raw}}
-        </div>
-      {% endif %}
+
+      {% include cms.helper('templates').themeTemplate('partials/block.twig')
+        with {blockname:'template-content-after'} %}
+
     </div>
+
+  </div>
+
 {% endblock %}
 
-{% block footer %}
-{% endblock %}
+{% block footer %}{% endblock %}

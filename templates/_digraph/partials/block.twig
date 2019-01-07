@@ -1,0 +1,7 @@
+{% if package.cms.helper('blocks').exists(blockname) %}
+  <div class="template-blockarea {{blockname}}">
+    {{package.cms.helper('blocks').block(blockname)|raw}}
+  </div>
+{% else %}
+  <!-- block area {{blockname}} -->
+{% endif %}

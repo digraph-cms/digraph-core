@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
+
   <head>
-    <meta charset="utf-8"/>
-    <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <link rel="icon" href="{{favicon}}">
+
     <title>
       {% block title %}
         {{page_name}}
@@ -12,8 +10,23 @@
         {{site_name}}
       {% endblock %}
     </title>
+
     {% block head %}
       {% include cms.helper('templates').themeTemplate('partials/head.twig') %}
     {% endblock %}
+
+    {% for url in cms.helper('templates').cssUrls() %}
+      <link rel="stylesheet" href="{{url}}">
+    {% endfor %}
+
+    {% for url in cms.helper('templates').headJSUrls() %}
+      <script src="{{url}}"></script>
+    {% endfor %}
+
+    {% if package.noun.dso.id %}
+    <script>digraph.noun = "{{package.noun.dso.id}}";</script>
+    {% endif %}
+
   </head>
+
   <body class="template-{{package.template}}">

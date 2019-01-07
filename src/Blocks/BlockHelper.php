@@ -23,7 +23,7 @@ class BlockHelper extends AbstractHelper
         return '<div class="digraph-block">'.$output.'</div>';
     }
 
-    public function areaFilled($noun)
+    public function exists($noun)
     {
         if (is_string($noun)) {
             $noun = $this->cms->read($noun);
@@ -31,7 +31,7 @@ class BlockHelper extends AbstractHelper
         if (!$noun) {
             return false;
         }
-        return $noun['dso.type'] == 'blockarea' && $noun->children();
+        return $noun['dso.type'] == 'block' || ($noun['dso.type'] == 'blockarea' && $noun->children());
     }
 
     public function blockContent($noun)

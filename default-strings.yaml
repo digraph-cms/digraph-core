@@ -12,7 +12,7 @@ notifications:
     generic: Operation completed successfully
   error:
     generic: An error occurred
-  unpublished: '"!name" is not currently published. Parts of the site may look different for users with lower access permissions than you..'
+  unpublished: '"!name" is not currently published. Parts of the site may look different for users with lower access permissions than you.'
   groupsource_illegalroot: Group source "!0" is not allowed to provide root.
   edit:
     confirmation: Edited !name

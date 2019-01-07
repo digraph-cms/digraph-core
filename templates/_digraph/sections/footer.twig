@@ -1,10 +1,11 @@
-{% if package.cms.helper('blocks').areaFilled('template-footer-before') %}
-  <div class="template-blockarea template-footer-before">
-    {{package.cms.helper('blocks').block('template-footer-before')|raw}}
-  </div>
-{% endif %}
-{% if package.cms.helper('blocks').areaFilled('template-footer-after') %}
-  <div class="template-blockarea template-footer-after">
-    {{package.cms.helper('blocks').block('template-footer-after')|raw}}
-  </div>
-{% endif %}
+<footer>
+  
+  {% include cms.helper('templates').themeTemplate('partials/block.twig')
+    with {blockname:'template-footer-before'} %}
+
+  {% include cms.helper('templates').themeTemplate('partials/footer.twig') %}
+
+  {% include cms.helper('templates').themeTemplate('partials/block.twig')
+    with {blockname:'template-footer-after'} %}
+
+</footer>

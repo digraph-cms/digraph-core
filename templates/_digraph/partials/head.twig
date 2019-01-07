@@ -1,11 +1,4 @@
-{% for url in cms.helper('templates').headJSUrls() %}
-  <script src="{{url}}"></script>
-{% endfor %}
-
-{% if package.noun.dso.id %}
-<script>digraph.noun = "{{package.noun.dso.id}}";</script>
-{% endif %}
-
-{% for url in cms.helper('templates').cssUrls() %}
-  <link rel="stylesheet" href="{{url}}">
-{% endfor %}
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link rel="icon" href="{{favicon}}">

@@ -23,7 +23,7 @@ abstract class AbstractBBCodeFilter extends AbstractFilter
             return false;
         }
         $t = $this->cms->helper('templates');
-        $template = static::TEMPLATEPREFIX.$tag;
+        $template = static::TEMPLATEPREFIX.$tag.'.twig';
         if (!$t->exists($template)) {
             return false;
         }
