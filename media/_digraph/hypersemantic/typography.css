@@ -224,6 +224,11 @@ dt {
 table {
   background:#efefef;
   font-size:14pt;
+  line-height:1.4em;
+}
+
+th, td {
+  padding:0.25em 0.5em;
 }
 
 th {
