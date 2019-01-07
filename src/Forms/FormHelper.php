@@ -83,6 +83,7 @@ class FormHelper extends AbstractHelper
     {
         $form = new Form('', 'edit-'.$noun['dso.id']);
         $form->cms($this->cms);
+        $form->addClass('editNoun');
         $this->mapNoun(
             $noun,
             $form,
@@ -99,6 +100,7 @@ class FormHelper extends AbstractHelper
         }
         $form = new Form('', 'add-'.$type);
         $form->cms($this->cms);
+        $form->addClass('addNoun');
         $this->mapNoun(
             $noun,
             $form,

@@ -20,6 +20,7 @@ class Slug extends Container
         $this['parent_slug'] = new Checkbox('[parent]/');
         $this['parent_slug']->default(true);
         $this['my_slug'] = new Input('');
+        $this['my_slug']->addClass('CustomSlug');
         //add a validator to trim slugs and ensure they're valid
         $this->addValidatorFunction(
             'validurl',

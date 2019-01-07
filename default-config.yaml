@@ -179,10 +179,12 @@ permissions:
     'extra/*':
       - deny all
       - allow group webmaster
-    'extra/digraph_bbcode_basic':
+    'extra/bbcode_basic':
       - allow all
-    'extra/digraph_bbcode_advanced':
-      - allow group editor, webmaster
+    'extra/bbcode_advanced':
+      - allow group editor
+    'extra/bbcode_extended':
+      - allow group editor
 
 navigation:
   menus:
@@ -393,7 +395,7 @@ forms:
       000_digraph_name:
         field: digraph.name
         label: ${strings.forms.digraph_name_label}
-        class: Formward\Fields\Input
+        class: Digraph\Forms\Fields\Name
         required: true
       001_digraph_title:
         field: digraph.title
@@ -412,7 +414,13 @@ forms:
         label: ${strings.forms.digraph_body_label}
         class: Digraph\Forms\Fields\Content
 
-defaultnoun: []
+defaultnoun:
+  digraph:
+    body:
+      filter: default
+      text: ""
+      extra:
+        bbcode_basic: true
 
 mungerhooks:
   build: []

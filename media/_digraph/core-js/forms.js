@@ -1,4 +1,41 @@
 /**
+ * Automatic slugs from name
+ */
+document.addEventListener("DOMContentLoaded", function(event) {
+  var forms = document.querySelectorAll('.Form.addNoun');
+  for (var i = 0; i < forms.length; i++) {
+    var form = forms[i];
+    var formID = form.getAttribute('id');
+    var names = document.querySelectorAll('#' + formID + ' input.class-Name');
+    var slugs = document.querySelectorAll('#' + formID + ' .Container.class-Slug input.CustomSlug');
+    if (names.length > 0 && slugs.length > 0) {
+      //set up slugs to stop updating if they are edited
+      for (var i = 0; i < slugs.length; i++) {
+        var slug = slugs[i];
+        slug.setAttribute('data-manually-changed', 'false');
+        slug.addEventListener('change', function(e) {
+          slug.setAttribute('data-manually-changed', 'true');
+        });
+      }
+      //set up name event listeners
+      for (var i = 0; i < names.length; i++) {
+        var name = names[i];
+        name.addEventListener('change', function(e) {
+          var v = name.value.toLowerCase();
+          v = v.replace(/[^a-z0-9]+/g, '-');
+          for (var j = 0; j < slugs.length; j++) {
+            var slug = slugs[j];
+            if (slug.getAttribute('data-manually-changed') == 'false') {
+              slug.value = v;
+            }
+          }
+        });
+      }
+    }
+  }
+});
+
+/**
  * Published field
  */
 document.addEventListener("DOMContentLoaded", function(event) {
