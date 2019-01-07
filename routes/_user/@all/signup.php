@@ -17,10 +17,10 @@ if (!$this->helper("users")->signupAllowed($managerName)) {
 $form = new Formward\Form('', 'signup-'.$managerName);
 
 //check for form pre-hooks
-foreach ($this->helper('routing')->allHookFiles('user', $managerName.'/signup_form_pre.php') as $file) {
+foreach ($this->helper('routing')->allHookFiles('_user', $managerName.'/signup_form_pre.php') as $file) {
     include $file['file'];
 }
-foreach ($this->helper('routing')->allHookFiles('user', 'signup_form_pre.php') as $file) {
+foreach ($this->helper('routing')->allHookFiles('_user', 'signup_form_pre.php') as $file) {
     include $file['file'];
 }
 
@@ -41,7 +41,7 @@ if ($form) {
                 $this->helper('notifications')->notice(
                     $this->helper('lang')->string(
                         'notifications.account_recovery',
-                        ['link' => $this->helper('urls')->parse('user/recover')->html()]
+                        ['link' => $this->helper('urls')->parse('_user/recover')->html()]
                     )
                 );
                 return $this->helper('lang')->string('forms.signup_email_taken');
@@ -52,10 +52,10 @@ if ($form) {
 }
 
 //check for form post-hooks
-foreach ($this->helper('routing')->allHookFiles('user', $managerName.'/signup_form_post.php') as $file) {
+foreach ($this->helper('routing')->allHookFiles('_user', $managerName.'/signup_form_post.php') as $file) {
     include $file['file'];
 }
-foreach ($this->helper('routing')->allHookFiles('user', 'signup_form_post.php') as $file) {
+foreach ($this->helper('routing')->allHookFiles('_user', 'signup_form_post.php') as $file) {
     include $file['file'];
 }
 
@@ -70,10 +70,10 @@ if ($form && $form->handle()) {
     $user->addEmail($form['email']->value());
     $user->setPassword($form['password']->value());
     //check for handle pre hooks
-    foreach ($this->helper('routing')->allHookFiles('user', $managerName.'/signup_handle.php') as $file) {
+    foreach ($this->helper('routing')->allHookFiles('_user', $managerName.'/signup_handle.php') as $file) {
         include $file['file'];
     }
-    foreach ($this->helper('routing')->allHookFiles('user', 'signup_handle.php') as $file) {
+    foreach ($this->helper('routing')->allHookFiles('_user', 'signup_handle.php') as $file) {
         include $file['file'];
     }
     //save new user
@@ -82,6 +82,6 @@ if ($form && $form->handle()) {
     }
     //redirect
     $package->redirect(
-        $this->helper('urls')->parse('user/signedup')
+        $this->helper('urls')->parse('_user/signedup')
     );
 }

@@ -1,10 +1,10 @@
 <?php
-include $this->helper('routing')->hookFile('user', 'core_init.php')['file'];
+include $this->helper('routing')->hookFile('_user', 'core_init.php')['file'];
 
 //end if user is already signed in
 if ($users->user()) {
     $package->redirect(
-        $this->helper('urls')->parse('user'),
+        $this->helper('urls')->parse('_user'),
         303
     );
     return;
@@ -20,10 +20,10 @@ if (!$this->helper("users")->signinAllowed($managerName)) {
 $form = new Formward\Form('', 'signin-'.$managerName);
 
 //check for form setup pre-hooks
-foreach ($this->helper('routing')->allHookFiles('user', $managerName.'/signin_form_pre.php') as $file) {
+foreach ($this->helper('routing')->allHookFiles('_user', $managerName.'/signin_form_pre.php') as $file) {
     include $file['file'];
 }
-foreach ($this->helper('routing')->allHookFiles('user', 'signin_form_pre.php') as $file) {
+foreach ($this->helper('routing')->allHookFiles('_user', 'signin_form_pre.php') as $file) {
     include $file['file'];
 }
 
@@ -36,10 +36,10 @@ if ($form) {
 }
 
 //check for form setup post-hooks
-foreach ($this->helper('routing')->allHookFiles('user', $managerName.'/signin_form_post.php') as $file) {
+foreach ($this->helper('routing')->allHookFiles('_user', $managerName.'/signin_form_post.php') as $file) {
     include $file['file'];
 }
-foreach ($this->helper('routing')->allHookFiles('user', 'signin_form_post.php') as $file) {
+foreach ($this->helper('routing')->allHookFiles('_user', 'signin_form_post.php') as $file) {
     include $file['file'];
 }
 
@@ -50,10 +50,10 @@ if ($form) {
 
 if ($form && $form->handle()) {
     //check for handle hooks
-    foreach ($this->helper('routing')->allHookFiles('user', $managerName.'/signin_handle.php') as $file) {
+    foreach ($this->helper('routing')->allHookFiles('_user', $managerName.'/signin_handle.php') as $file) {
         include $file['file'];
     }
-    foreach ($this->helper('routing')->allHookFiles('user', 'signin_handle.php') as $file) {
+    foreach ($this->helper('routing')->allHookFiles('_user', 'signin_handle.php') as $file) {
         include $file['file'];
     }
     //do default signin with password if none of the above completed a signin
@@ -66,7 +66,7 @@ if ($form && $form->handle()) {
                 $users->id($u->id());
                 $done = true;
                 $package->redirect(
-                    $this->helper('urls')->parse('user')
+                    $this->helper('urls')->parse('_user')
                 );
                 break;
             }
@@ -83,10 +83,10 @@ if ($form && $form->handle()) {
 //check for hooks regarding user being signed in
 if ($users->id()) {
     //check for signed in hooks
-    foreach ($this->helper('routing')->allHookFiles('user', $managerName.'/signin_complete.php') as $file) {
+    foreach ($this->helper('routing')->allHookFiles('_user', $managerName.'/signin_complete.php') as $file) {
         include $file['file'];
     }
-    foreach ($this->helper('routing')->allHookFiles('user', 'signin_complete.php') as $file) {
+    foreach ($this->helper('routing')->allHookFiles('_user', 'signin_complete.php') as $file) {
         include $file['file'];
     }
 }
@@ -94,7 +94,7 @@ if ($users->id()) {
 //redirect if user is signed in
 if ($users->user()) {
     $package->redirect(
-        $this->helper('urls')->parse('user'),
+        $this->helper('urls')->parse('_user'),
         303
     );
     return;
