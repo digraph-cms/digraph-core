@@ -18,16 +18,22 @@ class TemplateHelper extends AbstractHelper
     public function themeTemplate($file)
     {
         $files = [];
+        // first choice is file from root directory, so sites can override
+        // anything in their templates directory
+        $files[] = "$file";
+        // then search in themes
         foreach (array_reverse($this->theme()) as $theme) {
             $files[] = "_themes/$theme/$file";
         }
+        // fallback is _digraph directory
         $files[] = "_digraph/$file";
-        $files[] = "$file";
+        // return the first result found
         foreach ($files as $file) {
             if ($this->exists($file)) {
                 return $file;
             }
         }
+        // otherwise return notfound template
         return "_digraph/_notfound.twig";
     }
 
