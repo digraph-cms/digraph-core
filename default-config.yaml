@@ -10,11 +10,12 @@ urls:
 
 actions:
   uiforguests: true
+  categorical:
+    '*': []
   proper:
     '*':
       edit: !id/edit
       delete: !id/delete
-      order: !id/order
       rawdump: !id/rawdump
       rawedit: !id/rawedit
   common:

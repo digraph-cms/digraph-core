@@ -4,13 +4,9 @@ $package->noCache();
 
 <ul>
 <?php
-$u = $cms->helper('urls');
-$p = $cms->helper('permissions');
-$opts = $cms->config['admin'];
-ksort($opts);
-foreach ($opts as $key => $url) {
-    $url = $u->parse($url);
-    if ($url && $p->checkUrl($url)) {
+$actions = $cms->helper('actions')->other('_controlpanel');
+foreach ($actions as $url) {
+    if ($url = $cms->helper('urls')->parse($url)) {
         echo "<li>".$url->html()."</li>";
     }
 }

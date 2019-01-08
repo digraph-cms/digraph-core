@@ -8,6 +8,11 @@ permissions:
       - allow group editor, webmaster
 
 actions:
+  categorical:
+    '_controlpanel':
+      filestorecleanup: _filestorecleanup/display
+      trash: _trash/display
+
   common:
     '_user/signedin':
       _controlpanel: _controlpanel/display
@@ -17,9 +22,9 @@ navigation:
     proper:
       '*/sitemap': _controlpanel/sitemap
     common:
-      _controlpanel/display: false
-      _trash/filestore-cleanup-download: _trash/filestore-cleanup
-      _trash/item: _trash/display
+      _controlpanel/display: _controlpanel/display
+      _filestorecleanup/display: _controlpanel/display
+      _trash/display: _controlpanel/display
       _user/*: _user/display
       _user/display: false
 
@@ -33,8 +38,8 @@ strings:
       _controlpanel/sitemap: Site map
       _filestorecleanup/display: Filestore cleanup
       _filestorecleanup/download: Download file
-      _trash/trash-item: Trash bin item
-      _trash/trash: Trash bin
+      _trash/display: Trashed items
+      _trash/item: Item
   filestore-cleanup:
     none: There are no unused filestore files to clean up.
     title: Confirm permanent deletion of the following !count unreferenced files, freeing !size.

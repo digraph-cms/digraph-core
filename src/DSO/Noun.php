@@ -61,6 +61,9 @@ class Noun extends DSO implements NounInterface
 
     public function actions($links)
     {
+        if ($this->children()) {
+            $links['ordering'] = '!id/order';
+        }
         return $links;
     }
 

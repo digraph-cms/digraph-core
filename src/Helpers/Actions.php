@@ -29,20 +29,13 @@ class Actions extends AbstractHelper
         return array_values($types);
     }
 
-    public function get($noun)
+    protected function results($noun, $rules, $vars = [])
     {
-        $links = [];
-        $vars = [
-            'noun' => $noun
-        ];
+        $vars['noun'] = $noun;
+        //check for object
         if ($object = $this->cms->read($noun)) {
-            $proper = true;
-            $rules = $this->cms->config['actions.proper'];
             $vars['type'] = $noun = $object['dso.type'];
             $vars['id'] = $object['dso.id'];
-        } else {
-            $proper = false;
-            $rules = $this->cms->config['actions.common'];
         }
         //extract matching rules
         $links = $rules['*'];
@@ -50,7 +43,7 @@ class Actions extends AbstractHelper
             $links = array_replace_recursive($links, $rules[$noun]);
         }
         //allow noun to mess with links if it wants to
-        if ($object && method_exists($object, 'actions')) {
+        if (method_exists($object, 'actions')) {
             $links = $object->actions($links);
         }
         //apply variables to links
@@ -76,5 +69,32 @@ class Actions extends AbstractHelper
         //return links
         asort($links);
         return array_values($links);
+    }
+
+    public function other($noun, $type='categorical')
+    {
+        //make sure rules exist
+        if (!($rules = $this->cms->config['actions.'.$type])) {
+            return [];
+        }
+        //return results
+        return $this->results($noun, $rules, $vars);
+    }
+
+    public function get($noun)
+    {
+        $links = [];
+        $vars = [];
+        if ($object = $this->cms->read($noun)) {
+            $proper = true;
+            $rules = $this->cms->config['actions.proper'];
+            $vars['type'] = $noun = $object['dso.type'];
+            $vars['id'] = $object['dso.id'];
+        } else {
+            $proper = false;
+            $rules = $this->cms->config['actions.common'];
+        }
+        //return results
+        return $this->results($noun, $rules);
     }
 }
