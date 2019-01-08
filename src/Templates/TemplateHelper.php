@@ -22,6 +22,7 @@ class TemplateHelper extends AbstractHelper
             $files[] = "_themes/$theme/$file";
         }
         $files[] = "_digraph/$file";
+        $files[] = "$file";
         foreach ($files as $file) {
             if ($this->exists($file)) {
                 return $file;
