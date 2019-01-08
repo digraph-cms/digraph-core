@@ -8,6 +8,12 @@ use Digraph\DSO\Noun;
 
 class PermissionsHelper extends AbstractHelper
 {
+    /**
+     * Check whether a user is allowed to access a particular URL. Will also
+     * run a special check on add permissions if this is a proper noun's "add"
+     * verb. The permissions this method checks are controlled through the
+     * config permissions.url
+     */
     public function checkUrl(Url $url, string $userID = null) : bool
     {
         $path = '';
@@ -27,6 +33,16 @@ class PermissionsHelper extends AbstractHelper
         return $this->check($path, 'url', $userID);
     }
 
+    /**
+     * What is allowed to be added where is controlled in two places:
+     *
+     * First the user must have general permissions to the add verb of the
+     * parent noun, controlled through permissions.url.[parent type]/add
+     *
+     * Second, the user must have specific permissions to add the child type,
+     * to the parent type, which is controlled by
+     * permissions.add.[parent type]/[child type]
+     */
     public function checkAddPermissions(&$parentOrType, $type, string $userID=null) : bool
     {
         if ($parentOrType instanceof Noun) {

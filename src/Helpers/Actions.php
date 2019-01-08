@@ -6,6 +6,12 @@ use Digraph\Helpers\AbstractHelper;
 
 class Actions extends AbstractHelper
 {
+    /**
+     * Retrieve an array of all the types that can be added under a given noun.
+     * The output of this field is actually controlled by the permissions helper
+     * so check out PermissionsHelper::checkAddPermissions for more about how
+     * to configure addable lists.
+     */
     public function addable($search)
     {
         //make a list of all types
@@ -29,12 +35,54 @@ class Actions extends AbstractHelper
         return array_values($types);
     }
 
+    /**
+     * Pull a list of rules for the given noun from another named list of
+     * actions in config.
+     *
+     * Proper nouns always get their action list passed through the object, so
+     * objects get to add/remove actions from their own lists.
+     */
+    public function other($noun, $type='categorical')
+    {
+        //make sure rules exist
+        if (!($rules = $this->cms->config['actions.'.$type])) {
+            return [];
+        }
+        //return results
+        return $this->results($noun, $rules, $vars);
+    }
+
+    /**
+     * The most basic implementation, designed for use in actionbars. For proper
+     * nouns it pulls from actions.proper config, and for common nouns it pulls
+     * from actions.common
+     *
+     * Proper nouns always get their action list passed through the object, so
+     * objects get to add/remove actions from their own lists.
+     */
+    public function get($noun)
+    {
+        if ($object = $this->cms->read($noun)) {
+            $rules = $this->cms->config['actions.proper'];
+        } else {
+            $rules = $this->cms->config['actions.common'];
+        }
+        //return results
+        return $this->results($noun, $rules);
+    }
+
+    /**
+     * Given a noun and array of rules and additional variables, construct a
+     * list of available (and allowed for the current user) actions for the
+     * given noun. If the noun is a valid noun ID !type and !id variables are
+     * automatically pulled from the object.
+     */
     protected function results($noun, $rules, $vars = [])
     {
         $vars['noun'] = $noun;
         //check for object
         if ($object = $this->cms->read($noun)) {
-            $vars['type'] = $noun = $object['dso.type'];
+            $vars['type'] = $object['dso.type'];
             $vars['id'] = $object['dso.id'];
         }
         //extract matching rules
@@ -69,32 +117,5 @@ class Actions extends AbstractHelper
         //return links
         asort($links);
         return array_values($links);
-    }
-
-    public function other($noun, $type='categorical')
-    {
-        //make sure rules exist
-        if (!($rules = $this->cms->config['actions.'.$type])) {
-            return [];
-        }
-        //return results
-        return $this->results($noun, $rules, $vars);
-    }
-
-    public function get($noun)
-    {
-        $links = [];
-        $vars = [];
-        if ($object = $this->cms->read($noun)) {
-            $proper = true;
-            $rules = $this->cms->config['actions.proper'];
-            $vars['type'] = $noun = $object['dso.type'];
-            $vars['id'] = $object['dso.id'];
-        } else {
-            $proper = false;
-            $rules = $this->cms->config['actions.common'];
-        }
-        //return results
-        return $this->results($noun, $rules);
     }
 }

@@ -1,20 +1,29 @@
 permissions:
   url:
-    '_controlpanel/*':
+    _trash/*:
+      - deny all
+      - allow group webmaster, editor
+    _filestorecleanup/*:
       - deny all
       - allow group webmaster
-    '_controlpanel/display':
+    _controlpanel/*:
+      - deny all
+      - allow group webmaster
+    _controlpanel/display:
       - deny all
       - allow group editor, webmaster
+    _controlpanel/sitemap:
+      - allow group editor
 
 actions:
   categorical:
-    '_controlpanel':
+    _controlpanel:
+      config: _controlpanel/config
       filestorecleanup: _filestorecleanup/display
+      sitemap: _controlpanel/sitemap
       trash: _trash/display
-
   common:
-    '_user/signedin':
+    _user/signedin:
       _controlpanel: _controlpanel/display
 
 navigation:
@@ -36,9 +45,10 @@ strings:
       _controlpanel/add: add !arg_type
       _controlpanel/display: Control panel
       _controlpanel/sitemap: Site map
+      _controlpanel/config: Current configuration
       _filestorecleanup/display: Filestore cleanup
       _filestorecleanup/download: Download file
-      _trash/display: Trashed items
+      _trash/display: Trash bin
       _trash/item: Item
   filestore-cleanup:
     none: There are no unused filestore files to clean up.
