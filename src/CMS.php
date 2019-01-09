@@ -175,6 +175,7 @@ class CMS
             }
             $set->name($name);
             $set->createTable();
+            $this->config->push('factories', $name);
         }
         return $this->valueFunction('factory/'.$name, $set);
     }

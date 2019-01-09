@@ -10,7 +10,7 @@ use Flatrr\FlatArray;
 
 class DigraphFactory extends Factory
 {
-    const ID_LENGTH = 8;
+    const ID_LENGTH = 16;
     protected $cms;
     protected $name = 'system';
 

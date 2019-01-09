@@ -2,6 +2,18 @@ date:
   format:
     date: F j, Y
     datetime: F j, Y, g:i a T
+logging:
+  nomonolog: No Monolog Logger is configured. Logging to the internal Digraph logger is still possible, but for better security and more comprehensive logging reliability you should configure a Monolog Logger.
+filestore-cleanup:
+  none: There are no unused filestore files to clean up.
+  title: Confirm permanent deletion of the following !count unreferenced files, freeing !size.
+  file-error: An error occurred deleting file from !dir
+  error: !errors errors occurred
+  confirmation: Successfully deleted !count files, freeing !size
+  cardcontent: |
+    !names<br>
+    !size first uploaded !mtime<br>
+    <a href="!download">download</a>
 filestore:
   meta:
     time: Date uploaded
@@ -120,9 +132,20 @@ urls:
     '*/order': ordering
     '*/rawdump': raw dump
     '*/rawedit': raw edit
+    '*/sitemap': !name site map
   # rules for noun/verb combinations with common nouns
   common:
     '*/*': !noun !verb
+    _controlpanel/add: add !arg_type
+    _controlpanel/config: Current configuration
+    _controlpanel/display: Control panel
+    _controlpanel/sitemap: Site map
+    _filestorecleanup/display: Filestore cleanup
+    _filestorecleanup/download: Download file
+    _logging/display: Logs
+    _trash/display: Trash
+    _trash/factory: Trash from "!arg_factory"
+    _trash/item: Trash item !arg_id
     _user/display: User
     _user/signin: Sign in
     _user/signout: Sign out

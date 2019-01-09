@@ -1,7 +1,9 @@
 <?php
 use Digraph\DataObject\FieldMutator\FieldMutatorArrayInterface;
 
-$factory = $cms->factory();
+$package->noCache();
+
+$factory = $cms->factory($this->arg('factory'));
 $search = $factory->search();
 $search->order('${dso.modified.date} desc');
 $search->where('${dso.id} = :id');

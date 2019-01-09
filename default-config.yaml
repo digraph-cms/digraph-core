@@ -12,6 +12,12 @@ actions:
   uiforguests: true
   categorical:
     '*': []
+    _controlpanel:
+      config: _controlpanel/config
+      filestorecleanup: _filestorecleanup/display
+      logging: _logging/display
+      sitemap: _controlpanel/sitemap
+      trash: _trash/display
   proper:
     '*':
       edit: !id/edit
@@ -25,6 +31,7 @@ actions:
       signup: _user/signup
     '_user/signedin':
       signout: _user/signout
+      controlpanel: _controlpanel/display
 
 groups: []
 
@@ -149,6 +156,8 @@ permissions:
       - allow all
     '_user/*':
       - allow all
+    '_logging/*':
+      - allow group webmaster
     '*/rawdump':
       - allow group webmaster
     '*/rawedit':
@@ -161,6 +170,20 @@ permissions:
       - allow group webmaster, editor
     '*/delete':
       - allow group webmaster, editor
+    _trash/*:
+      - deny all
+      - allow group webmaster, editor
+    _filestorecleanup/*:
+      - deny all
+      - allow group webmaster
+    _controlpanel/*:
+      - deny all
+      - allow group webmaster
+    _controlpanel/display:
+      - deny all
+      - allow group editor, webmaster
+    _controlpanel/sitemap:
+      - allow group editor
   add:
     '*':
       - allow all
@@ -201,10 +224,18 @@ navigation:
     proper:
       '*/*': !noun/display
       '*/display': false
+      '*/sitemap': _controlpanel/sitemap
     # rules for noun/verb combinations with common nouns
     common:
       '*/*': !noun/display
       '*/display': false
+      _controlpanel/display: _controlpanel/display
+      _filestorecleanup/display: _controlpanel/display
+      _logging/display: _controlpanel/display
+      _trash/display: _controlpanel/display
+      _trash/item: _trash/factory?factory=!arg_factory
+      _user/*: _user/display
+      _user/display: false
 
 types:
   system:
@@ -215,6 +246,8 @@ types:
   users:
     simple: \Digraph\Users\Managers\Simple\SimpleUser
     default: ${types.users.simple}
+  logging:
+    default: \Digraph\Logging\LogEntry
 
 url:
   protocol: ''
@@ -378,6 +411,7 @@ helpers:
     filters: Digraph\Filters\FilterHelper
     forms: Digraph\Forms\FormHelper
     image: Digraph\FileStore\ImageHelper
+    log: Digraph\Logging\LogHelper
     media: Digraph\Media\MediaHelper
     modules: Digraph\Modules\ModuleHelper
     navigation: Digraph\Templates\NavigationHelper
@@ -490,3 +524,7 @@ bootstrap:
       class: \Digraph\Users\UserFactory
       driver: default
       table: digraph_users
+    logging:
+      class: \Digraph\Logging\LogFactory
+      driver: default
+      table: digraph_log
