@@ -9,6 +9,33 @@ class Versioned extends Noun
     const ROUTING_NOUNS = ['versioned'];
     const VERSION_TYPE = 'version';
 
+    public function title()
+    {
+        if (!($version = $this->currentVersion())) {
+            return $this->title();
+        }
+        return $version->title();
+    }
+
+    public function body()
+    {
+        if (!($version = $this->currentVersion())) {
+            $this->factory->cms()->helper('notifications')->warning(
+                $this->factory->cms()->helper('strings')->string('versioned.no_versions')
+            );
+            return;
+        }
+        if (!$version->isPublished()) {
+            $this->factory->cms()->helper('notifications')->warning(
+                $this->factory->cms()->helper('strings')->string(
+                    'notifications.unpublished',
+                    ['name'=>$version->name()]
+                )
+            );
+        }
+        return $this->factory->cms()->helper('filters')->filterContentField($version['digraph.body'], $this['dso.id']);
+    }
+
     public function actions($links)
     {
         $links['version_list'] = '!id/versions';
