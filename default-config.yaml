@@ -288,6 +288,7 @@ templates:
       core_actionbar: _digraph/actionbar/actionbar.css
       core_filestore: _digraph/core-css/filestore.css
       core_blocks: _digraph/core-css/blocks.css
+      core_print: _digraph/core-css/print.css
     hypersemantic:
       typography: _digraph/hypersemantic/typography.css
       menus: _digraph/hypersemantic/menus.css

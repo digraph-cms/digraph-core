@@ -1,0 +1,14 @@
+@media print {
+  .digraph-actionbar,
+  .template-blockarea,
+  .digraph-notifications,
+  body > nav.menubar {
+    display:none;
+  }
+  td {
+    border: 1px dotted #ccc;
+  }
+  th {
+    border: 1px solid #999;
+  }
+}
