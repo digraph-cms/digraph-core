@@ -9,12 +9,12 @@ class Versioned extends Noun
     const ROUTING_NOUNS = ['versioned'];
     const VERSION_TYPE = 'version';
 
-    public function title()
+    public function title($verb = null)
     {
         if (!($version = $this->currentVersion())) {
-            return $this->title();
+            return parent::title($verb);
         }
-        return $version->title();
+        return $version->title($verb);
     }
 
     public function body()
