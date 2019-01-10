@@ -26,6 +26,11 @@ package:
 paths:
   storage: ${paths.site}/storage
 
+# It's helpful for a site to have its own media directory as well
+media:
+  paths:
+    site: ${paths.site}/media
+
 # Template helper options
 templates:
   # templates.theme can be either a single theme name or an array of theme names

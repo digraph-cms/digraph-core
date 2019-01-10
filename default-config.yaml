@@ -293,6 +293,8 @@ templates:
       menus: _digraph/hypersemantic/menus.css
       layout: _digraph/hypersemantic/layout-1col.css
       layout2: _digraph/hypersemantic/layout-digraph.css
+    site:
+      site_styles: site_styles.css
   # js files are included at either the head or foot of the page
   js:
     head:
@@ -306,6 +308,8 @@ templates:
       core_notifications: _digraph/notifications/notifications.js
       core_actionbar: _digraph/actionbar/actionbar.js
       core_forms: _digraph/core-js/forms.js
+    site:
+      site_script: site_script.js
 
 routing:
   paths:
