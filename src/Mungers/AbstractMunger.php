@@ -43,7 +43,11 @@ abstract class AbstractMunger implements MungerInterface
                 $package->log('mungercache: saving');
                 $citem = $cache->getItem($id);
                 $citem->expiresAfter($package['response.ttl']);
-                $citem->set($package->serialize());
+                if (!($serialized = $package->serialize())) {
+                    $package->error(500, 'Failed to serialize package for cache');
+                    return;
+                }
+                $citem->set($serialized);
                 $cache->save($citem);
             }
         }

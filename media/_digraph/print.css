@@ -1,0 +1,24 @@
+.digraph-actionbar,
+.template-blockarea,
+.digraph-notifications,
+body > nav.menubar {
+  display:none;
+}
+
+td {
+  border: 1px dotted #ccc;
+}
+
+th {
+  border: 1px solid #999;
+}
+
+header[role="banner"] {
+  padding: 10pt;
+}
+
+header[role="banner"] > h1 {
+  font-size: 1.5rem;
+  margin: 0;
+  padding: 0;
+}

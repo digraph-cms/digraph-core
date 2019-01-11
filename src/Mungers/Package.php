@@ -27,6 +27,15 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         $this['response.ttl'] = 0;
     }
 
+    public function binaryContent(string $set = null)
+    {
+        if ($set) {
+            unset($this['response.content']);
+            $this['response.binarycontent'] = base64_encode($set);
+        }
+        return base64_decode($this['response.binarycontent']);
+    }
+
     public function template(string $set = null) : string
     {
         if ($set) {
@@ -174,6 +183,7 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
 
     public function serialize(string $name = null) : string
     {
+        //return json encoded package
         return json_encode($this->get($name));
     }
 

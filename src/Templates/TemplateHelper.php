@@ -172,21 +172,11 @@ class TemplateHelper extends AbstractHelper
             );
         }
         //first try to load template from themes, if it exists
-        $templates = [];
-        foreach (array_reverse($this->theme()) as $theme) {
-            $templates[] = "_themes/$theme/$template";
-        }
-        $templates[] = $template;
+        $template = $this->themeTemplate($template);
         //check that template exists, then render
-        foreach ($templates as $template) {
-            if ($this->exists($template)) {
-                $template = $env->load($template);
-                $package = $this->package;
-                $this->package = $fields['package'];
-                return $template->render($fields->get());
-            }
-        }
-        //return null by default, if template doesn't exist
-        return null;
+        $template = $env->load($template);
+        $package = $this->package;
+        $this->package = $fields['package'];
+        return $template->render($fields->get());
     }
 }

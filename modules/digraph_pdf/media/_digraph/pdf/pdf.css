@@ -1,0 +1,92 @@
+/*
+PDF styles begin with the system print styles, to have a sane starting point.
+This also makes PDFs look more like the basic prints from a browser, just
+cleaner and generally better.
+ */
+/*{include:print.css}*/
+
+body, table {
+  font-size:12pt;
+}
+
+td,th {
+  border:0;
+  padding:2pt;
+}
+
+table {
+  background:#ddd;
+}
+
+th {
+  background:#fafafa;
+}
+
+td {
+  background:#fff;
+}
+
+table.digraph-pdf-header,
+table.digraph-pdf-footer {
+  font-size:10pt;
+  background:#fafafa;
+}
+
+table.digraph-pdf-header td,
+table.digraph-pdf-footer td {
+  background:transparent;
+  border:0;
+}
+
+.digraph-pdf-unpublished {
+  background:#fdc;
+}
+
+.digraph-pdf-unpublished-warning {
+  background:#610;
+  color:#fff;
+  padding:5pt;
+  font-weight:bold;
+  font-family:monospace;
+}
+
+div.mpdf_toc_level_0 {
+  margin-left:0 !important;
+}
+div.mpdf_toc_level_1 {
+  margin-left:10pt !important;
+}
+div.mpdf_toc_level_2 {
+  margin-left:20pt !important;
+}
+div.mpdf_toc_level_3 {
+  margin-left:30pt !important;
+}
+div.mpdf_toc_level_4 {
+  margin-left:40pt !important;
+}
+div.mpdf_toc_level_5 {
+  margin-left:50pt !important;
+}
+div.mpdf_toc_level_6 {
+  margin-left:60pt !important;
+}
+div.mpdf_toc_level_7 {
+  margin-left:70pt !important;
+}
+div.mpdf_toc_level_8 {
+  margin-left:80pt !important;
+}
+div.mpdf_toc_level_9 {
+  margin-left:90pt !important;
+}
+div.mpdf_toc_level_10 {
+  margin-left:100pt !important;
+}
+
+/*
+Sites can add their own CSS that will only be used for PDFs by adding CSS to the
+file pdf.css (which can be in the site's media, or can be added by a theme
+module, whichever works best for the site owner).
+ */
+/*{include:pdf.css}*/

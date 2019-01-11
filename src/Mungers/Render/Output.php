@@ -25,6 +25,13 @@ class Output extends AbstractMunger
             return;
         }
         /*
+        if there's a binary response, output it using package->binaryContent()
+         */
+        if ($package['response.binarycontent']) {
+            echo $package->binaryContent();
+            return;
+        }
+        /*
         note that we output the raw version of response.content
         This is to avoid leaking information or producing unexpected results,
         since Packages are made from SelfReferencingFlatArray

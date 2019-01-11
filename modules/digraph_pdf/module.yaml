@@ -1,0 +1,38 @@
+helpers:
+  classes:
+    pdf: ${module.namespace}\PdfHelper
+
+permissions:
+  url:
+    '*/pdf': [allow all]
+
+pdf:
+  pdf:
+    ttl: 86400
+  pdfbook:
+    ttl: 86400
+  spread: true
+  toc:
+    toc-preHTML: <h1>${strings.pdf.toctitle}</h1>
+    paging: true
+    links: true
+  mpdf:
+    mode: utf-8
+    format: Letter
+    orientation: P
+    margin_left: 25
+    margin_right: 25
+    margin_top: 25
+    margin_bottom: 25
+    margin_header: 15
+    margin_footer: 15
+
+strings:
+  urls:
+    proper:
+      '*/pdf': PDF version
+  pdf:
+    toctitle: Table of contents
+    unpublished: |
+      Warning: This content is not published on the public website!
+      This PDF including it was generated for !user (!ip).

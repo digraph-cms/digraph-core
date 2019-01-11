@@ -24,10 +24,12 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^7.3",
-        "monolog/monolog": "^1.24"
+        "monolog/monolog": "^1.24",
+        "mpdf/mpdf": "^7.1"
     },
     "suggest": {
-        "monolog/monolog": "Allows fully integrated logging via the monolog helper"
+        "monolog/monolog": "Required for more advanced/reliable logging",
+        "mpdf/mpdf": "Required to use PDF features"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
