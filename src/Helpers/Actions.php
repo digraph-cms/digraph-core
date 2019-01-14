@@ -49,7 +49,7 @@ class Actions extends AbstractHelper
             return [];
         }
         //return results
-        return $this->results($noun, $rules, $vars);
+        return $this->results($noun, $rules);
     }
 
     /**

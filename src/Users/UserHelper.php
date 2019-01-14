@@ -96,7 +96,7 @@ class UserHelper extends AbstractHelper
         return null;
     }
 
-    public function &manager(string $name = null) : ?Managers\UserManagerInterface
+    public function manager(string $name = null) : ?Managers\UserManagerInterface
     {
         if (!$name) {
             $name = $this->cms->config['users.defaultmanager'];
@@ -163,7 +163,7 @@ class UserHelper extends AbstractHelper
         return $out;
     }
 
-    public function &groupSource(string $name)
+    public function groupSource(string $name)
     {
         if (!isset($this->groupSources[$name])) {
             if (isset($this->cms->config['users.groups.sources.'.$name])) {
