@@ -41,34 +41,34 @@ div.mpdf_toc_level_0 {
   margin-left:0 !important;
 }
 div.mpdf_toc_level_1 {
-  margin-left:10pt !important;
+  margin-left:0 !important;
 }
 div.mpdf_toc_level_2 {
-  margin-left:20pt !important;
+  margin-left:10pt !important;
 }
 div.mpdf_toc_level_3 {
-  margin-left:30pt !important;
+  margin-left:20pt !important;
 }
 div.mpdf_toc_level_4 {
-  margin-left:40pt !important;
+  margin-left:30pt !important;
 }
 div.mpdf_toc_level_5 {
-  margin-left:50pt !important;
+  margin-left:40pt !important;
 }
 div.mpdf_toc_level_6 {
-  margin-left:60pt !important;
+  margin-left:50pt !important;
 }
 div.mpdf_toc_level_7 {
-  margin-left:70pt !important;
+  margin-left:60pt !important;
 }
 div.mpdf_toc_level_8 {
-  margin-left:80pt !important;
+  margin-left:70pt !important;
 }
 div.mpdf_toc_level_9 {
-  margin-left:90pt !important;
+  margin-left:80pt !important;
 }
 div.mpdf_toc_level_10 {
-  margin-left:100pt !important;
+  margin-left:90pt !important;
 }
 
 /*{bundle:pdf}*/

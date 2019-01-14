@@ -4,74 +4,51 @@
     <meta charset="utf-8">
     <link rel="stylesheet" href="{{config.url.base}}pdf/pdf.css">
   </head>
-  <body>
+  <body class="pdf-content type-{{noun.dso.type}} spread-{{pdf.mpdf.mirrorMargins}}">
+
+    {% include cms.helper('templates').themeTemplate('pdf/partials/hf_document.twig') %}
 
     {% block prebody %}
 
-    <htmlpageheader name="foo">
-      <table class="pdf-header">
-        <tr>
-          <td style="text-align:left;">{{cms.helper('strings').date()}}</td>
-          <td style="text-align:right;">{{page_title}}</td>
-        </tr>
-      </table>
-    </htmlpageheader>
-    <htmlpagefooter name="foo">
-      <table class="pdf-footer">
-        <tr>
-          <td style="text-align:left;">{{noun.url}}</td>
-          <td style="text-align:right;">{PAGENO}</td>
-        </tr>
-      </table>
-    </htmlpagefooter>
+    <sethtmlpageheader
+      name="document"
+      show-this-page="1"
+      value="on" />
+    <sethtmlpagefooter
+      name="document"
+      value="on" />
+    <sethtmlpageheader
+      name="document_even"
+      show-this-page="1"
+      page="even"
+      value="on" />
+    <sethtmlpagefooter
+      name="document_even"
+      page="even"
+      value="on" />
 
-    <sethtmlpageheader name="foo" value="on" />
-    <sethtmlpagefooter name="foo" value="on" />
-
-    {% include cms.helper('templates').themeTemplate('partials/notifications.twig') %}
+      {% include cms.helper('templates').themeTemplate('partials/notifications.twig') %}
 
     {% endblock %}
 
     {% block body %}
 
-    <div class="pdf-article">
+      <div class="pdf-article level-0">
 
-      <columns column-count="0" />
-      <h1>{{page_title}}</h1>
-      {% if page_title != package.url.title %}
-        <h2>{{package.url.title}}</h2>
-      {% endif %}
+        <columns column-count="0"/>
+        <h1>{{page_title}}</h1>
+        {% if page_title != package.url.title %}
+          <h2>{{package.url.title}}</h2>
+        {% endif %}
 
-      <columns column-count="{{pdf.columns.count}}" column-gap="{{pdf.columns.gap}}" />
-      {{package.response.content|raw}}
+        <columns column-count="{{pdf.columns.count}}" column-gap="{{pdf.columns.gap}}"/>
+        {{package.response.content|raw}}
 
-    </div>
-
-    {% endblock %}
-
-    {% block postbody %}
-
-    <htmlpageheader name="foo">
-      <table class="pdf-header">
-        <tr>
-          <td style="text-align:left;">{{cms.helper('strings').date()}}</td>
-          <td style="text-align:right;">{{page_title}}</td>
-        </tr>
-      </table>
-    </htmlpageheader>
-    <htmlpagefooter name="foo">
-      <table class="pdf-footer">
-        <tr>
-          <td style="text-align:left;">{{noun.url}}</td>
-          <td style="text-align:right;">{PAGENO}</td>
-        </tr>
-      </table>
-    </htmlpagefooter>
-
-    <sethtmlpageheader name="foo" value="on" />
-    <sethtmlpagefooter name="foo" value="on" />
+      </div>
 
     {% endblock %}
+
+    {% block postbody %}{% endblock %}
 
   </body>
 </html>

@@ -1,0 +1,58 @@
+{% if pdf.mpdf.mirrorMargins == '1' %}
+
+  <htmlpageheader name="noun_{{noun.dso.id}}_even">
+    <table class="pdf-header">
+      <tr>
+        <td style="text-align:left;">{{site_name}}</td>
+      </tr>
+    </table>
+  </htmlpageheader>
+
+  <htmlpageheader name="noun_{{noun.dso.id}}">
+    <table class="pdf-header">
+      <tr>
+        <td style="text-align:right;">{{noun.title}}</td>
+      </tr>
+    </table>
+  </htmlpageheader>
+
+  <htmlpagefooter name="noun_{{noun.dso.id}}_even">
+    <table class="pdf-footer">
+      <tr>
+        <td style="text-align:left;">{PAGENO}</td>
+        <td style="text-align:right;">PDF built {{cms.helper('strings').date()}}</td>
+      </tr>
+    </table>
+  </htmlpagefooter>
+
+  <htmlpagefooter name="noun_{{noun.dso.id}}">
+    <table class="pdf-footer">
+      <tr>
+        <td style="text-align:left;">{{noun.url()}}</td>
+        <td style="text-align:right;">{PAGENO}</td>
+      </tr>
+    </table>
+  </htmlpagefooter>
+
+{% else %}
+
+  <htmlpageheader name="noun_{{noun.dso.id}}">
+    <table class="pdf-header">
+      <tr>
+        <td style="text-align:left;">{{site_name}}</td>
+        <td style="text-align:right;">{{noun.title}}</td>
+      </tr>
+    </table>
+  </htmlpageheader>
+
+  <htmlpagefooter name="noun_{{noun.dso.id}}">
+    <table class="pdf-footer">
+      <tr>
+        <td style="text-align:left;">{{noun.url()}}</td>
+        <td style="text-align:center;">{{cms.helper('strings').date()}}</td>
+        <td style="text-align:right;">{PAGENO}</td>
+      </tr>
+    </table>
+  </htmlpagefooter>
+
+{% endif %}

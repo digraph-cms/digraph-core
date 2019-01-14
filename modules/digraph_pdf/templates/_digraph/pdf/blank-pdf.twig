@@ -1,0 +1,15 @@
+{% extends '_digraph/pdf/default.twig' %}
+
+{% block prebody %}
+
+  {% include cms.helper('templates').themeTemplate('partials/notifications.twig') %}
+
+{% endblock %}
+
+{% block body %}
+
+  {{package.response.content|raw}}
+
+{% endblock %}
+
+{% block postbody %}{% endblock %}

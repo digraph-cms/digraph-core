@@ -19,17 +19,17 @@ templates:
 
 pdf:
   css: pdf/pdf.css
+  article_break_type: next-odd
   columns:
     count: 2
     gap: 5
-  templates: []
   mpdf:
     mode: utf-8
     format: Letter
     orientation: P
     useKerning: true
-    max_colH_correction: 1.15
-    # mirrorMargins: 1
+    max_colH_correction: 1.5
+    mirrorMargins: 1
     setAutoBottomMargin: stretch
     setAutoTopMargin: stretch
     autoMarginPadding: 5
