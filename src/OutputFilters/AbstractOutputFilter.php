@@ -19,8 +19,8 @@ abstract class AbstractOutputFilter
         $this->doFilterPackage($package);
     }
 
-    public function templatePackage(&$package)
+    public function preFilterPackage(&$package)
     {
-        $this->doTemplatePackage($package);
+        $this->doPreFilterPackage($package);
     }
 }

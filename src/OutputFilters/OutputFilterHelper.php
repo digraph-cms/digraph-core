@@ -17,11 +17,11 @@ class OutputFilterHelper extends AbstractHelper
         }
     }
 
-    public function templatePackage(PackageInterface &$package)
+    public function preFilterPackage(PackageInterface &$package)
     {
         if ($filter = $package['response.outputfilter']) {
             if ($filter = $this->getFilter($filter)) {
-                $filter->templatePackage($package);
+                $filter->preFilterPackage($package);
             }
         }
     }

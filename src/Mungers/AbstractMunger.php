@@ -5,6 +5,7 @@ namespace Digraph\Mungers;
 abstract class AbstractMunger implements MungerInterface
 {
     const CACHE_ENABLED = false;
+    const CACHE_ON_KEY = 'request.hash';
     protected $parent;
     protected $name;
 
@@ -13,19 +14,23 @@ abstract class AbstractMunger implements MungerInterface
 
     protected function cacheHash(&$package)
     {
-        return $package->hash();
+        return $package->hash(static::CACHE_ON_KEY);
     }
 
     protected function doMunge_cached(&$package)
     {
         //if cache isn't enabled, just run doMunge
         if (!static::CACHE_ENABLED || !$package['response.cacheable']) {
+            if (!$package['response.cacheable']) {
+                $package->log('mungercache: disabled by package.response.cacheable');
+            }
             $this->doMunge($package);
             return;
         }
         //use cache if possible
         $cache = $package->cms()->cache($package->cms()->config['cache.mungercache.adapter']);
         $id = 'mungercache.'.md5(serialize([$this->cacheHash($package),get_called_class()]));
+        $package->log('mungercache: id: '.$id);
         if ($cache && $cache->hasItem($id)) {
             //load result from cache
             $start = microtime(true);
@@ -40,7 +45,7 @@ abstract class AbstractMunger implements MungerInterface
             $duration = 1000*(microtime(true)-$start);
             $package->log('mungercache: took '.$duration.'ms');
             if ($cache && $package['response.cacheable'] && $duration > $package->cms()->config['cache.mungercache.threshold']) {
-                $package->log('mungercache: saving');
+                $package->log('mungercache: saving: '.$package['response.ttl']);
                 $citem = $cache->getItem($id);
                 $citem->expiresAfter($package['response.ttl']);
                 if (!($serialized = $package->serialize())) {

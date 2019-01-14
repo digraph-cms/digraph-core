@@ -33,6 +33,9 @@ pdf:
     setAutoBottomMargin: stretch
     setAutoTopMargin: stretch
     autoMarginPadding: 5
+  package:
+    response:
+      ttl: 86400
 
 strings:
   urls:

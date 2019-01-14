@@ -387,7 +387,7 @@ mungers:
     # Executes handler files and puts their output into the package
     600-execute: Digraph\Mungers\Build\Execute
     # Tweaks templates if called for by output filters
-    900-outputfilter: Digraph\OutputFilters\OutputFilterTemplateMunger
+    900-outputfilter: Digraph\OutputFilters\OutputFilterPrefilterMunger
   # Builds content of error pages if status isn't 200
   error:
     # Builds error pages based on status

@@ -8,6 +8,7 @@ use Flatrr\FlatArray;
 class OutputFilterMunger extends AbstractMunger
 {
     const CACHE_ENABLED = true;
+    const CACHE_ON_KEY = 'response';
 
     protected function doMunge(&$package)
     {

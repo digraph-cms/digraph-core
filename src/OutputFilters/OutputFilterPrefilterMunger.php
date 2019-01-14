@@ -4,10 +4,8 @@ namespace Digraph\OutputFilters;
 
 use Digraph\Mungers\AbstractMunger;
 
-class OutputFilterTemplateMunger extends AbstractMunger
+class OutputFilterPrefilterMunger extends AbstractMunger
 {
-    const CACHE_ENABLED = true;
-
     protected function doMunge(&$package)
     {
         if ($filter = @$_GET['outputfilter']) {
@@ -28,7 +26,7 @@ class OutputFilterTemplateMunger extends AbstractMunger
                 $package->template($template);
             }
             //offer outputfilter a chance to mess with the package before templating
-            $package->cms()->helper('outputfilters')->templatePackage($package);
+            $package->cms()->helper('outputfilters')->preFilterPackage($package);
         }
     }
 
