@@ -119,6 +119,7 @@ class ImageHelper extends AbstractHelper
             $filename .= '.'.$extension;
         }
         $package->makeMediaFile($filename);
+        $package['response.outputmode'] = 'readfile';
         $package['response.readfile'] = $cacheFile;
         unset($package['response.content']);
         $package['response.cacheable'] = $cacheable;

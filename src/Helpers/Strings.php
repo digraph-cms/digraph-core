@@ -19,24 +19,36 @@ class Strings extends AbstractHelper
         return '[strings.'.$name.']';
     }
 
-    public function date($time)
+    public function date($time=null)
     {
+        if (!$time) {
+            $time = time();
+        }
         return date($this->string('date.format.date'), $time);
     }
 
-    public function dateHTML($time)
+    public function dateHTML($time=null)
     {
+        if (!$time) {
+            $time = time();
+        }
         $formatted = $this->date($time);
         return "<time datetime=\"".date('c', $time)."\">$formatted</time>";
     }
 
-    public function datetime($time)
+    public function datetime($time=null)
     {
+        if (!$time) {
+            $time = time();
+        }
         return date($this->string('date.format.datetime'), $time);
     }
 
-    public function datetimeHTML($time)
+    public function datetimeHTML($time=null)
     {
+        if (!$time) {
+            $time = time();
+        }
         $formatted = $this->datetime($time);
         return "<time datetime=\"".date('c', $time)."\">$formatted</time>";
     }

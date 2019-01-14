@@ -29,12 +29,12 @@ class TemplateHelper extends AbstractHelper
         $files[] = "_digraph/$file";
         // return the first result found
         foreach ($files as $file) {
-            if ($this->exists($file)) {
+            if ($this->exists($file, true)) {
                 return $file;
             }
         }
         // otherwise return notfound template
-        return "_digraph/_notfound.twig";
+        return "_notfound.twig";
     }
 
     public function theme()
@@ -141,10 +141,10 @@ class TemplateHelper extends AbstractHelper
         return $this->render($id, $fields);
     }
 
-    public function exists($template = 'default.twig')
+    public function exists($template = 'default.twig', $skipTheme = false)
     {
         $this->env();
-        return $this->loader->exists($template);
+        return $this->loader->exists($template) || (!$skipTheme && $this->themeTemplate($template) != '_notfound.twig');
     }
 
     public function render($template = 'default.twig', $fields=array())
@@ -157,7 +157,8 @@ class TemplateHelper extends AbstractHelper
         $fields->merge([
             'helper' => &$this,
             'config' => $this->cms->config,
-            'cms' => $this->cms
+            'cms' => $this->cms,
+            'templateName' => $template
         ]);
         if ($fields['package']) {
             $fields->merge(

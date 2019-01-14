@@ -17,6 +17,7 @@ class MediaMunger extends AbstractMunger
                 unset($package['response.readfile']);
             } else {
                 $package['response.readfile'] = $f['path'];
+                $package['response.outputmode'] = 'readfile';
                 unset($package['response.content']);
             }
             $package['response.mime'] = $f['mime'];

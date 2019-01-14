@@ -1,8 +1,3 @@
-.notifications {
-  max-height: 20em;
-  overflow: auto;
-}
-
 .notification {
   background: #666;
   color: #fff;

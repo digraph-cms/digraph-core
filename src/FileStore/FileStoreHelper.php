@@ -114,6 +114,7 @@ class FileStoreHelper extends AbstractHelper
     public function output(&$package, FileStoreFile $file)
     {
         $package->makeMediaFile($file->nameWithHash());
+        $package['response.outputmode'] = 'readfile';
         $package['response.readfile'] = $file->path();
         unset($package['response.content']);
         $package['response.cacheable'] = true;

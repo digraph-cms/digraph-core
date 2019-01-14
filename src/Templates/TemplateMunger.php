@@ -10,11 +10,15 @@ class TemplateMunger extends AbstractMunger
 
     protected function doMunge(&$package)
     {
+        // only run templates for text/html
         if ($package['response.mime'] != 'text/html') {
             $package->log('templates are only for mime text/html');
             return;
         }
+        // load template helper
         $t = $package->cms()->helper('templates');
+        $template = $package->template();
+        // build fields and render
         $t->field('package', $package);
         foreach ($package->get('fields', true) as $key => $value) {
             $t->field($key, $value);
@@ -22,11 +26,11 @@ class TemplateMunger extends AbstractMunger
         $package->set(
             'response.content',
             $t->render(
-                $package->template(),
+                $template,
                 $package->get('fields')
             )
         );
-        $package->set('response.templated', true);
+        $package->set('response.templated', $template);
     }
 
     protected function doConstruct($name)

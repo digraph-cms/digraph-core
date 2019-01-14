@@ -11,5 +11,6 @@ if (!$file) {
 }
 
 $package->makeMediaFile($file['name']);
+$package['response.outputmode'] = 'readfile';
 $package['response.readfile'] = $file['file'];
 $package['response.disposition'] = 'attachment';

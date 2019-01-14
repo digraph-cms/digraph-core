@@ -29,8 +29,9 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
 
     public function binaryContent(string $set = null)
     {
-        if ($set) {
+        if ($set !== null) {
             unset($this['response.content']);
+            $this['response.outputmode'] = 'binary';
             $this['response.binarycontent'] = base64_encode($set);
         }
         return base64_decode($this['response.binarycontent']);

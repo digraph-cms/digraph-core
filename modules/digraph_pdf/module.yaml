@@ -7,43 +7,32 @@ permissions:
     '*/pdf': [allow all]
     '*/pdfbook': [allow all]
 
+outputfilters:
+  pdf: ${module.namespace}\PdfOutputFilter
+
+templates:
+  cssbundles:
+    pdf:
+      core_notifications: _digraph/notifications/notifications.css
+      core_filestore: _digraph/core-css/filestore.css
+      core_blocks: _digraph/core-css/blocks.css
+
 pdf:
-  pdf:
-    ttl: 86400
-    meta: true
-  pdfbook:
-    ttl: 86400
-    meta: true
+  css: pdf/pdf.css
   columns:
     count: 2
     gap: 5
-  spread: true
-  templates:
-    header: header
-    footer: footer
-    header_left: header_left
-    header_right: header_right
-    footer_left: footer_left
-    footer_right: footer_right
-  toc:
-    toc-preHTML: <h1>${strings.pdf.toctitle}</h1>
-    paging: true
-    links: true
-    odd-header-value: -1
-    even-header-value: -1
-    odd-footer-value: -1
-    even-footer-value: -1
+  templates: []
   mpdf:
     mode: utf-8
     format: Letter
     orientation: P
-    margin_left: 25
-    margin_right: 25
-    margin_top: 25
-    margin_bottom: 25
-    margin_header: 15
-    margin_footer: 15
     useKerning: true
+    max_colH_correction: 1.15
+    # mirrorMargins: 1
+    setAutoBottomMargin: stretch
+    setAutoTopMargin: stretch
+    autoMarginPadding: 5
 
 strings:
   urls:

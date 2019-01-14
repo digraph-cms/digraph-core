@@ -6,6 +6,8 @@ use Digraph\Mungers\AbstractMunger;
 
 class Route extends AbstractMunger
 {
+    const CACHE_ENABLED = true;
+
     protected function doMunge(&$package)
     {
         $noun = $package['url.noun'];
