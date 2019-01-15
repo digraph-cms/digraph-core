@@ -17,6 +17,17 @@ class Noun extends DSO implements NounInterface
         $this->resetChanges();
     }
 
+    public function invalidateCache()
+    {
+        $this->factory->cms()->invalidateCache($this['dso.id']);
+    }
+
+    public function update() : bool
+    {
+        $this->invalidateCache();
+        return parent::update();
+    }
+
     public function template($verb=null)
     {
         return null;
@@ -38,6 +49,7 @@ class Noun extends DSO implements NounInterface
         if (static::FILESTORE && $permanent) {
             exit("TODO: clear files when nouns are permanently deleted");
         }
+        $this->invalidateCache();
         return parent::delete($permanent);
     }
 

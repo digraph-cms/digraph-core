@@ -25,6 +25,7 @@ class MediaMunger extends AbstractMunger
             //set up media-specific package defaults
             $package->merge($package->cms()->config['media.package'], null, true);
             //skip everything up until rendering
+            $package->skipGlob('setup**');
             $package->skipGlob('build**');
             $package->skipGlob('error**');
             $package->skipGlob('template**');

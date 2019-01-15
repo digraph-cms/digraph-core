@@ -39,19 +39,29 @@ abstract class AbstractMunger implements MungerInterface
             $duration = 1000*(microtime(true)-$start);
             $package->log('mungercache: hit loaded in '.$duration.'ms');
         } else {
+            //execute and time how long it takes
             $package->log('mungercache: running '.get_called_class());
             $start = microtime(true);
             $this->doMunge($package);
             $duration = 1000*(microtime(true)-$start);
             $package->log('mungercache: took '.$duration.'ms');
+            //check if this result should be cached
             if ($cache && $package['response.cacheable'] && $duration > $package->cms()->config['cache.mungercache.threshold']) {
+                //set up cache item
                 $package->log('mungercache: saving: '.$package['response.ttl']);
                 $citem = $cache->getItem($id);
                 $citem->expiresAfter($package['response.ttl']);
+                //add cache tags from package
+                if ($package['cachetags']) {
+                    $citem->tag($package['cachetags']);
+                    $package->log('mungercache: tagged '.implode(', ', $package['cachetags']));
+                }
+                //try to serialize package
                 if (!($serialized = $package->serialize())) {
                     $package->error(500, 'Failed to serialize package for cache');
                     return;
                 }
+                //save into cache
                 $citem->set($serialized);
                 $cache->save($citem);
             }

@@ -3,7 +3,7 @@
 namespace Digraph;
 
 use Digraph\Helpers\HelperInterface;
-use Digraph\Mungers\Package;
+use Digraph\Mungers\PackageInterface;
 use Flatrr\Config\ConfigInterface;
 use Destructr\Drivers\DSODriverInterface;
 use Destructr\DSOFactoryInterface;
@@ -18,6 +18,7 @@ class CMS
     protected $log = [];
     protected $values = [];
     protected $readCache = [];
+    protected $package;
 
     public function __construct(ConfigInterface $config)
     {
@@ -27,6 +28,14 @@ class CMS
         $this->config->readFile(__DIR__.'/../default-strings.yaml', 'strings');
         $this->config['paths.core'] = realpath(__DIR__.'/..');
         $this->log('CMS::__construct finished');
+    }
+
+    public function package(PackageInterface &$package = null) : ?PackageInterface
+    {
+        if ($package) {
+            $this->package = $package;
+        }
+        return $this->package;
     }
 
     /**
@@ -66,6 +75,9 @@ class CMS
             $result = @array_shift($search->execute([':search'=>$q]));
             if ($result) {
                 $this->readCache[$id] = $result;
+                if ($this->package) {
+                    $this->package->cacheTag($result['dso.id']);
+                }
             } else {
                 $this->readCache[$id] = false;
             }
@@ -73,19 +85,22 @@ class CMS
         return $this->readCache[$id];
     }
 
-    public function fullMunge(Package &$package)
+    public function fullMunge(PackageInterface &$package)
     {
         foreach ($this->config['fullmunge'] as $name) {
             $this->munge($package, $name);
         }
     }
 
-    public function munge(Package &$package, string $name = 'build')
+    public function munge(PackageInterface &$package, string $name = 'build')
     {
+        $p = $this->package;
         $start = microtime(true);
         $this->log('beginning munging with '.$name);
         $package->cms($this);
+        $this->package = $package;
         $this->munger($name)->munge($package);
+        $this->package = $p;
         $this->log('finished munging with '.$name.' in '.round((microtime(true)-$start)*1000).'ms');
     }
 

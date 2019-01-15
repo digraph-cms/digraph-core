@@ -21,6 +21,13 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         'url'
     ];
 
+    public function cacheTag(string $tag)
+    {
+        if (!$this['cachetags'] || !in_array($tag, $this['cachetags'])) {
+            $this->push('cachetags', $tag);
+        }
+    }
+
     public function noCache()
     {
         $this['response.cacheable'] = false;
@@ -107,6 +114,7 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
             $this['noun'] = $set->get();
             $this['response.last-modified'] = $set['dso.modified.date'];
             $this->url($set->url($this['url.verb'], $this['url.args']));
+            $this->cacheTag($set['dso.id']);
         }
         if ($this['noun']) {
             return $this->cms->factory()->create($this['noun']);

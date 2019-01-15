@@ -6,4 +6,5 @@ use Destructr\DSOInterface;
 
 interface NounInterface extends DSOInterface
 {
+    // public function invalidateCache();
 }

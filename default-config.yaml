@@ -358,6 +358,7 @@ users:
     mode: groups
 
 fullmunge:
+  - setup
   - build
   - error
   - template
@@ -365,25 +366,25 @@ fullmunge:
   - render
 
 mungers:
-  # Constructs the content of a URL, based on initial URL and current user
-  build:
+  setup:
     # Initializes namespace based on current user and users.namespacing config
     100-userinitialize: Digraph\Users\UserMunger
     # Loads package defaults and builds the hash
-    110-initialize: Digraph\Mungers\Build\Initialize
+    200-initialize: Digraph\Mungers\Setup\Initialize
     # parses the URL
-    110-parse: Digraph\Mungers\Build\ParseUrl
+    300-parseurl: Digraph\Mungers\Setup\ParseUrl
     # Checks for mediahelper hits on the current url
-    200-media: Digraph\Media\MediaMunger
+    400-media: Digraph\Media\MediaMunger
     # Resolves slugs and identifies the object that is being referenced, if any
     # This is also where 300 pages are triggered, if slugs resolve to multiple pages
     # This is also where redirects are triggered for normalizing URLs
-    300-locate: Digraph\Mungers\Build\Locate
+    500-locate: Digraph\Mungers\Setup\Locate
+  build:
+    # Checks permissions, throws 403 errors
+    500-permissions: Digraph\Permissions\PermissionsMunger
     # Tries to match verb/noun to a route handler file
     # this is where 404 errors originate
     400-route: Digraph\Mungers\Build\Route
-    # Checks permissions, throws 403 errors
-    500-permissions: Digraph\Permissions\PermissionsMunger
     # Executes handler files and puts their output into the package
     600-execute: Digraph\Mungers\Build\Execute
     # Tweaks templates if called for by output filters

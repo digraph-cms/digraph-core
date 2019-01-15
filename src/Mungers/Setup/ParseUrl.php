@@ -1,6 +1,6 @@
 <?php
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
-namespace Digraph\Mungers\Build;
+namespace Digraph\Mungers\Setup;
 
 use Digraph\Mungers\AbstractMunger;
 
