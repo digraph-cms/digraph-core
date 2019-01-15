@@ -35,7 +35,7 @@ pdf:
     autoMarginPadding: 5
   package:
     response:
-      ttl: 86400
+      ttl: 86400 # day-long cache by default
 
 strings:
   urls:

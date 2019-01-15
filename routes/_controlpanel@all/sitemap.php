@@ -1,6 +1,5 @@
 <?php
-$package['response.ttl'] = 0;
-$package['response.cacheable'] = false;
+$package->noCache();
 $root = $package['url.args.root'];
 
 if (!$root) {

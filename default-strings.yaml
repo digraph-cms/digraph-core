@@ -27,9 +27,9 @@ notifications:
   unpublished: '"!name" is not currently published. Parts of the site may look different for users with lower access permissions than you.'
   groupsource_illegalroot: Group source "!0" is not allowed to provide root.
   edit:
-    confirmation: Edited !name
+    confirmation: Changes saved to !name
   add:
-    confirmation: Added !name
+    confirmation: Successfully added !name
 blocks:
   notfound: block not found
 forms:

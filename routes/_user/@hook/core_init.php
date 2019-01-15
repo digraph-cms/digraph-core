@@ -1,6 +1,6 @@
 <?php
-$package['response.cacheable'] = false;
-$package['response.ttl'] = 0;
+$package->noCache();
+
 $users = $package->cms()->helper('users');
 
 $managerName = $package['url.args.manager']?$package['url.args.manager']:$cms->config['users.defaultmanager'];

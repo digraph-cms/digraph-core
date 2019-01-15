@@ -1,6 +1,5 @@
 <?php
-$package['response.cacheable'] = false;
-$package['response.ttl'] = 0;
+$package->noCache();
 
 $noun = $package->noun();
 $cms->helper('notifications')->warning('<strong>Proceed with caution:</strong> this tool can irretrievably destroy data in the object you are editing.');

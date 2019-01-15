@@ -479,7 +479,7 @@ media:
   get_cache_ttl: 60
   package:
     response:
-      ttl: 86400
+      ttl: 86400 # one day in seconds
       headers:
         pragma: public
 
@@ -512,7 +512,7 @@ package:
       namespace: public
     response:
       status: 200
-      ttl: 60
+      ttl: 600 # default 10 minute cache ttl
       cacheable: true
       content: ''
       ready: false

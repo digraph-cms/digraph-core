@@ -1,7 +1,7 @@
 <?php
+$package->noCache();
+
 $package['fields.page_title'] = $package['url.text'];
-$package['response.cacheable'] = false;
-$package['response.ttl'] = 0;
 
 $type = $package['url.args.type'];
 $forms = $this->helper('forms');
@@ -25,10 +25,12 @@ $form->handle(
     }
 );
 if ($form->handle()) {
-    $cms->helper('notifications')->flashConfirmation(
-        $cms->helper('strings')->string('notifications.add.confirmation', ['name'=>$form->object->name()])
+    $cms->helper('notifications')->confirmation(
+        $cms->helper('strings')->string(
+            'notifications.add.confirmation',
+            ['name'=>$form->object->link()]
+        )
     );
-    $package->redirect($form->object->url()->string());
 }
 
 echo $form;

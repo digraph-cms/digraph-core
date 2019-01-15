@@ -1,6 +1,5 @@
 <?php
-$package['response.cacheable'] = false;
-$package['response.ttl'] = 0;
+$package->noCache();
 
 $fs = $this->helper('filestore');
 $file = $fs->getByHash($package['url.args.f']);

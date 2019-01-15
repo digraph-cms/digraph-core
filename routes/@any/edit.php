@@ -1,6 +1,5 @@
 <?php
-$package['response.cacheable'] = false;
-$package['response.ttl'] = 0;
+$package->noCache();
 
 $noun = $package->noun();
 $forms = $this->helper('forms');
@@ -22,10 +21,12 @@ $form->handle(function (&$form) use ($package,$noun) {
     }
 });
 if ($form->handle()) {
-    $cms->helper('notifications')->flashConfirmation(
-        $cms->helper('strings')->string('notifications.edit.confirmation', ['name'=>$form->object->name()])
+    $cms->helper('notifications')->confirmation(
+        $cms->helper('strings')->string(
+            'notifications.edit.confirmation',
+            ['name'=>$form->object->link()]
+        )
     );
-    $package->redirect($form->object->url()->string());
 }
 
 echo $form;

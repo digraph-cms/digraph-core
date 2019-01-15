@@ -1,6 +1,5 @@
 <?php
-$package['response.cacheable'] = false;
-$package['response.ttl'] = 0;
+$package->noCache();
 $u = $package->cms()->helper('users');
 $s = $package->cms()->helper('strings');
 $urls = $package->cms()->helper('urls');
