@@ -30,7 +30,7 @@ class CMS
         $this->log('CMS::__construct finished');
     }
 
-    public function package(PackageInterface &$package = null) : ?PackageInterface
+    public function &package(PackageInterface &$package = null) : ?PackageInterface
     {
         if ($package) {
             $this->package = $package;
@@ -75,9 +75,6 @@ class CMS
             $result = @array_shift($search->execute([':search'=>$q]));
             if ($result) {
                 $this->readCache[$id] = $result;
-                if ($this->package) {
-                    $this->package->cacheTag($result['dso.id']);
-                }
             } else {
                 $this->readCache[$id] = false;
             }

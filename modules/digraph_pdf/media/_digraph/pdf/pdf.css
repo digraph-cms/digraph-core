@@ -37,6 +37,27 @@ td {
   background:#fff;
 }
 
+pre, code,
+figure,
+table,
+ul, li, dl
+h1,h2,h3,h4,h5,h6 {
+  page-break-inside: avoid;
+}
+
+h1,h2,h3,h4,h5,h6 {
+  page-break-after: avoid;
+}
+
+h1 + *
+h2 + *
+h3 + *
+h4 + *
+h5 + *
+h6 + * {
+  page-break-before: avoid;
+}
+
 div.mpdf_toc_level_0 {
   margin-left:0 !important;
 }

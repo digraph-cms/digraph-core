@@ -12,7 +12,9 @@ buildPdfBook($package->noun(), $cms);
 
 function buildPdfBook($noun, &$cms, $level=0)
 {
-    echo $cms->helper('pdf')->template('article', $noun, ['level'=>$level]);
+    if (!$cms->helper('pdf')->config($noun)['skip_in_books']) {
+        echo $cms->helper('pdf')->template('article', $noun, ['level'=>$level]);
+    }
     //recurse into children
     foreach ($noun->children() as $child) {
         buildPdfBook($child, $cms, $level+1);

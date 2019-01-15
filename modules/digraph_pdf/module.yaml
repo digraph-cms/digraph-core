@@ -6,6 +6,14 @@ permissions:
   url:
     '*/pdf': [allow all]
     '*/pdfbook': [allow all]
+    '*/pdfsettings':
+      - deny all
+      - allow group webmaster
+
+actions:
+  proper:
+    '*':
+      pdfsettings: !id/pdfsettings
 
 outputfilters:
   pdf: ${module.namespace}\PdfOutputFilter
@@ -41,8 +49,5 @@ strings:
   urls:
     proper:
       '*/pdf': PDF version
-  pdf:
-    toctitle: Table of contents
-    unpublished: |
-      Warning: This content is not published on the public website!
-      This PDF including it was generated for !user (!ip).
+      '*/pdfbook': PDF ebook
+      '*/pdfsettings': PDF settings

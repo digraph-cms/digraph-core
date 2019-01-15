@@ -1,5 +1,5 @@
 <?php
-include $this->helper('routing')->hookFile('user', 'core_init.php')['file'];
+include $this->helper('routing')->hookFile('_user', 'core_init.php')['file'];
 
 //end if user is already signed in
 if ($users->id()) {
