@@ -29,6 +29,8 @@ class PdfHelper extends \Digraph\Helpers\AbstractHelper
         if ($noun && $noun['pdf']) {
             $config->merge($noun['pdf'], null, true);
         }
+        $config['package.response.ttl'] = intval($config['package.response.ttl']);
+        $config['mpdf.mirrorMargins'] = $config['mpdf.mirrorMargins']?1:0;
         return $config;
     }
 

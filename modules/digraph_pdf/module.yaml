@@ -26,6 +26,8 @@ templates:
       core_blocks: _digraph/core-css/blocks.css
 
 pdf:
+  ttl: 86400 # day-long cache by default
+  enabled: false
   css: pdf/pdf.css
   article_break_type: next-odd
   columns:
@@ -43,7 +45,7 @@ pdf:
     autoMarginPadding: 5
   package:
     response:
-      ttl: 86400 # day-long cache by default
+      ttl: ${pdf.ttl}
 
 strings:
   urls:
