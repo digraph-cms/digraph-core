@@ -36,10 +36,7 @@
       <div class="pdf-article level-0">
 
         <columns column-count="0"/>
-        <h1>{{page_title}}</h1>
-        {% if page_title != package.url.text %}
-          <h2>{{package.url.text}}</h2>
-        {% endif %}
+        {% include cms.helper('templates').themeTemplate('partials/page_title.twig') %}
 
         <columns column-count="{{pdf.columns.count}}" column-gap="{{pdf.columns.gap}}"/>
         {{package.response.content|raw}}

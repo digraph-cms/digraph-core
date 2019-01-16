@@ -13,10 +13,7 @@
 
       <article>
 
-        <h1>{{page_title}}</h1>
-        {% if page_title != package.url.text %}
-          <h2>{{package.url.text}}</h2>
-        {% endif %}
+        {% include cms.helper('templates').themeTemplate('partials/page_title.twig') %}
         {% include cms.helper('templates').themeTemplate('partials/block.twig')
           with {blockname:'template-title-after'} %}
 
