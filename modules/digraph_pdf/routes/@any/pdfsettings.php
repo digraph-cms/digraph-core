@@ -6,7 +6,6 @@ use Formward\Fields\Number;
 use Formward\Fields\Select;
 
 $package->noCache();
-$package['fields.page_title'] = 'PDF settings';
 
 $form = new Form('');
 
@@ -16,15 +15,23 @@ $form['enabled']->options([
     'TRUE' => 'true',
     'FALSE' => 'false'
 ]);
-$form['enabled']->nullText = 'inherit: '.($cms->config['pdf.enabled']?'true':'false');
+$form['enabled']->nullText = 'default: '.($cms->config['pdf.enabled']?'true':'false');
+
+# include_in_books
+$form['include_in_books'] = new Select('include_in_books');
+$form['include_in_books']->options([
+    'TRUE' => 'true',
+    'FALSE' => 'false'
+]);
+$form['include_in_books']->nullText = 'default: '.($cms->config['pdf.include_in_books']?'true':'false');
 
 # cache ttl configuration
 $form['ttl'] = new Number('cache ttl (in seconds)');
-$form['ttl']->attr('placeholder', 'inherit: '.$cms->config['pdf.ttl']);
+$form['ttl']->attr('placeholder', 'default: '.$cms->config['pdf.ttl']);
 
 # css path
 $form['css'] = new Input('css');
-$form['css']->attr('placeholder', 'inherit: '.$cms->config['pdf.css']);
+$form['css']->attr('placeholder', 'default: '.$cms->config['pdf.css']);
 
 # article break type configuration
 $form['article_break_type'] = new Select('article_break_type');
@@ -33,15 +40,15 @@ $form['article_break_type']->options([
     'next-even' => 'next-even',
     'next' => 'next'
 ]);
-$form['article_break_type']->nullText = 'inherit: '.($cms->config['pdf.enabled']?'true':'false');
+$form['article_break_type']->nullText = 'default: '.$cms->config['pdf.article_break_type'];
 
 # column count/gap configuration
 $form['columns'] = new Container('columns');
 $form['columns']['count'] = new Number('count');
-$form['columns']['count']->attr('placeholder', 'inherit: '.$cms->config['pdf.columns.count']);
+$form['columns']['count']->attr('placeholder', 'default: '.$cms->config['pdf.columns.count']);
 
 $form['columns']['gap'] = new Number('gap (in millimeters)');
-$form['columns']['gap']->attr('placeholder', 'inherit: '.$cms->config['pdf.columns.gap']);
+$form['columns']['gap']->attr('placeholder', 'default: '.$cms->config['pdf.columns.gap']);
 
 # mpdf options
 $form['mpdf'] = new Container('mpdf');
@@ -50,7 +57,7 @@ $form['mpdf']['mirrorMargins']->options([
     'TRUE' => 'true',
     'FALSE' => 'false',
 ]);
-$form['mpdf']['mirrorMargins']->nullText = 'inherit: '.($cms->config['pdf.mpdf.mirrorMargins']?'true':'false');
+$form['mpdf']['mirrorMargins']->nullText = 'default: '.($cms->config['pdf.mpdf.mirrorMargins']?'true':'false');
 
 
 //set form defaults from noun

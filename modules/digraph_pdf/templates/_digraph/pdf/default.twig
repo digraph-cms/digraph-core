@@ -36,7 +36,7 @@
       <div class="pdf-article level-0">
 
         <columns column-count="0"/>
-        {% include cms.helper('templates').themeTemplate('partials/page_title.twig') %}
+        {% include cms.helper('templates').themeTemplate('pdf/partials/page_title.twig') %}
 
         <columns column-count="{{pdf.columns.count}}" column-gap="{{pdf.columns.gap}}"/>
         {{package.response.content|raw}}

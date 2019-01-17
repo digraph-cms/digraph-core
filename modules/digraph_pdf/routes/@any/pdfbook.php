@@ -13,7 +13,7 @@ buildPdfBook($package->noun(), $cms);
 
 function buildPdfBook($noun, &$cms, $level=0)
 {
-    if (!$cms->helper('pdf')->config($noun)['skip_in_books']) {
+    if ($cms->helper('pdf')->config($noun)['include_in_books']) {
         echo $cms->helper('pdf')->template('article', $noun, ['level'=>$level]);
     }
     //recurse into children

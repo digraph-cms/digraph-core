@@ -35,6 +35,7 @@ pdf:
   enabled: false
   css: pdf/pdf.css
   article_break_type: next-odd
+  include_in_books: true
   filename:
     name: ${fields.page_name}
     suffix: _${pdf.filename.date}_${pdf.filename.contenthash}
