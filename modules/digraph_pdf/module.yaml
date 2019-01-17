@@ -10,6 +10,11 @@ permissions:
       - deny all
       - allow group webmaster
 
+permissions:
+  url:
+    '*/pdf': [allow all]
+    '*/pdfbook': [allow all]
+
 actions:
   proper:
     '*':
@@ -30,6 +35,10 @@ pdf:
   enabled: false
   css: pdf/pdf.css
   article_break_type: next-odd
+  filename:
+    name: ${fields.page_name}
+    suffix: _${pdf.filename.date}_${pdf.filename.contenthash}
+    prefix: ''
   columns:
     count: 2
     gap: 5

@@ -519,6 +519,7 @@ package:
       mime: text/html
       charset: utf-8
       disposition: inline
+      template: ${templates.default}
 
 # bootstrap settings are used by the Bootstrapper class, and are then removed
 # from the config used in the created CMS. This is a nice secure way to handle

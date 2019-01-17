@@ -16,11 +16,11 @@ abstract class AbstractOutputFilter
 
     public function filterPackage(&$package)
     {
-        $this->doFilterPackage($package);
+        return $this->doFilterPackage($package);
     }
 
     public function preFilterPackage(&$package)
     {
-        $this->doPreFilterPackage($package);
+        return $this->doPreFilterPackage($package);
     }
 }

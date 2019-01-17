@@ -12,7 +12,7 @@ class OutputFilterHelper extends AbstractHelper
     {
         if ($filter = $package['response.outputfilter']) {
             if ($filter = $this->getFilter($filter)) {
-                $filter->filterPackage($package);
+                return $filter->filterPackage($package);
             }
         }
     }
@@ -21,7 +21,7 @@ class OutputFilterHelper extends AbstractHelper
     {
         if ($filter = $package['response.outputfilter']) {
             if ($filter = $this->getFilter($filter)) {
-                $filter->preFilterPackage($package);
+                return $filter->preFilterPackage($package);
             }
         }
     }

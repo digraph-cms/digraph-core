@@ -10,9 +10,13 @@ class Error extends Execute
     {
         $status = $package['response.status'];
         if ($status != 200) {
-            unset($package['response.filename']);
+            //reset package settings
+            unset($package['response.outputfilter']);
+            $package->merge($package->cms()->config->get('package.defaults'), null, true);
+            //set up error settings
             $package['response.mime'] = 'text/html';
             $package['fields.page_name'] = 'Error '.$status;
+            $package['response.status'] = $status;
             $handlers = [
                 "$status",
                 floor($status/100).'xx',

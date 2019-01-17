@@ -143,15 +143,17 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
     public function error(int $code, string $message='Unspecified error')
     {
         $this->log("Error $code: $message");
+        $this->skipGlob('setup**');
         $this->skipGlob('build**');
         $this['response.status'] = $code;
-        $this['response.error'] = $message;
+        $this['error.message'] = $message;
     }
 
     public function __construct(array $data = null)
     {
         parent::__construct($data);
         $this->startTime = microtime(true);
+        $this['uniqid'] = uniqid('package.', true);
     }
 
     public function skip($name) : bool

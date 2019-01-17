@@ -7,6 +7,7 @@
 <?php
 $package['response.template'] = 'blank-pdf.twig';
 $package['response.outputfilter'] = 'pdf';
+$package['pdf.filename.name'] = '${fields.page_name} pdfbook';
 
 buildPdfBook($package->noun(), $cms);
 

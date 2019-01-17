@@ -19,7 +19,7 @@ class OutputFilterPrefilterMunger extends AbstractMunger
         //mess with templates per outputfilter
         if ($filter = $package['response.outputfilter']) {
             //offer outputfilter a chance to mess with the package before templating
-            if (!($package->cms()->helper('outputfilters')->preFilterPackage($package))) {
+            if (!$package->cms()->helper('outputfilters')->preFilterPackage($package)) {
                 //filter can return false to convert this into a 404 error
                 $package->error(404, 'Output filter refused to process this');
                 $package['response.outputfilter'] = false;

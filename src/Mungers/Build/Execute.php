@@ -49,7 +49,7 @@ class Execute extends AbstractMunger
         } catch (\Throwable $e) {
             @ob_end_clean();
             $package->error(500, get_class($e).": ".$e->getMessage().": ".$e->getFile().": ".$e->getLine());
-            $package->set('error_trace', $e->getTrace());
+            $package->set('error.trace', $e->getTrace());
         }
     }
 
