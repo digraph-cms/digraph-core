@@ -1,0 +1,7 @@
+<!-- this template only makes a TOC entry, it's for articles being skipped in books -->
+<!-- note that it only makes entries for articles with children -->
+{% if noun.children() %}
+  <tocentry
+    content="{{noun.title()}}"
+    level="{{level}}" />
+{% endif %}
