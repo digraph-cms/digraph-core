@@ -16,7 +16,7 @@ function buildPdfBook($noun, &$cms, $level=0)
     if ($cms->helper('pdf')->config($noun)['include_in_books']) {
         echo $cms->helper('pdf')->template('article', $noun, ['level'=>$level]);
     } else {
-        echo $cms->helper('pdf')->template('article_skipped', $noun, ['level'->$level]);
+        echo $cms->helper('pdf')->template('article_skipped', $noun, ['level'=>$level]);
     }
     //recurse into children
     foreach ($noun->children() as $child) {
