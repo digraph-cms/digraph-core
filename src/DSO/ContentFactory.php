@@ -49,7 +49,7 @@ class ContentFactory extends DigraphFactory
     {
         //if this user has permission to view unpublished info, just pass through
         //to parent executeSearch, because publication status is moot to them
-        if ($this->cms->helper('permissions')->check('content/view-unpublished')) {
+        if ($this->cms->helper('permissions')->check('unpublished/view', 'content')) {
             $result = parent::executeSearch($search, $params, $deleted);
         } else {
             //add clause to search to enforce publication rules
