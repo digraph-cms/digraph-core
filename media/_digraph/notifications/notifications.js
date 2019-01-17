@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
               var n = document.createElement('div');
               n.classList.add('notification');
               n.classList.add('notification-' + type);
-              n.append(data[type][i]);
+              n.innerHTML = data[type][i];
               container.prepend(n);
             }
           }

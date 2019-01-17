@@ -20,8 +20,9 @@ actions:
       trash: _trash/display
   proper:
     '*':
-      edit: !id/edit
+      clearcache: !id/clearcache
       delete: !id/delete
+      edit: !id/edit
       rawdump: !id/rawdump
       rawedit: !id/rawedit
   common:
@@ -159,7 +160,10 @@ permissions:
       - allow all
     '_user/*':
       - allow all
+    '*/clearcache':
+      - allow group webmaster
     '_logging/*':
+      - deny all
       - allow group webmaster
     '*/rawdump':
       - allow group webmaster

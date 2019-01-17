@@ -17,14 +17,43 @@ class Noun extends DSO implements NounInterface
         $this->resetChanges();
     }
 
-    public function invalidateCache()
+    public function invalidateCache($recurseUp=null, $recurseDown=null)
     {
+        $invalidated = [];
+        //invalidate my own cache
         $this->factory->cms()->invalidateCache($this['dso.id']);
+        $invalidated[] = $this['dso.id'];
+        //recurse up through parents
+        if ($recurseUp && $recurseUp !== $this['dso.id']) {
+            if ($recurseUp === true) {
+                $recurseUp = $this['dso.id'];
+            }
+            foreach ($this->parents() as $parent) {
+                $invalidated = array_merge($invalidated, $parent->invalidateCache($recurseUp));
+            }
+        }
+        //recurse down through children
+        if ($recurseDown && $recurseDown !== $this['dso.id']) {
+            if ($recurseDown === true) {
+                $recurseDown = $this['dso.id'];
+            }
+            foreach ($this->children() as $child) {
+                $invalidated = array_merge($invalidated, $child->invalidateCache(null, $recurseDown));
+            }
+        }
+        //return list of invalidated caches
+        return $invalidated;
+    }
+
+    public function add() : bool
+    {
+        $this->invalidateCache(true);
+        return parent::add();
     }
 
     public function update() : bool
     {
-        $this->invalidateCache();
+        $this->invalidateCache(true, true);
         return parent::update();
     }
 
@@ -212,9 +241,9 @@ class Noun extends DSO implements NounInterface
             }
             // append/prepend $children to $manuallySorted
             if ($unsorted == 'before') {
-                $children = $children+$manuallySorted;
+                $children = array_merge($children, $manuallySorted);
             } else {
-                $children = $manuallySorted+$children;
+                $children = array_merge($manuallySorted, $children);
             }
         }
         /* return */

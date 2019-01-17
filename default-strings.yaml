@@ -2,6 +2,7 @@ date:
   format:
     date: F j, Y
     datetime: F j, Y, g:i a T
+clearcache: 'Successfully cleared caches for the following pages:'
 logging:
   nomonolog: No Monolog Logger is configured. Logging to the internal Digraph logger is still possible, but for better security and more comprehensive logging reliability you should configure a Monolog Logger.
 filestore-cleanup:
@@ -127,6 +128,7 @@ urls:
   proper:
     '*/*': !verb
     '*/add': add !arg_type
+    '*/clearcache': clear cache
     '*/display': !name
     '*/file': download !arg_f
     '*/order': ordering

@@ -12,7 +12,6 @@ class Error extends Execute
         if ($status != 200) {
             //reset package settings
             unset($package['response.outputfilter']);
-            $package->merge($package->cms()->config->get('package.defaults'), null, true);
             //set up error settings
             $package['response.mime'] = 'text/html';
             $package['fields.page_name'] = 'Error '.$status;

@@ -221,6 +221,7 @@ class CMS
 
     public function invalidateCache(string $dso_id)
     {
+        $this->log('invalidating cache for '.$dso_id);
         $this->cache()->invalidateTags([$dso_id]);
     }
 
