@@ -16,7 +16,10 @@ class Error extends Execute
             //set up error settings
             $package['response.mime'] = 'text/html';
             $package['fields.page_name'] = 'Error '.$status;
+            $package['fields.page_title'] = 'Error '.$status;
+            $package['url.text'] = 'Error '.$status;
             $package['response.status'] = $status;
+            unset($package['response.template']);
             $handlers = [
                 "$status",
                 floor($status/100).'xx',

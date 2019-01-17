@@ -1,5 +1,5 @@
 <?php
-$package['fields.page_name'] = $package['fields.page_title'] = 'Multiple options';
+$package['fields.page_name'] = $package['fields.page_title'] = $package['url.text'] = 'Multiple options';
 ?>
 <p>This URL can be resolved to more than one piece of content. Please choose an option below:</p>
 <?php
