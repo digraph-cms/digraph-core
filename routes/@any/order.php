@@ -36,7 +36,6 @@ foreach ($noun->children() as $c) {
     $children[$c['dso.id']] = $c->name();
 }
 $form['manual']->opts($children);
-$form['manual']->default($noun['digraph.order.manual']);
 
 /* handle form */
 if ($form->handle()) {
