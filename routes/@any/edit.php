@@ -21,12 +21,13 @@ $form->handle(function (&$form) use ($package,$noun) {
     }
 });
 if ($form->handle()) {
-    $cms->helper('notifications')->confirmation(
+    $cms->helper('notifications')->flashConfirmation(
         $cms->helper('strings')->string(
             'notifications.edit.confirmation',
             ['name'=>$form->object->link()]
         )
     );
+    $package->redirect($form->object->url('edit')->string());
 }
 
 echo $form;
