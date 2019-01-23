@@ -39,6 +39,11 @@
 <div class="pdf-article level-{{level}}">
 
   <h1>
+    {% for p in extraTOCEntries %}
+      <tocentry
+        content="{{p.noun.title()}}"
+        level="{{p.level}}" />
+    {% endfor %}
     <tocentry
       content="{{noun.title()}}"
       level="{{level}}" />

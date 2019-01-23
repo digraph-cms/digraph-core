@@ -11,16 +11,27 @@ $package['pdf.filename.name'] = '${fields.page_name} pdfbook';
 
 buildPdfBook($package->noun(), $cms);
 
-function buildPdfBook($noun, &$cms, $level=0)
+function buildPdfBook($noun, &$cms, $extraTOCEntries=[], $level=0)
 {
     if ($cms->helper('pdf')->config($noun)['include_in_books']) {
-        echo $cms->helper('pdf')->template('article', $noun, ['level'=>$level]);
+        echo $cms->helper('pdf')->template(
+            'article',
+            $noun,
+            [
+                'level'=>$level,
+                'extraTOCEntries'=>$extraTOCEntries
+            ]
+        );
     } else {
-        echo $cms->helper('pdf')->template('article_skipped', $noun, ['level'=>$level]);
+        $extraTOCEntries[] = [
+            'noun' => $noun,
+            'level' => $level
+        ];
     }
     //recurse into children
     foreach ($noun->children() as $child) {
-        buildPdfBook($child, $cms, $level+1);
+        buildPdfBook($child, $cms, $extraTOCEntries, $level+1);
+        $extraTOCEntries = [];
     }
 }
 ?>
