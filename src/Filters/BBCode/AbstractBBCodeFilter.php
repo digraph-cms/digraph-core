@@ -76,8 +76,32 @@ abstract class AbstractBBCodeFilter extends AbstractFilter
 
     public function filter(string $text, array $opts = []) : string
     {
+        $tags = $this->tagsProvided();
+        /* clean up tags inside paragraphs */
         $text = preg_replace_callback(
-            $this->regex(),
+            '/<(p)>(\[\/?([^\?\= \/]+).*?\/?\])<\/\1>/i',
+            function ($matches) use ($tags) {
+                if (in_array(strtolower($matches[3]), $tags)) {
+                    return $matches[2];
+                }
+                return $matches[0];
+            },
+            $text
+        );
+        /* clean up tags encompassing entire paragraphs */
+        $text = preg_replace_callback(
+            '/<(p)>('.$this->regex(2).')<\/\1>/ims',
+            function ($matches) use ($tags) {
+                if (in_array(strtolower($matches[3]), $tags)) {
+                    return $matches[2];
+                }
+                return $matches[0];
+            },
+            $text
+        );
+        /* do replacements */
+        $text = preg_replace_callback(
+            '/'.$this->regex().'/ims',
             function ($matches) use ($opts) {
                 //figure out method name
                 $tag = strtolower($matches[1]);
@@ -127,7 +151,7 @@ abstract class AbstractBBCodeFilter extends AbstractFilter
         return $text;
     }
 
-    protected function regex()
+    protected function regex($depth=0)
     {
         $regex = '';
         $regex .= '\[([a-z0-9]+)';//open opening tag
@@ -136,7 +160,7 @@ abstract class AbstractBBCodeFilter extends AbstractFilter
         $regex .= '(( +[a-z0-9\-_]+(=.+?)?)*)';//named args
         $regex .= ' *(\/\]|\]';//self-close opening tag, or not self-closed so we might have text
         $regex .= '((.*?)';//content -- plus opening paren for making closing tag optional
-        $regex .= '\[\/\1\])?)';//closing tag
-        return '/'.$regex.'/ims';
+        $regex .= '\[\/\\'.($depth+1).'\])?)';//closing tag
+        return $regex;
     }
 }

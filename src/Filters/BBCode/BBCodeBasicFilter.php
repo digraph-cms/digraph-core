@@ -155,13 +155,13 @@ class BBCodeBasicFilter extends AbstractBBCodeFilter
             return false;
         }
         $style = '';
-        if ($lang = @$args['lang']) {
+        if (($lang = @$args['lang']) || ($lang = @$args['equals'])) {
             $lang = preg_replace('/[^a-z0-9]/', '', $lang);
             $style = ' class="language-'.$lang.'"';
         }
         $text = trim($text, "\r\n");
         $text = "<code$style>".htmlspecialchars($text)."</code>";
-        if (preg_match('[\r\n]', $text)) {
+        if (preg_match('/[\r\n]/', $text)) {
             $text = "<pre>$text</pre>";
         }
         return $text;
