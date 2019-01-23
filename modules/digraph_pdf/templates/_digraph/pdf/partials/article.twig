@@ -4,8 +4,26 @@
 {{cms.helper('pdf').template('hf_noun',noun)|raw}}
 
 <!-- set header/footer for this noun, depending on level -->
-{% if level and pdf.article_break_type %}
-  <!-- level is not zero, so we need a page break -->
+{% if firstArticle %}
+  <!-- first article, so we just set the header/footer -->
+  <sethtmlpageheader
+    name="noun_{{noun.dso.id}}"
+    show-this-page="1"
+    value="on" />
+  <sethtmlpagefooter
+    name="noun_{{noun.dso.id}}"
+    value="on" />
+  <sethtmlpageheader
+    name="noun_{{noun.dso.id}}_even"
+    show-this-page="1"
+    page="even"
+    value="on" />
+  <sethtmlpagefooter
+    name="noun_{{noun.dso.id}}_even"
+    page="even"
+    value="on" />
+{% else %}
+  <!-- not the first article, so we need a page break -->
   <pagebreak type="{{pdf.article_break_type}}"
     even-header-value="on"
     even-footer-value="on"
@@ -15,24 +33,6 @@
     even-footer-name="noun_{{noun.dso.id}}_even"
     odd-header-name="noun_{{noun.dso.id}}"
     odd-footer-name="noun_{{noun.dso.id}}" />
-{% else %}
-  <!-- level is zero, so we just set the header/footer -->
-  <sethtmlpageheader
-    name="noun_{{noun.dso.id}}"
-    show-this-page="1"
-    value="on" />
-  <sethtmlpagefooter
-    name="noun_{{noun.dso.id}}"
-    value="on" />
-  <sethtmlpageheader
-    name="noun_{{noun.dso.id}}_even"
-    show-this-page="1"
-    page="even"
-    value="on" />
-  <sethtmlpagefooter
-    name="noun_{{noun.dso.id}}_even"
-    page="even"
-    value="on" />
 {% endif %}
 
 <!-- set up the article content -->

@@ -11,7 +11,7 @@ $package['pdf.filename.name'] = '${fields.page_name} pdfbook';
 
 buildPdfBook($package->noun(), $cms);
 
-function buildPdfBook($noun, &$cms, $extraTOCEntries=[], $level=0)
+function buildPdfBook($noun, &$cms, $extraTOCEntries=[], $first=true, $level=0)
 {
     if ($cms->helper('pdf')->config($noun)['include_in_books']) {
         echo $cms->helper('pdf')->template(
@@ -19,9 +19,11 @@ function buildPdfBook($noun, &$cms, $extraTOCEntries=[], $level=0)
             $noun,
             [
                 'level'=>$level,
+                'firstArticle' => $first,
                 'extraTOCEntries'=>$extraTOCEntries
             ]
         );
+        $first = false;
     } else {
         $extraTOCEntries[] = [
             'noun' => $noun,
@@ -30,7 +32,7 @@ function buildPdfBook($noun, &$cms, $extraTOCEntries=[], $level=0)
     }
     //recurse into children
     foreach ($noun->children() as $child) {
-        buildPdfBook($child, $cms, $extraTOCEntries, $level+1);
+        buildPdfBook($child, $cms, $extraTOCEntries, $first, $level+1);
         $extraTOCEntries = [];
     }
 }
