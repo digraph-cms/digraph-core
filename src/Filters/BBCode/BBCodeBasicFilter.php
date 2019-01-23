@@ -205,6 +205,10 @@ class BBCodeBasicFilter extends AbstractBBCodeFilter
             return false;
         }
         $file = array_pop($file);
+        //if there is text, make a link
+        if ($text) {
+            return '<a href="'.$file->url().'" alt="'.$file->name().'">'.$text.'</a>';
+        }
         //return metacard for non-image files and mode=card
         if (@$args['mode'] == 'card' || !$file->isImage()) {
             return $file->metaCard();
