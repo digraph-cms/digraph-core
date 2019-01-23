@@ -51,7 +51,6 @@ class Locate extends AbstractMunger
             //deal with whatever was found
             if (!$opts) {
                 //no slugs found to match this url
-                return;
             } elseif (count($opts) == 1) {
                 //single result, just set noun to it
                 list($noun, $verb) = array_pop($opts);
@@ -74,7 +73,6 @@ class Locate extends AbstractMunger
             //have trailing slashes, and that arguments are in alphabetical
             //order (which is important for caching)
             if ($package->url()->routeString() != $package['request.url'] && $package->url()->routeString(true) != $package['request.url']) {
-                $package['response.cacheable'] = false;
                 $package->redirect($package->url()->string(), 301);
             }
         }
