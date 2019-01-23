@@ -45,13 +45,9 @@ class Published extends Container
             $value['force'] = 'unpublished';
         }
         //start
-        if ($start = $this['start']->value()) {
-            $value['start'] = $start->getTimestamp();
-        }
+        $start = $this['start']->value();
         //end
-        if ($end = $this['end']->value()) {
-            $value['end'] = $end->getTimestamp();
-        }
+        $end = $this['end']->value();
         //return array
         return $value;
     }
