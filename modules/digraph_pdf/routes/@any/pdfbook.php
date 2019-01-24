@@ -9,9 +9,9 @@ $package['response.template'] = 'blank-pdf.twig';
 $package['response.outputfilter'] = 'pdf';
 $package['pdf.filename.name'] = '${fields.page_name} pdfbook';
 
-buildPdfBook($package->noun(), $cms);
+buildPdfBook($package['noun.dso.id'], $package->noun(), $cms);
 
-function buildPdfBook($noun, &$cms, $extraTOCEntries=[], $first=true, $level=0)
+function buildPdfBook($rootID, $noun, &$cms, $extraTOCEntries=[], $level=0)
 {
     if ($cms->helper('pdf')->config($noun)['include_in_books']) {
         echo $cms->helper('pdf')->template(
@@ -19,11 +19,10 @@ function buildPdfBook($noun, &$cms, $extraTOCEntries=[], $first=true, $level=0)
             $noun,
             [
                 'level'=>$level,
-                'firstArticle' => $first,
+                'firstArticle' => ($rootID == $noun['dso.id']),
                 'extraTOCEntries'=>$extraTOCEntries
             ]
         );
-        $first = false;
         $extraTOCEntries = [];
     } else {
         $extraTOCEntries[] = [
@@ -33,7 +32,7 @@ function buildPdfBook($noun, &$cms, $extraTOCEntries=[], $first=true, $level=0)
     }
     //recurse into children
     foreach ($noun->children() as $child) {
-        buildPdfBook($child, $cms, $extraTOCEntries, $first, $level+1);
+        buildPdfBook($rootID, $child, $cms, $extraTOCEntries, $level+1);
         $extraTOCEntries = [];
     }
 }
