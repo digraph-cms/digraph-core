@@ -24,6 +24,7 @@ function buildPdfBook($noun, &$cms, $extraTOCEntries=[], $first=true, $level=0)
             ]
         );
         $first = false;
+        $extraTOCEntries = [];
     } else {
         $extraTOCEntries[] = [
             'noun' => $noun,
