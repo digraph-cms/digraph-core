@@ -92,6 +92,18 @@ pre {
   font-family: monospace;
 }
 
+figure {
+  text-align:center;
+}
+
+figcaption {
+  margin-top:0.5rem;
+  padding-top:0.5rem;
+  text-align:left;
+  font-size:0.8em;
+  line-height:1.3em;
+}
+
 footer {
   margin: 1rem 0;
   margin-top: 3rem;

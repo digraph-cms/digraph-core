@@ -8,7 +8,8 @@ class XSSFilter extends AbstractFilter
     {
         $filter = new \lincanbin\WhiteHTMLFilter();
         $filter->config->modifyTagWhiteList([
-            'thead' => []
+            'thead' => [],
+            'figure' => []
         ]);
         $filter->loadHTML($text);
         $filter->clean();

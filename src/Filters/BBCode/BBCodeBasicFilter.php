@@ -217,18 +217,35 @@ class BBCodeBasicFilter extends AbstractBBCodeFilter
         return $this->tag_img($context, $text, $args);
     }
 
+    public function tag_figure($context, $text, $args)
+    {
+        $attr = [];
+        $figure = 'no figure specified/found';
+        $caption = $text;
+        /* suss out the content we're using */
+        if (@$args['id']) {
+            $figure = $this->tag_file($context, '', $args);
+        }
+        /* return final markup */
+        return "<figure ".implode(' ', $attr).">".
+               $figure.
+               ($caption?'<figcaption>'.$caption.'</figcaption>':'').
+               '</figure>';
+    }
+
     public function tag_img($context, $text, $args)
     {
         $attr = [];
         $preset = @$args['preset']?$args['preset']:'tag-embed';
-        //handling depends on whether text is a valid URL
+        $style = '';
+        /* figure out the URL to use, which might be from text */
         if (filter_var($text, FILTER_VALIDATE_URL)) {
             /* if text is a URL, use that as the src, this is straight bbcode */
             $url = $text;
         } else {
             /* digraph-integrated img tag */
             $noun = $this->cms->read($context);
-            //use noun's file tag handler, if it exists
+            //use noun's image tag handler, if it exists
             if (method_exists($noun, 'tagImg')) {
                 return $noun->tagImg($args);
             }
@@ -249,9 +266,43 @@ class BBCodeBasicFilter extends AbstractBBCodeFilter
             //use image url otherwise
             $url = $file->imageUrl($preset);
         }
-        //build tag
+        /* figure out height/width */
+        if (@$args['equals'] && preg_match('/^[0-9]+x[0-9]+$/', $args['equals'])) {
+            list($args['width'], $args['height']) = explode('x', $args['equals']);
+        }
+        $height = intval(@$args['height']);
+        $width = intval(@$args['width']);
+        if ($height > 0) {
+            $style .= 'height:'.$height.'px';
+        }
+        if ($width > 0) {
+            $style .= 'width:'.$width.'px';
+        }
+        /* build alt */
+        if ($alt = @$args['alt']) {
+            $attr['alt'] = 'alt="'.htmlentities($alt).'"';
+        }
+        /* build styles */
+        //valign
+        if ($valign = @$args['valign']) {
+            $valign = strtolower($valign);
+            if (in_array($valign, ['baseline','text-top','text-bottom','sub','super','top','bottom','middle'])) {
+                $style .= 'vertical-align:'.$valign.';';
+            }
+        }
+        //float
+        if ($float = @$args['float']) {
+            $float = strtolower($float);
+            if (in_array($float, ['left','right'])) {
+                $style .= 'float:'.$float.';';
+            }
+        }
+        /* build tag */
         $attr['src'] = "src=\"$url\"";
         $attr['class'] = "class=\"digraph-image-embed digraph-image-embed_$preset\"";
+        if ($style) {
+            $attr['style'] = "style=\"$style\"";
+        }
         return "<img ".implode(' ', $attr).">";
     }
 }

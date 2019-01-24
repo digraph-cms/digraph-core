@@ -8,6 +8,13 @@
   text-align: center;
 }
 
+figure .filestore-metacard {
+  padding:0;
+  background:transparent;
+  box-shadow:none;
+  margin:0;
+}
+
 .filestore-metacard .filestore-icon {
   display: block;
   font-size: 3em;
