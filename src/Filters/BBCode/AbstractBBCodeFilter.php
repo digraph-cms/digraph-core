@@ -116,11 +116,9 @@ abstract class AbstractBBCodeFilter extends AbstractFilter
                 foreach ($argMatches[1] as $i => $name) {
                     $args[$name] = $argMatches[5][$i]?$argMatches[5][$i]:true;
                 }
-                //sort out context and recurse into text
+                //sort out context and get text
                 $context = @$matches[3];
-                if ($text = @$matches[11]) {
-                    $text = $this->filter($text, $opts);
-                }
+                $text = @$matches[11];
                 if (!$context) {
                     $context = $this->context;
                 }
@@ -144,7 +142,7 @@ abstract class AbstractBBCodeFilter extends AbstractFilter
                     );
                 }
                 //return output if it exists
-                return $out?$out:$matches[0];
+                return $out?$this->filter($out):$matches[0];
             },
             $text
         );

@@ -11,6 +11,8 @@ class MarkdownFilter extends AbstractFilter
 {
     public function filter(string $text, array $opts = []) : string
     {
+        $text = str_replace('\\[', '\\\\\\[', $text);
+        $text = str_replace('\\]', '\\\\\\]', $text);
         return \Parsedown::instance()
             ->setUrlsLinked(false)
             ->text($text);

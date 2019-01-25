@@ -160,7 +160,10 @@ class BBCodeBasicFilter extends AbstractBBCodeFilter
             $style = ' class="language-'.$lang.'"';
         }
         $text = trim($text, "\r\n");
-        $text = "<code$style>".htmlspecialchars($text)."</code>";
+        $text = htmlspecialchars($text);
+        $text = str_replace('[', '&#91;', $text);
+        $text = str_replace(']', '&#93;', $text);
+        $text = "<code$style>".$text."</code>";
         if (preg_match('/[\r\n]/', $text)) {
             $text = "<pre>$text</pre>";
         }

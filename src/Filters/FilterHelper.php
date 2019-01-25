@@ -27,6 +27,8 @@ class FilterHelper extends AbstractHelper
                 }
             }
         }
+        $text = str_replace('\\[', '[', $text);
+        $text = str_replace('\\]', ']', $text);
         return $text;
     }
 
