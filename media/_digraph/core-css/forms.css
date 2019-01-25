@@ -104,7 +104,7 @@
   box-sizing: border-box;
   display: block;
   width: 100%;
-  height: 25em;
+  height: 10em;
 }
 
 .Form .Button {
@@ -180,10 +180,6 @@
 
 .Form .Button.Submit:active {
   background: #00C853;
-}
-
-.Form .Container.class-Content .FieldWrapper-class-ContentFilter label {
-  display: none;
 }
 
 .Form .FieldWrapper-hidden,
@@ -345,4 +341,26 @@ progressively-enhanced ordering field
 
 .FieldWrapper-formward-ordering-field.FieldWrapper-addition-allowed .add-item {
   display:block;
+}
+
+/* content fields */
+.Form .Container.class-Content {
+  background:transparent;
+  border-color:#607D8B;
+}
+.Form .Container.class-Content .FieldWrapper-class-ContentTextarea
+{
+  padding:1em;
+}
+.Form .Container.class-Content .class-ContentTextarea {
+  background:transparent;
+  color:inherit;
+  padding:0;
+  border:0;
+}
+.Form .Container.class-Content .FieldWrapper-class-ContentTextarea label {
+  display:none;
+}
+.Form .Container.class-Content .FieldWrapper-class-ContentFilter label {
+  display: none;
 }

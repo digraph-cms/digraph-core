@@ -62,6 +62,30 @@ document.addEventListener("DOMContentLoaded", function(event) {
 });
 
 /**
+ * Auto-expanding content textareas
+ */
+document.addEventListener('DOMContentLoaded', function(e) {
+  var tas = document.querySelectorAll('.Form .Container.class-Content .class-ContentTextarea');
+  console.log(tas);
+  for (var i = 0; i < tas.length; i++) {
+    var t = tas[i];
+    t.addEventListener('keydown', autosize);
+    do_autosize(t);
+  }
+
+  function autosize() {
+    do_autosize(this);
+  }
+
+  function do_autosize(el) {
+    setTimeout(function() {
+      el.style.cssText = 'height:auto; padding:0';
+      el.style.cssText = 'height:' + el.scrollHeight + 'px';
+    }, 0);
+  }
+});
+
+/**
  * Ordering field inputs
  */
 var _sortablelist_el;
