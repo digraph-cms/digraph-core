@@ -18,13 +18,13 @@
     display:inline-block;
     vertical-align:top;
     margin: 1rem;
-    max-width:35rem;
+    max-width:40rem;
   }
 }
 
-@media screen and (min-width:39rem) {
+@media screen and (min-width:44rem) {
   .layout-column-wrapper.cols-1 *[role="main"] {
-    width: 35rem;
+    max-width: 40rem;
     margin: 0 1rem;
   }
 }
@@ -37,13 +37,13 @@
     display:inline-block;
     vertical-align:top;
     margin: 1rem;
-    max-width:35rem;
+    max-width:40rem;
   }
 }
 
-@media screen and (min-width:56rem) {
+@media screen and (min-width:61rem) {
   .layout-column-wrapper.cols-2 *[role="main"] {
-    width: 35rem;
+    width: 40rem;
     margin: 0 1rem;
   }
   .layout-column-wrapper.cols-2 .template-extracolumn {
