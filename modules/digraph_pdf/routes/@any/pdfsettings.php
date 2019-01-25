@@ -64,16 +64,16 @@ $form['mpdf']['mirrorMargins']->nullText = 'default: '.($cms->config['pdf.mpdf.m
 $form->default(
   array_Map_recursive(
     function ($e) {
-      if ($e === true) {
-        return 'TRUE';
-      }
-      if ($e === false) {
-        return 'FALSE';
-      }
-      if ($e === null) {
-        return '';
-      }
-      return $e;
+        if ($e === true) {
+            return 'TRUE';
+        }
+        if ($e === false) {
+            return 'FALSE';
+        }
+        if ($e === null) {
+            return '';
+        }
+        return $e;
     },
     $package->noun()['pdf']
   )
