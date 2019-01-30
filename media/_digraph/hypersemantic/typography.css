@@ -238,6 +238,7 @@ dt {
 .incidental {
   font-size:0.8em;
   opacity:0.9;
+  line-height:1.3em;
 }
 
 /* table base styles */
