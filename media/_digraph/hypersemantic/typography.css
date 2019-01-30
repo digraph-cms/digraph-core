@@ -235,6 +235,11 @@ dt {
   font-size: 0.8em;
 }
 
+.incidental {
+  font-size:0.8em;
+  opacity:0.9;
+}
+
 /* table base styles */
 table {
   background:#efefef;
