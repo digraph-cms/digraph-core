@@ -58,6 +58,7 @@ class ModuleHelper extends AbstractHelper
          */
         // src: register with autoloader
         if (is_dir($config['module.path'].'/src')) {
+            $this->cms->log('autoloader: '.$config['module.namespace'].': '.$config['module.path'].'/src');
             $this->autoloader->addNamespace(
                 $config['module.namespace'],
                 $config['module.path'].'/src'
