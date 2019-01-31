@@ -99,6 +99,11 @@ figure {
   text-align:center;
 }
 
+figure > img {
+  display:block;
+  margin:0 auto;
+}
+
 figcaption {
   margin-top:0.5rem;
   padding-top:0.5rem;
