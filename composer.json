@@ -25,7 +25,7 @@
     "require-dev": {
         "phpunit/phpunit": "^7.3",
         "monolog/monolog": "^1.24",
-        "mpdf/mpdf": "^7.1"
+        "byjoby/digraph-pdf": "dev-master"
     },
     "suggest": {
         "monolog/monolog": "Required for more advanced/reliable logging",

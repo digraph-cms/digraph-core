@@ -47,6 +47,7 @@ templates:
 modules:
   sources:
     200-site: dir ${paths.site}/modules
+    300-pdf: class Digraph\Modules\digraph_pdf\Module
 
 # configure cache settings
 cache:
