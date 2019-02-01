@@ -29,6 +29,11 @@ permissions:
     blockarea/block:
       - allow group webmaster
 
+actions:
+  categorical:
+    _controlpanel:
+      blocks: _blocks/display
+
 navigation:
   parents:
     common:
