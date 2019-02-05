@@ -411,6 +411,7 @@ templates:
       core_filestore: _digraph/core-css/filestore.css
       core_blocks: _digraph/core-css/blocks.css
       core_print: _digraph/core-css/print.css
+      core_simplemde: _digraph/simplemde/simplemde.min.css
     hypersemantic:
       typography: _digraph/hypersemantic/typography.css
       menus: _digraph/hypersemantic/menus.css
@@ -431,6 +432,8 @@ templates:
       core_notifications: _digraph/notifications/notifications.js
       core_actionbar: _digraph/actionbar/actionbar.js
       core_forms: _digraph/core-js/forms.js
+      core_simplemde: _digraph/simplemde/simplemde.min.js
+      core_simplemde-integration: _digraph/simplemde/simplemde-integration.js
     site:
       site_script: site_script.js
 

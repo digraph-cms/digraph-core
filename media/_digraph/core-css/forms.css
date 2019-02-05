@@ -348,10 +348,6 @@ progressively-enhanced ordering field
   background:transparent;
   border-color:#607D8B;
 }
-.Form .Container.class-Content .FieldWrapper-class-ContentTextarea
-{
-  padding:1em;
-}
 .Form .Container.class-Content .class-ContentTextarea {
   background:transparent;
   color:inherit;

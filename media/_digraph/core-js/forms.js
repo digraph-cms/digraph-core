@@ -66,7 +66,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
  */
 document.addEventListener('DOMContentLoaded', function(e) {
   var tas = document.querySelectorAll('.Form .Container.class-Content .class-ContentTextarea');
-  console.log(tas);
   for (var i = 0; i < tas.length; i++) {
     var t = tas[i];
     t.addEventListener('keydown', autosize);
