@@ -7,16 +7,18 @@ document.addEventListener('DOMContentLoaded', function(e) {
     //add event listener to toggle SimpleMDE based on filter field
     var container = containers[i];
     var filterField = container.querySelectorAll('.Field.class-ContentFilter')[0];
+    var textArea = container.querySelectorAll('.Field.class-ContentTextarea')[0];
+    var simpleMDE = null;
     filterField.addEventListener('change', function(e) {
       var name = this.options[this.selectedIndex].innerHTML;
       if (name.match(/markdown/i)) {
-        if (!filterField.simpleMDE) {
-          filterField.simpleMDE = new SimpleMDE();
+        if (!simpleMDE) {
+          simpleMDE = new SimpleMDE();
         }
       } else {
-        if (filterField.simpleMDE) {
-          filterField.simpleMDE.toTextArea();
-          filterField.simpleMDE = null;
+        if (simpleMDE) {
+          simpleMDE.toTextArea();
+          simpleMDE = null;
         }
       }
     });
