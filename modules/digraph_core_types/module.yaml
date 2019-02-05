@@ -59,10 +59,14 @@ strings:
     warning_unversionedparent: Parent isn't a versioned type.
   links:
     explanation: Click the link to continue to this URL
+    notifications:
+      editbypass: This URL normally redirects to the link immediately. You are being shown the metadata page instead because you have edit permissions.
+      nourl: There is no url specified for this object
   forms:
     links:
       digraph_body_label: Link description
       url_label: Link target Url
+      showpage: Display metadata page instead of immediately redirecting
   urls:
     proper:
       '*/versions': version list

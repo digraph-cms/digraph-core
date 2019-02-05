@@ -17,7 +17,13 @@ class Link extends Noun
                 'label' => $s->string('forms.links.url_label'),
                 'class' => 'Formward\\Fields\\Url',
                 'required' => true
-            ]
+            ],
+            '401_showpage' => [
+                'field' => 'link.showpage',
+                'label' => $s->string('forms.links.showpage'),
+                'class' => 'Formward\Fields\Checkbox'
+            ],
+            '500_digraph_body' => false
         ];
     }
 
