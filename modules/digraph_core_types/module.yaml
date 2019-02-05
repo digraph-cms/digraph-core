@@ -2,6 +2,7 @@ types:
   content:
     page: \Digraph\Modules\digraph_core_types\Page
     link: \Digraph\Modules\digraph_core_types\Link
+    linkrule: \Digraph\Modules\digraph_core_types\LinkRule
     version: \Digraph\Modules\digraph_core_types\Version
     versioned: \Digraph\Modules\digraph_core_types\Versioned
 
@@ -57,16 +58,18 @@ strings:
     revision_note: Revision note
     warning_noparent: No versioned parent found.
     warning_unversionedparent: Parent isn't a versioned type.
-  links:
+  link:
     explanation: Click the link to continue to this URL
     notifications:
       editbypass: This URL normally redirects to the link immediately. You are being shown the metadata page instead because you have edit permissions.
       nourl: There is no url specified for this object
   forms:
-    links:
-      digraph_body_label: Link description
+    link:
       url_label: Link target Url
       showpage: Display metadata page instead of immediately redirecting
+  forms:
+    linkrule:
+      rules_label: Rules for generating link
   urls:
     proper:
       '*/versions': version list

@@ -4,7 +4,7 @@ echo $this->helper('filters')->filterContentField($package['noun.digraph.body'],
 
 if (!$package['noun.url']) {
     $cms->helper('notifications')->error(
-        $cms->helper('strings')->string('links.notifications.nourl')
+        $cms->helper('strings')->string('link.notifications.nourl')
     );
     return;
 }
@@ -17,7 +17,7 @@ if ($noun['link.showpage'] || $noun->isEditable()) {
     //they have edit permissions
     if (!$noun['link.showpage']) {
         $cms->helper('notifications')->notice(
-            $cms->helper('strings')->string('links.notifications.editbypass')
+            $cms->helper('strings')->string('link.notifications.editbypass')
         );
     }
 }
@@ -29,5 +29,5 @@ if (!$noun['link.showpage'] && !$noun->isEditable()) {
 
 ?>
 
-<h2><?php echo $this->helper('strings')->string('links.explanation'); ?></h2>
+<h2><?php echo $this->helper('strings')->string('link.explanation'); ?></h2>
 <p><a href="<?php echo $noun['url']; ?>"><?php echo $noun['url']; ?></a></p>

@@ -14,13 +14,13 @@ class Link extends Noun
             '001_digraph_title' => false,
             '400_link_url' => [
                 'field' => 'url',
-                'label' => $s->string('forms.links.url_label'),
+                'label' => $s->string('forms.link.url_label'),
                 'class' => 'Formward\\Fields\\Url',
                 'required' => true
             ],
             '401_showpage' => [
                 'field' => 'link.showpage',
-                'label' => $s->string('forms.links.showpage'),
+                'label' => $s->string('forms.link.showpage'),
                 'class' => 'Formward\Fields\Checkbox'
             ],
             '500_digraph_body' => false
