@@ -67,7 +67,6 @@ strings:
     link:
       url_label: Link target Url
       showpage: Display metadata page instead of immediately redirecting
-  forms:
     linkrule:
       rules_label: Rules for generating link
   urls:

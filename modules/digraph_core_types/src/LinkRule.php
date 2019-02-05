@@ -18,7 +18,11 @@ class LinkRule extends Noun
                 'class' => 'Formward\\Fields\\Textarea',
                 'required' => true
             ],
-            '401_showpage' => false,
+            '401_showpage' => [
+                'field' => 'link.showpage',
+                'label' => $s->string('forms.link.showpage'),
+                'class' => 'Formward\Fields\Checkbox'
+            ],
             '500_digraph_body' => false
         ];
     }
@@ -77,7 +81,7 @@ class LinkRule extends Noun
         $link = new A();
         $link->attr('href', $this->linkUrl($text, $args));
         $link->addClass('digraph-link');
-        $link->attr('data-digraph-link', $this->url());
+        $link->attr('data-digraph-link', $this->url(null, $args));
         $link->content = $this->name();
         if ($text) {
             $link->content = $text;
