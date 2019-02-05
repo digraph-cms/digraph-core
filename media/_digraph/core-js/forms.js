@@ -79,7 +79,6 @@ document.addEventListener('DOMContentLoaded', function(e) {
 
   function do_autosize(el) {
     setTimeout(function() {
-      el.style.cssText = 'height:auto; padding:0';
       el.style.cssText = 'height:' + el.scrollHeight + 'px';
     }, 0);
   }
