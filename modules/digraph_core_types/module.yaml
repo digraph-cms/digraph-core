@@ -2,7 +2,7 @@ types:
   content:
     page: \Digraph\Modules\digraph_core_types\Page
     link: \Digraph\Modules\digraph_core_types\Link
-    linkrule: \Digraph\Modules\digraph_core_types\LinkRule
+    link-rule: \Digraph\Modules\digraph_core_types\LinkRule
     version: \Digraph\Modules\digraph_core_types\Version
     versioned: \Digraph\Modules\digraph_core_types\Versioned
 
