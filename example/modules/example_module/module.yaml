@@ -35,7 +35,3 @@ strings:
   urls:
     proper:
       '*/example': example verb
-
-# use module to set the theme
-templates:
-  theme: _digraph_dark

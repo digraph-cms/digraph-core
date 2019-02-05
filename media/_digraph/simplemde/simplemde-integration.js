@@ -13,12 +13,19 @@ document.addEventListener('DOMContentLoaded', function(e) {
       var name = this.options[this.selectedIndex].innerHTML;
       if (name.match(/markdown/i)) {
         if (!simpleMDE) {
+          //hide textarea and create SimpleMDE
+          textArea.classList.add('hidden');
           simpleMDE = new SimpleMDE();
         }
       } else {
         if (simpleMDE) {
           simpleMDE.toTextArea();
           simpleMDE = null;
+          //unhide and dispatch change event to textarea so it will resize
+          textArea.classList.remove('hidden');
+          setTimeout(function() {
+            textArea.style.cssText = 'height:' + textArea.scrollHeight + 'px';
+          }, 0);
         }
       }
     });

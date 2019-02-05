@@ -5,6 +5,10 @@
   font-size: 1rem;
 }
 
+.Form .hidden {
+  display:none !important;
+}
+
 .Form .Container {
   border: 1px solid #ccc;
   padding: 0 0.5rem;
@@ -353,6 +357,7 @@ progressively-enhanced ordering field
   color:inherit;
   padding:0;
   border:0;
+  min-height:300px;
 }
 .Form .Container.class-Content .FieldWrapper-class-ContentTextarea label {
   display:none;
