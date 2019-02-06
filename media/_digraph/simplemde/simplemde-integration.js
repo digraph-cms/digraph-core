@@ -15,7 +15,9 @@ document.addEventListener('DOMContentLoaded', function(e) {
         if (!simpleMDE) {
           //hide textarea and create SimpleMDE
           textArea.classList.add('hidden');
-          simpleMDE = new SimpleMDE();
+          simpleMDE = new SimpleMDE({
+            element: textArea
+          });
         }
       } else {
         if (simpleMDE) {
