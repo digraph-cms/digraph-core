@@ -14,6 +14,7 @@ class MarkdownFilter extends AbstractFilter
         $text = str_replace('\\[', '\\\\\\[', $text);
         $text = str_replace('\\]', '\\\\\\]', $text);
         return \Parsedown::instance()
+            ->setMarkupEscaped(true)
             ->setUrlsLinked(false)
             ->text($text);
     }

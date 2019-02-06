@@ -10,6 +10,46 @@
   line-height:1.4em;
 }
 
+/* code highlighting icons */
+
+pre {
+  position:relative;
+}
+
+pre > code {
+  z-index:2;
+}
+
+code.code-highlighted:before {
+  content:"";
+  display:block;
+  position:absolute;
+  top:0.5em;
+  right:0.5em;
+  color:#888;
+  opacity:0.3;
+  font-size:1.5em;
+  line-height:1em;
+  text-align:right;
+  z-index:1;
+  font-family: "Font Awesome 5 Brands";
+}
+
+code.language-arduino:before {font-family:"Font Awesome 5";content:"\f2db";}
+code.language-bash:before {font-family:"Font Awesome 5";content:"\f292";}
+code.language-css:before {content:"\f38b";}
+code.language-dockerfile:before {content:"\f395";}
+code.language-erlang-repl:before {content:"\f39d";}
+code.language-erlang:before {content:"\f39d";}
+code.language-java:before {content:"\f4e4";}
+code.language-javascript:before {content:"\f3b8";}
+code.language-json:before {content:"\f3b8";}
+code.language-less:before {content:"\f41d";}
+code.language-markdown:before {content:"\f60f";}
+code.language-php:before {content:"\f457";}
+code.language-python:before {content:"\f3e2";}
+code.language-scss:before {content:"\f41e";}
+
 /* one columns */
 
 @media screen {

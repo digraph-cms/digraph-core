@@ -19,7 +19,8 @@ a[href]:active {
 }
 
 blockquote, pre, aside, figure,
-.filestore-metacard {
+.filestore-metacard,
+div.code-highlighted {
   background: #333;
 }
 

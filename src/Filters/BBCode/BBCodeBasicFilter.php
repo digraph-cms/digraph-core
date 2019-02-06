@@ -149,27 +149,6 @@ class BBCodeBasicFilter extends AbstractBBCodeFilter
         return $out;
     }
 
-    public function tag_code($context, $text, $args)
-    {
-        if (!$text) {
-            return false;
-        }
-        $style = '';
-        if (($lang = @$args['lang']) || ($lang = @$args['equals'])) {
-            $lang = preg_replace('/[^a-z0-9]/', '', $lang);
-            $style = ' class="language-'.$lang.'"';
-        }
-        $text = trim($text, "\r\n");
-        $text = htmlspecialchars($text);
-        $text = str_replace('[', '&#91;', $text);
-        $text = str_replace(']', '&#93;', $text);
-        $text = "<code$style>".$text."</code>";
-        if (preg_match('/[\r\n]/', $text)) {
-            $text = "<pre>$text</pre>";
-        }
-        return $text;
-    }
-
     public function tag_link($context, $text, $args)
     {
         $noun = $this->cms->read($context);

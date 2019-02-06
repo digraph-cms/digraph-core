@@ -17,7 +17,9 @@ class FilterHelper extends AbstractHelper
     public function filterContentField(array $content, string $context) : string
     {
         $this->context($context);
+        //run main filter
         $text = $this->filterPreset(@$content['text'], @$content['filter']);
+        //run additonal bbcode filters
         if (@$content['extra']) {
             foreach ($content['extra'] as $name => $value) {
                 if ($value) {
@@ -27,8 +29,21 @@ class FilterHelper extends AbstractHelper
                 }
             }
         }
+        //finish off escaped square brackets
         $text = str_replace('\\[', '[', $text);
         $text = str_replace('\\]', ']', $text);
+        //run always filters and return
+        $text = $this->filterAlways($text);
+        return $text;
+    }
+
+    public function filterAlways($text)
+    {
+        foreach ($this->cms->config['filters.always'] as $name => $on) {
+            if ($on) {
+                $text = $this->filter($name)->filter($text);
+            }
+        }
         return $text;
     }
 

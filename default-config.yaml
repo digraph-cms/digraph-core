@@ -226,6 +226,8 @@ filters:
     bbcode_advanced: true
     bbcode_extended: true
     bbcode_unsafe: true
+  always:
+    code_highlight: true
   presets:
     default:
       - [preset,markdown-safe]
@@ -249,6 +251,7 @@ filters:
       - [class,allhtmlfilter]
       - [class,xss]
   classes:
+    code_highlight: Digraph\Filters\CodeHighlightFilter
     allhtmlfilter: Digraph\Filters\AllHTMLFilter
     htmlfilter: Digraph\Filters\HTMLFilter
     markdown: Digraph\Filters\MarkdownFilter
@@ -403,15 +406,16 @@ templates:
   # syntax like: /*${bundle:digraph_core}*/
   cssbundles:
     digraph_core:
-      core_hypersemantic: _digraph/hypersemantic/bundle.css
-      core_navigation: _digraph/core-css/navigation.css
-      core_notifications: _digraph/notifications/notifications.css
-      core_forms: _digraph/core-css/forms.css
-      core_actionbar: _digraph/actionbar/actionbar.css
-      core_filestore: _digraph/core-css/filestore.css
-      core_blocks: _digraph/core-css/blocks.css
-      core_print: _digraph/core-css/print.css
-      core_simplemde: _digraph/simplemde/simplemde.min.css
+      core_hypersemantic: hypersemantic/bundle.css
+      core_navigation: core-css/navigation.css
+      core_notifications: notifications/notifications.css
+      core_forms: core-css/forms.css
+      core_actionbar: actionbar/actionbar.css
+      core_filestore: core-css/filestore.css
+      core_blocks: core-css/blocks.css
+      core_print: core-css/print.css
+      core_simplemde: simplemde/simplemde.min.css
+      core_syntax_theme: core-css/syntax-theme.css
     hypersemantic:
       typography: _digraph/hypersemantic/typography.css
       menus: _digraph/hypersemantic/menus.css
