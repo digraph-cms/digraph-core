@@ -12,15 +12,32 @@
 
 /* code highlighting icons */
 
-pre {
+pre > code,
+pre > div.code-highlighted {
+  z-index:2;
+  margin:-0.5rem;
+}
+
+.code-highlighted {
+  font-family:monospace;
+  white-space:normal;
+  overflow:auto;
   position:relative;
 }
 
-pre > code {
-  z-index:2;
+.code-highlighted-line {
+  display:block;
+  white-space:pre-wrap;
+  line-height:1.2em;
+  margin:0.05em 0;
+  padding:0.05em 0.5em;
 }
 
-code.code-highlighted:before {
+.code-highlighted-line:nth-child(even) {
+  background:rgba(127,127,127,0.05);
+}
+
+div.code-highlighted:before {
   content:"";
   display:block;
   position:absolute;
@@ -35,20 +52,20 @@ code.code-highlighted:before {
   font-family: "Font Awesome 5 Brands";
 }
 
-code.language-arduino:before {font-family:"Font Awesome 5";content:"\f2db";}
-code.language-bash:before {font-family:"Font Awesome 5";content:"\f292";}
-code.language-css:before {content:"\f38b";}
-code.language-dockerfile:before {content:"\f395";}
-code.language-erlang-repl:before {content:"\f39d";}
-code.language-erlang:before {content:"\f39d";}
-code.language-java:before {content:"\f4e4";}
-code.language-javascript:before {content:"\f3b8";}
-code.language-json:before {content:"\f3b8";}
-code.language-less:before {content:"\f41d";}
-code.language-markdown:before {content:"\f60f";}
-code.language-php:before {content:"\f457";}
-code.language-python:before {content:"\f3e2";}
-code.language-scss:before {content:"\f41e";}
+div.language-arduino:before {font-family:"Font Awesome 5";content:"\f2db";}
+div.language-bash:before {font-family:"Font Awesome 5";content:"\f292";}
+div.language-css:before {content:"\f38b";}
+div.language-dockerfile:before {content:"\f395";}
+div.language-erlang-repl:before {content:"\f39d";}
+div.language-erlang:before {content:"\f39d";}
+div.language-java:before {content:"\f4e4";}
+div.language-javascript:before {content:"\f3b8";}
+div.language-json:before {content:"\f3b8";}
+div.language-less:before {content:"\f41d";}
+div.language-markdown:before {content:"\f60f";}
+div.language-php:before {content:"\f457";}
+div.language-python:before {content:"\f3e2";}
+div.language-scss:before {content:"\f41e";}
 
 /* one columns */
 

@@ -12,6 +12,7 @@ class CodeHighlightFilter extends AbstractFilter
         $text = preg_replace_callback(
             "/<code( class=\"language-(.+?)\")?>(.+?)<\/code>/ims",
             function ($matches) use ($h) {
+                //do highlighting
                 $lang = @$matches[2];
                 $code = trim($matches[3]);
                 $code = preg_replace("/&amp;(.{1,5});/", '&$1;', $code);
@@ -21,36 +22,29 @@ class CodeHighlightFilter extends AbstractFilter
                     $highlighted = $h->highlightAuto($code);
                 }
                 $code = $highlighted->value;
+                //fix double-coding
                 $code = preg_replace("/&amp;(.{1,5});/", '&$1;', $code);
-                return '<code class="code-highlighted language-'.$highlighted->language.'">'.$code.'</code>';
+                //escape bbcode
+                $code = str_replace('[', '\\[', $code);
+                $code = str_replace(']', '\\]', $code);
+                //wrap lines if there are multiple lines
+                if (preg_match('/[\r\n]/', $code)) {
+                    $code = preg_split('/(\r\n|\n|\r)/', $code);
+                    $code = array_map(
+                        function ($e) {
+                            return '<span class="code-highlighted-line">'.$e.'</span>';
+                        },
+                        $code
+                    );
+                    $code = implode(PHP_EOL, $code);
+                    //return as a DIV
+                    return '<div class="code-highlighted language-'.$highlighted->language.'">'.$code.'</div>';
+                }
+                //return as a SPAN
+                return '<span class="code-highlighted language-'.$highlighted->language.'">'.$code.'</span>';
             },
             $text
         );
         return $text;
-        // $dom = new Crawler($text);
-        // $h = new Highlighter;
-        // $codes = $dom->find('code');
-        // foreach ($codes as $code) {
-        //     $lang = null;
-        //     $classes = preg_split('/ +/', trim($code->getAttribute('class')));
-        //     foreach ($classes as $i => $class) {
-        //         if (preg_match('/^language-/', $class)) {
-        //             $lang = substr($class, 9);
-        //             unset($classes[$i]);
-        //         }
-        //     }
-        //     try {
-        //         $highlighted = $h->highlight($lang, $code->innerHTML());
-        //     } catch (\Exception $e) {
-        //         $highlighted = $h->highlightAuto($code->innerHTML());
-        //     }
-        //     if ($highlighted) {
-        //         $classes[] = 'highlighted';
-        //         $classes[] = 'language-'.$highlighted->language;
-        //         $code->setAttribute('class', implode(' ', $classes));
-        //         $code->setText($highlighted->value);
-        //     }
-        // }
-        // return "$dom";
     }
 }

@@ -226,8 +226,7 @@ filters:
     bbcode_advanced: true
     bbcode_extended: true
     bbcode_unsafe: true
-  always:
-    code_highlight: true
+  always: []
   presets:
     default:
       - [preset,markdown-safe]
@@ -237,16 +236,21 @@ filters:
       - [class,xss]
     text-unsafe:
       - [class,text]
+      - [class,code_highlight]
     markdown-safe:
       - [class,sanitize]
       - [class,markdown]
+      - [class,code_highlight]
       - [class,xss]
     markdown-unsafe:
       - [class,markdown]
+      - [class,code_highlight]
     html:
       - [class,htmlfilter]
+      - [class,code_highlight]
       - [class,xss]
-    html-unsafe: []
+    html-unsafe:
+      - [class,code_highlight]
     _sanitize:
       - [class,allhtmlfilter]
       - [class,xss]
