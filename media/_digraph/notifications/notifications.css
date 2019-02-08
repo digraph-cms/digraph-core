@@ -6,23 +6,23 @@
   line-height:1.2em;
 }
 
-.notifications .notification a {
+.notification a {
   color: #fff !important;
   font-weight: bold;
 }
 
-.notifications .notification-confirmation {
+.notification-confirmation {
   background-color: #2E7D32;
 }
 
-.notifications .notification-notice {
-  background-color: #607D8B;
+.notification-notice {
+  background-color: #1A78C2;
 }
 
-.notifications .notification-warning {
+.notification-warning {
   background-color: #E65100;
 }
 
-.notifications .notification-error {
+.notification-error {
   background-color: #b71c1c;
 }
