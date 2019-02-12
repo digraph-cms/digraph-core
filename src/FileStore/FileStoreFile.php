@@ -76,10 +76,14 @@ class FileStoreFile
         return $out;
     }
 
+    public function extension()
+    {
+        return strtolower(preg_replace('/.+\./', '', $this->name()));
+    }
+
     public function isImage()
     {
-        $extension = preg_replace('/.+\./', '', $this->name());
-        return $this->fs->imageHelper()->supports($extension);
+        return $this->fs->imageHelper()->supports($this->extension());
     }
 
     public function icon()

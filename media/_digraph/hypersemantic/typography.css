@@ -109,6 +109,7 @@ ul ul, ul ol, ol ul, ol ol, li ul, li ol {
 }
 
 blockquote, pre, aside, figure {
+  box-sizing:border-box;
   background: #fafafa;
   padding: 0.5rem;
 }

@@ -32,6 +32,11 @@ class BBCodeBasicFilter extends AbstractBBCodeFilter
     "teal","thistle","tomato","turquoise","violet","wheat","white","whitesmoke",
     "yellow","yellowgreen"];
 
+    public function tag_aside($context, $text, $args)
+    {
+        return "<aside>".$text."</aside>";
+    }
+
     public function tag_b($context, $text, $args)
     {
         return "<strong>$text</strong>";
@@ -192,7 +197,7 @@ class BBCodeBasicFilter extends AbstractBBCodeFilter
             return '<a href="'.$file->url().'" alt="'.$file->name().'">'.$text.'</a>';
         }
         //return metacard for non-image files and mode=card
-        if (@$args['mode'] == 'card' || !$file->isImage()) {
+        if (@$args['mode'] == 'card' || !($file->isImage() || $file->extension() == 'svg')) {
             return $file->metaCard();
         }
         //return img tag otherwise
@@ -243,7 +248,12 @@ class BBCodeBasicFilter extends AbstractBBCodeFilter
             $file = array_pop($file);
             //return false for non-image files
             if (!$file->isImage()) {
-                return false;
+                //svg files are an exception, they can embed
+                if ($file->extension() == 'svg') {
+                    $url = $file->url();
+                } else {
+                    return false;
+                }
             }
             //use image url otherwise
             $url = $file->imageUrl($preset);
