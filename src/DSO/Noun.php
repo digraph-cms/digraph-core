@@ -189,16 +189,17 @@ class Noun extends DSO implements NounInterface
         $exclusions = '';
         $params = [':pattern'=>'%|'.$this['dso.id'].'|%'];
         /* exclude types from config */
-        $i = 0;
-        foreach ($this->factory->cms()->config['excluded_child_types'] as $type => $value) {
-            if ($value) {
-                $i++;
-                $exclusions .= ' AND ${dso.type} <> :type_'.$i;
-                $params[':type_'.$i] = $type;
+        if ($this->factory->cms()->config['excluded_child_types']) {
+            $e = [];
+            foreach ($this->factory->cms()->config['excluded_child_types'] as $key => $value) {
+                if ($value) {
+                    $e[] = "'$key'";
+                }
             }
+            $exclusions .= '${dso.type} NOT IN ('.implode(',', $e).') AND ';
         }
         /* main search, look using LIKE in digraph.parents_string */
-        $search->where('${digraph.parents_string} LIKE :pattern'.$exclusions);
+        $search->where($exclusions.'${digraph.parents_string} LIKE :pattern');
         /* if no sort rule, pull it from our own config */
         if (!$sortRule) {
             $sortRule = $this['digraph.order.mode'];
