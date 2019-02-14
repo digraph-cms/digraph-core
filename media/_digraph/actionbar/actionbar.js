@@ -11,13 +11,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
   var actionbars = document.getElementsByClassName('digraph-actionbar');
   for (var i = 0; i < actionbars.length; i++) {
     let actionbar = actionbars[i];
-    fetch('{{config.url.base}}_user/actionbar.json?id=' + actionbar.getAttribute('data-id') + '&sid=' + digraph.user.sid)
-      //turn into json
-      .then(function(response) {
-        return response.json();
-      })
-      //receive json and put it on the page
-      .then(function(data) {
+    digraph.getJSON(
+      '_user/actionbar.json?id=' + actionbar.getAttribute('data-id'),
+      function(data) {
         let active = false;
         //set up title
         actionbar.innerHTML = '<div class="digraph-actionbar-title">' + data.title + '</div>';
@@ -54,6 +50,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
           actionbar.classList.remove('inactive');
           actionbar.classList.add('active');
         }
-      });
+      }
+    );
   }
 });

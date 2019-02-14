@@ -6,24 +6,21 @@
  */
 document.addEventListener("DOMContentLoaded", function(event) {
   if (container = document.getElementById('digraph-notifications')) {
-    fetch('{{config.url.base}}_user/notifications.json?sid=' + digraph.user.sid)
-      //turn into json
-      .then(function(response) {
-        return response.json();
-      })
-      //receive json and put it on the page
-      .then(function(data) {
+    digraph.getJSON(
+      '_user/notifications.json',
+      function(data) {
         for (var type in data) {
           if (data.hasOwnProperty(type)) {
             for (var i = 0; i < data[type].length; i++) {
-              var n = document.createElement('div');
-              n.classList.add('notification');
-              n.classList.add('notification-' + type);
-              n.innerHTML = data[type][i];
-              container.prepend(n);
+              container.innerHTML =
+                '<div class="notification notification-' + type + '">' +
+                data[type][i] +
+                '</div>' +
+                container.innerHTML;
             }
           }
         }
-      });
+      }
+    );
   }
 });
