@@ -152,7 +152,7 @@ abstract class AbstractBBCodeFilter extends AbstractFilter
     protected function regex($depth=0)
     {
         $regex = '';
-        $regex .= '\[([a-z0-9]+)';//open opening tag
+        $regex .= '\[([a-z0-9\-]+)';//open opening tag
         $regex .= '(:([^\] ]+))?';//context argument
         $regex .= '(=([^\] ]+))?';//bbcode style "equals" argument
         $regex .= '(( +[a-z0-9\-_]+(=.+?)?)*)';//named args
