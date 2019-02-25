@@ -2,6 +2,8 @@
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
 namespace Digraph\Modules;
 
+use Destructr\DriverFactory;
+use Digraph\DSO\DigraphFactory;
 use Digraph\Helpers\AbstractHelper;
 use Flatrr\Config\Config;
 
@@ -75,6 +77,42 @@ class ModuleHelper extends AbstractHelper
         // media: add to media config
         if (is_dir($config['module.path'].'/media')) {
             $config['media.paths.'.$config['module.name']] = $config['module.path'].'/media';
+        }
+        /*
+        Set up sqlite factories using options in module.sqlite
+         */
+        if ($config['module.factories']) {
+            //set up drivers -- if a driver by this name already exists, do nothing
+            //this way sites can override the drivers for modules if necessary
+            if ($config['module.factories.drivers']) {
+                foreach ($config['module.factories.drivers'] as $name) {
+                    //skip creating drivers that exist
+                    if ($this->cms->driver($name)) {
+                        continue;
+                    }
+                    //instantiate this driver
+                    $path = $this->cms->config['paths.storage'].'/'.$name.'.sqlite';
+                    $driver = DriverFactory::factory('sqlite:'.$path);
+                    $this->cms->driver($name, $driver);
+                }
+            }
+            //Set up factories the same way. Allow them to skip if a factory by
+            //the requested name exists so that sites can override them.
+            if ($config['module.factories.factories']) {
+                foreach ($config['module.factories.factories'] as $name => list($driver, $table, $class)) {
+                    //skip creating factories that exists
+                    if ($this->cms->factory($name)) {
+                        continue;
+                    }
+                    //instantiate this factory
+                    $class = $class?$class:DigraphFactory::class;
+                    $factory = new $class(
+                        $this->cms->driver($driver),
+                        $table
+                    );
+                    $this->cms->factory($name, $factory);
+                }
+            }
         }
         /*
         Unset module portion of config and merge what remains back into main config
