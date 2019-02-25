@@ -6,6 +6,7 @@ use Digraph\DSO\Noun;
 
 class Versioned extends Noun
 {
+    const PUBLISH_CONTROL = false;
     const ROUTING_NOUNS = ['versioned'];
     const VERSION_TYPE = 'version';
 

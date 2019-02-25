@@ -7,6 +7,8 @@ use HtmlObjectStrings\A;
 
 class Link extends Noun
 {
+    const PUBLISH_CONTROL = false;
+
     public function formMap(string $actions) : array
     {
         $s = $this->factory->cms()->helper('strings');
