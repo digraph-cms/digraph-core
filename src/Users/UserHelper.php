@@ -9,6 +9,41 @@ class UserHelper extends AbstractHelper
     protected $managers = [];
     protected $groupSources = [];
 
+    public function signinUrl(&$package = null)
+    {
+        if ($package) {
+            return $this->cms->helper('urls')->url('_user', 'signin', [
+                'bounce' => $package['request.url'],
+                'bounce_token' => $this->cms->helper('session')->getToken('bounce.'.$package['request.url'])
+            ]);
+        }
+        return $this->cms->helper('urls')->url('_user', 'signin');
+    }
+
+    public function signoutUrl(&$package = null)
+    {
+        if ($package) {
+            return $this->cms->helper('urls')->url('_user', 'signout', [
+                'bounce' => $package['request.url'],
+                'bounce_token' => $this->cms->helper('session')->getToken('bounce.'.$package['request.url'])
+            ]);
+        }
+        return $this->cms->helper('urls')->url('_user', 'signout');
+    }
+
+    public function requireAuth(&$package)
+    {
+        if (!$this->id()) {
+            $url = $this->signinUrl($package);
+            $package->redirect(
+                $url,
+                303
+            );
+            return false;
+        }
+        return true;
+    }
+
     public function validateIdentifier(string $identifier) : bool
     {
         if (preg_match('/[@]/', $identifier)) {

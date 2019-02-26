@@ -1,10 +1,20 @@
 <?php
 include $this->helper('routing')->hookFile('_user', 'core_init.php')['file'];
 
+//do login bounce if user is signed in
+if ($package['url.args.bounce']) {
+    if ($cms->helper('session')->checkToken('bounce.'.$package['url.args.bounce'], $package['url.args.bounce_token'], true)) {
+        $postSigninUrl = $this->helper('urls')->parse($package['url.args.bounce']);
+    }
+}
+if (!$postSigninUrl) {
+    $postSigninUrl = $this->helper('urls')->parse('_user');
+}
+
 //end if user is already signed in
 if ($users->user()) {
     $package->redirect(
-        $this->helper('urls')->parse('_user'),
+        $postSigninUrl,
         303
     );
     return;
@@ -81,7 +91,7 @@ if ($form && $form->handle()) {
 }
 
 //check for hooks regarding user being signed in
-if ($users->id()) {
+if ($users->user()) {
     //check for signed in hooks
     foreach ($this->helper('routing')->allHookFiles('_user', $managerName.'/signin_complete.php') as $file) {
         include $file['file'];
@@ -94,7 +104,7 @@ if ($users->id()) {
 //redirect if user is signed in
 if ($users->user()) {
     $package->redirect(
-        $this->helper('urls')->parse('_user'),
+        $postSigninUrl,
         303
     );
     return;
