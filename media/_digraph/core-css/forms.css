@@ -17,6 +17,14 @@
   background: #eee;
 }
 
+.Form .inline-children > .FieldWrapper,
+.Form .inline-children > .Container {
+  display:inline-block;
+  vertical-align:top;
+  margin-top:0;
+  margin-bottom:0;
+}
+
 .Form .tips .tip {
   font-size: 0.75em;
   opacity: 0.8;
@@ -26,6 +34,10 @@
 
 .Form .tips .tip:first-child {
   margin-top:0;
+}
+
+.Form .tips {
+  margin-top:0.5rem;
 }
 
 .Form .validation-messages {
