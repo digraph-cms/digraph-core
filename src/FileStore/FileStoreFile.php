@@ -115,12 +115,7 @@ class FileStoreFile
 
     public function url($args=[])
     {
-        //decide whether to use name or uniqid as id, use uniqid if name is not unique
-        $id = $this->name();
-        if (count($this->fs->get($this->noun, $id)) > 1) {
-            $id = $this->uniqid();
-        }
-        return $this->noun->fileUrl($id, $args);
+        return $this->noun->fileUrl($this->uniqid(), $args);
     }
 
     public function path()
