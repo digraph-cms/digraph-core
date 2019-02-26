@@ -414,6 +414,7 @@ templates:
       core_navigation: core-css/navigation.css
       core_notifications: notifications/notifications.css
       core_forms: core-css/forms.css
+      core_fancy_buttons: core-css/fancy-buttons.css
       core_actionbar: actionbar/actionbar.css
       core_filestore: core-css/filestore.css
       core_blocks: core-css/blocks.css

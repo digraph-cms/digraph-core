@@ -1,0 +1,80 @@
+.cta-button,
+.Form .Button {
+  background:#999;
+  color:#fff !important;
+  display:inline-block;
+  font-size:1.5rem;
+  padding:1rem;
+  border-radius:0.125rem;
+  opacity:0.9;
+  border:0 solid #999;
+  margin:0.125rem;
+}
+
+.cta-button,
+.Form .Button,
+.cta-button.blue {
+  background:#1A78C2;
+  border-color:#3085C8;
+}
+
+.Form .Button.Submit,
+.cta-button.green {
+  background:#2E7D32;
+  border-color:#428A46;
+}
+
+.cta-button.red {
+  background:#b71c1c;
+  border-color:#BE3232;
+}
+
+.cta-button.orange {
+  background:#E65100;
+  border-color:#E86219;
+}
+
+.Form .Button:hover,
+.cta-button:hover {
+  color:#fff !important;
+  opacity:1;
+  border-width:0.125rem;
+  margin:0;
+  transform: scale(1.03);
+}
+
+.Form .Button:active,
+.cta-button:active {
+  transform: scale(0.97);
+}
+
+.Form .FieldWrapper-Submit {
+  position:fixed;
+  margin:0;
+  padding:0.25rem;
+  bottom:0;
+  left:0;
+  right:0;
+  background:rgba(127,127,127,0.85);
+  text-align:center;
+  z-index:100;
+  box-shadow:0 0 0.5rem rgba(127,127,127,0.5);
+}
+
+.Form .FieldWrapper-Submit .Button {
+  font-size:1.5rem;
+  padding:0.5rem;
+}
+
+@keyframes cta-pulse {
+ from {opacity:0.85}
+ to {opacity:0.95}
+}
+
+.cta-button,
+.Form .Button {
+ animation-name: cta-pulse;
+ animation-duration: 0.5s;
+ animation-iteration-count: infinite;
+ animation-direction: alternate-reverse;
+}
