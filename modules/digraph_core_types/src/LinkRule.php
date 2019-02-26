@@ -8,25 +8,26 @@ use HtmlObjectStrings\A;
 class LinkRule extends Noun
 {
     const PUBLISH_CONTROL = false;
+    const SLUG_ENABLED = true;
 
     public function formMap(string $actions) : array
     {
         $s = $this->factory->cms()->helper('strings');
-        return [
-            '001_digraph_title' => false,
-            '400_linkrule_rules' => [
-                'field' => 'rules',
-                'label' => $s->string('forms.linkrule.rules_label'),
-                'class' => 'Formward\\Fields\\Textarea',
-                'required' => true
-            ],
-            '401_showpage' => [
-                'field' => 'link.showpage',
-                'label' => $s->string('forms.link.showpage'),
-                'class' => 'Formward\Fields\Checkbox'
-            ],
-            '500_digraph_body' => false
+        $map = parent::formMap($actions);
+        $map['001_digraph_title'] = false;
+        $map['500_digraph_body'] = false;
+        $map['400_linkrule_rules'] = [
+            'field' => 'rules',
+            'label' => $s->string('forms.linkrule.rules_label'),
+            'class' => 'Formward\\Fields\\Textarea',
+            'required' => true
         ];
+        $map['401_showpage'] = [
+            'field' => 'link.showpage',
+            'label' => $s->string('forms.link.showpage'),
+            'class' => 'Formward\Fields\Checkbox'
+        ];
+        return $map;
     }
 
     public function linkUrl($text, $args=[])

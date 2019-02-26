@@ -8,25 +8,26 @@ use HtmlObjectStrings\A;
 class Link extends Noun
 {
     const PUBLISH_CONTROL = false;
+    const SLUG_ENABLED = true;
 
     public function formMap(string $actions) : array
     {
         $s = $this->factory->cms()->helper('strings');
-        return [
-            '001_digraph_title' => false,
-            '400_link_url' => [
-                'field' => 'url',
-                'label' => $s->string('forms.link.url_label'),
-                'class' => 'Formward\\Fields\\Url',
-                'required' => true
-            ],
-            '401_showpage' => [
-                'field' => 'link.showpage',
-                'label' => $s->string('forms.link.showpage'),
-                'class' => 'Formward\Fields\Checkbox'
-            ],
-            '500_digraph_body' => false
+        $map = parent::formMap($actions);
+        $map['001_digraph_title'] = false;
+        $map['500_digraph_body'] = false;
+        $map['400_link_url'] = [
+            'field' => 'url',
+            'label' => $s->string('forms.link.url_label'),
+            'class' => 'Formward\\Fields\\Url',
+            'required' => true
         ];
+        $map['401_showpage'] = [
+            'field' => 'link.showpage',
+            'label' => $s->string('forms.link.showpage'),
+            'class' => 'Formward\Fields\Checkbox'
+        ];
+        return $map;
     }
 
     public function tag_link($text=null, array $args = [])

@@ -9,6 +9,7 @@ class Versioned extends Noun
     const PUBLISH_CONTROL = false;
     const ROUTING_NOUNS = ['versioned'];
     const VERSION_TYPE = 'version';
+    const SLUG_ENABLED = true;
 
     public function title($verb = null)
     {
@@ -92,9 +93,9 @@ class Versioned extends Noun
 
     public function formMap(string $actions) : array
     {
-        return [
-            '001_digraph_title' => false,
-            '500_digraph_body' => false
-        ];
+        $map = parent::formMap($actions);
+        $map['001_digraph_title'] = false;
+        $map['500_digraph_body'] = false;
+        return $map;
     }
 }

@@ -66,10 +66,8 @@ class FormHelper extends AbstractHelper
     {
         //load default map
         $map = new FlatArray($this->cms->config['forms.maps.default']);
-        //load map from object if it has one
-        if (method_exists($noun, 'formMap')) {
-            $map->merge($noun->formMap($action), null, true);
-        }
+        //load map from object
+        $map->merge($noun->formMap($action), null, true);
         //load type map
         $map->merge($this->cms->config['forms.maps.'.$noun['dso.type'].'.all'], null, true);
         //load type/action map

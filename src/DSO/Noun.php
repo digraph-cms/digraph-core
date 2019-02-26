@@ -7,6 +7,8 @@ use Destructr\DSOFactoryInterface;
 
 class Noun extends DSO implements NounInterface
 {
+    const SLUG_ENABLED = false;
+    const PUBLISH_CONTROL = false;
     const FILESTORE = false;
     const ROUTING_NOUNS = [];
 
@@ -43,6 +45,18 @@ class Noun extends DSO implements NounInterface
         }
         //return list of invalidated caches
         return $invalidated;
+    }
+
+    public function formMap(string $action) : array
+    {
+        $map = [];
+        if (!static::PUBLISH_CONTROL) {
+            $map['900_digraph_published'] = false;
+        }
+        if (!static::SLUG_ENABLED) {
+            $map['100_digraph_slug'] = false;
+        }
+        return $map;
     }
 
     public function add() : bool

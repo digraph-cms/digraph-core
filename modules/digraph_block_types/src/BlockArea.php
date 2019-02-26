@@ -8,6 +8,7 @@ use Digraph\FileStore\FileStoreFile;
 class BlockArea extends Noun
 {
     const ROUTING_NOUNS = ['blockarea'];
+    const SLUG_ENABLED = true;
 
     public function body()
     {

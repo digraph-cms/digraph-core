@@ -11,16 +11,17 @@ class Page extends Noun
     const FILESTORE = true;
     const FILESTORE_PATH = 'filefield';
     const FILESTORE_FILE_CLASS = FileStoreFile::class;
+    const SLUG_ENABLED = true;
 
     public function formMap(string $action) : array
     {
+        $map = parent::formMap($action);
         $s = $this->factory->cms()->helper('strings');
-        return [
-            '550-files' => [
-                'label' => $s->string('forms.file.upload_multi.container'),
-                'class' => 'Digraph\\Forms\\Fields\\FileStoreFieldMulti',
-                'extraConstructArgs' => [static::FILESTORE_PATH]
-            ]
+        $map['550-files'] = [
+            'label' => $s->string('forms.file.upload_multi.container'),
+            'class' => 'Digraph\\Forms\\Fields\\FileStoreFieldMulti',
+            'extraConstructArgs' => [static::FILESTORE_PATH]
         ];
+        return $map;
     }
 }
