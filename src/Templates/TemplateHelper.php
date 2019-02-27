@@ -100,11 +100,14 @@ class TemplateHelper extends AbstractHelper
             );
             //set up theme loaders
             if ($themes = $this->theme()) {
-                $themes[] = '/../_digraph';
+                foreach ($themes as $key => $value) {
+                    $themes[$key] = '_themes/'.$value;
+                }
+                $themes[] = '_digraph';
                 foreach ($themes as $theme) {
                     $paths = array_reverse($this->cms->config['templates.paths']);
                     foreach ($paths as $key => $value) {
-                        $paths[$key] = $value.'/_themes/'.$theme;
+                        $paths[$key] = $value.'/'.$theme;
                     }
                     $paths = array_filter($paths, 'is_dir');
                     if ($paths) {
@@ -165,9 +168,16 @@ class TemplateHelper extends AbstractHelper
             );
         }
         //check that template exists, then render
-        $template = $env->load($template);
+        if (!$this->loader->exists($template)) {
+            return '<div class="notification notification-error">Error: '.$template.' does not exist</div>';
+        }
+        $loaded = $env->load($template);
         $package = $this->package;
         $this->package = $fields['package'];
-        return $template->render($fields->get());
+        try {
+            return $loaded->render($fields->get());
+        } catch (\Exception $e) {
+            return '<div class="notification notification-error">Exception rendering '.$template.': '.$e->getMessage().'</div>';
+        }
     }
 }
