@@ -558,7 +558,7 @@ helpers:
     filters: Digraph\Filters\FilterHelper
     forms: Digraph\Forms\FormHelper
     image: Digraph\FileStore\ImageHelper
-    log: Digraph\Logging\LogHelper
+    logging: Digraph\Logging\LogHelper
     media: Digraph\Media\MediaHelper
     modules: Digraph\Modules\ModuleHelper
     navigation: Digraph\Templates\NavigationHelper
@@ -639,6 +639,10 @@ cache:
 
 package:
   defaults:
+    error: false
+    logging:
+      save: false
+      messages: []
     fields:
       page_title: ${page_name}
       favicon: ${url.base}favicon/favicon.ico
@@ -660,9 +664,15 @@ package:
 bootstrap:
   credentials:
     default: []
+    logging:
+      dsn: sqlite:${paths.storage}/logging.sqlite
   drivers:
     default:
+      class: default
       credentials: default
+    logging:
+      class: default
+      credentials: logging
   factories:
     content:
       class: \Digraph\DSO\ContentFactory
@@ -674,5 +684,5 @@ bootstrap:
       table: digraph_users
     logging:
       class: \Digraph\Logging\LogFactory
-      driver: default
+      driver: logging
       table: digraph_log

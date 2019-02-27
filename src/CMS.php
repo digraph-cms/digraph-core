@@ -2,13 +2,14 @@
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
 namespace Digraph;
 
-use Digraph\Helpers\HelperInterface;
-use Digraph\Mungers\PackageInterface;
-use Flatrr\Config\ConfigInterface;
 use Destructr\Drivers\DSODriverInterface;
 use Destructr\DSOFactoryInterface;
+use Digraph\Helpers\HelperInterface;
+use Digraph\Logging\LogHelper;
 use Digraph\Mungers\MungerInterface;
 use Digraph\Mungers\MungerTree;
+use Digraph\Mungers\PackageInterface;
+use Flatrr\Config\ConfigInterface;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 
 class CMS
@@ -84,8 +85,15 @@ class CMS
 
     public function fullMunge(PackageInterface &$package)
     {
-        foreach ($this->config['fullmunge'] as $name) {
-            $this->munge($package, $name);
+        try {
+            foreach ($this->config['fullmunge'] as $name) {
+                $this->munge($package, $name);
+            }
+        } catch (\Exception $e) {
+            echo "<div class='notification notification-error'>";
+            echo "An unhandled exception occurred during munging";
+            echo "</div>";
+            $package->saveLog('unhandled exception in CMS::fullMunge', LogHelper::CRITICAL);
         }
     }
 

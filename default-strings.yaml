@@ -145,6 +145,7 @@ urls:
     _filestorecleanup/display: Filestore cleanup
     _filestorecleanup/download: Download file
     _logging/display: Logs
+    _logging/entry: Log entry
     _trash/display: Trash
     _trash/factory: Trash from "!arg_factory"
     _trash/item: Trash item !arg_id

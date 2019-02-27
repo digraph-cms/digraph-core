@@ -2,10 +2,11 @@
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
 namespace Digraph\Mungers;
 
-use Flatrr\SelfReferencingFlatArray;
 use Digraph\CMS;
-use Digraph\Urls\Url;
 use Digraph\DSO\NounInterface;
+use Digraph\Logging\LogHelper;
+use Digraph\Urls\Url;
+use Flatrr\SelfReferencingFlatArray;
 
 class Package extends SelfReferencingFlatArray implements PackageInterface, \Serializable
 {
@@ -20,6 +21,20 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         'noun',
         'url'
     ];
+
+    public function saveLog($message, $level=null)
+    {
+        $id = md5(
+            $this['request.hash'].
+            $this->hash('error').
+            $this->hash('logging.messages')
+        );
+        $this['logging.save'] = $id;
+        $this['logging.messages.'.$id] = $message;
+        $log = $this->cms->helper('logging')->create($this, $level);
+        $this['logging.save'] = false;
+        return $log;
+    }
 
     public function cacheTag(string $tag)
     {
