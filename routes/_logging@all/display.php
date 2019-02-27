@@ -11,7 +11,8 @@ $logs = $l->list();
 ?>
 <style>
 tr.log-entry,
-tr.log-entry a {
+tr.log-entry a,
+tr.log-entry a:hover {
     color:#fff;
 }
 tr.log-level-DEBUG {
