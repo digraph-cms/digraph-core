@@ -1,23 +1,23 @@
-{% include cms.helper('templates').themeTemplate('_html_start.twig') %}
+{% include '_html_start.twig' %}
 
 {% block admin %}
-  {% include cms.helper('templates').themeTemplate('sections/admin.twig') %}
+  {% include 'sections/admin.twig' %}
 {% endblock %}
 
 {% block banner %}
-  {% include cms.helper('templates').themeTemplate('sections/banner.twig') %}
+  {% include 'sections/banner.twig' %}
 {% endblock %}
 
 {% block navigation %}
-  {% include cms.helper('templates').themeTemplate('sections/navigation.twig') %}
+  {% include 'sections/navigation.twig' %}
 {% endblock %}
 
 {% block body %}
-  {% include cms.helper('templates').themeTemplate('sections/body.twig') %}
+  {% include 'sections/body.twig' %}
 {% endblock %}
 
 {% block footer %}
-  {% include cms.helper('templates').themeTemplate('sections/footer.twig') %}
+  {% include 'sections/footer.twig' %}
 {% endblock %}
 
-{% include cms.helper('templates').themeTemplate('_html_end.twig') %}
+{% include '_html_end.twig' %}

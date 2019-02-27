@@ -8,10 +8,10 @@
   <div class="layout-column-wrapper cols-1">
 
     <div id="content" role="main">
-      {% include cms.helper('templates').themeTemplate('partials/notifications.twig') %}
-      {% include cms.helper('templates').themeTemplate('partials/breadcrumb.twig') %}
+      {% include 'partials/notifications.twig' %}
+      {% include 'partials/breadcrumb.twig' %}
 
-      {% include cms.helper('templates').themeTemplate('partials/block.twig')
+      {% include 'partials/block.twig'
         with {blockname:'template-content-before'} %}
 
       <article>
@@ -20,7 +20,7 @@
         {% if page_title != package.url.text %}
           <h2>{{package.url.text}}</h2>
         {% endif %}
-        {% include cms.helper('templates').themeTemplate('partials/block.twig')
+        {% include 'partials/block.twig'
           with {blockname:'template-title-after'} %}
 
         <div class="package-response-content">
@@ -29,7 +29,7 @@
 
       </article>
 
-      {% include cms.helper('templates').themeTemplate('partials/block.twig')
+      {% include 'partials/block.twig'
         with {blockname:'template-content-after'} %}
 
     </div>

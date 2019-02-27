@@ -12,7 +12,7 @@
     </title>
 
     {% block head %}
-      {% include cms.helper('templates').themeTemplate('partials/head.twig') %}
+      {% include 'partials/head.twig' %}
     {% endblock %}
 
     {% for url in cms.helper('templates').cssUrls() %}

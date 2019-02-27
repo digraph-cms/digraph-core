@@ -1,11 +1,11 @@
 <footer>
   
-  {% include cms.helper('templates').themeTemplate('partials/block.twig')
+  {% include 'partials/block.twig'
     with {blockname:'template-footer-before'} %}
 
-  {% include cms.helper('templates').themeTemplate('partials/footer.twig') %}
+  {% include 'partials/footer.twig' %}
 
-  {% include cms.helper('templates').themeTemplate('partials/block.twig')
+  {% include 'partials/block.twig'
     with {blockname:'template-footer-after'} %}
 
 </footer>

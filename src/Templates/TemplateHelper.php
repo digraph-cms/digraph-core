@@ -15,28 +15,6 @@ class TemplateHelper extends AbstractHelper
     protected $fields = [];
     protected $package = null;
 
-    public function themeTemplate($file)
-    {
-        $files = [];
-        // first choice is file from root directory, so sites can override
-        // anything in their templates directory
-        $files[] = "$file";
-        // then search in themes
-        foreach (array_reverse($this->theme()) as $theme) {
-            $files[] = "_themes/$theme/$file";
-        }
-        // fallback is _digraph directory
-        $files[] = "_digraph/$file";
-        // return the first result found
-        foreach ($files as $file) {
-            if ($this->exists($file, true)) {
-                return $file;
-            }
-        }
-        // otherwise return notfound template
-        return "_notfound.twig";
-    }
-
     public function theme()
     {
         $theme = $this->cms->config['templates.theme'];
@@ -113,15 +91,29 @@ class TemplateHelper extends AbstractHelper
     public function &env()
     {
         if (!$this->loader) {
-            //set up loader
-            $this->fsLoader = new \Twig_Loader_Filesystem(
+            $loaders = [];
+            //set up array loader for rendering from strings
+            $loaders[] = $this->arrayLoader = new \Twig_Loader_Array();
+            //set up basic filesystem loader
+            $loaders[] = $this->fsLoader = new \Twig_Loader_Filesystem(
                 array_reverse($this->cms->config['templates.paths'])//array of paths to look for templates in
             );
-            $this->arrayLoader = new \Twig_Loader_Array();
-            $this->loader = new \Twig_Loader_Chain([
-                $this->fsLoader,
-                $this->arrayLoader
-            ]);
+            //set up theme loaders
+            if ($themes = $this->theme()) {
+                $themes[] = '/../_digraph';
+                foreach ($themes as $theme) {
+                    $paths = array_reverse($this->cms->config['templates.paths']);
+                    foreach ($paths as $key => $value) {
+                        $paths[$key] = $value.'/_themes/'.$theme;
+                    }
+                    $paths = array_filter($paths, 'is_dir');
+                    if ($paths) {
+                        $loaders[] = new \Twig_Loader_Filesystem($paths);
+                    }
+                }
+            }
+            //put everything into a chain loader
+            $loaders[] = $this->loader = new \Twig_Loader_Chain($loaders);
             //set up twig environment with loader and config from cms config
             $this->twig = new \Twig_Environment(
                 $this->loader,
@@ -144,7 +136,7 @@ class TemplateHelper extends AbstractHelper
     public function exists($template = 'default.twig', $skipTheme = false)
     {
         $this->env();
-        return $this->loader->exists($template) || (!$skipTheme && $this->themeTemplate($template) != '_notfound.twig');
+        return $this->loader->exists($template);
     }
 
     public function render($template = 'default.twig', $fields=array())
@@ -172,8 +164,6 @@ class TemplateHelper extends AbstractHelper
                 false
             );
         }
-        //first try to load template from themes, if it exists
-        $template = $this->themeTemplate($template);
         //check that template exists, then render
         $template = $env->load($template);
         $package = $this->package;
