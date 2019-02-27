@@ -8,6 +8,9 @@ if (!$log) {
 
 function yaml($array)
 {
+    if ($array instanceof Flatrr\FlatArray) {
+        $array = $array->get();
+    }
     $c = new \Flatrr\Config\Config($array);
     return $c->yaml();
 }
@@ -28,16 +31,20 @@ $s = $cms->helper('strings');
 <?php
 foreach ($log['users'] as $a) {
     foreach ($a as $b) {
-        echo "<li>{$b['id']} at {$b['ip']} {$b['fw']}</li>";
+        echo @"<li>{$b['id']} at {$b['ip']} {$b['fw']}</li>";
     }
 }
  ?>
 </ul>
 
+<?php if ($log['package.error']) {
+     ?>
 <h2>Error trace</h2>
 <pre style="white-space:pre-wrap;">
 <?php echo yaml($log['package.error']); ?>
 </pre>
+<?php
+ } ?>
 
 <h2>Package log</h2>
 <pre style="white-space:pre-wrap;">
@@ -47,4 +54,9 @@ foreach ($log['users'] as $a) {
 <h2>CMS log</h2>
 <pre style="white-space:pre-wrap;">
 <?php echo implode(PHP_EOL, $log['log.cms']); ?>
+</pre>
+
+<h2>Package dump</h2>
+<pre style="white-space:pre-wrap;">
+<?php echo yaml($log['package']); ?>
 </pre>
