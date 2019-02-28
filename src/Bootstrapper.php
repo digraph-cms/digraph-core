@@ -33,8 +33,6 @@ class Bootstrapper
         //set up new CMS
         $cms = new CMS($config);
         $cms->log('Bootstrapper::bootstrap starting');
-        //set timezone
-        date_default_timezone_set($config['timezone']);
         //set up drivers
         foreach ($config['bootstrap.drivers'] as $k => $c) {
             $class = $c['class'];
@@ -69,6 +67,8 @@ class Bootstrapper
         unset($config['bootstrap']);
         //tell CMS it's time to initialize
         $cms->initialize();
+        //set timezone
+        date_default_timezone_set($config['timezone']);
         //return
         $cms->log('Bootstrapper::bootstrap finished');
         return $cms;
