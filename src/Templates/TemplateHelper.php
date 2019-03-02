@@ -27,6 +27,13 @@ class TemplateHelper extends AbstractHelper
         return $theme;
     }
 
+    public function variables()
+    {
+        //TODO: make these extend by them name
+        $vars = $this->cms->config['theme.variables._digraph'];
+        return $vars;
+    }
+
     public function cssUrls()
     {
         $urls = $this->cms->config['templates.css'];
@@ -153,7 +160,8 @@ class TemplateHelper extends AbstractHelper
             'helper' => &$this,
             'config' => $this->cms->config,
             'cms' => $this->cms,
-            'templateName' => $template
+            'templateName' => $template,
+            'url' => $this->cms->config['url']
         ]);
         if ($fields['package']) {
             $fields->merge(

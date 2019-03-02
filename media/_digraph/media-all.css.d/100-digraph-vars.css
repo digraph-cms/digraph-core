@@ -1,0 +1,5 @@
+@set {
+  {% for name,value in helper.variables %}
+    {{name}}: {{value}};
+  {% endfor %}
+}

@@ -1,0 +1,3 @@
+@import "media-all.css";
+@import "media-screen.css" screen;
+@import "media-print.css" print;

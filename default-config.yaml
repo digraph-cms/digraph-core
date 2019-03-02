@@ -387,13 +387,28 @@ url:
 paths:
   storage: ${paths.site}/storage
 
+theme:
+  variables:
+    _digraph:
+      color_link: '#03f'
+      color_link_visited: '#c0c'
+      color_link_hover: '#f90'
+      color_link_active: '#c00'
+      font_family_body: sans-serif
+      font_family_headers: serif
+      font_family_code: monospace
+      font_size_base: 14pt/1.4
+      spacing_base: 1rem
+      heading_size: 2
+      heading_ratio: 0.9
+
 # template/display configuration options
 templates:
   # default template for page rendering
   default: default.twig
   # templates.theme can be either a single theme name or an array of theme names
   # that will have their css/js included after core code, in the given order
-  theme: null
+  theme: digraph-core
   # paths where we should look for templates -- later items win
   paths:
     core: ${paths.core}/templates
@@ -403,48 +418,11 @@ templates:
     cache: ${paths.cache}/twig
     auto_reload: true
   # css urls to be linked in the head
-  css:
-    digraph_core: ${url.base}_digraph/core.css
-    fontawesome: https://use.fontawesome.com/releases/v5.5.0/css/all.css
-  # css bundles can be included all at once in media-driven css files, with
-  # syntax like: /*${bundle:digraph_core}*/
-  cssbundles:
-    digraph_core:
-      core_hypersemantic: hypersemantic/bundle.css
-      core_navigation: core-css/navigation.css
-      core_notifications: notifications/notifications.css
-      core_forms: core-css/forms.css
-      core_fancy_buttons: core-css/fancy-buttons.css
-      core_actionbar: actionbar/actionbar.css
-      core_filestore: core-css/filestore.css
-      core_blocks: core-css/blocks.css
-      core_print: core-css/print.css
-      core_simplemde: simplemde/simplemde.min.css
-      core_syntax_theme: core-css/syntax-theme.css
-    hypersemantic:
-      typography: _digraph/hypersemantic/typography.css
-      menus: _digraph/hypersemantic/menus.css
-      layout: _digraph/hypersemantic/layout-1col.css
-      layout2: _digraph/hypersemantic/layout-digraph.css
-    site:
-      site_styles: site_styles.css
+  css: []
   # js files are included at either the head or foot of the page
   js:
-    head:
-      digraph_obj: ${url.base}_digraph/init.js
-      digraph_user: ${url.base}_user/user.js
-    foot:
-      digraph_core: ${url.base}_digraph/core.js
-  # js bundles can be included the same way as css bundles
-  jsbundles:
-    digraph_core:
-      core_notifications: _digraph/notifications/notifications.js
-      core_actionbar: _digraph/actionbar/actionbar.js
-      core_forms: _digraph/core-js/forms.js
-      core_simplemde: _digraph/simplemde/simplemde.min.js
-      core_simplemde-integration: _digraph/simplemde/simplemde-integration.js
-    site:
-      site_script: site_script.js
+    head: []
+    foot: []
 
 routing:
   paths:
@@ -610,6 +588,11 @@ mungerhooks:
   render: []
 
 media:
+  css:
+    crush-options:
+      minify: false
+      cache: false
+      rewrite_import_urls: false
   get_cache_ttl: 60
   package:
     response:

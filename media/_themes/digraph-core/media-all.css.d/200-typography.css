@@ -1,0 +1,231 @@
+/* font selections and sizes */
+body,
+.Form .Container.class-Content .class-ContentTextarea {
+  font-size: $(font_size_base);
+  font-family: $(font_family_body);
+}
+
+a {
+  text-decoration: none;
+}
+
+a[href] {
+  text-decoration: underline;
+  color: $(color_link);
+}
+
+a[href]:visited {
+  color: $(color_link_visited);
+}
+
+a[href]:hover {
+  color: $(color_link_hover);
+}
+
+a[href]:active {
+  color: $(color_link_active);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $(font_family_headers);
+  line-height: 1.2em;
+}
+
+h1 {
+  font-size: $(heading_size)em;
+}
+
+h2 {
+  font-size: math($(heading_size)*$(heading_ratio))em;
+}
+
+h3 {
+  font-size: math($(heading_size)*$(heading_ratio)*$(heading_ratio))em;
+}
+
+h4 {
+  font-size: math($(heading_size)*$(heading_ratio)*$(heading_ratio)*$(heading_ratio))em;
+}
+
+h4 {
+  font-size: math($(heading_size)*$(heading_ratio)*$(heading_ratio)*$(heading_ratio)*$(heading_ratio))em;
+}
+
+h4 {
+  font-size: math($(heading_size)*$(heading_ratio)*$(heading_ratio)*$(heading_ratio)*$(heading_ratio)*$(heading_ratio))em;
+}
+
+/* spacing */
+h1, h2, h3, h4, h5, h6, p, aside, figure, ul, ol, blockquote, pre, address {
+  margin: $(spacing_base) 0;
+
+  &:first-child {
+    margin-top: 0;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+/* ol nesting rules */
+ol {
+  list-style-type: decimal;
+}
+
+ol ol {
+  list-style-type: lower-alpha;
+}
+
+ol ol ol {
+  list-style-type: lower-roman;
+}
+
+ol ol ol ol {
+  list-style-type: decimal;
+}
+
+ol ol ol ol ol {
+  list-style-type: lower-alpha;
+}
+
+ol ol ol ol ol ol {
+  list-style-type: lower-roman;
+}
+
+/* specific element styles */
+ul ul, ul ol, ol ul, ol ol, li ul, li ol {
+  margin-top: 0;
+}
+
+blockquote, pre, aside, figure {
+  box-sizing: border-box;
+  padding: 0.5em;
+}
+
+code {
+  font-family: monospace;
+}
+
+pre {
+  font-family: monospace;
+  overflow: auto;
+}
+
+figure {
+  text-align: center;
+}
+
+figure>img {
+  display: block;
+  margin: 0 auto;
+}
+
+figcaption {
+  margin-top: 0.5em;
+  padding-top: 0.5em;
+  text-align: left;
+  font-size: 0.8em;
+}
+
+/* blockquotes */
+blockquote {
+  padding: 1em;
+
+  >.author {
+    display: block;
+    margin-top: 1rem;
+    font-style: italic;
+    text-align: right;
+
+    &:before {
+      display: inline;
+      content: '\2015';
+    }
+  }
+}
+
+/* asides and figures */
+aside, figure {
+  font-size: 0.8em;
+
+  .block {
+    max-width: 100%;
+    width: 100%;
+    float: none;
+    margin-left: 0;
+  }
+}
+
+figure.block {
+  text-align: center;
+}
+
+figure img {
+  max-width: 100%;
+  height: auto !important;
+}
+
+aside {
+  h1, h2, h3, h4, h5, h6 {
+    font-style: italic;
+  }
+}
+
+img {
+  max-width: 100%;
+}
+
+/* aria roles */
+*[aria-hidden="true"], *[hidden] {
+  display: none;
+}
+
+/* medium size */
+@media (min-width: 40em) {
+  *[role="main"]:after {
+    content: "";
+    display: block;
+    clear: both;
+  }
+
+  *[role="main"] aside, *[role="main"] figure {
+    max-width: 50%;
+    float: right;
+    clear: right;
+    margin-left: 0.5rem;
+    margin-top: 0;
+  }
+}
+
+figure:last-child, aside:last-child {
+  width: 100%;
+  float: none;
+  max-width: 100%;
+  margin-left: 0;
+  margin-top: 0.5rem;
+}
+
+dt {
+  font-weight: bold;
+  font-size: 0.8em;
+}
+
+.incidental {
+  font-size: 0.8em;
+  opacity: 0.9;
+  line-height: 1.3em;
+}
+
+/* table base styles */
+table {
+  font-size: $(font_size_base);
+}
+
+th, td {
+  padding: 0.25em 0.5em;
+}
+
+th {
+  font-weight: bold;
+}
