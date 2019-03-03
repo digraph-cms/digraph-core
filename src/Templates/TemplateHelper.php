@@ -36,6 +36,7 @@ class TemplateHelper extends AbstractHelper
                 $c->merge($theme, null, true);
             }
         }
+        $c->merge($this->cms->config['theme._override'], null, true);
         return $c->get();
     }
 
@@ -46,6 +47,9 @@ class TemplateHelper extends AbstractHelper
 
     public function areas()
     {
+        if ($theme = $this->cms->config['theme.areas._override']) {
+            return $theme;
+        }
         foreach ($this->theme() as $theme) {
             if ($theme = $this->cms->config['theme.areas.'.$theme]) {
                 return $theme;

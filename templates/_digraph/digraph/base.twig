@@ -8,9 +8,7 @@
 
   <body>
     <div id="page-wrapper">
-      {% for area in helper.areas %}
-        {% include 'digraph/area.twig' with {area:area} %}
-      {% endfor %}
+      {% include 'digraph/areas.twig' with {areas:helper.areas} %}
     </div>
 
     <script src="{{url.base}}digraph-foot.js"></script>

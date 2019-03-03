@@ -1,3 +1,10 @@
 /*
 This file contains CSS that will be used on screens only
  */
+ #masthead-screen {
+   display: block;
+ }
+
+ #masthead-print {
+   display: none;
+ }

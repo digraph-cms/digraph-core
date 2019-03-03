@@ -260,25 +260,27 @@ progressively-enhanced ordering field
 .FieldWrapper-formward-ordering-field li {
   margin: 0.25em 0;
   padding: 0.25em;
-  background: #eee;
+  background: $(color_shade);
   transition: background-color 0.25s linear;
   cursor: grab;
   position: relative;
+  color: $(color_foreground);
 }
 
 .FieldWrapper-formward-ordering-field li a {
   color: inherit;
+  text-decoration: inherit;
 }
 
 .FieldWrapper-formward-ordering-field li.deleted {
-  background-color: #fee;
-  color: #600;
+  background-color: $(color_error);
+  color: #fff;
   text-decoration: line-through;
 }
 
 .FieldWrapper-formward-ordering-field li.dragging {
-  color: #329;
-  background-color: #def;
+  color: #fff;
+  background-color: $(color_notice);
   cursor: grabbing;
 }
 
@@ -289,7 +291,7 @@ progressively-enhanced ordering field
   top: 0.25em;
   right: 0.25em;
   bottom: 0.25em;
-  color: #c00;
+  color: $(color_error);
   overflow: hidden;
   text-indent: 100%;
   white-space: nowrap;
@@ -297,7 +299,7 @@ progressively-enhanced ordering field
 }
 
 .FieldWrapper-formward-ordering-field .delete-button:hover {
-  background: #c00;
+  background: $(color_error);
   color: #fff;
 }
 

@@ -1,0 +1,30 @@
+#digraph-masthead-and-navbar,
+#digraph-masthead,
+#digraph-footer {
+  margin: 0;
+  padding: $(spacing_base);
+  background: $(color_shade);
+}
+
+#digraph-masthead-and-navbar {
+  padding-bottom: 0;
+
+  .navbar {
+    margin-top: $(spacing_base);
+    background: transparent;
+  }
+}
+
+.digraph-area {
+  text-align: center;
+
+  .digraph-area-wrapper {
+    text-align: left;
+    margin: 0 auto;
+    max-width: 65em;
+  }
+}
+
+#digraph-actionbar {
+  background: $(color_actionbar_bg);
+}

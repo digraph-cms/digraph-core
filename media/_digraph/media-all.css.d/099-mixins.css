@@ -13,6 +13,7 @@
   page-break-inside: avoid;
   line-height: $(line_height_compact);
   background-color: $(color_shade);
+  border-radius: $(border_radius_accent);
 }
 
 @fragment button {

@@ -1,3 +1,16 @@
 /*
 Styles for a large-size breakpoint
  */
+body,
+table,
+.Form .Container.class-Content .class-ContentTextarea {
+  font-size: $(font_size_large);
+}
+
+#digraph-body aside, #digraph-body figure {
+  max-width: 75%;
+  float: right;
+  clear: right;
+  margin-left: 0.5rem;
+  margin-top: 0;
+}

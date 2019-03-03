@@ -1,8 +1,1 @@
-{% if package.cms.helper('navigation').menu('main') %}
-  {% for link in package.cms.helper('navigation').menu('main') %}
-    {% set link = helper.link(link) %}
-    {% do
-      link.addClass('menuitem') %}
-    {{link|raw}}
-  {% endfor %}
-{% endif %}
+{% include 'digraph/navbar.twig' %}

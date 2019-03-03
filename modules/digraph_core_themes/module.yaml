@@ -1,0 +1,12 @@
+theme:
+  areas:
+    digraph-basic: [actionbar,masthead-and-navbar,meta,body,footer]
+  variables:
+    digraph-colors-dark:
+      color_background: '#111'
+      color_foreground: '#eee'
+      color_link_active: '#f33'
+      color_link_hover: '#fc3'
+      color_link_visited: '#edc'
+      color_link: '#9cf'
+      color_shade: rgba(127,127,127,0.2)

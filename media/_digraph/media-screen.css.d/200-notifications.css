@@ -2,7 +2,7 @@
   @include .digraph-block-card;
   background: #888;
   color: #fff;
-  line-height:$(line_height_compact);
+  line-height: $(line_height_compact);
 }
 
 .notification a {

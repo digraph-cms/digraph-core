@@ -1,12 +1,11 @@
-/* font selections and sizes */
+/* font selections */
 body {
-  margin:0;
-  padding:0;
+  margin: 0;
+  padding: 0;
 }
 
 body,
 .Form .Container.class-Content .class-ContentTextarea {
-  font-size: $(font_size_base);
   font-family: $(font_family_body);
   line-height: $(line_height_base);
   background-color: $(color_background);
@@ -14,7 +13,7 @@ body,
 }
 
 .digraph-area {
-  margin:$(spacing_base);
+  margin: $(spacing_base);
 }
 
 .digraph-area:after {
@@ -47,30 +46,6 @@ a[href]:active {
 h1, h2, h3, h4, h5, h6 {
   font-family: $(font_family_headers);
   line-height: $(line_height_compact);
-}
-
-h1 {
-  font-size: $(heading_size)em;
-}
-
-h2 {
-  font-size: math($(heading_size)*$(heading_ratio))em;
-}
-
-h3 {
-  font-size: math($(heading_size)*$(heading_ratio)*$(heading_ratio))em;
-}
-
-h4 {
-  font-size: math($(heading_size)*$(heading_ratio)*$(heading_ratio)*$(heading_ratio))em;
-}
-
-h4 {
-  font-size: math($(heading_size)*$(heading_ratio)*$(heading_ratio)*$(heading_ratio)*$(heading_ratio))em;
-}
-
-h4 {
-  font-size: math($(heading_size)*$(heading_ratio)*$(heading_ratio)*$(heading_ratio)*$(heading_ratio)*$(heading_ratio))em;
 }
 
 /* spacing */
@@ -110,33 +85,27 @@ ul, ol {
   }
 }
 
-code {
-  font-family: monospace;
-}
-
 pre {
-  font-family: monospace;
+  font-family: $(font_family_code);
   overflow: auto;
 }
 
+/* figures */
 figure {
-  text-align: center;
-  > img {
-    display: block;
-    margin: 0 auto;
-  }
-  dd,dt {
-    padding:0;
-    margin:0;
-  }
-
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-content: stretch;
 }
 
 figcaption {
+  padding: 0.5em;
   margin-top: 0.5em;
-  padding-top: 0.5em;
   text-align: left;
   font-size: 0.8em;
+  background: $(color_shade);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* blockquotes */
@@ -157,11 +126,6 @@ blockquote {
 }
 
 /* asides and figures */
-figure img {
-  max-width: 100%;
-  height: auto !important;
-}
-
 img {
   max-width: 100%;
 }
@@ -171,15 +135,35 @@ dt {
   font-size: 0.8em;
 }
 
+dd {
+  margin-left: 1em;
+}
+
+ol, ul {
+  padding-left: 1em;
+}
+
 .incidental {
   font-size: 0.8em;
   opacity: 0.9;
   line-height: $(line_height_compact);
 }
 
+/* code */
+code, .code-highlighted {
+  font-family: $(font_family_code);
+}
+
+span.code-highlighted {
+  display: inline-block;
+  background: $(color_shade);
+  padding: 0 0.25em;
+  border-radius:$(border_radius_accent);
+}
+
 /* table base styles */
 table {
-  font-size: $(font_size_base);
+  font-size: $(font_size_small);
   line-height: $(line_height_compact);
 }
 

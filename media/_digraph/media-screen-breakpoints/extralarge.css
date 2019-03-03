@@ -1,8 +1,8 @@
 /*
-Styles for a medium-size breakpoint
+Styles for a extralarge-size breakpoint
  */
 body,
 table,
 .Form .Container.class-Content .class-ContentTextarea {
-  font-size: $(font_size_medium);
+  font-size: $(font_size_extralarge);
 }

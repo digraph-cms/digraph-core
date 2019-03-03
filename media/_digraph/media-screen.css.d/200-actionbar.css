@@ -1,19 +1,21 @@
 #digraph-actionbar {
-  margin:0;
-  padding:0;
+  margin: 0;
+  padding: 0;
 }
 
 .digraph-actionbar {
-  background: #1565C0;
-  color: #fff;
-  line-height:1.3em;
-  font-size:0.8rem;
-  font-family:sans-serif;
-  padding:0 5pt;
+  background: $(color_actionbar_bg);
+  color: $(color_actionbar_fg);
+  line-height: $(line_height_compact);
+  font-family: sans-serif;
+  font-size: 0.8em;
+  padding: 0 0.5rem;
+  display: none;
+  flex-wrap: wrap;
 }
 
-.digraph-actionbar.inactive {
-  display: none;
+.digraph-actionbar.active {
+  display: flex;
 }
 
 .digraph-actionbar:after {
@@ -27,25 +29,23 @@
   color: #fff !important;
   opacity: 0.8;
   text-decoration: none;
-  display: inline-block;
-  padding: 2pt 5pt;
+  padding: 0.2rem 0.5rem;
 }
 
 .digraph-actionbar .actionbar-adder {
-  margin: 0 5pt
+  margin: 0 0.5rem
 }
 
 .digraph-actionbar a:hover, .digraph-actionbar a[aria-selected="true"] {
-  background: #fff;
-  color: #1565C0 !important;
+  background: $(color_actionbar_fg);
+  color: $(color_actionbar_bg) !important;
   opacity: 1;
   text-decoration: underline;
 }
 
 .digraph-actionbar-title {
   font-weight: bold;
-  display: inline-block;
-  padding: 2pt 5pt;
+  padding: 0.2rem 0.5rem;
 }
 
 .digraph-actionbar-title:after {
@@ -54,16 +54,18 @@
 }
 
 #digraph-primary-actionbar {
-  background: #1565C0;
-  font-size:0;
-}
-#digraph-primary-actionbar:after {
-  content:'';
-  display:block;
-  clear:both;
-}
-#digraph-primary-actionbar .digraph-actionbar-user {
-  float:right;
-  background:rgba(255,255,255,0.25);
-  margin-left:1rem;
+  background: $(color_actionbar_bg);
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: space-between;
+
+  .digraph-actionbar {
+    order: 1;
+    padding: 0;
+  }
+
+  .digraph-actionbar-user {
+    order: 2;
+  }
 }
