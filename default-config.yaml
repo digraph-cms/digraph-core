@@ -397,13 +397,16 @@ theme:
       breakpoint_large: 70em
       breakpoint_medium: 30em
       breakpoint_normal: 50em
+      color_background: '#fafafa'
       color_confirmation: '#2E7D32'
       color_error: '#b71c1c'
+      color_foreground: '#222'
       color_link_active: '#c00'
       color_link_hover: '#f90'
       color_link_visited: '#c0c'
       color_link: '#03f'
       color_notice: '#1A78C2'
+      color_shade: rgba(127,127,127,0.1)
       color_warning: '#E65100'
       font_family_body: sans-serif
       font_family_code: monospace
@@ -414,6 +417,14 @@ theme:
       line_height_base: 1.5
       line_height_compact: 1.3
       spacing_base: 1rem
+    digraph-dark:
+      color_background: '#111'
+      color_foreground: '#eee'
+      color_link_active: '#f33'
+      color_link_hover: '#fc3'
+      color_link_visited: '#edc'
+      color_link: '#9cf'
+      color_shade: rgba(127,127,127,0.2)
 
 # template/display configuration options
 templates:

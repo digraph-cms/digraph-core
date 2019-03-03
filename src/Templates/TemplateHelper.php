@@ -5,6 +5,7 @@ namespace Digraph\Templates;
 use Digraph\Helpers\AbstractHelper;
 use Digraph\Urls\Url;
 use Flatrr\SelfReferencingFlatArray;
+use Flatrr\FlatArray;
 
 class TemplateHelper extends AbstractHelper
 {
@@ -27,19 +28,30 @@ class TemplateHelper extends AbstractHelper
         return $theme;
     }
 
+    protected function getThemeConfig($name)
+    {
+        $c = new FlatArray($this->cms->config['theme.'.$name.'._digraph']);
+        foreach ($this->theme() as $theme) {
+            if ($theme = $this->cms->config['theme.'.$name.'.'.$theme]) {
+                $c->merge($theme, null, true);
+            }
+        }
+        return $c->get();
+    }
+
     public function variables()
     {
-        //TODO: make these extend by them name
-        $vars = $this->cms->config['theme.variables._digraph'];
-        return $vars;
+        return $this->getThemeConfig('variables');
     }
 
     public function areas()
     {
-        //TODO: make these extend by them name
-        $areas = $this->cms->config['theme.areas._digraph'];
-        ksort($areas);
-        return $areas;
+        foreach ($this->theme() as $theme) {
+            if ($theme = $this->cms->config['theme.areas.'.$theme]) {
+                return $theme;
+            }
+        }
+        return $this->cms->config['theme.areas._digraph'];
     }
 
     public function cssUrls()

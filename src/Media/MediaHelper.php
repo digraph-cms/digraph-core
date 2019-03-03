@@ -15,9 +15,6 @@ class MediaHelper extends AbstractHelper
             $search = '/'.$search;
         }
         $searches = [];
-        foreach (array_reverse($this->cms->config['media.paths']) as $path) {
-            $searches[] = $path.$search;
-        }
         foreach (array_reverse($this->cms->helper('templates')->theme()) as $theme) {
             foreach (array_reverse($this->cms->config['media.paths']) as $path) {
                 $searches[] = $path.'/_themes/'.$theme.$search;

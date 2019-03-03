@@ -1,10 +1,5 @@
 .filestore-card {
-  padding: 1em;
-  background: #f6f6f6;
-  box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.15);
-  margin: 0.5rem 0;
-  line-height: 1.2em;
-  font-family: sans-serif;
+  background: $(color_shade);
   text-align: center;
 }
 
@@ -18,7 +13,6 @@ figure .filestore-card {
 .filestore-card .filestore-icon {
   display: block;
   font-size: 3em;
-  height: 1em;
 }
 
 .filestore-card .filestore-icon img {
@@ -39,11 +33,11 @@ figure .filestore-card {
 }
 
 .form-ordering-item.deleted .filestore-card {
-  background:#fcc;
+  background:$(color_error);
 }
 
 .form-ordering-item.dragging .filestore-card {
-  background:#cdf;
+  background:$(color_notice);
 }
 
 /*
