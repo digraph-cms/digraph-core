@@ -1,0 +1,9 @@
+{% if package.cms.helper('navigation').breadcrumb(url) | length > 1 %}
+  <div class="breadcrumb">
+    {% for link in package.cms.helper('navigation').breadcrumb(url) %}
+      <span class="breadcrumb-item">
+        {{link.html|raw}}
+      </span>
+    {% endfor %}
+  </div>
+{% endif %}

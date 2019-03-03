@@ -1,0 +1,11 @@
+<div id="digraph-notifications" class="notifications">
+  {% if package.cms.helper('notifications').all %}
+    {% for category, notifications in package.cms.helper('notifications').all %}
+      {% for message in notifications %}
+        <div class="notification notification-{{category}}">
+          {{message|raw}}
+        </div>
+      {% endfor %}
+    {% endfor %}
+  {% endif %}
+</div>

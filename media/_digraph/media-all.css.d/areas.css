@@ -1,0 +1,12 @@
+#digraph-masthead,
+#digraph-masthead-and-navbar {
+  h1 {
+    font-family: $(font_family_body);
+    margin: 0;
+
+    a {
+      color: inherit;
+      text-decoration: inherit;
+    }
+  }
+}

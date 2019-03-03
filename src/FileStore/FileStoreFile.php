@@ -33,7 +33,7 @@ class FileStoreFile
     public function metaCard($meta = ['time','size'])
     {
         $s = $this->fs->cms()->helper('strings');
-        $out = '<div class="filestore-metacard">';
+        $out = '<div class="digraph-card filestore-card">';
         $out .= '<a href="'.$this->url().'">';
         $out .= $this->thumbnail(true);
         $out .= '</a>';
@@ -70,7 +70,7 @@ class FileStoreFile
         $out .= $this->icon();
         $out .= '</span>';
         if ($name) {
-            $out .= '<span class="filestore-filename">'.$this->name().'</span>';
+            $out .= ' <span class="filestore-filename">'.$this->name().'</span>';
         }
         $out .= '</span>';
         return $out;

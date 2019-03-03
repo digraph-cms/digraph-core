@@ -1,0 +1,176 @@
+/* font selections */
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body,
+.Form .Container.class-Content .class-ContentTextarea {
+  font-family: $(font_family_body);
+  line-height: $(line_height_base);
+  background-color: $(color_background);
+  color: $(color_foreground);
+}
+
+.digraph-area {
+  margin: $(spacing_base);
+}
+
+.digraph-area:after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+a {
+  text-decoration: none;
+}
+
+a[href] {
+  text-decoration: underline;
+  color: $(color_link);
+}
+
+a[href]:visited {
+  color: $(color_link_visited);
+}
+
+a[href]:hover {
+  color: $(color_link_hover);
+}
+
+a[href]:active {
+  color: $(color_link_active);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $(font_family_headers);
+  line-height: $(line_height_compact);
+}
+
+/* spacing */
+h1, h2, h3, h4, h5, h6, p, ul, ol, address {
+  @include .digraph-block;
+}
+
+/* ol nesting rules */
+ol {
+  list-style-type: decimal;
+}
+
+ol ol {
+  list-style-type: lower-alpha;
+}
+
+ol ol ol {
+  list-style-type: lower-roman;
+}
+
+ol ol ol ol {
+  list-style-type: decimal;
+}
+
+ol ol ol ol ol {
+  list-style-type: lower-alpha;
+}
+
+ol ol ol ol ol ol {
+  list-style-type: lower-roman;
+}
+
+/* specific element styles */
+ul, ol {
+  ul, ol {
+    margin-top: 0;
+  }
+}
+
+pre {
+  font-family: $(font_family_code);
+  overflow: auto;
+}
+
+/* figures */
+figure {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-content: stretch;
+}
+
+figcaption {
+  padding: 0.5em;
+  margin-top: 0.5em;
+  text-align: left;
+  font-size: 0.8em;
+  background: $(color_shade);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* blockquotes */
+blockquote {
+  padding: 1em;
+
+  >.author {
+    display: block;
+    margin-top: 1rem;
+    font-style: italic;
+    text-align: right;
+
+    &:before {
+      display: inline;
+      content: '\2015';
+    }
+  }
+}
+
+/* asides and figures */
+img {
+  max-width: 100%;
+}
+
+dt {
+  font-weight: bold;
+  font-size: 0.8em;
+}
+
+dd {
+  margin-left: 1em;
+}
+
+ol, ul {
+  padding-left: 1em;
+}
+
+.incidental {
+  font-size: 0.8em;
+  opacity: 0.9;
+  line-height: $(line_height_compact);
+}
+
+/* code */
+code, .code-highlighted {
+  font-family: $(font_family_code);
+}
+
+span.code-highlighted {
+  display: inline-block;
+  background: $(color_shade);
+  padding: 0 0.25em;
+  border-radius:$(border_radius_accent);
+}
+
+/* table base styles */
+table {
+  font-size: $(font_size_small);
+  line-height: $(line_height_compact);
+}
+
+th, td {
+  padding: 0.25em 0.5em;
+}
+
+th {
+  font-weight: bold;
+}

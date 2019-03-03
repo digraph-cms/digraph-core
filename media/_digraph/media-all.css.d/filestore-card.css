@@ -1,0 +1,48 @@
+.filestore-card {
+  background: $(color_shade);
+
+  .filestore-thumbnail {
+    display: flex;
+    align-items: center;
+    line-height: $(line_height_compact);
+
+    .filestore-icon {
+      font-size: 3em;
+      line-height: 1em;
+      img {
+        display:block;
+        height:1em;
+      }
+    }
+
+    .filestore-filename {
+      padding-left: 0.5em;
+    }
+    &:hover {
+      background:$(color_shade);
+    }
+  }
+
+  a {
+    text-decoration: none;
+
+    &:hover .filestore-filename {
+      text-decoration: underline;
+    }
+  }
+
+  dl {
+    font-size: 0.8em;
+  }
+}
+
+figure .filestore-card {
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  margin: 0;
+}
+
+.form-ordering-item .filestore-card {
+  margin: 0;
+}

@@ -1,0 +1,8 @@
+/*
+Styles for a extralarge-size breakpoint
+ */
+body,
+table,
+.Form .Container.class-Content .class-ContentTextarea {
+  font-size: $(font_size_extralarge);
+}

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+  <head>
+    <title>{% include 'digraph/title.twig' %}</title>
+    {% include 'digraph/head.twig' %}
+  </head>
+
+  <body>
+    <div id="page-wrapper">
+      {% include 'digraph/areas.twig' with {areas:helper.areas} %}
+    </div>
+
+    <script src="{{url.base}}digraph-foot.js"></script>
+  </body>
+
+</html>

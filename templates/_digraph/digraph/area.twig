@@ -1,0 +1,13 @@
+{% if helper.exists("areas/"~area ~ "-before.twig") %}
+  {% include 'digraph/area.twig' with {area:area ~ '-before'} only %}
+{% endif %}
+
+<div class="digraph-area" id="digraph-{{area}}">
+  <div class="digraph-area-wrapper">
+    {% include 'areas/' ~ area ~ '.twig' %}
+  </div>
+</div>
+
+{% if helper.exists("areas/"~area ~ "-after.twig") %}
+  {% include 'digraph/area.twig' with {area:area ~ '-after'} only %}
+{% endif %}

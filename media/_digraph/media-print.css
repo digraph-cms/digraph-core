@@ -1,0 +1,32 @@
+/*
+This file contains CSS that will be used in print only
+ */
+body,
+table,
+.Form .Container.class-Content .class-ContentTextarea {
+  font-size: $(font_size_print);
+}
+
+#masthead-screen {
+  display: none;
+}
+
+#masthead-print {
+  display: block;
+}
+
+#digraph-body {
+  a:after {
+    content: " ("attr(href) ") ";
+    font-size: 0.8em;
+    font-weight: normal;
+  }
+
+  aside, figure {
+    max-width: 50%;
+    float: right;
+    clear: right;
+    margin-left: 0.5rem;
+    margin-top: 0;
+  }
+}

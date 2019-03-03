@@ -13,7 +13,7 @@ $logs = $l->list();
 tr.log-entry,
 tr.log-entry a,
 tr.log-entry a:hover {
-    color:#fff;
+    color:#fff !important;
 }
 tr.log-level-DEBUG {
     background-color:#3B3B3B;

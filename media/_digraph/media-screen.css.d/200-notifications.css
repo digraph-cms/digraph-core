@@ -1,0 +1,27 @@
+.notification {
+  @include .digraph-block-card;
+  background: #888;
+  color: #fff;
+  line-height: $(line_height_compact);
+}
+
+.notification a {
+  color: #fff !important;
+  font-weight: bold;
+}
+
+.notification-confirmation {
+  background-color: $(color_confirmation);
+}
+
+.notification-notice {
+  background-color: $(color_notice);
+}
+
+.notification-warning {
+  background-color: $(color_warning);
+}
+
+.notification-error {
+  background-color: $(color_error);
+}

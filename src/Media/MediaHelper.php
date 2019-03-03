@@ -7,13 +7,30 @@ use Digraph\Urls\Url;
 
 class MediaHelper extends AbstractHelper
 {
-    protected $mimes = null;
+    protected $mimes;
 
-    public function get($search)
+    public function importPaths($search = null)
+    {
+        if ($search !== null) {
+            $search = '/'.$search;
+        }
+        $searches = [];
+        foreach (array_reverse($this->cms->helper('templates')->theme()) as $theme) {
+            foreach (array_reverse($this->cms->config['media.paths']) as $path) {
+                $searches[] = $path.'/_themes/'.$theme.$search;
+            }
+        }
+        foreach (array_reverse($this->cms->config['media.paths']) as $path) {
+            $searches[] = $path.'/_digraph'.$search;
+        }
+        return $searches;
+    }
+
+    public function get($search, $raw=false)
     {
         //load from cache if possible
         if ($this->cms->config['media.get_cache_ttl']) {
-            $cacheID = 'MediaHelper.get.'.md5($search);
+            $cacheID = 'MediaHelper.get.'.md5(serialize([$search,$raw]));
             $cache = $this->cms->cache();
             if ($cache->hasItem($cacheID)) {
                 return $cache->getItem($cacheID)->get();
@@ -28,33 +45,24 @@ class MediaHelper extends AbstractHelper
             $argString = $search->argString();
             $search = preg_replace('/\/$/', '', $search->pathString());
         }
-        //search in media paths
-        foreach (array_reverse($this->cms->config['media.paths']) as $path) {
-            $path .= '/'.$search;
-            if (is_file($path)) {
-                $result = $this->prepare($path);
-                break;
+        //search in media paths and theme paths
+        $dfiles = [];
+        $ext = preg_replace('/^.+\./', '', $search);
+        $searches = $this->importPaths($search);
+        foreach ($searches as $key => $path) {
+            if (!$result && is_file($path)) {
+                $result = $path;
+            }
+            if (is_dir($path.'.d')) {
+                foreach (glob($path.'.d/*.'.$ext) as $f) {
+                    $dfiles[basename($f).$key] = $f;
+                }
             }
         }
-        //search in theme paths
-        if (!$result) {
-            $searches = [];
-            foreach (array_reverse($this->cms->helper('templates')->theme()) as $theme) {
-                $searches[] = '_themes/'.$theme.'/'.$search;
-            }
-            $searches[] = '_digraph/'.$search;
-            foreach ($searches as $search) {
-                foreach (array_reverse($this->cms->config['media.paths']) as $path) {
-                    $path .= '/'.$search;
-                    if (is_file($path)) {
-                        $result = $this->prepare($path);
-                        break;
-                    }
-                }
-                if ($result) {
-                    break;
-                }
-            }
+        //prepare
+        if ($result) {
+            ksort($dfiles);
+            $result = $this->prepare($result, null, null, $dfiles, $raw);
         }
         //save to cache and return
         if ($this->cms->config['media.get_cache_ttl']) {
@@ -66,9 +74,9 @@ class MediaHelper extends AbstractHelper
         return $result;
     }
 
-    public function getContent($search)
+    public function getContent($search, $raw=false)
     {
-        if ($res = $this->get($search)) {
+        if ($res = $this->get($search, $raw)) {
             if (isset($res['content'])) {
                 return $res['content'];
             } else {
@@ -80,57 +88,38 @@ class MediaHelper extends AbstractHelper
 
     protected function prepare_text_css($out)
     {
-        $original = $content = file_get_contents($out['path']);
-        //preprocess theme
-        $content = preg_replace_callback(
-            '/\\/\*{theme\:([^\}]+)\}\*\//',
-            function ($matches) {
-                $out = [];
-                $name = $matches[1];
-                foreach ($this->cms->helper('templates')->theme() as $theme) {
-                    $out[] = "/*{include:_themes/$theme/$name.css}*/";
-                }
-                return implode(PHP_EOL, $out);
-            },
-            $content
-        );
-        //preprocess bundles
-        $content = preg_replace_callback(
-            '/\\/\*{bundle\:([^\}]+)\}\*\//',
-            function ($matches) {
-                $name = $matches[1];
-                if ($bundle = $this->cms->config['templates.cssbundles.'.$name]) {
-                    $out = ['/* begin bundle: '.$name.' */'];
-                    foreach ($bundle as $file) {
-                        $out[] = '/*{include:'.$file.'}*/';
+        $original = file_get_contents($out['path']);
+        $content = @$out['content']?$out['content']:$original;
+        //preprocess imports
+        while (preg_match('/@import "(.+)"( (.+))?;/', $content)) {
+            $content = preg_replace_callback(
+                '/@import "(.+)"( (.+))?;/',
+                function ($matches) {
+                    $file = $matches[1];
+                    $media = @trim($matches[3]);
+                    $content = $this->getContent($file, true);
+                    if ($content !== null) {
+                        if ($media) {
+                            $content = "@media $media {".PHP_EOL.$content.PHP_EOL."}";
+                        }
+                        $content = '/* import "'.$file.'" '.@$media.' */'.PHP_EOL.$content.PHP_EOL;
+                        return $content;
+                    } else {
+                        return '/* import couldn\'t find '.$file.' */';
                     }
-                    $out[] = '/* end bundle: '.$name.' */';
-                    return implode(PHP_EOL, $out);
-                }
-                return '/* NOTICE: bundle '.$name.' not found */';
-            },
-            $content
-        );
-        //preprocess files
-        $content = preg_replace_callback(
-            '/\\/\*{include\:([^\}]+)\}\*\//',
-            function ($matches) {
-                $name = $matches[1];
-                if (!($file = $this->cms->config['templates.css.'.$name])) {
-                    $file = $name;
-                }
-                if ($content = $this->getContent($file)) {
-                    $out = ['/* begin include: '.$name.' */'];
-                    $out[] = $content;
-                    $out[] = '/* end include: '.$name.' */';
-                    return implode(PHP_EOL, $out);
-                }
-                return '/* NOTICE: file '.$name.' not found */';
-            },
-            $content
-        );
-        //run through template helper
+                },
+                $content
+            );
+        }
+        //run through template helper (that means we can do twig inside css!)
         $content = $this->cms->helper('templates')->renderString($content, $this->fields());
+        //run through css crush
+        if ($this->cms->config['media.css.crush-enabled']) {
+            $content = csscrush_string(
+                $content,
+                $this->cms->config['media.css.crush-options']
+            );
+        }
         //set content
         if ($original != $content) {
             $out['content'] = $content;
@@ -140,7 +129,8 @@ class MediaHelper extends AbstractHelper
 
     protected function prepare_application_javascript($out)
     {
-        $original = $content = file_get_contents($out['path']);
+        $original = file_get_contents($out['path']);
+        $content = @$out['content']?$out['content']:$original;
         //preprocess theme
         $content = preg_replace_callback(
             '/\\/\*{theme\:([^\}]+)\}\*\//',
@@ -218,22 +208,33 @@ class MediaHelper extends AbstractHelper
         return mime_content_type($filename);
     }
 
-    protected function prepare($file, $mime=null, $filename=null)
+    protected function prepare($file, $mime=null, $filename=null, $dfiles=[], $raw=false)
     {
         if (!$filename) {
             $filename = basename($file);
         }
         //set mime from extension list
-        $mime = $this->mime($filename);
+        if (!$mime) {
+            $mime = $this->mime($filename);
+        }
         //set up default output
         $out = [
             'path' => $file,
             'mime' => $mime,
             'filename' => basename($file)
         ];
+        //if there are dfiles, load it all together
+        if ($dfiles) {
+            $content = [file_get_contents($file)];
+            foreach ($dfiles as $df) {
+                $content[] = '/* '.$out['filename'].'.d/'.basename($df).' */';
+                $content[] = file_get_contents($df);
+            }
+            $out['content'] = implode(PHP_EOL, $content);
+        }
         //check for handler function
         $fn = 'prepare_'.preg_replace('/[^a-z]/', '_', $mime);
-        if (method_exists($this, $fn)) {
+        if (!$raw && method_exists($this, $fn)) {
             $out = $this->$fn($out);
         }
         //return output
