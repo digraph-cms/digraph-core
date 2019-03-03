@@ -1,0 +1,3 @@
+@mixin digraph-card_PRINT {
+  border:1px dotted #999;
+}

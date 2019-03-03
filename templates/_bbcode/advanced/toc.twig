@@ -1,0 +1,12 @@
+<ul class="toc-{{noun['dso.id']}}">
+  {% for item in noun.children() %}
+    <li class="toc-{{item['dso.id']}}">
+      {{item.link()|raw}}
+      {% if item.children() %}
+        {% include '_bbcode/advanced/toc.twig' with {
+          'noun' : item
+        } %}
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>

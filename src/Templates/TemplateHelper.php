@@ -34,6 +34,14 @@ class TemplateHelper extends AbstractHelper
         return $vars;
     }
 
+    public function areas()
+    {
+        //TODO: make these extend by them name
+        $areas = $this->cms->config['theme.areas._digraph'];
+        ksort($areas);
+        return $areas;
+    }
+
     public function cssUrls()
     {
         $urls = $this->cms->config['templates.css'];

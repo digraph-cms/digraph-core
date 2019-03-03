@@ -1,0 +1,62 @@
+.filestore-card {
+  padding: 1em;
+  background: #f6f6f6;
+  box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.15);
+  margin: 0.5rem 0;
+  line-height: 1.2em;
+  font-family: sans-serif;
+  text-align: center;
+}
+
+figure .filestore-card {
+  padding:0;
+  background:transparent;
+  box-shadow:none;
+  margin:0;
+}
+
+.filestore-card .filestore-icon {
+  display: block;
+  font-size: 3em;
+  height: 1em;
+}
+
+.filestore-card .filestore-icon img {
+  height: 1em;
+}
+
+.filestore-card dl {
+  margin: 0;
+  margin-top: 0.5em;
+}
+
+.filestore-card dd {
+  margin: 0;
+}
+
+.form-ordering-item .filestore-card {
+  margin:0;
+}
+
+.form-ordering-item.deleted .filestore-card {
+  background:#fcc;
+}
+
+.form-ordering-item.dragging .filestore-card {
+  background:#cdf;
+}
+
+/*
+ styling just for cards in form fields
+*/
+.Form .filestore-card {
+  text-align:left;
+  padding: 0.5em;
+}
+
+.Form .filestore-card .filestore-icon {
+  display:inline-block;
+  font-size:2em;
+  vertical-align:middle;
+  margin-right:0.25em;
+}

@@ -1,0 +1,18 @@
+* {
+  background: transparent !important;
+  color: #000 !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+#digraph-actionbar,
+#digraph-navbar,
+#digraph-footer,
+#digraph-meta {
+  display: none;
+}
+
+/* cards */
+.digraph-card, pre, blockquote, aside, figure, address {
+  @include digraph-card_PRINT;
+}

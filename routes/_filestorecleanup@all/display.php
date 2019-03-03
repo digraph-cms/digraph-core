@@ -75,7 +75,7 @@ $form['text'] = new \Formward\Fields\DisplayOnly('');
 $form['text']->content(array_reduce(
     $deleted,
     function ($c, $i) use ($s) {
-        $content = '<div class="filestore-metacard">';
+        $content = '<div class="digraph-card filestore-card">';
         $content .= $s->string(
             'filestore-cleanup.cardcontent',
             [

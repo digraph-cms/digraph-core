@@ -388,19 +388,32 @@ paths:
   storage: ${paths.site}/storage
 
 theme:
+  # page areas
+  areas:
+    _digraph: [actionbar,masthead,navbar,meta,body,footer]
+  # theme variables
   variables:
     _digraph:
-      color_link: '#03f'
-      color_link_visited: '#c0c'
-      color_link_hover: '#f90'
+      breakpoint_large: 70em
+      breakpoint_medium: 30em
+      breakpoint_normal: 50em
+      color_confirmation: '#2E7D32'
+      color_error: '#b71c1c'
       color_link_active: '#c00'
+      color_link_hover: '#f90'
+      color_link_visited: '#c0c'
+      color_link: '#03f'
+      color_notice: '#1A78C2'
+      color_warning: '#E65100'
       font_family_body: sans-serif
-      font_family_headers: serif
       font_family_code: monospace
-      font_size_base: 14pt/1.4
-      spacing_base: 1rem
-      heading_size: 2
+      font_family_headers: serif
+      font_size_base: 14pt
       heading_ratio: 0.9
+      heading_size: 2
+      line_height_base: 1.5
+      line_height_compact: 1.3
+      spacing_base: 1rem
 
 # template/display configuration options
 templates:
@@ -589,6 +602,7 @@ mungerhooks:
 
 media:
   css:
+    crush-enabled: true
     crush-options:
       minify: false
       cache: false
@@ -628,7 +642,7 @@ package:
       messages: []
     fields:
       page_title: ${page_name}
-      favicon: ${url.base}favicon/favicon.ico
+      favicon: ${url.base}favicon.ico
     request:
       namespace: public
     response:

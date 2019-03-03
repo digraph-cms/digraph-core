@@ -29,11 +29,11 @@ class MediaHelper extends AbstractHelper
         return $searches;
     }
 
-    public function get($search)
+    public function get($search, $raw=false)
     {
         //load from cache if possible
         if ($this->cms->config['media.get_cache_ttl']) {
-            $cacheID = 'MediaHelper.get.'.md5($search);
+            $cacheID = 'MediaHelper.get.'.md5(serialize([$search,$raw]));
             $cache = $this->cms->cache();
             if ($cache->hasItem($cacheID)) {
                 return $cache->getItem($cacheID)->get();
@@ -65,7 +65,7 @@ class MediaHelper extends AbstractHelper
         //prepare
         if ($result) {
             ksort($dfiles);
-            $result = $this->prepare($result, null, null, $dfiles);
+            $result = $this->prepare($result, null, null, $dfiles, $raw);
         }
         //save to cache and return
         if ($this->cms->config['media.get_cache_ttl']) {
@@ -77,9 +77,9 @@ class MediaHelper extends AbstractHelper
         return $result;
     }
 
-    public function getContent($search)
+    public function getContent($search, $raw=false)
     {
-        if ($res = $this->get($search)) {
+        if ($res = $this->get($search, $raw)) {
             if (isset($res['content'])) {
                 return $res['content'];
             } else {
@@ -94,31 +94,35 @@ class MediaHelper extends AbstractHelper
         $original = file_get_contents($out['path']);
         $content = @$out['content']?$out['content']:$original;
         //preprocess imports
-        $content = preg_replace_callback(
-            '/@import "(.+)"( (.+))?;/',
-            function ($matches) {
-                $file = $matches[1];
-                $media = @trim($matches[3]);
-                $content = $this->getContent($file);
-                if ($content !== null) {
-                    if ($media) {
-                        $content = "@media $media {".PHP_EOL.$content.PHP_EOL."}";
+        while (preg_match('/@import "(.+)"( (.+))?;/', $content)) {
+            $content = preg_replace_callback(
+                '/@import "(.+)"( (.+))?;/',
+                function ($matches) {
+                    $file = $matches[1];
+                    $media = @trim($matches[3]);
+                    $content = $this->getContent($file, true);
+                    if ($content !== null) {
+                        if ($media) {
+                            $content = "@media $media {".PHP_EOL.$content.PHP_EOL."}";
+                        }
+                        $content = '/* import "'.$file.'" '.@$media.' */'.PHP_EOL.$content.PHP_EOL;
+                        return $content;
+                    } else {
+                        return '/* import couldn\'t find '.$file.' */';
                     }
-                    $content = '/* '.$matches[0].' */'.PHP_EOL.$content.PHP_EOL;
-                    return $content;
-                } else {
-                    return '/* couldn\'t find '.$file.' */';
-                }
-            },
-            $content
-        );
+                },
+                $content
+            );
+        }
         //run through template helper (that means we can do twig inside css!)
         $content = $this->cms->helper('templates')->renderString($content, $this->fields());
         //run through css crush
-        $content = csscrush_string(
-            $content,
-            $this->cms->config['media.css.crush-options']
-        );
+        if ($this->cms->config['media.css.crush-enabled']) {
+            $content = csscrush_string(
+                $content,
+                $this->cms->config['media.css.crush-options']
+            );
+        }
         //set content
         if ($original != $content) {
             $out['content'] = $content;
@@ -128,7 +132,8 @@ class MediaHelper extends AbstractHelper
 
     protected function prepare_application_javascript($out)
     {
-        $original = $content = file_get_contents($out['path']);
+        $original = file_get_contents($out['path']);
+        $content = @$out['content']?$out['content']:$original;
         //preprocess theme
         $content = preg_replace_callback(
             '/\\/\*{theme\:([^\}]+)\}\*\//',
@@ -206,7 +211,7 @@ class MediaHelper extends AbstractHelper
         return mime_content_type($filename);
     }
 
-    protected function prepare($file, $mime=null, $filename=null, $dfiles=[])
+    protected function prepare($file, $mime=null, $filename=null, $dfiles=[], $raw=false)
     {
         if (!$filename) {
             $filename = basename($file);
@@ -232,7 +237,7 @@ class MediaHelper extends AbstractHelper
         }
         //check for handler function
         $fn = 'prepare_'.preg_replace('/[^a-z]/', '_', $mime);
-        if (method_exists($this, $fn)) {
+        if (!$raw && method_exists($this, $fn)) {
             $out = $this->$fn($out);
         }
         //return output

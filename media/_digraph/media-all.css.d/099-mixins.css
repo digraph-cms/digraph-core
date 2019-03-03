@@ -1,0 +1,16 @@
+.digraph-block {
+  margin: $(spacing_base) 0;
+
+  &:first-child {
+    margin-top: 0 !important;
+  }
+}
+
+.digraph-block-card {
+  @include .digraph-block;
+  padding: $(spacing_base);
+  box-sizing: border-box;
+  page-break-inside: avoid;
+  line-height: $(line_height_compact);
+  background-color: rgba(127, 127, 127, 0.1);
+}

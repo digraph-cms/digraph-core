@@ -1,0 +1,27 @@
+.breadcrumb {
+  @include .digraph-block;
+  font-size: 0.8em;
+  margin-left:auto;
+  margin-right:auto;
+  line-height:$(line_height_compact);
+}
+
+.breadcrumb-item {
+  display:inline-block;
+}
+
+.breadcrumb-item:after {
+  content: '\00BB';
+  display: inline-block;
+}
+
+.breadcrumb-item:last-of-type a {
+  text-decoration: inherit !important;
+  color: inherit !important;
+  font-style:italic;
+  opacity:0.75;
+}
+
+.breadcrumb-item:last-of-type:after {
+  display: none;
+}

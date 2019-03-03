@@ -1,0 +1,10 @@
+/*
+Styles for a normal-size breakpoint
+ */
+#digraph-body aside, #digraph-body figure {
+  max-width: 50%;
+  float: right;
+  clear: right;
+  margin-left: 0.5rem;
+  margin-top: 0;
+}

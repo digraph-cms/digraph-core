@@ -1,0 +1,383 @@
+.Form {
+  border-color: #eee;
+  background: #fff;
+  font-family: sans-serif;
+  font-size: 1rem;
+}
+
+.Form .hidden {
+  display:none !important;
+}
+
+.Form .Container {
+  border: 1px solid #ccc;
+  padding: 0 0.5rem;
+  margin: 1rem 0;
+  position: relative;
+  background: #eee;
+}
+
+.Form .inline-children > .FieldWrapper,
+.Form .inline-children > .Container {
+  display:inline-block;
+  vertical-align:top;
+  margin-top:0;
+  margin-bottom:0;
+}
+
+.Form .tips .tip {
+  font-size: 0.75em;
+  opacity: 0.8;
+  line-height: 1.2em;
+  margin:0.5rem 0;
+}
+
+.Form .tips .tip:first-child {
+  margin-top:0;
+}
+
+.Form .tips {
+  margin-top:0.5rem;
+}
+
+.Form .validation-messages {
+  /* background: #c33;
+  padding: 0 0.5rem;
+  border: 1px solid #c33;
+  margin: 0.5rem 0; */
+}
+
+.Form .validation-message {
+  background: #c33;
+  padding: 0.5rem;
+  margin: 0.5rem 0;
+  color: #900;
+}
+
+.Form .validation-message:first-child {
+  margin-top:0;
+}
+
+.Form .validation-message a {
+  text-decoration: none;
+  color: #fff !important;
+}
+
+.Form .validation-message a:after {
+  display: none;
+}
+
+.FieldWrapper {
+  margin: 0.5rem 0;
+}
+
+.FieldWrapper[data-validation="invalid"] {
+  background: #fee;
+}
+
+.FieldWrapper-Button {
+  padding: 0;
+  background: transparent;
+}
+
+.Form>label {
+  font-size: 1.5rem !important;
+}
+
+.Form label {
+  font-weight: bold;
+  display: block;
+  line-height:1.2em;
+}
+
+.Form .Container>label {
+  margin: 0.5rem 0;
+}
+
+.Form label:first-child {
+  font-size:0.8rem;
+}
+
+.FieldWrapper-required label:after {
+  display: inline;
+  content: '\2055';
+  color: #39f;
+  margin-left: 0.5rem;
+  font-size: 0.75rem;
+  vertical-align: middle;
+}
+
+.Form input, .Form textarea, .Form select {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.Form textarea {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  height: 10em;
+}
+
+.Form .Button {
+  display: inline-block;
+  font-size: 1.5rem;
+  padding: 1rem;
+  background: #1E88E5;
+  border: 0;
+  box-shadow: 0;
+  color: #fff;
+  font-weight: bold;
+}
+
+.Form .Field.class-Checkbox {
+  display: none;
+}
+
+.Form .Field.class-Checkbox+label {
+  display: inline-block;
+  vartical-align: middle;
+  cursor: pointer;
+  font-weight: normal;
+  opacity:0.5;
+  font-size:0.9rem;
+}
+
+.Form .Field.class-Checkbox+label:hover {
+  opacity:1;
+}
+
+.Form .Field.class-Checkbox+label:hover:before {
+  color: #06c;
+}
+
+.Form .Field.class-Checkbox+label:before {
+  font-family: 'Font Awesome 5 Free';
+  content: '\f0c8\00A0';
+  display: inline-block;
+  opacity: 0.25;
+}
+
+.Form .Field.class-Checkbox:checked+label {
+  opacity:1;
+}
+
+.Form .Field.class-Checkbox:checked+label:before {
+  content: '\f14a\00A0';
+  color: #090;
+  opacity: 1;
+}
+
+.Form .Button:hover {
+  background: #2196F3;
+  box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.5);
+}
+
+.Form .Button:active {
+  background: #2979FF;
+  box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.5);
+}
+
+.Form .Button:disabled {
+  background: #ccc;
+}
+
+.Form .Button.Submit {
+  background: #43A047;
+}
+
+.Form .Button.Submit:hover {
+  background: #4CAF50;
+}
+
+.Form .Button.Submit:active {
+  background: #00C853;
+}
+
+.Form .FieldWrapper-hidden,
+.Form .FieldWrapper.hidden,
+.Form .Container-hidden,
+.Form .Container.hidden {
+  display: none !important;
+}
+
+/*
+Slug fields
+ */
+.Form .Container.class-Slug {
+  padding-bottom: 0.5rem;
+}
+
+.Form .Container.class-Slug>label {
+  margin-bottom: 0;
+}
+
+.Form .Container.class-Slug .FieldWrapper {
+  display: inline;
+  margin: 0;
+}
+
+.Form .Container.class-Slug .FieldWrapper-class-Input label {
+  display: none;
+}
+
+.Form .Container.class-Slug input.class-Input {
+  display: inline-block;
+  width: auto;
+  max-width: 20em;
+  vertical-align: middle;
+}
+
+.Form .Container.class-Slug .FieldWrapper-class-Checkbox {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/*
+DateAndTime fields
+ */
+.Form .Container.class-DateAndTime {
+  border: 0;
+  padding: 0;
+}
+
+.Form .Container.class-DateAndTime>label {
+  margin-bottom: 0;
+}
+
+.Form .Container.class-DateAndTime input {
+  width: auto;
+  display: inline-block;
+}
+
+/*
+Publication settings field
+ */
+.Form .Container.class-Published>label {
+  display: none;
+}
+
+.Form .Container.class-Published {
+  padding-bottom: 0.5rem;
+}
+
+.Form .Container.class-Published>.FieldWrapper {
+  margin-bottom: 0;
+}
+
+.Form .Container.class-Published>.Container {
+  display: inline-block;
+  margin: 0;
+}
+
+/*
+progressively-enhanced ordering field
+ */
+.FieldWrapper-formward-ordering-field.js-active textarea {
+  display:none;
+}
+
+.FieldWrapper-formward-ordering-field ul {
+  margin: 0;
+  padding: 0;
+  list-style-type:none;
+}
+
+.FieldWrapper-formward-ordering-field li {
+  margin: 0.25em 0;
+  padding: 0.25em;
+  background:#eee;
+  transition:background-color 0.25s linear;
+  cursor: grab;
+  position:relative;
+}
+
+.FieldWrapper-formward-ordering-field li a {
+  color:inherit;
+}
+
+.FieldWrapper-formward-ordering-field li.deleted {
+  background-color:#fee;
+  color:#600;
+  text-decoration: line-through;
+}
+
+.FieldWrapper-formward-ordering-field li.dragging {
+  color:#329;
+  background-color:#def;
+  cursor: grabbing;
+}
+
+.FieldWrapper-formward-ordering-field .delete-button {
+  display:none;
+  cursor:pointer;
+  position:absolute;
+  top:0.25em;
+  right:0.25em;
+  bottom:0.25em;
+  color:#c00;
+  overflow:hidden;
+  text-indent:100%;
+  white-space:nowrap;
+  width:1.5em;
+}
+
+.FieldWrapper-formward-ordering-field .delete-button:hover {
+  background:#c00;
+  color:#fff;
+}
+
+.FieldWrapper-formward-ordering-field .delete-button:after {
+  content:"\00D7";
+  text-indent:0;
+  text-align:center;
+  display:block;
+  position:absolute;
+  top:0;
+  left:0;
+  bottom:0;
+  width:1.5em;
+}
+
+.FieldWrapper-formward-ordering-field.FieldWrapper-deletion-allowed .delete-button {
+  display:block;
+}
+
+.FieldWrapper-formward-ordering-field.FieldWrapper-deletion-allowed li {
+  padding-right:2em;
+}
+
+.FieldWrapper-formward-ordering-field .add-item {
+  display:none;
+}
+
+.FieldWrapper-formward-ordering-field.FieldWrapper-addition-allowed .add-item {
+  display:block;
+}
+
+.form-ordering-item .digraph-card {
+  margin:0;
+}
+
+/* content fields */
+.Form .Container.class-Content {
+  background:transparent;
+  border-color:#607D8B;
+}
+.Form .Container.class-Content .class-ContentTextarea {
+  background:transparent;
+  color:inherit;
+  padding:0;
+  border:0;
+  min-height:300px;
+}
+.Form .Container.class-Content .FieldWrapper-class-ContentTextarea label {
+  display:none;
+}
+.Form .Container.class-Content .FieldWrapper-class-ContentFilter label {
+  display: none;
+}

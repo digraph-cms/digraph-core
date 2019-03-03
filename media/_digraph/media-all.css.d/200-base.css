@@ -1,8 +1,24 @@
 /* font selections and sizes */
+body {
+  margin:0;
+  padding:0;
+}
+
 body,
 .Form .Container.class-Content .class-ContentTextarea {
   font-size: $(font_size_base);
   font-family: $(font_family_body);
+  line-height: $(line_height_base);
+}
+
+.digraph-area {
+  margin:$(spacing_base);
+}
+
+.digraph-area:after {
+  content: "";
+  clear: both;
+  display: table;
 }
 
 a {
@@ -28,7 +44,7 @@ a[href]:active {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: $(font_family_headers);
-  line-height: 1.2em;
+  line-height: $(line_height_compact);
 }
 
 h1 {
@@ -56,16 +72,8 @@ h4 {
 }
 
 /* spacing */
-h1, h2, h3, h4, h5, h6, p, aside, figure, ul, ol, blockquote, pre, address {
-  margin: $(spacing_base) 0;
-
-  &:first-child {
-    margin-top: 0;
-  }
-
-  &:last-child {
-    margin-bottom: 0;
-  }
+h1, h2, h3, h4, h5, h6, p, ul, ol, address {
+  @include .digraph-block;
 }
 
 /* ol nesting rules */
@@ -94,13 +102,10 @@ ol ol ol ol ol ol {
 }
 
 /* specific element styles */
-ul ul, ul ol, ol ul, ol ol, li ul, li ol {
-  margin-top: 0;
-}
-
-blockquote, pre, aside, figure {
-  box-sizing: border-box;
-  padding: 0.5em;
+ul, ol {
+  ul, ol {
+    margin-top: 0;
+  }
 }
 
 code {
@@ -114,11 +119,15 @@ pre {
 
 figure {
   text-align: center;
-}
+  > img {
+    display: block;
+    margin: 0 auto;
+  }
+  dd,dt {
+    padding:0;
+    margin:0;
+  }
 
-figure>img {
-  display: block;
-  margin: 0 auto;
 }
 
 figcaption {
@@ -146,64 +155,13 @@ blockquote {
 }
 
 /* asides and figures */
-aside, figure {
-  font-size: 0.8em;
-
-  .block {
-    max-width: 100%;
-    width: 100%;
-    float: none;
-    margin-left: 0;
-  }
-}
-
-figure.block {
-  text-align: center;
-}
-
 figure img {
   max-width: 100%;
   height: auto !important;
 }
 
-aside {
-  h1, h2, h3, h4, h5, h6 {
-    font-style: italic;
-  }
-}
-
 img {
   max-width: 100%;
-}
-
-/* aria roles */
-*[aria-hidden="true"], *[hidden] {
-  display: none;
-}
-
-/* medium size */
-@media (min-width: 40em) {
-  *[role="main"]:after {
-    content: "";
-    display: block;
-    clear: both;
-  }
-
-  *[role="main"] aside, *[role="main"] figure {
-    max-width: 50%;
-    float: right;
-    clear: right;
-    margin-left: 0.5rem;
-    margin-top: 0;
-  }
-}
-
-figure:last-child, aside:last-child {
-  width: 100%;
-  float: none;
-  max-width: 100%;
-  margin-left: 0;
-  margin-top: 0.5rem;
 }
 
 dt {
@@ -214,12 +172,13 @@ dt {
 .incidental {
   font-size: 0.8em;
   opacity: 0.9;
-  line-height: 1.3em;
+  line-height: $(line_height_compact);
 }
 
 /* table base styles */
 table {
   font-size: $(font_size_base);
+  line-height: $(line_height_compact);
 }
 
 th, td {
