@@ -35,8 +35,8 @@ media:
 templates:
   # templates.theme can be either a single theme name or an array of theme names
   # that will have their css/js included after core code, in the given order
-  # theme: [digraph-basic,digraph-colors-dark]
-  theme: [digraph-basic]
+  theme: [digraph-basic,digraph-colors-dark]
+  # theme: [digraph-basic]
   # Additional paths can be added here, they will be used in the reverse of the
   # order they're listed here
   paths:

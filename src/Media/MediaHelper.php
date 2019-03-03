@@ -15,6 +15,9 @@ class MediaHelper extends AbstractHelper
             $search = '/'.$search;
         }
         $searches = [];
+        foreach (array_reverse($this->cms->config['media.paths']) as $path) {
+            $searches[] = $path.$search;
+        }
         foreach (array_reverse($this->cms->helper('templates')->theme()) as $theme) {
             foreach (array_reverse($this->cms->config['media.paths']) as $path) {
                 $searches[] = $path.'/_themes/'.$theme.$search;
@@ -28,15 +31,7 @@ class MediaHelper extends AbstractHelper
 
     public function get($search, $raw=false)
     {
-        //load from cache if possible
-        if ($this->cms->config['media.get_cache_ttl']) {
-            $cacheID = 'MediaHelper.get.'.md5(serialize([$search,$raw]));
-            $cache = $this->cms->cache();
-            if ($cache->hasItem($cacheID)) {
-                return $cache->getItem($cacheID)->get();
-            }
-        }
-        /* build result */
+        //sort out URL
         $result = null;
         $args = [];
         $argString = '';
@@ -44,6 +39,14 @@ class MediaHelper extends AbstractHelper
             $args = $search['args'];
             $argString = $search->argString();
             $search = preg_replace('/\/$/', '', $search->pathString());
+        }
+        //load from cache if possible
+        if ($this->cms->config['media.get_cache_ttl']) {
+            $cacheID = 'MediaHelper.get.'.md5(serialize([$search,$raw]));
+            $cache = $this->cms->cache();
+            if ($cache->hasItem($cacheID)) {
+                return $cache->getItem($cacheID)->get();
+            }
         }
         //search in media paths and theme paths
         $dfiles = [];
