@@ -1,5 +1,5 @@
 {% if helper.exists("areas/"~area ~ "-before.twig") %}
-  {% include 'digraph/area.twig' with {area:area ~ '-before'} only %}
+  {% include 'digraph/area.twig' with {area:area ~ '-before'} %}
 {% endif %}
 
 <div class="digraph-area" id="digraph-{{area}}">
@@ -9,5 +9,5 @@
 </div>
 
 {% if helper.exists("areas/"~area ~ "-after.twig") %}
-  {% include 'digraph/area.twig' with {area:area ~ '-after'} only %}
+  {% include 'digraph/area.twig' with {area:area ~ '-after'} %}
 {% endif %}
