@@ -1,11 +1,11 @@
 /*
   digraph variables in use:
 {% for name,value in helper.variables %}
-  {{name}}: {{value}};
+  {{name}}: {{value|raw}};
 {% endfor %}
 */
 @set {
   {% for name,value in helper.variables %}
-    {{name}}: {{value}};
+    {{name}}: {{value|raw}};
   {% endfor %}
 }
