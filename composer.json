@@ -30,8 +30,7 @@
         "byjoby/digraph-pdf": "dev-master"
     },
     "suggest": {
-        "monolog/monolog": "Required for more advanced/reliable logging",
-        "mpdf/mpdf": "Required to use PDF features"
+        "monolog/monolog": "Required for more advanced/reliable logging"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
