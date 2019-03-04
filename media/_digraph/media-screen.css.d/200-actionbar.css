@@ -1,6 +1,7 @@
 #digraph-actionbar {
   margin: 0;
   padding: 0;
+  background: $(color_actionbar_bg);
 }
 
 .digraph-actionbar {
