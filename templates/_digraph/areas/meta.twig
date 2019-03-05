@@ -1,2 +1,6 @@
 {% include 'digraph/notifications.twig' %}
-{% include 'digraph/breadcrumb.twig' with {url:package.url()} %}
+{% if package.response.status < 400 %}
+  {% include 'digraph/breadcrumb.twig' with {
+    url : package.url()
+  } %}
+{% endif %}
