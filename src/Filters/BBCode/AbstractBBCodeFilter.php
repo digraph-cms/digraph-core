@@ -34,10 +34,10 @@ abstract class AbstractBBCodeFilter extends AbstractFilter
         if (!$fields['noun']) {
             return false;
         }
-        return $t->render(
+        return trim($t->render(
             $template,
             $fields
-        );
+        ));
     }
 
     public function tagsProvided()
