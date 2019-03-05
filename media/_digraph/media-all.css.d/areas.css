@@ -1,5 +1,4 @@
-#digraph-masthead,
-#digraph-masthead-and-navbar {
+#digraph-masthead {
   h1 {
     font-family: $(font_family_body);
     margin: 0;

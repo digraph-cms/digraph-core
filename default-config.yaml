@@ -394,7 +394,7 @@ theme:
   js-head:
     _digraph:
       100-digraph-1-init: ${url.base}digraph-init.js
-      100-digraph-2-user: ${url.base}digraph-user.js
+      100-digraph-2-user: ${url.base}_user/user.js
       100-digraph-3-main: ${url.base}digraph-head.js
   js-foot:
     _digraph:

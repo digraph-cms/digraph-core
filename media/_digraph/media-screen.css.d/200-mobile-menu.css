@@ -1,0 +1,67 @@
+#digraph-mobile-menu.closed {
+  .toggle-button {
+    color: $(color_accent);
+  }
+}
+
+#digraph-mobile-menu {
+  margin: 0;
+  padding: 0;
+  background-color: $(color_shade);
+  text-align: left;
+  border-top: 0.1em solid $(color_accent);
+  border-bottom: 0.1em solid $(color_accent);
+
+  .toggle-button {
+    display: block;
+    font-weight: bold;
+    cursor: pointer;
+    padding-left: $(spacing_base);
+    color: $(color_foreground);
+
+    &:hover {
+      color: $(color_foreground);
+      background-color: $(color_background);
+    }
+
+    &:before {
+      content: '\f0c9';
+      font-family: "Font Awesome 5 Free";
+      display: inline-block;
+      font-size: 1.5em;
+      vertical-align: middle;
+      padding-right: 0.5em;
+    }
+  }
+
+  .links {
+    overflow: hidden;
+    opacity: 1;
+    transition: all 0.6s;
+
+    &.closed {
+      opacity: 0;
+    }
+  }
+
+  .menuitem {
+    display: block;
+    padding: 0.5em;
+
+    &.selected {
+      background: $(color_background);
+      color: $(color_foreground);
+      border-left: 0.5em solid $(color_accent);
+
+      &.active-path {
+        border-color: s-adjust($(color_accent), -50);
+      }
+    }
+
+    &:hover, &:active {
+      color: $(color_foreground);
+      background-color: $(color_background);
+      border-color: s-adjust($(color_accent), 50);
+    }
+  }
+}

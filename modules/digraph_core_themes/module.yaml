@@ -1,6 +1,4 @@
 theme:
-  areas:
-    digraph-basic: [actionbar,masthead-and-navbar,meta,body,footer]
   variables:
     digraph-colors-dark:
       color_background: '#111'
