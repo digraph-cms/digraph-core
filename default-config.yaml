@@ -388,6 +388,17 @@ paths:
   storage: ${paths.site}/storage
 
 theme:
+  css:
+    _digraph:
+      100-digraph: ${url.base}digraph.css
+  js-head:
+    _digraph:
+      100-digraph-1-init: ${url.base}digraph-init.js
+      100-digraph-2-user: ${url.base}digraph-user.js
+      100-digraph-3-main: ${url.base}digraph-head.js
+  js-foot:
+    _digraph:
+      100-digraph: ${url.base}digraph-foot.js
   # page areas
   areas:
     _override: []
@@ -443,12 +454,6 @@ templates:
   twigconfig:
     cache: ${paths.cache}/twig
     auto_reload: true
-  # css urls to be linked in the head
-  css: []
-  # js files are included at either the head or foot of the page
-  js:
-    head: []
-    foot: []
 
 routing:
   paths:

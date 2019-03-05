@@ -28,6 +28,21 @@ class TemplateHelper extends AbstractHelper
         return $theme;
     }
 
+    public function css()
+    {
+        return $this->getThemeConfig('css');
+    }
+
+    public function jsHead()
+    {
+        return $this->getThemeConfig('js-head');
+    }
+
+    public function jsFoot()
+    {
+        return $this->getThemeConfig('js-foot');
+    }
+
     protected function getThemeConfig($name)
     {
         $c = new FlatArray($this->cms->config['theme.'.$name.'._digraph']);
@@ -37,7 +52,9 @@ class TemplateHelper extends AbstractHelper
             }
         }
         $c->merge($this->cms->config['theme._override'], null, true);
-        return $c->get();
+        $c = $c->get();
+        ksort($c);
+        return array_filter($c);
     }
 
     public function variables()
@@ -56,24 +73,6 @@ class TemplateHelper extends AbstractHelper
             }
         }
         return $this->cms->config['theme.areas._digraph'];
-    }
-
-    public function cssUrls()
-    {
-        $urls = $this->cms->config['templates.css'];
-        return $urls;
-    }
-
-    public function headJSUrls()
-    {
-        $urls = $this->cms->config['templates.js.head'];
-        return $urls;
-    }
-
-    public function footJSUrls()
-    {
-        $urls = $this->cms->config['templates.js.foot'];
-        return $urls;
     }
 
     public function link($url, $text=null)

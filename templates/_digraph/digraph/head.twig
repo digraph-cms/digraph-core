@@ -3,10 +3,14 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport" />
 <link rel="stylesheet" href="{{url.base}}digraph.css" />
 <link rel="icon" href="{{favicon}}" />
+<!-- css -->
+{% for file in helper.css %}
+    <link rel="stylesheet" href="{{file}}" />
+{% endfor %}
 <!-- head javascript -->
-<script src="{{url.base}}digraph-init.js"></script>
-<script src="{{url.base}}_user/user.js"></script>
-<script src="{{url.base}}digraph-head.js"></script>
+{% for file in helper.jsHead %}
+    <script src="{{file}}"></script>
+{% endfor %}
 <!-- Load current noun id into digraph JS object if it exists -->
 {% if package.noun.dso.id %}
 <script>digraph.noun = "{{package.noun.dso.id}}";</script>

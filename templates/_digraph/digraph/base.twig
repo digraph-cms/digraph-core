@@ -29,7 +29,10 @@
       {% block page_wrapper_end %}{% endblock %}
     </div>
 
-    <script src="{{url.base}}digraph-foot.js"></script>
+    <!-- foot javascript -->
+    {% for file in helper.jsFoot %}
+        <script src="{{file}}"></script>
+    {% endfor %}
     {% block body_end %}{% endblock %}
   </body>
 
