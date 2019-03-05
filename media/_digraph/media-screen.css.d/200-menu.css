@@ -1,3 +1,13 @@
+#digraph-navbar {
+  padding-left: 0;
+  padding-right: 0;
+
+  .digraph-area-wrapper {
+    padding-left: $(spacing_base);
+    padding-right: $(spacing_base);
+  }
+}
+
 #digraph-mobile-menu.closed {
   .toggle-button {
     color: $(color_foreground);

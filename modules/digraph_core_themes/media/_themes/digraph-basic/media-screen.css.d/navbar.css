@@ -1,7 +1,10 @@
 #digraph-navbar {
   margin: 0;
-  padding-left: $(spacing_base);
-  padding-right: $(spacing_base);
+
+  .digraph-area-wrapper {
+    padding-left: $(spacing_base);
+    padding-right: $(spacing_base);
+  }
 }
 
 .navbar, #digraph-navbar {
