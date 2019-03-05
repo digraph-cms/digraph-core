@@ -31,7 +31,10 @@ $(() => {
   //switch to mobile menu
   let mobileMenu = () => {
     menuState = 'mobile';
+    //hide standard menu
+    $standardMenu.attr('style','overflow:hidden;margin:0;padding:0;border:0;outline:0;');
     $standardMenu.height(0);
+    //copy links and show mobile menu
     $mobileMenuLinks.empty();
     $mobileMenuLinks.append($standardMenu.find('.menuitem').clone());
     $mobileMenuLinks.height($mobileMenuLinks[0].scrollHeight);
@@ -40,7 +43,7 @@ $(() => {
 //switch to standard menu
 let standardMenu = () => {
   menuState = 'standard';
-  $standardMenu.height(false);
+  $standardMenu.attr('style','');
   $mobileMenu.hide();
 };
 //event listeners, plus immediate check
