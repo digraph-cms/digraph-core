@@ -111,8 +111,8 @@ actionbar:
   title:
     default: Actions
     guest: Account
-  adder_cue: Add child here...
-  adder_item: Add !type here
+  adder_cue: Add...
+  adder_item: Add !type
 filters:
   default: Default (Markdown)
   text-safe: Basic text

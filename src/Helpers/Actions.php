@@ -17,7 +17,7 @@ class Actions extends AbstractHelper
         //make a list of all types
         $types = [];
         foreach ($this->cms->config['types.content'] as $type => $class) {
-            if ($type == 'default') {
+            if (!$class || $type == 'default') {
                 continue;
             }
             $types[] = $type;

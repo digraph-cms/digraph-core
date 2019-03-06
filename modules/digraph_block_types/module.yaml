@@ -27,7 +27,7 @@ permissions:
       - deny all
     # allow adding blocks under blockareas
     blockarea/block:
-      - allow group webmaster
+      - allow group webmaster, editor
 
 actions:
   categorical:

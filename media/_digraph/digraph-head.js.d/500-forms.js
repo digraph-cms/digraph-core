@@ -105,8 +105,13 @@ function sortablelist_dragEnd(e) {
 function sortablelist_dragStart(e) {
   e.dataTransfer.effectAllowed = "move";
   var noun = '';
+  var $target = $(e.target);
+  if (!$target.is('li.form-ordering-item')) {
+    $target = $target.parents('li.form-ordering-item');
+  }
+  console.log($target);
   if (digraph.noun) noun = ':' + digraph.noun;
-  e.dataTransfer.setData("text/plain", "[file" + noun + " id=\"" + e.target.getAttribute('data-value') + "\"]");
+  e.dataTransfer.setData("text/plain", "[file" + noun + " id=\"" + $target.attr('data-value') + "\"]");
   _sortablelist_el = e.target;
   _sortablelist_el.classList.add('dragging');
 }
