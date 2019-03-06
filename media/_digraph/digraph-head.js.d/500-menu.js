@@ -1,7 +1,7 @@
 $(() => {
   let $standardMenu = $('#digraph-navbar').eq(0);
   let $mobileMenu = $('<div id="digraph-mobile-menu" class="digraph-area closed"></div>');
-  let $mobileMenuButton = $('<a class="toggle-button">Menu</a>');
+  let $mobileMenuButton = $('<a class="toggle-button">{{cms.helper('strings').string('navigation.mobilemenu.toggle')|raw}}</a>');
   let $mobileMenuLinks = $('<div class="links closed"></div>');
   $mobileMenu.append($mobileMenuButton);
   $mobileMenu.append($mobileMenuLinks);

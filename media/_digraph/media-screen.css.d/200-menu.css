@@ -16,8 +16,12 @@
       color: $(color_link_hover);
     }
 
-    &:after {
-      content: '\f0c9';
+    .closed {
+      display:block !important;
+    }
+
+    .open {
+      display:none;
     }
   }
 }
@@ -40,16 +44,20 @@
     font-size: 1.5em;
     text-align: right;
 
+    .closed {
+      display:none;
+    }
+
+    .open {
+      display:block;
+    }
+
     &:hover {
       color: $(color_foreground);
       background-color: $(color_background);
     }
 
-    &:after {
-      content: '\f00d';
-      font-family: "Font Awesome 5 Free";
-      display: inline-block;
-      vertical-align: baseline;
+    i {
       width: 1.5em;
       text-align: center;
     }

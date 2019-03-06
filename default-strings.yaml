@@ -3,6 +3,9 @@ date:
     date: F j, Y
     datetime: F j, Y, g:i a T
 clearcache: 'Successfully cleared caches for the following pages:'
+navigation:
+  mobilemenu:
+    toggle: <span class="open">Menu <i class="fas far fa-window-close"></i></span><span class="closed">Menu <i class="fas fa-bars"></i></span>
 logging:
   nomonolog: No Monolog Logger is configured. Logging to the internal Digraph logger is still possible, but for better security and more comprehensive logging reliability you should configure a Monolog Logger.
 filestore-cleanup:
