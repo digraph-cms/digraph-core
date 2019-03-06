@@ -423,7 +423,8 @@ theme:
       color_link_visited: '#6d4b6d'
       color_link: '#2345cd'
       color_notice: '#1A78C2'
-      color_shade: rgba(127,127,127,0.075)
+      color_shade: rgba(31,31,31,0.1)
+      color_lightbox_shade: rgba(223,223,223,0.9)
       color_warning: '#E65100'
       font_family_body: sans-serif
       font_family_code: monospace

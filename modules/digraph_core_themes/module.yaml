@@ -3,8 +3,9 @@ theme:
     digraph-colors-dark:
       color_background: '#111'
       color_foreground: '#eee'
+      color_lightbox_shade: rgba(31,31,31,0.9)
       color_link_active: '#f33'
       color_link_hover: '#fc3'
       color_link_visited: '#edc'
       color_link: '#9cf'
-      color_shade: rgba(127,127,127,0.2)
+      color_shade: rgba(223,223,223,0.1)
