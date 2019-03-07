@@ -13,10 +13,12 @@ class Slug extends Container
     const CHARS = '$-_.+!*\'(),';
 
     protected $noun;
+    protected $cms;
 
-    public function __construct(string $label, string $name=null, FieldInterface $parent=null)
+    public function __construct(string $label, string $name=null, FieldInterface $parent=null, &$cms=null)
     {
         parent::__construct($label, $name, $parent);
+        $this->cms = $cms;
         $this['parent_slug'] = new Checkbox('[parent]/');
         $this['parent_slug']->default(true);
         $this['my_slug'] = new Input('');

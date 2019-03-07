@@ -1,1 +1,15 @@
 @import "digraph/codemirror.css";
+
+/* fixes for the version of font awesome that is bundled */
+.fa.fa-picture-o {
+  @include .fa-image;
+  &:before {
+    @include .fa-image:before;
+  }
+}
+.fa.fa-header {
+  @include .fa-heading;
+  &:before {
+    @include .fa-heading:before;
+  }
+}

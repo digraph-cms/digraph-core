@@ -12,6 +12,7 @@
   margin: $(spacing_base) 0;
   position: relative;
   background: $(color_shade);
+  border-radius: $(border_radius_accent);
 
   .Container, .FieldWrapper {
     &:last-child {
@@ -55,10 +56,11 @@
 }
 
 .Form .validation-message {
-  background: #c33;
+  background: $(color_error);
   padding: 0.5rem;
   margin: 0.5rem 0;
-  color: #900;
+  color: #fff;
+  border-radius: $(border_radius_accent);
 }
 
 .Form .validation-message:first-child {
@@ -70,16 +72,13 @@
   color: #fff !important;
 }
 
-.Form .validation-message a:after {
-  display: none;
-}
-
 .FieldWrapper {
   margin: $(spacing_base) 0;
 }
 
 .FieldWrapper[data-validation="invalid"] {
-  background: #fee;
+  border: 1px solid $(color_error);
+  color: $(color_error);
 }
 
 .FieldWrapper-Button {
@@ -103,12 +102,13 @@
 
 .Form label:first-child {
   font-size: 0.8rem;
+  margin-top: 0;
 }
 
 .FieldWrapper-required label:after {
   display: inline;
   content: '\2055';
-  color: #39f;
+  color: $(color_accent);
   margin-left: 0.5rem;
   font-size: 0.75rem;
   vertical-align: middle;
@@ -118,9 +118,10 @@
   display: block;
   box-sizing: border-box;
   width: 100%;
-  border: 1px solid #ccc;
+  border: 1px solid $(color_shade);
   padding: 0.5rem;
   font-size: 1.2rem;
+  border-radius: $(border_radius_accent);
 }
 
 .Form textarea {
@@ -265,6 +266,7 @@ progressively-enhanced ordering field
   cursor: grab;
   position: relative;
   color: $(color_foreground);
+  border-radius: $(border_radius_accent);
 }
 
 .FieldWrapper-formward-ordering-field li a {
