@@ -1,6 +1,8 @@
 .Form {
   font-family: sans-serif;
-  font-size: 1rem;
+  font-size: 0.8em;
+  line-height: $(line_height_compact);
+  color: $(color_foreground);
 }
 
 .Form .hidden {
@@ -8,7 +10,7 @@
 }
 
 .Form .Container {
-  padding: 0.5rem;
+  padding: 0.5em;
   margin: $(spacing_base) 0;
   position: relative;
   background: $(color_shade);
@@ -37,7 +39,7 @@
   font-size: 0.75em;
   opacity: 0.8;
   line-height: 1.2em;
-  margin: 0.5rem 0;
+  margin: 0.5em 0;
 }
 
 .Form .tips .tip:first-child {
@@ -45,21 +47,22 @@
 }
 
 .Form .tips {
-  margin-top: 0.5rem;
-}
-
-.Form .validation-messages {
-  /* background: #c33;
-  padding: 0 0.5rem;
-  border: 1px solid #c33;
-  margin: 0.5rem 0; */
+  margin-top: 0.5em;
 }
 
 .Form .validation-message {
   background: $(color_error);
-  padding: 0.5rem;
-  margin: 0.5rem 0;
+  padding: 0.5em;
+  margin: 0.5em 0;
   color: #fff;
+  border-radius: $(border_radius_accent);
+}
+
+.Form .FieldWrapper[data-validation="invalid"],
+.Form .Container[data-validation="invalid"] {
+  background: $(color_warning);
+  color: #fff;
+  padding: 0.5em;
   border-radius: $(border_radius_accent);
 }
 
@@ -76,18 +79,13 @@
   margin: $(spacing_base) 0;
 }
 
-.FieldWrapper[data-validation="invalid"] {
-  border: 1px solid $(color_error);
-  color: $(color_error);
-}
-
 .FieldWrapper-Button {
   padding: 0;
   background: transparent;
 }
 
 .Form>label {
-  font-size: 1.5rem !important;
+  font-size: 1.5em !important;
 }
 
 .Form label {
@@ -97,11 +95,11 @@
 }
 
 .Form .Container>label {
-  margin: 0.5rem 0;
+  margin: 0.5em 0;
 }
 
 .Form label:first-child {
-  font-size: 0.8rem;
+  font-size: 0.8em;
   margin-top: 0;
 }
 
@@ -109,8 +107,8 @@
   display: inline;
   content: '\2055';
   color: $(color_accent);
-  margin-left: 0.5rem;
-  font-size: 0.75rem;
+  margin-left: 0.5em;
+  font-size: 0.75em;
   vertical-align: middle;
 }
 
@@ -119,8 +117,8 @@
   box-sizing: border-box;
   width: 100%;
   border: 1px solid $(color_shade);
-  padding: 0.5rem;
-  font-size: 1.2rem;
+  padding: 0.5em;
+  font-size: 1.2em;
   border-radius: $(border_radius_accent);
 }
 
@@ -141,7 +139,7 @@
   cursor: pointer;
   font-weight: normal;
   opacity: 0.5;
-  font-size: 0.9rem;
+  font-size: 0.9em;
 }
 
 .Form .Field.class-Checkbox+label:hover {
@@ -180,7 +178,7 @@
 Slug fields
  */
 .Form .Container.class-Slug {
-  padding-bottom: 0.5rem;
+  padding-bottom: 0.5em;
 }
 
 .Form .Container.class-Slug>label {
@@ -233,7 +231,7 @@ Publication settings field
 }
 
 .Form .Container.class-Published {
-  padding-bottom: 0.5rem;
+  padding-bottom: 0.5em;
 }
 
 .Form .Container.class-Published>.FieldWrapper {
