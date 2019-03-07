@@ -83,7 +83,7 @@ class LinkRule extends Noun
     {
         $link = new A();
         $link->attr('href', $this->linkUrl($text, $args));
-        $link->addClass('digraph-link');
+        $link->addClass('digraph-link-intercept');
         $link->attr('data-digraph-link', $this->url(null, $args));
         $link->content = $this->name();
         if ($text) {

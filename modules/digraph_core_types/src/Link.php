@@ -34,7 +34,7 @@ class Link extends Noun
     {
         $link = new A();
         $link->attr('href', $this['url']);
-        $link->addClass('digraph-link');
+        $link->addClass('digraph-link-intercept');
         $link->attr('data-digraph-link', $this->url());
         $link->content = $this->name();
         if ($text) {
