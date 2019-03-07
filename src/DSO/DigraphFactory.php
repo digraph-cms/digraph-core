@@ -75,7 +75,7 @@ class DigraphFactory extends Factory
         if ($class = $this->cms->config['types.'.$this->name.'.'.$type]) {
             return $class;
         }
-        throw new \Exception("No class could be found for factory ".$this->name.", type ".$data['digraph']['type'], 1);
+        throw new \Exception("No class could be found for factory ".$this->name.", type ".$data['dso']['type'], 1);
     }
 
     public function &cms(CMS &$set=null) : CMS
