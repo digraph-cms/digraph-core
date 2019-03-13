@@ -56,39 +56,25 @@ class Versioned extends Noun
 
     public function availableVersions()
     {
+        /* pull list of child IDs from edge helper, create IN clause to get them */
+        $cids = $this->cms()->helper('edges')->children($this['dso.id']);
+        if (!$cids) {
+            //short-circuit if edge helper has no children for this noun
+            return [];
+        }
+        $cids = '${dso.id} in (\''.implode('\',\'', $cids).'\') AND ';
+        /* run search */
         $search = $this->factory->search();
-        $search->where('${digraph.parents_string} LIKE :pattern AND ${dso.type} = :versiontype');
+        $search->where($cids.'${dso.type} = :versiontype');
         return $this->sortVersions($search->execute([
-            ':pattern' => '%|'.$this['dso.id'].'|%',
             ':versiontype' => static::VERSION_TYPE
         ]));
     }
 
     public function currentVersion()
     {
-        //search for the most recent with a publication start date
-        $search = $this->factory->search();
-        $search->where('${digraph.parents_string} LIKE :pattern AND ${dso.type} = :versiontype AND ${digraph.published.force} is null AND ${digraph.published.start} is not null');
-        $search->order('${digraph.published.start} desc');
-        $r = $search->execute([
-            ':pattern' => '%|'.$this['dso.id'].'|%',
-            ':versiontype' => static::VERSION_TYPE
-        ]);
-        //search for the most recent creation date
-        $search = $this->factory->search();
-        $search->where('${digraph.parents_string} LIKE :pattern AND ${dso.type} = :versiontype');
-        $search->order('${digraph.dso.created.date} desc');
-        $r = $r+$search->execute([
-            ':pattern' => '%|'.$this['dso.id'].'|%',
-            ':versiontype' => static::VERSION_TYPE
-        ]);
-        //sort the results
-        $r = $this->sortVersions($r);
-        //return the most recent
-        if ($r) {
-            return reset($r);
-        }
-        return null;
+        $vs = $this->availableVersions();
+        return $vs?array_shift($vs):null;
     }
 
     public function formMap(string $actions) : array

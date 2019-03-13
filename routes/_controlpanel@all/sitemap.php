@@ -5,7 +5,7 @@ $root = $package['url.args.root'];
 if (!$root) {
     echo "<ul>";
     $search = $this->cms()->factory()->search();
-    $search->where('${digraph.parents.0} is null');
+    $search->where('${digraph.noparent}');
     $search->order('${digraph.modified.date} desc');
     foreach ($search->execute() as $root) {
         sitemap($root, $cms);
@@ -28,7 +28,7 @@ function sitemap($obj, &$cms, $max=5, $depth=1)
     if ($obj) {
         echo "<li>".$obj->url(null, [], true)->html();
         echo " <a href=\"".$obj->url('sitemap', [], true)."\">...</a>";
-        $children = $obj->children();
+        $children = $obj->children(null, true);
         if ($depth < $max && $children) {
             echo "<ul>";
             foreach ($children as $child) {

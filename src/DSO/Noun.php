@@ -19,11 +19,16 @@ class Noun extends DSO implements NounInterface
         $this->resetChanges();
     }
 
+    public function cms()
+    {
+        return $this->factory->cms();
+    }
+
     public function invalidateCache($recurseUp=null, $recurseDown=null)
     {
         $invalidated = [];
         //invalidate my own cache
-        $this->factory->cms()->invalidateCache($this['dso.id']);
+        $this->cms()->invalidateCache($this['dso.id']);
         $invalidated[] = $this['dso.id'];
         //recurse up through parents
         if ($recurseUp && $recurseUp !== $this['dso.id']) {
@@ -65,10 +70,10 @@ class Noun extends DSO implements NounInterface
         return parent::add();
     }
 
-    public function update() : bool
+    public function update(bool $sneaky = false) : bool
     {
         $this->invalidateCache(true, true);
-        return parent::update();
+        return parent::update($sneaky);
     }
 
     public function template($verb=null)
@@ -81,7 +86,7 @@ class Noun extends DSO implements NounInterface
         if (!$this['digraph.body']) {
             return null;
         }
-        return $this->factory->cms()->helper('filters')->filterContentField(
+        return $this->cms()->helper('filters')->filterContentField(
             $this['digraph.body'],
             $this['dso.id']
         );
@@ -99,7 +104,7 @@ class Noun extends DSO implements NounInterface
     public function fileUrl($id=null, $args=[])
     {
         if ($id === null) {
-            $fs = $this->factory->cms()->helper('filestore');
+            $fs = $this->cms()->helper('filestore');
             $files = $fs->list($this, static::FILESTORE_PATH);
             if (!$files) {
                 return null;
@@ -150,7 +155,7 @@ class Noun extends DSO implements NounInterface
 
     public function isEditable()
     {
-        return $this->factory->cms()->helper('permissions')->checkUrl($this->url('edit'));
+        return $this->cms()->helper('permissions')->checkUrl($this->url('edit'));
     }
 
     public function parentUrl($verb='display')
@@ -158,62 +163,76 @@ class Noun extends DSO implements NounInterface
         if ($verb != 'display') {
             return $this->url();
         }
-        if ($parent = @$this->parents()[0]) {
+        if ($parent = $this->parent()) {
             return $parent->url();
         }
         return null;
     }
 
-    public function addParent($dso)
+    public function addParent($pid)
     {
-        $this->unshift('digraph.parents', $dso);
-        $parents = [];
-        foreach (array_unique($this['digraph.parents']) as $i) {
-            $parents[] = $i;
-        }
-        unset($this['digraph.parents']);
-        $this['digraph.parents'] = $parents;
-        $this['digraph.parents_string'] = '|'.implode('|', $this['digraph.parents']).'|';
+        $this->cms()->helper('edges')->create($pid, $this['dso.id']);
+    }
+
+    public function addChild($cid)
+    {
+        $this->cms()->helper('edges')->create($this['dso.id'], $cid);
     }
 
     public function parents()
     {
-        if (!$this['digraph.parents']) {
+        $pids = $this->cms()->helper('edges')->parents($this['dso.id']);
+        if (!$pids) {
+            //short-circuit if edge helper has no parents for this noun
             return [];
         }
-        $parents = [];
-        foreach ($this['digraph.parents'] as $id) {
-            $parents[] = $this->factory->cms()->read($id);
-        }
-        return $parents;
+        $pids = '${dso.id} in (\''.implode('\',\'', $pids).'\')';
+        $search = $this->factory->search();
+        $search->where($pids);
+        return $search->execute();
     }
 
     public function parent()
     {
-        if (!$this['digraph.parents']) {
-            return null;
+        $pids = $this->cms()->helper('edges')->parents($this['dso.id']);
+        foreach ($pids as $pid) {
+            if ($parent = $this->cms()->read($pid)) {
+                return $parent;
+            }
         }
-        return $this->factory->cms()->read($this['digraph.parents.0']);
+        return null;
     }
 
-    public function children(string $sortRule = null)
+    public function children(string $sortRule = null, $includeAll = false)
     {
+        /* pull list of child IDs from edge helper, create IN clause to get them */
+        $cids = $this->cms()->helper('edges')->children($this['dso.id']);
+        if (!$cids) {
+            //short-circuit if edge helper has no children for this noun
+            return [];
+        }
+        $cids = '${dso.id} in (\''.implode('\',\'', $cids).'\')';
         /* set up search */
         $search = $this->factory->search();
         $exclusions = '';
-        $params = [':pattern'=>'%|'.$this['dso.id'].'|%'];
         /* exclude types from config */
-        if ($this->factory->cms()->config['excluded_child_types']) {
-            $e = [];
-            foreach ($this->factory->cms()->config['excluded_child_types'] as $key => $value) {
-                if ($value) {
-                    $e[] = "'$key'";
+        if (!$includeAll) {
+            if ($this->factory->cms()->config['excluded_child_types']) {
+                $e = [];
+                foreach ($this->factory->cms()->config['excluded_child_types'] as $key => $value) {
+                    if ($value) {
+                        $e[] = "'$key'";
+                    }
                 }
+                $exclusions .= ' AND ${dso.type} NOT IN ('.implode(',', $e).')';
             }
-            $exclusions .= '${dso.type} NOT IN ('.implode(',', $e).') AND ';
         }
-        /* main search, look using LIKE in digraph.parents_string */
-        $search->where($exclusions.'${digraph.parents_string} LIKE :pattern');
+        /* main search */
+        //put CIDs clause first, so that the rest is operating on as small a
+        //result set as possible
+        // var_dump($cid.$exclusions);
+        // exit();
+        $search->where($cids.$exclusions);
         /* if no sort rule, pull it from our own config */
         if (!$sortRule) {
             $sortRule = $this['digraph.order.mode'];
@@ -240,7 +259,7 @@ class Noun extends DSO implements NounInterface
         $rule = $cms->config["child_sorting.$sortRule"];
         $search->order($rule);
         /* execute */
-        $children = $search->execute($params);
+        $children = $search->execute();
         /* manually sort */
         if ($manualSort) {
             // add all manually-specified ids to $manuallySorted, removing from

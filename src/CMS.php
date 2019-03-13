@@ -59,6 +59,10 @@ class CMS
         $this->initializeMungers();
     }
 
+    public function readMulti(array $ids) : array
+    {
+    }
+
     public function read(string $q = null, bool $slugs = true)
     {
         if (!$q) {
@@ -184,6 +188,14 @@ class CMS
             }
         }
         return $this->valueFunction('driver/'.$name, $set);
+    }
+
+    public function &pdo(string $name = 'default', \PDO &$set=null) : ?\PDO
+    {
+        if ($set) {
+            $this->log('Setting PDO '.$name);
+        }
+        return $this->valueFunction('pdo/'.$name, $set);
     }
 
     public function &factory(string $name = 'content', DSOFactoryInterface &$set=null) : ?DSOFactoryInterface

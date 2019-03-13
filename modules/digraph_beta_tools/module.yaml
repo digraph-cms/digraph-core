@@ -1,0 +1,22 @@
+permissions:
+  url:
+    _beta/*: [deny all,allow group webmaster]
+
+actions:
+  categorical:
+    _controlpanel:
+      beta: _beta/display
+    _beta:
+      edges: _beta/edgemigrator
+
+strings:
+  urls:
+    common:
+      _beta/display: Beta/migration tools
+      _beta/edgemigrator: Migrate from noun-managed edges to edge helper
+
+navigation:
+  parents:
+    common:
+      _beta/display: _controlpanel/display
+      _beta/*: _beta/display

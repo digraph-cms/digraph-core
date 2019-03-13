@@ -90,12 +90,9 @@ class FormHelper extends AbstractHelper
         return $form;
     }
 
-    public function addNoun(string $type, string $parent = null) : Form
+    public function addNoun(string $type) : Form
     {
         $noun = $this->cms->factory()->create(['dso.type'=>$type]);
-        if ($parent) {
-            $noun->addParent($parent);
-        }
         $form = new Form('', 'add-'.$type);
         $form->cms($this->cms);
         $form->addClass('addNoun');

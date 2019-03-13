@@ -10,7 +10,7 @@ function sitemap($obj, &$cms, $max=5, $depth=1)
     if ($obj) {
         echo "<li>".$obj->url(null, [], true)->html();
         echo " <a href=\"".$obj->url('sitemap', [], true)."\">...</a>";
-        $children = $obj->children();
+        $children = $obj->children(null, true);
         if ($depth < $max && $children) {
             echo "<ul>";
             foreach ($children as $child) {

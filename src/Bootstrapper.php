@@ -33,28 +33,29 @@ class Bootstrapper
         //set up new CMS
         $cms = new CMS($config);
         $cms->log('Bootstrapper::bootstrap starting');
-        //set up drivers
+        //set up bare PDOs
+        foreach ($config['bootstrap.pdos'] as $k => $cred) {
+            $pdo = new \PDO(
+                $cred['dsn'],
+                @$cred['username'],
+                @$cred['password'],
+                @$cred['options']
+            );
+            $cms->pdo($k, $pdo);
+        }
+        //set up Destructr drivers
         foreach ($config['bootstrap.drivers'] as $k => $c) {
             $class = $c['class'];
-            $cred = $config['bootstrap.credentials.'.$c['credentials']];
+            $pdo = $cms->pdo($c['pdo']);
             if ($class == 'default') {
-                $driver = DriverFactory::factory(
-                    $cred['dsn'],
-                    @$cred['username'],
-                    @$cred['password'],
-                    @$cred['options']
-                );
+                $driver = DriverFactory::factoryFromPDO($pdo);
             } else {
-                $driver = new $class(
-                    $cred['dsn'],
-                    @$cred['username'],
-                    @$cred['password'],
-                    @$cred['options']
-                );
+                $driver = new $class();
+                $driver->pdo($pdo);
             }
             $cms->driver($k, $driver);
         }
-        //set up factories
+        //set up Destructr factories
         foreach ($config['bootstrap.factories'] as $k => $c) {
             $class = $c['class'];
             $factory = new $class(

@@ -8,6 +8,36 @@ urls:
   aliases:
     '?arg_parent/': home
 
+# bootstrap settings are used by the Bootstrapper class, and are then removed
+# from the config used in the created CMS. This is a nice secure way to handle
+# setting up drivers and factories, and you should use it if at all possible.
+bootstrap:
+  pdos:
+    default:
+      dsn: sqlite:${paths.storage}/digraph.sqlite
+    logging:
+      dsn: sqlite:${paths.storage}/logging.sqlite
+  drivers:
+    default:
+      class: default
+      pdo: default
+    logging:
+      class: default
+      pdo: logging
+  factories:
+    content:
+      class: \Digraph\DSO\ContentFactory
+      driver: default
+      table: digraph_content
+    users:
+      class: \Digraph\Users\UserFactory
+      driver: default
+      table: digraph_users
+    logging:
+      class: \Digraph\Logging\LogFactory
+      driver: logging
+      table: digraph_log
+
 actions:
   uiforguests: true
   categorical:
@@ -568,6 +598,7 @@ helpers:
   classes:
     actions: Digraph\Helpers\Actions
     blocks: Digraph\Blocks\BlockHelper
+    edges: Digraph\Edges\EdgeHelper
     filestore: Digraph\FileStore\FileStoreHelper
     filters: Digraph\Filters\FilterHelper
     forms: Digraph\Forms\FormHelper
@@ -613,6 +644,7 @@ forms:
 
 defaultnoun:
   digraph:
+    noparent: true
     body:
       filter: default
       text: ""
@@ -677,32 +709,3 @@ package:
       mime: text/html
       charset: utf-8
       disposition: inline
-
-# bootstrap settings are used by the Bootstrapper class, and are then removed
-# from the config used in the created CMS. This is a nice secure way to handle
-# setting up drivers and factories, and you should use it if at all possible.
-bootstrap:
-  credentials:
-    default: []
-    logging:
-      dsn: sqlite:${paths.storage}/logging.sqlite
-  drivers:
-    default:
-      class: default
-      credentials: default
-    logging:
-      class: default
-      credentials: logging
-  factories:
-    content:
-      class: \Digraph\DSO\ContentFactory
-      driver: default
-      table: digraph_content
-    users:
-      class: \Digraph\Users\UserFactory
-      driver: default
-      table: digraph_users
-    logging:
-      class: \Digraph\Logging\LogFactory
-      driver: logging
-      table: digraph_log
