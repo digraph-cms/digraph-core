@@ -1,8 +1,9 @@
 <?php
 $package->noCache();
+$token = $cms->helper('session')->getToken('edgemigrator');
 
 /* execute if requested */
-if ($cms->helper('session')->checkToken('edgemigrator', @$_GET['token'])) {
+if (@$_GET['token'] && $cms->helper('session')->checkToken('edgemigrator', @$_GET['token'])) {
     $e = $cms->helper('edges');
     $search = $cms->factory()->search();
     $search->where('${digraph.parents_string} IS NOT null');
@@ -37,7 +38,6 @@ $search = $cms->factory()->search();
 $search->where('${digraph.parents_string} IS NOT null');
 $r = $search->execute();
 if ($r) {
-    $token = $cms->helper('session')->getToken('edgemigrator');
     echo <<<EOT
 <h2>Content in need of migration</h2>
 <p>
