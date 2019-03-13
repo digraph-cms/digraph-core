@@ -53,7 +53,7 @@ class Version extends Page
         $map['001_digraph_title']['label'] = $s->string('version.display_title');
         $map['100_digraph_slug'] = false;
         if ($action == 'add') {
-            if ($parent = $this->parent()) {
+            if ($parent = $this->cms()->package()->noun()) {
                 $map['001_digraph_title']['default'] = $parent->title();
                 if (method_exists($parent, 'currentVersion')) {
                     if ($prev = $parent->currentVersion()) {
@@ -70,11 +70,6 @@ class Version extends Page
                         $s->string('version.warning_unversionedparent')
                     );
                 }
-            } else {
-                //error indicating that there isn't a parent
-                $this->factory->cms()->helper('notifications')->warning(
-                    $s->string('version.warning_noparent')
-                );
             }
         }
         return $map;
