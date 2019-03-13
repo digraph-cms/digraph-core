@@ -20,6 +20,9 @@ permissions:
       - allow group webmaster, editors
     'version/*':
       - allow group webmaster, editors
+    'versioned/edit':
+      - deny all
+      - allow group webmaster
   add:
     # deny adding version under everything
     '*/version':
@@ -70,8 +73,11 @@ strings:
       rules_label: Rules for generating link
   urls:
     proper:
-      '*/versions': version list
       '*/version-diff': compare versions
+      '*/versions': revision list
+      'version/edit': edit revision
+      'versioned/add': add revision
+      'versioned/edit': edit versioned root
 
 defaultnoun:
   dso:
