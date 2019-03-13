@@ -41,6 +41,10 @@ class Versioned extends Noun
     public function actions($links)
     {
         $links['version_list'] = '!id/versions';
+        if ($c = $this->currentVersion()) {
+            $links['edit_currentversion'] = $c['dso.id'].'/edit';
+        }
+        $links['add_revision'] = '!id/add?type='.static::VERSION_TYPE;
         return $links;
     }
 
