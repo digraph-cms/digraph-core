@@ -14,6 +14,7 @@ actions:
     '*': []
     _controlpanel:
       config: _controlpanel/config
+      cron: _cron/display
       filestorecleanup: _filestorecleanup/display
       logging: _logging/display
       sitemap: _controlpanel/sitemap
@@ -361,6 +362,7 @@ navigation:
       '*/*': !noun/display
       '*/display': false
       _controlpanel/display: _controlpanel/display
+      _cron/display: _controlpanel/display
       _filestorecleanup/display: _controlpanel/display
       _logging/display: _controlpanel/display
       _trash/display: _controlpanel/display
