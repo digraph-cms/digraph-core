@@ -22,13 +22,17 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         'url'
     ];
 
-    public function saveLog($message, $level=null)
+    public function saveLog($message, $level=null, $id=null)
     {
-        $id = md5(
-            $this['request.hash'].
-            $this->hash('error').
-            $this->hash('logging.messages')
-        );
+        if (!$id) {
+            $id = md5(
+                $this['request.hash'].
+                $this->hash('error').
+                $this->hash('logging.messages')
+            );
+        } else {
+            $id = md5($id);
+        }
         $this['logging.save'] = $id;
         $this['logging.messages.'.$id] = $message;
         $log = $this->cms->helper('logging')->create($this, $level);

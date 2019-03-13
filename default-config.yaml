@@ -313,6 +313,8 @@ permissions:
       - allow group editor, webmaster
     _controlpanel/sitemap:
       - allow group editor
+    _cron/display:
+      - allow all
   add:
     '*':
       - allow all

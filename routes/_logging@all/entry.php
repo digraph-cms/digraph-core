@@ -26,12 +26,12 @@ $s = $cms->helper('strings');
     <li>Last recorded: <?php echo $s->dateTimeHTML($log['dso.modified.date']); ?></li>
 </ul>
 
-<h2>Users impacted</h2>
+<h2>Users</h2>
 <ul>
 <?php
 foreach ($log['users'] as $a) {
     foreach ($a as $b) {
-        echo @"<li>{$b['id']} at {$b['ip']} {$b['fw']}</li>";
+        echo @"<li>{$b['ip']} {$b['fw']} {$b['id']}<br>{$b['url']}</li>";
     }
 }
  ?>

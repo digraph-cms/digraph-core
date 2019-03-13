@@ -50,7 +50,7 @@ class LogHelper extends \Digraph\Helpers\AbstractHelper
     public function list()
     {
         $search = $this->factory()->search();
-        $search->order('${dso.type} DESC, ${count} DESC, ${dso.modified.date} DESC');
+        $search->order('${count} DESC, ${dso.type} DESC, ${dso.modified.date} DESC');
         return $search->execute();
     }
 
@@ -80,13 +80,14 @@ class LogHelper extends \Digraph\Helpers\AbstractHelper
         }
         //record count
         $entry['count'] = $entry['count']+1;
-        //record user
+        //record user/url
         $u = $this->cms->helper('users');
-        $userKey = "users.".md5($u->id()).'.'.md5($_SERVER['REMOTE_ADDR']);
+        $userKey = "users.".md5($u->id()).'.'.md5($_SERVER['REMOTE_ADDR'].$package->url());
         $entry[$userKey] = [
             'id' => $u->id(),
             'ip' => @$_SERVER['REMOTE_ADDR'],
-            'fw' => @$_SERVER['HTTP_X_FORWARDED_FOR']
+            'fw' => @$_SERVER['HTTP_X_FORWARDED_FOR'],
+            'url' => $package->url().''
         ];
         //save
         if ($new) {
