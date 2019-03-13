@@ -2,7 +2,7 @@
 $package->noCache();
 
 /* execute if requested */
-if ($cms->helper('session')->checkToken('edgemigrator', @$_GET['token'])) {
+if (@$_GET['token'] && $cms->helper('session')->checkToken('edgemigrator', @$_GET['token'])) {
     $e = $cms->helper('edges');
     $search = $cms->factory()->search();
     $search->where('${digraph.parents_string} IS NOT null');
