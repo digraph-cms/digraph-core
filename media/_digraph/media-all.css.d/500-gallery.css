@@ -93,6 +93,7 @@
   border-radius: $(border_radius_accent);
   align-items: center;
   justify-content: center;
+  box-sizing: border-box;
 
   .file {
     height: 100%;
