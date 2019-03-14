@@ -310,6 +310,8 @@ permissions:
       - allow all
     '*/file':
       - allow all
+    '*/gallery-file':
+      - allow all
     '_user/*':
       - allow all
     '*/clearcache':

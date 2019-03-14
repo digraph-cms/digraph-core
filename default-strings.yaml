@@ -87,6 +87,8 @@ forms:
       container: Attached files
       current: ''
       upload: Upload additional files
+  file-bundle:
+    gallery: Display as a gallery instead of a file list. This will enable fancy lightbox displays, but will hide unsupported files from the default view.
   filestore_verb:
     form_title: Reorder/delete files
   digraph_content:
