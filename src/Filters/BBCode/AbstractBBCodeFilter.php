@@ -57,7 +57,9 @@ abstract class AbstractBBCodeFilter extends AbstractFilter
                     $files = glob($path.'*.twig');
                     foreach ($files as $path) {
                         $name = preg_replace('/^.+\/(.+)\.twig$/', '$1', $path);
-                        $tags[] = $name;
+                        if (preg_match('/^[a-z]/', $name)) {
+                            $tags[] = $name;
+                        }
                     }
                 }
             }
@@ -152,7 +154,7 @@ abstract class AbstractBBCodeFilter extends AbstractFilter
     protected function regex($depth=0)
     {
         $regex = '';
-        $regex .= '\[([a-z0-9\-]+)';//open opening tag
+        $regex .= '\[([a-z][a-z0-9\-]*)';//open opening tag
         $regex .= '(:([^\] ]+))?';//context argument
         $regex .= '(=([^\] ]+))?';//bbcode style "equals" argument
         $regex .= '(( +[a-z0-9\-_]+(=.+?)?)*)';//named args

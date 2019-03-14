@@ -134,6 +134,8 @@ urls:
     '*/clearcache': clear cache
     '*/display': !name
     '*/file': download !arg_f
+    '*/file': file
+    '*/gallery-file': file
     '*/order': ordering
     '*/rawdump': raw dump
     '*/rawedit': raw edit

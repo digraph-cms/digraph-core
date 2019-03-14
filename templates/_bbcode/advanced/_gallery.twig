@@ -1,0 +1,7 @@
+<div class="digraph-gallery">
+  {% for img in files %}
+    <a href="{{img.galleryUrl|raw}}">
+      <img src="{{img.imageUrl(thumb)}}"/>
+    </a>
+  {% endfor %}
+</div>

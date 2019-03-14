@@ -8,6 +8,14 @@ if (!$files) {
     );
     return;
 }
-foreach ($files as $f) {
-    echo $f->metacard();
+echo $package->noun()->body();
+
+if ($package->noun()['file-bundle.gallery']) {
+    echo $cms->helper('filters')->filter('bbcode_advanced')->filter(
+        '[gallery /]'
+    );
+} else {
+    foreach ($files as $f) {
+        echo $f->metacard();
+    }
 }

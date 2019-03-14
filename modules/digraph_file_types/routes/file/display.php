@@ -19,6 +19,7 @@ if ($noun['file.showpage'] || $noun->isEditable()) {
             $cms->helper('strings')->string('file.notifications.editbypass')
         );
     }
+    echo $package->noun()->body();
     echo $f->metacard();
     //dislay metadata page and return so that we skip outputting file
     return;

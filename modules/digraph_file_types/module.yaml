@@ -10,10 +10,13 @@ helpers:
 image:
   presets:
     full: []
-    thumbnail:
-      - cover 200 200
-    embed:
-      - resize 800 800
+    gallery-thumb:
+      size: 400 400 cover
+      extension: jpg
+      save:
+        jpeg_quality: 80
+    gallery-full:
+      size: 1200 1200 inset
 
 strings:
   file:

@@ -7,7 +7,7 @@ use Digraph\FileStore\FileStoreFile;
 
 class FileBundle extends Noun
 {
-    const ROUTING_NOUNS = ['filebundle'];
+    const ROUTING_NOUNS = ['file-bundle'];
     const FILESTORE = true;
     const FILESTORE_PATH = 'filefield';
     const FILESTORE_FILE_CLASS = FileStoreFile::class;
@@ -17,11 +17,16 @@ class FileBundle extends Noun
     {
         $s = $this->factory->cms()->helper('strings');
         return [
-            '002-file' => [
+            '502-file' => [
                 'label' => $s->string('forms.file.upload_multi.container'),
                 'class' => 'Digraph\\Forms\\Fields\\FileStoreFieldMulti',
                 'required' => true,
                 'extraConstructArgs' => [static::FILESTORE_PATH]
+            ],
+            '503-gallery' => [
+                'field' => 'file-bundle.gallery',
+                'label' => $s->string('forms.file-bundle.gallery'),
+                'class' => 'Formward\Fields\Checkbox'
             ]
         ];
     }

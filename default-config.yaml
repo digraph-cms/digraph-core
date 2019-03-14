@@ -88,7 +88,6 @@ image:
     dir: ${paths.cache}/image
   preset_base:
     size: 3840 2160 inset
-    strip_exif: true
   presets:
     default: []
     tag-embed:

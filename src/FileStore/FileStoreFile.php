@@ -30,6 +30,11 @@ class FileStoreFile
         $this->time = $e['time'];
     }
 
+    public function exif()
+    {
+        return exif_read_data($this->path());
+    }
+
     public function metaCard($meta = ['time','size'])
     {
         $s = $this->fs->cms()->helper('strings');
@@ -116,6 +121,12 @@ class FileStoreFile
     public function url($args=[])
     {
         return $this->noun->fileUrl($this->uniqid(), $args);
+    }
+
+    public function galleryUrl($args=[])
+    {
+        $args['f'] = $this->uniqid();
+        return $this->noun->url('gallery-file', $args);
     }
 
     public function path()
