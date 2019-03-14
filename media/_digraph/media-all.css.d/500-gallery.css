@@ -27,7 +27,7 @@
 
     >img {
       display: block;
-      width: 100%;
+      max-width: 100%;
       transform: scale(0.95);
       opacity: 0.9;
       transition: all 0.5s ease-in;

@@ -34,6 +34,7 @@ if (@$_GET['token'] && $cms->helper('session')->checkToken('edgemigrator', @$_GE
 }
 
 /* display current state */
+$token = $cms->helper('session')->getToken('edgemigrator');
 $search = $cms->factory()->search();
 $search->where('${digraph.parents_string} IS NOT null');
 $r = $search->execute();
