@@ -20,6 +20,8 @@ class CMS
     protected $values = [];
     protected $readCache = [];
     protected $package;
+    protected $helpers = [];
+    protected $caches = [];
 
     public function __construct(ConfigInterface $config)
     {
@@ -154,9 +156,23 @@ class CMS
         return $this->log;
     }
 
+    public function allHelpers($includeUninstantiated=true)
+    {
+        if ($includeUninstantiated) {
+            $helpers = array_keys($this->config['helpers.classes']);
+        } else {
+            $helpers = [];
+        }
+        $helpers = $helpers + $this->helpers;
+        $helpers = array_unique($helpers);
+        return $helpers;
+    }
+
     public function &helper(string $name, HelperInterface &$set=null) : ?HelperInterface
     {
         if ($set) {
+            $this->helpers[] = $name;
+            $this->helpers = array_unique($this->helpers);
             $this->log('Setting helper '.$name.': '.get_class($set));
         } elseif (!$this->valueFunction('helper/'.$name)) {
             if ($class = $this->config['helpers.classes.'.$name]) {
@@ -212,9 +228,23 @@ class CMS
         return $this->valueFunction('factory/'.$name, $set);
     }
 
+    public function allCaches($includeUninstantiated=true)
+    {
+        if ($includeUninstantiated) {
+            $caches = array_keys($this->config['cache.adapters']);
+        } else {
+            $caches = [];
+        }
+        $caches = $caches + $this->caches;
+        $caches = array_unique($caches);
+        return $caches;
+    }
+
     public function &cache(?string $name = 'default', TagAwareAdapterInterface &$set=null) : ?TagAwareAdapterInterface
     {
         if ($set) {
+            $this->caches[] = $name;
+            $this->caches = array_unique($this->caches);
             $this->log('Setting cache '.$name.': '.get_class($set));
         } elseif (!$this->valueFunction('cache/'.$name)) {
             if ($conf = $this->config['cache.adapters.'.$name]) {
