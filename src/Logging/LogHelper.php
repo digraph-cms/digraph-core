@@ -47,6 +47,27 @@ class LogHelper extends \Digraph\Helpers\AbstractHelper
      */
     public const EMERGENCY = 600;
 
+    public function hook_cron()
+    {
+        $search = $this->cms->factory('logging')->search();
+        $exp = 2*time()-strtotime($this->cms->config['cron.logexpiration']);
+        $search->where('${dso.created.date} < :exp');
+        $result = $search->execute(['exp'=>$exp], null);
+        $deleted = 0;
+        $errors = [];
+        foreach ($result as $l) {
+            if ($l->delete(true)) {
+                $deleted++;
+            } else {
+                $errors[] = 'error deleting '.$l['dso.id'];
+            }
+        }
+        return [
+            'result' => $deleted,
+            'errors' => $errors
+        ];
+    }
+
     public function list()
     {
         $search = $this->factory()->search();

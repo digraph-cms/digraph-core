@@ -8,6 +8,14 @@ urls:
   aliases:
     '?arg_parent/': home
 
+cron:
+  # the ttl to be applied to the cron-running page, used to rate-limit cron runs
+  minttl: 3600
+  # how long complete log entries should last before they are removed by cron
+  # this only applies to the logging database in Digraph, any monolog loggers
+  # will need to be configured separately wherever they are instantiated
+  logexpiration: 30 days
+
 # bootstrap settings are used by the Bootstrapper class, and are then removed
 # from the config used in the created CMS. This is a nice secure way to handle
 # setting up drivers and factories, and you should use it if at all possible.

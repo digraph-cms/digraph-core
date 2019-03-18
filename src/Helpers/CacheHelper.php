@@ -8,13 +8,22 @@ class CacheHelper extends AbstractHelper
 {
     public function hook_cron()
     {
-        $return = [];
+        $pruned = [];
+        $errors = [];
         foreach ($this->cms->allCaches() as $name) {
             $cache = $this->cms->cache($name);
             if (method_exists($cache, 'prune')) {
-                $return[$name] = $cache->prune();
+                if ($r = $cache->prune()) {
+                    $pruned[] = $name;
+                } else {
+                    $errors[] = 'error pruning '.$name;
+                }
             }
         }
-        return $return;
+        return [
+            'result' => count($pruned),
+            'errors' => $errors,
+            'names' => $pruned
+        ];
     }
 }
