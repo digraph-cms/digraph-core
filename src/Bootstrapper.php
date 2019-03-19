@@ -18,16 +18,19 @@ class Bootstrapper
      */
     public static function url()
     {
-        $url = $_SERVER['QUERY_STRING'];
-        $url = preg_replace('/^.*url=/U', '', $url);
-        $pos = strpos($url, '&');
-        if ($pos !== false) {
-            $url = substr_replace($url, '?', $pos, 1);
+        if (!($url = @$_GET['digraph_url'])) {
+            $url = '';
         }
-        $url = urldecode($url);
-        $fixed = preg_replace('/((.+)\/?)(.*)(&|\?)url=\1(\/|%2F|%2f)?(.*)/', '$1$3$4$5', $url);
-        $fixed = preg_replace('/\?&/', '?', $fixed);
-        return $fixed;
+        $q = [];
+        foreach ($_GET as $key => $value) {
+            if ($key != 'digraph_url') {
+                $q[] = urlencode($key).'='.urlencode($value);
+            }
+        }
+        if ($q) {
+            $url .= '?'.implode('&', $q);
+        }
+        return $url;
     }
 
     public static function bootstrap(ConfigInterface &$config)

@@ -3,7 +3,7 @@
   DirectoryIndex index.php
   RewriteEngine on
   RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteRule ^([^?]*)$ index.php?url=$1 [NC,L,QSA]
+  RewriteRule ^([^?]*)$ index.php?digraph_url=$1 [NC,L,QSA]
 </IfModule>
 
 # deny access to all yaml files
