@@ -25,7 +25,7 @@ class Bootstrapper
             $url = substr_replace($url, '?', $pos, 1);
         }
         $url = urldecode($url);
-        $fixed = preg_replace('/(.+)(.*)(&|\?)url=\1(.*)/', '$1$2$3$4', $url);
+        $fixed = preg_replace('/((.+)\/?)(.*)(&|\?)url=\1(\/|%2F|%2f)?(.*)/', '$1$3$4$5', $url);
         $fixed = preg_replace('/\?&/', '?', $fixed);
         return $fixed;
     }
@@ -35,6 +35,10 @@ class Bootstrapper
         //set up new CMS
         $cms = new CMS($config);
         $cms->log('Bootstrapper::bootstrap starting');
+        //do https redirects if necessary
+        if ($cms->config['url.forcehttps']) {
+            static::makeHttps();
+        }
         //set up bare PDOs
         foreach ($config['bootstrap.pdos'] as $k => $cred) {
             $pdo = new \PDO(
@@ -75,5 +79,38 @@ class Bootstrapper
         //return
         $cms->log('Bootstrapper::bootstrap finished');
         return $cms;
+    }
+
+    public static function makeHttps()
+    {
+        if (!static::isHttps()) {
+            $newUrl = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+            $newUrl = preg_replace('/index\.(php)$/i', '', $newUrl);
+            if (count($_GET) >= 1) {
+                $newUrl .= '?'.http_build_query($_GET);
+            }
+            header("Location: $newUrl");
+            die('Attempting to force HTTPS by redirecting to ' . $newUrl);
+        }
+    }
+
+    public static function isHttps()
+    {
+        //use $_SERVER['HTTPS'] if it exists
+        if (isset($_SERVER['HTTPS'])) {
+            return $_SERVER['HTTPS'] !== 'off';
+        }
+        //if we're on port 443 return true
+        if ($_SERVER['SERVER_PORT'] == 443) {
+            return true;
+        }
+        //as a fallback, set a cookie that the browser is asked to only
+        //send back over HTTPS. Then if this cookie is set, we know we're on
+        //an SSL connection.
+        if (!isset($_COOKIE['Digraph_HTTPS_Only_Cookie'])) {
+            setcookie('Digraph_HTTPS_Only_Cookie', time(), 0, "", "", true);
+            return false;
+        }
+        return true;
     }
 }

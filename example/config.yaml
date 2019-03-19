@@ -8,6 +8,9 @@ url:
   # path to Digraph installation should have leading/trailing slashes, if it's
   # the root of your domain name, a single slash is required
   path: /
+  # don't force https on default example site, since many local environments
+  # aren't configured for it
+  forcehttps: false
 
 timezone: America/Denver
 
