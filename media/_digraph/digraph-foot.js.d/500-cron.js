@@ -1,3 +1,3 @@
 $(function() {
-  digraph.get('_cron/');
+  digraph.get('_cron/', null, null, false);
 });

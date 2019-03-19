@@ -16,16 +16,18 @@ var digraph = {
  * Automatically prepends base URL so that other scripts don't need to deal
  * with it. Also automatically adds the user's SID as a GET variable.
  */
-digraph.get = function(url, success, error) {
+digraph.get = function(url, success, error, sid = true) {
   //set up url
   url = '{{config.url.base}}' + url;
   //add session ID to url, so that Ajax requests are cached per-user
-  if (url.includes('?')) {
-    url = url + '&';
-  } else {
-    url = url + '?';
+  if (sid) {
+    if (url.includes('?')) {
+      url = url + '&';
+    } else {
+      url = url + '?';
+    }
+    url = url + 'sid=' + digraph.user.sid;
   }
-  url = url + 'sid=' + digraph.user.sid;
   //set up request
   var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
   xhr.open('GET', url);
@@ -46,7 +48,7 @@ digraph.get = function(url, success, error) {
 /**
  * Utility function to handle parsing JSON for a get() call
  */
-digraph.getJSON = function(url, success, error) {
+digraph.getJSON = function(url, success, error, sid = true) {
   return digraph.get(
     url,
     function(text) {
@@ -54,6 +56,7 @@ digraph.getJSON = function(url, success, error) {
     },
     function(text) {
       return error(JSON.parse(text));
-    }
+    },
+    sid
   );
 }

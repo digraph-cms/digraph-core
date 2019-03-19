@@ -26,4 +26,4 @@ foreach ($this->helper('routing')->allHookFiles('_cron', 'cron.php') as $file) {
 
 echo json_encode($CRON_OUTPUT, JSON_PRETTY_PRINT);
 
-$package->saveLog('cron ran', 200, 'cron ran');
+$package->saveLog('cron ran', 200);
