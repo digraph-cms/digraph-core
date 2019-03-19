@@ -25,7 +25,9 @@ class Bootstrapper
             $url = substr_replace($url, '?', $pos, 1);
         }
         $url = urldecode($url);
-        return $url;
+        $fixed = preg_replace('/(.+)(.*)(&|\?)url=\1(.*)/', '$1$2$3$4', $url);
+        $fixed = preg_replace('/\?&/', '?', $fixed);
+        return $fixed;
     }
 
     public static function bootstrap(ConfigInterface &$config)
