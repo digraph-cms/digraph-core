@@ -23,9 +23,7 @@ class Bootstrapper
         }
         $q = [];
         foreach ($_GET as $key => $value) {
-            if ($key != 'digraph_url') {
-                $q[] = urlencode($key).'='.urlencode($value);
-            }
+            $q[] = urlencode($key).'='.urlencode($value);
         }
         if ($q) {
             $url .= '?'.implode('&', $q);
@@ -89,8 +87,10 @@ class Bootstrapper
         if (!static::isHttps()) {
             $newUrl = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
             $newUrl = preg_replace('/index\.(php)$/i', '', $newUrl);
-            if (count($_GET) >= 1) {
-                $newUrl .= '?'.http_build_query($_GET);
+            $get = $_GET;
+            unset($get['digraph_url']);
+            if ($get) {
+                $newUrl .= '?'.http_build_query($get);
             }
             header("Location: $newUrl");
             die('Attempting to force HTTPS by redirecting to ' . $newUrl);

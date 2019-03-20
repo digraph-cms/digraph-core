@@ -72,8 +72,12 @@ class Locate extends AbstractMunger
             //this is used for both ensuring that nouns (including slugs)
             //have trailing slashes, and that arguments are in alphabetical
             //order (which is important for caching)
-            if ($package->url()->routeString() != $package['request.url'] && $package->url()->routeString(true) != $package['request.url']) {
-                $package->redirect($package->url()->string(), 301);
+            unset($package['url.args.digraph_url']);
+            $url = $package->url()->string();
+            $actual = $package->cms()->config['url.protocol'].$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
+            if ($url != $actual) {
+                header('Location: '.$url);
+                exit();
             }
         }
     }
