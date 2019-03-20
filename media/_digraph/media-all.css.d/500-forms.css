@@ -177,33 +177,13 @@
 /*
 Slug fields
  */
-.Form .Container.class-Slug {
-  padding-bottom: 0.5em;
+.Form .Container.class-Slug >label {
+  display:none;
 }
-
-.Form .Container.class-Slug>label {
-  margin-bottom: 0;
-}
-
-.Form .Container.class-Slug .FieldWrapper {
-  display: inline;
-  margin: 0;
-}
-
-.Form .Container.class-Slug .FieldWrapper-class-Input label {
-  display: none;
-}
-
-.Form .Container.class-Slug input.class-Input {
-  display: inline-block;
-  width: auto;
-  max-width: 20em;
-  vertical-align: middle;
-}
-
 .Form .Container.class-Slug .FieldWrapper-class-Checkbox {
   display: inline-block;
   vertical-align: middle;
+  margin: 0;
 }
 
 /*

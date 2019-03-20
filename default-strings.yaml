@@ -40,13 +40,14 @@ forms:
   digraph_body_label: Body content
   digraph_name_label: Short display name
   digraph_title_label: Long display title
-  slug_label: Slug/alias
+  slug_label: ''
   confirm_button: Confirm
   slug:
     error:
-      underscore: Slugs beginning with an underscore are reserved for system functions
-      slashes: Slug can't have more than one slash in a row
-      character: Slug contains an invalid character. Allowed characters are alphanumerics, forward slashes, and <code>!0</code>
+      taken: The URL <code>!slug</code> is already in use by !by. Choosing a different URL is recommended.
+      underscore: URLs beginning with an underscore are reserved for system functions
+      slashes: URL can't have more than one slash in a row
+      character: URL contains an invalid character. Allowed characters are alphanumerics, forward slashes, and <code>!0</code>
   order:
     form_title: Control ordering of children
     mode:

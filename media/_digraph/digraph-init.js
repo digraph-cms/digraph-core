@@ -34,9 +34,13 @@ digraph.get = function(url, success, error, sid = true) {
   xhr.onreadystatechange = function() {
     if (xhr.readyState > 3 && xhr.status == 200) {
       if (xhr.status == 200) {
-        success(xhr.responseText);
+        if (success) {
+          success(xhr.responseText);
+        }
       } else {
-        error(xhr.status);
+        if (error) {
+          error(xhr.status);
+        }
       }
     }
   };

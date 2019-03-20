@@ -32,7 +32,7 @@ if ($form->handle()) {
         )
     );
     $form->object->addParent($package->noun()['dso.id']);
-    $package->redirect($form->object->url('edit')->string());
+    $package->redirect($form->object->url('edit', null, true)->string());
 }
 
 echo $form;

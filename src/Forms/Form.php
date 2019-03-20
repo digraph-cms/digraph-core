@@ -11,6 +11,7 @@ class Form extends \Formward\Form
     public $writeObjectFn;
     public $written = false;
     public $object;
+    public $parent;
     protected $cms;
 
     public function __construct(string $label, string $name=null, FieldInterface $parent=null)

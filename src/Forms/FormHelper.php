@@ -8,39 +8,55 @@ use Flatrr\FlatArray;
 
 class FormHelper extends AbstractHelper
 {
-    protected function mapNoun(NounInterface &$noun, Form &$form, array $map, bool $insert = false)
+    protected function mapNoun(NounInterface &$noun, Form &$form, array $map, bool $insert = false, NounInterface &$parent = null)
     {
+        $form->object = $noun;
+        $form->parent = $parent;
         foreach ($map as $name => $opt) {
             if (!$opt) {
                 continue;
             }
+            //add extra construction args from map
             $args = [$opt['label'],null,null,&$this->cms];
             if (@$opt['extraConstructArgs']) {
                 foreach ($opt['extraConstructArgs'] as $a) {
                     $args[] = $a;
                 }
             }
+            //create new ReflectionClass from class requested by map ['class']
+            //and use it to instantiate the class with the args
             $r = new \ReflectionClass($opt['class']);
             $field = $r->newInstanceArgs($args);
+            //tell field about the noun if the field has the dsoNoun method
             if (method_exists($field, 'dsoNoun')) {
                 $field->dsoNoun($noun);
             }
+            //tell field about the noun if the field has the dsoParent method
+            if (!$parent) {
+                $parent = $noun->parent();
+            }
+            if ($parent && method_exists($field, 'dsoParent')) {
+                $field->dsoParent($parent);
+            }
+            //allow map to call functions on field
             if (@$map['call']) {
-                foreach ($map['callFns'] as $fn => $args) {
+                foreach ($map['call'] as $fn => $args) {
                     call_user_func_array([$field,$fn], $args);
                 }
             }
+            //mark as required
             if (@$opt['required']) {
                 $field->required(true);
             }
+            //set default value
             $field->default(@$opt['default']);
+            //set default from noun value at location set in map ['field']
             if (@$opt['field']) {
-                //field isn't actually required
                 $field->default($noun[@$opt['field']]);
             }
+            //add to form
             $form[$name] = $field;
         }
-        $form->object = $noun;
         $form->writeObjectFn = function () use ($noun,$form,$map,$insert) {
             foreach ($map as $name => $opt) {
                 if (!$opt) {
@@ -90,7 +106,7 @@ class FormHelper extends AbstractHelper
         return $form;
     }
 
-    public function addNoun(string $type) : Form
+    public function addNoun(string $type, NounInterface $parent = null) : Form
     {
         $noun = $this->cms->factory()->create(['dso.type'=>$type]);
         $form = new Form('', 'add-'.$type);
@@ -100,7 +116,8 @@ class FormHelper extends AbstractHelper
             $noun,
             $form,
             $this->getMap($noun, 'add'),
-            true
+            true,
+            $parent
         );
         return $form;
     }

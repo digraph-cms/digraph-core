@@ -27,7 +27,7 @@ if ($form->handle()) {
             ['name'=>$form->object->link()]
         )
     );
-    $package->redirect($form->object->url('edit')->string());
+    $package->redirect($form->object->url('edit', null, true)->string());
 }
 
 echo $form;
