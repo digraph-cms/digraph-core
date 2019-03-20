@@ -11,7 +11,6 @@ class FormHelper extends AbstractHelper
     protected function mapNoun(NounInterface &$noun, Form &$form, array $map, bool $insert = false, NounInterface &$parent = null)
     {
         $form->object = $noun;
-        $form->parent = $parent;
         foreach ($map as $name => $opt) {
             if (!$opt) {
                 continue;
@@ -57,6 +56,7 @@ class FormHelper extends AbstractHelper
             //add to form
             $form[$name] = $field;
         }
+        //set up function writing content to object
         $form->writeObjectFn = function () use ($noun,$form,$map,$insert) {
             foreach ($map as $name => $opt) {
                 if (!$opt) {

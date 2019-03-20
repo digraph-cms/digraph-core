@@ -14,6 +14,7 @@ class Slug extends Container
 
     protected $cms;
     protected $noun;
+    protected $pnoun;
     protected $vars = [];
 
     public function __construct(string $label, string $name=null, FieldInterface $parent=null, &$cms=null)
@@ -22,30 +23,6 @@ class Slug extends Container
         $this->cms = $cms;
         $this['use'] = new Checkbox('Enable custom URL');
         $this['slug'] = new Input('');
-        $this['slug']->default('[parent]/[name]');
-        //add validator function to warn for non-unique slug
-        $this->addValidatorFunction(
-            'unique',
-            function ($field) {
-                $value = $this->dsoValue();
-                if (!$value) {
-                    return true;
-                }
-                $res = $this->cms->read($value);
-                if ($res && $res['dso.id'] != $this->noun['dso.id']) {
-                    $this->cms->helper('notifications')->flashWarning(
-                        $this->cms->helper('strings')->string(
-                            'forms.slug.error.taken',
-                            [
-                                'slug' => $value,
-                                'by' => $res->url()->html()
-                            ]
-                        )
-                    );
-                }
-                return true;
-            }
-        );
         //add a validator to trim slugs and ensure they're valid
         $this->addValidatorFunction(
             'validurl',
@@ -71,12 +48,6 @@ class Slug extends Container
     public function dsoNoun(&$noun)
     {
         $this->noun = $noun;
-        $this->vars['id'] = $noun['dso.id'];
-        $this->vars['name'] = $noun->name();
-        if ($noun['digraph.slug']) {
-            $this['use']->default(true);
-            $this['slug']->default($noun['digraph.slug']);
-        }
         if ($noun->parent()) {
             $this->dsoParent($noun->parent());
         }
@@ -89,120 +60,92 @@ class Slug extends Container
 
     public function dsoParent(&$parent)
     {
-        $this->vars['parent'] = $parent->url()['noun'];
-        $this->vars['parentid'] = $parent['dso.id'];
-        if (method_exists($parent, 'slugVars')) {
-            foreach ($parent->slugVars() as $key => $value) {
-                $this->vars[$key] = $value;
-            }
-        }
+        $this->pnoun = $parent;
     }
 
     public function default($value = null)
     {
-        $this['slug']->attr('data-slug-pattern', $value);
+        if (!$value) {
+            $value = null;
+            $this['use']->default(false);
+        } else {
+            $this['use']->default(true);
+        }
+        return $this['slug']->default($value);
+    }
+
+    public function hook_formWrite($noun, $opt)
+    {
+        $this->dsoNoun($noun);
+        $noun[$opt['field']] = $this->dsoValue();
+        //verify that this slug hasn't been used before
+        if ($value = $this->dsoValue()) {
+            $res = $this->cms->read($value);
+            if ($res && $res['dso.id'] != $this->noun['dso.id']) {
+                $this->cms->helper('notifications')->flashWarning(
+                    $this->cms->helper('strings')->string(
+                        'forms.slug.error.taken',
+                        [
+                            'slug' => $value,
+                            'by' => $res->url()->html()
+                        ]
+                    )
+                );
+            }
+        }
     }
 
     public function dsoValue()
     {
         if (!$this['use']->value()) {
-            return null;
+            return false;
         }
         return $this->vars($this['slug']->value());
     }
 
     public function vars($slug)
     {
+        //pull vars from parent
+        if ($this->pnoun) {
+            $this->vars['parent'] = $this->pnoun->url()['noun'];
+            $this->vars['parentid'] = $this->pnoun['dso.id'];
+            if (method_exists($this->pnoun, 'slugVars')) {
+                foreach ($this->pnoun->slugVars() as $key => $value) {
+                    $this->vars[$key] = $value;
+                }
+            }
+        }
+        // pull vars from noun
+        if ($this->noun) {
+            $this->vars['id'] = $this->noun['dso.id'];
+            $this->vars['name'] = $this->noun->name();
+            $this->vars['cdate'] = '[cdate-year][cdate-month][cdate-day]';
+            $this->vars['cdate-time'] = '[cdate-hour][cdate-minute]';
+            $this->vars['cdate-year'] = date('Y', $this->noun['dso.created.date']);
+            $this->vars['cdate-month'] = date('m', $this->noun['dso.created.date']);
+            $this->vars['cdate-day'] = date('d', $this->noun['dso.created.date']);
+            $this->vars['cdate-hour'] = date('H', $this->noun['dso.created.date']);
+            $this->vars['cdate-minute'] = date('i', $this->noun['dso.created.date']);
+            if ($this->noun['digraph.slug']) {
+                $this['use']->default(true);
+                $this['slug']->default($this->noun['digraph.slug']);
+            }
+        }
+        //do variable replacement
         $slug = $this['slug']->value();
         foreach ($this->vars as $key => $value) {
             $slug = str_replace('['.$key.']', $value, $slug);
         }
         $slug = trim($slug, "\/ \t\n\r\0\x0B");
         $slug = preg_replace('/[^a-z0-9\/'.preg_quote(static::CHARS).']+/i', '-', $slug);
+        //clean up
+        $slug = preg_replace('/\-?\/\-?/', '/', $slug);
+        $slug = preg_replace('/\/+/', '/', $slug);
+        $slug = preg_replace('/\-+/', '-', $slug);
+        $slug = preg_replace('/[\/\-]+$/', '', $slug);
+        $slug = preg_replace('/^[\/\-]+/', '', $slug);
+        $slug = preg_replace('/^home\//', '', $slug);
+        $slug = strtolower($slug);
         return $slug;
-    }
-
-    // public function dsoValue()
-    // {
-    //     if (!$this['my_slug']->value()) {
-    //         return null;
-    //     }
-    //     $slug = $this['parent_slug']->value()?$this['parent_slug']->label():'';
-    //     $slug .= $this['my_slug']->value();
-    //     $slug = trim($slug, "\/ \t\n\r\0\x0B");
-    //     return $slug;
-    // }
-    //
-    // public function dsoParent(&$parent)
-    // {
-    //     $this->parent = $parent;
-    //     //set up parent slug
-    //     $url = $parent->url();
-    //     $this['parent_slug']->label($url['noun'].'/');
-    //     if ($this['parent_slug']->label() == 'home/' || $this['parent_slug']->label() == '/') {
-    //         $this['parent_slug']->label('');
-    //         $this['parent_slug']->addClass('hidden');
-    //     }
-    // }
-    //
-    // public function dsoNoun(&$noun)
-    // {
-    //     $this->noun = $noun;
-    //     //set up my slug
-    //     $this['my_slug']->default($noun['dso.id']);
-    //     //set up parent
-    //     if ($noun->parent()) {
-    //         $this->dsoParent($noun->parent());
-    //     }
-    // }
-    //
-    // public function default($value = null)
-    // {
-    //     if (is_string($value)) {
-    //         if ($value) {
-    //             if ($this['parent_slug']->label() && strpos($value, $this['parent_slug']->label()) === 0) {
-    //                 $this['parent_slug']->default(true);
-    //                 $this['my_slug']->default(substr($value, strlen($this['parent_slug']->label())));
-    //             } else {
-    //                 $this['parent_slug']->default(false);
-    //                 $this['my_slug']->default($value);
-    //             }
-    //         }
-    //     } else {
-    //         parent::default($value);
-    //     }
-    //     if (!$this['parent_slug']->label()) {
-    //         $this['parent_slug']->addClass('hidden');
-    //     } else {
-    //         $this['parent_slug']->removeClass('hidden');
-    //     }
-    //     return parent::default();
-    // }
-
-    //trims off leading/trailing slashes
-    public function value($value = null)
-    {
-        if (is_string($value)) {
-            if ($value) {
-                if ($this['parent_slug']->label() && strpos($value, $this['parent_slug']->label()) === 0) {
-                    $this['parent_slug']->value(true);
-                    $this['my_slug']->value(substr($value, strlen($this['parent_slug']->label())));
-                } else {
-                    $this['parent_slug']->value(false);
-                    $this['my_slug']->value($value);
-                }
-            }
-        } else {
-            parent::value($value);
-        }
-        $this['my_slug']->value(
-            trim($this['my_slug']->value(), "\/ \t\n\r\0\x0B")
-        );
-        if (!$this['parent_slug']->label()) {
-            $this['parent_slug']->addClass('hidden');
-        } else {
-            $this['parent_slug']->removeClass('hidden');
-        }
-        return parent::value();
     }
 }
