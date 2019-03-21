@@ -24,34 +24,6 @@ class Noun extends DSO implements NounInterface
         return $this->factory->cms();
     }
 
-    public function invalidateCache($recurseUp=null, $recurseDown=null)
-    {
-        $invalidated = [];
-        //invalidate my own cache
-        $this->cms()->invalidateCache($this['dso.id']);
-        $invalidated[] = $this['dso.id'];
-        //recurse up through parents
-        if ($recurseUp && $recurseUp !== $this['dso.id']) {
-            if ($recurseUp === true) {
-                $recurseUp = $this['dso.id'];
-            }
-            foreach ($this->parents() as $parent) {
-                $invalidated = array_merge($invalidated, $parent->invalidateCache($recurseUp));
-            }
-        }
-        //recurse down through children
-        if ($recurseDown && $recurseDown !== $this['dso.id']) {
-            if ($recurseDown === true) {
-                $recurseDown = $this['dso.id'];
-            }
-            foreach ($this->children() as $child) {
-                $invalidated = array_merge($invalidated, $child->invalidateCache(null, $recurseDown));
-            }
-        }
-        //return list of invalidated caches
-        return $invalidated;
-    }
-
     public function formMap(string $action) : array
     {
         $map = [];
@@ -62,18 +34,6 @@ class Noun extends DSO implements NounInterface
             $map['digraph_slug'] = false;
         }
         return $map;
-    }
-
-    public function add() : bool
-    {
-        $this->invalidateCache(true);
-        return parent::add();
-    }
-
-    public function update(bool $sneaky = false) : bool
-    {
-        $this->invalidateCache(true, true);
-        return parent::update($sneaky);
     }
 
     public function template($verb=null)
@@ -92,12 +52,27 @@ class Noun extends DSO implements NounInterface
         );
     }
 
+    public function add() : bool
+    {
+        $this->invalidateCache(true);
+        $this->cms()->helper('hooks')->noun_trigger($this, 'add');
+        return parent::add();
+    }
+
+    public function update(bool $sneaky = false) : bool
+    {
+        if (!$sneaky) {
+            $this->cms()->helper('hooks')->noun_trigger($this, 'update');
+        }
+        return parent::update($sneaky);
+    }
+
     public function delete(bool $permanent=false) : bool
     {
-        if (static::FILESTORE && $permanent) {
-            exit("TODO: clear files when nouns are permanently deleted");
+        $this->cms()->helper('hooks')->noun_trigger($this, 'delete');
+        if ($permanent) {
+            $this->cms()->helper('hooks')->noun_trigger($this, 'delete_permanent');
         }
-        $this->invalidateCache();
         return parent::delete($permanent);
     }
 

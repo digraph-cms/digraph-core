@@ -31,6 +31,16 @@ class CMS
         $this->config->readFile(__DIR__.'/../default-strings.yaml', 'strings');
         $this->config['paths.core'] = realpath(__DIR__.'/..');
         $this->log('CMS::__construct finished');
+        //register built-in hooks
+        $this->helper('hooks')->noun_register('update', [$this,'invalidateCache']);
+        $this->helper('hooks')->noun_register('parent:update', [$this,'invalidateCache']);
+        $this->helper('hooks')->noun_register('child:update', [$this,'invalidateCache']);
+        $this->helper('hooks')->noun_register('add', [$this,'invalidateCache']);
+        $this->helper('hooks')->noun_register('parent:add', [$this,'invalidateCache']);
+        $this->helper('hooks')->noun_register('child:add', [$this,'invalidateCache']);
+        $this->helper('hooks')->noun_register('delete', [$this,'invalidateCache']);
+        $this->helper('hooks')->noun_register('parent:delete', [$this,'invalidateCache']);
+        $this->helper('hooks')->noun_register('child:delete', [$this,'invalidateCache']);
     }
 
     public function &package(PackageInterface &$package = null) : ?PackageInterface

@@ -2,8 +2,6 @@
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
 namespace Digraph\Helpers;
 
-use Digraph\CMS;
-
 /**
  * EdgeHelper is used to quickly manage the edges between Nouns. It operates
  * entirely using the string representations of dso IDs, so sorting and actually
@@ -29,15 +27,16 @@ EOT;
         'CREATE UNIQUE INDEX IF NOT EXISTS digraph_edges_start_end_IDX ON digraph_edges (edge_start,edge_end);'
     ];
 
-    public function __construct(CMS &$cms)
+    public function construct()
     {
-        parent::__construct($cms);
         $this->pdo = $this->cms->pdo();
         //ensure that table and indexes exist
         $this->pdo->exec(static::DDL);
         foreach (static::IDX as $idx) {
             $this->pdo->exec($idx);
         }
+        //set up hooks to delete edges
+        $this->cms->helper('hooks')->noun_register('delete_permanent', [$this,'deleteAll']);
     }
 
     public function get(string $start, string $end)
@@ -115,7 +114,7 @@ EOT;
         return false;
     }
 
-    public function remove(string $start, string $end)
+    public function delete(string $start, string $end)
     {
         //need to make a new edge
         $s = $this->pdo->prepare(
@@ -133,7 +132,7 @@ EOT;
         }
     }
 
-    public function removeAll(string $id)
+    public function deleteAll(string $id)
     {
         //need to make a new edge
         $s = $this->pdo->prepare(

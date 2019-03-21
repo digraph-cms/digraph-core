@@ -2,8 +2,6 @@
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
 namespace Digraph\Helpers;
 
-use Digraph\CMS;
-
 /**
  * SlugHelper manages the non-canonical URLs that nouns can be found at. The
  * default behavior of this helper is to keep all past slugs of any given noun
@@ -30,15 +28,16 @@ EOT;
         'CREATE UNIQUE INDEX IF NOT EXISTS digraph_slugs_url_noun_IDX ON digraph_slugs (slug_url,slug_noun);'
     ];
 
-    public function __construct(CMS &$cms)
+    public function construct()
     {
-        parent::__construct($cms);
         $this->pdo = $this->cms->pdo();
         //ensure that table and indexes exist
         $this->pdo->exec(static::DDL);
         foreach (static::IDX as $idx) {
             $this->pdo->exec($idx);
         }
+        //set up hooks to delete slugs
+        $this->cms->helper('hooks')->noun_register('delete_permanent', [$this,'deleteAll']);
     }
 
     protected function sanitizeNoun($noun)
@@ -146,5 +145,19 @@ EOT;
             'DELETE FROM digraph_slugs WHERE slug_url = :url AND slug_noun = :noun'
         );
         return $s->execute([':url'=>$url,':noun'=>$noun]);
+    }
+
+    /**
+     * Delete all slugs associated with the given noun
+     */
+    public function deleteAll(string $noun)
+    {
+        if (!($noun = $this->sanitizeNoun($noun))) {
+            return false;
+        }
+        $s = $this->pdo->prepare(
+            'DELETE FROM digraph_slugs WHERE slug_noun = :noun'
+        );
+        return $s->execute([':noun'=>$noun]);
     }
 }

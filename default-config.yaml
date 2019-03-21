@@ -612,6 +612,7 @@ helpers:
     filestore: Digraph\FileStore\FileStoreHelper
     filters: Digraph\Filters\FilterHelper
     forms: Digraph\Forms\FormHelper
+    hooks: Digraph\Helpers\HookHelper
     image: Digraph\FileStore\ImageHelper
     logging: Digraph\Logging\LogHelper
     media: Digraph\Media\MediaHelper

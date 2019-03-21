@@ -11,5 +11,10 @@ abstract class AbstractHelper implements HelperInterface
     public function __construct(CMS &$cms)
     {
         $this->cms = $cms;
+        $this->construct();
+    }
+
+    public function construct()
+    {
     }
 }
