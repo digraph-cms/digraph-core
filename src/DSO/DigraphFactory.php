@@ -69,7 +69,7 @@ class DigraphFactory extends Factory
     {
         $data = new FlatArray($data);
         $type = $data['dso.type'];
-        if (!$type || !isset($this->cms->config['types.'.$this->name.'.'.$type])) {
+        if (!$type || !$this->cms->config['types.'.$this->name.'.'.$type]) {
             $type = 'default';
         }
         if ($class = $this->cms->config['types.'.$this->name.'.'.$type]) {

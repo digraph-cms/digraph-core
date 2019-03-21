@@ -1,6 +1,6 @@
 <?php
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
-namespace Digraph\Edges;
+namespace Digraph\Helpers;
 
 use Digraph\CMS;
 

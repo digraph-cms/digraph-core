@@ -177,10 +177,11 @@
 /*
 Slug fields
  */
-.Form .Container.class-Slug >label {
-  display:none;
+.Form .Container.class-slugpattern>label {
+  display: none;
 }
-.Form .Container.class-Slug .FieldWrapper-class-Checkbox {
+
+.Form .Container.class-slugpattern .FieldWrapper-class-Checkbox {
   display: inline-block;
   vertical-align: middle;
   margin: 0;

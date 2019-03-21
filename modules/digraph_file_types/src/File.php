@@ -18,13 +18,15 @@ class File extends Noun
     {
         $s = $this->factory->cms()->helper('strings');
         return [
-            '502-file' => [
+            'file' => [
+                'weight' => 502,
                 'label' => $s->string('forms.file.upload_single.container'),
                 'class' => 'Digraph\\Forms\\Fields\\FileStoreFieldSingle',
                 'required' => true,
                 'extraConstructArgs' => [static::FILESTORE_PATH]
             ],
-            '503-showpage' => [
+            'showpage' => [
+                'weight' => 503,
                 'field' => 'file.showpage',
                 'label' => $s->string('forms.file.showpage'),
                 'class' => 'Formward\Fields\Checkbox'

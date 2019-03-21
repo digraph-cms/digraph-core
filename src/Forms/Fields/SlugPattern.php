@@ -7,7 +7,7 @@ use Formward\Fields\Checkbox;
 use Formward\Fields\Container;
 use Formward\Fields\Input;
 
-class Slug extends Container
+class SlugPattern extends Container
 {
     //The characters allowed in addition to alphanumerics and slashes
     const CHARS = '$-_.+!*\'(),';

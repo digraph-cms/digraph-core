@@ -59,9 +59,6 @@ class FormHelper extends AbstractHelper
         //set up function writing content to object
         $form->writeObjectFn = function () use ($noun,$form,$map,$insert) {
             foreach ($map as $name => $opt) {
-                if (!$opt) {
-                    continue;
-                }
                 if (method_exists($form[$name], 'hook_formWrite')) {
                     $form[$name]->hook_formWrite($noun, $opt);
                 } elseif (method_exists($form[$name], 'dsoValue')) {
@@ -89,7 +86,19 @@ class FormHelper extends AbstractHelper
         //load type/action map
         $map->merge($this->cms->config['forms.maps'.$noun['dso.type'].'.'.$action], null, true);
         $map = $map->get();
-        ksort($map);
+        $map = array_filter($map);
+        uasort(
+            $map,
+            function ($a, $b) {
+                if ($a['weight'] == $b['weight']) {
+                    return 0;
+                } elseif ($a['weight'] < $b['weight']) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+        );
         return $map;
     }
 

@@ -16,8 +16,9 @@ class Block extends Noun
     {
         $s = $this->factory->cms()->helper('strings');
         return [
-            '001_digraph_title' => false,
-            '550-files' => [
+            'digraph_title' => false,
+            'files' => [
+                'weight' => 550,
                 'label' => $s->string('forms.file.upload_multi.container'),
                 'class' => 'Digraph\\Forms\\Fields\\FileStoreFieldMulti',
                 'extraConstructArgs' => [static::FILESTORE_PATH]

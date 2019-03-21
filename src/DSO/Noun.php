@@ -56,10 +56,10 @@ class Noun extends DSO implements NounInterface
     {
         $map = [];
         if (!static::PUBLISH_CONTROL) {
-            $map['900_digraph_published'] = false;
+            $map['digraph_published'] = false;
         }
         if (!static::SLUG_ENABLED) {
-            $map['100_digraph_slug'] = false;
+            $map['digraph_slug'] = false;
         }
         return $map;
     }
@@ -309,14 +309,20 @@ class Noun extends DSO implements NounInterface
         return $this->url($verb, $args, $canonical)->html($text);
     }
 
+    public function slug()
+    {
+        $slugs = $this->cms()->helper('slugs')->slugs($this['dso.id']);
+        return @array_shift($slugs);
+    }
+
     public function url(string $verb=null, array $args=null, bool $canonical=false)
     {
         if (!$verb) {
             $verb = 'display';
         }
         $noun = null;
-        if ($this->get('digraph.slug') && !$canonical) {
-            $noun = $this->get('digraph.slug');
+        if (!$canonical && $this->slug()) {
+            $noun = $this->slug();
         } else {
             $noun = $this->get('dso.id');
         }

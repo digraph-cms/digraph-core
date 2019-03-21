@@ -2,15 +2,15 @@
  * Hide slugs with checkbox
  */
 $(function() {
-  $('.Form div.class-Slug input.class-Checkbox').on('change', function(e) {
-    var $input = $(this).closest('div.class-Slug').find('.FieldWrapper-class-Input');
+  $('.Form div.class-SlugPattern input.class-Checkbox').on('change', function(e) {
+    var $input = $(this).closest('div.class-SlugPattern').find('.FieldWrapper-class-Input');
     if ($(this).is(':checked')) {
       $input.show();
     } else {
       $input.hide();
     }
   });
-  $('.Form div.class-Slug input.class-Checkbox').trigger('change');
+  $('.Form div.class-SlugPattern input.class-Checkbox').trigger('change');
 });
 
 /**

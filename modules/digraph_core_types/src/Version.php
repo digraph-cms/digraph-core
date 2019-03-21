@@ -47,22 +47,22 @@ class Version extends Page
     {
         $s = $this->factory->cms()->helper('strings');
         $map = parent::formMap($action);
-        $map['000_digraph_name']['default'] = $s->date(time());
-        $map['000_digraph_name']['label'] = $s->string('version.revision_note');
-        $map['001_digraph_title']['required'] = true;
-        $map['001_digraph_title']['label'] = $s->string('version.display_title');
-        $map['100_digraph_slug'] = false;
+        $map['digraph_name']['default'] = $s->date(time());
+        $map['digraph_name']['label'] = $s->string('version.revision_note');
+        $map['digraph_title']['required'] = true;
+        $map['digraph_title']['label'] = $s->string('version.display_title');
+        $map['digraph_slug'] = false;
         if ($action == 'add') {
             if ($parent = $this->cms()->package()->noun()) {
-                $map['001_digraph_title']['default'] = $parent->title();
+                $map['digraph_title']['default'] = $parent->title();
                 if (method_exists($parent, 'currentVersion')) {
                     if ($prev = $parent->currentVersion()) {
                         //confirmation indicating field is prepopulated from previous version
                         $this->factory->cms()->helper('notifications')->confirmation(
                             $s->string('version.confirm_prepopulated')
                         );
-                        $map['001_digraph_title']['default'] = $prev->title();
-                        $map['500_digraph_body']['default'] = $prev['digraph.body'];
+                        $map['digraph_title']['default'] = $prev->title();
+                        $map['digraph_body']['default'] = $prev['digraph.body'];
                     }
                 } else {
                     //error indicating that parent isn't a versioned type

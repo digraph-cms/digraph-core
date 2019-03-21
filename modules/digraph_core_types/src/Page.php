@@ -17,7 +17,8 @@ class Page extends Noun
     {
         $map = parent::formMap($action);
         $s = $this->factory->cms()->helper('strings');
-        $map['550-files'] = [
+        $map['files'] = [
+            'weight' => 550,
             'label' => $s->string('forms.file.upload_multi.container'),
             'class' => 'Digraph\\Forms\\Fields\\FileStoreFieldMulti',
             'extraConstructArgs' => [static::FILESTORE_PATH]

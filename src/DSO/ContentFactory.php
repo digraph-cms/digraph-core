@@ -27,11 +27,6 @@ class ContentFactory extends DigraphFactory
             'name'=>'dso_deleted',
             'type'=>'BIGINT',
             'index'=>'BTREE'
-        ],
-        'digraph.slug' => [
-            'name'=>'digraph_slug',
-            'type'=>'VARCHAR(100)',
-            'index'=>'BTREE'
         ]
     ];
 

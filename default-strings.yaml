@@ -37,9 +37,9 @@ notifications:
 blocks:
   notfound: block not found
 forms:
-  digraph_body_label: Body content
-  digraph_name_label: Short display name
-  digraph_title_label: Long display title
+  digraph_body_label: Content
+  digraph_name_label: Name
+  digraph_title_label: Title
   slug_label: ''
   confirm_button: Confirm
   slug:

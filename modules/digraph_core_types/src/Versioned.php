@@ -84,8 +84,8 @@ class Versioned extends Noun
     public function formMap(string $actions) : array
     {
         $map = parent::formMap($actions);
-        $map['001_digraph_title'] = false;
-        $map['500_digraph_body'] = false;
+        $map['digraph_title'] = false;
+        $map['digraph_body'] = false;
         return $map;
     }
 }

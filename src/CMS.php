@@ -61,8 +61,31 @@ class CMS
         $this->initializeMungers();
     }
 
-    public function readMulti(array $ids) : array
+    public function locate(string $q = null, bool $slugs = true)
     {
+        if (!$q) {
+            return null;
+        }
+        $q = trim($q, "/ \t\n\r\0\x0B");
+        $id = md5(serialize(['locate',$q,$slugs]));
+        if (!isset($this->readCache[$id])) {
+            $search = $this->factory()->search();
+            $qids = [$q];
+            if ($slugs) {
+                foreach ($this->helper('slugs')->nouns($q) as $sid) {
+                    $qids[] = $sid;
+                }
+                $qids = array_unique($qids);
+            }
+            $search->where('${dso.id} in (\''.implode("','", $qids).'\')');
+            $result = $search->execute();
+            if ($result) {
+                $this->readCache[$id] = $result;
+            } else {
+                $this->readCache[$id] = [];
+            }
+        }
+        return $this->readCache[$id];
     }
 
     public function read(string $q = null, bool $slugs = true)
@@ -71,15 +94,18 @@ class CMS
             return null;
         }
         $q = trim($q, "/ \t\n\r\0\x0B");
-        $id = md5(serialize([$q,$slugs]));
+        $id = md5(serialize(['read',$q,$slugs]));
         if (!isset($this->readCache[$id])) {
             $search = $this->factory()->search();
+            $qids = [$q];
             if ($slugs) {
-                $search->where('${dso.id} = :search OR ${digraph.slug} = :search');
-            } else {
-                $search->where('${dso.id} = :search');
+                foreach ($this->helper('slugs')->nouns($q) as $sid) {
+                    $qids[] = $sid;
+                }
+                $qids = array_unique($qids);
             }
-            $result = @array_shift($search->execute([':search'=>$q]));
+            $search->where('${dso.id} in (\''.implode("','", $qids).'\')');
+            $result = @array_shift($search->execute());
             if ($result) {
                 $this->readCache[$id] = $result;
             } else {

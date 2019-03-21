@@ -17,13 +17,15 @@ class FileBundle extends Noun
     {
         $s = $this->factory->cms()->helper('strings');
         return [
-            '502-file' => [
+            'file' => [
+                'weight' => 502,
                 'label' => $s->string('forms.file.upload_multi.container'),
                 'class' => 'Digraph\\Forms\\Fields\\FileStoreFieldMulti',
                 'required' => true,
                 'extraConstructArgs' => [static::FILESTORE_PATH]
             ],
-            '503-gallery' => [
+            'gallery' => [
+                'weight' => 503,
                 'field' => 'file-bundle.gallery',
                 'label' => $s->string('forms.file-bundle.gallery'),
                 'class' => 'Formward\Fields\Checkbox'

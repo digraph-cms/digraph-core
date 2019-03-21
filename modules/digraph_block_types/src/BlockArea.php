@@ -19,9 +19,9 @@ class BlockArea extends Noun
     {
         $s = $this->factory->cms()->helper('strings');
         return [
-            '001_digraph_title' => false,
-            '500_digraph_body' => false,
-            '900_digraph_published' => false
+            'digraph_title' => false,
+            'digraph_body' => false,
+            'digraph_published' => false
         ];
     }
 

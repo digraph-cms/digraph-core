@@ -608,7 +608,7 @@ helpers:
     actions: Digraph\Helpers\Actions
     blocks: Digraph\Blocks\BlockHelper
     cache: Digraph\Helpers\CacheHelper
-    edges: Digraph\Edges\EdgeHelper
+    edges: Digraph\Helpers\EdgeHelper
     filestore: Digraph\FileStore\FileStoreHelper
     filters: Digraph\Filters\FilterHelper
     forms: Digraph\Forms\FormHelper
@@ -622,6 +622,7 @@ helpers:
     permissions: Digraph\Permissions\PermissionsHelper
     routing: Digraph\Helpers\Routing
     session: Digraph\Users\SessionHelper
+    slugs: Digraph\Helpers\SlugHelper
     strings: Digraph\Helpers\Strings
     templates: Digraph\Templates\TemplateHelper
     urls: Digraph\Urls\UrlHelper
@@ -630,25 +631,30 @@ helpers:
 forms:
   maps:
     default:
-      000_digraph_name:
+      digraph_name:
+        weight: 100
         field: digraph.name
         label: ${strings.forms.digraph_name_label}
         class: Digraph\Forms\Fields\Name
         required: true
-      001_digraph_title:
+      digraph_title:
+        weight: 101
         field: digraph.title
         label: ${strings.forms.digraph_title_label}
         class: Formward\Fields\Input
-      100_digraph_slug:
-        field: digraph.slug
+      digraph_slug:
+        weight: 150
+        field: digraph.slugpattern
         label: ${strings.forms.slug_label}
-        class: Digraph\Forms\Fields\Slug
-        default: '[parent]/[name]'
-      900_digraph_published:
+        class: Digraph\Forms\Fields\SlugPattern
+        default: '[parent]/[name]-[id]'
+      digraph_published:
+        weight: 900
         field: digraph.published
         label: ${strings.forms.published_label}
         class: Digraph\Forms\Fields\Published
-      500_digraph_body:
+      digraph_body:
+        weight: 500
         field: digraph.body
         label: ${strings.forms.digraph_body_label}
         class: Digraph\Forms\Fields\Content

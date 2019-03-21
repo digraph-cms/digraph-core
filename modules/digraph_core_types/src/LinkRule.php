@@ -14,15 +14,17 @@ class LinkRule extends Noun
     {
         $s = $this->factory->cms()->helper('strings');
         $map = parent::formMap($actions);
-        $map['001_digraph_title'] = false;
-        $map['500_digraph_body'] = false;
-        $map['400_linkrule_rules'] = [
+        $map['digraph_title'] = false;
+        $map['digraph_body'] = false;
+        $map['linkrule_rules'] = [
+            'weight' => 400,
             'field' => 'rules',
             'label' => $s->string('forms.linkrule.rules_label'),
             'class' => 'Formward\\Fields\\Textarea',
             'required' => true
         ];
-        $map['401_showpage'] = [
+        $map['showpage'] = [
+            'weight' => 401,
             'field' => 'link.showpage',
             'label' => $s->string('forms.link.showpage'),
             'class' => 'Formward\Fields\Checkbox'

@@ -8,12 +8,14 @@ actions:
       beta: _beta/display
     _beta:
       edges: _beta/edgemigrator
+      slugs: _beta/slugmigrator
 
 strings:
   urls:
     common:
       _beta/display: Beta/migration tools
       _beta/edgemigrator: Migrate from noun-managed edges to edge helper
+      _beta/slugmigrator: Migrate from noun-managed URL slugs to slug helper
 
 navigation:
   parents:
