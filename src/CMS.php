@@ -4,6 +4,7 @@ namespace Digraph;
 
 use Destructr\Drivers\DSODriverInterface;
 use Destructr\DSOFactoryInterface;
+use Digraph\DSO\Noun;
 use Digraph\Helpers\HelperInterface;
 use Digraph\Logging\LogHelper;
 use Digraph\Mungers\MungerInterface;
@@ -32,15 +33,15 @@ class CMS
         $this->config['paths.core'] = realpath(__DIR__.'/..');
         $this->log('CMS::__construct finished');
         //register built-in hooks
-        $this->helper('hooks')->noun_register('update', [$this,'invalidateCache']);
-        $this->helper('hooks')->noun_register('parent:update', [$this,'invalidateCache']);
-        $this->helper('hooks')->noun_register('child:update', [$this,'invalidateCache']);
-        $this->helper('hooks')->noun_register('add', [$this,'invalidateCache']);
-        $this->helper('hooks')->noun_register('parent:add', [$this,'invalidateCache']);
-        $this->helper('hooks')->noun_register('child:add', [$this,'invalidateCache']);
-        $this->helper('hooks')->noun_register('delete', [$this,'invalidateCache']);
-        $this->helper('hooks')->noun_register('parent:delete', [$this,'invalidateCache']);
-        $this->helper('hooks')->noun_register('child:delete', [$this,'invalidateCache']);
+        $this->helper('hooks')->noun_register('update', [$this,'invalidateCache'], 'cms/invalidateCache');
+        $this->helper('hooks')->noun_register('parent:update', [$this,'invalidateCache'], 'cms/invalidateCache');
+        $this->helper('hooks')->noun_register('child:update', [$this,'invalidateCache'], 'cms/invalidateCache');
+        $this->helper('hooks')->noun_register('add', [$this,'invalidateCache'], 'cms/invalidateCache');
+        $this->helper('hooks')->noun_register('parent:insert', [$this,'invalidateCache'], 'cms/invalidateCache');
+        $this->helper('hooks')->noun_register('child:insert', [$this,'invalidateCache'], 'cms/invalidateCache');
+        $this->helper('hooks')->noun_register('delete', [$this,'invalidateCache'], 'cms/invalidateCache');
+        $this->helper('hooks')->noun_register('parent:delete', [$this,'invalidateCache'], 'cms/invalidateCache');
+        $this->helper('hooks')->noun_register('child:delete', [$this,'invalidateCache'], 'cms/invalidateCache');
     }
 
     public function &package(PackageInterface &$package = null) : ?PackageInterface
@@ -305,8 +306,11 @@ class CMS
         return $this->valueFunction('cache/'.$name, $set);
     }
 
-    public function invalidateCache(string $dso_id)
+    public function invalidateCache($dso_id)
     {
+        if ($dso_id instanceof Noun) {
+            $dso_id = $dso_id['dso.id'];
+        }
         $this->log('invalidating cache for '.$dso_id);
         $this->cache()->invalidateTags([$dso_id]);
     }

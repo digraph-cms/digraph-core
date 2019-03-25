@@ -22,7 +22,8 @@
     padding: $(spacing_base);
     box-sizing: border-box;
     background: #(1);
-    color: #fff;
+    color: #fff !important;
+    text-decoration: none !important;
     border: 0;
     font-weight: bold;
     font-size: 1.5em;

@@ -32,8 +32,10 @@ notifications:
   groupsource_illegalroot: Group source "!0" is not allowed to provide root.
   edit:
     confirmation: Changes saved to !name
+    error: An error occurred while saving
   add:
     confirmation: Successfully added !name
+    error: An error occurred while saving
 blocks:
   notfound: block not found
 forms:
@@ -140,7 +142,6 @@ urls:
     '*/file': file
     '*/gallery-file': file
     '*/order': ordering
-    '*/rawdump': raw dump
     '*/rawedit': raw edit
     '*/sitemap': !name site map
   # rules for noun/verb combinations with common nouns

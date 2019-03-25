@@ -60,9 +60,11 @@ class Locate extends AbstractMunger
                 $package->error(300, 'Multiple options found');
                 $package['response.300'] = [];
                 foreach ($opts as $opt) {
+                    $args = $url['args'];
+                    unset($args['digraph_url']);
                     $package->push('response.300', [
                         'object' => $opt[0]['dso.id'],
-                        'link' => $opt[0]->url($opt[1], $url['args'])->html(null, true)->string()
+                        'link' => $opt[0]->url($opt[1], $args)->html(null, true)->string()
                     ]);
                 }
             }

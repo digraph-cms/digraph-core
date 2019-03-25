@@ -52,17 +52,18 @@ class Noun extends DSO implements NounInterface
         );
     }
 
-    public function add() : bool
+    public function insert() : bool
     {
-        $this->invalidateCache(true);
-        $this->cms()->helper('hooks')->noun_trigger($this, 'add');
-        return parent::add();
+        $this->cms()->helper('hooks')->noun_trigger($this, 'insert');
+        return parent::insert();
     }
 
     public function update(bool $sneaky = false) : bool
     {
         if (!$sneaky) {
             $this->cms()->helper('hooks')->noun_trigger($this, 'update');
+        } else {
+            $this->cms()->helper('hooks')->noun_trigger($this, 'update_sneaky');
         }
         return parent::update($sneaky);
     }

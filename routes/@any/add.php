@@ -25,13 +25,22 @@ $form->handle(
     }
 );
 if ($form->handle()) {
-    $cms->helper('notifications')->flashConfirmation(
-        $cms->helper('strings')->string(
-            'notifications.add.confirmation',
-            ['name'=>$form->object->link()]
-        )
-    );
-    $form->object->addParent($package->noun()['dso.id']);
+    if ($form->object->insert()) {
+        $form->object->addParent($package->noun()['dso.id']);
+        $cms->helper('hooks')->noun_trigger($form->object, 'added');
+        $cms->helper('notifications')->flashConfirmation(
+            $cms->helper('strings')->string(
+                'notifications.add.confirmation',
+                ['name'=>$form->object->link()]
+            )
+        );
+    } else {
+        $cms->helper('notifications')->flashError(
+            $cms->helper('strings')->string(
+                'notifications.add.error'
+            )
+        );
+    }
     $package->redirect($form->object->url('edit', null, true)->string());
 }
 

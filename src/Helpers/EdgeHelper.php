@@ -2,6 +2,8 @@
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
 namespace Digraph\Helpers;
 
+use Digraph\DSO\Noun;
+
 /**
  * EdgeHelper is used to quickly manage the edges between Nouns. It operates
  * entirely using the string representations of dso IDs, so sorting and actually
@@ -132,21 +134,15 @@ EOT;
         }
     }
 
-    public function deleteAll(string $id)
+    public function deleteAll($id)
     {
-        //need to make a new edge
+        if ($id instanceof Noun) {
+            $id = $id['dso.id'];
+        }
+        //delete all edges related to this ID
         $s = $this->pdo->prepare(
             'DELETE FROM digraph_edges WHERE edge_start = :id OR edge_end = :id'
         );
-        if ($s->execute([':id'=>$id])) {
-            //add digraph.noparent to noun if we've removed its last parent
-            if (!$this->parents($id)) {
-                if ($en = $this->cms->read($end, false) && !$en['digraph.noparent']) {
-                    $en['digraph.noparent'] = true;
-                    $en->update(true);
-                }
-            }
-            return true;
-        }
+        return $s->execute([':id'=>$id]);
     }
 }

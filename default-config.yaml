@@ -62,7 +62,6 @@ actions:
       clearcache: !id/clearcache
       delete: !id/delete
       edit: !id/edit
-      rawdump: !id/rawdump
       rawedit: !id/rawedit
   common:
     '*': []
@@ -326,8 +325,6 @@ permissions:
       - allow group webmaster
     '_logging/*':
       - deny all
-      - allow group webmaster
-    '*/rawdump':
       - allow group webmaster
     '*/rawedit':
       - allow group webmaster
@@ -604,6 +601,7 @@ mungers:
 helpers:
   initialized:
     modules: true
+    slugs: true
   classes:
     actions: Digraph\Helpers\Actions
     blocks: Digraph\Blocks\BlockHelper
@@ -648,7 +646,7 @@ forms:
         field: digraph.slugpattern
         label: ${strings.forms.slug_label}
         class: Digraph\Forms\Fields\SlugPattern
-        default: '[parent]/[name]-[id]'
+        default: '[parent]/[name]'
       digraph_published:
         weight: 900
         field: digraph.published

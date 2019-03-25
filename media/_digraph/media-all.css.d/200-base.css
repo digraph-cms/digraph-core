@@ -182,3 +182,9 @@ th, td {
 th {
   font-weight: bold;
 }
+
+/* buttons */
+@fragment button(.cta-button, $(color_notice));
+@fragment button(.cta-button.green, $(color_confirmation));
+@fragment button(.cta-button.red, $(color_error));
+@fragment button(.cta-button.orange, $(color_warning));

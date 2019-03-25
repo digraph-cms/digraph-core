@@ -15,7 +15,6 @@ class SlugPattern extends Container
     protected $cms;
     protected $noun;
     protected $pnoun;
-    protected $vars = [];
 
     public function __construct(string $label, string $name=null, FieldInterface $parent=null, &$cms=null)
     {
@@ -57,11 +56,6 @@ class SlugPattern extends Container
         if ($noun->parent()) {
             $this->dsoParent($noun->parent());
         }
-        if (method_exists($noun, 'slugVars')) {
-            foreach ($noun->slugVars() as $key => $value) {
-                $this->vars[$key] = $value;
-            }
-        }
     }
 
     public function dsoParent(&$parent)
@@ -79,78 +73,11 @@ class SlugPattern extends Container
         return $this['slug']->default($value);
     }
 
-    public function hook_formWrite($noun, $opt)
-    {
-        $this->dsoNoun($noun);
-        $noun[$opt['field']] = $this->dsoValue();
-        //verify that this slug hasn't been used before
-        if ($value = $this->dsoValue()) {
-            $res = $this->cms->read($value);
-            if ($res && $res['dso.id'] != $this->noun['dso.id']) {
-                $this->cms->helper('notifications')->flashWarning(
-                    $this->cms->helper('strings')->string(
-                        'forms.slug.error.taken',
-                        [
-                            'slug' => $value,
-                            'by' => $res->url()->html()
-                        ]
-                    )
-                );
-            }
-        }
-    }
-
     public function dsoValue()
     {
         if (!$this['use']->value()) {
             return false;
         }
-        return $this->vars($this['slug']->value());
-    }
-
-    public function vars($slug)
-    {
-        //pull vars from parent
-        if ($this->pnoun) {
-            $this->vars['parent'] = $this->pnoun->url()['noun'];
-            $this->vars['parentid'] = $this->pnoun['dso.id'];
-            if (method_exists($this->pnoun, 'slugVars')) {
-                foreach ($this->pnoun->slugVars() as $key => $value) {
-                    $this->vars[$key] = $value;
-                }
-            }
-        }
-        // pull vars from noun
-        if ($this->noun) {
-            $this->vars['id'] = $this->noun['dso.id'];
-            $this->vars['name'] = $this->noun->name();
-            $this->vars['cdate'] = '[cdate-year][cdate-month][cdate-day]';
-            $this->vars['cdate-time'] = '[cdate-hour][cdate-minute]';
-            $this->vars['cdate-year'] = date('Y', $this->noun['dso.created.date']);
-            $this->vars['cdate-month'] = date('m', $this->noun['dso.created.date']);
-            $this->vars['cdate-day'] = date('d', $this->noun['dso.created.date']);
-            $this->vars['cdate-hour'] = date('H', $this->noun['dso.created.date']);
-            $this->vars['cdate-minute'] = date('i', $this->noun['dso.created.date']);
-            if ($this->noun['digraph.slugpattern']) {
-                $this['use']->default(true);
-                $this['slug']->default($this->noun['digraph.slugpattern']);
-            }
-        }
-        //do variable replacement
-        $slug = $this['slug']->value();
-        foreach ($this->vars as $key => $value) {
-            $slug = str_replace('['.$key.']', $value, $slug);
-        }
-        //clean up
-        $slug = trim($slug, "\/ \t\n\r\0\x0B");
-        $slug = preg_replace('/[^a-z0-9\/'.preg_quote(static::CHARS).']+/i', '-', $slug);
-        $slug = preg_replace('/\-?\/\-?/', '/', $slug);
-        $slug = preg_replace('/\/+/', '/', $slug);
-        $slug = preg_replace('/\-+/', '-', $slug);
-        $slug = preg_replace('/[\/\-]+$/', '', $slug);
-        $slug = preg_replace('/^[\/\-]+/', '', $slug);
-        $slug = preg_replace('/^home\//', '', $slug);
-        $slug = strtolower($slug);
-        return $slug;
+        return $this['slug']->value();
     }
 }

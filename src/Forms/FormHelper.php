@@ -8,7 +8,7 @@ use Flatrr\FlatArray;
 
 class FormHelper extends AbstractHelper
 {
-    protected function mapNoun(NounInterface &$noun, Form &$form, array $map, bool $insert = false, NounInterface &$parent = null)
+    protected function mapNoun(NounInterface &$noun, Form &$form, array $map, NounInterface &$parent = null)
     {
         $form->object = $noun;
         foreach ($map as $name => $opt) {
@@ -57,7 +57,7 @@ class FormHelper extends AbstractHelper
             $form[$name] = $field;
         }
         //set up function writing content to object
-        $form->writeObjectFn = function () use ($noun,$form,$map,$insert) {
+        $form->writeObjectFn = function () use ($noun,$form,$map) {
             foreach ($map as $name => $opt) {
                 if (method_exists($form[$name], 'hook_formWrite')) {
                     $form[$name]->hook_formWrite($noun, $opt);
@@ -66,11 +66,6 @@ class FormHelper extends AbstractHelper
                 } else {
                     $noun[$opt['field']] = $form[$name]->value();
                 }
-            }
-            if ($insert) {
-                return $noun->insert();
-            } else {
-                return $noun->update();
             }
         };
     }
@@ -125,7 +120,6 @@ class FormHelper extends AbstractHelper
             $noun,
             $form,
             $this->getMap($noun, 'add'),
-            true,
             $parent
         );
         return $form;

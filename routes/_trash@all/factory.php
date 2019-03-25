@@ -1,8 +1,19 @@
 <?php
 $package->noCache();
+$token = $cms->helper('session')->getToken('emptytrash');
+
 $factory = $cms->factory($this->arg('factory'));
 $search = $factory->search();
 $search->order('${dso.modified.date} desc');
+
+/* execute if requested */
+if (@$_GET['token'] && $cms->helper('session')->checkToken('emptytrash', @$_GET['token'])) {
+    foreach ($search->execute([], true) as $item) {
+        var_dump($item->delete(true));
+    }
+}
+
+echo "<p><a class='cta-button' href='?factory=".$this->arg('factory')."&token=$token'>Empty trash</a></p>";
 
 $results = $search->execute([], true);
 
