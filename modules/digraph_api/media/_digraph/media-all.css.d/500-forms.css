@@ -1,0 +1,116 @@
+.FormwardAjaxAutocomplete {
+  &.js-active {
+    .FieldWrapper-ajax-field-value {
+      display: none;
+    }
+  }
+
+  .FieldWrapper-ajax-field-query {
+    margin-bottom: 0;
+
+    input {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+      opacity: 0.5;
+      font-size: 0.8em;
+    }
+  }
+
+  .FieldWrapper-ajax-field-results {
+    margin-top: 0;
+    margin-bottom: 0;
+    position: relative;
+    border-bottom-left-radius: $(border_radius_accent);
+    border-bottom-right-radius: $(border_radius_accent);
+    overflow: hidden;
+
+    label {
+      display: none;
+    }
+
+    div.ajax-field-results {
+      box-shadow: 0 0 0.5em $(color_shade);
+      height: auto;
+      transition: all 0.5s linear;
+      line-height: 1.5em;
+
+      .ajax-empty,
+      .ajax-item,
+      .ajax-loading,
+      .ajax-waiting {
+        overflow: hidden;
+        box-sizing: border-box;
+        padding: 0.25em;
+        color: #fff;
+        background: #777;
+
+        a {
+          color: #fff !important;
+        }
+      }
+
+      .ajax-waiting {
+        background: $(color_confirmation);
+
+        &:after {
+          content: "Waiting for input...";
+        }
+      }
+
+      .ajax-loading {
+        background: $(color_confirmation);
+
+        &:after {
+          content: "Loading...";
+        }
+      }
+
+      .ajax-empty {
+        background: $(color_warning);
+
+        &:after {
+          content: "Nothing found";
+        }
+      }
+
+      .ajax-item {
+        cursor: pointer;
+
+        &.selected {
+          background: $(color_notice);
+        }
+
+        &:hover {
+          background: $(color_confirmation);
+        }
+      }
+    }
+  }
+
+  &.focused {
+    div.ajax-field-results {
+      background: $(color_shade);
+      z-index: 100;
+    }
+  }
+
+  &.blurred {
+    .ajax-item {
+      height: 0;
+      padding: 0 !important;
+
+      &.selected {
+        height: auto;
+        padding: 0.25em !important;
+        background: $(color_accent) !important;
+      }
+    }
+
+    div.ajax-field-results {
+      position: relative;
+    }
+  }
+}

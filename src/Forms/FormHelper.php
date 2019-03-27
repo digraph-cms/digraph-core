@@ -8,6 +8,33 @@ use Flatrr\FlatArray;
 
 class FormHelper extends AbstractHelper
 {
+    protected $types = [];
+
+    public function field($type, $label, $extraArgs = [])
+    {
+        $class = isset($this->types[$type])?$this->types[$type]:$type;
+        if (!class_exists($class)) {
+            throw new \Exception("Class not found for field type $type, class $class");
+        }
+        //set up args
+        $args = [$label,null,null,&$this->cms];
+        if ($extraArgs) {
+            foreach ($extraArgs as $a) {
+                $args[] = $a;
+            }
+        }
+        //create new ReflectionClass from class requested
+        //and use it to instantiate the class with the args
+        $r = new \ReflectionClass($class);
+        $field = $r->newInstanceArgs($args);
+        return $field;
+    }
+
+    public function registerType($name, $class)
+    {
+        $this->types[$name] = $class;
+    }
+
     protected function mapNoun(NounInterface &$noun, Form &$form, array $map, NounInterface &$parent = null)
     {
         $form->object = $noun;
@@ -15,17 +42,8 @@ class FormHelper extends AbstractHelper
             if (!$opt) {
                 continue;
             }
-            //add extra construction args from map
-            $args = [$opt['label'],null,null,&$this->cms];
-            if (@$opt['extraConstructArgs']) {
-                foreach ($opt['extraConstructArgs'] as $a) {
-                    $args[] = $a;
-                }
-            }
-            //create new ReflectionClass from class requested by map ['class']
-            //and use it to instantiate the class with the args
-            $r = new \ReflectionClass($opt['class']);
-            $field = $r->newInstanceArgs($args);
+            //create new field
+            $field = $this->field($opt['class'], $opt['label'], @$opt['extraConstructArgs']);
             //tell field about the noun if the field has the dsoNoun method
             if (method_exists($field, 'dsoNoun')) {
                 $field->dsoNoun($noun);

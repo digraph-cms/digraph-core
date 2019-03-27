@@ -63,6 +63,7 @@ class CMS
     public function initialize()
     {
         //initialize modules
+        $this->helper('modules')->initialize();
         foreach ($this->config['helpers.initialized'] as $name => $i) {
             if ($i) {
                 $this->helper($name)->initialize();

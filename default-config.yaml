@@ -600,7 +600,6 @@ mungers:
 
 helpers:
   initialized:
-    modules: true
     slugs: true
   classes:
     actions: Digraph\Helpers\Actions
