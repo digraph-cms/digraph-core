@@ -9,14 +9,14 @@ $(function() {
     var $value = $container.find('select.ajax-field-value');
     if (query !== $container.data('lastquery')) {
       $container.data('lastquery', query);
-      url = url.replace('$q', encodeURIComponent(query));
+      url = url.replace('%24q', encodeURIComponent(query));
       $container.data('lasturl', url);
       $results.html('<div class="ajax-loading"></div>');
       $.ajax({
         url: url,
         dataType: 'json',
         success: function(data, status, xhr) {
-          if (xhr.responseURL == $container.data('lasturl')) {
+          if (true || xhr.responseURL == $container.data('lasturl')) {
             var current = $container.data('lastselected');
             if (data.length == 0) {
               $results.html('<div class="ajax-empty"></div>');

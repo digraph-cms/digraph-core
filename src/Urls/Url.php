@@ -77,7 +77,7 @@ class Url extends FlatArray
                 if ($value === true || !strval($value)) {
                     $args[] = $key;
                 } else {
-                    $args[] = $key.static::ARGVALUESEPARATOR.$value;
+                    $args[] = $key.static::ARGVALUESEPARATOR.urlencode($value);
                 }
             }
             return static::ARGINITIALSEPARATOR.implode(static::ARGSEPARATOR, $args);
