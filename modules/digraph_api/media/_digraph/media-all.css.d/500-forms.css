@@ -6,7 +6,7 @@
   }
 
   .FieldWrapper-ajax-field-query {
-    margin-bottom: 0;
+    margin-bottom: 0 !important;
 
     input {
       display: block;
@@ -20,8 +20,8 @@
   }
 
   .FieldWrapper-ajax-field-results {
-    margin-top: 0;
-    margin-bottom: 0;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
     position: relative;
     border-bottom-left-radius: $(border_radius_accent);
     border-bottom-right-radius: $(border_radius_accent);

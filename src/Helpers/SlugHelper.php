@@ -96,8 +96,8 @@ EOT;
         // pull vars from noun
         $vars['id'] = $noun['dso.id'];
         $vars['name'] = $noun->name();
-        $vars['cdate'] = '[cdate-year][cdate-month][cdate-day]';
-        $vars['cdate-time'] = '[cdate-hour][cdate-minute]';
+        $vars['cdate'] = date('Ymd', $noun['dso.created.date']);
+        $vars['cdatetime'] = date('YmdHi', $noun['dso.created.date']);
         $vars['cdate-year'] = date('Y', $noun['dso.created.date']);
         $vars['cdate-month'] = date('m', $noun['dso.created.date']);
         $vars['cdate-day'] = date('d', $noun['dso.created.date']);
@@ -158,6 +158,39 @@ EOT;
         $slug = preg_replace('/^home\//', '', $slug);
         $slug = strtolower($slug);
         return $slug;
+    }
+
+    public function list(int $limit, int $offset)
+    {
+        $args = [];
+        $l = '';
+        if ($limit) {
+            $l .= ' LIMIT :limit';
+            $args[':limit'] = $limit;
+        }
+        if ($offset) {
+            $l .= ' OFFSET :offset';
+            $args[':offset'] = $offset;
+        }
+        $s = $this->pdo->prepare(
+            'SELECT * FROM digraph_slugs ORDER BY slug_id desc'.$l
+        );
+        if ($s->execute($args)) {
+            return $s->fetchAll(\PDO::FETCH_ASSOC);
+        }
+        return [];
+    }
+
+    public function count()
+    {
+        $s = $this->pdo->prepare(
+            'SELECT COUNT(slug_id) FROM digraph_slugs'
+        );
+        if ($s->execute($args)) {
+            $out = $s->fetchAll(\PDO::FETCH_ASSOC);
+            return intval($out[0]['COUNT(slug_id)']);
+        }
+        return 0;
     }
 
     /**

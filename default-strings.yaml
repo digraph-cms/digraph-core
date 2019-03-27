@@ -155,6 +155,9 @@ urls:
     _filestorecleanup/download: Download file
     _logging/display: Logs
     _logging/entry: Log entry
+    _slugs/bynoun: Manage URLs by noun
+    _slugs/display: Custom URLs
+    _slugs/list: List all URLs
     _trash/display: Trash
     _trash/factory: Trash from "!arg_factory"
     _trash/item: Trash item !arg_id

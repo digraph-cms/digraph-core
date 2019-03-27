@@ -8,7 +8,26 @@ use Flatrr\FlatArray;
 
 class FormHelper extends AbstractHelper
 {
-    protected $types = [];
+    protected $types = [
+        'digraph_content' => Fields\Content::class,
+        'digraph_published' => Fields\Published::class,
+        'digraph_slug' => Fields\SlugPattern::class,
+        'digraph_name' => \Formward\Fields\Input::class,
+        'digraph_title' => \Formward\Fields\Input::class,
+        'checkbox' => \Formward\Fields\Checkbox::class
+    ];
+
+    public function form($label='', $name=null)
+    {
+        $form = new Form($label, $name);
+        $form->cms($this->cms);
+        return $form;
+    }
+
+    public function registerType($name, $class)
+    {
+        $this->types[$name] = $class;
+    }
 
     public function field($type, $label, $extraArgs = [])
     {
@@ -28,11 +47,6 @@ class FormHelper extends AbstractHelper
         $r = new \ReflectionClass($class);
         $field = $r->newInstanceArgs($args);
         return $field;
-    }
-
-    public function registerType($name, $class)
-    {
-        $this->types[$name] = $class;
     }
 
     protected function mapNoun(NounInterface &$noun, Form &$form, array $map, NounInterface &$parent = null)
@@ -75,7 +89,7 @@ class FormHelper extends AbstractHelper
             $form[$name] = $field;
         }
         //set up function writing content to object
-        $form->writeObjectFn = function () use ($noun,$form,$map) {
+        $form->digraphHandlerFn = function () use ($noun,$form,$map) {
             foreach ($map as $name => $opt) {
                 if (method_exists($form[$name], 'hook_formWrite')) {
                     $form[$name]->hook_formWrite($noun, $opt);

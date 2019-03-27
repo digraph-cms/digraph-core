@@ -8,7 +8,7 @@ use Digraph\CMS;
 
 class Form extends \Formward\Form
 {
-    public $writeObjectFn;
+    public $digraphHandlerFn;
     public $written = false;
     public $object;
     public $parent;
@@ -39,8 +39,8 @@ class Form extends \Formward\Form
     public function handle(callable $validFn = null, callable $invalidFn = null, callable $notSubmittedFn = null) : ?bool
     {
         if ($out = parent::handle($validFn, $invalidFn, $notSubmittedFn)) {
-            if (!$this->written && $this->writeObjectFn) {
-                $this->written = ($this->writeObjectFn)();
+            if (!$this->written && $this->digraphHandlerFn) {
+                $this->written = ($this->digraphHandlerFn)();
             }
         }
         return $out;

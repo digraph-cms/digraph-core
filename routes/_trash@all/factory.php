@@ -9,7 +9,7 @@ $search->order('${dso.modified.date} desc');
 /* execute if requested */
 if (@$_GET['token'] && $cms->helper('session')->checkToken('emptytrash', @$_GET['token'])) {
     foreach ($search->execute([], true) as $item) {
-        var_dump($item->delete(true));
+        $item->delete(true);
     }
 }
 

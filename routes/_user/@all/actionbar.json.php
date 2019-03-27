@@ -39,7 +39,11 @@ if ($object = $package->cms()->read($package['url.args.id'])) {
 } elseif ($package['url.args.id'] == '_user/guest') {
     $title = $cms->helper('strings')->string('actionbar.title.guest');
 } elseif ($package['url.args.id'] == '_user/signedin') {
-    $title = $cms->helper('users')->user()->name();
+    if ($user = $cms->helper('users')->user()) {
+        $title = $user->name();
+    } else {
+        $title = $cms->helper('strings')->string('actionbar.title.guest');
+    }
 }
 
 //include object title
