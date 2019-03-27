@@ -12,7 +12,7 @@ use Digraph\DSO\Noun;
  */
 class SlugHelper extends \Digraph\Helpers\AbstractHelper
 {
-    const CHARS = '$-_.+!*\'(),';
+    const CHARS = '$-_.+!*(),';
 
     /* DDL for table */
     const DDL = <<<EOT

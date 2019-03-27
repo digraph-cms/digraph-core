@@ -10,7 +10,7 @@ use Formward\Fields\Input;
 class SlugPattern extends Container
 {
     //The characters allowed in addition to alphanumerics and slashes
-    const CHARS = '$-_.+!*\'(),';
+    const CHARS = '$-_.+!*(),';
 
     protected $cms;
     protected $noun;

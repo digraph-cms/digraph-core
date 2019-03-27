@@ -9,9 +9,6 @@ use Formward\Fields\Checkbox;
 
 class Content extends Container
 {
-    //The characters allowed in addition to alphanumerics and slashes
-    const CHARS = '$-_.+!*\'(),';
-
     public function default($default = null)
     {
         if (is_string($default)) {

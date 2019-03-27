@@ -8,9 +8,6 @@ use Digraph\CMS;
 
 class ContentFilter extends Select
 {
-    //The characters allowed in addition to alphanumerics and slashes
-    const CHARS = '$-_.+!*\'(),';
-
     public function __construct(string $label, string $name=null, FieldInterface $parent=null, CMS &$cms=null)
     {
         parent::__construct($label, $name, $parent);
