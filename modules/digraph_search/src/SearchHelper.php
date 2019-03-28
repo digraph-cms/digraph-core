@@ -30,12 +30,12 @@ class SearchHelper extends AbstractHelper
     {
         if (!$this->indexer) {
             try {
-                $this->tnt->selectIndex('content.index');
+                $this->tnt->selectIndex('digraph.index');
                 $this->indexer = $this->tnt->getIndex();
             } catch (\Exception $e) {
-                $this->indexer = $this->tnt->createIndex('content.index');
+                $this->indexer = $this->tnt->createIndex('digraph.index');
             }
-            $this->tnt->selectIndex('content.index');
+            $this->tnt->selectIndex('digraph.index');
             $this->indexer->includePrimaryKey();
         }
         return $this->indexer;
