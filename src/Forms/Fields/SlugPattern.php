@@ -9,9 +9,6 @@ use Formward\Fields\Input;
 
 class SlugPattern extends Container
 {
-    //The characters allowed in addition to alphanumerics and slashes
-    const CHARS = '$-_.+!*(),';
-
     protected $cms;
     protected $noun;
     protected $pnoun;
@@ -37,12 +34,17 @@ class SlugPattern extends Container
                 if (strpos('//', $value) !== false) {
                     return $this->cms->helper('strings')->string('forms.slug.error.slashes');
                 }
-                if (preg_match('/[^a-z0-9\[\]\/'.preg_quote(static::CHARS).']/i', $value)) {
-                    return $this->cms->helper('strings')->string('forms.slug.error.character', [static::CHARS]);
+                if (preg_match('/[^a-z0-9\[\]\/'.preg_quote($this->chars()).']/i', $value)) {
+                    return $this->cms->helper('strings')->string('forms.slug.error.character', [$this->chars()]);
                 }
                 return true;
             }
         );
+    }
+
+    protected function chars()
+    {
+        return $this->cms->helper('slugs')::CHARS;
     }
 
     public function disableByDefault(bool $set=null)

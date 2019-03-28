@@ -13,6 +13,7 @@ use Digraph\DSO\Noun;
 class SlugHelper extends \Digraph\Helpers\AbstractHelper
 {
     const CHARS = '$-_.+!*(),';
+    // const CHARS = '-_.!*(),';
 
     /* DDL for table */
     const DDL = <<<EOT
@@ -116,24 +117,11 @@ EOT;
             $slug
         );
         //clean up
-        $slug = trim($slug, "\/ \t\n\r\0\x0B");
-        $slug = preg_replace('/[^a-z0-9\/'.preg_quote(static::CHARS).']+/i', '-', $slug);
-        $slug = preg_replace('/\-?\/\-?/', '/', $slug);
-        $slug = preg_replace('/\/+/', '/', $slug);
-        $slug = preg_replace('/\-+/', '-', $slug);
-        $slug = preg_replace('/[\/\-]+$/', '', $slug);
-        $slug = preg_replace('/^[\/\-]+/', '', $slug);
-        $slug = preg_replace('/^home\//', '', $slug);
-        $slug = strtolower($slug);
+        $slug = $this->sanitizeSlug($slug);
         //append number if slug exists already for a different noun
-        $finalslug = $slug;
-        $i = 1;
-        while (($nouns = $this->nouns($finalslug)) && !in_array($noun['dso.id'], $nouns)) {
-            $i++;
-            $finalslug = $slug.'-'.$i;
-        }
+        $slug = $this->uniqueSlug($slug, $noun['dso.id']);
         //return result
-        return $finalslug;
+        return $slug;
     }
 
     protected function sanitizeNoun($noun)
@@ -146,17 +134,31 @@ EOT;
         return $noun;
     }
 
-    protected function sanitizeSlug($slug)
+    public function uniqueSlug($slug, $noun=null)
     {
+        $i = 1;
+        $unique = $slug;
+        while (($nouns = $this->nouns($unique)) && !in_array($noun, $nouns)) {
+            $i++;
+            $unique = $slug.'-'.$i;
+        }
+        return $unique;
+    }
+
+    public function sanitizeSlug($slug)
+    {
+        $slug = strtolower($slug);
+        $slug = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $slug);
         $slug = trim($slug, "\/ \t\n\r\0\x0B");
-        $slug = preg_replace('/[^a-z0-9\/'.preg_quote(static::CHARS).']+/i', '-', $slug);
+        $slug = preg_replace('/\s+/', '-', $slug);
+        $slug = preg_replace('/[^a-z0-9\/'.preg_quote(static::CHARS).']+/i', '', $slug);
         $slug = preg_replace('/\-?\/\-?/', '/', $slug);
         $slug = preg_replace('/\/+/', '/', $slug);
-        $slug = preg_replace('/\-+/', '-', $slug);
-        $slug = preg_replace('/[\/\-]+$/', '', $slug);
-        $slug = preg_replace('/^[\/\-]+/', '', $slug);
+        $slug = preg_replace('/([^a-z0-9])+/', '$1', $slug);
+        $slug = preg_replace('/[^a-z0-9]+$/', '', $slug);
+        $slug = preg_replace('/^[^a-z0-9]+/', '', $slug);
         $slug = preg_replace('/^home\//', '', $slug);
-        $slug = strtolower($slug);
+        $slug = preg_replace('/[^a-z0-9]*([\/\-\_])[^a-z0-9]*/', '$1', $slug);
         return $slug;
     }
 
