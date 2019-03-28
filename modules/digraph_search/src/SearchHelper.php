@@ -14,13 +14,9 @@ class SearchHelper extends AbstractHelper
     {
         //set up search object
         $this->tnt = new TNTSearch;
-        $path = $this->cms->config['paths.searchindex'];
-        if (!is_dir($path) && !mkdir($path)) {
-            throw new \Exception("Couldn't create search index directory");
-        }
         $this->tnt->loadConfig([
             'driver' => 'filesystem',
-            'storage' => $this->cms->config['paths.searchindex']
+            'storage' => $this->cms->config['paths.storage']
         ]);
         //set up hooks to index nouns on insert/update/delete
         $hooks = $this->cms->helper('hooks');
@@ -34,12 +30,12 @@ class SearchHelper extends AbstractHelper
     {
         if (!$this->indexer) {
             try {
-                $this->tnt->selectIndex('digraph.index');
+                $this->tnt->selectIndex('content.index');
                 $this->indexer = $this->tnt->getIndex();
             } catch (\Exception $e) {
-                $this->indexer = $this->tnt->createIndex('digraph.index');
+                $this->indexer = $this->tnt->createIndex('content.index');
             }
-            $this->tnt->selectIndex('digraph.index');
+            $this->tnt->selectIndex('content.index');
             $this->indexer->includePrimaryKey();
         }
         return $this->indexer;
