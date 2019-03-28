@@ -1,0 +1,8 @@
+helpers:
+  initialized:
+    search: true
+  classes:
+    search: ${module.namespace}\SearchHelper
+
+paths:
+  searchindex: ${paths.storage}/searchindex

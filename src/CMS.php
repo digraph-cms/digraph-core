@@ -36,7 +36,7 @@ class CMS
         $this->helper('hooks')->noun_register('update', [$this,'invalidateCache'], 'cms/invalidateCache');
         $this->helper('hooks')->noun_register('parent:update', [$this,'invalidateCache'], 'cms/invalidateCache');
         $this->helper('hooks')->noun_register('child:update', [$this,'invalidateCache'], 'cms/invalidateCache');
-        $this->helper('hooks')->noun_register('add', [$this,'invalidateCache'], 'cms/invalidateCache');
+        $this->helper('hooks')->noun_register('insert', [$this,'invalidateCache'], 'cms/invalidateCache');
         $this->helper('hooks')->noun_register('parent:insert', [$this,'invalidateCache'], 'cms/invalidateCache');
         $this->helper('hooks')->noun_register('child:insert', [$this,'invalidateCache'], 'cms/invalidateCache');
         $this->helper('hooks')->noun_register('delete', [$this,'invalidateCache'], 'cms/invalidateCache');

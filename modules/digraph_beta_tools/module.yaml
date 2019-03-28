@@ -9,6 +9,7 @@ actions:
     _beta:
       edges: _beta/edgemigrator
       slugs: _beta/slugmigrator
+      index: _beta/rebuildindex
 
 strings:
   urls:
@@ -16,6 +17,7 @@ strings:
       _beta/display: Beta/migration tools
       _beta/edgemigrator: Migrate from noun-managed edges to edge helper
       _beta/slugmigrator: Migrate from noun-managed URL slugs to slug helper
+      _beta/rebuildindex: Force rebuild of search index
 
 navigation:
   parents:
