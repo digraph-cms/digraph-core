@@ -6,3 +6,8 @@ helpers:
 
 paths:
   searchindex: ${paths.storage}/searchindex
+
+strings:
+  urls:
+    common:
+      _search/display: Site search

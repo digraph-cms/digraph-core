@@ -1,14 +1,12 @@
 <?php
 $search = $cms->helper('search');
+$t = $cms->helper('templates');
 
+$form = $search->form();
+echo $form;
 
-// $search->index($cms->read('home'));
-// $search->index($cms->read('10j6fvt0'));
-
-foreach ($search->search($package['url.args.q']) as $n) {
-    if (!$n) {
-        echo "<div>[not found]</div>";
-    } else {
-        echo "<div>".$n->link()."</div>";
+foreach ($search->search($package['url.args.search_q']) as $result) {
+    if ($result) {
+        echo $t->render('digraph/search-result.twig', ['result'=>$result]);
     }
 }

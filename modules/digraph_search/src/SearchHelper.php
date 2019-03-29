@@ -18,12 +18,65 @@ class SearchHelper extends AbstractHelper
             'driver' => 'filesystem',
             'storage' => $this->cms->config['paths.storage']
         ]);
+        $this->tnt->fuzziness = true;
         //set up hooks to index nouns on insert/update/delete
         $hooks = $this->cms->helper('hooks');
         $hooks->noun_register('update', [$this,'index'], 'search/index');
+        $hooks->noun_register('child:update', [$this,'index'], 'search/index');
         $hooks->noun_register('insert', [$this,'index'], 'search/index');
+        $hooks->noun_register('child:insert', [$this,'index'], 'search/index');
         $hooks->noun_register('delete', [$this,'delete'], 'search/delete');
+        $hooks->noun_register('child:delete', [$this,'index'], 'search/index');
         $hooks->noun_register('delete_permanent', [$this,'delete'], 'search/delete');
+    }
+
+    public function form()
+    {
+        $form = new \Formward\Fields\Container('', 'search');
+        $form->tag = 'form';
+        $form->addClass('Form');
+        $form->addClass('search-form');
+        $form->attr('action', $this->cms->helper('urls')->url('_search', 'display'));
+        $form->method('get');
+        $form['q'] = new \Formward\Fields\Input('');
+        $form['submit'] = new \Formward\SystemFields\Submit('Search');
+        return $form;
+    }
+
+    public function search($query)
+    {
+        $this->indexer();
+        $result = $this->tnt->search($query);
+        $result = array_map(
+            function ($e) use ($query) {
+                if ($noun = $this->cms->read($e)) {
+                    return [
+                        'noun' => $noun,
+                        'highlights' => $this->highlights($query, $noun)
+                    ];
+                }
+                return false;
+            },
+            $result['ids']
+        );
+        $result = array_filter($result);
+        return $result;
+    }
+
+    public function highlights($query, $noun)
+    {
+        return [
+            'The following is being produced after normal execution by the digraph_debug_module. This module should never be used in production.',
+            'ModuleManager: loading C:\xampp\htdocs\digraph-core\example/modules/example_module/module.yaml'
+        ];
+    }
+
+    public function shouldBeIndexed($noun)
+    {
+        if (method_exists($noun, 'searchIndexed')) {
+            return $noun->searchIndexed();
+        }
+        return true;
     }
 
     protected function indexer()
@@ -36,31 +89,9 @@ class SearchHelper extends AbstractHelper
                 $this->indexer = $this->tnt->createIndex('digraph.index');
             }
             $this->tnt->selectIndex('digraph.index');
-            $this->indexer->includePrimaryKey();
+            $this->tnt->getIndex()->includePrimaryKey();
         }
         return $this->indexer;
-    }
-
-    public function search($query)
-    {
-        $this->indexer();
-        $result = $this->tnt->search($query);
-        $result = array_map(
-            function ($e) {
-                return $this->cms->read($e);
-            },
-            $result['ids']
-        );
-        $result = array_filter($result);
-        return $result;
-    }
-
-    public function shouldBeIndexed($noun)
-    {
-        if (method_exists($noun, 'searchIndexed')) {
-            return $noun->searchIndexed();
-        }
-        return true;
     }
 
     public function delete($noun)
@@ -83,7 +114,7 @@ class SearchHelper extends AbstractHelper
         $data = [
             'id' => $noun['dso.id'],
             'title' => $noun->name(),
-            'article' => $noun->body()
+            'article' => $noun->name().' '.$noun->title().' '.$noun->body()
         ];
         $idx = $this->indexer();
         $idx->indexBeginTransaction();
