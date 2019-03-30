@@ -454,7 +454,7 @@ theme:
   variables:
     _override: []
     _digraph:
-      border_radius_accent: 0.2em
+      border_radius_accent: 0.3rem
       breakpoint_extralarge: 70em
       breakpoint_large: 50em
       breakpoint_medium: 30em
