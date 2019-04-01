@@ -38,6 +38,9 @@ class Paginator extends AbstractHelper
         }
         $start = $perpage*($page-1)+1;
         $end = $start + $perpage-1;
+        if ($end > $count) {
+            $end = $count;
+        }
         //build content
         $results = [];
         foreach (array_slice($items, $start-1, $perpage) as $e) {
