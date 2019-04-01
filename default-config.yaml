@@ -411,7 +411,7 @@ navigation:
       _slugs/display: _controlpanel/display
       _trash/display: _controlpanel/display
       _trash/item: _trash/factory?factory=!arg_factory
-      _user/display: false
+      _user/display: __none
 
 types:
   system:

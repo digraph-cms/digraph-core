@@ -20,3 +20,9 @@ strings:
   urls:
     common:
       _search/display: Site search
+
+navigation:
+  parents:
+    common:
+      '_search/*': _search/display
+      _search/display: __none

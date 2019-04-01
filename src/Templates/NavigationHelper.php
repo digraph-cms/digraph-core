@@ -22,6 +22,9 @@ class NavigationHelper extends AbstractHelper
         if (!$parent) {
             return $bc;
         }
+        if ($parent['noun'] == '__none' && $parent['verb'] == 'display') {
+            return $bc;
+        }
         if ($parent['noun'] == 'home' && $parent['verb'] == 'display') {
             $bc["$parent"] = $parent;
             return $bc;
