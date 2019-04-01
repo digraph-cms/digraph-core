@@ -25,4 +25,9 @@ class Block extends Noun
             ]
         ];
     }
+
+    public function searchIndexed()
+    {
+        return false;
+    }
 }

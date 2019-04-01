@@ -12,6 +12,11 @@ class Version extends Page
         'img' => 'image'
     ];
 
+    public function searchIndexed()
+    {
+        return false;
+    }
+
     /**
      * Needs to produce a markdown version of this version's content, which will
      * be used in the diff verb to produce diffs. It's fine to strip content

@@ -34,4 +34,9 @@ class BlockArea extends Noun
         }
         return $out;
     }
+
+    public function searchIndexed()
+    {
+        return false;
+    }
 }

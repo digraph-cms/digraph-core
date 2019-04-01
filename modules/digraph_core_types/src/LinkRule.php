@@ -10,6 +10,11 @@ class LinkRule extends Noun
     const PUBLISH_CONTROL = false;
     const SLUG_ENABLED = true;
 
+    public function searchIndexed()
+    {
+        return false;
+    }
+
     public function formMap(string $actions) : array
     {
         $s = $this->factory->cms()->helper('strings');
