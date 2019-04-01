@@ -4,6 +4,11 @@ helpers:
   classes:
     search: ${module.namespace}\SearchHelper
 
+search:
+  cron:
+    interval: 86400
+    limit: 3
+
 paths:
   searchindex: ${paths.storage}/searchindex
 

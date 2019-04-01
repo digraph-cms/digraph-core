@@ -9,6 +9,7 @@ class SearchHelper extends AbstractHelper
 {
     protected $tnt;
     protected $indexer;
+    protected $transaction;
 
     public function initialize()
     {
@@ -28,6 +29,25 @@ class SearchHelper extends AbstractHelper
         $hooks->noun_register('delete', [$this,'delete'], 'search/delete');
         $hooks->noun_register('child:delete', [$this,'index'], 'search/index');
         $hooks->noun_register('delete_permanent', [$this,'delete'], 'search/delete');
+    }
+
+    public function hook_cron()
+    {
+        $count = 0;
+        $interval = $this->cms->config['searh.cron.interval'];
+        $limit = $this->cms->config['search.cron.limit'];
+        $search = $this->cms->factory()->search();
+        $search->where('${digraph.lastsearchindex} is null OR ${digraph.lastsearchindex} < :time');
+        $search->limit($limit);
+        $this->beginTransaction();
+        foreach ($search->execute([':time'=>(time()-$interval)]) as $noun) {
+            $this->index($noun);
+            $noun['digraph.lastsearchindex'] = time();
+            $noun->update(true);
+            $count++;
+        }
+        $this->endTransaction();
+        return $count;
     }
 
     public function form()
@@ -102,6 +122,22 @@ class SearchHelper extends AbstractHelper
         $idx->indexEndTransaction();
     }
 
+    public function beginTransaction()
+    {
+        if (!$this->transaction) {
+            $this->indexer()->indexBeginTransaction();
+            $this->transaction = true;
+        }
+    }
+
+    public function endTransaction()
+    {
+        if ($this->transaction) {
+            $this->indexer()->indexEndTransaction();
+            $this->transaction = false;
+        }
+    }
+
     public function index($noun)
     {
         //verify that this noun should be indexed, remove it if it's deleted or
@@ -117,11 +153,15 @@ class SearchHelper extends AbstractHelper
             'article' => $noun->name().' '.$noun->title().' '.$noun->body()
         ];
         $idx = $this->indexer();
-        $idx->indexBeginTransaction();
+        if (!$this->transaction) {
+            $idx->indexBeginTransaction();
+        }
         $idx->update(
             $noun['dso.id'],
             $data
         );
-        $idx->indexEndTransaction();
+        if (!$this->transaction) {
+            $idx->indexEndTransaction();
+        }
     }
 }

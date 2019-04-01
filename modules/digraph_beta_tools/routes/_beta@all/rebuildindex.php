@@ -13,15 +13,15 @@ if (!$package['url.args.time']) {
 if (@$_GET['token'] && $cms->helper('session')->checkToken('rebuildindex', @$_GET['token'])) {
     $s = $cms->helper('search');
     $search = $cms->factory()->search();
-    $search->where('${digraph.searchindexrebuilt} is null OR ${digraph.searchindexrebuilt} < :time');
-    $search->order('${digraph.searchindexrebuilt} asc');
+    $search->where('${digraph.lastsearchindex} is null OR ${digraph.lastsearchindex} < :time');
+    $search->order('${digraph.lastsearchindex} asc');
     $r = $search->execute([":time"=>$package['url.args.time']]);
     $ncount = 0;
     $start = time();
     foreach ($r as $n) {
         $s->index($n);
         $ncount++;
-        $n['digraph.searchindexrebuilt'] = $package['url.args.time'];
+        $n['digraph.lastsearchindex'] = $package['url.args.time'];
         $n->update(true);
         if (time()-$start >= 10) {
             break;
@@ -34,8 +34,8 @@ if (@$_GET['token'] && $cms->helper('session')->checkToken('rebuildindex', @$_GE
 /* display current state */
 $token = $cms->helper('session')->getToken('rebuildindex');
 $search = $cms->factory()->search();
-$search->where('${digraph.searchindexrebuilt} is null OR ${digraph.searchindexrebuilt} < :time');
-$search->order('${digraph.searchindexrebuilt} asc');
+$search->where('${digraph.lastsearchindex} is null OR ${digraph.lastsearchindex} < :time');
+$search->order('${digraph.lastsearchindex} asc');
 $r = $search->execute([":time"=>$package['url.args.time']]);
 if ($r) {
     echo <<<EOT
