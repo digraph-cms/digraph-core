@@ -8,7 +8,7 @@ search:
   cron:
     interval: 86400
     limit: 3
-  highlight_length: 200
+  highlight_length: 150
 
 paths:
   searchindex: ${paths.storage}/searchindex

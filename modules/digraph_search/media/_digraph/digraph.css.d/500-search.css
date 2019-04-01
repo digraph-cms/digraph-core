@@ -22,7 +22,6 @@
   .highlight {
     font-size: 0.7em;
     opacity: 0.75;
-    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 
