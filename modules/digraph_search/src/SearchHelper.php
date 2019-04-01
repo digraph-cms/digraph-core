@@ -95,7 +95,7 @@ class SearchHelper extends AbstractHelper
         $text = $this->tnt->highlight($text, $query);
         $length = $this->cms->config['search.highlight.length'];
         $positions = [];
-        while (($lastPos = strpos($text, '<em>', $lastPos))!== false) {
+        while (($lastPos = strpos($text, '<em>', @$lastPos))!== false) {
             $positions[] = $lastPos;
             $lastPos = $lastPos + strlen('<em>');
         }
