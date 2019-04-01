@@ -85,10 +85,32 @@ class SearchHelper extends AbstractHelper
 
     public function highlights($query, $noun)
     {
-        return [
-            'The following is being produced after normal execution by the digraph_debug_module. This module should never be used in production.',
-            'ModuleManager: loading C:\xampp\htdocs\digraph-core\example/modules/example_module/module.yaml'
-        ];
+        $text = \Soundasleep\Html2Text::convert(
+            $noun->body(),
+            [
+                'ignore_errors' => true,
+                'drop_links' => true
+            ]
+        );
+        $text = $this->tnt->highlight($text, $query);
+        $length = $this->cms->config['search.highlight_length'];
+        $positions = [];
+        while (($lastPos = strpos($text, '<em>', $lastPos))!== false) {
+            $positions[] = $lastPos;
+            $lastPos = $lastPos + strlen('<em>');
+        }
+        $highlights = [];
+        $limit = -1;
+        foreach ($positions as $pos) {
+            if ($pos <= $limit) {
+                continue;
+            }
+            $hl = substr($text, $pos, $length);
+            $limit = $pos + $length;
+            $highlights[substr_count($hl, '<em>')] = $this->tnt->highlight(strip_tags($hl), $query);
+        }
+        krsort($highlights);
+        return array_slice($highlights, 0, 3);
     }
 
     public function shouldBeIndexed($noun)
