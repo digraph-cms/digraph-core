@@ -24,10 +24,14 @@ class Paginator extends AbstractHelper
         return "$link";
     }
 
-    public function paginate($items, $package, $arg, $perpage, $callback)
+    public function paginate($items, $package, $arg, $perpage, $callback, $fields=[])
     {
+        if (is_array($items)) {
+            $count = count($items);
+        } else {
+            $count = $items;
+        }
         //verify that URL is sane
-        $count = count($items);
         $page = $package['url.args.'.$arg]?intval($package['url.args.'.$arg]):1;
         $pages = ceil($count/$perpage);
         if ($pages == 0) {
@@ -42,26 +46,29 @@ class Paginator extends AbstractHelper
             $end = $count;
         }
         //build content
-        $results = [];
-        foreach (array_slice($items, $start-1, $perpage) as $e) {
-            $results[] = $callback($e);
+        if (is_array($items)) {
+            $results = '';
+            foreach (array_slice($items, $start-1, $perpage) as $e) {
+                $results .= PHP_EOL.$callback($e);
+            }
+        } else {
+            $results = $callback($start, $end);
         }
         //render with template
         $this->package = $package;
         $this->arg = $arg;
         $this->pages = $pages;
         $this->page = $page;
+        $fields['page'] = $page;
+        $fields['pages'] = $pages;
+        $fields['paginator'] = $this;
+        $fields['start'] = $start;
+        $fields['end'] = $end;
+        $fields['count'] = $count;
+        $fields['results'] = $results;
         return $this->cms->helper('templates')->render(
             'digraph/paginated.twig',
-            [
-                'page' => $page,
-                'pages' => $pages,
-                'paginator' => $this,
-                'start' => $start,
-                'end' => $end,
-                'count' => $count,
-                'results' => $results
-            ]
+            $fields
         );
     }
 }

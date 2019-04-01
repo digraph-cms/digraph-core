@@ -6,9 +6,7 @@
   {% endif %}
 
   <div class="digraph-paginated-results">
-    {% for item in results %}
-      {{item|raw}}
-    {% endfor %}
+    {{results|raw}}
   </div>
 
   {% if pages > 1 %}

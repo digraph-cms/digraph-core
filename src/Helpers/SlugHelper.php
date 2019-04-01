@@ -188,7 +188,7 @@ EOT;
         $s = $this->pdo->prepare(
             'SELECT COUNT(slug_id) FROM digraph_slugs'
         );
-        if ($s->execute($args)) {
+        if ($s->execute()) {
             $out = $s->fetchAll(\PDO::FETCH_ASSOC);
             return intval($out[0]['COUNT(slug_id)']);
         }
