@@ -93,7 +93,7 @@ class SearchHelper extends AbstractHelper
             ]
         );
         $text = $this->tnt->highlight($text, $query);
-        $length = $this->cms->config['search.highlight_length'];
+        $length = $this->cms->config['search.highlight.length'];
         $positions = [];
         while (($lastPos = strpos($text, '<em>', $lastPos))!== false) {
             $positions[] = $lastPos;
@@ -107,10 +107,10 @@ class SearchHelper extends AbstractHelper
             }
             $hl = substr($text, $pos, $length);
             $limit = $pos + $length;
-            $highlights[substr_count($hl, '<em>')] = $this->tnt->highlight(strip_tags($hl), $query);
+            $highlights[substr_count($hl, '<em>')-$pos] = $this->tnt->highlight(strip_tags($hl), $query);
         }
         krsort($highlights);
-        return array_slice($highlights, 0, 3);
+        return array_slice($highlights, 0, $this->cms->config['search.highlight.count']);
     }
 
     public function shouldBeIndexed($noun)

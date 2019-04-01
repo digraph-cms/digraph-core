@@ -483,8 +483,8 @@ theme:
       font_size_small: 12pt
       heading_ratio: 0.9
       heading_size: 2
-      line_height_base: 1.5
-      line_height_compact: 1.3
+      line_height_base: 1.5em
+      line_height_compact: 1.3em
       spacing_base: 1rem
 
 # template/display configuration options
@@ -624,6 +624,7 @@ helpers:
     navigation: Digraph\Templates\NavigationHelper
     notifications: Digraph\Templates\NotificationsHelper
     outputfilters: Digraph\OutputFilters\OutputFilterHelper
+    paginator: Digraph\Helpers\Paginator
     permissions: Digraph\Permissions\PermissionsHelper
     routing: Digraph\Helpers\Routing
     session: Digraph\Users\SessionHelper

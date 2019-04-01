@@ -11,23 +11,37 @@
     color: $(color_link);
     font-weight: bold;
     text-decoration: underline;
+    line-height: $(line_height_compact);
   }
 
   .url {
     color: $(color_confirmation);
     font-size: 0.5em;
     font-style: italic;
+    line-height: $(line_height_compact);
   }
 
-  .highlight {
+  .highlights {
+    line-height: $(line_height_compact);
     font-size: 0.7em;
     opacity: 0.75;
-    overflow: hidden;
-    text-overflow: ellipsis;
 
-    em {
-      font-weight: bold;
-      color: $(color_accent);
+    .highlight {
+      display: inline;
+
+      &:after {
+        content: ' ... ';
+        display: inline;
+      }
+
+      &:last-child:after {
+        display: none;
+      }
+
+      em {
+        font-weight: bold;
+        color: $(color_accent);
+      }
     }
   }
 

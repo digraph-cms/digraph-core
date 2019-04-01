@@ -2,8 +2,10 @@
   <a href="{{result.noun.url()|raw}}">
     <div class="name">{{result.noun.name()}}</div>
     <div class="url">{{result.noun.url()}}</div>
-    {% for h in result.highlights %}
+    <div class="highlights">
+      {% for h in result.highlights %}
         <div class="highlight">{{h|raw}}</div>
-    {% endfor %}
+      {% endfor %}
+    </div>
   </a>
 </div>
