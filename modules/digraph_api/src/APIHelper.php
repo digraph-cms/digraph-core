@@ -29,10 +29,10 @@ class APIHelper extends AbstractHelper
         return array_map(
             function ($n) {
                 return [
-                    'id' => $n['dso.id'],
-                    'name' => $n->name(),
-                    'title' => $n->title(),
-                    'url' => $n->url()->string()
+                    'id' => $n['noun']['dso.id'],
+                    'name' => $n['noun']->name(),
+                    'title' => $n['noun']->title(),
+                    'url' => $n['noun']->url()->string()
                 ];
             },
             $this->cms->helper('search')->search($q)
@@ -43,7 +43,7 @@ class APIHelper extends AbstractHelper
     {
         $result = [];
         foreach ($this->cms->helper('search')->search($q) as $r) {
-            $result[$r['dso.id']] = $r->name();
+            $result[$r['noun']['dso.id']] = $r['noun']->name();
         }
         return $result;
     }
