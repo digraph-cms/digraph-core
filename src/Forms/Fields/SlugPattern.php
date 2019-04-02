@@ -56,7 +56,8 @@ class SlugPattern extends Container
     {
         $this->noun = $noun;
         if ($noun->parent()) {
-            $this->dsoParent($noun->parent());
+            $parent = $noun->parent();
+            $this->dsoParent($parent);
         }
     }
 
