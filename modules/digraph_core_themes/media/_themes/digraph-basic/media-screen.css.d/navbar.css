@@ -25,6 +25,7 @@
     background-color: $(color_shade);
     margin-left: 0.25em;
     text-decoration: none;
+    overflow: hidden;
 
     &:first-child {
       margin-left: 0;
@@ -48,8 +49,6 @@
         right: 0;
         height: 0.5em;
         background-color: $(color_accent);
-        border-top-left-radius: $(border_radius_accent);
-        border-top-right-radius: $(border_radius_accent);
       }
 
       &.active-path:before {

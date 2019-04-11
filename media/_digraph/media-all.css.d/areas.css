@@ -1,4 +1,4 @@
-#digraph-masthead {
+#digraph-masthead, #digraph-masthead-navbar {
   h1 {
     font-family: $(font_family_body);
     line-height: $(line_height_compact);
@@ -8,5 +8,13 @@
       color: inherit;
       text-decoration: inherit;
     }
+  }
+}
+
+#digraph-masthead-navbar {
+  padding: 0 !important;
+
+  #digraph-masthead, #digraph-navbar {
+    background: transparent;
   }
 }
