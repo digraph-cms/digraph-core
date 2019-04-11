@@ -1,6 +1,7 @@
 #digraph-masthead {
   h1 {
     font-family: $(font_family_body);
+    line-height: $(line_height_compact);
     margin: 0;
 
     a {
