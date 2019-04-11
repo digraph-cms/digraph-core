@@ -104,6 +104,11 @@ EOT;
         $vars['cdate-day'] = date('d', $noun['dso.created.date']);
         $vars['cdate-hour'] = date('H', $noun['dso.created.date']);
         $vars['cdate-minute'] = date('i', $noun['dso.created.date']);
+        if (method_exists($noun, 'slugVars')) {
+            foreach ($noun->slugVars() as $key => $value) {
+                $vars[$key] = $value;
+            }
+        }
         //do variable replacement
         $slug = preg_replace_callback(
             '/\[(.+?)\]/',
