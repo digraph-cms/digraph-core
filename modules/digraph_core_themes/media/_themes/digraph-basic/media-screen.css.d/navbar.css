@@ -26,6 +26,8 @@
     margin-left: 0.25em;
     text-decoration: none;
     overflow: hidden;
+    min-width: 4em;
+    max-width: 10em;
 
     &:first-child {
       margin-left: 0;
