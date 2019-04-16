@@ -10,6 +10,7 @@ class Locate extends AbstractMunger
 
     protected function doMunge(&$package)
     {
+        unset($package['url.args.digraph_url']);
         $url = $package->url();
         if ($noun = $package->cms()->read($url['noun'], false)) {
             //we're using a canonical url
@@ -72,7 +73,6 @@ class Locate extends AbstractMunger
             //this is used for both ensuring that nouns (including slugs)
             //have trailing slashes, and that arguments are in alphabetical
             //order (which is important for caching)
-            unset($package['url.args.digraph_url']);
             $url = $package->url()->string();
             $actual = $package->cms()->config['url.protocol'].$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
             if ($url != $actual) {

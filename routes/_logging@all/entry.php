@@ -21,6 +21,7 @@ $s = $cms->helper('strings');
 
 <ul>
     <li>Recorded at: <a href="<?php echo $log['url']; ?>"><?php echo $log['url']; ?></a></li>
+    <li>PHP URL: <a href="<?php echo $log['phpurl']; ?>"><?php echo $log['phpurl']; ?></a></li>
     <li>Times recorded: <?php echo $log['count']; ?></li>
     <li>First recorded: <?php echo $s->dateTimeHTML($log['dso.created.date']); ?></li>
     <li>Last recorded: <?php echo $s->dateTimeHTML($log['dso.modified.date']); ?></li>

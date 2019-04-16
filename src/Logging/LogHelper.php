@@ -94,6 +94,7 @@ class LogHelper extends \Digraph\Helpers\AbstractHelper
                 'package' => $package->get(),
                 'users' => [],
                 'url' => $package->url().'',
+                'phpurl' => htmlspecialchars("//$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]", ENT_QUOTES, 'UTF-8'),
                 'log.package' => $package->log(),
                 'log.cms' => $this->cms->log(),
                 'config' => $this->cms->config->get()
