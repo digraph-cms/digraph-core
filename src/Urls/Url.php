@@ -39,7 +39,7 @@ class Url extends FlatArray
 
     public function string(bool $canonical = false) : string
     {
-        return htmlspecialchars($this->get('base').$this->routeString($canonical), ENT_QUOTES, 'UTF-8');
+        return $this->get('base').$this->routeString($canonical);
     }
 
     public function routeString(bool $canonical = false) : string
