@@ -13,7 +13,6 @@ use Digraph\DSO\Noun;
 class SlugHelper extends \Digraph\Helpers\AbstractHelper
 {
     const CHARS = '$-_.+!*(),';
-    // const CHARS = '-_.!*(),';
 
     /* DDL for table */
     const DDL = <<<EOT
@@ -30,6 +29,34 @@ EOT;
         'CREATE INDEX IF NOT EXISTS digraph_slugs_noun_IDX ON digraph_slugs (slug_noun);',
         'CREATE UNIQUE INDEX IF NOT EXISTS digraph_slugs_url_noun_IDX ON digraph_slugs (slug_url,slug_noun);'
     ];
+
+    public function hook_export(&$export)
+    {
+        $slugs = [];
+        foreach ($export['noun_ids'] as $noun) {
+            if ($these = $this->slugs($noun)) {
+                $slugs[$noun] = $these;
+            }
+        }
+        return $slugs;
+    }
+
+    public function hook_import($data, $nouns)
+    {
+        $log = [];
+        foreach ($data['helper']['slugs'] as $noun => $slugs) {
+            //first regenerate slug from pattern
+            $this->updateSlug($noun);
+            //reverse order, so that lower-priority slugs get added first, and
+            //the priority matches up after reimporting
+            foreach (array_reverse($slugs) as $slug) {
+                if ($this->create($slug, $noun, true)) {
+                    $log[] = "New Slug: $slug =&gt; $noun";
+                }
+            }
+        }
+        return $log;
+    }
 
     public function initialize()
     {
@@ -61,7 +88,6 @@ EOT;
     {
         if (!($noun instanceof Noun)) {
             $noun = $this->cms->read($noun);
-            $noun = $this->sanitizeNoun($noun);
         }
         if (!$noun) {
             return false;

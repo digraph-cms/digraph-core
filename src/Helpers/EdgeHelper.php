@@ -41,6 +41,42 @@ EOT;
         $this->cms->helper('hooks')->noun_register('delete_permanent', [$this,'deleteAll']);
     }
 
+    public function hook_export(&$export)
+    {
+        $edges = [];
+        foreach ($export['noun_ids'] as $noun) {
+            foreach ($this->children($noun) as $edge) {
+                $edges[] = [$noun,$edge];
+            }
+            foreach ($this->parents($noun) as $edge) {
+                $edges[] = [$edge,$noun];
+            }
+        }
+        $out = [];
+        foreach ($edges as $e) {
+            if (!isset($out[$e])) {
+                $out[$e] = [];
+            }
+            if (!in_array($e[1], $out[$e[0]])) {
+                $out[$e[0]][] = $e[1];
+            }
+        }
+        return $out;
+    }
+
+    public function hook_import($data, $nouns)
+    {
+        $log = [];
+        foreach ($data['helper']['edges'] as $start => $ends) {
+            foreach ($ends as $end) {
+                if ($this->create($start, $end)) {
+                    $log[] = "$start =&gt; $end";
+                }
+            }
+        }
+        return $log;
+    }
+
     public function get(string $start, string $end)
     {
         $s = $this->pdo->prepare(
@@ -50,6 +86,20 @@ EOT;
             return $s->fetch(\PDO::FETCH_ASSOC);
         }
         return null;
+    }
+
+    public function children_recursive(string $noun, $depth=-1)
+    {
+        $children = $this->children($noun);
+        if ($depth != 0) {
+            $depth--;
+            foreach ($children as $child) {
+                foreach ($this->children_recursive($child, $depth) as $c) {
+                    $children[] = $c;
+                }
+            }
+        }
+        return array_unique($children);
     }
 
     public function children(string $start)

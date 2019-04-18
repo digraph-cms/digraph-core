@@ -15,6 +15,66 @@ class FileStoreHelper extends AbstractHelper
         return $this->cms->helper('image');
     }
 
+    public function hook_export(&$export)
+    {
+        $out = [];
+        foreach ($export['noun_ids'] as $noun) {
+            $noun = $this->cms->read($noun);
+            foreach ($this->listPaths($noun) as $path) {
+                foreach ($this->list($noun, $path) as $file) {
+                    $out[$file->hash()] = base64_encode(file_get_contents($file->path()));
+                }
+            }
+        }
+        return $out;
+    }
+
+    public function hook_import($data, $nouns)
+    {
+        $log = [];
+        //set up temp files to hold imported files
+        $tmpfiles = [];
+        foreach ($data['helper']['filestore'] as $hash => $data) {
+            $data = base64_decode($data);
+            if ($hash == md5($data)) {
+                $fn = $tmpfiles[$hash] = tempnam(sys_get_temp_dir(), 'import');
+                file_put_contents($fn, $data);
+            } else {
+                $log[] = 'ERROR: Hash doesn\'t match for filestore file '.$hash;
+            }
+        }
+        //re-add all files from imported nouns
+        foreach ($nouns as $noun) {
+            foreach ($this->listPaths($noun) as $path) {
+                foreach ($this->list($noun, $path) as $file) {
+                    $fname = @$tmpfiles[$file->hash()];
+                    if (!$fname) {
+                        if ($fname = @$this->getByHash($file->hash())['file']) {
+                            $log[] = 'WARNING: exported file is invalid, but matching hash was found in filestore';
+                        }
+                    }
+                    if (!$fname) {
+                        $log[] = 'ERROR: no valid file found matching hash '.$file->hash();
+                        continue;
+                    }
+                    $arr = [
+                        'uniqid' => $file->uniqid(),
+                        'name' => $file->name(),
+                        'file' => $fname,
+                        'time' => $file->time()
+                    ];
+                    $log[] = 'imported file: '.implode(', ', [$file->uniqid(),$file->name()]);
+                    $this->import($noun, $arr, $path);
+                }
+            }
+        }
+        return $log;
+    }
+
+    protected function importFile($fdata, $id, $farr)
+    {
+    }
+
     /**
      * Retrieve an array of information about a file by its hash
      */
@@ -246,9 +306,14 @@ class FileStoreHelper extends AbstractHelper
     public function import(Noun &$noun, array $file, string $path = 'default', $copy = true)
     {
         //hash file, record time
+        if (!file_exists($file['file'])) {
+            throw new \Exception("File doesn't exist: $file[file]");
+        }
         $file['hash'] = md5_file($file['file']);
         $file['time'] = time();
-        $file['uniqid'] = uniqid();
+        if (!$file['uniqid']) {
+            $file['uniqid'] = uniqid();
+        }
         //identify the files we'll need
         $dir = $this->dir($file['hash']);
         $storeFile = $dir.'/file';

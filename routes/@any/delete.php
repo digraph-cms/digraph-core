@@ -23,6 +23,7 @@ $form['id']->addValidatorFunction('match', function (&$field) use ($s) {
 $form['recurse'] = new Formward\Fields\Checkbox(
     $s->string('forms.delete.confirm_delete_children')
 );
+$form['recurse']->default(true);
 
 //submit button
 $form->submitButton()->label($s->string('forms.confirm_button'));
@@ -53,7 +54,22 @@ function do_delete(&$noun, &$cms, $recurse=false)
 if ($form->handle()) {
     $n = $package->cms()->helper('notifications');
     $noun = $package->noun();
-    do_delete($noun, $package->cms(), $form['recurse']->value());
+    if ($form['recurse']->value()) {
+        $toDelete = $cms->helper('edges')->children_recursive($noun['dso.id']);
+    }
+    $toDelete[] = $noun['dso.id'];
+    $limit = ini_get('max_execution_time')-2;
+    $start = time();
+    foreach ($toDelete as $id) {
+        if ($n = $cms->read($id, false)) {
+            $n->delete();
+        }
+        if (time()-$start >= $limit) {
+            $cms->helper('notifications')->flashError('Ran out of time while deleting child pages. Please run again to complete deletion process.');
+            $package->redirect($package->url()->string());
+            return;
+        }
+    }
     return;
 }
 
