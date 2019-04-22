@@ -58,13 +58,17 @@ if ($form->handle()) {
         $toDelete = $cms->helper('edges')->children_recursive($noun['dso.id']);
     }
     $toDelete[] = $noun['dso.id'];
-    $limit = ini_get('max_execution_time')-2;
+    //try to set max execution time to unlimited
+    ini_set('max_execution_time', 0);
+    //set time limit
+    $limit = intval(ini_get('max_execution_time'));
+    $limit = $limit?$limit-2:0;
     $start = time();
     foreach ($toDelete as $id) {
         if ($n = $cms->read($id, false)) {
             $n->delete();
         }
-        if (time()-$start >= $limit) {
+        if ($limit && time()-$start >= $limit) {
             $cms->helper('notifications')->flashError('Ran out of time while deleting child pages. Please run again to complete deletion process.');
             $package->redirect($package->url()->string());
             return;

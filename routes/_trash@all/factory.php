@@ -8,6 +8,8 @@ $search->order('${dso.modified.date} desc');
 
 /* execute if requested */
 if (@$_GET['token'] && $cms->helper('session')->checkToken('emptytrash', @$_GET['token'])) {
+    //try to set max execution time to unlimited
+    ini_set('max_execution_time', 0);
     foreach ($search->execute([], true) as $item) {
         $item->delete(true);
     }

@@ -13,7 +13,7 @@ body,
 }
 
 .digraph-area {
-  margin: $(spacing_base);
+  margin: $(spacing_base) 0;
 }
 
 .digraph-area:after {

@@ -12,6 +12,8 @@ $nounForm['depth']->addTip('Enter "0" to include no children');
 $nounForm['depth']->default(-1);
 $nounForm['depth']->required();
 
+ini_set('max_execution_time', 0);
+
 if ($nounForm->handle()) {
     $output = new \Flatrr\FlatArray();
     $output['digraph_export'] = $nounForm->value();

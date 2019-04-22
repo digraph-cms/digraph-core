@@ -4,6 +4,11 @@ $token = $cms->helper('session')->getToken('edgemigrator');
 
 /* execute if requested */
 if (@$_GET['token'] && $cms->helper('session')->checkToken('edgemigrator', @$_GET['token'])) {
+    //try to set max execution time to unlimited
+    ini_set('max_execution_time', 0);
+    $limit = intval(ini_get('max_execution_time'));
+    $limit = $limit?$limit-2:0;
+    //do migration
     $e = $cms->helper('edges');
     $search = $cms->factory()->search();
     $search->where('${digraph.parents_string} IS NOT null');
@@ -25,7 +30,7 @@ if (@$_GET['token'] && $cms->helper('session')->checkToken('edgemigrator', @$_GE
         unset($n['digraph.parents']);
         unset($n['digraph.parents_string']);
         $n->update(true);
-        if (time()-$start >= 10) {
+        if (time()-$start >= $limit) {
             break;
         }
     }
@@ -43,9 +48,6 @@ if ($r) {
 <h2>Content in need of migration</h2>
 <p>
     <a class='cta-button' href='?token=$token'>Migrate batch</a>
-</p>
-<p>
-    Each batch will migrate as many nouns as it can in 10 seconds
 </p>
 <ul>
 EOT;

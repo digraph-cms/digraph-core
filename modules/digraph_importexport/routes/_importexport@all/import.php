@@ -10,8 +10,12 @@ $form['file']->required();
 
 echo $form;
 
+//try to set max execution time to unlimited
+ini_set('max_execution_time', 0);
+
 if ($form->handle()) {
-    $limit = ini_get('max_execution_time')-2;
+    $limit = intval(ini_get('max_execution_time'));
+    $limit = $limit?$limit-2:0;
     $start = time();
     if (!($data = file_get_contents($form['file']->value()['file']))) {
         $n->error('Error reading uploaded file. Server may be misconfigured.');
@@ -29,7 +33,7 @@ if ($form->handle()) {
     $merged = 0;
     $nouns = [];
     foreach ($data['nouns'] as $in) {
-        if (time()-$start >= $limit) {
+        if ($limit && time()-$start >= $limit) {
             $log[] = 'Ran out of time';
             $errors++;
             break;
@@ -68,7 +72,7 @@ if ($form->handle()) {
     }
     //see if helpers have hook_import method, and call it if they do
     foreach ($cms->allHelpers() as $name) {
-        if (time()-$start >= $limit) {
+        if ($limit && time()-$start >= $limit) {
             $log[] = 'Ran out of time';
             $errors++;
             break;
