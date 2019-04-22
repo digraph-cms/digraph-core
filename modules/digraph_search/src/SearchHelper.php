@@ -80,7 +80,48 @@ class SearchHelper extends AbstractHelper
             $result['ids']
         );
         $result = array_filter($result);
+        $this->sort($query, $result);
         return $result;
+    }
+
+    protected function sortScore($noun, $query)
+    {
+        $query = strtolower($query);
+        $name = strtolower($noun->name());
+        $title = strtolower($noun->title());
+        $body = strtolower($noun->body());
+        $score = 0;
+        if ($name == $query) {
+            $score += 100;
+        }
+        if ($title == $query) {
+            $score += 100;
+        }
+        if (strpos($name, $query) !== false) {
+            $score += 20;
+        }
+        if (strpos($title, $query) !== false) {
+            $score += 20;
+        }
+        if (strpos($body, $query) !== false) {
+            $score += 10;
+        }
+        return $score;
+    }
+
+    protected function sort($query, &$result)
+    {
+        uasort($result, function ($a, $b) use ($query) {
+            $as = $this->sortScore($a['noun'], $query);
+            $bs = $this->sortScore($b['noun'], $query);
+            if ($as == $bs) {
+                return 0;
+            } elseif ($as > $bs) {
+                return -1;
+            } else {
+                return 1;
+            }
+        });
     }
 
     public function highlights($query, $noun)
@@ -172,7 +213,13 @@ class SearchHelper extends AbstractHelper
         $data = [
             'id' => $noun['dso.id'],
             'title' => $noun->name(),
-            'article' => $noun->name().' '.$noun->title().' '.$noun->body()
+            'article' => implode(' ', [
+                $noun->url()['noun'],
+                $noun->url()['canonicalnoun'],
+                $noun->name(),
+                $noun->title(),
+                $noun->body()
+            ])
         ];
         $idx = $this->indexer();
         if (!$this->transaction) {
