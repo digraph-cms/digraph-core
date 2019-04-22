@@ -8,12 +8,12 @@ permissions:
     # deny displaying blocks and blockareas to everyone but webmasters
     block/display:
       - deny all
-      - allow group webmaster
+      - allow group webmaster, editor
     blockarea/display:
       - deny all
-      - allow group webmaster
+      - allow group webmaster, editor
     # only allow admin interface to webmaster
-    '_blocks/':
+    _blocks/*:
       - deny all
       - allow group webmaster
   add:
@@ -37,12 +37,12 @@ actions:
 navigation:
   parents:
     common:
-      '_blocks/*': _blocks/display
-      '_blocks/display': _controlpanel/
+      _blocks/*: _blocks/display
+      _blocks/display: _controlpanel/display
     proper:
-      'blockarea/display': blocks/
+      blockarea/display: _blocks/display
 
 strings:
   urls:
     common:
-      '_blocks/display': Block management
+      _blocks/display: Block management
