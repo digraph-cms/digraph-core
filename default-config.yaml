@@ -555,6 +555,7 @@ fullmunge:
   - template
   - finalize
   - render
+  - cleanup
 
 mungers:
   setup:
@@ -604,6 +605,10 @@ mungers:
     # Outputs with readfile() if response.readfile is set, otherwise just echoes
     # response.content
     200-output: Digraph\Mungers\Render\Output
+  # runs post-output cleanup as needed
+  cleanup:
+    # Checks final package for anything strange/noteworthy that should be logged
+    999-logging: Digraph\Logging\LogMunger
 
 helpers:
   initialized:
