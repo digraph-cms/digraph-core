@@ -54,11 +54,11 @@ EOT;
     public function count()
     {
         $s = $this->pdo->prepare(
-            'SELECT COUNT(*) FROM digraph_edges'
+            'SELECT COUNT(edge_id) FROM digraph_edges'
         );
         if ($s->execute()) {
             $out = $s->fetchAll(\PDO::FETCH_ASSOC);
-            return intval($out[0]['COUNT(*)']);
+            return intval($out[0]['COUNT(edge_id)']);
         }
         return 0;
     }
