@@ -16,6 +16,7 @@ class EdgeHelper extends \Digraph\Helpers\AbstractHelper
     /* DDL for table */
     const DDL = <<<EOT
 CREATE TABLE IF NOT EXISTS digraph_edges (
+    edge_id INTEGER PRIMARY KEY,
 	edge_start TEXT NOT NULL,
 	edge_end TEXT NOT NULL,
 	edge_weight INTEGER DEFAULT 0 NOT NULL
@@ -28,6 +29,39 @@ EOT;
         'CREATE INDEX IF NOT EXISTS digraph_edges_end_IDX ON digraph_edges (edge_end);',
         'CREATE UNIQUE INDEX IF NOT EXISTS digraph_edges_start_end_IDX ON digraph_edges (edge_start,edge_end);'
     ];
+
+    public function list(int $limit, int $offset)
+    {
+        $args = [];
+        $l = '';
+        if ($limit) {
+            $l .= ' LIMIT :limit';
+            $args[':limit'] = $limit;
+        }
+        if ($offset) {
+            $l .= ' OFFSET :offset';
+            $args[':offset'] = $offset;
+        }
+        $s = $this->pdo->prepare(
+            'SELECT * FROM digraph_edges ORDER BY edge_weight desc, edge_id desc'.$l
+        );
+        if ($s->execute($args)) {
+            return $s->fetchAll(\PDO::FETCH_ASSOC);
+        }
+        return [];
+    }
+
+    public function count()
+    {
+        $s = $this->pdo->prepare(
+            'SELECT COUNT(*) FROM digraph_edges'
+        );
+        if ($s->execute()) {
+            $out = $s->fetchAll(\PDO::FETCH_ASSOC);
+            return intval($out[0]['COUNT(*)']);
+        }
+        return 0;
+    }
 
     public function construct()
     {
@@ -106,7 +140,7 @@ EOT;
     {
         $r = [];
         $s = $this->pdo->prepare(
-            'SELECT * FROM digraph_edges WHERE edge_start = :start ORDER BY edge_weight desc'
+            'SELECT * FROM digraph_edges WHERE edge_start = :start ORDER BY edge_weight desc, edge_id desc'
         );
         //execute
         if ($s->execute([':start'=>$start])) {
@@ -122,7 +156,7 @@ EOT;
     {
         $r = [];
         $s = $this->pdo->prepare(
-            'SELECT * FROM digraph_edges WHERE edge_end = :end ORDER BY edge_weight desc'
+            'SELECT * FROM digraph_edges WHERE edge_end = :end ORDER BY edge_weight desc, edge_id desc'
         );
         //execute
         if ($s->execute([':end'=>$end])) {
@@ -175,8 +209,13 @@ EOT;
         if ($s->execute([':start'=>$start,':end'=>$end])) {
             //add digraph.noparent to end noun if this was its last parent
             if (!$this->parents($end)) {
-                if ($en = $this->cms->read($end, false) && !$en['digraph.noparent']) {
+                if ($en = $this->cms->read($end, false)) {
                     $en['digraph.noparent'] = true;
+                    $en->update(true);
+                }
+            } else {
+                if ($en = $this->cms->read($end, false)) {
+                    $en['digraph.noparent'] = false;
                     $en->update(true);
                 }
             }

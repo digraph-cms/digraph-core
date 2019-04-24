@@ -53,6 +53,7 @@ actions:
     _controlpanel:
       config: _controlpanel/config
       cron: _cron/display
+      edges: _edges/display
       filestorecleanup: _filestorecleanup/display
       logging: _logging/display
       sitemap: _controlpanel/sitemap
@@ -359,6 +360,9 @@ permissions:
     _slugs/*:
       - deny all
       - allow group webmaster
+    _edges/*:
+      - deny all
+      - allow group webmaster
   add:
     '*':
       - allow all
@@ -406,6 +410,7 @@ navigation:
       '*/display': false
       _controlpanel/display: _controlpanel/display
       _cron/display: _controlpanel/display
+      _edges/display: _controlpanel/display
       _filestorecleanup/display: _controlpanel/display
       _logging/display: _controlpanel/display
       _slugs/display: _controlpanel/display

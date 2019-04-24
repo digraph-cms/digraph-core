@@ -151,6 +151,7 @@ urls:
     _controlpanel/config: Current configuration
     _controlpanel/display: Control panel
     _controlpanel/sitemap: Site map
+    _edges/display: Edge management
     _filestorecleanup/display: Filestore cleanup
     _filestorecleanup/download: Download file
     _logging/display: Logs
