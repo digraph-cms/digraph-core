@@ -5,7 +5,7 @@ $form = $cms->helper('forms')->form('');
 $n = $cms->helper('notifications');
 
 $form['file'] = $cms->helper('forms')->field('Formward\\Fields\\File', 'Digraph export file');
-$form['file']->attr('accept', '.dgexprt');
+$form['file']->attr('accept', '.json');
 $form['file']->required();
 
 echo $form;
@@ -21,7 +21,7 @@ if ($form->handle()) {
         $n->error('Error reading uploaded file. Server may be misconfigured.');
         return;
     }
-    if (!($data = unserialize($data))) {
+    if (!($data = json_decode($data, true))) {
         $n->error('Error unserializing file.');
         return;
     }

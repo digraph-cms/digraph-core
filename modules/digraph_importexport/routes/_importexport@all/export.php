@@ -40,9 +40,9 @@ if ($nounForm->handle()) {
         }
     }
     //output value
-    $package->makeMediaFile($nounForm['noun']->value().'_'.$nounForm['depth']->value().'.dgexprt');
-    $package->binaryContent(serialize($output->get()));
-    $package['response.disposition'] = 'attachment';
+    $package->makeMediaFile($nounForm['noun']->value().'_'.$nounForm['depth']->value().'.json');
+    $package->binaryContent(json_encode($output->get()));
+    // $package['response.disposition'] = 'attachment';
 } else {
     echo $nounForm;
 }
