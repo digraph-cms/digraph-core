@@ -12,7 +12,7 @@ echo "<p>This site currently has $count custom URLs. The most recently added/upd
 if ($delete = $package['url.args.delete']) {
     if ($delete = json_decode($delete, true)) {
         list($url, $noun) = $delete;
-        if ($package['url.args.hash'] != md5($token.$url.$noun)) {
+        if ($package['url.args.hash'] == md5($token.$url.$noun)) {
             if ($s->delete($url, $noun)) {
                 $n->flashConfirmation("Deleted URL <code>$url =&gt; $noun</code>");
             }
@@ -33,21 +33,21 @@ echo $p->paginate(
     $package,
     'page',
     20,
-    function ($start, $end) use ($package,$s,$cms,$session) {
+    function ($start, $end) use ($package,$s,$cms,$token) {
         $out = '';
         $out .= "<table>";
-        $out .= "<tr><th>URL</th><th>Noun</th></tr>";
+        $out .= "<tr><th>URL</th><th>Noun</th><th></th></tr>";
         foreach ($s->list(20, $start-1) as $slug) {
             $url = $slug['slug_url'];
             $noun = $cms->read($slug['slug_noun']);
             $nlink = $noun?$noun->link():'[noun not found: '.$slug['slug_noun'].']';
             $out .= "<tr>";
-            $out .= "<td>$url</td>";
+            $out .= "<td><a href='".$cms->config['url.base']."$slug[slug_url]'>$slug[slug_url]</a></td>";
             $out .= "<td>$nlink</td>";
             $durl = $package->url();
             $durl['args.delete'] = json_encode([$slug['slug_url'], $slug['slug_noun']]);
             $durl['args.hash'] = md5($token.$slug['slug_url'].$slug['slug_noun']);
-            $out .= "<td><a href='$durl'>delete</a></td>";
+            $out .= "<td><a href='$durl' class='row-button row-delete'>delete</a></td>";
             $out .= "</tr>";
         }
         $out .= "</table>";

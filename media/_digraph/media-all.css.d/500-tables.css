@@ -1,0 +1,88 @@
+/* table base styles */
+
+table {
+  font-size: $(font_size_small);
+  line-height: $(line_height_compact);
+
+  .row-button {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-indent: 100%;
+    width: $(line_height_base);
+    height: $(line_height_base);
+    background: $(color_accent);
+    vertical-align: middle;
+    position: relative;
+    color: #fff !important;
+
+    &:first-child {
+      border-top-left-radius: $(border_radius_accent);
+      border-bottom-left-radius: $(border_radius_accent);
+    }
+
+    &:last-child {
+      border-top-right-radius: $(border_radius_accent);
+      border-bottom-right-radius: $(border_radius_accent);
+    }
+
+    &:after {
+      content: "\f059";
+      font-family: "Font Awesome 5 Free";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      line-height: $(line_height_base);
+      text-align: center;
+      text-indent: 0;
+      opacity: 0.8;
+      color: inherit !important;
+      font-weight: 900;
+    }
+
+    &:hover:after {
+      opacity: 1;
+    }
+
+    &.row-delete {
+      background: $(color_error);
+
+      &:after {
+        content: '\f2ed';
+      }
+    }
+
+    &.row-unlink {
+      background: $(color_warning);
+
+      &:after {
+        content: '\f127';
+      }
+    }
+  }
+}
+
+td,
+th {
+  padding: 0.25em 0.5em;
+}
+
+th {
+  background-color: $(color_accent);
+  color: #fff;
+  font-weight: bold;
+
+  &:first-child {
+    border-top-left-radius: $(border_radius_accent);
+  }
+
+  &:last-child {
+    border-top-right-radius: $(border_radius_accent);
+  }
+}
+
+tr:nth-child(odd) td {
+  background-color: $(color_shade);
+}

@@ -2,7 +2,6 @@ date:
   format:
     date: F j, Y
     datetime: F j, Y, g:i a T
-clearcache: 'Successfully cleared caches for the following pages:'
 navigation:
   mobilemenu:
     toggle: <span class="open">Menu <i class="fas far fa-window-close"></i></span><span class="closed">Menu <i class="fas fa-bars"></i></span>
@@ -136,14 +135,15 @@ urls:
   proper:
     '*/*': !verb
     '*/add': add !arg_type
-    '*/clearcache': clear cache
     '*/display': !name
+    '*/edges': edges
     '*/file': download !arg_f
     '*/file': file
     '*/gallery-file': file
     '*/order': ordering
-    '*/rawedit': raw edit
+    '*/rawedit': raw
     '*/sitemap': !name site map
+    '*/slugs': URLs
   # rules for noun/verb combinations with common nouns
   common:
     '*/*': !noun !verb
@@ -151,14 +151,12 @@ urls:
     _controlpanel/config: Current configuration
     _controlpanel/display: Control panel
     _controlpanel/sitemap: Site map
-    _edges/display: Edge management
+    _controlpanel/edges: Manage all edges
     _filestorecleanup/display: Filestore cleanup
     _filestorecleanup/download: Download file
     _logging/display: Logs
     _logging/entry: Log entry
-    _slugs/bynoun: Manage URLs by noun
-    _slugs/display: Custom URLs
-    _slugs/list: List all URLs
+    _controlpanel/slugs: Manage all URLs
     _trash/display: Trash
     _trash/factory: Trash from "!arg_factory"
     _trash/item: Trash item !arg_id

@@ -1,9 +1,9 @@
 {% if config.actions.uiforguests or cms.helper('users').id() %}
   <div id="digraph-primary-actionbar">
     {% if cms.helper('users').id() %}
-      <div class="digraph-actionbar digraph-actionbar-user" data-id="_user/signedin"></div>
+      <div class="digraph-actionbar digraph-actionbar-user" data-id="_user%2Fsignedin"></div>
     {% else %}
-      <div class="digraph-actionbar digraph-actionbar-user" data-id="_user/guest"></div>
+      <div class="digraph-actionbar digraph-actionbar-user" data-id="_user%2Fguest"></div>
     {% endif %}
     <div class="digraph-actionbar" data-id="{{package.noun.dso.id}}"></div>
   </div>

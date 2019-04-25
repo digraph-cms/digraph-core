@@ -169,20 +169,6 @@ span.code-highlighted {
   border-radius: $(border_radius_accent);
 }
 
-/* table base styles */
-table {
-  font-size: $(font_size_small);
-  line-height: $(line_height_compact);
-}
-
-th, td {
-  padding: 0.25em 0.5em;
-}
-
-th {
-  font-weight: bold;
-}
-
 /* buttons */
 @fragment button(.cta-button, $(color_notice));
 @fragment button(.cta-button.green, $(color_confirmation));

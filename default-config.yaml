@@ -53,21 +53,19 @@ actions:
     _controlpanel:
       config: _controlpanel/config
       cron: _cron/display
-      edges: _edges/display
+      edges: _controlpanel/edges
       filestorecleanup: _filestorecleanup/display
       logging: _logging/display
       sitemap: _controlpanel/sitemap
       trash: _trash/display
-      urls: _slugs/display
-    _slugs:
-      bynoun: _slugs/bynoun
-      all: _slugs/list
+      urls: _controlpanel/slugs
   proper:
     '*':
-      clearcache: !id/clearcache
       delete: !id/delete
+      edges: !id/edges
       edit: !id/edit
       rawedit: !id/rawedit
+      urls: !id/slugs
   common:
     '*': []
     '_user/guest':
@@ -326,8 +324,6 @@ permissions:
       - allow all
     '_user/*':
       - allow all
-    '*/clearcache':
-      - allow group webmaster
     '_logging/*':
       - deny all
       - allow group webmaster
@@ -353,6 +349,10 @@ permissions:
     _controlpanel/display:
       - deny all
       - allow group editor, webmaster
+    '*/slugs':
+      - allow group webmaster
+    '*/edges':
+      - allow group webmaster
     _controlpanel/sitemap:
       - allow group editor
     _cron/display:
@@ -410,10 +410,8 @@ navigation:
       '*/display': false
       _controlpanel/display: _controlpanel/display
       _cron/display: _controlpanel/display
-      _edges/display: _controlpanel/display
       _filestorecleanup/display: _controlpanel/display
       _logging/display: _controlpanel/display
-      _slugs/display: _controlpanel/display
       _trash/display: _controlpanel/display
       _trash/item: _trash/factory?factory=!arg_factory
       _user/display: __none

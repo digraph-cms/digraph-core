@@ -6,6 +6,31 @@ class BBCodeAdvancedFilter extends AbstractBBCodeFilter
 {
     const TEMPLATEPREFIX = '_bbcode/advanced/';
 
+    public function tag_toc($context, $text, $args)
+    {
+        $noun = $this->cms->read($context);
+        if (!$noun) {
+            return false;
+        }
+        return $this->toc_helper($noun).PHP_EOL;
+    }
+
+    protected function toc_helper($noun, $seen=[])
+    {
+        if (in_array($noun['dso.id'], $seen) || !($children = $noun->children())) {
+            return '';
+        }
+        $seen[] = $noun['dso.id'];
+        $out = '<ul class="digraph-toc">';
+        foreach ($children as $c) {
+            $out .= '<li>'.$c->link();
+            $out .= $this->toc_helper($c, $seen);
+            $out .= '</li>';
+        }
+        $out .= '</ul>';
+        return $out;
+    }
+
     public function tag_embed($context, $text, $args)
     {
         $noun = $this->cms->read($context);
@@ -25,20 +50,22 @@ class BBCodeAdvancedFilter extends AbstractBBCodeFilter
         }
         $depth = @$args['depth']?$args['depth']:-1;
         $args['thumb'] = @$args['thumb']?$args['thumb']:'gallery-thumb';
-        $args['files'] = $this->gallery_files($noun, $depth);
+        $seen = [];
+        $args['files'] = $this->gallery_files($noun, $depth, $seen);
         return $this->fromTemplate('_gallery', $context, $text, $args);
     }
 
-    protected function gallery_files(&$noun, $depth)
+    protected function gallery_files(&$noun, $depth, &$seen)
     {
         //base case when depth is 0
-        if ($depth == 0) {
+        if ($depth == 0 || in_array($noun['dso.id'], $seen)) {
             return [];
         }
+        $seen[] = $noun['dso.id'];
         //recurse
         $files = [];
         foreach ($noun->children() as $child) {
-            foreach ($this->gallery_files($child, $depth-1) as $file) {
+            foreach ($this->gallery_files($child, $depth-1, $seen) as $file) {
                 if (!isset($files[$file->hash()])) {
                     $files[$file->hash()] = $file;
                 }
