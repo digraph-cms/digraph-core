@@ -1,4 +1,5 @@
 <?php
+$package->noCache();
 $f = $cms->helper('forms');
 
 $nounForm = $f->form('', 'noun');

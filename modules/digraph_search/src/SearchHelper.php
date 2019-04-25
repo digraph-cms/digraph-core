@@ -23,11 +23,8 @@ class SearchHelper extends AbstractHelper
         //set up hooks to index nouns on insert/update/delete
         $hooks = $this->cms->helper('hooks');
         $hooks->noun_register('update', [$this,'index'], 'search/index');
-        $hooks->noun_register('child:update', [$this,'index'], 'search/index');
         $hooks->noun_register('insert', [$this,'index'], 'search/index');
-        $hooks->noun_register('child:insert', [$this,'index'], 'search/index');
         $hooks->noun_register('delete', [$this,'delete'], 'search/delete');
-        $hooks->noun_register('child:delete', [$this,'index'], 'search/index');
         $hooks->noun_register('delete_permanent', [$this,'delete'], 'search/delete');
     }
 

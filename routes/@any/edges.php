@@ -53,9 +53,9 @@ $cform->addClass('compact-form');
 $cform['noun'] = $f->field('noun', '');
 $cform['noun']->required(true);
 if ($cform->handle()) {
-    if ($e->create($pform['noun']->value(), $noun['dso.id'])) {
-        $c = $cms->read($pform['noun']->value())->link();
-        $e = $noun->link();
+    if ($e->create($noun['dso.id'], $cform['noun']->value())) {
+        $c = $cms->read($cform['noun']->value())->link();
+        $p = $noun->link();
         $n->flashConfirmation("Created edge from $p to $c");
     }
     $package->redirect($package->url());

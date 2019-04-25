@@ -43,7 +43,7 @@ EOT;
             $args[':offset'] = $offset;
         }
         $s = $this->pdo->prepare(
-            'SELECT * FROM digraph_edges ORDER BY edge_weight desc, edge_id desc'.$l
+            'SELECT * FROM digraph_edges ORDER BY edge_id desc'.$l
         );
         if ($s->execute($args)) {
             return $s->fetchAll(\PDO::FETCH_ASSOC);
@@ -140,7 +140,7 @@ EOT;
     {
         $r = [];
         $s = $this->pdo->prepare(
-            'SELECT * FROM digraph_edges WHERE edge_start = :start ORDER BY edge_weight desc, edge_id desc'
+            'SELECT * FROM digraph_edges WHERE edge_start = :start ORDER BY edge_weight desc, edge_id asc'
         );
         //execute
         if ($s->execute([':start'=>$start])) {
@@ -156,7 +156,7 @@ EOT;
     {
         $r = [];
         $s = $this->pdo->prepare(
-            'SELECT * FROM digraph_edges WHERE edge_end = :end ORDER BY edge_weight desc, edge_id desc'
+            'SELECT * FROM digraph_edges WHERE edge_end = :end ORDER BY edge_weight desc, edge_id asc'
         );
         //execute
         if ($s->execute([':end'=>$end])) {

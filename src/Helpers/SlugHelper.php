@@ -71,7 +71,6 @@ EOT;
         $h->noun_register('delete_permanent', [$this,'deleteAll'], 'slug/deleteAll');
         $h->noun_register('update', [$this,'updateSlug'], 'slug/updateSlug');
         $h->noun_register('added', [$this,'updateSlug'], 'slug/updateSlug');
-        $h->noun_register('parent:update', [$this,'updateSlug'], 'slug/updateSlug');
     }
 
     public function construct()

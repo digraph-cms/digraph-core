@@ -53,7 +53,7 @@
       }
 
       .ajax-waiting {
-        background: $(color_confirmation);
+        background: $(color_notice);
 
         &:after {
           content: "Waiting for input...";
@@ -61,7 +61,7 @@
       }
 
       .ajax-loading {
-        background: $(color_confirmation);
+        background: $(color_notice);
 
         &:after {
           content: "Loading...";
