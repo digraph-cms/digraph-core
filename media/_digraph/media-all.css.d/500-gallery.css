@@ -45,18 +45,6 @@
   }
 }
 
-@media (min-width:800px) {
-  .digraph-gallery>a {
-    width: 25%;
-  }
-}
-
-@media (min-width:1600px) {
-  .digraph-gallery>a {
-    width: 20%;
-  }
-}
-
 .digraph-gallery-file {
   display: flex;
   max-width: 100%;
