@@ -23,7 +23,9 @@ class Bootstrapper
         }
         $q = [];
         foreach ($_GET as $key => $value) {
-            $q[] = urlencode($key).'='.urlencode($value);
+            if ($key != 'digraph_url') {
+                $q[] = urlencode($key).'='.urlencode($value);
+            }
         }
         if ($q) {
             $url .= '?'.implode('&', $q);

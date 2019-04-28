@@ -10,7 +10,6 @@ class Locate extends AbstractMunger
 
     protected function doMunge(&$package)
     {
-        unset($package['url.args.digraph_url']);
         $url = $package->url();
         if ($noun = $package->cms()->read($url['noun'], false)) {
             //we're using a canonical url
@@ -76,8 +75,7 @@ class Locate extends AbstractMunger
             $url = $package->url()->string();
             $actual = $package->cms()->config['url.protocol'].$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
             if ($url != $actual) {
-                header('Location: '.$url);
-                exit();
+                $package->redirect($url);
             }
         }
     }
