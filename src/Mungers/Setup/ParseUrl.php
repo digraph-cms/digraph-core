@@ -17,12 +17,6 @@ class ParseUrl extends AbstractMunger
         }
         //save parsed url into package
         $package->url($parsed);
-        //redirect if parsed URL doesn't match original request
-        $url = $package->url()->string();
-        $actual = $package->cms()->config['url.protocol'].$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
-        if ($url != $actual) {
-            $package->redirect($url);
-        }
     }
 
     protected function doConstruct($name)
