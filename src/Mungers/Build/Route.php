@@ -11,7 +11,7 @@ class Route extends AbstractMunger
     protected function doMunge(&$package)
     {
         $handlers = [];
-        $opts = $package['located-options'];
+        $opts = isset($package['located-options'])?$package['located-options']:[];
         $args = $package['url.args'];
         foreach ($opts as list($noun, $verb, $dso)) {
             $dso = $package->cms()->read($dso, false);

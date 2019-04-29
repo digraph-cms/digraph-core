@@ -15,6 +15,11 @@ class Locate extends AbstractMunger
             //we're using a canonical url, which always takes priority over any
             //and all other interpretations
             $package->noun($noun);
+            $package['located-options'] = [[
+                $url['noun'],
+                $url['verb'],
+                $noun['dso.id']
+            ]];
         } else {
             //we appear to not be using a canonical url
             //start by building a list of possible slug/verb combinations
