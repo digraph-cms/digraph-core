@@ -19,13 +19,12 @@ class Route extends AbstractMunger
                 $verb = 'display';
             }
             //first check for handler from object
+            $vsub = false;
             if (method_exists($dso, 'verbSubstitution')) {
-                if ($vsub = $dso->verbSubstitution($verb)) {
-                    $verb = $vsub;
-                }
+                $vsub = $dso->verbSubstitution($verb);
             }
             //then check for file handler
-            $handler = $package->cms()->helper('routing')->file($dso['dso.type'], true, $verb.'.php');
+            $handler = $package->cms()->helper('routing')->file($dso['dso.type'], true, ($vsub?$vsub:$verb).'.php');
             if ($handler) {
                 $handlers[] = [
                     $handler,
