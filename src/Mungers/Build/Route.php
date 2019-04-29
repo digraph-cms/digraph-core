@@ -33,7 +33,7 @@ class Route extends AbstractMunger
             $pathString = explode('/', $pathString);
             if (count($pathString) <= 2) {
                 $type = $pathString[0];
-                $verb = isset($pathstring[1])?$pathString[1]:'display';
+                $verb = isset($pathString[1])?$pathString[1]:'display';
                 $handler = $package->cms()->helper('routing')->file($type, false, $verb.'.php');
                 if ($handler) {
                     $handlers[] = [
