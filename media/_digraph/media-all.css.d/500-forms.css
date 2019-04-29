@@ -3,6 +3,7 @@
   font-size: 0.8em;
   line-height: $(line_height_compact);
   color: $(color_foreground);
+  max-width: 40em;
 }
 
 .Form .hidden {
