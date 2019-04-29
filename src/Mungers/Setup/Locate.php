@@ -58,7 +58,7 @@ class Locate extends AbstractMunger
                     function ($e) {
                         return [
                             $e[0],
-                            $e[1],
+                            $e[1]?$e[1]:'display',
                             $e[2]['dso.id']
                         ];
                     },

@@ -18,12 +18,20 @@ class Route extends AbstractMunger
             if (!$verb) {
                 $verb = 'display';
             }
-            //first check for file handler
+            //first check for handler from object
+            if (method_exists($dso, 'verbSubstitution')) {
+                if ($vsub = $dso->verbSubstitution($verb)) {
+                    $verb = $vsub;
+                }
+            }
+            //then check for file handler
             $handler = $package->cms()->helper('routing')->file($dso['dso.type'], true, $verb.'.php');
             if ($handler) {
                 $handlers[] = [
                     $handler,
-                    $dso
+                    $dso,
+                    $noun,
+                    $verb
                 ];
             }
         }
@@ -38,7 +46,9 @@ class Route extends AbstractMunger
                 if ($handler) {
                     $handlers[] = [
                         $handler,
-                        null
+                        null,
+                        $type,
+                        $verb
                     ];
                 }
             }
@@ -50,6 +60,8 @@ class Route extends AbstractMunger
             $handler = array_pop($handlers);
             $package['response.handler'] = $handler[0];
             $package->noun($handler[1]);
+            $package['url.noun'] = $handler[2];
+            $package['url.verb'] = $handler[3];
         } else {
             echo "TODO: make 300 pages in Route munger";
             var_dump($handlers);

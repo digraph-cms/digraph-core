@@ -18,7 +18,18 @@ class NavigationHelper extends AbstractHelper
 
     protected function bcBuilder($bc)
     {
-        $parent = $this->parentOf(end($bc));
+        $url = end($bc);
+        //request breadcrumb from object
+        if ($url['object'] && $object = $this->cms->read($url['object'])) {
+            if (method_exists($object, 'breadcrumb') && $objectbc = $object->breadcrumb($url['verb'])) {
+                foreach ($objectbc as $bcurl) {
+                    $bc["$bcurl"] = $bcurl;
+                }
+                return $this->bcBuilder($bc);
+            }
+        }
+        //fall back on using built-in parent-finding
+        $parent = $this->parentOf($url);
         if (!$parent) {
             return $bc;
         }
