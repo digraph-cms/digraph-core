@@ -1,7 +1,5 @@
 types:
   content:
-    blog: \Digraph\Modules\digraph_core_types\Blog
-    blog-post: \Digraph\Modules\digraph_core_types\BlogPost
     page: \Digraph\Modules\digraph_core_types\Page
     link: \Digraph\Modules\digraph_core_types\Link
     link-rule: false
@@ -82,9 +80,5 @@ strings:
       'versioned/edit': edit versioned root
 
 defaultnoun:
-  default:
-    dso:
-      type: page
-  blog-post:
-    digraph:
-      slugpattern: '[parent]/[name]'
+  dso:
+    type: page

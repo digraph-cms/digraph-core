@@ -674,14 +674,13 @@ forms:
         class: digraph_content
 
 defaultnoun:
-  default:
-    digraph:
-      noparent: true
-      body:
-        filter: default
-        text: ""
-        extra:
-          bbcode_basic: true
+  digraph:
+    noparent: true
+    body:
+      filter: default
+      text: ""
+      extra:
+        bbcode_basic: true
 
 mungerhooks:
   build: []

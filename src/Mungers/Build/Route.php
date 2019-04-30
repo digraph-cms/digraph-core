@@ -10,80 +10,24 @@ class Route extends AbstractMunger
 
     protected function doMunge(&$package)
     {
-        $handlers = [];
-        $opts = isset($package['located-options'])?$package['located-options']:[];
+        $noun = $package['url.noun'];
+        $verb = $package['url.verb'];
         $args = $package['url.args'];
-        foreach ($opts as list($noun, $verb, $dso)) {
-            $dso = $package->cms()->read($dso, false);
-            if (!$verb) {
-                $verb = 'display';
-            }
-            //first check for handler from object
-            $vsub = false;
-            if (method_exists($dso, 'verbSubstitution')) {
-                $vsub = $dso->verbSubstitution($verb);
-            }
-            //then check for file handler
-            $handler = $package->cms()->helper('routing')->file($dso['dso.type'], true, ($vsub?$vsub:$verb).'.php');
-            if ($handler) {
-                $handlers[] = [
-                    $handler,
-                    $dso,
-                    $noun,
-                    $verb
-                ];
-            }
-        }
-        //if no handler was found, try to find a common noun/verb pair
-        if (!$handlers) {
-            $pathString = trim($package->url()->pathString(), "/ \t\n\r\0\x0B");
-            $pathString = explode('/', $pathString);
-            if (count($pathString) <= 2) {
-                $type = $pathString[0];
-                $verb = isset($pathString[1])?$pathString[1]:'display';
-                $handler = $package->cms()->helper('routing')->file($type, false, $verb.'.php');
-                if ($handler) {
-                    $handlers[] = [
-                        $handler,
-                        null,
-                        $type,
-                        $verb
-                    ];
-                }
-            }
-        }
-        //put handlers into package
-        if (!$handlers) {
-            $package->error(404, 'No route handler found');
-        } elseif (count($handlers) === 1) {
-            $handler = array_pop($handlers);
-            $package['response.handler'] = $handler[0];
-            $package->noun($handler[1]);
-            $package['url.noun'] = $handler[2];
-            $package['url.verb'] = $handler[3];
+        if ($object = $package->noun()) {
+            $proper = true;
+            $noun = $package->noun()['dso.id'];
+            $type = $package->noun()['dso.type'];
         } else {
-            echo "TODO: make 300 pages in Route munger";
-            var_dump($handlers);
-            exit();
+            $proper = false;
+            $type = $noun;
         }
-        // $noun = $package['url.noun'];
-        // $verb = $package['url.verb'];
-        // $args = $package['url.args'];
-        // if ($object = $package->noun()) {
-        //     $proper = true;
-        //     $noun = $package->noun()['dso.id'];
-        //     $type = $package->noun()['dso.type'];
-        // } else {
-        //     $proper = false;
-        //     $type = $noun;
-        // }
-        // //route with file handlers
-        // $handler = $package->cms()->helper('routing')->file($type, $proper, $verb.'.php');
-        // if (!$handler) {
-        //     $package->error(404, 'No route handler found');
-        //     return;
-        // }
-        // $package['response.handler'] = $handler;
+        //route with file handlers
+        $handler = $package->cms()->helper('routing')->file($type, $proper, $verb.'.php');
+        if (!$handler) {
+            $package->error(404, 'No route handler found');
+            return;
+        }
+        $package['response.handler'] = $handler;
     }
 
     protected function doConstruct($name)
