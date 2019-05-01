@@ -675,7 +675,6 @@ forms:
 
 defaultnoun:
   digraph:
-    noparent: true
     body:
       filter: default
       text: ""

@@ -28,25 +28,6 @@ class SearchHelper extends AbstractHelper
         $hooks->noun_register('delete_permanent', [$this,'delete'], 'search/delete');
     }
 
-    public function hook_cron()
-    {
-        $count = 0;
-        $interval = $this->cms->config['searh.cron.interval'];
-        $limit = $this->cms->config['search.cron.limit'];
-        $search = $this->cms->factory()->search();
-        $search->where('${digraph.lastsearchindex} is null OR ${digraph.lastsearchindex} < :time');
-        $search->limit($limit);
-        $this->beginTransaction();
-        foreach ($search->execute([':time'=>(time()-$interval)]) as $noun) {
-            $this->index($noun);
-            $noun['digraph.lastsearchindex'] = time();
-            $noun->update(true);
-            $count++;
-        }
-        $this->endTransaction();
-        return $count;
-    }
-
     public function form()
     {
         $form = new \Formward\Fields\Container('', 'search');
@@ -219,14 +200,15 @@ class SearchHelper extends AbstractHelper
             ])
         ];
         $idx = $this->indexer();
-        if (!$this->transaction) {
+        $transaction = $this->transaction;
+        if (!$transaction) {
             $idx->indexBeginTransaction();
         }
         $idx->update(
             $noun['dso.id'],
             $data
         );
-        if (!$this->transaction) {
+        if (!$transaction) {
             $idx->indexEndTransaction();
         }
     }

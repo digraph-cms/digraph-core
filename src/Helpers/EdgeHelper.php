@@ -161,7 +161,9 @@ EOT;
         //execute
         if ($s->execute([':end'=>$end])) {
             foreach ($s->fetchAll(\PDO::FETCH_ASSOC) as $e) {
-                $r[] = $e['edge_start'];
+                if ($e['edge_start'] !== '{ROOT}') {
+                    $r[] = $e['edge_start'];
+                }
             }
         }
         //return
@@ -189,15 +191,9 @@ EOT;
         $s = $this->pdo->prepare(
             'INSERT INTO digraph_edges (edge_start,edge_end,edge_weight) VALUES (:start,:end,:weight)'
         );
-        if ($s->execute([':start'=>$start,':end'=>$end,':weight'=>$weight])) {
-            //remove digraph.noparent from end noun
-            if (($en = $this->cms->read($end, false)) && $en['digraph.noparent']) {
-                $en['digraph.noparent'] = false;
-                $en->update(true);
-            }
-            return true;
-        }
-        return false;
+        $out = $s->execute([':start'=>$start,':end'=>$end,':weight'=>$weight]);
+        $this->updateRootTracking($end);
+        return $out;
     }
 
     public function delete(string $start, string $end)
@@ -206,21 +202,9 @@ EOT;
         $s = $this->pdo->prepare(
             'DELETE FROM digraph_edges WHERE edge_start = :start AND edge_end = :end'
         );
-        if ($s->execute([':start'=>$start,':end'=>$end])) {
-            //add digraph.noparent to end noun if this was its last parent
-            if (!$this->parents($end)) {
-                if ($en = $this->cms->read($end, false)) {
-                    $en['digraph.noparent'] = true;
-                    $en->update(true);
-                }
-            } else {
-                if ($en = $this->cms->read($end, false)) {
-                    $en['digraph.noparent'] = false;
-                    $en->update(true);
-                }
-            }
-            return true;
-        }
+        $out = $s->execute([':start'=>$start,':end'=>$end]);
+        $this->updateRootTracking($end);
+        return $out;
     }
 
     public function deleteAll($id)
@@ -233,5 +217,19 @@ EOT;
             'DELETE FROM digraph_edges WHERE edge_start = :id OR edge_end = :id'
         );
         return $s->execute([':id'=>$id]);
+    }
+
+    public function roots()
+    {
+        return $this->children('{ROOT}');
+    }
+
+    public function updateRootTracking($id)
+    {
+        if (!$this->parents($id)) {
+            $this->create('{ROOT}', $id);
+        } else {
+            $this->delete('{ROOT}', $id);
+        }
     }
 }

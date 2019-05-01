@@ -13,9 +13,6 @@ search:
     count: 2
   perpage: 10
 
-paths:
-  searchindex: ${paths.storage}/searchindex
-
 strings:
   urls:
     common:

@@ -10,6 +10,7 @@ actions:
       edges: _beta/edgemigrator
       slugs: _beta/slugmigrator
       index: _beta/rebuildindex
+      cleanup: _beta/cleanup
 
 strings:
   urls:
@@ -18,6 +19,7 @@ strings:
       _beta/edgemigrator: Migrate from noun-managed edges to edge helper
       _beta/slugmigrator: Migrate from noun-managed URL slugs to slug helper
       _beta/rebuildindex: Force rebuild of search index
+      _beta/cleanup: Clean up old data from nouns
 
 navigation:
   parents:
