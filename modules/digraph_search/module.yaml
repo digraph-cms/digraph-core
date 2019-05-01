@@ -6,12 +6,11 @@ helpers:
 
 search:
   cron:
-    interval: 86400
     limit: 1
   highlight:
     length: 300
     count: 2
-  perpage: 10
+  perpage: 20
 
 strings:
   urls:
