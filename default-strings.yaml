@@ -142,7 +142,7 @@ urls:
     '*/gallery-file': file
     '*/order': ordering
     '*/rawedit': raw
-    '*/sitemap': !name site map
+    '*/sitemap': sitemap
     '*/slugs': URLs
   # rules for noun/verb combinations with common nouns
   common:

@@ -403,7 +403,6 @@ navigation:
     proper:
       '*/*': !noun/display
       '*/display': false
-      '*/sitemap': _controlpanel/sitemap
     # rules for noun/verb combinations with common nouns
     common:
       '*/*': !noun/display
