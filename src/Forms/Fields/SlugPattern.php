@@ -17,7 +17,7 @@ class SlugPattern extends Container
     {
         parent::__construct($label, $name, $parent);
         $this->cms = $cms;
-        $this['use'] = new Checkbox('Enable custom URL');
+        $this['use'] = new Checkbox('Enable custom URL pattern');
         $this['use']->default(true);
         $this['slug'] = new Input('');
         //add a validator to trim slugs and ensure they're valid

@@ -6,6 +6,25 @@ $n = $cms->helper('notifications');
 $token = $cms->helper('session')->getToken('slug.delete');
 $noun = $package->noun();
 
+//do deletions
+if ($delete = $package['url.args.delete']) {
+    if ($delete = json_decode($delete, true)) {
+        list($url, $noun) = $delete;
+        if ($package['url.args.hash'] == md5($token.$url.$noun)) {
+            if ($s->delete($url, $noun)) {
+                $n->flashConfirmation("Deleted URL <code>$url =&gt; $noun</code>");
+            }
+        } else {
+            $n->flashError('Incorrect link hash, please try again');
+        }
+    }
+    $url = $package->url();
+    unset($url['args.delete']);
+    unset($url['args.hash']);
+    $package->redirect($url->string(true));
+    return;
+}
+
 /**
  * form for adding new URLs and updating saved URL patterns
  */
@@ -46,7 +65,7 @@ foreach ($slugs as $slug) {
     $durl['args.hash'] = md5($token.$slug.$noun['dso.id']);
     echo "<tr>";
     echo "<td><a href='$url$slug'>$slug</a></td>";
-    echo "<td><a href='$durl' class='row-button row-delete'>delete</a></td>";
+    echo "<td><a href='".$durl->string(true)."' class='row-button row-delete'>delete</a></td>";
     echo "</tr>";
 }
 echo "</table>";

@@ -13,7 +13,6 @@ delete handling
      if ($delete = json_decode($delete, true)) {
          list($start, $end) = $delete;
          if ($package['url.args.hash'] == md5($token.$start.$end)) {
-             $n->flashNotification("Requested delete of edge <code>$start =&gt; $end</code>");
              if ($e->delete($start, $end)) {
                  $n->flashConfirmation("Deleted edge <code>$start =&gt; $end</code>");
              }
@@ -24,7 +23,7 @@ delete handling
      $url = $package->url();
      unset($url['args.delete']);
      unset($url['args.hash']);
-     $package->redirect($url);
+     $package->redirect($url->string(true));
      return;
  }
 
@@ -85,7 +84,8 @@ echo "</div>";
 
 function printEdges($edges, $reverse=false)
 {
-    global $noun,$cms,$token,$package;
+    global $noun,$cms,$package;
+    $token = $cms->helper('session')->getToken('edge.delete');
     echo "<table>";
     foreach ($edges as $end) {
         if ($reverse) {
@@ -95,7 +95,7 @@ function printEdges($edges, $reverse=false)
             $start = $package->noun()['dso.id'];
         }
         $durl = $package->url();
-        $durl['args.delete'] = json_encode([$start,$end]);
+        $durl['args.delete'] = json_encode([$start, $end]);
         $durl['args.hash'] = md5($token.$start.$end);
         echo "<tr>";
         $dn = $reverse?$cms->read($start, false):$cms->read($end, false);
@@ -104,7 +104,7 @@ function printEdges($edges, $reverse=false)
         } else {
             echo "<td>[not found: ".($reverse?$start:$end)."]</td>";
         }
-        echo "<td><a href='$durl' class='row-button row-unlink'>unlink</a></td>";
+        echo "<td><a href='".$durl->string(true)."' class='row-button row-unlink'>unlink</a></td>";
         echo "</tr>";
     }
     echo "</table>";
