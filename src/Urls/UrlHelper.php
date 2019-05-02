@@ -57,7 +57,12 @@ class UrlHelper extends AbstractHelper
         //search for possible slug matches
         foreach ($slugs as $slug) {
             if ($dso = $this->cms->read($slug[0])) {
-                $url['object'] = $url['canonicalurl'] = $dso['dso.id'];
+                $url['object'] = $dso['dso.id'];
+                if ($url['noun'] == $dso['dso.id']) {
+                    $url->canonical(true);
+                } else {
+                    $url->canonical(false);
+                }
                 return $this->addText($url);
             }
         }

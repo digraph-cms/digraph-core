@@ -22,11 +22,20 @@ class Url extends FlatArray
             'noun' => 'home',
             'verb' => static::DEFAULTVERB,
             'args' => [],
-            'text' => 'untitled'
+            'text' => 'untitled',
+            'canonical' => false
         ]);
     }
 
-    public function html(string $text = null, bool $canonical = false)
+    public function canonical(bool $set = null)
+    {
+        if ($set !== null) {
+            $this->set('canonical', $set);
+        }
+        return $this->get('canonical');
+    }
+
+    public function html(string $text = null, bool $canonical = null)
     {
         if (!$text) {
             $text = $this['text'];
@@ -37,18 +46,21 @@ class Url extends FlatArray
         return $a;
     }
 
-    public function string(bool $canonical = false) : string
+    public function string(bool $canonical = null) : string
     {
         return $this->get('base').$this->routeString($canonical);
     }
 
-    public function routeString(bool $canonical = false) : string
+    public function routeString(bool $canonical = null) : string
     {
         return $this->pathString($canonical).$this->argString();
     }
 
-    public function pathString(bool $canonical = false) : string
+    public function pathString(bool $canonical = null) : string
     {
+        if ($canonical === null) {
+            $canonical = $this->get('canonical');
+        }
         $noun = $this->get('noun');
         if ($canonical && $this->get('canonicalnoun')) {
             $noun = $this->get('canonicalnoun');
