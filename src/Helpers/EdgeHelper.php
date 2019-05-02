@@ -192,7 +192,9 @@ EOT;
             'INSERT INTO digraph_edges (edge_start,edge_end,edge_weight) VALUES (:start,:end,:weight)'
         );
         $out = $s->execute([':start'=>$start,':end'=>$end,':weight'=>$weight]);
-        $this->updateRootTracking($end);
+        if ($start !== '{ROOT}') {
+            $this->updateRootTracking($end);
+        }
         return $out;
     }
 
@@ -203,7 +205,9 @@ EOT;
             'DELETE FROM digraph_edges WHERE edge_start = :start AND edge_end = :end'
         );
         $out = $s->execute([':start'=>$start,':end'=>$end]);
-        $this->updateRootTracking($end);
+        if ($start !== '{ROOT}') {
+            $this->updateRootTracking($end);
+        }
         return $out;
     }
 
