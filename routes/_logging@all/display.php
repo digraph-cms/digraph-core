@@ -9,34 +9,6 @@ $l = $cms->helper('logging');
 $logs = $l->list();
 
 ?>
-<style>
-tr.log-entry,
-tr.log-entry a,
-tr.log-entry a:hover {
-    color:#fff !important;
-}
-tr.log-level-DEBUG {
-    background-color:#3B3B3B;
-}
-tr.log-level-INFO,
-tr.log-level-NOTICE {
-    background-color:#1C528D;
-}
-tr.log-level-WARNING {
-    background-color:#ffbc00;
-}
-tr.log-level-ERROR {
-    background-color:#ff7c00;
-}
-tr.log-level-CRITICAL,
-tr.log-level-ALERT {
-    background-color:#ff2200;
-}
-tr.log-level-EMERGENCY,
-tr.log-level-UNKNOWN {
-    background-color:#e500ff;
-}
-</style>
 <table>
     <thead>
         <tr>
@@ -47,8 +19,16 @@ tr.log-level-UNKNOWN {
         </tr>
     </thead>
 <?php
+$classes = [
+    'INFO' => 'highlighted-notice',
+    'NOTICE' => 'highlighted-notice',
+    'WARNING' => 'highlighted-warning',
+    'ERROR' => 'highlighted-error',
+    'CRITICAL' => 'highlighted-error',
+    'EMERGENCY' => 'highlighted-error',
+];
 foreach ($logs as $log) {
-    echo "<tr class='log-entry log-level-".$log->level()."'>";
+    echo "<tr class='log-entry log-level-".$log->level()." ".@$classes[$log->level()]."'>";
     echo "<td><a href='".$log->url()."'>".$log->name()."</a></td>";
     echo "<td>".$log['package.response.status']."</td>";
     echo "<td>".$log['count']."</td>";
