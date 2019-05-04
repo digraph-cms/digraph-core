@@ -47,7 +47,7 @@ strings:
     no_versions: No current versions available
     version-diff:
       intro: |
-        <p>This page displays a summary of the differences between two versions of <a href="!parent_url">!parent_name</a></p>
+        <p>This page displays a summary of the differences between two versions of <a href="!parent_url">!parent_name</a>. Note that formatting is stripped before comparison, so only text changes are shown.</p>
         <p>Currently comparing:<p>
         <ul>
           <li>!a_date</li>

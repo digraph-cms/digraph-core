@@ -83,6 +83,23 @@ th {
   }
 }
 
+tr.highlighted,
+tr.highlighted-notice {
+  background-color: a-adjust($(color_notice) -80);
+}
+
+tr.highlighted-warning {
+  background-color: a-adjust($(color_warning) -80);
+}
+
+tr.highlighted-confirmation {
+  background-color: a-adjust($(color_confirmation) -80);
+}
+
+tr.highlighted-error {
+  background-color: a-adjust($(color_error) -80);
+}
+
 tr:nth-child(odd) td {
   background-color: $(color_shade);
 }

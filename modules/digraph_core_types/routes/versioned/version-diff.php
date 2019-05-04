@@ -1,14 +1,7 @@
 <?php
-//load args, make sure two versions are being specified
-$vs = array_keys($package['url.args']);
-if (count($vs) != 2) {
-    $package->error(404, 'Wrong number of versions specified');
-    return;
-}
-
 //ensure both exist
-$b = $cms->read($vs[0]);
-$a = $cms->read($vs[1]);
+$a = $cms->read($package['url.args.a']);
+$b = $cms->read($package['url.args.b']);
 if (!$a || !$b) {
     $package->error(404, 'A specified version wasn\'t found');
     return;
@@ -51,9 +44,8 @@ $text = $diff->render(
     $a->bodyDiffable(),
     $b->bodyDiffable()
 );
-$parsedown = new \Parsedown;
-$text = $parsedown->text($text);
-echo $text;
+$text = str_replace("\t", '<span style="display:inline-block;width:2em;"> </span>', $text);
+echo "<div style='white-space:pre-wrap;'>$text</div>";
 
 echo "</div>";
 ?>

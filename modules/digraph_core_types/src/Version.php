@@ -24,20 +24,13 @@ class Version extends Page
      */
     public function bodyDiffable()
     {
-        $body = $this->body();
-        //strip undiffable tags
-        foreach (static::UNDIFFABLE_TAGS as $tag => $name) {
-            $body = preg_replace('/<'.$tag.'.*?>(.*?<\/'.$tag.'.*?>)?/i', '['.$name.' can\'t be diffed]', $body);
-        }
-        //strip tags and convert to markdown
-        $body = strip_tags($body, '<p><br><h1><h2><h3><h4><h5><h6><strong><em><i><b><u>');
-        $converter = new HtmlConverter();
-        $converter->getConfig()->setOption('header_style', 'atx');
-        $body = $converter->convert($body);
-        //add spaces to the end of every line
-        $body = preg_replace('/(\r?\n)/m', ' $1', $body);
-        //return
-        return $body;
+        return \Soundasleep\Html2Text::convert(
+            $this->body(),
+            [
+                'ignore_errors' => true,
+                'drop_links' => true
+            ]
+        );
     }
 
     public function effectiveDate()

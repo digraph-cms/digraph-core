@@ -26,12 +26,13 @@ $form->handle(
 );
 if ($form->handle()) {
     if ($form->object->insert()) {
-        $form->object->addParent($package->noun()['dso.id']);
-        $cms->helper('hooks')->noun_trigger($form->object, 'added');
+        $object = $cms->read($form->object['dso.id']);
+        $object->addParent($package->noun()['dso.id']);
+        $cms->helper('hooks')->noun_trigger($object, 'added');
         $cms->helper('notifications')->flashConfirmation(
             $cms->helper('strings')->string(
                 'notifications.add.confirmation',
-                ['name'=>$form->object->link()]
+                ['name'=>$object->link()]
             )
         );
     } else {
