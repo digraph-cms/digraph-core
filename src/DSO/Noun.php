@@ -157,15 +157,9 @@ class Noun extends DSO implements NounInterface
 
     public function parents()
     {
-        $pids = $this->cms()->helper('edges')->parents($this['dso.id']);
-        if (!$pids) {
-            //short-circuit if edge helper has no parents for this noun
-            return [];
-        }
-        $pids = '${dso.id} in (\''.implode('\',\'', $pids).'\')';
-        $search = $this->factory->search();
-        $search->where($pids);
-        return $search->execute();
+        return $this->factory->cms()
+            ->helper('graph')
+            ->parents($this['dso.id']);
     }
 
     public function parent()
@@ -177,6 +171,11 @@ class Noun extends DSO implements NounInterface
             }
         }
         return null;
+    }
+
+    public function excludedChildTypes()
+    {
+        return [];
     }
 
     public function children(string $sortRule = null, $includeAll = false)
@@ -191,16 +190,10 @@ class Noun extends DSO implements NounInterface
         /* set up search */
         $search = $this->factory->search();
         $exclusions = '';
-        /* exclude types from config */
+        /* exclude types */
         if (!$includeAll) {
-            if ($this->factory->cms()->config['excluded_child_types']) {
-                $e = [];
-                foreach ($this->factory->cms()->config['excluded_child_types'] as $key => $value) {
-                    if ($value) {
-                        $e[] = "'$key'";
-                    }
-                }
-                $exclusions .= ' AND ${dso.type} NOT IN ('.implode(',', $e).')';
+            if ($e = $this->excludedChildTypes()) {
+                $exclusions = ' AND ${dso.type} NOT IN (\''.implode('\',\'', $e).'\')';
             }
         }
         /* main search */

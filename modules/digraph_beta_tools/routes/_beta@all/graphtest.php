@@ -1,7 +1,11 @@
 <?php
 $g = $cms->helper('graph');
 
-var_dump($g->route('c6omxxru', 'efnje4xu'));
+foreach ($g->children('3isc3b3j', 2) as $n) {
+    echo "<div>".$n->link()."</div>";
+}
+
+// var_dump($g->route('c6omxxru', 'efnje4xu'));
 
 // var_dump(
 //     $g->traverse(

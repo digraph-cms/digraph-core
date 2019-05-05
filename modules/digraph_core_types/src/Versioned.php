@@ -11,6 +11,11 @@ class Versioned extends Noun
     const VERSION_TYPE = 'version';
     const SLUG_ENABLED = true;
 
+    public function excludedChildTypes()
+    {
+        return [static::VERSION_TYPE];
+    }
+
     public function title($verb = null)
     {
         if (!($version = $this->currentVersion())) {
@@ -60,19 +65,11 @@ class Versioned extends Noun
 
     public function availableVersions()
     {
-        /* pull list of child IDs from edge helper, create IN clause to get them */
-        $cids = $this->cms()->helper('edges')->children($this['dso.id']);
-        if (!$cids) {
-            //short-circuit if edge helper has no children for this noun
-            return [];
-        }
-        $cids = '${dso.id} in (\''.implode('\',\'', $cids).'\') AND ';
-        /* run search */
-        $search = $this->factory->search();
-        $search->where($cids.'${dso.type} = :versiontype');
-        return $this->sortVersions($search->execute([
-            ':versiontype' => static::VERSION_TYPE
-        ]));
+        return $this->sortVersions(
+            $this->factory->cms()
+                ->helper('graph')
+                ->children($this['dso.id'], 1, [static::VERSION_TYPE])
+        );
     }
 
     public function currentVersion()

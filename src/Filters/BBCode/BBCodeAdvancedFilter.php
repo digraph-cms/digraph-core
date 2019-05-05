@@ -50,36 +50,46 @@ class BBCodeAdvancedFilter extends AbstractBBCodeFilter
         }
         $depth = @$args['depth']?$args['depth']:-1;
         $args['thumb'] = @$args['thumb']?$args['thumb']:'gallery-thumb';
-        $seen = [];
-        $args['files'] = $this->gallery_files($noun, $depth, $seen);
+        $args['files'] = $this->gallery_files($noun, $depth);
+        usort(
+            $args['files'],
+            function ($a, $b) {
+                $a = $a->time();
+                $b = $b->time();
+                if ($a == $b) {
+                    return 0;
+                }
+                return ($a < $b) ? 1 : -1;
+            }
+        );
         return $this->fromTemplate('_gallery', $context, $text, $args);
     }
 
-    protected function gallery_files(&$noun, $depth, &$seen)
+    protected function gallery_files(&$noun, $depth)
     {
-        //base case when depth is 0
-        if ($depth == 0 || in_array($noun['dso.id'], $seen)) {
-            return [];
-        }
-        $seen[] = $noun['dso.id'];
-        //recurse
         $files = [];
-        foreach ($noun->children() as $child) {
-            foreach ($this->gallery_files($child, $depth-1, $seen) as $file) {
-                if (!isset($files[$file->hash()])) {
-                    $files[$file->hash()] = $file;
-                }
-            }
-        }
-        //find all files in this noun
         $f = $this->cms->helper('filestore');
-        foreach ($f->listPaths($noun) as $path) {
-            foreach ($f->list($noun, $path) as $file) {
-                if ($file->isImage() && !isset($files[$file->hash()])) {
-                    $files[$file->hash()] = $file;
-                }
-            }
-        }
+        //traverse graph
+        $this->cms->helper('graph')
+            ->traverse(
+                $noun['dso.id'],
+                function ($id) use (&$files, $f) {
+                    //check noun exists
+                    if (!($noun = $this->cms->read($id))) {
+                        return false;
+                    }
+                    //find all files in this noun
+                    foreach ($f->listPaths($noun) as $path) {
+                        foreach ($f->list($noun, $path) as $file) {
+                            if ($file->isImage() && !isset($files[$file->hash()])) {
+                                $files[$file->hash()] = $file;
+                            }
+                        }
+                    }
+                    return true;
+                },
+                $depth
+            );
         //return full result
         return $files;
     }

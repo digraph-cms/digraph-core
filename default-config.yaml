@@ -88,8 +88,6 @@ child_sorting:
   manual_before: ${child_sorting.date_desc}
   manual_after: ${child_sorting.date_asc}
 
-excluded_child_types: []
-
 image:
   #gd, imagick or gmagick -- gd is the default because it's widely supported
   driver: gd

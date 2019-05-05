@@ -34,9 +34,6 @@ permissions:
     'version/*':
       - deny all
 
-excluded_child_types:
-  version: true
-
 templates:
   jsbundles:
     digraph_core:
