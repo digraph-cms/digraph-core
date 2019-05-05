@@ -44,6 +44,7 @@ $text = $diff->render(
     $a->bodyDiffable(),
     $b->bodyDiffable()
 );
+$text = preg_replace("/([\s]+)<\/del><ins>(.+?)\g{1}<\/ins>/msu", "</del><ins>$2</ins>$1", $text);
 $text = str_replace("\t", '<span style="display:inline-block;width:2em;"> </span>', $text);
 echo "<div style='white-space:pre-wrap;'>$text</div>";
 
