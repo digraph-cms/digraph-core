@@ -14,7 +14,9 @@ class FormHelper extends AbstractHelper
         'digraph_slug' => Fields\SlugPattern::class,
         'digraph_name' => \Formward\Fields\Input::class,
         'digraph_title' => \Formward\Fields\Input::class,
-        'checkbox' => \Formward\Fields\Checkbox::class
+        'checkbox' => \Formward\Fields\Checkbox::class,
+        'datetime' => \Formward\Fields\DateAndTime::class,
+        'select' => \Formward\Fields\Select::class,
     ];
 
     public function form($label='', $name=null)
