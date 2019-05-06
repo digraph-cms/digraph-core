@@ -73,14 +73,14 @@ class CMS
         $this->initializeMungers();
     }
 
-    public function locate(string $q = null, bool $slugs = true)
+    public function locate(string $q = null, bool $slugs = true, bool $recache = false)
     {
         if (!$q) {
             return null;
         }
         $q = trim($q, "/ \t\n\r\0\x0B");
         $id = md5(serialize(['locate',$q,$slugs]));
-        if (!isset($this->readCache[$id])) {
+        if ($recache || !isset($this->readCache[$id])) {
             $search = $this->factory()->search();
             $qids = [$q];
             if ($slugs) {
@@ -100,14 +100,14 @@ class CMS
         return $this->readCache[$id];
     }
 
-    public function read(string $q = null, bool $slugs = true)
+    public function read(string $q = null, bool $slugs = true, bool $recache = false)
     {
         if (!$q) {
             return null;
         }
         $q = trim($q, "/ \t\n\r\0\x0B");
         $id = md5(serialize(['read',$q,$slugs]));
-        if (!isset($this->readCache[$id])) {
+        if ($recache || !isset($this->readCache[$id])) {
             $search = $this->factory()->search();
             $qids = [$q];
             if ($slugs) {
