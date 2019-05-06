@@ -81,6 +81,12 @@ class FormHelper extends AbstractHelper
             }
             //set default value
             $field->default(@$opt['default']);
+            //set up tips
+            if ($opt['tips']) {
+                foreach ($opt['tips'] as $key => $value) {
+                    $field->addTip($value, 'mapped_'.$key);
+                }
+            }
             //set default from noun value at location set in map ['field']
             if (@$opt['field']) {
                 $field->default($noun[@$opt['field']]);
