@@ -104,7 +104,8 @@
   margin-top: 0;
 }
 
-.FieldWrapper-required label:after {
+.FieldWrapper-required label:after,
+.Container.required>label:after {
   display: inline;
   content: '\2055';
   color: $(color_accent);
