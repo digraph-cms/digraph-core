@@ -655,7 +655,7 @@ forms:
         label: ${strings.forms.digraph_title_label}
         class: digraph_title
       digraph_slug:
-        weight: 150
+        weight: 950
         field: digraph.slugpattern
         label: ${strings.forms.slug_label}
         class: digraph_slug
