@@ -100,6 +100,12 @@ class GraphHelper extends \Digraph\Helpers\AbstractHelper
             foreach ($s->execute() as $n) {
                 $ids[$n['dso.id']] = $n;
             }
+            $ids = array_filter(
+                $ids,
+                function ($e) {
+                    return $e instanceof Noun;
+                }
+            );
             return $ids;
         } else {
             return [];
