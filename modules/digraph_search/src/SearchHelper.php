@@ -44,7 +44,13 @@ class SearchHelper extends AbstractHelper
     public function search($query)
     {
         $this->indexer();
-        $result = $this->tnt->search($query);
+        $result = $this->tnt->search($query)['ids'];
+        //direct-read
+        foreach ($this->cms->locate(trim($query)) as $d) {
+            $result[] = $d['dso.id'];
+            $result = array_unique($result);
+        }
+        //set up highlights
         $result = array_map(
             function ($e) use ($query) {
                 if ($noun = $this->cms->read($e)) {
@@ -55,8 +61,9 @@ class SearchHelper extends AbstractHelper
                 }
                 return false;
             },
-            $result['ids']
+            $result
         );
+        //filter and sort before returning
         $result = array_filter($result);
         $this->sort($query, $result);
         return $result;
@@ -68,6 +75,8 @@ class SearchHelper extends AbstractHelper
         $name = strtolower($noun->name());
         $title = strtolower($noun->title());
         $body = strtolower($noun->body());
+        $slug = strtolower($noun->url()['noun']);
+        $id = strtolower($noun['dso.id']);
         $score = 0;
         if ($name == $query) {
             $score += 100;
@@ -75,10 +84,34 @@ class SearchHelper extends AbstractHelper
         if ($title == $query) {
             $score += 100;
         }
-        if (strpos($name, $query) !== false) {
+        if ($slug == $query) {
+            $score += 100;
+        }
+        if ($id == $query) {
+            $score += 100;
+        }
+        $posName = strpos($name, $query);
+        $posTitle = strpos($title, $query);
+        $posSlug = strpos($slug, $query);
+        $posId = strpos($id, $query);
+        if ($posSlug === 0) {
+            $score += 50;
+        } elseif ($posSlug !== false) {
             $score += 20;
         }
-        if (strpos($title, $query) !== false) {
+        if ($posId === 0) {
+            $score += 50;
+        } elseif ($posId !== false) {
+            $score += 20;
+        }
+        if ($posName === 0) {
+            $score += 50;
+        } elseif ($posName !== false) {
+            $score += 20;
+        }
+        if ($posTitle === 0) {
+            $score += 50;
+        } elseif ($posTitle !== false) {
             $score += 20;
         }
         if (strpos($body, $query) !== false) {

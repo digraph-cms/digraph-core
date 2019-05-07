@@ -27,9 +27,6 @@ class Versioned extends Noun
     public function body()
     {
         if (!($version = $this->currentVersion())) {
-            $this->factory->cms()->helper('notifications')->warning(
-                $this->factory->cms()->helper('strings')->string('versioned.no_versions')
-            );
             return;
         }
         if (!$version->isPublished()) {
