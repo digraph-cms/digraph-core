@@ -8,7 +8,6 @@ if (!$files) {
     );
     return;
 }
-echo $package->noun()->body();
 
 if ($package->noun()['file-bundle.gallery']) {
     echo $cms->helper('filters')->filter('bbcode_advanced')->filter(

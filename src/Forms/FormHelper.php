@@ -84,7 +84,7 @@ class FormHelper extends AbstractHelper
             //set default value
             $field->default(@$opt['default']);
             //set up tips
-            if ($opt['tips']) {
+            if (@$opt['tips']) {
                 foreach ($opt['tips'] as $key => $value) {
                     $field->addTip($value, 'mapped_'.$key);
                 }

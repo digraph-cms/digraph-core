@@ -12,25 +12,26 @@ class File extends Noun
     const FILESTORE = true;
     const FILESTORE_PATH = 'filefield';
     const FILESTORE_FILE_CLASS = FileStoreFile::class;
-    const SLUG_ENABLED = true;
+    const SLUG_ENABLED = false;
+    const PUBLISH_CONTROL = false;
 
     public function formMap(string $action) : array
     {
+        $map = parent::formMap($action);
         $s = $this->factory->cms()->helper('strings');
-        return [
-            'file' => [
-                'weight' => 502,
-                'label' => $s->string('forms.file.upload_single.container'),
-                'class' => 'Digraph\\Forms\\Fields\\FileStoreFieldSingle',
-                'required' => true,
-                'extraConstructArgs' => [static::FILESTORE_PATH]
-            ],
-            'showpage' => [
-                'weight' => 503,
-                'field' => 'file.showpage',
-                'label' => $s->string('forms.file.showpage'),
-                'class' => 'Formward\Fields\Checkbox'
-            ]
+        $map['file'] = [
+            'weight' => 250,
+            'label' => $s->string('forms.file.upload_single.container'),
+            'class' => 'Digraph\\Forms\\Fields\\FileStoreFieldSingle',
+            'required' => true,
+            'extraConstructArgs' => [static::FILESTORE_PATH]
         ];
+        $map['showpage'] = [
+            'weight' => 251,
+            'field' => 'file.showpage',
+            'label' => $s->string('forms.file.showpage'),
+            'class' => 'Formward\Fields\Checkbox'
+        ];
+        return $map;
     }
 }

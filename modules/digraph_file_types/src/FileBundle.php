@@ -12,24 +12,25 @@ class FileBundle extends Noun
     const FILESTORE_PATH = 'filefield';
     const FILESTORE_FILE_CLASS = FileStoreFile::class;
     const SLUG_ENABLED = true;
+    const PUBLISH_CONTROL = false;
 
     public function formMap(string $action) : array
     {
+        $map = parent::formMap($action);
         $s = $this->factory->cms()->helper('strings');
-        return [
-            'file' => [
-                'weight' => 502,
-                'label' => $s->string('forms.file.upload_multi.container'),
-                'class' => 'Digraph\\Forms\\Fields\\FileStoreFieldMulti',
-                'required' => true,
-                'extraConstructArgs' => [static::FILESTORE_PATH]
-            ],
-            'gallery' => [
-                'weight' => 503,
-                'field' => 'file-bundle.gallery',
-                'label' => $s->string('forms.file-bundle.gallery'),
-                'class' => 'Formward\Fields\Checkbox'
-            ]
+        $map['file'] = [
+            'weight' => 650,
+            'label' => $s->string('forms.file.upload_multi.container'),
+            'class' => 'Digraph\\Forms\\Fields\\FileStoreFieldMulti',
+            'required' => true,
+            'extraConstructArgs' => [static::FILESTORE_PATH]
         ];
+        $map['gallery'] = [
+            'weight' => 651,
+            'field' => 'file-bundle.gallery',
+            'label' => $s->string('forms.file-bundle.gallery'),
+            'class' => 'Formward\Fields\Checkbox'
+        ];
+        return $map;
     }
 }
