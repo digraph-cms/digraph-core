@@ -76,7 +76,7 @@ class CMS
     public function locate(string $q = null, bool $slugs = true, bool $recache = false)
     {
         if (!$q) {
-            return null;
+            return [];
         }
         $q = trim($q, "/ \t\n\r\0\x0B");
         $id = md5(serialize(['locate',$q,$slugs]));
