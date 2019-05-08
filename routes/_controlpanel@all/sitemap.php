@@ -31,9 +31,13 @@ if (!$root) {
     echo "</ul>";
 }
 
-function sitemap($obj, &$cms, $max=5, $depth=1)
+function sitemap($obj, &$cms, $max=5, $depth=1, $seen=[])
 {
     if ($obj) {
+        if (in_array($obj['dso.id'], $seen)) {
+            return '';
+        }
+        $seen[] = $obj['dso.id'];
         echo "<li>";
         if ($depth == 1) {
             echo "<strong>";
@@ -47,7 +51,7 @@ function sitemap($obj, &$cms, $max=5, $depth=1)
         if ($depth < $max && $children) {
             echo "<ul>";
             foreach ($children as $child) {
-                sitemap($child, $cms, $max, $depth+1);
+                sitemap($child, $cms, $max, $depth+1, $seen);
             }
             echo "</ul>";
         }

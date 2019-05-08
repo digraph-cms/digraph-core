@@ -23,6 +23,9 @@ class BBCodeAdvancedFilter extends AbstractBBCodeFilter
         $seen[] = $noun['dso.id'];
         $out = '<ul class="digraph-toc">';
         foreach ($children as $c) {
+            if (in_array($c['dso.id'], $seen)) {
+                continue;
+            }
             $out .= '<li>'.$c->link();
             $out .= $this->toc_helper($c, $seen);
             $out .= '</li>';
