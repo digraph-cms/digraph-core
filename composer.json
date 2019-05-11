@@ -1,7 +1,7 @@
 {
     "name": "byjoby/digraph-core",
     "description": "Source and API version of a CMS that emphasizes flexibility and content permanence. Generally this package is only used for development.",
-    "type": "project",
+    "type": "digraph-core",
     "license": "MIT",
     "authors": [{
         "name": "Joby Elliott",
