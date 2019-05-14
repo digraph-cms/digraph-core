@@ -27,7 +27,6 @@ notifications:
     generic: Operation completed successfully
   error:
     generic: An error occurred
-  unpublished: '"!name" is not currently published. Parts of the site may look different for users with lower access permissions than you.'
   groupsource_illegalroot: Group source "!0" is not allowed to provide root.
   edit:
     confirmation: Changes saved to !name
@@ -103,14 +102,6 @@ forms:
       bbcode_advanced: 'Advanced BBCode: !tags'
       bbcode_extended: Extended BBCode tags from templates in _bbcode/extended
       bbcode_unsafe: 'Unsafe BBCode: !tags'
-  digraph_published:
-    label: Publication settings
-    label_start: Start date
-    label_end: End date
-    options:
-      on: Published
-      off: Unpublished
-      date: Scheduled
 actionbar:
   title:
     default: Actions

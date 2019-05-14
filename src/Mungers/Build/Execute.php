@@ -37,15 +37,6 @@ class Execute extends AbstractMunger
             }
             $this->package = $package;
             $this->execute();
-            //add a notice about unpublished pages
-            if ($package->noun() && !$package->noun()->isPublished()) {
-                $package->cms()->helper('notifications')->warning(
-                    $package->cms()->helper('strings')->string(
-                        'notifications.unpublished',
-                        ['name'=>$package->noun()->name()]
-                    )
-                );
-            }
         } catch (\Throwable $e) {
             @ob_end_clean();
             $package->error(500, get_class($e).": ".$e->getMessage().": ".$e->getFile().": ".$e->getLine());

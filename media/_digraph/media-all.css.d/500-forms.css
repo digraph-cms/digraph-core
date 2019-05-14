@@ -207,26 +207,6 @@ DateAndTime fields
 }
 
 /*
-Publication settings field
- */
-.Form .Container.class-Published>label {
-  display: none;
-}
-
-.Form .Container.class-Published {
-  padding-bottom: 0.5em;
-}
-
-.Form .Container.class-Published>.FieldWrapper {
-  margin-bottom: 0;
-}
-
-.Form .Container.class-Published>.Container {
-  display: inline-block;
-  margin: 0;
-}
-
-/*
 progressively-enhanced ordering field
  */
 .FieldWrapper-formward-ordering-field.js-active textarea {

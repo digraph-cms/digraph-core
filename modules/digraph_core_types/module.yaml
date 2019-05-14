@@ -1,16 +1,21 @@
 types:
-  content:
+  classes:
     page: \Digraph\Modules\digraph_core_types\Page
     link: \Digraph\Modules\digraph_core_types\Link
-    link-rule: false
-    version: false
-    versioned: false
+    link-rule: \Digraph\Modules\digraph_core_types\LinkRule
+    version: \Digraph\Modules\digraph_core_types\Version
+    versioned: \Digraph\Modules\digraph_core_types\Versioned
+  content:
+    page: ${types.classes.page}
+    link: ${types.classes.link}
+    link-rule: ${types.classes.link-rule}
+    version: ${types.classes.version}
+    versioned: ${types.classes.versioned}
 
 navigation:
   parents:
     proper:
       '*/version-diff': !noun/versions
-      'version/display': !parent/versions
 
 permissions:
   url:

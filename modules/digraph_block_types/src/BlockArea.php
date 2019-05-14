@@ -20,8 +20,7 @@ class BlockArea extends Noun
         $s = $this->factory->cms()->helper('strings');
         return [
             'digraph_title' => false,
-            'digraph_body' => false,
-            'digraph_published' => false
+            'digraph_body' => false
         ];
     }
 

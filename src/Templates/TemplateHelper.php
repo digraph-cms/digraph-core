@@ -92,18 +92,17 @@ class TemplateHelper extends AbstractHelper
         }
         //add active status based on breadcrumb
         $breadcrumb = @$this->cms->helper('navigation')->breadcrumb($this->package->url());
-        if (@isset($breadcrumb["$url"])) {
-            if ($url->pathString() == '' && count($breadcrumb) > 1) {
-                return $link;
-            }
-            if ($breadcrumb["$url"] == end($breadcrumb)) {
-                $link->addClass('active-page');
-            } else {
-                $link->addClass('active-path');
-            }
+        if ($url->pathString(true) == end($breadcrumb)->pathString(true)) {
+            $link->addClass('active-page');
             $link->addClass('selected');
+        } elseif ($url->pathString() != '') {
+            foreach ($breadcrumb as $bc) {
+                if ($url->pathString(true) == $bc->pathString(true)) {
+                    $link->addClass('active-path');
+                    $link->addClass('selected');
+                }
+            }
         }
-        //return link
         return $link;
     }
 

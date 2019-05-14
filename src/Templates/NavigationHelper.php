@@ -13,7 +13,7 @@ class NavigationHelper extends AbstractHelper
         $bc = [];
         $bc["$url"] = $url;
         $bc = $this->bcBuilder($bc);
-        return array_reverse($bc);
+        return array_values(array_reverse($bc));
     }
 
     protected function bcBuilder($bc)

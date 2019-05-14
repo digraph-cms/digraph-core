@@ -62,8 +62,8 @@ class Url extends FlatArray
             $canonical = $this->get('canonical');
         }
         $noun = $this->get('noun');
-        if ($canonical && $this->get('canonicalnoun')) {
-            $noun = $this->get('canonicalnoun');
+        if ($canonical && $this->get('object')) {
+            $noun = $this->get('object');
         }
         $verb = $this->get('verb');
         if ($noun == static::HOMEALIAS && $verb == static::DEFAULTVERB) {

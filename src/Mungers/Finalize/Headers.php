@@ -40,6 +40,7 @@ class Headers extends AbstractMunger
         $headers['Content-Disposition'] = '${response.disposition}';
         if ($package['response.filename']) {
             $fn = urlencode($package['response.filename']);
+            $fn = str_replace('+', ' ', $fn);
             $headers['Content-Disposition'] = $headers['Content-Disposition']."; filename=\"$fn\"";
         }
         //redirection

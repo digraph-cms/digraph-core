@@ -33,9 +33,9 @@ EOT;
     public function hook_export(&$export)
     {
         $slugs = [];
-        foreach ($export['noun_ids'] as $noun) {
-            if ($these = $this->slugs($noun)) {
-                $slugs[$noun] = $these;
+        foreach ($export['nouns'] as $noun) {
+            if ($these = $this->slugs($noun['dso.id'])) {
+                $slugs[$noun['dso.id']] = $these;
             }
         }
         return $slugs;

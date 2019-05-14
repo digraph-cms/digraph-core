@@ -10,7 +10,6 @@ class FormHelper extends AbstractHelper
 {
     protected $types = [
         'digraph_content' => Fields\Content::class,
-        'digraph_published' => Fields\Published::class,
         'digraph_slug' => Fields\SlugPattern::class,
         'digraph_name' => \Formward\Fields\Input::class,
         'digraph_title' => \Formward\Fields\Input::class,

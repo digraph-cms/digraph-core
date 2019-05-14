@@ -1,7 +1,10 @@
 types:
-  content:
+  classes:
     block: \Digraph\Modules\digraph_block_types\Block
     blockarea: \Digraph\Modules\digraph_block_types\BlockArea
+  content:
+    block: ${types.classes.block}
+    blockarea: ${types.classes.blockarea}
 
 permissions:
   url:

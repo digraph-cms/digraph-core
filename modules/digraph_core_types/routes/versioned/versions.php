@@ -4,13 +4,27 @@ $versions = $package->noun()->availableVersions();
 echo "<h2>Revision history</h2>";
 echo "<form action='".$this->url($package['noun.dso.id'], 'version-diff', [])."' method='get'>";
 echo "<table id='digraph-revision-history'>";
-echo "<tr><th colspan=2>&nbsp;</th><th>Title</th><th>Date</th></tr>";
+echo "<tr>";
+if (count($versions) > 1) {
+    echo "<th colspan=2>Compare</th>";
+}
+echo "<th>Revision title</th><th>Publish date</th></tr>";
 $i = 0;
 foreach ($versions as $k => $v) {
     $i++;
     echo "<tr class='revision-row' data-rownum='$i'>";
-    echo "<td><input type='radio' class='compare-radio compare-radio-b' value='".$v['dso.id']."' name='b' data-rownum='$i'></td>";
-    echo "<td><input type='radio' class='compare-radio compare-radio-a' value='".$v['dso.id']."' name='a' data-rownum='$i'></td>";
+    if (count($versions) != 1) {
+        if ($i == count($versions)) {
+            echo "<td></td>";
+        } else {
+            echo "<td><input type='radio' class='compare-radio compare-radio-b' value='".$v['dso.id']."' name='b' data-rownum='$i'></td>";
+        }
+        if ($i == 1) {
+            echo "<td></td>";
+        } else {
+            echo "<td><input type='radio' class='compare-radio compare-radio-a' value='".$v['dso.id']."' name='a' data-rownum='$i'></td>";
+        }
+    }
     echo "<td>".$v->url()->html()."</td>";
     echo "<td>";
     echo $cms->helper('strings')->datetimeHTML($v->effectiveDate());
@@ -18,9 +32,11 @@ foreach ($versions as $k => $v) {
     echo "</tr>";
 }
 echo "</table>";
-echo "<div class='fixed-controls'>";
-echo "<input type='submit' class='cta-button green' value='Compare'></div>";
-echo "</form>";
+if (count($versions) > 1) {
+    echo "<div class='fixed-controls'>";
+    echo "<input type='submit' class='cta-button green' value='Compare'></div>";
+    echo "</form>";
+}
 
 ?>
 <style>

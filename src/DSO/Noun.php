@@ -8,7 +8,6 @@ use Destructr\DSOFactoryInterface;
 class Noun extends DSO implements NounInterface
 {
     const SLUG_ENABLED = false;
-    const PUBLISH_CONTROL = false;
     const FILESTORE = false;
     const ROUTING_NOUNS = [];
 
@@ -27,9 +26,6 @@ class Noun extends DSO implements NounInterface
     public function formMap(string $action) : array
     {
         $map = [];
-        if (!static::PUBLISH_CONTROL) {
-            $map['digraph_published'] = false;
-        }
         if (!static::SLUG_ENABLED) {
             $map['digraph_slug'] = false;
         }
@@ -103,32 +99,6 @@ class Noun extends DSO implements NounInterface
         return $links;
     }
 
-    public function isPublished()
-    {
-        //no information
-        if (!$this['digraph.published']) {
-            return true;
-        }
-        //forced unpublished
-        if ($this['digraph.published.force'] == 'unpublished') {
-            return false;
-        }
-        //forced published
-        if ($this['digraph.published.force'] == 'published') {
-            return true;
-        }
-        //check start date
-        if ($this['digraph.published.start'] && time() < $this['digraph.published.start']) {
-            return false;
-        }
-        //check end date
-        if ($this['digraph.published.end'] && time() >= $this['digraph.published.end']) {
-            return false;
-        }
-        //default is to return true
-        return true;
-    }
-
     public function isEditable()
     {
         return $this->cms()->helper('permissions')->checkUrl($this->url('edit'));
@@ -145,26 +115,9 @@ class Noun extends DSO implements NounInterface
         return null;
     }
 
-    public function addParent($pid)
-    {
-        $this->cms()->helper('edges')->create($pid, $this['dso.id']);
-    }
-
-    public function addChild($cid)
-    {
-        $this->cms()->helper('edges')->create($this['dso.id'], $cid);
-    }
-
-    public function parents()
-    {
-        return $this->factory->cms()
-            ->helper('graph')
-            ->parents($this['dso.id']);
-    }
-
     public function parent()
     {
-        $pids = $this->cms()->helper('edges')->parents($this['dso.id']);
+        $pids = $this->cms()->helper('edges')->parents($this['dso.id'], null, true);
         foreach ($pids as $pid) {
             if ($parent = $this->cms()->read($pid)) {
                 return $parent;
@@ -173,15 +126,10 @@ class Noun extends DSO implements NounInterface
         return null;
     }
 
-    public function excludedChildTypes()
-    {
-        return [];
-    }
-
     public function children(string $sortRule = null, $includeAll = false)
     {
         /* pull list of child IDs from edge helper, create IN clause to get them */
-        $cids = $this->cms()->helper('edges')->children($this['dso.id']);
+        $cids = $this->cms()->helper('graph')->childIDs($this['dso.id'], 'normal');
         if (!$cids) {
             //short-circuit if edge helper has no children for this noun
             return [];
@@ -189,19 +137,8 @@ class Noun extends DSO implements NounInterface
         $cids = '${dso.id} in (\''.implode('\',\'', $cids).'\')';
         /* set up search */
         $search = $this->factory->search();
-        $exclusions = '';
-        /* exclude types */
-        if (!$includeAll) {
-            if ($e = $this->excludedChildTypes()) {
-                $exclusions = ' AND ${dso.type} NOT IN (\''.implode('\',\'', $e).'\')';
-            }
-        }
         /* main search */
-        //put CIDs clause first, so that the rest is operating on as small a
-        //result set as possible
-        // var_dump($cid.$exclusions);
-        // exit();
-        $search->where($cids.$exclusions);
+        $search->where($cids);
         /* if no sort rule, pull it from our own config */
         if (!$sortRule) {
             $sortRule = $this['digraph.order.mode'];
@@ -300,7 +237,6 @@ class Noun extends DSO implements NounInterface
         }
         $url = $this->factory->cms()->helper('urls')->url($noun, $verb, $args);
         $url['object'] = $this['dso.id'];
-        $url['canonicalnoun'] = $this->get('dso.id');
         return $this->factory->cms()->helper('urls')->addText($url);
     }
 }

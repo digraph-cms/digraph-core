@@ -13,7 +13,6 @@ class File extends Noun
     const FILESTORE_PATH = 'filefield';
     const FILESTORE_FILE_CLASS = FileStoreFile::class;
     const SLUG_ENABLED = false;
-    const PUBLISH_CONTROL = false;
 
     public function formMap(string $action) : array
     {

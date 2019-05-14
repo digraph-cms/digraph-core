@@ -2,6 +2,11 @@
 $package->noCache();
 
 $noun = $package->noun();
+if (!$noun->isEditable()) {
+    $package->error(401);
+    return;
+}
+
 $forms = $this->helper('forms');
 $form = $forms->editNoun($noun);
 

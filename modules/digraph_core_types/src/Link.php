@@ -7,7 +7,6 @@ use HtmlObjectStrings\A;
 
 class Link extends Noun
 {
-    const PUBLISH_CONTROL = false;
     const SLUG_ENABLED = true;
 
     public function searchIndexed()

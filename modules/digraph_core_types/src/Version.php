@@ -27,17 +27,23 @@ class Version extends Page
         return \Soundasleep\Html2Text::convert(
             $this->body(),
             [
-                'ignore_errors' => true,
-                'drop_links' => true
+                'ignore_errors' => true
             ]
         );
     }
 
+    public function parentUrl($verb = 'display')
+    {
+        if ($verb == 'display') {
+            if (($parent = $this->parent()) instanceof Versioned) {
+                return $parent->url('versions');
+            }
+        }
+        return parent::parentUrl($verb);
+    }
+
     public function effectiveDate()
     {
-        if (!$this['digraph.published.force'] && $this['digraph.published.start']) {
-            return $this['digraph.published.start'];
-        }
         return $this['dso.created.date'];
     }
 

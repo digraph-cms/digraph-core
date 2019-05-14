@@ -28,34 +28,15 @@ $form['recurse']->default(true);
 //submit button
 $form->submitButton()->label($s->string('forms.confirm_button'));
 
-//delete function
-function do_delete(&$noun, &$cms, $recurse=false)
-{
-    //recurse if necessary
-    if ($recurse) {
-        foreach ($noun->children() as $child) {
-            do_delete($child, $cms, $recurse);
-        }
-    }
-    //delete this noun
-    if ($noun->delete()) {
-        $cms->helper('notifications')->confirmation(
-            $cms->helper('strings')->string('forms.delete.confirm_deleted', [$noun->name()])
-        );
-    } else {
-        $cms->helper('notifications')->error(
-            $cms->helper('strings')->string('forms.delete.confirm_deleted_error', [$noun->name()])
-        );
-    }
-    return;
-}
-
 //do deletion
 if ($form->handle()) {
     $n = $package->cms()->helper('notifications');
     $noun = $package->noun();
     if ($form['recurse']->value()) {
-        $toDelete = $cms->helper('edges')->children_recursive($noun['dso.id']);
+        //get list of all children, in breadth-first order
+        $toDelete = $cms->helper('graph')->traverse($noun['dso.id']);
+        //reverse order to delete children from leaves in
+        $toDelete = array_reverse($toDelete);
     }
     $toDelete[] = $noun['dso.id'];
     //try to set max execution time to unlimited

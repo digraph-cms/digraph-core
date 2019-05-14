@@ -4,7 +4,8 @@ $token = $cms->helper('session')->getToken('betacleanup');
 
 $oldkeys = [
     'digraph.noparent',
-    'digraph.lastsearchindex'
+    'digraph.lastsearchindex',
+    'digraph.published'
 ];
 
 /* execute if requested */

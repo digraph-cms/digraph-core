@@ -1,7 +1,10 @@
 types:
-  content:
+  classes:
     file: Digraph\Modules\digraph_file_types\File
     file-bundle: Digraph\Modules\digraph_file_types\FileBundle
+  content:
+    file: ${types.classes.file}
+    file-bundle: ${types.classes.file-bundle}
 
 helpers:
   classes:

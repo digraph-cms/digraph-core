@@ -11,8 +11,8 @@ delete handling
  */
  if ($delete = $package['url.args.delete']) {
      if ($delete = json_decode($delete, true)) {
-         list($start, $end) = $delete;
-         if ($package['url.args.hash'] == md5($token.$start.$end)) {
+         list($start, $end, $type) = $delete;
+         if ($package['url.args.hash'] == md5($token.$start.$end.$type)) {
              if ($e->delete($start, $end)) {
                  $n->flashConfirmation("Deleted edge <code>$start =&gt; $end</code>");
              }
@@ -34,8 +34,9 @@ $pform = $f->form('Add parent');
 $pform->addClass('compact-form');
 $pform['noun'] = $f->field('noun', '');
 $pform['noun']->required(true);
+$pform['type'] = $f->field('text', 'Edge type');
 if ($pform->handle()) {
-    if ($e->create($pform['noun']->value(), $noun['dso.id'])) {
+    if ($e->create($pform['noun']->value(), $noun['dso.id'], $pform['type']->value())) {
         $p = $cms->read($pform['noun']->value())->link();
         $c = $noun->link();
         $n->flashConfirmation("Created edge from $p to $c");
@@ -51,8 +52,9 @@ $cform = $f->form('Add child');
 $cform->addClass('compact-form');
 $cform['noun'] = $f->field('noun', '');
 $cform['noun']->required(true);
+$cform['type'] = $f->field('text', 'Edge type');
 if ($cform->handle()) {
-    if ($e->create($noun['dso.id'], $cform['noun']->value())) {
+    if ($e->create($noun['dso.id'], $cform['noun']->value(), $cform['type']->value())) {
         $c = $cms->read($cform['noun']->value())->link();
         $p = $noun->link();
         $n->flashConfirmation("Created edge from $p to $c");
@@ -69,14 +71,14 @@ echo "<div class='edges-manager'>";
 echo '<div class="edges-parents">';
 echo '<h3>Parents</h3>';
 echo $pform;
-echo "<h4>Current parents</h4>";
+echo "<h4>Current parent edges</h4>";
 printEdges($e->parents($noun['dso.id']), true);
 echo "</div>";
 
 echo '<div class="edges-children">';
 echo '<h3>Children</h3>';
 echo $cform;
-echo "<h4>Current children</h4>";
+echo "<h4>Current child edges</h4>";
 printEdges($e->children($noun['dso.id']));
 echo "</div>";
 
@@ -87,16 +89,18 @@ function printEdges($edges, $reverse=false)
     global $noun,$cms,$package;
     $token = $cms->helper('session')->getToken('edge.delete');
     echo "<table>";
-    foreach ($edges as $end) {
+    echo "<tr><th>".($reverse?'From':'To')."</th><th>Type</th><th>&nbsp;</th></tr>";
+    foreach ($edges as $edge) {
         if ($reverse) {
-            $start = $end;
+            $start = $edge->start();
             $end = $package->noun()['dso.id'];
         } else {
             $start = $package->noun()['dso.id'];
+            $end = $edge->end();
         }
         $durl = $package->url();
-        $durl['args.delete'] = json_encode([$start, $end]);
-        $durl['args.hash'] = md5($token.$start.$end);
+        $durl['args.delete'] = json_encode([$start, $end, $type]);
+        $durl['args.hash'] = md5($token.$start.$end.$type);
         echo "<tr>";
         $dn = $reverse?$cms->read($start, false):$cms->read($end, false);
         if ($dn) {
@@ -104,6 +108,7 @@ function printEdges($edges, $reverse=false)
         } else {
             echo "<td>[not found: ".($reverse?$start:$end)."]</td>";
         }
+        echo "<td>".$edge->type()."</td>";
         echo "<td><a href='".$durl->string(true)."' class='row-button row-unlink'>unlink</a></td>";
         echo "</tr>";
     }

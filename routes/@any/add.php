@@ -27,7 +27,7 @@ $form->handle(
 if ($form->handle()) {
     if ($form->object->insert()) {
         $object = $cms->read($form->object['dso.id'], false, true);
-        $object->addParent($package->noun()['dso.id']);
+        $cms->helper('edges')->create($package['noun.dso.id'], $object['dso.id']);
         $cms->helper('hooks')->noun_trigger($object, 'added');
         $cms->helper('notifications')->flashConfirmation(
             $cms->helper('strings')->string(

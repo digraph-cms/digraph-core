@@ -18,8 +18,7 @@ class FileStoreHelper extends AbstractHelper
     public function hook_export(&$export)
     {
         $out = [];
-        foreach ($export['noun_ids'] as $noun) {
-            $noun = $this->cms->read($noun);
+        foreach ($export['nouns'] as $noun) {
             foreach ($this->listPaths($noun) as $path) {
                 foreach ($this->list($noun, $path) as $file) {
                     $out[$file->hash()] = base64_encode(file_get_contents($file->path()));

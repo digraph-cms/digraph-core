@@ -36,32 +36,34 @@ class HookHelper extends \Digraph\Helpers\AbstractHelper
     {
         $this->trigger('nouns', $event, [$noun]);
         //recurse into parents, triggering child:$event events
-        $seen = [$noun['dso.id']];
-        $this->noun_recurse_up($noun->parents(), 'child:'.$event, $seen);
+        $this->noun_recurse_up($noun, 'child:'.$event, $seen);
         //recurse into children, triggering parent:$event events
-        $seen = [$noun['dso.id']];
-        $this->noun_recurse_down($noun->children(), 'parent:'.$event, $seen);
+        $this->noun_recurse_down($noun, 'parent:'.$event, $seen);
     }
 
-    protected function noun_recurse_up($nouns, $event, &$seen)
+    protected function noun_recurse_up($noun, $event)
     {
-        foreach ($nouns as $noun) {
-            if (!in_array($noun['dso.id'], $seen)) {
+        $this->cms->helper('graph')->traverse(
+            $noun['dso.id'],
+            function ($noun) use ($event) {
                 $this->trigger('nouns', $event, [$noun]);
-                $seen[] = $noun['dso.id'];
-                $this->noun_recurse_up($noun->parents(), $event, $seen);
-            }
-        }
+            },
+            null,
+            5,
+            true
+        );
     }
 
-    protected function noun_recurse_down($nouns, $event, &$seen)
+    protected function noun_recurse_down($nouns, $event)
     {
-        foreach ($nouns as $noun) {
-            if (!in_array($noun['dso.id'], $seen)) {
+        $this->cms->helper('graph')->traverse(
+            $noun['dso.id'],
+            function ($noun) use ($event) {
                 $this->trigger('nouns', $event, [$noun]);
-                $seen[] = $noun['dso.id'];
-                $this->noun_recurse_down($noun->children(), $event, $seen);
-            }
-        }
+            },
+            null,
+            5,
+            false
+        );
     }
 }

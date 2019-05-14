@@ -6,14 +6,17 @@ use Digraph\DSO\Noun;
 
 class Versioned extends Noun
 {
-    const PUBLISH_CONTROL = false;
     const ROUTING_NOUNS = ['versioned'];
     const VERSION_TYPE = 'version';
     const SLUG_ENABLED = true;
 
-    public function excludedChildTypes()
+    public function childEdgeType($child)
     {
-        return [static::VERSION_TYPE];
+        if ($child instanceof Version) {
+            return 'version';
+        } else {
+            return null;
+        }
     }
 
     public function title($verb = null)
@@ -27,17 +30,9 @@ class Versioned extends Noun
     public function body()
     {
         if (!($version = $this->currentVersion())) {
-            return;
+            return '[no version of this page is available]';
         }
-        if (!$version->isPublished()) {
-            $this->factory->cms()->helper('notifications')->warning(
-                $this->factory->cms()->helper('strings')->string(
-                    'notifications.unpublished',
-                    ['name'=>$version->name()]
-                )
-            );
-        }
-        return $this->factory->cms()->helper('filters')->filterContentField($version['digraph.body'], $this['dso.id']);
+        return $version->body();
     }
 
     public function actions($links)
@@ -65,7 +60,7 @@ class Versioned extends Noun
         return $this->sortVersions(
             $this->factory->cms()
                 ->helper('graph')
-                ->children($this['dso.id'], 1, [static::VERSION_TYPE])
+                ->children($this['dso.id'], 'version', 1)
         );
     }
 

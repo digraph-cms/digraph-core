@@ -1,6 +1,7 @@
-{% if package.cms.helper('navigation').breadcrumb(url) | length > 1 %}
+{% set breadcrumb = package.cms.helper('navigation').breadcrumb(url) %}
+{% if breadcrumb | length > 2 or (breadcrumb | length > 1 and breadcrumb[0] != url.base) %}
   <div class="breadcrumb">
-    {% for link in package.cms.helper('navigation').breadcrumb(url) %}
+    {% for link in breadcrumb %}
       <span class="breadcrumb-item">
         {{link.html|raw}}
       </span>

@@ -308,9 +308,6 @@ filters:
     allowed: [a,b,blockquote,code,del,dd,dl,em,figure,figcaption,h1,h2,h3,h4,h5,h6,i,img,li,ol,p,pre,s,sup,sub,strong,strike,ul,br,hr]
 
 permissions:
-  content:
-    unpublished/view:
-      - allow group webmaster, editor
   url:
     '*':
       - deny all
@@ -617,11 +614,11 @@ helpers:
     actions: Digraph\Helpers\Actions
     blocks: Digraph\Blocks\BlockHelper
     cache: Digraph\Helpers\CacheHelper
-    edges: Digraph\Helpers\EdgeHelper
+    edges: Digraph\Graph\EdgeHelper
     filestore: Digraph\FileStore\FileStoreHelper
     filters: Digraph\Filters\FilterHelper
     forms: Digraph\Forms\FormHelper
-    graph: Digraph\Helpers\GraphHelper
+    graph: Digraph\Graph\GraphHelper
     hooks: Digraph\Helpers\HookHelper
     image: Digraph\FileStore\ImageHelper
     logging: Digraph\Logging\LogHelper
@@ -660,11 +657,6 @@ forms:
         label: ${strings.forms.slug_label}
         class: digraph_slug
         default: '[parent]/[name]'
-      digraph_published:
-        weight: 900
-        field: digraph.published
-        label: ${strings.forms.published_label}
-        class: digraph_published
       digraph_body:
         weight: 500
         field: digraph.body

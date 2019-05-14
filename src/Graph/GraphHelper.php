@@ -1,6 +1,6 @@
 <?php
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
-namespace Digraph\Helpers;
+namespace Digraph\Graph;
 
 use Digraph\DSO\Noun;
 
@@ -22,42 +22,66 @@ use Digraph\DSO\Noun;
  */
 class GraphHelper extends \Digraph\Helpers\AbstractHelper
 {
-    public function children($id, $depth=1, $onlyTypes=[], $omitTypes=[])
+    const DEFAULT_FIND_OPTS = [
+        'depth' => -1,
+        'onlyTypes' => [],
+        'omitTypes' => [],
+        'sort' => 'tree'
+    ];
+
+    /*
+    Wrapper for childIDs that actually loads all the Nouns from the database.
+    Maintains breadth-first order.
+     */
+    public function children($id, $type=null, $depth=1)
     {
-        return $this->sqlResults($this->childIDs($id, $depth), $onlyTypes, $omitTypes);
+        return $this->sqlResults($this->childIDs($id, $type, $depth));
     }
 
-    public function parents($id, $depth=1, $onlyTypes=[], $omitTypes=[])
+    /*
+    Wrapper for parentIDs that actually loads all the Nouns from the database.
+    Maintains breadth-first order.
+     */
+    public function parents($id, $type=null, $depth=1)
     {
-        return $this->sqlResults($this->parentIDs($id, $depth), $onlyTypes, $omitTypes);
+        return $this->sqlResults($this->parentIDs($id, $type, $depth));
     }
 
-    public function childIDs($id, $depth=1)
+    /*
+    Return all children of a given ID, optionally up to a given depth and/or of
+    a specific edge type. Returns the IDs only.
+     */
+    public function childIDs($id, $type=null, $depth=1)
     {
-        //return edge helper children method results if depth is 1, it's fastest
-        if ($depth === 1) {
-            return $this->cms->helper('edges')->children($id);
-        }
-        //otherwise build with traverse
-        return $this->traverse($id, null, $depth);
+        $out = $this->traverse($id, null, $type, $depth);
+        array_shift($out);//shift first item off to not include root of search
+        return $out;
     }
 
-    public function parentIDs($id, $depth=1)
+    /*
+    Return all parents of a given ID, optionally up to a given depth and/or of
+    a specific edge type. Returns the IDs only.
+     */
+    public function parentIDs($id, $type=null, $depth=1)
     {
-        //return edge helper parent method results if depth is 1, it's fastest
-        if ($depth === 1) {
-            return $this->cms->helper('edges')->parents($id);
-        }
-        //otherwise build with traverse
-        return $this->traverse($id, null, $depth, true);
+        $out = $this->traverse($id, null, $type, $depth, true);
+        array_shift($out);//shift first item off to not include root of search
+        return $out;
     }
 
+    /*
+    Wrapper for routeIDs that actually loads all the Nouns from the database.
+    Maintains breadth-first order.
+     */
     public function route($start, $end, $reverse=false)
     {
         return $this->sqlResults($this->routeIDs($start, $end, $reverse));
     }
 
-    public function routeIDs($start, $end, $reverse=false) : ?array
+    /*
+    Get an array of IDs that form a route between a given start and end point.
+     */
+    public function routeIDs($start, $end) : ?array
     {
         /*
         It's noteworthy that this method works in a slightly unintuitive way.
@@ -66,9 +90,6 @@ class GraphHelper extends \Digraph\Helpers\AbstractHelper
         of the time nouns will have more children than parents, so going
         backwards will yield a much smaller tree.
          */
-        if ($reverse) {
-            list($start, $end) = [$end,$start];
-        }
         //traverse to build a list of edges tracing backwards from end
         $edges = [];
         $this->traverse(
@@ -100,13 +121,12 @@ class GraphHelper extends \Digraph\Helpers\AbstractHelper
             foreach ($s->execute() as $n) {
                 $ids[$n['dso.id']] = $n;
             }
-            $ids = array_filter(
+            return array_filter(
                 $ids,
                 function ($e) {
                     return $e instanceof Noun;
                 }
             );
-            return $ids;
         } else {
             return [];
         }
@@ -172,46 +192,25 @@ class GraphHelper extends \Digraph\Helpers\AbstractHelper
      *
      * If no callback is provided, each item will simply be the ID of the noun.
      */
-    public function traverse($start, $fn=null, $maxDepth=-1, $reverse=false)
+    public function traverse($start, $fn=null, $type=null, $maxDepth=-1, $reverse=false)
     {
         $queue = [[0,$start,null]];
         $results = [];
         while ($queue) {
             list($depth, $id, $last) = array_shift($queue);
-            if (!$id) {
+            if (!$id || isset($results[$id])) {
                 continue;
             }
             $r = $fn?$fn($id, $depth, $last):$id;
             $results[$id] = $r?$r:false;
             if ($depth != $maxDepth) {
-                foreach (($reverse?$this->cms->helper('edges')->parents($id, 1):$this->cms->helper('edges')->children($id, 1)) as $c) {
-                    if (!isset($results[$c])) {
-                        $queue[] = [$depth+1,$c,$id];
-                    }
+                if ($reverse) {
+                    $new = $this->cms->helper('edges')->parents($id, $type, true);
+                } else {
+                    $new = $this->cms->helper('edges')->children($id, $type, true);
                 }
-            }
-        }
-        return $results;
-    }
-
-    /**
-     * Works about the same as traverse(), but uses Nouns' built-in children()
-     * and parents() methods. It's much slower, but respects any ordering or
-     * filtering rules that are hard-coded into the nouns involved.
-     */
-    public function complexTraverse(Noun $start, $fn=null, $maxDepth=-1, $reverse=false)
-    {
-        $queue = [[0,$start,null]];
-        $results = [];
-        while ($queue) {
-            list($depth, $noun, $last) = array_shift($queue);
-            $r = $fn?$fn($noun, $depth, $last):$noun;
-            $results[$noun] = $r?$r:false;
-            if ($depth != $maxDepth) {
-                foreach (($reverse?$noun->parents():$noun->children()) as $c) {
-                    if (!isset($results[$c])) {
-                        $queue[] = [$depth+1,$c,$noun];
-                    }
+                foreach ($new as $n) {
+                    $queue[] = [$depth+1,$n,$id];
                 }
             }
         }
