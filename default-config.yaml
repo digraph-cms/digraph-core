@@ -671,10 +671,6 @@ defaultnoun:
       extra:
         bbcode_basic: true
 
-mungerhooks:
-  build: []
-  render: []
-
 media:
   css:
     crush-enabled: true
