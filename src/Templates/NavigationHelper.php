@@ -11,8 +11,15 @@ class NavigationHelper extends AbstractHelper
     public function breadcrumb($url) : array
     {
         $bc = [];
-        $bc["$url"] = $url;
+        $bc[] = $url;
         $bc = $this->bcBuilder($bc);
+        //filter with permissions
+        $bc = array_filter(
+            $bc,
+            function ($e) {
+                return $this->cms->helper('permissions')->checkUrl($e);
+            }
+        );
         return array_values(array_reverse($bc));
     }
 
