@@ -54,7 +54,7 @@ class HookHelper extends \Digraph\Helpers\AbstractHelper
         );
     }
 
-    protected function noun_recurse_down($nouns, $event)
+    protected function noun_recurse_down($noun, $event)
     {
         $this->cms->helper('graph')->traverse(
             $noun['dso.id'],
