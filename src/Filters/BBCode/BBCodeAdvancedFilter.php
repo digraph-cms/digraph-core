@@ -51,9 +51,10 @@ class BBCodeAdvancedFilter extends AbstractBBCodeFilter
         if (!$noun) {
             return false;
         }
-        $depth = @$args['depth']?$args['depth']:-1;
+        $args['depth'] = @$args['depth']?intval($args['depth']):-1;
+        $args['limit'] = @$args['limit']?intval($args['limit']):0;
         $args['thumb'] = @$args['thumb']?$args['thumb']:'gallery-thumb';
-        $args['files'] = $this->gallery_files($noun, $depth);
+        $args['files'] = $this->gallery_files($noun, $args['depth']);
         usort(
             $args['files'],
             function ($a, $b) {
@@ -65,6 +66,9 @@ class BBCodeAdvancedFilter extends AbstractBBCodeFilter
                 return ($a < $b) ? 1 : -1;
             }
         );
+        if ($args['limit'] && count($args['files']) > $args['limit']) {
+            $args['files'] = array_slice($args['files'], 0, $args['limit']);
+        }
         return $this->fromTemplate('_gallery', $context, $text, $args);
     }
 
