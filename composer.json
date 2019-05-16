@@ -25,7 +25,6 @@
         "soundasleep/html2text": "^1.1"
     },
     "require-dev": {
-        "phpunit/phpunit": "^7.3",
         "monolog/monolog": "^1.24",
         "byjoby/digraph-pdf": "dev-master"
     },
@@ -43,10 +42,5 @@
         "psr-4": {
             "Digraph\\": "tests/"
         }
-    },
-    "scripts": {
-        "test": [
-            "phpunit"
-        ]
     }
 }

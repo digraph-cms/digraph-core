@@ -12,3 +12,4 @@ example/modules_env/*
 *.sqlite
 !.keep
 .DS_Store
+.vscode
