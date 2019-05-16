@@ -32,7 +32,7 @@ class CMS
         $this->config->readFile(__DIR__.'/../default-strings.yaml', 'strings');
         $this->config['paths.core'] = realpath(__DIR__.'/..');
         $this->log('CMS::__construct finished');
-        //register built-in hooks
+        //register hooks for invalidating caches by noun IDs
         $this->helper('hooks')->noun_register('update', [$this,'invalidateCache'], 'cms/invalidateCache');
         $this->helper('hooks')->noun_register('parent:update', [$this,'invalidateCache'], 'cms/invalidateCache');
         $this->helper('hooks')->noun_register('child:update', [$this,'invalidateCache'], 'cms/invalidateCache');
@@ -156,12 +156,23 @@ class CMS
     public function initializeMungers()
     {
         foreach ($this->config['mungers'] as $treeName => $mungers) {
+            // sort by weight option
+            uasort(
+                $mungers,
+                function ($a, $b) {
+                    if (@$a['weight'] == @$b['weight']) {
+                        return 0;
+                    }
+                    return (@$a['weight'] < @$b['weight']) ? -1 : 1;
+                }
+            );
+            //place mungers into tree
             $tree = new MungerTree($treeName);
-            // set up munger nodes in tree
-            ksort($mungers);
-            foreach ($mungers as $name => $class) {
-                $name = preg_replace('/^[0-9]+\-/', '', $name);
-                $munger = new $class($name);
+            foreach ($mungers as $name => $conf) {
+                if (!is_array($conf)) {
+                    throw new \Exception('Munger configuration should be an array: "'.$conf.'"');
+                }
+                $munger = new $conf['class']($name);
                 $tree->add($munger, $name);
             }
             // set munger into CMS

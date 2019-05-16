@@ -184,7 +184,7 @@ filestore:
       jspx: ${filestore.icons.html.code}
       lisp: ${filestore.icons.html.code}
       lz: ${filestore.icons.html.archive}
-      lzma:: ${filestore.icons.html.archive}
+      lzma: ${filestore.icons.html.archive}
       lzo: ${filestore.icons.html.archive}
       m: ${filestore.icons.html.code}
       mm: ${filestore.icons.html.code}
@@ -243,7 +243,7 @@ filestore:
       xps: ${filestore.icons.html.powerpoint}
       yaws: ${filestore.icons.html.code}
       zip: ${filestore.icons.html.archive}
-      zipx:: ${filestore.icons.html.archive}
+      zipx: ${filestore.icons.html.archive}
     # mime_full:
     #   -
   chmod: # note: these are octal
@@ -557,55 +557,87 @@ fullmunge:
 mungers:
   setup:
     # Initializes namespace based on current user and users.namespacing config
-    100-userinitialize: Digraph\Users\UserMunger
+    userinitialize:
+      weight: 100
+      class: Digraph\Users\UserMunger
     # Loads package defaults and builds the hash
-    200-initialize: Digraph\Mungers\Setup\Initialize
+    initialize:
+      weight: 200
+      class: Digraph\Mungers\Setup\Initialize
     # parses the URL
-    300-parseurl: Digraph\Mungers\Setup\ParseUrl
+    parseurl: 
+      weight: 300
+      class: Digraph\Mungers\Setup\ParseUrl
     # Checks for mediahelper hits on the current url
-    400-media: Digraph\Media\MediaMunger
+    media: 
+      weight: 400
+      class: Digraph\Media\MediaMunger
     # Resolves slugs and identifies the object that is being referenced, if any
     # This is also where 300 pages are triggered, if slugs resolve to multiple pages
     # This is also where redirects are triggered for normalizing URLs
-    500-locate: Digraph\Mungers\Setup\Locate
+    locate: 
+      weight: 500
+      class: Digraph\Mungers\Setup\Locate
   build:
     # Checks permissions, throws 403 errors
-    500-permissions: Digraph\Permissions\PermissionsMunger
+    permissions: 
+      weight: 500
+      class: Digraph\Permissions\PermissionsMunger
     # Tries to match verb/noun to a route handler file
     # this is where 404 errors originate
-    400-route: Digraph\Mungers\Build\Route
+    route:
+      weight: 400
+      class: Digraph\Mungers\Build\Route
     # Executes handler files and puts their output into the package
-    600-execute: Digraph\Mungers\Build\Execute
+    execute: 
+      weight: 600
+      class: Digraph\Mungers\Build\Execute
     # Tweaks templates if called for by output filters
-    900-outputfilter: Digraph\OutputFilters\OutputFilterPrefilterMunger
+    outputfilter: 
+      weight: 900
+      class: Digraph\OutputFilters\OutputFilterPrefilterMunger
   # Builds content of error pages if status isn't 200
   error:
     # Builds error pages based on status
     # uses @error route folder, and extends teh Execute munger so it presents
     # the same environment to handlers
-    100-error: Digraph\Mungers\Error\Error
+    error:
+      weight: 100
+      class: Digraph\Mungers\Error\Error
   # Applies templates
   template:
     # Applies templates based on package.response.template and package.fields
-    100-templates: Digraph\Templates\TemplateMunger
+    templates:
+      weight: 100
+      class: Digraph\Templates\TemplateMunger
   # Any final preparation before output
   finalize:
     # Applies output filters to content, these can be used to transform content
     # in complex ways, such as converting HTML output to PDF
-    050-outputfilter: Digraph\OutputFilters\OutputFilterMunger
+    outputfilter: 
+      weight: 50
+      class: Digraph\OutputFilters\OutputFilterMunger
     # Builds HTTP headers, but doesn't output them, saves them in response.headers
-    100-headers: Digraph\Mungers\Finalize\Headers
+    headers:
+      weight: 100
+      class: Digraph\Mungers\Finalize\Headers
   # Outputs package to the browser
   render:
     # Outputs headers from response.headers
-    100-headers: Digraph\Mungers\Render\Headers
+    headers:
+      weight: 0
+      class: Digraph\Mungers\Render\Headers
     # Outputs with readfile() if response.readfile is set, otherwise just echoes
     # response.content
-    200-output: Digraph\Mungers\Render\Output
+    output:
+      weight: 900
+      class: Digraph\Mungers\Render\Output
   # runs post-output cleanup as needed
   cleanup:
     # Checks final package for anything strange/noteworthy that should be logged
-    999-logging: Digraph\Logging\LogMunger
+    logging:
+      weight: 999
+      class: Digraph\Logging\LogMunger
 
 helpers:
   initialized:
