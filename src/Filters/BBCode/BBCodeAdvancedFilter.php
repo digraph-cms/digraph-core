@@ -91,6 +91,7 @@ class BBCodeAdvancedFilter extends AbstractBBCodeFilter
                     }
                     return true;
                 },
+                null,
                 $depth
             );
         //return full result
