@@ -1,4 +1,5 @@
 <?php
+$package->noCache();
 if (!$cms->helper('logging')->monolog()) {
     $cms->helper('notifications')->warning(
         $cms->helper('strings')->string('logging.nomonolog')

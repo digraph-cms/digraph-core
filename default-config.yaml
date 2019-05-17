@@ -8,6 +8,9 @@ urls:
   aliases:
     '?arg_parent/': home
 
+logging:
+  debug: false
+
 cron:
   # the ttl to be applied to the cron-running page, used to rate-limit cron runs
   minttl: 3600

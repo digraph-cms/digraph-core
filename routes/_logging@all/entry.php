@@ -1,4 +1,5 @@
 <?php
+$package->noCache();
 $log = $cms->helper('logging')->factory()->read($package['url.args.id']);
 
 if (!$log) {
@@ -59,5 +60,6 @@ foreach ($log['users'] as $a) {
 
 <h2>Package dump</h2>
 <pre style="white-space:pre-wrap;">
+<?php unset($log['package.response.content']); ?>
 <?php echo yaml($log['package']); ?>
 </pre>

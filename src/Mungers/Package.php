@@ -153,6 +153,7 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
 
     public function redirect($url, int $code=302)
     {
+        $this->log('Redirect: '.$code.': '.$url);
         $this->skipGlob('setup**');
         $this->skipGlob('build**');
         $this->skipGlob('error**');
