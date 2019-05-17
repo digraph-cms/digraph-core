@@ -15,15 +15,13 @@ class CodeHighlightFilter extends AbstractFilter
                 //do highlighting
                 $lang = @$matches[2];
                 $code = trim($matches[3]);
-                $code = preg_replace("/&amp;(.{1,5});/", '&$1;', $code);
+                $code = html_entity_decode($code);
                 try {
                     $highlighted = $h->highlight($lang, $code);
                 } catch (\Exception $e) {
                     $highlighted = $h->highlightAuto($code);
                 }
                 $code = $highlighted->value;
-                //fix double-coding
-                $code = preg_replace("/&amp;(.{1,5});/", '&$1;', $code);
                 //escape bbcode
                 $code = str_replace('[', '\\[', $code);
                 $code = str_replace(']', '\\]', $code);

@@ -169,6 +169,12 @@ span.code-highlighted {
   border-radius: $(border_radius_accent);
 }
 
+pre > span.code-highlighted {
+  background: transparent !important;
+  padding: 0 !important;
+  display: block !important;
+}
+
 /* buttons */
 @fragment button(.cta-button, $(color_notice));
 @fragment button(.cta-button.green, $(color_confirmation));
