@@ -122,6 +122,7 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
     public function &cms(CMS &$set = null) : ?CMS
     {
         if ($set) {
+            $this->log('Set CMS');
             $this->cms = $set;
         }
         return $this->cms;
@@ -130,6 +131,7 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
     public function noun(NounInterface $set = null) : ?NounInterface
     {
         if ($set) {
+            $this->log('Set Noun: '.$set['dso.id'].': '.$set->name());
             $this['noun'] = $set->get();
             $this['response.last-modified'] = $set['dso.modified.date'];
             $this->url($set->url($this['url.verb'], $this['url.args']));
@@ -145,6 +147,7 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
     public function url(Url $set = null) : ?Url
     {
         if ($set) {
+            $this->log('Set URL: '.$set);
             $this['url']= $set->get();
             $this['fields.page_name'] = $set['text'];
         }

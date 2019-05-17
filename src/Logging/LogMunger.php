@@ -8,8 +8,10 @@ class LogMunger extends AbstractMunger
 {
     protected function doMunge(&$package)
     {
-        if ($this->cms->config['logging.debug'] && $package['response.status'] != 200) {
-            $package->saveLog('Status '.$package['response.status'], 100);
+        if ($package->cms()->config['logging.debug']) {
+            if ($package['response.status'] != 200) {
+                $package->saveLog('Debug: status '.$package['response.status'], 100);
+            }
         }
     }
 
