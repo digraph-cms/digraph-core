@@ -86,8 +86,13 @@ class Url extends FlatArray
             $argarr = $this['args'];
             ksort($argarr);
             foreach ($argarr as $key => $value) {
-                if ($value === true || !strval($value)) {
-                    $args[] = $key;
+                if ($value === true) {
+                    $value = 1;
+                }elseif ($value === false) {
+                    $value = 0;
+                }
+                if (!strval($value)) {
+                    // it is best to omit args with values that can't be represented as strings
                 } else {
                     $args[] = $key.static::ARGVALUESEPARATOR.urlencode($value);
                 }
