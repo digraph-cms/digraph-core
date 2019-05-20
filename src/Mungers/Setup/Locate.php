@@ -75,6 +75,8 @@ class Locate extends AbstractMunger
             $url = $package->url()->string();
             $actual = $package->cms()->config['url.protocol'].$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
             if ($url != $actual) {
+                $package->log('"'.$url.'" expected URL');
+                $package->log('"'.$url.'" actual URL');
                 $package->redirect($url);
             }
         }
