@@ -68,17 +68,8 @@ class Locate extends AbstractMunger
                     ]);
                 }
             }
-            //redirect if parsed URL doesn't match original request
-            //this is used for both ensuring that nouns (including slugs)
-            //have trailing slashes, and that arguments are in alphabetical
-            //order (which is important for caching)
-            $url = $package->url()->string();
-            $actual = $package->cms()->config['url.protocol'].$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
-            if ("$url" != "$actual") {
-                $package->log('"'.$url.'" expected URL');
-                $package->log('"'.$actual.'" actual URL');
-                $package->redirect($url);
-            }
+            //this is a good time to have the package normalize the URL
+            $package->normalizeUrl();
         }
     }
 

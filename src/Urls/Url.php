@@ -88,7 +88,7 @@ class Url extends FlatArray
             foreach ($argarr as $key => $value) {
                 if ($value === true) {
                     $value = 1;
-                }elseif ($value === false) {
+                } elseif ($value === false) {
                     $value = 0;
                 }
                 if (!strval($value)) {

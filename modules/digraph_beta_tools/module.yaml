@@ -12,6 +12,7 @@ actions:
       index: _beta/rebuildindex
       cleanup: _beta/cleanup
       versionedges: _beta/versionedges
+      phpinfo: _beta/phpinfo
 
 strings:
   urls:
@@ -22,6 +23,7 @@ strings:
       _beta/rebuildindex: Force rebuild of search index
       _beta/cleanup: Clean up old data from nouns
       _beta/versionedges: Fix version edge types
+      _beta/phpinfo: PHP info
 
 navigation:
   parents:

@@ -37,7 +37,7 @@ class UrlHelper extends AbstractHelper
             $args = explode(Url::ARGSEPARATOR, $args);
             foreach ($args as $part) {
                 list($key, $value) = explode(Url::ARGVALUESEPARATOR, $part, 2);
-                $argarr[$key] = $value?urldecode($value):true;
+                $argarr[$key] = $value?urldecode($value):false;
             }
             $url['args'] = $argarr;
         }

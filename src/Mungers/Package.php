@@ -166,6 +166,23 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         $this['response.ready'] = true;
     }
 
+    /**
+     * Redirect if current parsed url in package doesn't match the original, actual
+     * URL that was set during the initialize munger.
+     */
+    public function normalizeUrl()
+    {
+        $url = $this->url()->string();
+        $actual = $this['request.actualurl'];
+        if ("$url" != "$actual") {
+            $this->log('"'.$url.'" expected URL');
+            $this->log('"'.$actual.'" actual URL');
+            $this->redirect($url);
+            return false;
+        }
+        return true;
+    }
+
     public function error(int $code, string $message='Unspecified error')
     {
         $this->log("Error $code: $message");
