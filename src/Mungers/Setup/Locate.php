@@ -74,10 +74,9 @@ class Locate extends AbstractMunger
             //order (which is important for caching)
             $url = $package->url()->string();
             $actual = $package->cms()->config['url.protocol'].$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
-            if ($url != $actual) {
-                $package->log('URL mismatch');
-                $package->log($url.' in package');
-                $package->log($actual.' actual');
+            if ("$url" != "$actual") {
+                $package->log('"'.$url.'" expected URL');
+                $package->log('"'.$actual.'" actual URL');
                 $package->redirect($url);
             }
         }

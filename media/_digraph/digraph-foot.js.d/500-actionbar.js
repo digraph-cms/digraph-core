@@ -11,8 +11,12 @@ document.addEventListener("DOMContentLoaded", function(event) {
   var actionbars = document.getElementsByClassName('digraph-actionbar');
   for (var i = 0; i < actionbars.length; i++) {
     let actionbar = actionbars[i];
+    let url = '_user/actionbar.json';
+    if (actionbar.getAttribute('data-id')) {
+      url = url+'?id=' + actionbar.getAttribute('data-id');
+    }
     digraph.getJSON(
-      '_user/actionbar.json?id=' + actionbar.getAttribute('data-id'),
+      url,
       function(data) {
         let active = false;
         //set up title

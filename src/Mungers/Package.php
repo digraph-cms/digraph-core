@@ -160,6 +160,7 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         $this->skipGlob('setup**');
         $this->skipGlob('build**');
         $this->skipGlob('error**');
+        $this->skipGlob('template**');
         $this['response.status'] = $code;
         $this['response.redirect'] = "$url";
         $this['response.ready'] = true;

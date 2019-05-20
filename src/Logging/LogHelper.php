@@ -102,6 +102,10 @@ class LogHelper extends \Digraph\Helpers\AbstractHelper
         }
         //record count
         $entry['count'] = $entry['count']+1;
+        //record referer
+        $referer = $_SERVER['HTTP_REFERER']?$_SERVER['HTTP_REFERER']:'[empty]';
+        $entry['referers.'.md5($referer).'.url'] = $referer;
+        $entry['referers.'.md5($referer).'.count'] = $entry['referers.'.md5($referer).'.count']+1;
         //record user/url
         $u = $this->cms->helper('users');
         $userKey = "users.".md5($u->id()).'.'.md5($_SERVER['REMOTE_ADDR'].$package->url());
