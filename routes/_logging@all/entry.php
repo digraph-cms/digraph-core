@@ -39,6 +39,15 @@ foreach ($log['users'] as $a) {
  ?>
 </ul>
 
+<h2>Referers</h2>
+<ul>
+<?php
+foreach ($log['referers'] as $r) {
+     echo @"<li>{$r['url']}: {$r['count']}</li>";
+ }
+ ?>
+</ul>
+
 <?php if ($log['package.error']) {
      ?>
 <h2>Error trace</h2>
