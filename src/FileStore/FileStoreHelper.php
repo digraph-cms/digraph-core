@@ -70,10 +70,6 @@ class FileStoreHelper extends AbstractHelper
         return $log;
     }
 
-    protected function importFile($fdata, $id, $farr)
-    {
-    }
-
     /**
      * Retrieve an array of information about a file by its hash
      */
@@ -113,6 +109,7 @@ class FileStoreHelper extends AbstractHelper
                 @unlink("$dir/file");
                 @unlink("$dir/names");
                 @unlink("$dir/uses");
+                @unlink("$dir/lock");
                 $e['deleted'] = @rmdir($dir);
                 return $e;
             },
@@ -150,7 +147,7 @@ class FileStoreHelper extends AbstractHelper
         $dirs = glob($this->cms->config['filestore.path'].'/*/*');
         $out = [];
         foreach ($dirs as $dir) {
-            if (@filesize("$dir/uses") < 1) {
+            if (@filesize("$dir/uses") == 0) {
                 $names = [];
                 if ($names = trim(@file_get_contents("$dir/names"))) {
                     $names = explode("\n", $names);
@@ -158,7 +155,7 @@ class FileStoreHelper extends AbstractHelper
                 $out[] = [
                     'dir' => $dir,
                     'size' => @filesize("$dir/file"),
-                    'hash' => @md5_file("$dir/file"),
+                    'hash' => preg_replace('/.+\//','',$dir),
                     'mtime' => @filemtime("$dir/file"),
                     'names' => $names
                 ];
@@ -212,6 +209,9 @@ class FileStoreHelper extends AbstractHelper
         return [];
     }
 
+    /**
+     * This is a CMS-aware helper
+     */
     public function cms(&$cms = null)
     {
         if ($cms !== null) {
@@ -268,31 +268,98 @@ class FileStoreHelper extends AbstractHelper
                 $file = $files[$uniqid];
                 //identify the files we'll need
                 $dir = $this->dir($file['hash'], false);
-                $storeFile = $dir.'/file';
                 $usesFile = $dir.'/uses';
-                //short-circuit and give up if storefile isn't there
-                if (!is_file($storeFile)) {
-                    return;
-                }
-                //get lock of lock file
-                $lockHandle = fopen($storeFile, 'r');
-                while (!flock($lockHandle, LOCK_EX)) {
-                    usleep(50+random_int(0, 100));
-                }
                 //remove this uniqid from the uses file
-                $uses = file_get_contents($usesFile);
-                $useID = $noun['dso.id'].'.'.$file['uniqid'];
-                if (strpos($uses, $useID."\n") !== false) {
-                    $uses = str_replace($useID."\n", '', $uses);
-                    file_put_contents($usesFile, $uses);
-                }
-                //release lock on lock file
-                flock($lockHandle, LOCK_UN);
+                $this->removeLineFromFile($usesFile, $noun['dso.id'].'.'.$file['uniqid']);
                 //remove from array and save
                 unset($noun["filestore.$path.$uniqid"]);
                 $noun->update();
             }
         }
+    }
+
+    protected function removeLineFromFile($file,$line)
+    {
+        if (!is_file($file)) {
+            return;
+        }
+        //get shared lock
+        $lock = fopen($file, 'w+');
+        while (!flock($lock, LOCK_SH)) {
+            usleep(50+random_int(0, 100));
+        }
+        //get existing lines
+        $contents = @file_get_contents($file);
+        $lines = explode("\n", $contents);
+        //filter out given line
+        $lines = array_filter(
+            $lines,
+            function($e) use ($line) {
+                return ($e != $line);
+            }
+        );
+        //filter and sort
+        $lines = array_filter($lines);
+        $lines = array_unique($lines);
+        sort($lines);
+        $lines = implode("\n", $lines);
+        //check if new lines match original contents
+        if ($lines != $contents) {
+            //get exclusive lock
+            $lock = fopen($file, 'w+');
+            while (!flock($lock, LOCK_EX)) {
+                usleep(50+random_int(0, 100));
+            }
+            //write to file
+            file_put_contents($file, implode("\n",$lines));
+        }
+        //release lock
+        flock($lock, LOCK_UN);
+    }
+
+    protected function putLineInFile($file,$line)
+    {
+        if (!file_exists($file)) {
+            touch($file);
+        }
+        //get shared lock
+        $lock = fopen($file, 'r');
+        while (!flock($lock, LOCK_SH)) {
+            usleep(50+random_int(0, 100));
+        }
+        //get existing lines
+        $contents = @file_get_contents($file);
+        $lines = explode("\n", $contents);
+        //add line
+        $lines[] = $line;
+        //filter and sort
+        $lines = array_filter($lines);
+        $lines = array_unique($lines);
+        sort($lines);
+        $lines = implode("\n", $lines);
+        //release lock
+        flock($lock, LOCK_UN);
+        //check if new lines match original contents
+        if ($lines != $contents) {
+            //write to file
+            file_put_contents($file, $lines, LOCK_EX);
+        }
+    }
+
+    public function addFileName($hash,$name)
+    {
+        $this->putLineInFile(
+            $this->dir($hash).'/names',
+            $name
+        );
+    }
+
+    public function addFileUse($hash,$name)
+    {
+        $this->putLineInFile(
+            $this->dir($hash).'/uses',
+            $name
+        );
     }
 
     /**
@@ -302,13 +369,17 @@ class FileStoreHelper extends AbstractHelper
      *  * name - filename to give back to users
      *  * type - mime type to give back to users
      */
-    public function import(Noun &$noun, array $file, string $path = 'default', $copy = true)
+    public function import(Noun &$noun, array $file, string $path = 'default')
     {
         //hash file, record time
-        if (!file_exists($file['file'])) {
-            throw new \Exception("File doesn't exist: $file[file]");
+        $tries = 0;
+        while (!($file['hash'] = md5_file($file['file']))) {
+            $tries++;
+            if ($tries > 50) {
+                throw new \Exception('Failed to get hash of '.$file['file']);
+            }
+            usleep(50+random_int(0, 100));
         }
-        $file['hash'] = md5_file($file['file']);
         $file['time'] = time();
         if (!$file['uniqid']) {
             $file['uniqid'] = uniqid();
@@ -316,53 +387,28 @@ class FileStoreHelper extends AbstractHelper
         //identify the files we'll need
         $dir = $this->dir($file['hash']);
         $storeFile = $dir.'/file';
-        $usesFile = $dir.'/uses';
-        $namesFile = $dir.'/names';
-        //do nothing if file with this hash already exists
-        if (!is_file($storeFile)) {
-            //move/dopy file
+        //only copy file to storage if it doesn't already exist
+        if (!is_file($storeFile) || (md5_file($storeFile) != $file['hash'])) {
+            //copy file
             $oldName = $file['file'];
             if (is_uploaded_file($oldName)) {
+                @unlink($storeFile);
                 if (!move_uploaded_file($oldName, $storeFile)) {
                     throw new \Exception("Failed to move uploaded file $oldName to $storeFile");
                 }
-            } elseif ($copy) {
+            } else {
                 if (!copy($oldName, $storeFile)) {
                     throw new \Exception("Failed to copy file $oldName to $storeFile");
                 }
-            } else {
-                if (!rename($oldName, $storeFile)) {
-                    throw new \Exception("Failed to rename file $oldName to $storeFile");
-                }
             }
         }
-        //get lock of lock file
-        $lockHandle = fopen($storeFile, 'r');
-        while (!flock($lockHandle, LOCK_EX)) {
-            usleep(50+random_int(0, 100));
-        }
         //add this filename to the filenames file
-        $uses = @file_get_contents($namesFile);
-        if (strpos($uses, $file['name']."\n") === false) {
-            $uses .= $file['name']."\n";
-            file_put_contents($namesFile, $uses);
-        }
+        $this->addFileName($file['hash'], $file['name']);
         //add this uniqid to the uses file
-        $uses = @file_get_contents($usesFile);
-        $useID = $noun['dso.id'].'.'.$file['uniqid'];
-        if (strpos($uses, $useID."\n") === false) {
-            $uses .= $useID."\n";
-            file_put_contents($usesFile, $uses);
-        }
-        //release lock on lock file
-        flock($lockHandle, LOCK_UN);
+        $this->addFileUse($file['hash'], $noun['dso.id'].'.'.$file['uniqid']);
         //remove filename from array, because it gets regenerated when it's retrieved
         //that way moving storage locations is easier
         unset($file['file']);
-        //save into file
-        if (!$noun["filestore.$path"]) {
-            $noun["filestore.$path"] = [];
-        }
         //push into noun and save
         $noun["filestore.$path.".$file['uniqid']] = $file;
         $noun->update();

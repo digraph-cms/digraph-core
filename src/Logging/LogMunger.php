@@ -12,6 +12,9 @@ class LogMunger extends AbstractMunger
             if ($package['response.status'] != 200) {
                 $package->saveLog('Debug: status '.$package['response.status'], 100);
             }
+            if ($package->msElapsed() > 500) {
+                $package->saveLog('Debug: slow execution', 200);
+            }
         }
     }
 

@@ -270,7 +270,7 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         $this->log($munger->name().": finished in {$time}ms");
     }
 
-    protected function msElapsed() : int
+    public function msElapsed() : int
     {
         return round((microtime(true)-$this->startTime)*(1000));
     }
