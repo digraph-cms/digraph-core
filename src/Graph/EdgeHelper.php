@@ -118,9 +118,16 @@ EOT;
     public function hook_import($data, $nouns)
     {
         $log = [];
-        foreach ($data['helper']['edges'] as list($start, $end, $type)) {
-            if ($this->create($start, $end, $type)) {
-                $log[] = "$start =&gt; $end ($type)";
+        foreach ($data['helper']['edges'] as $item) {
+            $start = $item['start'];
+            $end = $item['end'];
+            $type = $item['type'];
+            try {
+                if ($this->create($start, $end, $type)) {
+                    $log[] = "$start =&gt; $end ($type)";
+                }
+            }catch (\Exception $e) {
+                $log[] = "Exception: ".serialize($item);
             }
         }
         return $log;
@@ -221,6 +228,9 @@ EOT;
         }
         if ($end && method_exists($end, 'parentEdgeType')) {
             $type = $end->parentEdgeType($start);
+        }
+        if ($type === null) {
+            $type = 'normal';
         }
         return $type;
     }

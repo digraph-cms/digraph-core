@@ -77,9 +77,7 @@ strings:
     proper:
       '*/version-diff': compare versions
       '*/versions': revision list
-      'version/edit': edit revision
-      'versioned/add': add revision
-      'versioned/edit': edit versioned root
+      'versioned/edit': edit versioned page
 
 defaultnoun:
   dso:

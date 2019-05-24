@@ -2,6 +2,7 @@
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
 namespace Digraph\Modules\digraph_search;
 
+use Digraph\DSO\Noun;
 use Digraph\Helpers\AbstractHelper;
 use TeamTNT\TNTSearch\TNTSearch;
 
@@ -9,7 +10,7 @@ class SearchHelper extends AbstractHelper
 {
     protected $tnt;
     protected $indexer;
-    protected $transaction;
+    protected $transaction = 0;
 
     public function initialize()
     {
@@ -22,10 +23,80 @@ class SearchHelper extends AbstractHelper
         $this->tnt->fuzziness = true;
         //set up hooks to index nouns on insert/update/delete
         $hooks = $this->cms->helper('hooks');
-        $hooks->noun_register('update', [$this,'index'], 'search/index');
-        $hooks->noun_register('insert', [$this,'index'], 'search/index');
-        $hooks->noun_register('delete', [$this,'delete'], 'search/delete');
-        $hooks->noun_register('delete_permanent', [$this,'delete'], 'search/delete');
+        $hooks->noun_register('update', [$this,'queueIndex'], 'search/index');
+        $hooks->noun_register('insert', [$this,'queueIndex'], 'search/index');
+        $hooks->noun_register('delete', [$this,'queueDelete'], 'search/delete');
+        $hooks->noun_register('delete_permanent', [$this,'queueDelete'], 'search/delete');
+        //hooks to index parents/children as well
+        $hooks->noun_register('parent:update', [$this,'queueIndex'], 'search/index');
+        $hooks->noun_register('child:update', [$this,'queueIndex'], 'search/index');
+        $hooks->noun_register('parent:insert', [$this,'queueIndex'], 'search/index');
+        $hooks->noun_register('child:insert', [$this,'queueIndex'], 'search/index');
+        $hooks->noun_register('parent:delete', [$this,'queueIndex'], 'search/index');
+        $hooks->noun_register('child:delete', [$this,'queueIndex'], 'search/index');
+    }
+
+    public function hook_cron()
+    {
+        $count = 0;
+        $errors = [];
+        $queue = $this->cms->helper('data')->facts('search_index_queue');
+        if ($list = $queue->list()) {
+            $this->beginTransaction();
+            while ($list && $count < 10) {
+                $fact = array_shift($list);
+                if ($fact->data()['action'] == 'delete') {
+                    $count++;
+                    $this->delete($fact->about());
+                } elseif ($noun = $this->cms->read($fact->about())) {
+                    $count++;
+                    $this->index($noun);
+                } else {
+                    $errors[] = 'couldn\'t index '.$fact->about();
+                }
+                $queue->delete($fact);
+            }
+            $this->endTransaction();
+        }
+        return [
+            'result' => count($pruned),
+            'errors' => $errors
+        ];
+    }
+
+    public function queueIndex($noun)
+    {
+        $noun = $this->sanitizeNoun($noun);
+        $this->cms->helper('data')->facts('search_index_queue')->create(
+            'queue', //name
+            time(), //value,
+            $noun, //about
+            ['action'=>'index'] //data
+        );
+    }
+
+    public function queueDelete($noun)
+    {
+        $noun = $this->sanitizeNoun($noun);
+        $this->cms->helper('data')->facts('search_index_queue')->create(
+            'queue', //name
+            time(), //value,
+            $noun, //about
+            ['action'=>'delete'] //data
+        );
+    }
+
+    protected function sanitizeNoun($noun)
+    {
+        if (!$noun) {
+            return '';
+        }
+        if ($noun instanceof Noun) {
+            return $noun['dso.id'];
+        }
+        $noun = strtolower($noun);
+        $noun = preg_replace('/[^a-z0-9]/', '', $noun);
+        return $noun;
     }
 
     public function form()
@@ -173,42 +244,41 @@ class SearchHelper extends AbstractHelper
         return true;
     }
 
-    protected function indexer()
+    protected function &indexer()
     {
         if (!$this->indexer) {
             try {
                 $this->tnt->selectIndex('digraph.index');
-                $this->indexer = $this->tnt->getIndex();
             } catch (\Exception $e) {
-                $this->indexer = $this->tnt->createIndex('digraph.index');
+                $this->tnt->createIndex('digraph.index');
+                $this->tnt->selectIndex('digraph.index');
             }
-            $this->tnt->selectIndex('digraph.index');
-            $this->tnt->getIndex()->includePrimaryKey();
+            $this->indexer = $this->tnt->getIndex();
         }
         return $this->indexer;
     }
 
     public function delete($noun)
     {
-        $idx = $this->indexer();
-        $idx->indexBeginTransaction();
-        $idx->delete($noun['dso.id']);
-        $idx->indexEndTransaction();
+        $noun = $this->sanitizeNoun($noun);
+        $this->beginTransaction();
+        $this->indexer()->delete($noun);
+        $this->endTransaction();
     }
 
     public function beginTransaction()
     {
-        if (!$this->transaction) {
+        if ($this->transaction == 0) {
             $this->indexer()->indexBeginTransaction();
-            $this->transaction = true;
+            $this->transaction++;
         }
     }
 
     public function endTransaction()
     {
-        if ($this->transaction) {
+        if ($this->transaction > 0) {
             $this->indexer()->indexEndTransaction();
-            $this->transaction = false;
+            $this->transaction--;
         }
     }
 
@@ -232,17 +302,11 @@ class SearchHelper extends AbstractHelper
                 $noun->body()
             ])
         ];
-        $idx = $this->indexer();
-        $transaction = $this->transaction;
-        if (!$transaction) {
-            $idx->indexBeginTransaction();
-        }
-        $idx->update(
+        $this->beginTransaction();
+        $this->indexer()->update(
             $noun['dso.id'],
             $data
         );
-        if (!$transaction) {
-            $idx->indexEndTransaction();
-        }
+        $this->endTransaction();
     }
 }
