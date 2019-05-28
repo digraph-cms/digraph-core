@@ -49,12 +49,3 @@ $text = str_replace("\t", '<span style="display:inline-block;width:2em;"> </span
 echo "<div style='white-space:pre-wrap;'>$text</div>";
 
 echo "</div>";
-?>
-<style>
-.diff ins {
-    background-color:#8BC34A;
-}
-.diff del {
-    background-color:#f44336;
-}
-</style>

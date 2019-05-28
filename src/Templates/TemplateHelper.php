@@ -30,7 +30,16 @@ class TemplateHelper extends AbstractHelper
 
     public function css()
     {
-        return $this->getThemeConfig('css');
+        $css = $this->getThemeConfig('css');
+        $nouns = [];
+        if ($noun = $this->cms->package()->noun()) {
+            $nouns = $noun::ROUTING_NOUNS;
+            $nouns[] = $noun['dso.type'];
+            $nouns = array_unique($nouns);
+        }
+        $verb = $this->cms->package()['url.verb'];
+        $css[] = $this->cms->helper('urls')->url('_routemedia','linked.css',['nouns'=>json_encode($nouns),'verb'=>$verb]);
+        return $css;
     }
 
     public function jsHead()

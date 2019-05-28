@@ -39,14 +39,6 @@ if (count($versions) > 1) {
 }
 
 ?>
-<style>
-tr.hide-a .compare-radio-a {
-    display:none;
-}
-tr.hide-b .compare-radio-b {
-    display:none;
-}
-</style>
 <script>
 $(()=>{
     var $table = $('#digraph-revision-history');

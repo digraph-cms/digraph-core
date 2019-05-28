@@ -4,11 +4,11 @@
 <link rel="icon" href="{{favicon}}" />
 <!-- css -->
 {% for file in helper.css %}
-    <link rel="stylesheet" href="{{file}}" />
+    <link rel="stylesheet" href="{{file|raw}}" />
 {% endfor %}
 <!-- head javascript -->
 {% for file in helper.jsHead %}
-    <script src="{{file}}"></script>
+    <script src="{{file|raw}}"></script>
 {% endfor %}
 <!-- Load current noun id into digraph JS object if it exists -->
 {% if package.noun.dso.id %}

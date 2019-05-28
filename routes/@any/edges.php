@@ -114,21 +114,3 @@ function printEdges($edges, $reverse=false)
     }
     echo "</table>";
 }
-
-?>
-<style>
-.edges-manager {
-    display:flex;
-}
-.edges-children {
-    padding-left: 0.5em;
-    flex-grow: 1;
-    width: 50%;
-    border-left: 1px dotted rgba(127,127,127,0.5);
-}
-.edges-parents {
-    padding-right: 0.5em;
-    flex-grow: 1;
-    width: 50%;
-}
-</style>

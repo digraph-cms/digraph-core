@@ -1,0 +1,8 @@
+@import "digraph-variables.css";
+
+.diff ins {
+    background-color: a-adjust($(color_confirmation) -50);
+}
+.diff del {
+    background-color: a-adjust($(color_error) -50);
+}
