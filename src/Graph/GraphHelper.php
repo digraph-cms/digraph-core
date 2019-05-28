@@ -44,7 +44,7 @@ class GraphHelper extends \Digraph\Helpers\AbstractHelper
     {
         $found = null;
         $this->traverse(
-            $this['dso.id'],
+            $start,
             function ($id) use (&$found,$fnOrDSOType) {
                 if ($noun = $this->cms->read($id)) {
                     if (is_callable($fnOrDSOType)) {
