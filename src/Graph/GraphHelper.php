@@ -43,7 +43,7 @@ class GraphHelper extends \Digraph\Helpers\AbstractHelper
     public function nearest($start, $fnOrDSOType, $reverse=false)
     {
         $found = null;
-        $g->traverse(
+        $this->traverse(
             $this['dso.id'],
             function ($id) use (&$found,$fnOrDSOType) {
                 if ($noun = $this->cms->read($id)) {
