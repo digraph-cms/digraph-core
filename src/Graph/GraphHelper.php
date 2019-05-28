@@ -29,6 +29,44 @@ class GraphHelper extends \Digraph\Helpers\AbstractHelper
         'sort' => 'tree'
     ];
 
+    /**
+     * Traverse upward and locate the nearest ancestor matching a test. Test can
+     * be a string, and will be matched against DSO type. A callback can also be
+     * provided, which will be given a Noun and should return true for a positive
+     * match.
+     *
+     * @param string $start DSO ID of starting point
+     * @param mixed $fnOrDSOType DSO type or function for identifying targets
+     * @param boolean $reverse reverse order (searches up by default)
+     * @return ?\Digraph\DSO\Noun
+     */
+    public function nearest($start, $fnOrDSOType, $reverse=false)
+    {
+        $found = null;
+        $g->traverse(
+            $this['dso.id'],
+            function ($id) use (&$found,$fnOrDSOType) {
+                if ($noun = $this->cms->read($id)) {
+                    if (is_callable($fnOrDSOType)) {
+                        if ($fnOrDSOType($noun)) {
+                            $found = $noun;
+                            return false;
+                        }
+                    }else {
+                        if ($noun['dso.type'] == $fnOrDSOType) {
+                            $found = $noun;
+                            return false;
+                        }
+                    }
+                }
+            },
+            null,
+            -1,
+            !$reverse
+        );
+        return $found;
+    }
+
     /*
     Wrapper for childIDs that actually loads all the Nouns from the database.
     Maintains breadth-first order.
