@@ -201,8 +201,13 @@ class GraphHelper extends \Digraph\Helpers\AbstractHelper
             if (!$id || isset($results[$id])) {
                 continue;
             }
-            $r = $fn?$fn($id, $depth, $last):$id;
-            $results[$id] = $r?$r:false;
+            try {
+                $r = $fn?$fn($id, $depth, $last):$id;
+                $results[$id] = $r?$r:false;
+            } catch (AbortTraverseException $e) {
+                $results[$id] = false;
+                return $results;
+            }
             if ($depth != $maxDepth) {
                 if ($reverse) {
                     $new = $this->cms->helper('edges')->parents($id, $type, true);
