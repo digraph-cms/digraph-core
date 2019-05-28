@@ -126,7 +126,7 @@ EOT;
                 if ($this->create($start, $end, $type)) {
                     $log[] = "$start =&gt; $end ($type)";
                 }
-            }catch (\Exception $e) {
+            } catch (\Exception $e) {
                 $log[] = "Exception: ".serialize($item);
             }
         }
@@ -224,10 +224,16 @@ EOT;
         $start = $this->cms->read($start);
         $end = $this->cms->read($end);
         if ($start && method_exists($start, 'childEdgeType')) {
-            $type = $start->childEdgeType($end);
+            $t = $start->childEdgeType($end);
+            if ($t) {
+                $type = $t;
+            }
         }
         if ($end && method_exists($end, 'parentEdgeType')) {
-            $type = $end->parentEdgeType($start);
+            $t = $end->parentEdgeType($start);
+            if ($t) {
+                $type = $t;
+            }
         }
         if ($type === null) {
             $type = 'normal';

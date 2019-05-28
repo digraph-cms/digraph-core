@@ -201,11 +201,11 @@ class GraphHelper extends \Digraph\Helpers\AbstractHelper
             if (!$id || isset($results[$id])) {
                 continue;
             }
-            try {
-                $r = $fn?$fn($id, $depth, $last):$id;
-                $results[$id] = $r?$r:false;
-            } catch (AbortTraverseException $e) {
-                $results[$id] = false;
+            $r = $fn?$fn($id, $depth, $last):$id;
+            $results[$id] = $r?$r:false;
+            //if result is false, abort traverse
+            //this means callback should return null if it doesn't want to abort
+            if ($r === false) {
                 return $results;
             }
             if ($depth != $maxDepth) {
