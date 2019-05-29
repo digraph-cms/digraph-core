@@ -36,9 +36,9 @@ class HookHelper extends \Digraph\Helpers\AbstractHelper
     {
         $this->trigger('nouns', $event, [$noun]);
         //recurse into parents, triggering child:$event events
-        $this->noun_recurse_up($noun, 'child:'.$event, $seen);
+        $this->noun_recurse_up($noun, 'child:'.$event);
         //recurse into children, triggering parent:$event events
-        $this->noun_recurse_down($noun, 'parent:'.$event, $seen);
+        $this->noun_recurse_down($noun, 'parent:'.$event);
     }
 
     protected function noun_recurse_up($noun, $event)
@@ -49,7 +49,7 @@ class HookHelper extends \Digraph\Helpers\AbstractHelper
                 $this->trigger('nouns', $event, [$noun]);
             },
             null,
-            5,
+            -1,
             true
         );
     }
@@ -62,7 +62,7 @@ class HookHelper extends \Digraph\Helpers\AbstractHelper
                 $this->trigger('nouns', $event, [$noun]);
             },
             null,
-            5,
+            -1,
             false
         );
     }
