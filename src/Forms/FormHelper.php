@@ -15,6 +15,7 @@ class FormHelper extends AbstractHelper
         'digraph_title' => \Formward\Fields\Input::class,
         'checkbox' => \Formward\Fields\Checkbox::class,
         'datetime' => \Formward\Fields\DateAndTime::class,
+        'select' => \Formward\Fields\Select::class,
         'text' => \Formward\Fields\Input::class,
     ];
 
@@ -79,6 +80,10 @@ class FormHelper extends AbstractHelper
             //mark as required
             if (@$opt['required']) {
                 $field->required(true);
+            }
+            //set up options if available
+            if (@$opt['options'] && method_exists($field, 'options')) {
+                $field->options($opt['options']);
             }
             //set default value
             $field->default(@$opt['default']);
