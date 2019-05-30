@@ -13,10 +13,14 @@ class FormHelper extends AbstractHelper
         'digraph_slug' => Fields\SlugPattern::class,
         'digraph_name' => \Formward\Fields\Input::class,
         'digraph_title' => \Formward\Fields\Input::class,
+        'array' => \Formward\Fields\YAML::class,
         'checkbox' => \Formward\Fields\Checkbox::class,
         'datetime' => \Formward\Fields\DateAndTime::class,
+        'ini' => \Formward\Fields\INI::class,
+        'json' => \Formward\Fields\JSON::class,
         'select' => \Formward\Fields\Select::class,
         'text' => \Formward\Fields\Input::class,
+        'yaml' => \Formward\Fields\YAML::class,
     ];
 
     public function form($label='', $name=null)
