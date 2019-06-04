@@ -33,7 +33,7 @@ $s = $cms->helper('strings');
 <?php
 foreach ($log['users'] as $a) {
     foreach ($a as $b) {
-        echo @"<li>{$b['ip']} {$b['fw']} {$b['id']}<br>{$b['url']}</li>";
+        echo @"<li>{$b['ip']} {$b['fw']} {$b['id']}<br>{$b['ua']}<br>{$b['url']}</li>";
     }
 }
  ?>

@@ -52,7 +52,7 @@ class GraphHelper extends \Digraph\Helpers\AbstractHelper
                             $found = $noun;
                             return false;
                         }
-                    }else {
+                    } else {
                         if ($noun['dso.type'] == $fnOrDSOType) {
                             $found = $noun;
                             return false;
@@ -178,29 +178,15 @@ class GraphHelper extends \Digraph\Helpers\AbstractHelper
     {
         //sanitize IDs
         $ids = $this->regexFilter($ids, '/^[a-z0-9]+$/');
-        //sanitize type args
-        $onlyTypes = $this->regexFilter($onlyTypes, '/^[a-z0-9\-]+$/');
-        $omitTypes = $this->regexFilter($omitTypes, '/^[a-z0-9\-]+$/');
         //short circuit if none were valid
         if (!$ids) {
             return null;
         }
         //use DSO search
         $search = $this->cms->factory()->search();
-        $where = [];
-        //set up basic search for valid IDs
-        $where[] = '${dso.id} in (\''.implode("','", $ids).'\')';
-        //add clause to limit types
-        if ($onlyTypes) {
-            $where[] = '${dso.type} in (\''.implode("','", $onlyTypes).'\')';
-        }
-        //add clause to omit types
-        if ($omitTypes) {
-            $where[] = '${dso.type} not in (\''.implode("','", $omitTypes).'\')';
-        }
-        //join $where
-        $search->where('('.implode(') AND (', $where).')');
-        //execute search
+        //set up where clause
+        $search->where('${dso.id} in (\''.implode("','", $ids).'\')');
+        //return search object
         return $search;
     }
 

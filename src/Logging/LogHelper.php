@@ -71,6 +71,7 @@ class LogHelper extends \Digraph\Helpers\AbstractHelper
     public function list()
     {
         $search = $this->factory()->search();
+        $search->limit(5);
         $search->order('${count} DESC, ${dso.type} DESC, ${dso.modified.date} DESC');
         return $search->execute();
     }
@@ -113,6 +114,7 @@ class LogHelper extends \Digraph\Helpers\AbstractHelper
             'id' => $u->id(),
             'ip' => @$_SERVER['REMOTE_ADDR'],
             'fw' => @$_SERVER['HTTP_X_FORWARDED_FOR'],
+            'ua' => @$_SERVER['HTTP_USER_AGENT'],
             'url' => $package->url().''
         ];
         //save
