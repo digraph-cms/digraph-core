@@ -16,6 +16,7 @@ class FormHelper extends AbstractHelper
         'digraph_title' => \Formward\Fields\Input::class,
         'array' => \Formward\Fields\YAML::class,
         'checkbox' => \Formward\Fields\Checkbox::class,
+        'date' => \Formward\Fields\Date::class,
         'datetime' => \Formward\Fields\DateAndTime::class,
         'ini' => \Formward\Fields\INI::class,
         'json' => \Formward\Fields\JSON::class,
