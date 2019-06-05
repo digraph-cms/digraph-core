@@ -18,6 +18,39 @@ class Noun extends DSO implements NounInterface
         $this->resetChanges();
     }
 
+    public function infoCard()
+    {
+        return
+            "<article class='digraph-card type-".$this['dso.type']."'>".
+            "<h1>".$this->title()."</h1>".
+            $this->content_text(50).
+            "<a href='".$this->url()."'>read more</a>".
+            "</article>";
+    }
+
+    public function content_text($wordCount = null)
+    {
+        $text = $this->body();
+        $text = \Soundasleep\Html2Text::convert(
+            $this->body(),
+            [
+                'ignore_errors' => true,
+                'drop_links' => true
+            ]
+        );
+        if ($wordCount) {
+            $text = preg_replace('/[nosummary].*?[/nosummary]/','',$text);
+            $text = preg_split('/[ ]+/', $text);
+            if (count($text) > $wordCount) {
+                $text = array_slice($text, 0, $wordCount);
+                $text = implode(' ', $text).'...';
+            }else {
+                $text = implode(' ', $text);
+            }
+        }
+        return $text;
+    }
+
     public function cms()
     {
         return $this->factory->cms();

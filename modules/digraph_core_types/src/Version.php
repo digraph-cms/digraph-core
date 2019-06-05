@@ -17,21 +17,6 @@ class Version extends Page
         return false;
     }
 
-    /**
-     * Needs to produce a markdown version of this version's content, which will
-     * be used in the diff verb to produce diffs. It's fine to strip content
-     * that cannot be accurately represented as markdown.
-     */
-    public function bodyDiffable()
-    {
-        return \Soundasleep\Html2Text::convert(
-            $this->body(),
-            [
-                'ignore_errors' => true
-            ]
-        );
-    }
-
     public function parentUrl($verb = 'display')
     {
         if ($verb == 'display') {

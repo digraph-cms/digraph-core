@@ -41,8 +41,8 @@ $granularity = new cogpowered\FineDiff\Granularity\Word;
 $diff = new cogpowered\FineDiff\Diff($granularity);
 echo "<div class='diff'>";
 $text = $diff->render(
-    $a->bodyDiffable(),
-    $b->bodyDiffable()
+    $a->content_text(),
+    $b->content_text()
 );
 $text = preg_replace("/([\s]+)<\/del><ins>(.+?)\g{1}<\/ins>/msu", "</del><ins>$2</ins>$1", $text);
 $text = str_replace("\t", '<span style="display:inline-block;width:2em;"> </span>', $text);

@@ -26,11 +26,11 @@ foreach ($this->helper('routing')->allHookFiles('_user', 'signup_form_pre.php') 
 
 if ($form) {
     $form['email'] = new Formward\Fields\Email('Email address');
-    $form['email']->required();
+    $form['email']->required(true);
     $form['displayname'] = new Formward\Fields\Input('Display name');
-    $form['displayname']->required();
+    $form['displayname']->required(true);
     $form['password'] = new Formward\Fields\ConfirmedPassword('');
-    $form['password']->required();
+    $form['password']->required(true);
 
     //set up validators
     $form['email']->addValidatorFunction(
