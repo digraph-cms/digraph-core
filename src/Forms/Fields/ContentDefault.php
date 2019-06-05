@@ -38,5 +38,6 @@ class ContentDefault extends Content
         parent::__construct($label, $name, $parent, $cms);
         unset($this['filter']);
         unset($this['extra']);
+        $this['text']->label('');
     }
 }
