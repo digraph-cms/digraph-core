@@ -71,7 +71,7 @@ table {
     }
 
     &.row-edit {
-      background: $(color_accent);
+      background: $(color_confirmation);
 
       &:after {
         content: '\f303';
@@ -79,7 +79,7 @@ table {
     }
 
     &.row-create-item {
-      background: $(color_confirmation);
+      background: $(color_notice);
 
       &:after {
         content: '\f067';
@@ -87,7 +87,7 @@ table {
     }
 
     &.row-create-person {
-      background: $(color_confirmation);
+      background: $(color_notice);
 
       &:after {
         content: '\f234';
