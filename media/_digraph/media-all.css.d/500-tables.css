@@ -61,6 +61,30 @@ table {
         content: '\f127';
       }
     }
+
+    &.row-edit {
+      background: $(color_confirmation);
+
+      &:after {
+        content: '\f044';
+      }
+    }
+
+    &.row-edit {
+      background: $(color_accent);
+
+      &:after {
+        content: '\f044';
+      }
+    }
+
+    &.row-create-item {
+      background: $(color_confirmation);
+
+      &:after {
+        content: '\f0fe';
+      }
+    }
   }
 }
 
