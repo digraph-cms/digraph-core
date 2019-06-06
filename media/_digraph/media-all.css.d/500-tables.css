@@ -82,7 +82,7 @@ table {
       background: $(color_confirmation);
 
       &:after {
-        content: '\f0fe';
+        content: '\f303';
       }
     }
   }
