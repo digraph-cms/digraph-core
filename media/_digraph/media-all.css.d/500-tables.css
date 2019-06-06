@@ -74,7 +74,7 @@ table {
       background: $(color_accent);
 
       &:after {
-        content: '\f044';
+        content: '\f303';
       }
     }
 
@@ -82,7 +82,15 @@ table {
       background: $(color_confirmation);
 
       &:after {
-        content: '\f303';
+        content: '\f067';
+      }
+    }
+
+    &.row-create-person {
+      background: $(color_confirmation);
+
+      &:after {
+        content: '\f234';
       }
     }
   }
