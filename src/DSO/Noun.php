@@ -39,12 +39,12 @@ class Noun extends DSO implements NounInterface
             ]
         );
         if ($wordCount) {
-            $text = preg_replace('/[nosummary].*?[/nosummary]/','',$text);
+            $text = preg_replace('/[nosummary].*?[\/nosummary]/', '', $text);
             $text = preg_split('/[ ]+/', $text);
             if (count($text) > $wordCount) {
                 $text = array_slice($text, 0, $wordCount);
                 $text = implode(' ', $text).'...';
-            }else {
+            } else {
                 $text = implode(' ', $text);
             }
         }
