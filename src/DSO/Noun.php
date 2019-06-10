@@ -15,6 +15,9 @@ class Noun extends DSO implements NounInterface
     {
         parent::__construct($data, $factory);
         $this->merge($factory->cms()->config['defaultnoun']);
+        if ($factory->cms()->config['defaultnounbytype.'.$this['dso.type']]) {
+            $this->merge($factory->cms()->config['defaultnounbytype.'.$this['dso.type']]);
+        }
         $this->resetChanges();
     }
 
