@@ -290,7 +290,7 @@ class SearchHelper extends AbstractHelper
             $this->delete($noun);
             return;
         }
-        //insert/update index entry
+        //get content for item
         $data = [
             'id' => $noun['dso.id'],
             'title' => $noun->name(),
@@ -302,6 +302,11 @@ class SearchHelper extends AbstractHelper
                 $noun->body()
             ])
         ];
+        //get additional search text
+        if (method_exists($noun, 'additionalSearchText')) {
+            $data['article'] .= ' '.$noun->additionalSearchText();
+        }
+        //insert into index
         $this->beginTransaction();
         $this->indexer()->update(
             $noun['dso.id'],
