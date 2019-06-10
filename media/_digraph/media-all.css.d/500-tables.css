@@ -93,6 +93,14 @@ table {
         content: '\f234';
       }
     }
+
+    &.row-tag-person {
+      background: $(color_notice);
+
+      &:after {
+        content: '\f507';
+      }
+    }
   }
 }
 
