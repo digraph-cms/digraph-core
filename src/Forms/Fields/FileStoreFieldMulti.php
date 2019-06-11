@@ -171,7 +171,7 @@ class FileStoreFieldMulti extends \Formward\Fields\Container
         }
         unset($noun['filestore.'.$this->path]);
         $noun['filestore.'.$this->path] = $arr;
-        $noun->update();
+        $noun->update(true);
         /*
         save uploaded files to the noun using the filestore helper
          */
