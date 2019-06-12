@@ -374,7 +374,7 @@ class FileStoreHelper extends AbstractHelper
         if (file_exists($filename)) {
             $hash = md5_file($filename);
             //identify the files we'll need
-            $dir = $this->dir($hash);
+            $dir = $this->dir($hash, true);
             $storeFile = $dir.'/file';
             //only copy file to storage if it doesn't already exist
             if (!is_file($storeFile)) {
@@ -405,7 +405,7 @@ class FileStoreHelper extends AbstractHelper
     {
         $hash = md5($content);
         //identify the files we'll need
-        $dir = $this->dir($hash);
+        $dir = $this->dir($hash, true);
         $storeFile = $dir.'/file';
         //only copy file to storage if it doesn't already exist
         if (!is_file($storeFile)) {
