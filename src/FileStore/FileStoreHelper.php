@@ -403,13 +403,13 @@ class FileStoreHelper extends AbstractHelper
      */
     public function storeFileContent($contents)
     {
-        $hash = md5($content);
+        $hash = md5($contents);
         //identify the files we'll need
         $dir = $this->dir($hash, true);
         $storeFile = $dir.'/file';
         //only copy file to storage if it doesn't already exist
         if (!is_file($storeFile)) {
-            if (!file_put_contents($storeFile, $contents)) {
+            if (file_put_contents($storeFile, $contents) === false) {
                 throw new \Exception('Failed to write filestore file to '.$storeFile);
             }
         }
