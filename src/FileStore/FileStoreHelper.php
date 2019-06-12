@@ -155,7 +155,7 @@ class FileStoreHelper extends AbstractHelper
                 $out[] = [
                     'dir' => $dir,
                     'size' => @filesize("$dir/file"),
-                    'hash' => preg_replace('/.+\//','',$dir),
+                    'hash' => preg_replace('/.+\//', '', $dir),
                     'mtime' => @filemtime("$dir/file"),
                     'names' => $names
                 ];
@@ -278,7 +278,7 @@ class FileStoreHelper extends AbstractHelper
         }
     }
 
-    protected function removeLineFromFile($file,$line)
+    protected function removeLineFromFile($file, $line)
     {
         if (!is_file($file)) {
             return;
@@ -294,7 +294,7 @@ class FileStoreHelper extends AbstractHelper
         //filter out given line
         $lines = array_filter(
             $lines,
-            function($e) use ($line) {
+            function ($e) use ($line) {
                 return ($e != $line);
             }
         );
@@ -311,13 +311,13 @@ class FileStoreHelper extends AbstractHelper
                 usleep(50+random_int(0, 100));
             }
             //write to file
-            file_put_contents($file, implode("\n",$lines));
+            file_put_contents($file, implode("\n", $lines));
         }
         //release lock
         flock($lock, LOCK_UN);
     }
 
-    protected function putLineInFile($file,$line)
+    protected function putLineInFile($file, $line)
     {
         if (!file_exists($file)) {
             touch($file);
@@ -346,7 +346,7 @@ class FileStoreHelper extends AbstractHelper
         }
     }
 
-    public function addFileName($hash,$name)
+    public function addFileName($hash, $name)
     {
         $this->putLineInFile(
             $this->dir($hash).'/names',
@@ -354,12 +354,66 @@ class FileStoreHelper extends AbstractHelper
         );
     }
 
-    public function addFileUse($hash,$name)
+    public function addFileUse($hash, $name)
     {
         $this->putLineInFile(
             $this->dir($hash).'/uses',
             $name
         );
+    }
+
+    /**
+     * Copy an existing file into the filestore, without adding any uses or
+     * filenames data.
+     *
+     * @param string $filename path to existing file
+     * @return boolean
+     */
+    public function storeFile($filename)
+    {
+        if (file_exists($filename)) {
+            $hash = md5_file($filename);
+            //identify the files we'll need
+            $dir = $this->dir($hash);
+            $storeFile = $dir.'/file';
+            //only copy file to storage if it doesn't already exist
+            if (!is_file($storeFile)) {
+                //copy file
+                if (is_uploaded_file($filename)) {
+                    @unlink($storeFile);
+                    if (!move_uploaded_file($filename, $storeFile)) {
+                        throw new \Exception("Failed to move uploaded file $filename to $storeFile");
+                    }
+                } else {
+                    if (!copy($filename, $storeFile)) {
+                        throw new \Exception("Failed to copy file $filename to $storeFile");
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Copy file data into the filestore from a string, without adding any uses
+     * or filenames data
+     *
+     * @param string $contents file content to add to filestore
+     * @return boolean
+     */
+    public function storeFileContent($contents)
+    {
+        $hash = md5($content);
+        //identify the files we'll need
+        $dir = $this->dir($hash);
+        $storeFile = $dir.'/file';
+        //only copy file to storage if it doesn't already exist
+        if (!is_file($storeFile)) {
+            if (!file_put_contents($contents, $storeFile)) {
+                throw new \Exception('Failed to write filestore file to '.$storeFile);
+            }
+        }
+        return true;
     }
 
     /**
@@ -384,24 +438,8 @@ class FileStoreHelper extends AbstractHelper
         if (!$file['uniqid']) {
             $file['uniqid'] = uniqid();
         }
-        //identify the files we'll need
-        $dir = $this->dir($file['hash']);
-        $storeFile = $dir.'/file';
-        //only copy file to storage if it doesn't already exist
-        if (!is_file($storeFile) || (md5_file($storeFile) != $file['hash'])) {
-            //copy file
-            $oldName = $file['file'];
-            if (is_uploaded_file($oldName)) {
-                @unlink($storeFile);
-                if (!move_uploaded_file($oldName, $storeFile)) {
-                    throw new \Exception("Failed to move uploaded file $oldName to $storeFile");
-                }
-            } else {
-                if (!copy($oldName, $storeFile)) {
-                    throw new \Exception("Failed to copy file $oldName to $storeFile");
-                }
-            }
-        }
+        //copy file into filestore directory structure
+        $this->storeFile($file['file']);
         //add this filename to the filenames file
         $this->addFileName($file['hash'], $file['name']);
         //add this uniqid to the uses file
