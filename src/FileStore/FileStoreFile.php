@@ -153,7 +153,7 @@ class FileStoreFile
     {
         $name = $this->name();
         if (strpos($name, '.')) {
-            $name = preg_replace('/(\.[^.]+)/', '.'.$this->miniHash().'$1', $name);
+            $name = preg_replace('/(\.[^.]+)$/', '.'.$this->miniHash().'$1', $name);
         } else {
             $name .= '_'.$this->miniHash();
         }
