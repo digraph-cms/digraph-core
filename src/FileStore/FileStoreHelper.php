@@ -409,7 +409,7 @@ class FileStoreHelper extends AbstractHelper
         $storeFile = $dir.'/file';
         //only copy file to storage if it doesn't already exist
         if (!is_file($storeFile)) {
-            if (!touch($storeFile) || !file_put_contents($storeFile, $contents)) {
+            if (!file_put_contents($storeFile, $contents)) {
                 throw new \Exception('Failed to write filestore file to '.$storeFile);
             }
         }
