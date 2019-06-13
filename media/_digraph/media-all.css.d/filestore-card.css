@@ -33,6 +33,23 @@
 
   dl {
     font-size: 0.8em;
+    display:block;
+    line-height:$(line_height_compact);
+    dt {
+      display: inline-block;
+      float: left;
+      clear: both;
+    }
+    dd {
+      display: inline-block;
+      float: left;
+      clear: right;
+    }
+    &:after {
+      display:block;
+      content:'';
+      clear:both;
+    }
   }
 }
 

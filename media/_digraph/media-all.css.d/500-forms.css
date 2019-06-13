@@ -259,23 +259,40 @@ progressively-enhanced ordering field
   text-indent: 100%;
   white-space: nowrap;
   width: 1.5em;
+  opacity: 0.5;
+  background: #fff;
+  border-radius: $(border_radius_accent);
+  &:hover {
+    background: $(color_error);
+    color: #fff;
+    opacity: 1;
+  }
+  &:after {
+    font-family: "Font Awesome 5 Free";
+    content: "\f2ed";
+    text-indent: 0;
+    text-align: center;
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 1.5em;
+    line-height: 1.5em;
+  }
 }
 
-.FieldWrapper-formward-ordering-field .delete-button:hover {
-  background: $(color_error);
-  color: #fff;
-}
-
-.FieldWrapper-formward-ordering-field .delete-button:after {
-  content: "\00D7";
-  text-indent: 0;
-  text-align: center;
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: 1.5em;
+.FieldWrapper-formward-ordering-field .deleted .delete-button {
+  background: #fff;
+  color: $(color_error);
+  &:hover {
+    background: $(color_confirmation);
+    color: #fff;
+  }
+  &:after {
+    content: "\f2ea";
+    font-weight: 900;
+  }
 }
 
 .FieldWrapper-formward-ordering-field.FieldWrapper-deletion-allowed .delete-button {

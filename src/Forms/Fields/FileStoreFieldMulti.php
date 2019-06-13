@@ -32,6 +32,11 @@ class FileStoreFieldMulti extends \Formward\Fields\Container
     protected $noun;
     protected $path;
 
+    public function isFilled()
+    {
+        return !!$this->value();
+    }
+
     /**
      * Extra args:
      * string $path the filestore path to use
@@ -149,6 +154,9 @@ class FileStoreFieldMulti extends \Formward\Fields\Container
     {
         $value = $this->nounValue();
         $value = $value + $this['upload']->value();
+        foreach ($this['current']->deleted() as $uniqid) {
+            unset($value[$uniqid]);
+        }
         return $value;
     }
 
@@ -198,7 +206,7 @@ class FileStoreFieldMulti extends \Formward\Fields\Container
         if ($files = $this->nounValue()) {
             $opts = [];
             foreach ($files as $file) {
-                $opts[$file->uniqid()]= $file->metaCard(false);
+                $opts[$file->uniqid()]= $file->metaCard(false, true);
             }
             $this['current']->opts($opts);
         }

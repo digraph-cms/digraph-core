@@ -35,7 +35,7 @@ class FileStoreFile
         return exif_read_data($this->path());
     }
 
-    public function metaCard($meta = null)
+    public function metaCard($meta=null, $noLink=false)
     {
         if ($meta === null) {
             $meta = ['time','size'];
@@ -45,9 +45,13 @@ class FileStoreFile
         }
         $s = $this->fs->cms()->helper('strings');
         $out = '<div class="digraph-card filestore-card">';
-        $out .= '<a href="'.$this->url().'">';
+        if (!$noLink) {
+            $out .= '<a href="'.$this->url().'">';
+        }
         $out .= $this->thumbnail(true);
-        $out .= '</a>';
+        if (!$noLink) {
+            $out .= '</a>';
+        }
         if ($meta) {
             $out .= '<dl>';
             foreach ($meta as $i) {

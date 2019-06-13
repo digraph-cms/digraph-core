@@ -191,7 +191,7 @@ class FileStoreFieldSingle extends \Formward\Fields\Container
             //set up options
             $opts = [];
             foreach ($files as $file) {
-                $opts[$file->uniqid()]= $file->metaCard(false);
+                $opts[$file->uniqid()]= $file->metaCard(false, true);
             }
             $this['current']->opts($opts);
         }
