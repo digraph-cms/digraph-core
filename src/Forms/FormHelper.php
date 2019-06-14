@@ -78,8 +78,8 @@ class FormHelper extends AbstractHelper
                 $field->dsoParent($parent);
             }
             //allow map to call functions on field
-            if (@$map['call']) {
-                foreach ($map['call'] as $fn => $args) {
+            if (@$opt['call']) {
+                foreach ($opt['call'] as $fn => $args) {
                     call_user_func_array([$field,$fn], $args);
                 }
             }

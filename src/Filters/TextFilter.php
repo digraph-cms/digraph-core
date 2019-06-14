@@ -12,6 +12,9 @@ class TextFilter extends AbstractFilter
     public function filter(string $text, array $opts = []) : string
     {
         $text = preg_split('/(\r?\n){2,}/', $text);
-        return '<p>'.implode('</p>'.PHP_EOL.'<p>', $text).'</p>';
+        $text = array_map('trim', $text);
+        $text = '<p>'.implode('</p><p>', $text).'</p>';
+        $text = preg_replace('/(\r?\n)+/', '<br>', $text);
+        return $text;
     }
 }
