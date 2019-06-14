@@ -12,25 +12,32 @@ class BBCodeAdvancedFilter extends AbstractBBCodeFilter
         if (!$noun) {
             return false;
         }
-        return $this->toc_helper($noun).PHP_EOL;
+        $depth = @$args['depth']?intval($args['depth']):-1;
+        return $this->toc_helper($noun, $depth).PHP_EOL;
     }
 
-    protected function toc_helper($noun, $seen=[])
+    protected function toc_helper($noun, $depth=-1, $seen=[])
     {
+        $depth--;
+        if ($depth == -1) {
+            return '';
+        }
         if (in_array($noun['dso.id'], $seen) || !($children = $noun->children())) {
             return '';
         }
         $seen[] = $noun['dso.id'];
-        $out = '<ul class="digraph-toc">';
+        $out = '';
         foreach ($children as $c) {
             if (in_array($c['dso.id'], $seen)) {
                 continue;
             }
             $out .= '<li>'.$c->link();
-            $out .= $this->toc_helper($c, $seen);
+            $out .= $this->toc_helper($c, $depth, $seen);
             $out .= '</li>';
         }
-        $out .= '</ul>';
+        if ($out) {
+            $out = '<ul class="digraph-toc">'.$out.'</ul>';
+        }
         return $out;
     }
 
