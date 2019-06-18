@@ -6,7 +6,7 @@ class Session extends \Sesh\Session
 {
     public function get($key)
     {
-        return @$this->session['digraph'];
+        return @$this->session['digraph'][$key];
     }
 
     public function set($key, $value)
