@@ -42,7 +42,9 @@ if ($form->handle()) {
             )
         );
     }
-    $package->redirect($form->object->url('edit', null, true)->string());
+    $package->redirect(
+        $form->object->hook_postAddUrl()
+    );
 }
 
 echo $form;

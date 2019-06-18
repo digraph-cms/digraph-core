@@ -21,6 +21,16 @@ class Noun extends DSO implements NounInterface
         $this->resetChanges();
     }
 
+    public function hook_postEditUrl()
+    {
+        return $this->url('edit', null, true)->string();
+    }
+
+    public function hook_postAddUrl()
+    {
+        return $this->url('edit', null, true)->string();
+    }
+
     public function infoCard()
     {
         return
