@@ -9,6 +9,16 @@ class SessionHelper extends AbstractHelper
 {
     protected $session;
 
+    public function get($key)
+    {
+        return $this->session->get($key);
+    }
+
+    public function set($key, $value)
+    {
+        return $this->session->set($key, $value);
+    }
+
     public function getToken(string $name, int $ttl=3600*24) : string
     {
         return $this->session->getToken($name, $ttl);

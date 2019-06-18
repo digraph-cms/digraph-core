@@ -4,4 +4,13 @@ namespace Digraph\Users;
 
 class Session extends \Sesh\Session
 {
+    public function get($key)
+    {
+        return @$this->session['digraph'];
+    }
+
+    public function set($key, $value)
+    {
+        return @$this->session['digraph'][$key] = $value;
+    }
 }
