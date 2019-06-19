@@ -9,8 +9,8 @@ class Strings extends AbstractHelper
 {
     public function obfuscate($text)
     {
-        $obfuscated = \base64_encode($obfuscated);
-        return '<script>document.write(atob("'.$obfuscated.'"));</script><noscript><em>[javascript required to view]</em></noscript>';
+        $text = \base64_encode($text);
+        return '<script>document.write(atob("'.$text.'"));</script><noscript><em>[javascript required to view]</em></noscript>';
     }
 
     public function allhtmlentities($str)
