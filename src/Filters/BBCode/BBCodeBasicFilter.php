@@ -32,6 +32,18 @@ class BBCodeBasicFilter extends AbstractBBCodeFilter
     "teal","thistle","tomato","turquoise","violet","wheat","white","whitesmoke",
     "yellow","yellowgreen"];
 
+    public function tag_email($context, $text, $args)
+    {
+        $s = $this->cms->helper('strings');
+        if (!($email = @$args['addr'])) {
+            $email = $text;
+        }
+        $href = $s->allHtmlEntities('mailto:'.$email);
+        $text = $s->allHtmlEntities($text);
+        $out = '<a href="'.$href.'">'.$text.'</a>';
+        return $s->obfuscate($out);
+    }
+
     public function tag_aside($context, $text, $args)
     {
         return "<aside>".$text."</aside>";

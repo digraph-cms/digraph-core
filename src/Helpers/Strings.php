@@ -7,6 +7,22 @@ use Flatrr\Config\Config;
 
 class Strings extends AbstractHelper
 {
+    public function obfuscate($text)
+    {
+        $obfuscated = \base64_encode($obfuscated);
+        return '<script>document.write(atob("'.$obfuscated.'"));</script><noscript><em>[javascript required to view]</em></noscript>';
+    }
+
+    public function allhtmlentities($str)
+    {
+        $str = mb_convert_encoding($str, 'UTF-32', 'UTF-8');
+        $t = unpack("N*", $str);
+        $t = array_map(function ($n) {
+            return "&#$n;";
+        }, $t);
+        return implode("", $t);
+    }
+
     public function string($name, array $args=[]) : string
     {
         $string = $this->cms->config['strings.'.$name];
