@@ -209,7 +209,7 @@ class SearchHelper extends AbstractHelper
     public function highlights($query, $noun)
     {
         $text = \Soundasleep\Html2Text::convert(
-            $noun->body(),
+            $this->article($noun),
             [
                 'ignore_errors' => true,
                 'drop_links' => true
@@ -282,6 +282,31 @@ class SearchHelper extends AbstractHelper
         }
     }
 
+    protected function article(&$noun)
+    {
+        $article = [
+            $noun->url()['noun'],
+            $noun->url()['canonicalnoun'],
+            $noun->name(),
+            $noun->title(),
+            $noun->body()
+        ];
+        //get additional search text
+        if (method_exists($noun, 'additionalSearchText')) {
+            $article[] = $noun->additionalSearchText();
+        }
+        //get additional searchable text from helpers
+        foreach ($this->cms->allHelpers() as $name) {
+            if (method_exists($this->cms->helper($name), 'hook_search_index')) {
+                $article[] = $this->cms->helper($name)->hook_search_index($noun);
+            }
+        }
+        //return as single string with back-to-back repeated chunks deduplicated
+        $article = implode(' ', $article);
+        $article = preg_replace('/ (.+)( +\1)+/i', '$1', $article);
+        return $article;
+    }
+
     public function index($noun)
     {
         //verify that this noun should be indexed, remove it if it's deleted or
@@ -293,19 +318,9 @@ class SearchHelper extends AbstractHelper
         //get content for item
         $data = [
             'id' => $noun['dso.id'],
-            'title' => $noun->name(),
-            'article' => implode(' ', [
-                $noun->url()['noun'],
-                $noun->url()['canonicalnoun'],
-                $noun->name(),
-                $noun->title(),
-                $noun->body()
-            ])
+            'title' => $noun->title(),
+            'article' => $this->article($noun)
         ];
-        //get additional search text
-        if (method_exists($noun, 'additionalSearchText')) {
-            $data['article'] .= ' '.$noun->additionalSearchText();
-        }
         //insert into index
         $this->beginTransaction();
         $this->indexer()->update(

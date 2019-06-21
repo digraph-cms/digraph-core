@@ -15,6 +15,33 @@ class FileStoreHelper extends AbstractHelper
         return $this->cms->helper('image');
     }
 
+    public function hook_search_index(&$noun)
+    {
+        $out = '';
+        foreach ($this->allFiles($noun) as $file) {
+            //add file metacard data to search index text
+            $out .= ' '.$file->metaCard();
+            //if file is a PDF, extract its text and put that in the index text
+            if ($file->type() == 'application/pdf') {
+                $parser = new \Smalot\PdfParser\Parser();
+                $pdf = $parser->parseFile($file->path());
+                $out .= ' '.$pdf->getText();
+            }
+        }
+        return $out;
+    }
+
+    public function allFiles(&$noun)
+    {
+        $files = [];
+        foreach ($this->listPaths($noun) as $path) {
+            foreach ($this->list($noun, $path) as $file) {
+                $files[] = $file;
+            }
+        }
+        return $files;
+    }
+
     public function hook_export(&$export)
     {
         $out = [];

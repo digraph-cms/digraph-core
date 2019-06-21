@@ -22,7 +22,8 @@
         "scrivo/highlight.php": "^9.14",
         "css-crush/css-crush": "^2.4",
         "teamtnt/tntsearch": "^2.0",
-        "soundasleep/html2text": "^1.1"
+        "soundasleep/html2text": "^1.1",
+        "smalot/pdfparser": "^0.14.0"
     },
     "require-dev": {
         "monolog/monolog": "^1.24",

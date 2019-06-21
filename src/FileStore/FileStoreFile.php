@@ -53,7 +53,7 @@ class FileStoreFile
             $out .= '</a>';
         }
         if ($meta) {
-            $out .= '<dl>';
+            $out .= PHP_EOL.'<dl>';
             foreach ($meta as $i) {
                 switch ($i) {
                 case 'time':
@@ -75,12 +75,12 @@ class FileStoreFile
 
     protected function metaCard_attr($name, $value)
     {
-        return '<dt>'.$name.'</dt><dd>'.$value.'</dd>';
+        return PHP_EOL.'<dt>'.$name.'</dt>'.PHP_EOL.'<dd>'.$value.'</dd>';
     }
 
     public function thumbnail($name=false)
     {
-        $out = '<span class="filestore-thumbnail">';
+        $out = PHP_EOL.'<span class="filestore-thumbnail">';
         $out .= '<span class="filestore-icon">';
         $out .= $this->icon();
         $out .= '</span>';
