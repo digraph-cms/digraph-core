@@ -27,7 +27,7 @@ class FileStoreHelper extends AbstractHelper
                     $parser = new \Smalot\PdfParser\Parser();
                     $pdf = $parser->parseFile($file->path());
                     $out .= ' '.$pdf->getText();
-                } finally {
+                } catch (\Exception $e) {
                     $out .= ' [error parsing pdf]';
                 }
             }
