@@ -21,6 +21,10 @@ class FileStoreHelper extends AbstractHelper
         foreach ($this->allFiles($noun) as $file) {
             //add file metacard data to search index text
             $out .= ' '.$file->metaCard();
+            //don't try to parse anything additional from files over 50MB
+            if ($file->size() > 1024*1024*50) {
+                continue;
+            }
             //if file is a PDF, extract its text and put that in the index text
             if ($file->type() == 'application/pdf') {
                 try {
