@@ -321,6 +321,10 @@ class SearchHelper extends AbstractHelper
             'title' => $noun->title(),
             'article' => $this->article($noun)
         ];
+        //get search override title
+        if (method_exists($noun,'searchResultTitle')) {
+            $data['title'] = $noun->searchResultTitle();
+        }
         //insert into index
         $this->beginTransaction();
         $this->indexer()->update(
