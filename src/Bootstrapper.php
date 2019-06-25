@@ -42,10 +42,10 @@ class Bootstrapper
         if ($config['bootstrap.pdos']) {
             foreach ($config['bootstrap.pdos'] as $k => $cred) {
                 $pdo = new \PDO(
-                $cred['dsn'],
-                @$cred['username'],
-                @$cred['password'],
-                @$cred['options']
+                    $cred['dsn'],
+                    @$cred['username'],
+                    @$cred['password'],
+                    @$cred['options']
             );
                 $cms->pdo($k, $pdo);
             }
@@ -69,8 +69,8 @@ class Bootstrapper
             foreach ($config['bootstrap.factories'] as $k => $c) {
                 $class = $c['class'];
                 $factory = new $class(
-                $cms->driver($c['driver']),
-                $c['table']
+                    $cms->driver($c['driver']),
+                    $c['table']
             );
                 $cms->factory($k, $factory);
             }
@@ -109,11 +109,14 @@ class Bootstrapper
             $newUrl = preg_replace('/index\.(php)$/i', '', $newUrl);
             $get = $_GET;
             unset($get['digraph_url']);
+            $get['digraph_redirect_count'] = @$get['digraph_redirect_count']++;
             if ($get) {
                 $newUrl .= '?'.http_build_query($get);
             }
-            header("Location: $newUrl");
-            die('Attempting to force HTTPS by redirecting to ' . $newUrl);
+            if ($get['digraph_redirect_count'] <= 3) {
+                header("Location: $newUrl");
+                die('Attempting to force HTTPS by redirecting to ' . $newUrl);
+            }
         }
     }
 
