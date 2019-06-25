@@ -109,7 +109,7 @@ class Bootstrapper
             $newUrl = preg_replace('/index\.(php)$/i', '', $newUrl);
             $get = $_GET;
             unset($get['digraph_url']);
-            $get['digraph_redirect_count'] = @$get['digraph_redirect_count']++;
+            $get['digraph_redirect_count'] = @$get['digraph_redirect_count']+1;
             if ($get) {
                 $newUrl .= '?'.http_build_query($get);
             }
