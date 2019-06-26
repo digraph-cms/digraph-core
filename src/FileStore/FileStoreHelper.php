@@ -28,9 +28,11 @@ class FileStoreHelper extends AbstractHelper
             //if file is a PDF, extract its text and put that in the index text
             if ($file->type() == 'application/pdf') {
                 try {
+                    ob_start();
                     $parser = new \Smalot\PdfParser\Parser();
                     $pdf = $parser->parseFile($file->path());
                     $out .= ' '.$pdf->getText();
+                    ob_end_clean();
                 } catch (\Exception $e) {
                     $out .= ' [error parsing pdf]';
                 }
