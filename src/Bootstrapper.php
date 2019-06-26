@@ -134,7 +134,7 @@ class Bootstrapper
         //send back over HTTPS. Then if this cookie is set, we know we're on
         //an SSL connection.
         if (!isset($_COOKIE['Digraph_HTTPS_Only_Cookie'])) {
-            setcookie('Digraph_HTTPS_Only_Cookie', time(), 0, "", "", true);
+            setcookie('Digraph_HTTPS_Only_Cookie', 1, 0, "/", null, true);
             return false;
         }
         return true;
