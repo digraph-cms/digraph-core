@@ -47,6 +47,11 @@ class Headers extends AbstractMunger
         if ($package['response.redirect']) {
             $headers['Location'] = '${response.redirect}';
         }
+        //canonical url
+        $url = $package->url();
+        unset($url['args.digraph_url']);
+        unset($url['args.digraph_redirect_count']);
+        $headers['Link'] = '<'.$url.'>; rel="canonical"';
         //merge into package, not overwriting so that previous mungers can set headers
         $package->merge($headers->get(), 'response.headers');
     }
