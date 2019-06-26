@@ -13,7 +13,7 @@ if (@$_GET['token'] && $cms->helper('session')->checkToken('rebuildslugs', @$_GE
         function ($id) use (&$ncount,$cms,$s) {
             if ($noun = $cms->read($id)) {
                 if ($pattern = $noun['digraph.slugpattern']) {
-                    $s->createFromPattern($pattern,$noun);
+                    $s->updateSlug($noun);
                     $ncount++;
                 }
             }
