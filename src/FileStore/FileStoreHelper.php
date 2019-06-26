@@ -97,7 +97,8 @@ class FileStoreHelper extends AbstractHelper
                         'uniqid' => $file->uniqid(),
                         'name' => $file->name(),
                         'file' => $fname,
-                        'time' => $file->time()
+                        'time' => $file->time(),
+                        'size' => $file->size()
                     ];
                     $log[] = 'imported file: '.implode(', ', [$file->uniqid(),$file->name()]);
                     $this->import($noun, $arr, $path);

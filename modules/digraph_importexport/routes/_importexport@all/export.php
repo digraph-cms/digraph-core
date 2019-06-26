@@ -19,7 +19,8 @@ if ($nounForm->handle()) {
     $output = new \Flatrr\FlatArray();
     $output['digraph_export'] = $nounForm->value();
     //build list of all the nouns we need to include
-    $nouns = $cms->helper('graph')->children($nounForm['noun']->value(), null, $nounForm['depth']->value());
+    $nouns = [$cms->read($nounForm['noun']->value())];
+    $nouns = $nouns + $cms->helper('graph')->children($nounForm['noun']->value(), null, $nounForm['depth']->value());
     $output['nouns'] = array_values($nouns);
     $output['digraph_export.results'] = count($output['nouns']);
     //see if helpers have hook_export method, and call it if they do
