@@ -8,7 +8,8 @@ actions:
       beta: _beta/display
     _beta:
       edges: _beta/edgemigrator
-      slugs: _beta/slugmigrator
+      slugsmigrator: _beta/slugmigrator
+      slugrebuilder: _beta/slugrebuilder
       index: _beta/rebuildindex
       cleanup: _beta/cleanup
       versionedges: _beta/versionedges
@@ -24,6 +25,7 @@ strings:
       _beta/cleanup: Clean up old data from nouns
       _beta/versionedges: Fix version edge types
       _beta/phpinfo: PHP info
+      _beta/slugrebuilder: Rebuild all slugs from patterns
 
 navigation:
   parents:
