@@ -71,18 +71,18 @@ class GraphHelper extends \Digraph\Helpers\AbstractHelper
     Wrapper for childIDs that actually loads all the Nouns from the database.
     Maintains breadth-first order.
      */
-    public function children($id, $type=null, $depth=1)
+    public function children($id, $type=null, $depth=1, $order=null)
     {
-        return $this->sqlResults($this->childIDs($id, $type, $depth));
+        return $this->sqlResults($this->childIDs($id, $type, $depth), $order);
     }
 
     /*
     Wrapper for parentIDs that actually loads all the Nouns from the database.
     Maintains breadth-first order.
      */
-    public function parents($id, $type=null, $depth=1)
+    public function parents($id, $type=null, $depth=1, $order=null)
     {
-        return $this->sqlResults($this->parentIDs($id, $type, $depth));
+        return $this->sqlResults($this->parentIDs($id, $type, $depth), $order);
     }
 
     /*
@@ -152,19 +152,26 @@ class GraphHelper extends \Digraph\Helpers\AbstractHelper
         return null;
     }
 
-    protected function sqlResults($ids=[], $onlyTypes=[], $omitTypes=[])
+    protected function sqlResults($ids=[], $order=null)
     {
-        if ($s = $this->sqlSearch($ids, $onlyTypes, $omitTypes)) {
-            $ids = array_flip($ids);
-            foreach ($s->execute() as $n) {
-                $ids[$n['dso.id']] = $n;
-            }
-            return array_filter(
-                $ids,
-                function ($e) {
-                    return $e instanceof Noun;
+        if ($s = $this->sqlSearch($ids)) {
+            if ($order === null) {
+                //for null ordering, order by the order of the id array
+                $ids = array_flip($ids);
+                foreach ($s->execute() as $n) {
+                    $ids[$n['dso.id']] = $n;
                 }
-            );
+                return array_filter(
+                    $ids,
+                    function ($e) {
+                        return $e instanceof Noun;
+                    }
+                );
+            }else {
+                //for specified ordering, let SQL do our ordering
+                $s->order($order);
+                return $s->execute();
+            }
         } else {
             return [];
         }
@@ -174,7 +181,7 @@ class GraphHelper extends \Digraph\Helpers\AbstractHelper
      * Creates a Destructr search object set up to return a given list of IDs,
      * optionally limiting to and omitting by type
      */
-    protected function sqlSearch($ids=[], $onlyTypes=[], $omitTypes=[])
+    protected function sqlSearch($ids=[])
     {
         //sanitize IDs
         $ids = $this->regexFilter($ids, '/^[a-z0-9]+$/');
