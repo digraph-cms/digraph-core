@@ -19,7 +19,7 @@ class Headers extends AbstractMunger
         $headers['Date'] = gmdate('D, d M Y H:i:s T', time());
         $headers['Cache-Control'] = $this->cacheControl($package);
         $headers['Pragma'] = $this->pragma($package);
-        if ($ttl = $package['response.ttl']) {
+        if ($ttl = $package['response.browserttl']) {
             $headers['Expires'] = gmdate('D, d M Y H:i:s T', time()+$ttl);
         } else {
             $headers['Expires'] = gmdate('D, d M Y H:i:s T', 0);

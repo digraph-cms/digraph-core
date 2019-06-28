@@ -757,6 +757,7 @@ package:
     response:
       status: 200
       ttl: 600 # default 10 minute cache ttl
+      browserttl: ${response.ttl}
       cacheable: true
       content: ''
       ready: false
