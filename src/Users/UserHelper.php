@@ -66,10 +66,14 @@ class UserHelper extends AbstractHelper
         $out = [];
         foreach ($this->managers() as $manager) {
             if ($user = $manager->getByEmail($search)) {
-                $out[$user->identifier()] = $user;
-            }
-            if ($user = $manager->getByIdentifier($this->userIdentifier($search))) {
-                $out[$user->identifier()] = $user;
+                $out[$user->id()] = $user;
+            }else {
+                list($i, $m) = explode('@', $search);
+                if ($m == $manager->name()) {
+                    if ($user = $manager->getByIdentifier($i)) {
+                        $out[$user->id()] = $user;
+                    }
+                }
             }
         }
         return $out;
@@ -122,7 +126,7 @@ class UserHelper extends AbstractHelper
 
     public function userIdentifier($id = null) : ?string
     {
-        if (!$id == null) {
+        if ($id === null) {
             $id = $this->id();
         }
         if ($id !== null) {

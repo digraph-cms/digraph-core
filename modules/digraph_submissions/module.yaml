@@ -1,0 +1,17 @@
+types:
+  classes:
+    submission: ${module.namespace}\Submission
+    submission-window: ${module.namespace}\SubmissionWindow
+  content:
+    submission: false
+    submission-window: false
+
+permissions:
+  url:
+    submission-window/submit: [allow all]
+  add:
+    '*/submission': [deny all]
+  submissions:
+    submission/submit: [allow all]
+    submission/edit: [deny all,"allow group webmaster, editor"]
+    submission/view: [deny all,"allow group webmaster, editor"]

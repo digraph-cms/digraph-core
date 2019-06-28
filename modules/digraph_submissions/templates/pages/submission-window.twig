@@ -1,0 +1,47 @@
+<div class="submission-window">
+    <div class="bodytext">
+        {{window.bodyText()|raw}}
+    </div>
+    {% if window.pending %}
+        {# Window hasn't opened yet #}
+        <div class="submission-window-status notification notification-notice">
+            <strong>This submission window opens {{window.openHR}}</strong>
+            {% if window.close %}
+            <br>The deadline to submit will be {{window.closeHR}}
+            {% endif %}
+        </div>
+    {% elseif window.ended %}
+        {# Window has ended #}
+        <div class="submission-window-status ended notification notification-warning">
+            <strong>This submission window ended {{window.closeHR}}</strong>
+            {% if window.open %}
+            <br>The submission window began {{window.openHR}}
+            {% endif %}
+        </div>
+    {% else %}
+        {# Window is open #}
+        <div class="submission-window-status open notification notification-confirmation">
+            <strong>This submission window is currently open</strong>
+            {% if window.close %}
+            <br>The deadline to submit is {{window.closeHR}}
+            {% endif %}
+        </div>
+        {# List existing submissions for current user #}
+        {% if window.mySubmissions %}
+        <h2>My submissions</h2>
+        <ul>
+            {% for submission in window.mySubmissions %}
+                <li>{{submission.link|raw}}</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <h2>Create submission</h2>
+        {% endif %}
+        {# begin submission link if applicable #}
+        {% if window.canSubmit %}
+        <a href="{{window.url('submit')}}" class="cta-button">
+            Start new submission
+        </a>
+        {% endif %}
+    {% endif %}
+</div>

@@ -17,6 +17,10 @@
   background: $(color_shade);
   border-radius: $(border_radius_accent);
 
+  &.class-DateAndTime {
+    background:transparent;
+  }
+
   .Container, .FieldWrapper {
     &:last-child {
       margin-bottom: 0;

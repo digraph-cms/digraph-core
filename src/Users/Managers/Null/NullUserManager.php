@@ -11,6 +11,9 @@ class NullUserManager extends AbstractUserManager
 
     public function getByIdentifier(string $identifier) : ?UserInterface
     {
+        if (!$identifier) {
+            return null;
+        }
         $class = static::USERCLASS;
         return new $class($identifier, $this->name);
     }

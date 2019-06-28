@@ -11,8 +11,8 @@ class FormHelper extends AbstractHelper
     protected $types = [
         'digraph_content' => Fields\Content::class,
         'digraph_content_default' => Fields\ContentDefault::class,
-        'digraph_slug' => Fields\SlugPattern::class,
         'digraph_name' => \Formward\Fields\Input::class,
+        'digraph_slug' => Fields\SlugPattern::class,
         'digraph_title' => \Formward\Fields\Input::class,
         'array' => \Formward\Fields\YAML::class,
         'checkbox' => \Formward\Fields\Checkbox::class,
@@ -22,6 +22,7 @@ class FormHelper extends AbstractHelper
         'json' => \Formward\Fields\JSON::class,
         'select' => \Formward\Fields\Select::class,
         'text' => \Formward\Fields\Input::class,
+        'user' => \Digraph\Forms\Fields\User::class,
         'yaml' => \Formward\Fields\YAML::class,
     ];
 
