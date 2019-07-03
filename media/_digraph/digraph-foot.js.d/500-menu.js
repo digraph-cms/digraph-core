@@ -1,5 +1,10 @@
 $(() => {
   let $standardMenu = $('#digraph-navbar').eq(0);
+  //short circuit if there is no menu
+  if ($standardMenu.length == 0) {
+    return;
+  }
+  //otherwise build mobile menu
   let $mobileMenu = $('<div id="digraph-mobile-menu" class="digraph-area closed"></div>');
   let $mobileMenuButton = $('<a class="toggle-button">{{cms.helper('strings').string('navigation.mobilemenu.toggle')|raw}}</a>');
   let $mobileMenuLinks = $('<div class="links closed"></div>');

@@ -1,4 +1,6 @@
 <article>
-  <h1>{{article_title|raw}}</h1>
+  {% if article_title %}
+    <h1>{{article_title|raw}}</h1>
+  {% endif %}
   {{article_body|raw}}
 </article>

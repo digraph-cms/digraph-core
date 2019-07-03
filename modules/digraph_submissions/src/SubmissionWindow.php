@@ -14,6 +14,30 @@ class SubmissionWindow extends Noun
         return 'submission';
     }
 
+    public function submitterFieldClass()
+    {
+        if ($this['submitterfieldclass']) {
+            return $this['submitterfieldclass'];
+        }
+        return SubmitterField::class;
+    }
+
+    public function submissionFieldClass()
+    {
+        if ($this['submissionfieldclass']) {
+            return $this['submissionfieldclass'];
+        }
+        return SubmissionField::class;
+    }
+
+    public function partsClass()
+    {
+        if ($this['partsclass']) {
+            return $this['partsclass'];
+        }
+        return Parts\EmptyPartsClass::class;
+    }
+
     public function canSubmit()
     {
         if ($this->isEditable()) {
@@ -24,6 +48,11 @@ class SubmissionWindow extends Noun
         }
         if (!$this->cms()->helper('users')->user()) {
             return false;
+        }
+        if ($this['maxperuser']) {
+            if (count($this->mySubmissions()) >= $this['maxperuser']) {
+                return false;
+            }
         }
         return $this->cms()->helper('permissions')
             ->check('submission/submit', 'submissions');
@@ -159,6 +188,23 @@ class SubmissionWindow extends Noun
             'field' => 'window.end',
             'weight' => 151,
             'tips' => ['If no end date is specified the window will remain open indefinitely.']
+        ];
+        $map['maxperuser'] = [
+            'label' => 'Maximum submissions per user',
+            'class' => '\\Formward\\Fields\\Number',
+            'required' => false,
+            'field' => 'maxperuser',
+            'weight' => 200,
+            'tips' => ['Leave blank to allow unlimited submissions per user']
+        ];
+        $map['partsclass'] = [
+            'label' => 'Submission parts class',
+            'class' => 'text',
+            'required' => false,
+            'field' => 'partsclass',
+            'weight' => 201,
+            'default' => $this->partsClass(),
+            'tips' => ['Enter the class to be used for submission parts']
         ];
         return $map;
     }

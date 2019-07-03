@@ -17,12 +17,22 @@
   background: $(color_shade);
   border-radius: $(border_radius_accent);
 
+  &:first-child {
+    margin-top:0;
+  }
+
+  &:last-child {
+    margin-bottom:0;
+  }
+
   &.class-DateAndTime {
     background:transparent;
   }
 
   .Container, .FieldWrapper {
-    &:last-child {
+    margin: $(spacing_base) 0;
+    &:last-child,
+    &.FieldWrapper-class-Submit {
       margin-bottom: 0;
     }
 
@@ -78,10 +88,6 @@
 .Form .validation-message a {
   text-decoration: none;
   color: #fff !important;
-}
-
-.FieldWrapper {
-  margin: $(spacing_base) 0;
 }
 
 .FieldWrapper-Button {

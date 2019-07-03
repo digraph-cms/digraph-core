@@ -46,7 +46,7 @@ class FileStoreFile
         $s = $this->fs->cms()->helper('strings');
         $out = '<div class="digraph-card filestore-card">';
         if (!$noLink) {
-            $out .= '<a href="'.$this->url().'">';
+            $out .= '<a target="_top" href="'.$this->url().'">';
         }
         $out .= $this->thumbnail(true);
         if (!$noLink) {

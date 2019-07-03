@@ -1,4 +1,16 @@
 /**
+ * Form submission feedback
+ */
+$(()=>{
+  $('.Form').on('submit',(e)=>{
+    console.log(e);
+    $(e.target).find('button.Submit')
+      .addClass('loading')
+      .attr('disabled',true);
+  });
+});
+
+/**
  * Hide slugs with checkbox
  */
 $(function() {

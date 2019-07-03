@@ -488,6 +488,7 @@ class FileStoreHelper extends AbstractHelper
         //push into noun and save
         $noun["filestore.$path.".$file['uniqid']] = $file;
         $noun->update();
+        return $file['uniqid'];
     }
 
     /**

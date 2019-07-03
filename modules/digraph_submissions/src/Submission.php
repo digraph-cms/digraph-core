@@ -9,6 +9,66 @@ class Submission extends Noun
     const ROUTING_NOUNS = ['submission'];
     const FILESTORE = true;
 
+    protected $parts;
+
+    public function complete()
+    {
+        return $this->parts()->complete();
+    }
+
+    public function &window()
+    {
+        if ($this->parent() instanceof SubmissionWindow) {
+            return $this->parent();
+        }
+        return null;
+    }
+
+    public function &parts()
+    {
+        if (!$this->parts) {
+            $class = $this->partsClass();
+            $this->parts = new $class($this);
+        }
+        return $this->parts;
+    }
+
+    // public function insert() : bool
+    // {
+    //     //capture form classes so the same forms can be re-used later
+    //     $map = $this->formMap('add');
+    //     $this['classes'] = [
+    //         'submitter' => $map['submitter']['class'],
+    //         'submission' => $map['submission']['class']
+    //     ];
+    //     //call parent insert
+    //     return parent::insert();
+    // }
+
+    public function submitterFieldClass()
+    {
+        if ($this->window()) {
+            return $this->window()->submitterFieldClass();
+        }
+        return SubmitterField::class;
+    }
+
+    public function submissionFieldClass()
+    {
+        if ($this->window()) {
+            return $this->window()->submissionFieldClass();
+        }
+        return SubmissionField::class;
+    }
+
+    public function partsClass()
+    {
+        if ($this->window()) {
+            return $this->window()->partsClass();
+        }
+        return Parts\EmptyPartsClass::class;
+    }
+
     public function isViewable()
     {
         //if user can edit, they can view
@@ -43,7 +103,7 @@ class Submission extends Noun
 
     public function name($verb=null)
     {
-        return implode(' ',[
+        return implode(' ', [
             $this['submitter.firstname'],
             $this['submitter.lastname'].',',
             $this->cms()->helper('strings')->date($this['dso.created.date']),
@@ -92,13 +152,13 @@ class Submission extends Noun
         //submitter info
         $map['submitter'] = [
             'label' => 'Submitter information',
-            'class' => SubmitterField::class,
+            'class' => ($this['formclass.submitter']?$this['formclass.submitter']:$this->submitterFieldClass()),
             'field' => 'submitter'
         ];
         //first-step submission data
         $map['submission'] = [
             'label' => 'Submission information',
-            'class' => SubmissionField::class,
+            'class' => ($this['formclass.submission']?$this['formclass.submission']:$this->submissionFieldClass()),
             'field' => 'submission'
         ];
         return $map;

@@ -5,25 +5,25 @@
     {% if window.pending %}
         {# Window hasn't opened yet #}
         <div class="submission-window-status notification notification-notice">
-            <strong>This submission window opens {{window.openHR}}</strong>
+            <strong>Opens: {{window.openHR}}</strong>
             {% if window.close %}
-            <br>The deadline to submit will be {{window.closeHR}}
+            <br>Deadline: {{window.closeHR}}
             {% endif %}
         </div>
     {% elseif window.ended %}
         {# Window has ended #}
         <div class="submission-window-status ended notification notification-warning">
-            <strong>This submission window ended {{window.closeHR}}</strong>
+            <strong>Ended: {{window.closeHR}}</strong>
             {% if window.open %}
-            <br>The submission window began {{window.openHR}}
+            <br>Opened: {{window.openHR}}
             {% endif %}
         </div>
     {% else %}
         {# Window is open #}
         <div class="submission-window-status open notification notification-confirmation">
-            <strong>This submission window is currently open</strong>
+            <strong>Currently open</strong>
             {% if window.close %}
-            <br>The deadline to submit is {{window.closeHR}}
+            <br>Deadline: {{window.closeHR}}
             {% endif %}
         </div>
         {# List existing submissions for current user #}
@@ -34,14 +34,27 @@
                 <li>{{submission.link|raw}}</li>
             {% endfor %}
         </ul>
+        {% if window.maxperuser %}
+            {% if window.mySubmissions|length %}
+                <p>You have used {{window.mySubmissions|length}} of {{window.maxperuser}} allowed submissions per user.</p>
+            {% else %}
+                <p>Maximum submissions per user: {{window.maxperuser}}.</p>
+            {% endif %}
+        {% endif %}
         {% else %}
         <h2>Create submission</h2>
         {% endif %}
         {# begin submission link if applicable #}
         {% if window.canSubmit %}
-        <a href="{{window.url('submit')}}" class="cta-button">
-            Start new submission
-        </a>
+            <a href="{{window.url('submit')}}" class="cta-button">
+                Start new submission
+            </a>
+        {% else %}
+            {% if window.maxperuser %}
+                {% if window.mySubmissions|length >= window.maxperuser %}
+                    <p>You have used {{window.mySubmissions|length}} of {{window.maxperuser}} allowed submissions per user.</p>
+                {% endif %}
+            {% endif %}
         {% endif %}
     {% endif %}
 </div>

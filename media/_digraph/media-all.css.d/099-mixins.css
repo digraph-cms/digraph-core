@@ -44,5 +44,22 @@
       background: s-adjust(#(1) 30);
       border-color: s-adjust(#(1) 50);
     }
+
+    &:disabled,
+    &[disabled] {
+      background: #fafafa;
+      border-color: #eee;
+      color:#666!important;;
+      cursor:default;
+    }
+
+    &.loading {
+      text-indent:200%;
+      white-space:nowrap;
+      overflow:hidden;
+      background:#fafafa url({{url.base}}digraph/loading-dark.gif);
+      background-position:center center;
+      background-repeat:no-repeat;
+    }
   }
 }

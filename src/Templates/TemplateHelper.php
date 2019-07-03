@@ -15,6 +15,27 @@ class TemplateHelper extends AbstractHelper
     protected $loader;
     protected $fields = [];
     protected $package = null;
+    protected $css = [];
+    protected $headJS = [];
+    protected $footJS = [];
+
+    public function addCSS($url)
+    {
+        $this->css[] = $url;
+        $this->css = array_unique($this->css);
+    }
+
+    public function addHeadJS($url)
+    {
+        $this->headJS[] = $url;
+        $this->headJS = array_unique($this->headJS);
+    }
+
+    public function addFootJS($url)
+    {
+        $this->footJS[] = $url;
+        $this->footJS = array_unique($this->footJS);
+    }
 
     public function theme()
     {
@@ -37,19 +58,27 @@ class TemplateHelper extends AbstractHelper
             $nouns[] = $noun['dso.type'];
             $nouns = array_unique($nouns);
         }
+        //add verb-driven route media
         $verb = $this->cms->package()['url.verb'];
         $css[] = $this->cms->helper('urls')->url('_routemedia','linked.css',['nouns'=>json_encode($nouns),'verb'=>$verb]);
-        return $css;
+        //add custom-added css
+        $css = $css + $this->css;
+        //return
+        return array_unique($css);
     }
 
     public function jsHead()
     {
-        return $this->getThemeConfig('js-head');
+        $out = $this->getThemeConfig('js-head');
+        $out = $out + $this->headJS;
+        return array_unique($out);
     }
 
     public function jsFoot()
     {
-        return $this->getThemeConfig('js-foot');
+        $out = $this->getThemeConfig('js-foot');
+        $out = $out + $this->footJS;
+        return array_unique($out);
     }
 
     protected function getThemeConfig($name)
