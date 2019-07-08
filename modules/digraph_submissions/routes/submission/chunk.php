@@ -3,6 +3,8 @@ if (!$package->noun()->isViewable()) {
     //deny access for those with no access
     $package->error(403);
 }
+$package->noCache();
+
 //find chunk
 $submission = $package->noun();
 $parts = $submission->parts();
