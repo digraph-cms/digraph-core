@@ -11,6 +11,32 @@ class Submission extends Noun
 
     protected $parts;
 
+    protected function defaultSubmitterFieldClass()
+    {
+        return SubmitterField::class;
+    }
+
+    protected function defaultSubmissionFieldClass()
+    {
+        return SubmissionField::class;
+    }
+
+    public function submitterFieldClass()
+    {
+        if ($this['submitterfieldclass']) {
+            return $this['submitterfieldclass'];
+        }
+        return $this->defaultSubmitterFieldClass();
+    }
+
+    public function submissionFieldClass()
+    {
+        if ($this['submissionfieldclass']) {
+            return $this['submissionfieldclass'];
+        }
+        return $this->defaultSubmissionFieldClass();
+    }
+
     public function actions($links)
     {
         $links['files'] = '!id/allfiles';
@@ -39,28 +65,17 @@ class Submission extends Noun
         return $this->parts;
     }
 
-    public function submitterFieldClass()
+    protected function defaultPartsClass()
     {
-        if ($this->window()) {
-            return $this->window()->submitterFieldClass();
-        }
-        return SubmitterField::class;
-    }
-
-    public function submissionFieldClass()
-    {
-        if ($this->window()) {
-            return $this->window()->submissionFieldClass();
-        }
-        return SubmissionField::class;
+        return Parts\EmptyPartsClass::class;
     }
 
     public function partsClass()
     {
-        if ($this->window()) {
-            return $this->window()->partsClass();
+        if ($this['partsclass']) {
+            return $this['partsclass'];
         }
-        return Parts\EmptyPartsClass::class;
+        return $this->defaultPartsClass();
     }
 
     public function isViewable()

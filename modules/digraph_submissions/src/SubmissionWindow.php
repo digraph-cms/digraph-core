@@ -14,40 +14,6 @@ class SubmissionWindow extends Noun
         return 'submission';
     }
 
-    public function defaultSubmitterFieldClass()
-    {
-        return SubmitterField::class;
-    }
-
-    public function defaultSubmissionFieldClass()
-    {
-        return SubmissionField::class;
-    }
-
-    public function submitterFieldClass()
-    {
-        if ($this['submitterfieldclass']) {
-            return $this['submitterfieldclass'];
-        }
-        return $this->defaultSubmitterFieldClass();
-    }
-
-    public function submissionFieldClass()
-    {
-        if ($this['submissionfieldclass']) {
-            return $this['submissionfieldclass'];
-        }
-        return $this->defaultSubmissionFieldClass();
-    }
-
-    public function partsClass()
-    {
-        if ($this['partsclass']) {
-            return $this['partsclass'];
-        }
-        return Parts\EmptyPartsClass::class;
-    }
-
     public function canSubmit()
     {
         if ($this->isEditable()) {
@@ -206,15 +172,6 @@ class SubmissionWindow extends Noun
             'field' => 'maxperuser',
             'weight' => 200,
             'tips' => ['Leave blank to allow unlimited submissions per user']
-        ];
-        $map['partsclass'] = [
-            'label' => 'Submission parts class',
-            'class' => 'text',
-            'required' => false,
-            'field' => 'partsclass',
-            'weight' => 201,
-            'default' => $this->partsClass(),
-            'tips' => ['Enter the class to be used for submission parts']
         ];
         return $map;
     }
