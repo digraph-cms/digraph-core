@@ -5,6 +5,7 @@ iframe.embedded-iframe {
     display:block;
     margin:$(spacing_base) 0;
     padding:0;
+    overflow:hidden;
 }
 
 body.iframe-embedded {

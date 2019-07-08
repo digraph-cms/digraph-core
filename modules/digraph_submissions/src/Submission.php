@@ -11,6 +11,12 @@ class Submission extends Noun
 
     protected $parts;
 
+    public function actions($links)
+    {
+        $links['files'] = '!id/allfiles';
+        return $links;
+    }
+
     public function complete()
     {
         return $this->parts()->complete();
@@ -32,18 +38,6 @@ class Submission extends Noun
         }
         return $this->parts;
     }
-
-    // public function insert() : bool
-    // {
-    //     //capture form classes so the same forms can be re-used later
-    //     $map = $this->formMap('add');
-    //     $this['classes'] = [
-    //         'submitter' => $map['submitter']['class'],
-    //         'submission' => $map['submission']['class']
-    //     ];
-    //     //call parent insert
-    //     return parent::insert();
-    // }
 
     public function submitterFieldClass()
     {
