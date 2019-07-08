@@ -14,12 +14,22 @@ class SubmissionWindow extends Noun
         return 'submission';
     }
 
+    public function defaultSubmitterFieldClass()
+    {
+        return SubmitterField::class;
+    }
+
+    public function defaultSubmissionFieldClass()
+    {
+        return SubmissionField::class;
+    }
+
     public function submitterFieldClass()
     {
         if ($this['submitterfieldclass']) {
             return $this['submitterfieldclass'];
         }
-        return SubmitterField::class;
+        return $this->defaultSubmitterFieldClass();
     }
 
     public function submissionFieldClass()
@@ -27,7 +37,7 @@ class SubmissionWindow extends Noun
         if ($this['submissionfieldclass']) {
             return $this['submissionfieldclass'];
         }
-        return SubmissionField::class;
+        return $this->defaultSubmissionFieldClass();
     }
 
     public function partsClass()
