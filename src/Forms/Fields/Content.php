@@ -9,14 +9,23 @@ use Formward\Fields\Checkbox;
 
 class Content extends Container
 {
-    protected $extra = true;
+    protected $_extra = true;
+    protected $_selectable = false;
 
     public function extra($set=null)
     {
         if ($set !== null) {
-            $this->extra = $set;
+            $this->_extra = $set;
         }
-        return $this->extra;
+        return $this->_extra;
+    }
+
+    public function selectable($set=null)
+    {
+        if ($set !== null) {
+            $this->_selectable = $set;
+        }
+        return $this->_selectable;
     }
 
     public function default($default = null)
@@ -46,6 +55,10 @@ class Content extends Container
         parent::__construct($label, $name, $parent);
         $this['text'] = new ContentTextarea($s->string('forms.digraph_content.label_text'));
         $this['filter'] = new ContentFilter($s->string('forms.digraph_content.label_filter'), null, null, $cms);
+        //hide selector from UI (doesn't actually disable, not a security measure!)
+        if (!$this->selectable) {
+            $this['filter']->addClass('hidden');
+        }
         //options for enabling/disabling extra filters
         $extrasAllowed = false;
         $extras = new Container($s->string('forms.digraph_content.label_extras'));
