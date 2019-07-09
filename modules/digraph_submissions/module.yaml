@@ -8,7 +8,8 @@ types:
 
 permissions:
   url:
-    submission-window/submit: [allow all]
+    submission-window/submit: [allow group user]
+    submission/chunk: [allow group user]
   add:
     '*/submission': [deny all]
   submissions:

@@ -9,6 +9,16 @@ use Formward\Fields\Checkbox;
 
 class Content extends Container
 {
+    protected $extra = true;
+
+    public function extra($set=null)
+    {
+        if ($set !== null) {
+            $this->extra = $set;
+        }
+        return $this->extra;
+    }
+
     public function default($default = null)
     {
         if (is_string($default)) {
@@ -55,7 +65,7 @@ class Content extends Container
                 $extrasAllowed = true;
             }
         }
-        if ($extrasAllowed) {
+        if ($extrasAllowed && $this->extra) {
             $this['extra'] = $extras;
         }
     }
