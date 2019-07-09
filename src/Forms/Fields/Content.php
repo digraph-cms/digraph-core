@@ -15,7 +15,7 @@ class Content extends Container
     public function required($set=null)
     {
         parent::required($set);
-        $this['text']->required('false');
+        $this['text']->required(false);
         return parent::required();
     }
 
@@ -38,8 +38,10 @@ class Content extends Container
             $this->_selectable = $set;
         }
         //hide filter selector from UI (doesn't actually disable, not a security measure!)
-        if ($this['filter']) {
-            $this['filter']->hidden(!$this->_selectable);
+        if ($this->_selectable) {
+            $this['filter']->removeClass('hidden');
+        } else {
+            $this['filter']->addClass('hidden');
         }
         //return value
         return $this->_selectable;
