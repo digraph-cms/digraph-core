@@ -437,6 +437,10 @@ paths:
   storage: ${paths.site}/storage
 
 theme:
+  prefetch:
+    _digraph:
+      loading-light: ${url.base}digraph/loading-light.gif
+      loading-dark: ${url.base}digraph/loading-dark.gif
   css:
     _digraph:
       100-digraph: ${url.base}digraph.css

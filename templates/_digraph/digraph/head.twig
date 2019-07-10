@@ -2,6 +2,10 @@
 <meta content="IE=edge" http-equiv="X-UA-Compatible" />
 <meta content="width=device-width, initial-scale=1.0" name="viewport" />
 <link rel="icon" href="{{favicon}}" />
+<!-- prefetch -->
+{% for url in helper.prefetch %}
+    <link rel="prefetch" href="{{url|raw}}" />
+{% endfor %}
 <!-- css -->
 {% for file in helper.css %}
     <link rel="stylesheet" href="{{file|raw}}" />

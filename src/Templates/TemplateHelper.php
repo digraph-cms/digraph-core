@@ -18,6 +18,13 @@ class TemplateHelper extends AbstractHelper
     protected $css = [];
     protected $headJS = [];
     protected $footJS = [];
+    protected $prefetch = [];
+
+    public function addPrefetch($url)
+    {
+        $this->prefetch[] = $url;
+        $this->prefetch = array_unique($this->prefetch);
+    }
 
     public function addCSS($url)
     {
@@ -49,6 +56,15 @@ class TemplateHelper extends AbstractHelper
         return $theme;
     }
 
+    public function prefetch()
+    {
+        $urls = $this->getThemeConfig('prefetch');
+        //add custom-added css
+        $urls = $urls + $this->prefetch;
+        //return
+        return array_unique($urls);
+    }
+
     public function css()
     {
         $css = $this->getThemeConfig('css');
@@ -60,7 +76,7 @@ class TemplateHelper extends AbstractHelper
         }
         //add verb-driven route media
         $verb = $this->cms->package()['url.verb'];
-        $css[] = $this->cms->helper('urls')->url('_routemedia','linked.css',['nouns'=>json_encode($nouns),'verb'=>$verb]);
+        $css[] = $this->cms->helper('urls')->url('_routemedia', 'linked.css', ['nouns'=>json_encode($nouns),'verb'=>$verb]);
         //add custom-added css
         $css = $css + $this->css;
         //return
