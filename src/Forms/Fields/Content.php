@@ -9,14 +9,42 @@ use Formward\Fields\Checkbox;
 
 class Content extends Container
 {
-    protected $extra = true;
+    protected $_extra = true;
+    protected $_selectable = true;
+
+    public function required($set=null)
+    {
+        parent::required($set);
+        $this['text']->required(false);
+        return parent::required();
+    }
 
     public function extra($set=null)
     {
         if ($set !== null) {
-            $this->extra = $set;
+            $this->_extra = $set;
         }
-        return $this->extra;
+        //hide filter selector from UI (doesn't actually disable, not a security measure!)
+        if ($this['extra']) {
+            $this['extra']->hidden(!$this->_extra);
+        }
+        //return value
+        return $this->_extra;
+    }
+
+    public function selectable($set=null)
+    {
+        if ($set !== null) {
+            $this->_selectable = $set;
+        }
+        //hide filter selector from UI (doesn't actually disable, not a security measure!)
+        if ($this->_selectable) {
+            $this['filter']->removeClass('hidden');
+        } else {
+            $this['filter']->addClass('hidden');
+        }
+        //return value
+        return $this->_selectable;
     }
 
     public function default($default = null)
@@ -46,7 +74,7 @@ class Content extends Container
         parent::__construct($label, $name, $parent);
         $this['text'] = new ContentTextarea($s->string('forms.digraph_content.label_text'));
         $this['filter'] = new ContentFilter($s->string('forms.digraph_content.label_filter'), null, null, $cms);
-        //options for enabling/disabling extra filters
+        //find allowed extras and add field
         $extrasAllowed = false;
         $extras = new Container($s->string('forms.digraph_content.label_extras'));
         foreach ($cms->config['filters.extras'] as $name => $enabled) {
@@ -65,7 +93,7 @@ class Content extends Container
                 $extrasAllowed = true;
             }
         }
-        if ($extrasAllowed && $this->extra) {
+        if ($extrasAllowed) {
             $this['extra'] = $extras;
         }
     }
