@@ -35,7 +35,7 @@ if ($chunks) {
         $url = $package->url();
         $url['args.edit'] = true;
         echo "<p><a href='$url' class='cta-button'>Edit submission</a></p>";
-    } elseif ($submission->isEditable()) {
+    } elseif ($submission->isEditable() && $package['url.args.edit']) {
         $url = $package->url();
         unset($url['args.edit']);
         echo "<p><a href='$url' class='cta-button'>Exit editing mode</a></p>";
