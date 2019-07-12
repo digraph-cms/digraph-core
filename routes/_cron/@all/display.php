@@ -1,4 +1,5 @@
 <?php
+ini_set('max_execution_time', 300);
 $package->makeMediaFile('cron_result.json');
 $package['response.ttl'] = $cms->config['cron.minttl'];
 $CRON_OUTPUT = [
