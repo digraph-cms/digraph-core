@@ -21,8 +21,9 @@ class FileStoreHelper extends AbstractHelper
         foreach ($this->allFiles($noun) as $file) {
             //add file metacard data to search index text
             $out .= ' '.$file->metaCard();
-            //don't try to parse anything additional from files over 50MB
-            if ($file->size() > 1024*1024*50) {
+            //don't try to parse anything additional from files over 1/4 memory_limit
+            $limit = return_bytes(ini_get('memory_limit'));
+            if ($file->size() > $limit/4) {
                 continue;
             }
             //if file is a PDF, extract its text and put that in the index text
@@ -30,8 +31,10 @@ class FileStoreHelper extends AbstractHelper
                 try {
                     ob_start();
                     $parser = new \Smalot\PdfParser\Parser();
-                    $pdf = $parser->parseFile($file->path());
-                    $out .= ' '.$pdf->getText();
+                    $pdf = @$parser->parseFile($file->path());
+                    $out .= ' '.@$pdf->getText();
+                    unset($pdf);
+                    unset($parser);
                     ob_end_clean();
                 } catch (\Exception $e) {
                     $out .= ' [error parsing pdf]';
