@@ -17,13 +17,15 @@ class FileStoreHelper extends AbstractHelper
 
     public function hook_search_index(&$noun)
     {
+        //try to allocate way more memory
+        ini_set('memory_limit', '500M');
         $out = '';
         foreach ($this->allFiles($noun) as $file) {
             //add file metacard data to search index text
             $out .= ' '.$file->metaCard();
-            //don't try to parse anything additional from files over 1/4 memory_limit
+            //don't try to parse anything additional from files over 1/10 the memory_limit
             $limit = return_bytes(ini_get('memory_limit'));
-            if ($file->size() > $limit/4) {
+            if ($file->size() > $limit/10) {
                 continue;
             }
             //if file is a PDF, extract its text and put that in the index text
