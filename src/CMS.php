@@ -137,7 +137,7 @@ class CMS
             echo "<div class='notification notification-error'>";
             echo "An unhandled exception occurred during munging";
             echo "</div>";
-            $package->saveLog('unhandled exception in CMS::fullMunge', LogHelper::CRITICAL);
+            $package->saveLog('CMS::fullMunge: '.$e->getMessage(), LogHelper::CRITICAL);
         }
     }
 
