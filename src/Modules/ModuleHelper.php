@@ -24,6 +24,8 @@ class ModuleHelper extends AbstractHelper
                 $this->loadModuleClass($source);
             } elseif ($type == 'dir') {
                 $this->loadModuleDirectory($source);
+            } elseif ($type == 'composer-dir') {
+                $this->loadModuleDirectory($source, [], true);
             } elseif ($type == 'file') {
                 $this->loadModule($source);
             } else {
@@ -45,7 +47,7 @@ class ModuleHelper extends AbstractHelper
         }
     }
 
-    public function loadModule($module, array $config=[])
+    public function loadModule($module, array $config=[], bool $noAutoloader)
     {
         $this->cms->log('ModuleManager: loading '.$module);
         $config = new Config($config);
@@ -59,7 +61,10 @@ class ModuleHelper extends AbstractHelper
         Automatically add default paths to config if they exists
          */
         // src: register with autoloader
-        if (is_dir($config['module.path'].'/src')) {
+        // can be skipped by setting $noAutoloader to true
+        // in config, this is done by loading a module directory with
+        // the prefix "composer-dir" instead of "dir"
+        if (!$noAutoloader && is_dir($config['module.path'].'/src')) {
             $this->cms->log('autoloader: '.$config['module.namespace'].': '.$config['module.path'].'/src');
             $this->autoloader->addNamespace(
                 $config['module.namespace'],
