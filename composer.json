@@ -1,5 +1,5 @@
 {
-    "name": "byjoby/digraph-core",
+    "name": "digraphcms/digraph-core",
     "description": "Source and API version of a CMS that emphasizes flexibility and content permanence. Generally this package is only used for development.",
     "type": "digraph-core",
     "license": "MIT",
