@@ -1,6 +1,6 @@
 <?php
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
-namespace Digraph\Blocks;
+namespace Digraph\Helpers;
 
 use Digraph\DSO\Noun;
 use Digraph\Helpers\AbstractHelper;

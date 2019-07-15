@@ -653,7 +653,7 @@ helpers:
     slugs: true
   classes:
     actions: Digraph\Helpers\Actions
-    blocks: Digraph\Blocks\BlockHelper
+    blocks: Digraph\Helpers\BlockHelper
     cache: Digraph\Helpers\CacheHelper
     data: Digraph\Data\DataHelper
     edges: Digraph\Graph\EdgeHelper
