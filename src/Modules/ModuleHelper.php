@@ -47,7 +47,7 @@ class ModuleHelper extends AbstractHelper
         }
     }
 
-    public function loadModule($module, array $config=[], bool $noAutoloader)
+    public function loadModule($module, array $config=[], bool $noAutoloader=false)
     {
         $this->cms->log('ModuleManager: loading '.$module);
         $config = new Config($config);
