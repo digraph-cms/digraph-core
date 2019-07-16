@@ -13,6 +13,12 @@ if (!($chunk = @$chunks[$package['url.args.chunk']])) {
     $package->error(404);
     return;
 }
+//handle opt-out
+if ($chunk->optional() && $package['url.args.optout']) {
+    if ($submission->isEditable()) {
+        $chunk->optOut(true);
+    }
+}
 //always make browser-side TTL 0
 $package['response.browserttl'] = 0;
 $package['fields.page_title'] = '';
