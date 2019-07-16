@@ -13,3 +13,7 @@
     @include .fa-heading:before;
   }
 }
+
+.FieldWrapper-class-ContentTextarea div.editor-statusbar {
+  display:none;
+}
