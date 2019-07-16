@@ -20,6 +20,23 @@ class TemplateHelper extends AbstractHelper
     protected $footJS = [];
     protected $prefetch = [];
 
+    /**
+     * Get all the paths from CMS config, with 'site' swapped to the end, and
+     * the entire thing reversed. This way 'site' is highest priority, and
+     * 'core' is lowest priority.
+     *
+     * @return array
+     */
+    protected function paths()
+    {
+        $paths = $this->cms->config['templates.paths'];
+        if ($site = @$paths['site']) {
+            unset($paths['site']);
+            $paths['site'] = $site;
+        }
+        return array_reverse($paths);
+    }
+
     public function addPrefetch($url)
     {
         $this->prefetch[] = $url;
@@ -179,7 +196,7 @@ class TemplateHelper extends AbstractHelper
             $loaders[] = $this->arrayLoader = new \Twig_Loader_Array();
             //set up basic filesystem loader
             $loaders[] = $this->fsLoader = new \Twig_Loader_Filesystem(
-                array_reverse($this->cms->config['templates.paths'])//array of paths to look for templates in
+                $this->paths()//array of paths to look for templates in
             );
             //set up theme loaders
             if ($themes = $this->theme()) {

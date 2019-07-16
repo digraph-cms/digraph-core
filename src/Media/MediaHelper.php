@@ -9,13 +9,30 @@ class MediaHelper extends AbstractHelper
 {
     protected $mimes;
 
+    /**
+     * Get all the paths from CMS config, with 'site' swapped to the end, and
+     * the entire thing reversed. This way 'site' is highest priority, and
+     * 'core' is lowest priority.
+     *
+     * @return array
+     */
+    protected function paths()
+    {
+        $paths = $this->cms->config['media.paths'];
+        if ($site = @$paths['site']) {
+            unset($paths['site']);
+            $paths['site'] = $site;
+        }
+        return array_reverse($paths);
+    }
+
     public function importPaths($search = null)
     {
         if ($search !== null) {
             $search = '/'.$search;
         }
         $searches = [];
-        foreach (array_reverse($this->cms->config['media.paths']) as $path) {
+        foreach ($this->paths() as $path) {
             $searches[] = $path.$search;
         }
         foreach (array_reverse($this->cms->helper('templates')->theme()) as $theme) {

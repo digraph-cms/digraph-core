@@ -4,6 +4,23 @@ namespace Digraph\Helpers;
 
 class Routing extends AbstractHelper
 {
+    /**
+     * Get all the paths from CMS config, with 'site' swapped to the end, and
+     * the entire thing reversed. This way 'site' is highest priority, and
+     * 'core' is lowest priority.
+     *
+     * @return array
+     */
+    protected function paths()
+    {
+        $paths = $this->cms->config['routing.paths'];
+        if ($site = @$paths['site']) {
+            unset($paths['site']);
+            $paths['site'] = $site;
+        }
+        return array_reverse($paths);
+    }
+
     public function hookFile(string $type, string $filename, string $module = null)
     {
         //extension files all go in the @hook folder
@@ -63,7 +80,7 @@ class Routing extends AbstractHelper
         routing path.
          */
         foreach ($types as $type) {
-            foreach (array_reverse($this->cms->config['routing.paths']) as $module => $path) {
+            foreach ($this->paths() as $module => $path) {
                 if ($proper) {
                     $candidatesSpecific[$module.':specific:'.$i++] = "$path/$type/$filename";
                 } else {
@@ -78,7 +95,7 @@ class Routing extends AbstractHelper
         /*
         Build list of general candidates, ordered by routing path.
          */
-        foreach (array_reverse($this->cms->config['routing.paths']) as $module => $path) {
+        foreach ($this->paths() as $module => $path) {
             //build general candidates
             if ($proper) {
                 $candidatesGeneral[$module.':general:'.$i++] = "$path/@any/$filename";
