@@ -190,6 +190,7 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         $this->skipGlob('build**');
         $this['response.status'] = $code;
         $this['error.message'] = $message;
+        $this->merge($this->cms()->config->get('package.error_defaults'), null, true);
     }
 
     public function __construct(array $data = null)

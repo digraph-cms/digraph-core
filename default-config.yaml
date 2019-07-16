@@ -748,6 +748,10 @@ cache:
       tags: null
 
 package:
+  error_defaults:
+    response:
+      ttl: 30
+      browserttl: 0
   defaults:
     error: false
     logging:
@@ -761,7 +765,7 @@ package:
     response:
       status: 200
       ttl: 1800 # default 30 minute cache ttl
-      browserttl: 30
+      browserttl: 10
       cacheable: true
       content: ''
       ready: false
