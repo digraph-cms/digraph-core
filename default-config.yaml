@@ -55,7 +55,6 @@ actions:
     '*': []
     _controlpanel:
       config: _controlpanel/config
-      cron: _cron/display
       edges: _controlpanel/edges
       filestorecleanup: _filestorecleanup/display
       logging: _logging/display
@@ -514,10 +513,7 @@ routing:
     core: ${paths.core}/routes
 
 modules:
-  sources:
-    100-core: dir ${paths.core}/modules
-    # this is how you load a class-based module
-    # 100-system: class \Digraph\Modules\DigraphSystem\Module
+  sources: []
 
 users:
   defaultmanager: default
