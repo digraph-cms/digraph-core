@@ -9,11 +9,6 @@ class BBCodeUnsafeFilter extends AbstractBBCodeFilter
         return $this->tag_template($context, 'tags/unsafe/'.$tag, $args);
     }
 
-    public function tag_block($context, $text, $args)
-    {
-        return $this->cms->helper('blocks')->block($context);
-    }
-
     public function tag_template($context, $text, $args)
     {
         $t = $this->cms->helper('templates');

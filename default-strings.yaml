@@ -34,8 +34,6 @@ notifications:
   add:
     confirmation: Successfully added !name
     error: An error occurred while saving
-blocks:
-  notfound: block not found
 forms:
   digraph_body_label: Content
   digraph_name_label: Name
