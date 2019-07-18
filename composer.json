@@ -22,7 +22,6 @@
         "css-crush/css-crush": "^2.4",
         "digraphcms/digraph-core-types": "dev-master",
         "digraphcms/digraph-core-themes": "dev-master",
-        "digraphcms/digraph-beta-tools": "dev-master",
         "soundasleep/html2text": "^1.1"
     },
     "minimum-stability": "dev",
