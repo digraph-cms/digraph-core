@@ -21,7 +21,9 @@
         "lincanbin/white-html-filter": "^1.3",
         "scrivo/highlight.php": "^9.14",
         "css-crush/css-crush": "^2.4",
-        "digraphcms/digraph-core-types": "dev-master"
+        "digraphcms/digraph-core-types": "dev-master",
+        "digraphcms/digraph-core-themes": "dev-master",
+        "digraphcms/digraph-beta-tools": "dev-master"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
