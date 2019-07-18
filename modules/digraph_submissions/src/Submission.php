@@ -37,12 +37,6 @@ class Submission extends Noun
         return $this->defaultSubmissionFieldClass();
     }
 
-    public function actions($links)
-    {
-        $links['files'] = '!id/allfiles';
-        return $links;
-    }
-
     public function complete()
     {
         return $this->parts()->complete();

@@ -16,4 +16,3 @@ permissions:
     submission/submit: [allow all]
     submission/edit: [deny all,"allow group webmaster, editor"]
     submission/view: [deny all,"allow group webmaster, editor"]
-    submission/allfiles: [deny all,"allow group webmaster"]
