@@ -15,37 +15,6 @@ class FileStoreHelper extends AbstractHelper
         return $this->cms->helper('image');
     }
 
-    public function hook_search_index(&$noun)
-    {
-        //try to allocate way more memory
-        ini_set('memory_limit', '500M');
-        $out = '';
-        foreach ($this->allFiles($noun) as $file) {
-            //add file metacard data to search index text
-            $out .= ' '.$file->metaCard();
-            //don't try to parse anything additional from files over 1/10 the memory_limit
-            $limit = return_bytes(ini_get('memory_limit'));
-            if ($file->size() > $limit/10) {
-                continue;
-            }
-            //if file is a PDF, extract its text and put that in the index text
-            if ($file->type() == 'application/pdf') {
-                try {
-                    ob_start();
-                    $parser = new \Smalot\PdfParser\Parser();
-                    $pdf = @$parser->parseFile($file->path());
-                    $out .= ' '.@$pdf->getText();
-                    unset($pdf);
-                    unset($parser);
-                    ob_end_clean();
-                } catch (\Exception $e) {
-                    $out .= ' [error parsing pdf]';
-                }
-            }
-        }
-        return $out;
-    }
-
     public function allFiles(&$noun)
     {
         $files = [];
