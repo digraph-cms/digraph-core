@@ -20,6 +20,7 @@ class FormHelper extends AbstractHelper
         'datetime' => \Formward\Fields\DateAndTime::class,
         'ini' => \Formward\Fields\INI::class,
         'json' => \Formward\Fields\JSON::class,
+        'noun' => \Formward\Fields\Input::class,
         'select' => \Formward\Fields\Select::class,
         'text' => \Formward\Fields\Input::class,
         'user' => \Digraph\Forms\Fields\User::class,
