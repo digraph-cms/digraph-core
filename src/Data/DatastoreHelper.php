@@ -26,6 +26,21 @@ EOT;
         'CREATE UNIQUE INDEX IF NOT EXISTS digraph_datastore_UNIQUE_IDX ON digraph_datastore (data_namespace,data_name);'
     ];
 
+    public function queue(string $namespace)
+    {
+        return new Structures\Queue('queue_'.$namespace, $this);
+    }
+
+    public function pqueue(string $namespace)
+    {
+        return new Structures\PriorityQueue('queue_'.$namespace, $this);
+    }
+
+    public function stack(string $namespace)
+    {
+        return new Structures\Stack('queue_'.$namespace, $this);
+    }
+
     /**
      * Get a convenience object that allows making get()/set()/delete() calls without specifying a
      * namespace.
@@ -57,6 +72,27 @@ EOT;
         } else {
             return null;
         }
+    }
+
+    /**
+     * Retrieve a specific number of values, with an optional sorting rule (defaults
+     * to providing the most recent entries as sorted/identified by primary key)
+     *
+     * @param string $namespace
+     * @param int $limit the maximum to return (0/null returns all)
+     * @param string $sort SQL sorting rules
+     */
+    public function query(string $namespace, int $limit=null, string $sort='data_id DESC')
+    {
+        $sql = 'SELECT * FROM digraph_datastore';
+        $sql .= ' WHERE data_namespace = :namespace';
+        $sql .= ' ORDER BY '.$sort;
+        if ($limit) {
+            $sql .= ' LIMIT '.$limit;
+        }
+        return $this->fetch($sql, [
+            'namespace' => $namespace
+        ]);
     }
 
     /**
@@ -110,7 +146,7 @@ EOT;
      */
     public function delete(string $namespace, string $name)
     {
-        $sql = 'DELETE FROM digraph_facts WHERE data_namespace = :namespace AND data_name = :name;';
+        $sql = 'DELETE FROM digraph_datastore WHERE data_namespace = :namespace AND data_name = :name;';
         return $this->execute($sql, [
             'namespace' => $namespace,
             'name' => $name
@@ -126,7 +162,7 @@ EOT;
      */
     public function deleteNamespace(string $namespace)
     {
-        $sql = 'DELETE FROM digraph_facts WHERE data_namespace = :namespace;';
+        $sql = 'DELETE FROM digraph_datastore WHERE data_namespace = :namespace;';
         return $this->execute($sql, [
             'namespace' => $namespace
         ]);
@@ -146,6 +182,9 @@ EOT;
             $fargs[':'.$key] = $value;
         }
         $s = $this->pdo->prepare($sql);
+        if (!$s) {
+            throw new \Exception('PDO prepare error: '.implode(', ', $this->pdo->errorInfo()));
+        }
         return $s->execute($fargs);
     }
 
@@ -174,10 +213,11 @@ EOT;
 
     public function construct()
     {
-        $this->pdo = $this->cms->pdo();
+        //uses sqlite-only pdo
+        $this->pdo = $this->cms->pdo('datastore');
         //set up JSON function from Destructr
         // $this->pdo->sqliteCreateFunction(
-        //     'DH_JSON_EXTRACT',
+        //     'DSJSON',
         //     '\\Destructr\\LegacyDrivers\\SQLiteDriver::JSON_EXTRACT',
         //     2
         // );

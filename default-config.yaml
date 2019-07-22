@@ -13,7 +13,7 @@ logging:
 
 cron:
   # the ttl to be applied to the cron-running page, used to rate-limit cron runs
-  minttl: 3600
+  minttl: 60
   # how long complete log entries should last before they are removed by cron
   # this only applies to the logging database in Digraph, any monolog loggers
   # will need to be configured separately wherever they are instantiated
@@ -26,6 +26,8 @@ bootstrap:
   pdos:
     default:
       dsn: sqlite:${paths.storage}/digraph.sqlite
+    datastore:
+      dsn: sqlite:${paths.storage}/datastore.sqlite
     logging:
       dsn: sqlite:${paths.storage}/logging.sqlite
   drivers:
@@ -650,7 +652,6 @@ helpers:
   classes:
     actions: Digraph\Helpers\Actions
     cache: Digraph\Helpers\CacheHelper
-    data: Digraph\Data\DataHelper
     datastore: Digraph\Data\DatastoreHelper
     edges: Digraph\Graph\EdgeHelper
     filestore: Digraph\FileStore\FileStoreHelper
