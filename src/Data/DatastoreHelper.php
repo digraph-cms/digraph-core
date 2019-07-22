@@ -33,12 +33,12 @@ EOT;
 
     public function pqueue(string $namespace)
     {
-        return new Structures\PriorityQueue('queue_'.$namespace, $this);
+        return new Structures\PriorityQueue('pqueue_'.$namespace, $this);
     }
 
     public function stack(string $namespace)
     {
-        return new Structures\Stack('queue_'.$namespace, $this);
+        return new Structures\Stack('stack_'.$namespace, $this);
     }
 
     /**
