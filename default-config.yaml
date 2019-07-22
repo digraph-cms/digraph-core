@@ -651,6 +651,7 @@ helpers:
     actions: Digraph\Helpers\Actions
     cache: Digraph\Helpers\CacheHelper
     data: Digraph\Data\DataHelper
+    datastore: Digraph\Data\DatastoreHelper
     edges: Digraph\Graph\EdgeHelper
     filestore: Digraph\FileStore\FileStoreHelper
     filters: Digraph\Filters\FilterHelper

@@ -4,6 +4,9 @@ namespace Digraph\Data;
 
 use Digraph\DSO\Noun;
 
+/**
+ * TODO: deprecate this class in favor of DatastoreHelper
+ */
 class Fact
 {
     protected $row;

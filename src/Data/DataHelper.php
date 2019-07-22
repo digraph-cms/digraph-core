@@ -4,6 +4,9 @@ namespace Digraph\Data;
 
 use Digraph\Helpers\AbstractHelper;
 
+/**
+ * TODO: deprecate this class in favor of DatastoreHelper
+ */
 class DataHelper extends AbstractHelper
 {
     protected $groups = [];

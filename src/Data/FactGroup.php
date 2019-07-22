@@ -2,6 +2,9 @@
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
 namespace Digraph\Data;
 
+/**
+ * TODO: deprecate this class in favor of DatastoreHelper
+ */
 class FactGroup
 {
     protected $helper;
