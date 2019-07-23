@@ -133,12 +133,6 @@ class FileStoreFile
         return $this->noun->fileUrl($this->uniqid(), $args);
     }
 
-    public function galleryUrl($args=[])
-    {
-        $args['f'] = $this->uniqid();
-        return $this->noun->url('gallery-file', $args);
-    }
-
     public function path()
     {
         return $this->file;
