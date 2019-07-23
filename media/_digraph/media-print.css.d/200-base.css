@@ -10,7 +10,8 @@
 #digraph-footer,
 #digraph-meta,
 #digraph-mobile-menu,
-.navbar {
+.navbar,
+.noprint {
   display: none;
 }
 
