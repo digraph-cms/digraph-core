@@ -54,6 +54,30 @@ table {
       }
     }
 
+    &.row-block {
+      background: $(color_error);
+
+      &:after {
+        content: '\f05e';
+      }
+    }
+
+    &.row-downvote {
+      background: $(color_warning);
+
+      &:after {
+        content: '\f063';
+      }
+    }
+
+    &.row-upvote {
+      background: $(color_confirmation);
+
+      &:after {
+        content: '\f062';
+      }
+    }
+
     &.row-unlink {
       background: $(color_warning);
 
