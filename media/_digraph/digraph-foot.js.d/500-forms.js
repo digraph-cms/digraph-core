@@ -1,4 +1,16 @@
 /**
+ * Autosubmit forms
+ */
+$(()=>{
+  $('.Form.autosubmit .FieldWrapper-Button').hide();
+  $('.Form.autosubmit select').change((e)=>{
+    console.log(e);
+    $(e.target).closest('.Form')
+      .hide().submit();
+  });
+});
+
+/**
  * Form submission feedback
  */
 $(()=>{
