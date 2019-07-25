@@ -32,7 +32,7 @@ class DatastoreNamespace
      *
      * @return array
      */
-    public function getAll(string $namespace)
+    public function getAll()
     {
         return $this->datastore->getAll(
             $this->namespace
