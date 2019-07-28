@@ -16,6 +16,15 @@ class FileStoreFile
     protected $time;
     protected $path;
 
+    //keys that are not allowed to be changed with set()
+    const PROTECTED_KEYS = [
+        'size',
+        'type',
+        'uniqid',
+        'hash',
+        'time'
+    ];
+
     public function __construct(array $e, Noun &$noun, string $path, FileStoreHelper &$fs)
     {
         $this->fs = $fs;
@@ -28,6 +37,20 @@ class FileStoreFile
         $this->uniqid = $e['uniqid'];
         $this->hash = $e['hash'];
         $this->time = $e['time'];
+    }
+
+    public function set($key, $value)
+    {
+        //don't allow changing values that might break things
+        if (in_array($key, static::PROTECTED_KEYS)) {
+            return;
+        }
+        //find this file in the given noun
+        foreach ($this->noun['filestore'] as $section => $files) {
+            if (isset($files[$this->uniqid()])) {
+                $this->noun["filestore.$section.".$this->uniqid().".$key"] = $value;
+            }
+        }
     }
 
     public function exif()
