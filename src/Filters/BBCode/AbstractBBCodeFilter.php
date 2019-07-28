@@ -28,7 +28,8 @@ abstract class AbstractBBCodeFilter extends AbstractFilter
             return false;
         }
         $fields = $args;
-        $fields['noun'] = $this->cms->read($context);
+        $fields['args'] = $args;
+        $fields['noun'] = $fields['context'] = $this->cms->read($context);
         $fields['text'] = $text;
         $fields['tag'] = $tag;
         if (!$fields['noun']) {
