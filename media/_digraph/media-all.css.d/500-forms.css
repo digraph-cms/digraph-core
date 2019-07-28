@@ -219,8 +219,25 @@ DateAndTime fields
 /*
 progressively-enhanced ordering field
  */
-.FieldWrapper-formward-ordering-field.js-active > textarea {
+ .FieldWrapper-formward-ordering-field.js-active > textarea {
   display: none;
+}
+
+.FieldWrapper-formward-ordering-field {
+  ul,.form-ordering-item {
+    max-width: none;
+    width: 100%:
+  }
+  .filestore-card {
+    background: transparent;
+    max-width: 100%;
+  }
+  .Container {
+    margin-bottom:0 !important;
+    padding:0;
+    background:transparent;
+    font-size:0.8em;
+  }
 }
 
 .FieldWrapper-formward-ordering-field ul {
