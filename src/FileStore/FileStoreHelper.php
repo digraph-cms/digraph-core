@@ -206,13 +206,18 @@ class FileStoreHelper extends AbstractHelper
      */
     public function list(Noun &$noun, string $path = 'default') : array
     {
+        //figure out class to use
+        $class = @$noun::FILESTORE_FILE_CLASS;
+        if (!$class || !class_exists($class)) {
+            $class = FileStoreFile::class;
+        }
         //check for array in path
         if ($files = $noun["filestore.$path"]) {
-            //create FileStoreFile objects from array
+            //create file objects from array
             return array_map(
-                function ($e) use ($noun,$path) {
+                function ($e) use ($noun,$path,$class) {
                     $e['file'] = $this->dir($e['hash'], false).'/file';
-                    return new FileStoreFile($e, $noun, $path, $this);
+                    return new $class($e, $noun, $path, $this);
                 },
                 $files
             );
