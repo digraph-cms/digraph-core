@@ -82,10 +82,11 @@ function sortablelist_dragStart(e) {
   e.dataTransfer.effectAllowed = "move";
   var noun = '';
   var $target = $(e.target);
+  console.log(e);
+  //ensure target is top level ordering item
   if (!$target.is('li.form-ordering-item')) {
     $target = $target.parents('li.form-ordering-item');
   }
-  console.log($target);
   if (digraph.noun) noun = ':' + digraph.noun;
   e.dataTransfer.setData("text/plain", "[file" + noun + " id=\"" + $target.attr('data-value') + "\"]");
   _sortablelist_el = e.target;
@@ -180,6 +181,16 @@ document.addEventListener('DOMContentLoaded', function(e) {
           controlList.innerHTML += '<li class="form-ordering-item' + deleted + '" draggable="true" data-value="' + k + '" ondragend="sortablelist_dragEnd()" ondragover="sortablelist_dragOver(event)" ondragstart="sortablelist_dragStart(event)">' + v + '<a class="delete-button">delete</a></li>';
         });
         controlList.addEventListener('dragend', syncDown);
+        //set up events to stop dragging by some children
+        var cs = controlList.querySelectorAll('textarea, input, .delete-button, .no-drag');
+        for (var i = 0; i < cs.length; i++) {
+          cs[i].addEventListener('mousedown', function(e) {
+            $(e.target).parents('li.form-ordering-item').attr('draggable',false);
+          });
+          cs[i].addEventListener('mouseup', function(e) {
+            $(e.target).parents('li.form-ordering-item').attr('draggable',true);
+          });
+        }
         //set up event listeners on delete buttons
         var bs = controlList.querySelectorAll('.delete-button');
         for (var i = 0; i < bs.length; i++) {
