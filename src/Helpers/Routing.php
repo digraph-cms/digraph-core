@@ -79,16 +79,16 @@ class Routing extends AbstractHelper
         Build list of type-specific candidates, ordered by type and then by
         routing path.
          */
-        foreach ($types as $type) {
+        foreach ($types as $t) {
             foreach ($this->paths() as $module => $path) {
                 if ($proper) {
-                    $candidatesSpecific[$module.':specific:'.$i++] = "$path/$type/$filename";
+                    $candidatesSpecific[$module.':specific:'.$i++] = "$path/$t/$filename";
                 } else {
-                    $candidatesSpecific[$module.':specific:'.$i++] = "$path/$type/@all/$filename";
-                    $candidatesSpecific[$module.':specific:'.$i++] = "$path/$type@all/$filename";
+                    $candidatesSpecific[$module.':specific:'.$i++] = "$path/$t/@all/$filename";
+                    $candidatesSpecific[$module.':specific:'.$i++] = "$path/$t@all/$filename";
                 }
                 if (preg_match('/^@.+\//', $filename)) {
-                    $candidatesSpecific[$module.':specific:'.$i++] = "$path/$type$filename";
+                    $candidatesSpecific[$module.':specific:'.$i++] = "$path/$t$filename";
                 }
             }
         }
