@@ -39,6 +39,11 @@ class FileStoreFile
         $this->time = $e['time'];
     }
 
+    public function noun()
+    {
+        return $this->noun;
+    }
+
     public function set($key, $value)
     {
         //don't allow changing values that might break things
@@ -165,7 +170,7 @@ class FileStoreFile
     {
         if ($set !== null) {
             $this->name = $set;
-            $this->setInNoun('name', $set);
+            $this->set('name', $set);
         }
         return $this->name;
     }
@@ -179,10 +184,6 @@ class FileStoreFile
             $name .= '_'.$this->miniHash();
         }
         return $name;
-    }
-
-    protected function setInNoun($name, $value)
-    {
     }
 
     public function update()
