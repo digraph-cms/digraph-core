@@ -36,6 +36,31 @@ class NotificationsHelper extends AbstractHelper
         return $out;
     }
 
+    public function printNotice($message)
+    {
+        $this->print($message, 'notice');
+    }
+
+    public function printConfirmation($message)
+    {
+        $this->print($message, 'confirmation');
+    }
+
+    public function printWarning($message)
+    {
+        $this->print($message, 'warning');
+    }
+
+    public function printError($message)
+    {
+        $this->print($message, 'error');
+    }
+
+    protected function print($message, $type)
+    {
+        echo "<div class='notification notification-$type'>$message</div>";
+    }
+
     public function all()
     {
         return $this->notifications;
