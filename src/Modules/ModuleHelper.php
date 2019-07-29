@@ -25,7 +25,7 @@ class ModuleHelper extends AbstractHelper
             } elseif ($type == 'dir') {
                 $this->loadModuleDirectory($source);
             } elseif ($type == 'composer-dir') {
-                $this->loadModuleDirectory($source, [], true);
+                $this->loadModuleDirectory($source, true);
             } elseif ($type == 'file') {
                 $this->loadModule($source);
             } else {
@@ -40,10 +40,10 @@ class ModuleHelper extends AbstractHelper
         $this->loadModule($module->getYAMLPath(), $module->getConfig());
     }
 
-    public function loadModuleDirectory($path)
+    public function loadModuleDirectory($path, bool $noAutoloader=false)
     {
         foreach (glob($path.'/*/module.yaml') as $module) {
-            $this->loadModule($module);
+            $this->loadModule($module, [], $noAutoloader);
         }
     }
 
@@ -64,12 +64,14 @@ class ModuleHelper extends AbstractHelper
         // can be skipped by setting $noAutoloader to true
         // in config, this is done by loading a module directory with
         // the prefix "composer-dir" instead of "dir"
-        if (!$noAutoloader && is_dir($config['module.path'].'/src')) {
-            $this->cms->log('autoloader: '.$config['module.namespace'].': '.$config['module.path'].'/src');
-            $this->autoloader->addNamespace(
-                $config['module.namespace'],
-                $config['module.path'].'/src'
-            );
+        if (!$noAutoloader) {
+            if (is_dir($config['module.path'].'/src')) {
+                $this->cms->log('autoloader: '.$config['module.namespace'].': '.$config['module.path'].'/src');
+                $this->autoloader->addNamespace(
+                    $config['module.namespace'],
+                    $config['module.path'].'/src'
+                );
+            }
         }
         // routes: add to routes config
         if (is_dir($config['module.path'].'/routes')) {

@@ -207,7 +207,10 @@ class FileStoreHelper extends AbstractHelper
     public function list(Noun &$noun, string $path = 'default') : array
     {
         //figure out class to use
-        $class = @$noun::FILESTORE_FILE_CLASS;
+        $class = null;
+        if (defined(get_class($noun).'::FILESTORE_FILE_CLASS')) {
+            $class = $noun::FILESTORE_FILE_CLASS;
+        }
         if (!$class || !class_exists($class)) {
             $class = FileStoreFile::class;
         }
