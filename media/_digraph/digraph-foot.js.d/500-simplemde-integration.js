@@ -2,7 +2,7 @@
  * Toggle SimpleMDE on content fields
  */
 document.addEventListener('DOMContentLoaded', function(e) {
-  var containers = document.querySelectorAll('.Form .Container.class-Content');
+  var containers = document.querySelectorAll('.Form .Container.DigraphContent');
   for (var i = 0; i < containers.length; i++) {
     //add event listener to toggle SimpleMDE based on filter field
     var container = containers[i];

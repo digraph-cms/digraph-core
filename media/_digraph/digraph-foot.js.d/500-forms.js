@@ -41,7 +41,7 @@ $(function() {
  * Auto-expanding content textareas
  */
 document.addEventListener('DOMContentLoaded', function(e) {
-  var tas = document.querySelectorAll('.Form .Container.class-Content .class-ContentTextarea');
+  var tas = document.querySelectorAll('.Form .Container.DigraphContent .class-ContentTextarea');
   for (var i = 0; i < tas.length; i++) {
     var t = tas[i];
     t.addEventListener('keydown', autosize);

@@ -86,7 +86,7 @@ class ContentDefault extends Content
     {
         parent::__construct($label, $name, $parent, $cms);
         $this->cms = $cms;
-        unset($this['filter']);
+        $this['filter']->addClass('hidden');
         unset($this['extra']);
         $this['text']->label('');
         $this->filter();

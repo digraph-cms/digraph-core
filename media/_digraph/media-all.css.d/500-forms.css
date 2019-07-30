@@ -344,20 +344,24 @@ progressively-enhanced ordering field
 }
 
 /* content fields */
-.Form .Container.class-Content .class-ContentTextarea {
-  background: transparent;
+.Form .Container.DigraphContent .class-ContentTextarea {
+  background: rgba(255,255,255,0.5);
   color: inherit;
-  padding: 0;
   border: 0;
   min-height: 300px;
 }
 
-.Form .Container.class-Content .FieldWrapper-class-ContentTextarea label {
+.Form .Container.DigraphContent .FieldWrapper-class-ContentTextarea label {
   display: none;
 }
 
-.Form .Container.class-Content .FieldWrapper-class-ContentFilter label {
+.Form .Container.DigraphContent .FieldWrapper-class-ContentFilter label {
   display: none;
+}
+
+.Form .Container.class-ContentDefault div.FieldWrapper-class-ContentTextarea
+{
+  margin-bottom:0 !important;
 }
 
 /* buttons */
