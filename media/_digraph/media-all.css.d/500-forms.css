@@ -6,6 +6,10 @@
   max-width: 40em;
 }
 
+.Form .FieldWrapper-hidden,
+.Form .FieldWrapper.hidden,
+.Form .Container-hidden,
+.Form .Container.hidden,
 .Form .hidden {
   display: none !important;
 }
@@ -179,13 +183,6 @@
   opacity: 1;
 }
 
-.Form .FieldWrapper-hidden,
-.Form .FieldWrapper.hidden,
-.Form .Container-hidden,
-.Form .Container.hidden {
-  display: none !important;
-}
-
 /*
 Slug fields
  */
@@ -345,9 +342,9 @@ progressively-enhanced ordering field
 
 /* content fields */
 .Form .Container.DigraphContent .class-ContentTextarea {
-  background: rgba(255,255,255,0.5);
   color: inherit;
   border: 0;
+  padding: 0;
   min-height: 300px;
 }
 
