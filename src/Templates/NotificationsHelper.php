@@ -88,7 +88,7 @@ class NotificationsHelper extends AbstractHelper
 
     public function flash($type, $message, $name=null)
     {
-        $this->sessionPushFlash($type, $message, $name);
+        $this->sessionPushFlash($type, $message);
     }
 
     public function confirmation($message, $name=null)

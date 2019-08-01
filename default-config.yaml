@@ -659,6 +659,7 @@ helpers:
     hooks: Digraph\Helpers\HookHelper
     image: Digraph\FileStore\ImageHelper
     logging: Digraph\Logging\LogHelper
+    mail: Digraph\Helpers\Mailer
     media: Digraph\Media\MediaHelper
     modules: Digraph\Modules\ModuleHelper
     navigation: Digraph\Templates\NavigationHelper
