@@ -77,7 +77,7 @@ class Headers extends AbstractMunger
             $cacheControl['must-revalidate'] = true;
         }
         //cache ttl
-        if ($ttl = $package['response.ttl']) {
+        if ($ttl = $package['response.browserttl']) {
             $cacheControl['max-age'] = $ttl;
         }
         //finish cache-control
