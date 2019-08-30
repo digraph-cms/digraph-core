@@ -30,7 +30,7 @@ class Message
         return $this->to;
     }
 
-    public function from() : string
+    public function from()
     {
         return $this->from;
     }
@@ -55,7 +55,7 @@ class Message
         return $this->body;
     }
 
-    public function replyTo() : ?string
+    public function replyTo()
     {
         return $this->replyTo;
     }
