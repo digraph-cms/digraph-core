@@ -138,6 +138,10 @@ urls:
     _controlpanel/display: Control panel
     _controlpanel/sitemap: Site map
     _controlpanel/edges: Manage all edges
+    _controlpanel/mail: Mail management
+    _controlpanel/mail_queue: Mail queue
+    _controlpanel/mail_sent: Mail send log
+    _controlpanel/mail_errors: Mail errors
     _filestorecleanup/display: Filestore cleanup
     _filestorecleanup/download: Download file
     _logging/display: Logs

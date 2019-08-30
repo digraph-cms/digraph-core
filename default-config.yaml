@@ -11,6 +11,14 @@ urls:
 logging:
   debug: false
 
+mail:
+  default:
+    subject: Untitled message
+    from: noreply@fake.domain
+    replyto: null
+    cc: []
+    bcc: []
+
 cron:
   # the ttl to be applied to the cron-running page, used to rate-limit cron runs
   minttl: 60
@@ -30,6 +38,8 @@ bootstrap:
       dsn: sqlite:${paths.storage}/datastore.sqlite
     logging:
       dsn: sqlite:${paths.storage}/logging.sqlite
+    mail:
+      dsn: sqlite:${paths.storage}/mail.sqlite
   drivers:
     default:
       class: default
@@ -60,6 +70,7 @@ actions:
       edges: _controlpanel/edges
       filestorecleanup: _filestorecleanup/display
       logging: _logging/display
+      mail: _controlpanel/mail
       sitemap: _controlpanel/sitemap
       trash: _trash/display
       urls: _controlpanel/slugs
@@ -407,6 +418,9 @@ navigation:
       '*/*': !noun/display
       '*/display': false
       _controlpanel/display: _controlpanel/display
+      _controlpanel/mail_errors: _controlpanel/mail
+      _controlpanel/mail_queue: _controlpanel/mail
+      _controlpanel/mail_sent: _controlpanel/mail
       _cron/display: _controlpanel/display
       _filestorecleanup/display: _controlpanel/display
       _logging/display: _controlpanel/display
@@ -659,7 +673,7 @@ helpers:
     hooks: Digraph\Helpers\HookHelper
     image: Digraph\FileStore\ImageHelper
     logging: Digraph\Logging\LogHelper
-    mail: Digraph\Helpers\Mailer
+    mail: Digraph\Mail\MailHelper
     media: Digraph\Media\MediaHelper
     modules: Digraph\Modules\ModuleHelper
     navigation: Digraph\Templates\NavigationHelper
