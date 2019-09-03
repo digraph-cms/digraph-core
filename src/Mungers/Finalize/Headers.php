@@ -16,14 +16,14 @@ class Headers extends AbstractMunger
          */
         $headers = new FlatArray();
         // cache control
-        $headers['Date'] = gmdate('D, d M Y H:i:s T', time());
-        $headers['Cache-Control'] = $this->cacheControl($package);
-        $headers['Pragma'] = $this->pragma($package);
-        if ($ttl = $package['response.browserttl']) {
-            $headers['Expires'] = gmdate('D, d M Y H:i:s T', time()+$ttl);
-        } else {
-            $headers['Expires'] = gmdate('D, d M Y H:i:s T', 0);
-        }
+        // $headers['Date'] = gmdate('D, d M Y H:i:s T', time());
+        // $headers['Cache-Control'] = $this->cacheControl($package);
+        // $headers['Pragma'] = $this->pragma($package);
+        // if ($ttl = $package['response.browserttl']) {
+        //     $headers['Expires'] = gmdate('D, d M Y H:i:s T', time()+$ttl);
+        // } else {
+        //     $headers['Expires'] = gmdate('D, d M Y H:i:s T', 0);
+        // }
         // last-modified
         if ($package['response.last-modified']) {
             $headers['Last-Modified'] = gmdate('D, d M Y H:i:s T', $package['response.last-modified']);
