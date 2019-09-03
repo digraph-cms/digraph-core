@@ -58,15 +58,19 @@
   background: $(color_actionbar_bg);
   display: flex;
   flex-wrap: wrap;
+  flex-direction: row-reverse;
   width: 100%;
   justify-content: space-between;
 
   .digraph-actionbar {
-    order: 1;
+    order: 2;
     padding: 0;
   }
 
   .digraph-actionbar-user {
-    order: 2;
+    order: 1;
+    &:first-child:last-child {
+      text-align:right;
+    }
   }
 }

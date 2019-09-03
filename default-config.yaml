@@ -84,10 +84,10 @@ actions:
   common:
     '*': []
     '_user/guest':
-      signin: _user/signin
-      signup: _user/signup
+      _signin: _user/signin
+      _signup: _user/signup
     '_user/signedin':
-      signout: _user/signout
+      _signout: _user/signout
       controlpanel: _controlpanel/display
 
 groups: []
