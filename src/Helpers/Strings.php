@@ -49,7 +49,7 @@ class Strings extends AbstractHelper
             $time = time();
         }
         $formatted = $this->date($time);
-        return "<time datetime=\"".date('c', $time)."\">$formatted</time>";
+        return "<time datetime=\"".date('c', $time)."\" title=\"".$this->datetime($time)."\">$formatted</time>";
     }
 
     public function datetime($time=null)
