@@ -126,7 +126,7 @@ class ModuleHelper extends AbstractHelper
          */
         $config = $config->get();
         unset($config['module']);
-        $this->cms->config->merge($config, null);
+        $this->cms->config->merge($config, null, true);
         $this->cms->config->push('modules.loaded', $module);
     }
 }
