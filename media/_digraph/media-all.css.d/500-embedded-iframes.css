@@ -8,6 +8,35 @@ iframe.embedded-iframe {
     overflow:hidden;
 }
 
+div.embedded-iframe {
+    position:relative;
+    margin:$(spacing_base) 0;
+
+    iframe.embedded-iframe {
+        margin:0;
+        display:block;
+    }
+
+    &:after {
+        content:"";
+        display:none;
+        position:absolute;
+        top:0;
+        left:0;
+        right:0;
+        bottom:0;
+        background:#f00;
+        z-index:1000;
+        background:#fafafa url({{url.base}}digraph/loading-dark.gif);
+        background-position:center center;
+        background-repeat:no-repeat;
+    }
+
+    &.loading:after {
+        display:block;
+    }
+}
+
 body.iframe-embedded {
     margin:0;
     padding:0;
