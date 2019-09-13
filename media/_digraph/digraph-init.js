@@ -16,7 +16,8 @@ var digraph = {
  * Automatically prepends base URL so that other scripts don't need to deal
  * with it. Also automatically adds the user's SID as a GET variable.
  */
-digraph.get = function(url, success, error, sid = true) {
+digraph.get = function(url, success, error, sid) {
+  if (typeof sid === 'undefined') { sid = true; }
   //set up url
   url = '{{config.url.base}}' + url;
   //add session ID to url, so that Ajax requests are cached per-user
@@ -52,7 +53,8 @@ digraph.get = function(url, success, error, sid = true) {
 /**
  * Utility function to handle parsing JSON for a get() call
  */
-digraph.getJSON = function(url, success, error, sid = true) {
+digraph.getJSON = function(url, success, error) {
+  if (typeof sid === 'undefined') { sid = true; }
   return digraph.get(
     url,
     function(text) {
