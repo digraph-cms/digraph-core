@@ -2,7 +2,18 @@ $(() => {
     var $iframes = $('iframe.embedded-iframe');
     setInterval(()=>{
         $iframes = $('iframe.embedded-iframe');
-    },1000);
+        $iframes.each((i) => {
+            var $iframe = $iframes.eq(i);
+            //ensure iframe is wrapped
+            if (!$iframe.parent().is('div.embedded-iframe')) {
+                $iframe.wrap('<div class="embedded-iframe" />');
+                $iframe.css('overflow','hidden');
+                $iframe.attr('scrolling','no');
+            }
+            //add iframe-embedded class
+            $content.find('body').addClass('iframe-embedded');
+        });
+    },100);
     var updateFrames = () => {
         $iframes.each((i) => {
             var $iframe = $iframes.eq(i);
@@ -13,14 +24,6 @@ $(() => {
     var updateSingleFrame = (iframe) => {
         var $iframe = $(iframe);
         var $content = $iframe.contents();
-            //ensure iframe is wrapped
-            if (!$iframe.parent().is('div.embedded-iframe')) {
-                $iframe.wrap('<div class="embedded-iframe" />');
-                $iframe.css('overflow','hidden');
-                $iframe.attr('scrolling','no');
-            }
-            //add iframe-embedded class
-            $content.find('body').addClass('iframe-embedded');
             //set height if it isn't loading
             if (!$iframe.is('.loading')) {
                 var height = $content.find('html').get(0).offsetHeight;
