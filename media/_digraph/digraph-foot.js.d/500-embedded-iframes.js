@@ -11,7 +11,7 @@ $(() => {
                 $iframe.attr('scrolling','no');
             }
             //add iframe-embedded class
-            $content.find('body').addClass('iframe-embedded');
+            $iframe.contents().addClass('iframe-embedded');
         });
     },100);
     var updateFrames = () => {
@@ -24,21 +24,21 @@ $(() => {
     var updateSingleFrame = (iframe) => {
         var $iframe = $(iframe);
         var $content = $iframe.contents();
-            //set height if it isn't loading
-            if (!$iframe.is('.loading')) {
-                var height = $content.find('html').get(0).offsetHeight;
-                $iframe.animate({
-                    height: height+'px'
-                }),'fast';
-            }
-            //set up load/unload listeners
-            iframe.onload = function(e) {
-                $(iframe).parent('div.embedded-iframe').removeClass('loading');
-                updateSingleFrame(iframe);
-            };
-            iframe.contentWindow.onunload = function(e) {
-                $(iframe).parent('div.embedded-iframe').addClass('loading');
-            };
+        //set height if it isn't loading
+        if (!$iframe.is('.loading')) {
+            var height = $content.find('html').get(0).offsetHeight;
+            $iframe.animate({
+                height: height+'px'
+            }),'fast';
+        }
+        //set up load/unload listeners
+        iframe.onload = function(e) {
+            $(iframe).parent('div.embedded-iframe').removeClass('loading');
+            updateSingleFrame(iframe);
+        };
+        iframe.contentWindow.onunload = function(e) {
+            $(iframe).parent('div.embedded-iframe').addClass('loading');
+        };
     };
     updateFrames();
     $(window).on('resize',updateFrames);
