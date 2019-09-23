@@ -4,6 +4,7 @@ $(() => {
         $iframes = $('iframe.embedded-iframe');
         $iframes.each((i) => {
             var $iframe = $iframes.eq(i);
+            var iframe = $iframe.get()[0];
             //ensure iframe is wrapped
             if (!$iframe.parent().is('div.embedded-iframe')) {
                 $iframe.wrap('<div class="embedded-iframe" />');
@@ -12,6 +13,14 @@ $(() => {
             }
             //add iframe-embedded class
             $iframe.contents().addClass('iframe-embedded');
+            //set up load/unload listeners
+            iframe.onload = function(e) {
+                $(iframe).parent('div.embedded-iframe').removeClass('loading');
+                updateSingleFrame(iframe);
+            };
+            iframe.contentWindow.onunload = function(e) {
+                $(iframe).parent('div.embedded-iframe').addClass('loading');
+            };
         });
     },100);
     var updateFrames = () => {
@@ -31,14 +40,6 @@ $(() => {
                 height: height+'px'
             }),'fast';
         }
-        //set up load/unload listeners
-        iframe.onload = function(e) {
-            $(iframe).parent('div.embedded-iframe').removeClass('loading');
-            updateSingleFrame(iframe);
-        };
-        iframe.contentWindow.onunload = function(e) {
-            $(iframe).parent('div.embedded-iframe').addClass('loading');
-        };
     };
     updateFrames();
     $(window).on('resize',updateFrames);
