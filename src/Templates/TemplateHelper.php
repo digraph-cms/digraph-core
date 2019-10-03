@@ -122,7 +122,7 @@ class TemplateHelper extends AbstractHelper
                 $c->merge($theme, null, true);
             }
         }
-        $c->merge($this->cms->config['theme._override'], null, true);
+        $c->merge($this->cms->config['theme.'.$name.'._override'], null, true);
         $c = $c->get();
         ksort($c);
         return array_filter($c);
