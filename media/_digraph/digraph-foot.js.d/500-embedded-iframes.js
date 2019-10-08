@@ -43,6 +43,7 @@ $(() => {
     };
     updateFrames();
     $(window).on('resize',updateFrames);
+    setInterval(updateFrames,250);
 });
 
 if (window!=window.top) { $('body').addClass('iframe-embedded'); }
