@@ -29,15 +29,19 @@ class QueuedMessage
         echo "<dl>";
         echo "<dt>Subject</dt>";
         echo "<dd>".$this->message->subject()."</dd>";
-        echo "<dt>From</dt>";
-        echo "<dd>".$this->fmtAddress($this->message->from())."</dd>";
+        if (!@$options['hidefrom']) {
+            echo "<dt>From</dt>";
+            echo "<dd>".$this->fmtAddress($this->message->from())."</dd>";
+        }
         if (!@$options['hidereplyto'] && $this->message->replyTo()) {
             echo "<dt>Reply to</dt>";
             echo "<dd>".$this->fmtAddress($this->message->replyTo())."</dd>";
         }
-        echo "<dt>To</dt>";
-        echo "<dd>".$this->fmtMultipleAddresses($this->message->to())."</dd>";
-        if ($this->message->cc()) {
+        if (!@$options['hideto']) {
+            echo "<dt>To</dt>";
+            echo "<dd>".$this->fmtMultipleAddresses($this->message->to())."</dd>";
+        }
+        if (!@$options['hidecc'] && $this->message->cc()) {
             echo "<dt>CC</dt>";
             echo "<dd>".$this->fmtMultipleAddresses($this->message->cc())."</dd>";
         }
