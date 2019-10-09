@@ -37,12 +37,13 @@ $(() => {
         var $contents = $iframe.contents();
         //set height if it isn't loading
         if (!$iframe.is('.loading') || ($iframe.is('.loading') && !$iframe.is('.loaded'))) {
-            var height = $contents.find('html').get(0).offsetHeight;
-            if (height && height != $contents.find('html').attr('data-ifheight')) {
-                $contents.find('html').attr('data-ifheight',height);
-                $iframe.animate({
-                    height: height+'px'
-                }),'fast';
+            if ($contents.find('html').get(0)) {
+                var height = $contents.find('html').get(0).offsetHeight;
+                if (height != $iframe.height()) {
+                    $iframe.animate({
+                        height: height+'px'
+                    }),'fast';
+                }
             }
         }
     };
