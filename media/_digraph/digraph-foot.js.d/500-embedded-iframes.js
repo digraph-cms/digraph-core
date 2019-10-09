@@ -37,13 +37,18 @@ $(() => {
         var $contents = $iframe.contents();
         //set height if it isn't loading
         if (!$iframe.is('.loading') || ($iframe.is('.loading') && !$iframe.is('.loaded'))) {
-            if ($contents.find('html').get(0)) {
-                var height = $contents.find('html').get(0).offsetHeight;
-                if (height != $iframe.height()) {
-                    $iframe.animate({
-                        height: height+'px'
-                    }),'fast';
-                }
+            //only continue if html tag exists
+            if (!$contents.find('html').get(0)) {
+                return;
+            }
+            //get height from html tag
+            var height = $contents.find('html').get(0).offsetHeight;
+            //set height
+            if ((height || !$iframe.is('.resized')) && height != $iframe.height()) {
+                $iframe.addClass('resized');
+                $iframe.animate({
+                    height: height+'px'
+                }),'fast';
             }
         }
     };
