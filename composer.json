@@ -9,7 +9,7 @@
     }],
     "require": {
         "php": ">=7.1",
-        "byjoby/destructr": "^1",
+        "byjoby/destructr": "^1.4",
         "byjoby/formward": "dev-master",
         "byjoby/html-object-strings": "dev-master",
         "byjoby/sesh": "^0.1.0",

@@ -67,6 +67,7 @@ actions:
     '*': []
     _controlpanel:
       config: _controlpanel/config
+      content: _controlpanel/content
       edges: _controlpanel/edges
       filestorecleanup: _filestorecleanup/display
       logging: _logging/display

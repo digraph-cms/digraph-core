@@ -135,6 +135,7 @@ urls:
     '*/*': !noun !verb
     _controlpanel/add: add !arg_type
     _controlpanel/config: Current configuration
+    _controlpanel/content: Content
     _controlpanel/display: Control panel
     _controlpanel/sitemap: Site map
     _controlpanel/edges: Manage all edges
