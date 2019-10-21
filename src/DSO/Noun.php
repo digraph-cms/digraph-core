@@ -10,6 +10,7 @@ class Noun extends DSO implements NounInterface
     const SLUG_ENABLED = false;
     const FILESTORE = false;
     const ROUTING_NOUNS = [];
+    const SLUG_ID_LENGTH = 4;
 
     public function __construct(array $data = null, DSOFactoryInterface &$factory = null)
     {

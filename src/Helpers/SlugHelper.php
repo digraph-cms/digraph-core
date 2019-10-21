@@ -120,7 +120,8 @@ EOT;
             }
         }
         // pull vars from noun
-        $vars['id'] = $noun['dso.id'];
+        $vars['id'] = substr($noun['dso.id'], 0, $noun::SLUG_ID_LENGTH);
+        $vars['id-full'] = $noun['dso.id'];
         $vars['name'] = $noun->name();
         $vars['cdate'] = date('Ymd', $noun['dso.created.date']);
         $vars['cdatetime'] = date('YmdHi', $noun['dso.created.date']);
