@@ -16,6 +16,10 @@
   a {
     text-decoration: none;
     display: block;
+    max-width: 20em;
+    white-space: nowrap;
+    overflow: hidden;
+    overflow: ellipse;
 
     &:hover {
       text-decoration: underline;
