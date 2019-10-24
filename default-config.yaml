@@ -557,13 +557,6 @@ users:
       config:
         class: Digraph\Users\GroupSources\ConfigGroups
         args: []
-  namespacing:
-    # possible values for users.namespacing.mode
-    # auth: one namespace for public, one for authenticated users
-    # id: full user ID, which is guaranteed to be unique
-    # username: just the username portion, which *should* all be the same person via different auth methods
-    # groups: namespaced based on full list of groups users belong to, groups can be ignored by adding them to users.namespacing.ignore
-    mode: groups
 
 fullmunge:
   - setup

@@ -52,6 +52,63 @@ class Actions extends AbstractHelper
         return $this->results($noun, $rules);
     }
 
+    public function html($noun)
+    {
+        if (!$this->cms->config['actions.uiforguests'] && !$this->cms->helper('users').id()) {
+            return '';
+        }
+        $actions = $this->get($noun);
+        $addable = [];
+
+        //figure out title, addables
+        $title = $this->cms->helper('strings')->string('actionbar.title.default');
+        if ($object = $this->cms->read($noun)) {
+            $type = $object['dso.type'];
+            $addable = $this->cms->helper('actions')->addable($object['dso.type']);
+            $addable_url = $object->url('add', [], true)->string();
+            $title = $object->name();
+        } elseif ($noun == '_user/guest') {
+            $title = $this->cms->helper('strings')->string('actionbar.title.guest');
+        } elseif ($noun == '_user/signedin') {
+            if ($user = $this->cms->helper('users')->user()) {
+                $title = 'Welcome, '.$user->name();
+            } else {
+                $title = $this->cms->helper('strings')->string('actionbar.title.guest');
+            }
+        }
+
+        //exit out if no actions or addables
+        if (!$actions && !$addable) {
+            return '';
+        }
+
+        //build and output html
+        ob_start();
+        echo "<div class='digraph-actionbar active'>";
+        //title
+        echo "<div class='digraph-actionbar-title'>$title</div>";
+        //actions
+        foreach ($actions as $action) {
+            $url = $this->cms->helper("urls")->parse($action);
+            echo $url->html();
+        }
+        //addable
+        if ($addable) {
+            echo "<select class='linker'>";
+            foreach ($addable as $type) {
+                $url = $addable_url.'?type='.$type;
+                echo "<option value='$url'>";
+                echo str_replace('!type', $type, $this->cms->helper('strings')->string('actionbar.adder_item'));
+                echo "</option>";
+            }
+            echo "</select>";
+        }
+        echo "</div>";
+        $out = ob_get_contents();
+        ob_end_clean();
+        return $out;
+    }
+
     /**
      * The most basic implementation, designed for use in actionbars. For proper
      * nouns it pulls from actions.proper config, and for common nouns it pulls
