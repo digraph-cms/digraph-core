@@ -54,7 +54,7 @@ class Actions extends AbstractHelper
 
     public function html($noun)
     {
-        if (!$this->cms->config['actions.uiforguests'] && !$this->cms->helper('users').id()) {
+        if (!$this->cms->config['actions.uiforguests'] && !$this->cms->helper('users')->id()) {
             return '';
         }
         $actions = $this->get($noun);
