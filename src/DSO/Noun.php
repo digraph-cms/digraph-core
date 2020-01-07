@@ -181,11 +181,11 @@ class Noun extends DSO implements NounInterface
             //short-circuit if edge helper has no children for this noun
             return [];
         }
-        $cids = array_map([$search, 'quote'], $cids);
-        $cids = '${dso.id} in ('.implode(',', $cids).')';
         /* set up search */
         $search = $this->factory->search();
         /* main search */
+        $cids = array_map([$search, 'quote'], $cids);
+        $cids = '${dso.id} in ('.implode(',', $cids).')';
         $search->where($cids);
         /* if no sort rule, pull it from our own config */
         if (!$sortRule) {
