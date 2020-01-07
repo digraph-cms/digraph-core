@@ -181,7 +181,8 @@ class Noun extends DSO implements NounInterface
             //short-circuit if edge helper has no children for this noun
             return [];
         }
-        $cids = '${dso.id} in (\''.implode('\',\'', $cids).'\')';
+        $cids = array_map([$search, 'quote'], $cids);
+        $cids = '${dso.id} in ('.implode(',', $cids).')';
         /* set up search */
         $search = $this->factory->search();
         /* main search */

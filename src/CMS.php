@@ -89,7 +89,8 @@ class CMS
                 }
                 $qids = array_unique($qids);
             }
-            $search->where('${dso.id} in (\''.implode("','", $qids).'\')');
+            $qids = array_map([$search, 'quote'], $qids);
+            $search->where('${dso.id} in ('.implode(",", $qids).')');
             $result = $search->execute();
             if ($result) {
                 $this->readCache[$id] = $result;
@@ -116,7 +117,8 @@ class CMS
                 }
                 $qids = array_unique($qids);
             }
-            $search->where('${dso.id} in (\''.implode("','", $qids).'\')');
+            $qids = array_map([$search, 'quote'], $qids);
+            $search->where('${dso.id} in ('.implode(",", $qids).')');
             $result = @array_shift($search->execute());
             if ($result) {
                 $this->readCache[$id] = $result;

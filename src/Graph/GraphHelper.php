@@ -167,7 +167,7 @@ class GraphHelper extends \Digraph\Helpers\AbstractHelper
                         return $e instanceof Noun;
                     }
                 );
-            }else {
+            } else {
                 //for specified ordering, let SQL do our ordering
                 $s->order($order);
                 return $s->execute();
@@ -192,7 +192,8 @@ class GraphHelper extends \Digraph\Helpers\AbstractHelper
         //use DSO search
         $search = $this->cms->factory()->search();
         //set up where clause
-        $search->where('${dso.id} in (\''.implode("','", $ids).'\')');
+        $ids = array_map([$search, 'quote'], $ids);
+        $search->where('${dso.id} in ('.implode(",", $ids).')');
         //return search object
         return $search;
     }
