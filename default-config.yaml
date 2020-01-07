@@ -77,11 +77,11 @@ actions:
       urls: _controlpanel/slugs
   proper:
     '*':
-      delete: !id/delete
-      edges: !id/edges
-      edit: !id/edit
-      rawedit: !id/rawedit
-      urls: !id/slugs
+      delete: "!id/delete"
+      edges: "!id/edges"
+      edit: "!id/edit"
+      rawedit: "!id/rawedit"
+      urls: "!id/slugs"
   common:
     '*': []
     '_user/guest':
@@ -412,11 +412,11 @@ navigation:
     fallback: home
     # rules for noun/verb combinations with proper nouns
     proper:
-      '*/*': !noun/display
+      '*/*': "!noun/display"
       '*/display': false
     # rules for noun/verb combinations with common nouns
     common:
-      '*/*': !noun/display
+      '*/*': "!noun/display"
       '*/display': false
       _controlpanel/display: _controlpanel/display
       _controlpanel/mail_errors: _controlpanel/mail
