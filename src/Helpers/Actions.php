@@ -95,6 +95,7 @@ class Actions extends AbstractHelper
         //addable
         if ($addable) {
             echo "<select class='linker'>";
+            echo "<option>-- add --</option>";
             foreach ($addable as $type) {
                 $url = $addable_url.'?type='.$type;
                 echo "<option value='$url'>";
