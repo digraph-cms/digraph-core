@@ -1,0 +1,19 @@
+.sticky-block {
+    @include .digraph-block;
+    padding: $(spacing_tight);
+    background-color: $(color_background);
+}
+
+.sticky-block-wrapper {
+    &.stuck {
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        box-shadow: 0 0 $(spacing_base) $(color_shade);
+    }
+
+    .sticky-block {
+        margin: 0 auto;
+    }
+}

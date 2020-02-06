@@ -23,14 +23,14 @@
 @fragment button {
   #(0) {
     display: inline-block;
-    padding: $(spacing_base);
+    padding: $(spacing_tight);
     box-sizing: border-box;
     background: #(1);
     color: #fff !important;
     text-decoration: none !important;
     border: 0;
     font-weight: bold;
-    font-size: 1.5em;
+    font-size: 1em;
     cursor: pointer;
     border: 0.2em solid s-adjust(#(1) -25);
     border-radius: $(border_radius_accent);
@@ -49,17 +49,18 @@
     &[disabled] {
       background: #fafafa;
       border-color: #eee;
-      color:#666!important;;
-      cursor:default;
+      color: #666 !important;
+      ;
+      cursor: default;
     }
 
     &.loading {
-      text-indent:200%;
-      white-space:nowrap;
-      overflow:hidden;
+      text-indent: 200%;
+      white-space: nowrap;
+      overflow: hidden;
       background:#fafafa url({{url.base}}digraph/loading-dark.gif);
-      background-position:center center;
-      background-repeat:no-repeat;
+      background-position: center center;
+      background-repeat: no-repeat;
     }
   }
 }

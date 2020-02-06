@@ -506,6 +506,7 @@ theme:
       line_height_base: 1.4em
       line_height_compact: 1.3em
       spacing_base: 1rem
+      spacing_tight: 0.5rem;
 
 # template/display configuration options
 templates:

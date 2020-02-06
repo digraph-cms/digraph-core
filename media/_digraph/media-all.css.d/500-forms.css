@@ -22,19 +22,21 @@
   border-radius: $(border_radius_accent);
 
   &:first-child {
-    margin-top:0;
+    margin-top: 0;
   }
 
   &:last-child {
-    margin-bottom:0;
+    margin-bottom: 0;
   }
 
   &.class-DateAndTime {
-    background:transparent;
+    background: transparent;
   }
 
-  .Container, .FieldWrapper {
+  .Container,
+  .FieldWrapper {
     margin: $(spacing_base) 0;
+
     &:last-child,
     &.FieldWrapper-class-Submit {
       margin-bottom: 0;
@@ -128,7 +130,9 @@
   vertical-align: middle;
 }
 
-.Form input, .Form textarea, .Form select {
+.Form input,
+.Form textarea,
+.Form select {
   display: block;
   box-sizing: border-box;
   width: 100%;
@@ -216,24 +220,28 @@ DateAndTime fields
 /*
 progressively-enhanced ordering field
  */
- .FieldWrapper-formward-ordering-field.js-active > textarea {
+.FieldWrapper-formward-ordering-field.js-active>textarea {
   display: none;
 }
 
 .FieldWrapper-formward-ordering-field {
-  ul,.form-ordering-item {
+
+  ul,
+  .form-ordering-item {
     max-width: none;
     width: 100%:
   }
+
   .filestore-card {
     background: transparent;
     max-width: 100%;
   }
+
   .Container {
-    margin-bottom:0 !important;
-    padding:0;
-    background:transparent;
-    font-size:0.8em;
+    margin-bottom: 0 !important;
+    padding: 0;
+    background: transparent;
+    font-size: 0.8em;
   }
 }
 
@@ -286,11 +294,13 @@ progressively-enhanced ordering field
   opacity: 0.5;
   background: #fff;
   border-radius: $(border_radius_accent);
+
   &:hover {
     background: $(color_error);
     color: #fff;
     opacity: 1;
   }
+
   &:after {
     font-family: "Font Awesome 5 Free";
     content: "\f2ed";
@@ -309,10 +319,12 @@ progressively-enhanced ordering field
 .FieldWrapper-formward-ordering-field .deleted .delete-button {
   background: #fff;
   color: $(color_error);
+
   &:hover {
     background: $(color_confirmation);
     color: #fff;
   }
+
   &:after {
     content: "\f2ea";
     font-weight: 900;
@@ -356,9 +368,8 @@ progressively-enhanced ordering field
   display: none;
 }
 
-.Form .Container.class-ContentDefault div.FieldWrapper-class-ContentTextarea
-{
-  margin-bottom:0 !important;
+.Form .Container.class-ContentDefault div.FieldWrapper-class-ContentTextarea {
+  margin-bottom: 0 !important;
 }
 
 /* buttons */
