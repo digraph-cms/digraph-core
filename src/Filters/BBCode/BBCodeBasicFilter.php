@@ -119,7 +119,7 @@ class BBCodeBasicFilter extends AbstractBBCodeFilter
     public function tag_url($context, $text, $args)
     {
         $url = $text;
-        if ($args['equals']) {
+        if (@$args['equals']) {
             //if a url is specified in equals, use it
             $url = $args['equals'];
             //if url is relative, try to parse it, and use parsed version
@@ -134,7 +134,7 @@ class BBCodeBasicFilter extends AbstractBBCodeFilter
         } else {
             //otherwise use context to generate url/text as needed
             if ($context = $this->cms->read($context)) {
-                $url = $context->url($args['verb']);
+                $url = $context->url(@$args['verb']);
                 if (!$text) {
                     $text = $url['text'];
                 }
