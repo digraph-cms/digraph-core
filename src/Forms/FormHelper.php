@@ -137,9 +137,9 @@ class FormHelper extends AbstractHelper
         uasort(
             $map,
             function ($a, $b) {
-                if ($a['weight'] == $b['weight']) {
+                if (@$a['weight'] == @$b['weight']) {
                     return 0;
-                } elseif ($a['weight'] < $b['weight']) {
+                } elseif (@$a['weight'] < @$b['weight']) {
                     return -1;
                 } else {
                     return 1;
