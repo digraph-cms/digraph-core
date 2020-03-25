@@ -4,6 +4,7 @@ namespace Digraph\Media;
 
 use Digraph\Helpers\AbstractHelper;
 use Digraph\Urls\Url;
+use MatthiasMullie\Minify;
 
 class MediaHelper extends AbstractHelper
 {
@@ -135,10 +136,19 @@ class MediaHelper extends AbstractHelper
         $content = $this->cms->helper('templates')->renderString($content, $this->fields());
         //run through css crush
         if ($this->cms->config['media.css.crush-enabled']) {
+            $options = $this->cms->config['media.css.crush-options'];
+            if ($this->cms->config['media.css.minify']) {
+                $options['minify'] = true;
+            }
             $content = csscrush_string(
                 $content,
-                $this->cms->config['media.css.crush-options']
+                $options
             );
+        }
+        //minify if enabled
+        if ($this->cms->config['media.css.minify']) {
+            $minifier = new Minify\CSS($content);
+            $content = $minifier->minify();
         }
         //set content
         if ($original != $content) {
@@ -201,6 +211,11 @@ class MediaHelper extends AbstractHelper
         );
         //run through template helper
         $content = $this->cms->helper('templates')->renderString($content, $this->fields());
+        //minify if enabled
+        if ($this->cms->config['media.js.minify']) {
+            $minifier = new Minify\JS($content);
+            $content = $minifier->minify();
+        }
         //set content
         if ($original != $content) {
             $out['content'] = $content;
