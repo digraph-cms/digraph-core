@@ -33,6 +33,12 @@
     background: transparent;
   }
 
+  &.TransparentContainer {
+    padding: 0;
+    background: transparent;
+    border-radius: 0;
+  }
+
   .Container,
   .FieldWrapper {
     margin: $(spacing_base) 0;

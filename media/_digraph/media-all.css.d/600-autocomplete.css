@@ -1,0 +1,23 @@
+.autocomplete-item {
+    line-height: 1.4;
+    font-size: 1.2rem;
+    font-weight: normal;
+
+    .autocomplete-item-url {
+        opacity: 0.7;
+        font-size: 0.7em;
+    }
+}
+
+.autocomplete-selection {
+    cursor: text;
+    border: 1px solid $(color_shade);
+    border-radius: $(border_radius_accent);
+    background: #fff;
+    padding: 0.5em;
+}
+
+.FieldWrapper-AutocompleteUserIndex,
+.FieldWrapper-AutocompleteActual {
+    display: none;
+}

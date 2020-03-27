@@ -348,6 +348,8 @@ permissions:
       - allow group webmaster, editor
     _routemedia/*:
       - allow all
+    _json/*:
+      - allow all
     _trash/*:
       - deny all
       - allow group webmaster, editor

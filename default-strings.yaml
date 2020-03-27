@@ -144,6 +144,8 @@ urls:
     _controlpanel/mail_errors: Mail errors
     _filestorecleanup/display: Filestore cleanup
     _filestorecleanup/download: Download file
+    _json/*: "!verb"
+    _json/display: JSON API
     _logging/display: Logs
     _logging/entry: Log entry
     _controlpanel/slugs: Manage all URLs

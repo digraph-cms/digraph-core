@@ -11,10 +11,12 @@ delete handling
  */
  if ($delete = $package['url.args.delete']) {
      if ($delete = json_decode($delete, true)) {
-         list($start, $end, $type) = $delete;
-         if ($package['url.args.hash'] == md5($token.$start.$end.$type)) {
+         list($start, $end) = $delete;
+         if ($package['url.args.hash'] == md5($token.$start.$end)) {
              if ($e->delete($start, $end)) {
-                 $n->flashConfirmation("Deleted edge <code>$start =&gt; $end</code>");
+                 $start = $cms->read($start)->link();
+                 $end = $cms->read($end)->link();
+                 $n->flashConfirmation("Deleted all edges from $start to $end");
              }
          } else {
              $n->flashError('Incorrect link hash, please try again');
@@ -32,14 +34,17 @@ parent-adding form
  */
 $pform = $f->form('Add parent');
 $pform->addClass('compact-form');
-$pform['noun'] = $f->field('noun', '');
+$pform['noun'] = $f->field('noun', 'Noun');
 $pform['noun']->required(true);
 $pform['type'] = $f->field('text', 'Edge type');
+$pform['type']->default('normal');
 if ($pform->handle()) {
-    if ($e->create($pform['noun']->value(), $noun['dso.id'], $pform['type']->value())) {
-        $p = $cms->read($pform['noun']->value())->link();
-        $c = $noun->link();
-        $n->flashConfirmation("Created edge from $p to $c");
+    if ($target = $cms->read($pform['noun']->value())) {
+        if ($e->create($target['dso.id'], $noun['dso.id'], $pform['type']->value())) {
+            $p = $target->link();
+            $c = $noun->link();
+            $n->flashConfirmation("Created edge from $p to $c");
+        }
     }
     $package->redirect($package->url());
     return;
@@ -50,14 +55,17 @@ child-adding form
  */
 $cform = $f->form('Add child');
 $cform->addClass('compact-form');
-$cform['noun'] = $f->field('noun', '');
+$cform['noun'] = $f->field('noun', 'Noun');
 $cform['noun']->required(true);
 $cform['type'] = $f->field('text', 'Edge type');
+$cform['type']->default('normal');
 if ($cform->handle()) {
-    if ($e->create($noun['dso.id'], $cform['noun']->value(), $cform['type']->value())) {
-        $c = $cms->read($cform['noun']->value())->link();
-        $p = $noun->link();
-        $n->flashConfirmation("Created edge from $p to $c");
+    if ($target = $cms->read($cform['noun']->value())) {
+        if ($e->create($noun['dso.id'], $target['dso.id'], $cform['type']->value())) {
+            $c = $target->link();
+            $p = $noun->link();
+            $n->flashConfirmation("Created edge from $p to $c");
+        }
     }
     $package->redirect($package->url());
     return;
@@ -99,8 +107,8 @@ function printEdges($edges, $reverse=false)
             $end = $edge->end();
         }
         $durl = $package->url();
-        $durl['args.delete'] = json_encode([$start, $end, $type]);
-        $durl['args.hash'] = md5($token.$start.$end.$type);
+        $durl['args.delete'] = json_encode([$start, $end]);
+        $durl['args.hash'] = md5($token.$start.$end);
         echo "<tr>";
         $dn = $reverse?$cms->read($start, false):$cms->read($end, false);
         if ($dn) {

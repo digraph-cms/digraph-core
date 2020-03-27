@@ -8,7 +8,8 @@ var digraph = {
   user: {
     id: null,
     sid: null
-  }
+  },
+  url: '{{config.url.base}}'
 };
 
 /**
