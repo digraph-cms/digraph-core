@@ -1,6 +1,7 @@
 digraph.autocomplete = {};
 digraph.autocomplete.noun = {
-    source: digraph.url + '_json/autocomplete-noun'
+    source: digraph.url + '_json/autocomplete-noun',
+    source_definitive: digraph.url+'_json/autocomplete-noun-definitive'
 };
 $(() => {
     var renderItem = function (item) {
@@ -16,8 +17,7 @@ $(() => {
         var $input = $this.find('.AutocompleteActual');
         var $wrapper = $('<div class="autocomplete-wrapper">');
         var $userInput = $this.find('.AutocompleteUser');
-        var $userInputIndex = $this.find('.AutocompleteUserIndex');
-        var $selection = $('<div class="autocomplete-selection">').insertAfter($userInput).hide();
+        var $selection = $('<div class="autocomplete-selection" tabindex="0">').insertAfter($userInput).hide();
         // set up options
         var readyOptions = {};
         var options = digraph.autocomplete[$this.attr('data-autocomplete')];
@@ -32,20 +32,52 @@ $(() => {
             $selection.empty().append(renderItem(ui.item)).show();
             $input.val(ui.item.value);
             $userInput.hide();
+            $userInput.attr('data-user-val', $userInput.val());
             if (select) {
-                select(event, ui);
+                select(ui);
             }
         }
+        // custom focus callback, mostly to cancel updating user input field
+        let focus = readyOptions.focus;
+        readyOptions.focus = function (event, ui) {
+            if (focus) {
+                focus(ui);
+            }
+            event.preventDefault();
+            return false;
+        }
         // custom ui events
-        $selection.click(function(){
-            $selection.empty().hide();
-            $input.val('');
-            $userInput.val('');
+        $userInput.keyup(function(){
+            $userInput.attr('data-user-val', $userInput.val())
+        });
+        $selection.focus(function(){
+            $selection.hide();
             $userInput.show();
             $userInput.focus();
+            $userInput.val($userInput.attr('data-user-val'));
+            $userInput.autocomplete('search',$userInput.val());
+        });
+        $userInput.blur(function(){
+            $selection.show();
+            $userInput.hide();
+            $userInput.val($userInput.attr('data-user-val'));
         });
         // initiate autocomplete
         $userInput.autocomplete(readyOptions);
+        // check for filled value, try to locate from definitive source
+        if ($input.val()) {
+            $.getJSON(
+                readyOptions.source_definitive,
+                {'term': $input.val()},
+                function(item) {
+                    if (item) {
+                        readyOptions.select({},{
+                            'item': item
+                        });
+                    }
+                }
+            );
+        }
         // custom rendering
         $userInput.autocomplete("instance")._renderItem = function (ul, item) {
             return $('<li>')

@@ -29,11 +29,9 @@ class AbstractAutocomplete extends Container
         $this->addClass('DigraphAutocomplete');
         $this->addClass('TransparentContainer');
         $this->attr('data-autocomplete', static::SOURCE);
-        $this['actual'] = new Input('Actual input');
-        $this['actual']->addClass('AutocompleteActual');
         $this['user'] = new Input($label);
         $this['user']->addClass('AutocompleteUser');
-        $this['userindex'] = new Input('User input selected item');
-        $this['userindex']->addClass('AutocompleteUserIndex');
+        $this['actual'] = new Input('Actual input');
+        $this['actual']->addClass('AutocompleteActual');
     }
 }

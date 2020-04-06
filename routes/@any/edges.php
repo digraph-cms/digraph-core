@@ -37,7 +37,6 @@ $pform->addClass('compact-form');
 $pform['noun'] = $f->field('noun', 'Noun');
 $pform['noun']->required(true);
 $pform['type'] = $f->field('text', 'Edge type');
-$pform['type']->default('normal');
 if ($pform->handle()) {
     if ($target = $cms->read($pform['noun']->value())) {
         if ($e->create($target['dso.id'], $noun['dso.id'], $pform['type']->value())) {
@@ -58,7 +57,6 @@ $cform->addClass('compact-form');
 $cform['noun'] = $f->field('noun', 'Noun');
 $cform['noun']->required(true);
 $cform['type'] = $f->field('text', 'Edge type');
-$cform['type']->default('normal');
 if ($cform->handle()) {
     if ($target = $cms->read($cform['noun']->value())) {
         if ($e->create($noun['dso.id'], $target['dso.id'], $cform['type']->value())) {

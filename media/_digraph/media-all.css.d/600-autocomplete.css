@@ -10,6 +10,7 @@
 }
 
 .autocomplete-selection {
+    display: block;
     cursor: text;
     border: 1px solid $(color_shade);
     border-radius: $(border_radius_accent);
