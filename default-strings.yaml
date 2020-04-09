@@ -122,6 +122,7 @@ urls:
   proper:
     '*/*': "!verb"
     '*/add': add !arg_type
+    '*/copy': copy
     '*/display': "!name"
     '*/edges': edges
     '*/file': file

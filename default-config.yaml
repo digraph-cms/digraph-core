@@ -77,6 +77,7 @@ actions:
       urls: _controlpanel/slugs
   proper:
     '*':
+      copy: "!id/copy"
       delete: "!id/delete"
       edges: "!id/edges"
       edit: "!id/edit"
@@ -338,6 +339,8 @@ permissions:
       - allow group webmaster
     '*/rawedit':
       - allow group webmaster
+    '*/copy':
+      - allow group webmaster, editor
     '*/edit':
       - allow group webmaster, editor
     '*/order':
