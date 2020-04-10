@@ -69,7 +69,6 @@ actions:
       config: _controlpanel/config
       content: _controlpanel/content
       edges: _controlpanel/edges
-      filestorecleanup: _filestorecleanup/display
       logging: _logging/display
       mail: _controlpanel/mail
       sitemap: _controlpanel/sitemap
@@ -356,9 +355,6 @@ permissions:
     _trash/*:
       - deny all
       - allow group webmaster, editor
-    _filestorecleanup/*:
-      - deny all
-      - allow group webmaster
     _controlpanel/*:
       - deny all
       - allow group webmaster
@@ -428,7 +424,6 @@ navigation:
       _controlpanel/mail_queue: _controlpanel/mail
       _controlpanel/mail_sent: _controlpanel/mail
       _cron/display: _controlpanel/display
-      _filestorecleanup/display: _controlpanel/display
       _logging/display: _controlpanel/display
       _trash/display: _controlpanel/display
       _trash/item: _trash/factory?factory=!arg_factory

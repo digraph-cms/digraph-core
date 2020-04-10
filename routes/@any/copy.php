@@ -18,13 +18,14 @@ if ($parent = $noun->parent()) {
 echo $form;
 
 if ($form->handle()) {
-    $copy = copyNoun($noun);
+    $copy = copyNoun($noun,$form['parent']->value());
     $cms->helper('edges')->create($form['parent']->value(), $copy['dso.id']);
-    $n->flashConfirmation($copy->name().' created');
-    $package->redirect($copy->url()->__toString());
+    $package->redirect(
+        $copy->hook_postAddUrl()
+    );
 }
 
-function copyNoun($noun)
+function copyNoun($noun, string $parentID = null)
 {
     global $cms;
     // copy noun itself, including all data except dso.id
@@ -33,6 +34,11 @@ function copyNoun($noun)
     $copy = $cms->factory()->create($copy);
     // insert changes
     $copy->insert();
+    if ($parentID) {
+        $cms->helper('edges')->create($parentID, $copy['dso.id']);
+    }
+    $cms->helper('hooks')->noun_trigger($copy, 'added');
+    $cms->helper('hooks')->noun_trigger($copy, 'copied');
     //return copy
     return $copy;
 }

@@ -109,74 +109,6 @@ class FileStoreHelper extends AbstractHelper
     }
 
     /**
-     * Call cleanup() and then attempt to actually delete the cleanup-able files
-     */
-    public function cleanupRun() : array
-    {
-        //clean up files
-        $files = $this->cleanup();
-        $files = array_map(
-            function ($e) {
-                $dir = $e['dir'];
-                @unlink("$dir/file");
-                @unlink("$dir/names");
-                @unlink("$dir/uses");
-                @unlink("$dir/lock");
-                $e['deleted'] = @rmdir($dir);
-                return $e;
-            },
-            $files
-        );
-        //clean up empty directories
-        $this->cleanupEmptyDirs();
-        //return file result
-        return $files;
-    }
-
-    protected function cleanupEmptyDirs($dir = null)
-    {
-        if ($dir === null) {
-            $dir = $this->cms->config['filestore.path'];
-        }
-        //recurse
-        foreach (glob("$dir/*") as $s) {
-            if (is_dir($s)) {
-                $this->cleanupEmptyDirs($s);
-            }
-        }
-        //remove if empty
-        $children = glob("$dir/*");
-        if (!$children) {
-            rmdir($dir);
-        }
-    }
-
-    /**
-     * returns an array of all the files that are currently not referenced
-     */
-    public function cleanup() : array
-    {
-        $dirs = glob($this->cms->config['filestore.path'].'/*/*');
-        $out = [];
-        foreach ($dirs as $dir) {
-            if (@filesize("$dir/uses") == 0) {
-                $names = [];
-                if ($names = trim(@file_get_contents("$dir/names"))) {
-                    $names = explode("\n", $names);
-                }
-                $out[] = [
-                    'dir' => $dir,
-                    'size' => @filesize("$dir/file"),
-                    'hash' => preg_replace('/.+\//', '', $dir),
-                    'mtime' => @filemtime("$dir/file"),
-                    'names' => $names
-                ];
-            }
-        }
-        return $out;
-    }
-
-    /**
      * Set up a package to output a FileStoreFile
      */
     public function output(&$package, FileStoreFile $file)
@@ -288,9 +220,6 @@ class FileStoreHelper extends AbstractHelper
                 $file = $files[$uniqid];
                 //identify the files we'll need
                 $dir = $this->dir($file['hash'], false);
-                $usesFile = $dir.'/uses';
-                //remove this uniqid from the uses file
-                $this->removeLineFromFile($usesFile, $noun['dso.id'].'.'.$file['uniqid']);
                 //remove from array and save
                 unset($noun["filestore.$path.$uniqid"]);
                 $noun->update();
@@ -374,17 +303,8 @@ class FileStoreHelper extends AbstractHelper
         );
     }
 
-    public function addFileUse($hash, $name)
-    {
-        $this->putLineInFile(
-            $this->dir($hash).'/uses',
-            $name
-        );
-    }
-
     /**
-     * Copy an existing file into the filestore, without adding any uses or
-     * filenames data.
+     * Copy an existing file into the filestore, without adding filename data
      *
      * @param string $filename path to existing file
      * @return boolean
@@ -462,8 +382,6 @@ class FileStoreHelper extends AbstractHelper
         $this->storeFile($file['file']);
         //add this filename to the filenames file
         $this->addFileName($file['hash'], $file['name']);
-        //add this uniqid to the uses file
-        $this->addFileUse($file['hash'], $noun['dso.id'].'.'.$file['uniqid']);
         //remove filename from array, because it gets regenerated when it's retrieved
         //that way moving storage locations is easier
         unset($file['file']);

@@ -143,8 +143,6 @@ urls:
     _controlpanel/mail_queue: Mail queue
     _controlpanel/mail_sent: Mail send log
     _controlpanel/mail_errors: Mail errors
-    _filestorecleanup/display: Filestore cleanup
-    _filestorecleanup/download: Download file
     _json/*: "!verb"
     _json/display: JSON API
     _logging/display: Logs
