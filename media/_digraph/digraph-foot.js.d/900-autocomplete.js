@@ -9,6 +9,9 @@ $(() => {
         if (item['url']) {
             $div.append('<div class="autocomplete-item-url">' + item.url + '</div>');
         }
+        if (item['desc']) {
+            $div.append('<div class="autocomplete-item-desc">' + item.desc + '</div>');
+        }
         return $div;
     }
     $('.DigraphAutocomplete').each(function (index) {
