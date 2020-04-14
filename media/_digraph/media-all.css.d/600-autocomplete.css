@@ -3,8 +3,16 @@
     font-size: 1.2rem;
     font-weight: normal;
 
+    .autocomplete-item-label {
+        font-weight: bold;
+    }
+
     .autocomplete-item-url {
         opacity: 0.7;
+        font-size: 0.7em;
+    }
+
+    .autocomplete-item-desc {
         font-size: 0.7em;
     }
 }

@@ -1,13 +1,13 @@
 digraph.autocomplete.noun = {
     source: digraph.url + '_json/autocomplete-noun',
-    source_definitive: digraph.url+'_json/autocomplete-noun-definitive'
+    source_definitive: digraph.url + '_json/autocomplete-noun-definitive'
 };
 $(() => {
     var renderItem = function (item) {
         var $div = $('<div class="autocomplete-item">')
             .append('<div class="autocomplete-item-label">' + item.label + '</div>');
         if (item['url']) {
-            $div.append('<div class="autocomplete-item-url">' + item.url + '</div>');
+            $div.append('<div class="autocomplete-item-url">' + item.desc + '</div>');
         }
         if (item['desc']) {
             $div.append('<div class="autocomplete-item-desc">' + item.desc + '</div>');
@@ -49,17 +49,17 @@ $(() => {
             return false;
         }
         // custom ui events
-        $userInput.keyup(function(){
+        $userInput.keyup(function () {
             $userInput.attr('data-user-val', $userInput.val())
         });
-        $selection.focus(function(){
+        $selection.focus(function () {
             $selection.hide();
             $userInput.show();
             $userInput.focus();
             $userInput.val($userInput.attr('data-user-val'));
-            $userInput.autocomplete('search',$userInput.val());
+            $userInput.autocomplete('search', $userInput.val());
         });
-        $userInput.blur(function(){
+        $userInput.blur(function () {
             $selection.show();
             $userInput.hide();
             $userInput.val($userInput.attr('data-user-val'));
@@ -69,11 +69,12 @@ $(() => {
         // check for filled value, try to locate from definitive source
         if ($input.val()) {
             $.getJSON(
-                readyOptions.source_definitive,
-                {'term': $input.val()},
-                function(item) {
+                readyOptions.source_definitive, {
+                    'term': $input.val()
+                },
+                function (item) {
                     if (item) {
-                        readyOptions.select({},{
+                        readyOptions.select({}, {
                             'item': item
                         });
                     }
