@@ -16,7 +16,7 @@ $(() => {
         var $input = $this.find('.AutocompleteActual');
         var $wrapper = $('<div class="autocomplete-wrapper">');
         var $userInput = $this.find('.AutocompleteUser');
-        var $selection = $('<div class="autocomplete-selection" tabindex="0">').insertAfter($userInput).hide();
+        var $selection = $('<div class="autocomplete-selection" tabindex="0">&nbsp;</div>').insertAfter($userInput).hide();
         // set up options
         var readyOptions = {};
         var options = digraph.autocomplete[$this.attr('data-autocomplete')];
