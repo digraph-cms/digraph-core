@@ -9,7 +9,8 @@ var digraph = {
     id: null,
     sid: null
   },
-  url: '{{config.url.base}}'
+  url: '{{config.url.base}}',
+  autocomplete: {}
 };
 
 /**

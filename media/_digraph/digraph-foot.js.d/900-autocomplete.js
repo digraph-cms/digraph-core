@@ -1,4 +1,3 @@
-digraph.autocomplete = {};
 digraph.autocomplete.noun = {
     source: digraph.url + '_json/autocomplete-noun',
     source_definitive: digraph.url+'_json/autocomplete-noun-definitive'
