@@ -7,7 +7,7 @@ $(() => {
         var $div = $('<div class="autocomplete-item">')
             .append('<div class="autocomplete-item-label">' + item.label + '</div>');
         if (item['url']) {
-            $div.append('<div class="autocomplete-item-url">' + item.desc + '</div>');
+            $div.append('<div class="autocomplete-item-url">' + item.url + '</div>');
         }
         if (item['desc']) {
             $div.append('<div class="autocomplete-item-desc">' + item.desc + '</div>');

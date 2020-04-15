@@ -1,5 +1,4 @@
 <?php
-$package->noCache();
 $package->makeMediaFile('results.json');
 $q = $package['url.args.term'];
 $base = $cms->config['url.base'];
