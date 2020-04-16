@@ -48,7 +48,7 @@ EOT;
      * @param string $namespace namespace name
      * @return DatastoreNamespace
      */
-    public function &namespace(string $namespace)
+    public function namespace(string $namespace)
     {
         return new DatastoreNamespace($namespace, $this);
     }
