@@ -20,7 +20,7 @@ class SessionHelper extends AbstractHelper
 
     public function persistData($data, $noun, $verb, $args = [])
     {
-        $token = md5(serialize([$data, $noun, $verb, $args]));
+        $token = md5(rand());
         $args['pers_token'] = $token;
         $this->set('persistData.' . $token, $data);
         return $this->cms->helper('urls')->url(
