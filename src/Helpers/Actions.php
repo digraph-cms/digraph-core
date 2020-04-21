@@ -145,6 +145,9 @@ class Actions extends AbstractHelper
         }
         //extract matching rules
         $links = $rules['*'];
+        if ($object && isset($rules[$object['dso.type']])) {
+            $links = array_replace_recursive($links, $rules[$object['dso.type']]);
+        }
         if (isset($rules[$noun])) {
             $links = array_replace_recursive($links, $rules[$noun]);
         }
