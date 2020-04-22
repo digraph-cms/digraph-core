@@ -50,7 +50,7 @@ class FileStoreHelper extends AbstractHelper
                 $fn = $tmpfiles[$hash] = tempnam(sys_get_temp_dir(), 'import');
                 file_put_contents($fn, $data);
             } else {
-                $log[] = 'ERROR: Hash doesn\'t match for filestore file '.$hash;
+                $log[] = 'ERROR: Hash doesn\'t match for filestore file ' . $hash;
             }
         }
         //re-add all files from imported nouns
@@ -64,7 +64,7 @@ class FileStoreHelper extends AbstractHelper
                         }
                     }
                     if (!$fname) {
-                        $log[] = 'ERROR: no valid file found matching hash '.$file->hash();
+                        $log[] = 'ERROR: no valid file found matching hash ' . $file->hash();
                         continue;
                     }
                     $arr = [
@@ -72,9 +72,9 @@ class FileStoreHelper extends AbstractHelper
                         'name' => $file->name(),
                         'file' => $fname,
                         'time' => $file->time(),
-                        'size' => $file->size()
+                        'size' => $file->size(),
                     ];
-                    $log[] = 'imported file: '.implode(', ', [$file->uniqid(),$file->name()]);
+                    $log[] = 'imported file: ' . implode(', ', [$file->uniqid(), $file->name()]);
                     $this->import($noun, $arr, $path);
                 }
             }
@@ -92,7 +92,7 @@ class FileStoreHelper extends AbstractHelper
         } catch (\Exception $e) {
             return null;
         }
-        if (!is_file($dir.'/file')) {
+        if (!is_file($dir . '/file')) {
             return null;
         }
         if ($name = trim(@file_get_contents("$dir/names"))) {
@@ -104,7 +104,7 @@ class FileStoreHelper extends AbstractHelper
         return [
             'dir' => $dir,
             'file' => "$dir/file",
-            'name' => $name
+            'name' => $name,
         ];
     }
 
@@ -125,7 +125,7 @@ class FileStoreHelper extends AbstractHelper
     /**
      * List all the paths (namespaces) in use by a noun
      */
-    public function listPaths(Noun &$noun) : array
+    public function listPaths(Noun $noun): array
     {
         if (!$noun['filestore']) {
             return [];
@@ -136,11 +136,11 @@ class FileStoreHelper extends AbstractHelper
     /**
      * List all the files at a particular path in a particular noun
      */
-    public function list(Noun &$noun, string $path = 'default') : array
+    function list(Noun $noun, string $path = 'default'): array
     {
         //figure out class to use
         $class = null;
-        if (defined(get_class($noun).'::FILESTORE_FILE_CLASS')) {
+        if (defined(get_class($noun) . '::FILESTORE_FILE_CLASS')) {
             $class = $noun::FILESTORE_FILE_CLASS;
         }
         if (!$class || !class_exists($class)) {
@@ -150,8 +150,8 @@ class FileStoreHelper extends AbstractHelper
         if ($files = $noun["filestore.$path"]) {
             //create file objects from array
             return array_map(
-                function ($e) use ($noun,$path,$class) {
-                    $e['file'] = $this->dir($e['hash'], false).'/file';
+                function ($e) use ($noun, $path, $class) {
+                    $e['file'] = $this->dir($e['hash'], false) . '/file';
                     return new $class($e, $noun, $path, $this);
                 },
                 $files
@@ -176,7 +176,7 @@ class FileStoreHelper extends AbstractHelper
      * get a file from a noun -- searches by both name and uniqid, and might
      * return more than one result
      */
-    public function get(Noun &$noun, string $s, string $path = null) : array
+    public function get(Noun &$noun, string $s, string $path = null): array
     {
         //loop through all paths
         if ($path === null) {
@@ -235,7 +235,7 @@ class FileStoreHelper extends AbstractHelper
         //get shared lock
         $lock = fopen($file, 'w+');
         while (!flock($lock, LOCK_SH)) {
-            usleep(50+random_int(0, 100));
+            usleep(50 + random_int(0, 100));
         }
         //get existing lines
         $contents = @file_get_contents($file);
@@ -257,7 +257,7 @@ class FileStoreHelper extends AbstractHelper
             //get exclusive lock
             $lock = fopen($file, 'w+');
             while (!flock($lock, LOCK_EX)) {
-                usleep(50+random_int(0, 100));
+                usleep(50 + random_int(0, 100));
             }
             //write to file
             file_put_contents($file, implode("\n", $lines));
@@ -274,7 +274,7 @@ class FileStoreHelper extends AbstractHelper
         //get shared lock
         $lock = fopen($file, 'r');
         while (!flock($lock, LOCK_SH)) {
-            usleep(50+random_int(0, 100));
+            usleep(50 + random_int(0, 100));
         }
         //get existing lines
         $contents = @file_get_contents($file);
@@ -298,7 +298,7 @@ class FileStoreHelper extends AbstractHelper
     public function addFileName($hash, $name)
     {
         $this->putLineInFile(
-            $this->dir($hash).'/names',
+            $this->dir($hash) . '/names',
             $name
         );
     }
@@ -315,7 +315,7 @@ class FileStoreHelper extends AbstractHelper
             $hash = md5_file($filename);
             //identify the files we'll need
             $dir = $this->dir($hash, true);
-            $storeFile = $dir.'/file';
+            $storeFile = $dir . '/file';
             //only copy file to storage if it doesn't already exist
             if (!is_file($storeFile)) {
                 //copy file
@@ -346,11 +346,11 @@ class FileStoreHelper extends AbstractHelper
         $hash = md5($contents);
         //identify the files we'll need
         $dir = $this->dir($hash, true);
-        $storeFile = $dir.'/file';
+        $storeFile = $dir . '/file';
         //only copy file to storage if it doesn't already exist
         if (!is_file($storeFile)) {
             if (file_put_contents($storeFile, $contents) === false) {
-                throw new \Exception('Failed to write filestore file to '.$storeFile);
+                throw new \Exception('Failed to write filestore file to ' . $storeFile);
             }
         }
         return true;
@@ -370,9 +370,9 @@ class FileStoreHelper extends AbstractHelper
         while (!($file['hash'] = md5_file($file['file']))) {
             $tries++;
             if ($tries > 50) {
-                throw new \Exception('Failed to get hash of '.$file['file']);
+                throw new \Exception('Failed to get hash of ' . $file['file']);
             }
-            usleep(50+random_int(0, 100));
+            usleep(50 + random_int(0, 100));
         }
         $file['time'] = time();
         if (!$file['uniqid']) {
@@ -386,7 +386,7 @@ class FileStoreHelper extends AbstractHelper
         //that way moving storage locations is easier
         unset($file['file']);
         //push into noun and save
-        $noun["filestore.$path.".$file['uniqid']] = $file;
+        $noun["filestore.$path." . $file['uniqid']] = $file;
         $noun->update();
         return $file['uniqid'];
     }
@@ -395,7 +395,7 @@ class FileStoreHelper extends AbstractHelper
      * Get the directory to be used for storing a given file hash, creating it
      * by default if necessary
      */
-    public function dir(string $hash, $create=true) : string
+    public function dir(string $hash, $create = true): string
     {
         $shard = substr($hash, 0, 1);
         $dir = implode(
@@ -403,7 +403,7 @@ class FileStoreHelper extends AbstractHelper
             [
                 $this->cms->config['filestore.path'],
                 $shard,
-                $hash
+                $hash,
             ]
         );
         if (!is_dir($dir) && $create && !mkdir($dir, 0775, true)) {
