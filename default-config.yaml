@@ -729,6 +729,7 @@ media:
   package:
     response:
       ttl: 86400 # one day in seconds
+      browserttl: 86400
       headers:
         pragma: public
 
