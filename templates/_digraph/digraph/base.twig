@@ -31,7 +31,7 @@
 
     <!-- foot javascript -->
     {% for file in helper.jsFoot %}
-        <script src="{{file|raw}}"></script>
+        <script src="{{file|raw}}" async></script>
     {% endfor %}
     {% block body_end %}{% include 'body_end.twig' %}{% endblock %}
   </body>

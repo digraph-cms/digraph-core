@@ -14,7 +14,11 @@
 {% for file in helper.jsHead %}
     <script src="{{file|raw}}"></script>
 {% endfor %}
-<!-- Load current noun id into digraph JS object if it exists -->
-{% if package.noun.dso.id %}
-<script>digraph.noun = "{{package.noun.dso.id}}";</script>
-{% endif %}
+
+<script>
+digraph.noun = "{{package.noun.dso.id}}";
+digraph.requestHash = "{{package.request.hash}}";
+digraph.uniqid = "{{package.uniqid}}";
+digraph.user.id = "{{cms.helper('users').id()}}";
+digraph.user.sid = "{{cms.helper('session').userSID()}}";
+</script>

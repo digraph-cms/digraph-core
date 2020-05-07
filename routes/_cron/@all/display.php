@@ -1,7 +1,9 @@
 <?php
 ini_set('max_execution_time', 300);
-$package->makeMediaFile('cron_result.json');
+$package->makeMediaFile('cron.js');
 $package['response.ttl'] = $cms->config['cron.minttl'];
+$package['response.browserttl'] = $cms->config['cron.minttl'];
+
 $CRON_OUTPUT = [
     'started' => date('r'),
     'hooks' => []
@@ -25,6 +27,4 @@ foreach ($this->helper('routing')->allHookFiles('_cron', 'cron.php') as $file) {
     $CRON_OUTPUT['hooks'][$file['module']] = $CRON;
 }
 
-echo json_encode($CRON_OUTPUT, JSON_PRETTY_PRINT);
-
-$package->saveLog('cron ran', 200);
+echo 'digraph.cron_result = '.json_encode($CRON_OUTPUT).';';

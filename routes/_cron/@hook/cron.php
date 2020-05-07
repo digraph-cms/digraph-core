@@ -18,7 +18,7 @@ foreach ($cms->allHelpers() as $name) {
         $start = microtime(true);
         $result = $h->hook_cron();
         $time = round((microtime(true)-$start)*1000);
-        if ($result['result'] === 0) {
+        if (@$result['result'] === 0) {
             $result['result'] = true;
         }
         $CRON['helpers'][$name] = [

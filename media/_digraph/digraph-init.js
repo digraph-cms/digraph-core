@@ -55,7 +55,7 @@ digraph.get = function(url, success, error, sid) {
 /**
  * Utility function to handle parsing JSON for a get() call
  */
-digraph.getJSON = function(url, success, error) {
+digraph.getJSON = function(url, success, error, sid) {
   if (typeof sid === 'undefined') { sid = true; }
   return digraph.get(
     url,

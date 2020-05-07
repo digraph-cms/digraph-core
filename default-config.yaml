@@ -21,7 +21,7 @@ mail:
 
 cron:
   # the ttl to be applied to the cron-running page, used to rate-limit cron runs
-  minttl: 60
+  minttl: 300
   # how long complete log entries should last before they are removed by cron
   # this only applies to the logging database in Digraph, any monolog loggers
   # will need to be configured separately wherever they are instantiated
@@ -461,11 +461,11 @@ theme:
   js-head:
     _digraph:
       100-digraph-1-init: ${url.base}digraph-init.js
-      100-digraph-2-user: ${url.base}_user/user.js
-      100-digraph-3-main: ${url.base}digraph-head.js
+      100-digraph-2-main: ${url.base}digraph-head.js
   js-foot:
     _digraph:
-      100-digraph: ${url.base}digraph-foot.js
+      100-digraph-foot: ${url.base}digraph-foot.js
+      999-digraph-cron: ${url.base}_cron/
   # page areas
   areas:
     _override: []
