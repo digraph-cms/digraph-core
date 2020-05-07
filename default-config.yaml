@@ -297,7 +297,7 @@ filters:
       - [class,code_highlight]
       - [class,xss]
     markdown-unsafe:
-      - [class,markdown]
+      - [class,markdown_unsafe]
       - [class,code_highlight]
     html:
       - [class,htmlfilter]
@@ -313,6 +313,7 @@ filters:
     allhtmlfilter: Digraph\Filters\AllHTMLFilter
     htmlfilter: Digraph\Filters\HTMLFilter
     markdown: Digraph\Filters\MarkdownFilter
+    markdown_unsafe: Digraph\Filters\MarkdownFilterUnsafe
     sanitize: Digraph\Filters\SanitizeFilter
     text: Digraph\Filters\TextFilter
     xss: Digraph\Filters\XSSFilter
