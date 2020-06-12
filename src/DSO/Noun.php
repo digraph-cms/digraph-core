@@ -16,10 +16,20 @@ class Noun extends DSO implements NounInterface
     {
         parent::__construct($data, $factory);
         $this->merge($factory->cms()->config['defaultnoun']);
-        if ($factory->cms()->config['defaultnounbytype.'.$this['dso.type']]) {
-            $this->merge($factory->cms()->config['defaultnounbytype.'.$this['dso.type']]);
+        if ($factory->cms()->config['defaultnounbytype.' . $this['dso.type']]) {
+            $this->merge($factory->cms()->config['defaultnounbytype.' . $this['dso.type']]);
         }
         $this->resetChanges();
+    }
+
+    public function addMenuEnabled(string $verb)
+    {
+        return $verb == 'display';
+    }
+
+    public function addMenuFilter(string $type)
+    {
+        return true;
     }
 
     public function hook_postEditUrl()
@@ -35,10 +45,10 @@ class Noun extends DSO implements NounInterface
     public function infoCard()
     {
         return
-            "<article class='digraph-card type-".$this['dso.type']."'>".
-            "<h1>".$this->title()."</h1>".
-            $this->content_text(50).
-            "<a href='".$this->url()."'>read more</a>".
+        "<article class='digraph-card type-" . $this['dso.type'] . "'>" .
+        "<h1>" . $this->title() . "</h1>" .
+        $this->content_text(50) .
+        "<a href='" . $this->url() . "'>read more</a>" .
             "</article>";
     }
 
@@ -49,7 +59,7 @@ class Noun extends DSO implements NounInterface
             $this->body(),
             [
                 'ignore_errors' => true,
-                'drop_links' => true
+                'drop_links' => true,
             ]
         );
         if ($wordCount) {
@@ -57,7 +67,7 @@ class Noun extends DSO implements NounInterface
             $text = preg_split('/[ ]+/', $text);
             if (count($text) > $wordCount) {
                 $text = array_slice($text, 0, $wordCount);
-                $text = implode(' ', $text).'...';
+                $text = implode(' ', $text) . '...';
             } else {
                 $text = implode(' ', $text);
             }
@@ -70,7 +80,7 @@ class Noun extends DSO implements NounInterface
         return $this->factory->cms();
     }
 
-    public function formMap(string $action) : array
+    public function formMap(string $action): array
     {
         $map = [];
         if (!static::SLUG_ENABLED) {
@@ -79,7 +89,7 @@ class Noun extends DSO implements NounInterface
         return $map;
     }
 
-    public function template($verb=null)
+    public function template($verb = null)
     {
         return null;
     }
@@ -95,13 +105,13 @@ class Noun extends DSO implements NounInterface
         );
     }
 
-    public function insert() : bool
+    public function insert(): bool
     {
         $this->cms()->helper('hooks')->noun_trigger($this, 'insert');
         return parent::insert();
     }
 
-    public function update(bool $sneaky = false) : bool
+    public function update(bool $sneaky = false): bool
     {
         if (!$sneaky) {
             $this->cms()->helper('hooks')->noun_trigger($this, 'update');
@@ -111,7 +121,7 @@ class Noun extends DSO implements NounInterface
         return parent::update($sneaky);
     }
 
-    public function delete(bool $permanent=false) : bool
+    public function delete(bool $permanent = false): bool
     {
         $this->cms()->helper('hooks')->noun_trigger($this, 'delete');
         if ($permanent) {
@@ -120,7 +130,7 @@ class Noun extends DSO implements NounInterface
         return parent::delete($permanent);
     }
 
-    public function fileUrl($id=null, $args=[])
+    public function fileUrl($id = null, $args = [])
     {
         if ($id === null) {
             $fs = $this->cms()->helper('filestore');
@@ -151,7 +161,7 @@ class Noun extends DSO implements NounInterface
         return $this->cms()->helper('permissions')->checkUrl($this->url('edit'));
     }
 
-    public function parentUrl($verb='display')
+    public function parentUrl($verb = 'display')
     {
         if ($verb != 'display') {
             return $this->url();
@@ -185,7 +195,7 @@ class Noun extends DSO implements NounInterface
         $search = $this->factory->search();
         /* main search */
         $cids = array_map([$search, 'quote'], $cids);
-        $cids = '${dso.id} in ('.implode(',', $cids).')';
+        $cids = '${dso.id} in (' . implode(',', $cids) . ')';
         $search->where($cids);
         /* if no sort rule, pull it from our own config */
         if (!$sortRule) {
@@ -238,15 +248,15 @@ class Noun extends DSO implements NounInterface
         return $children;
     }
 
-    public function name($verb=null)
+    public function name($verb = null)
     {
         if ($this->get('digraph.name')) {
             return $this->factory->cms()->helper('filters')->sanitize($this->get('digraph.name'));
         }
-        return $this->get('dso.type').' '.$this->get('dso.id');
+        return $this->get('dso.type') . ' ' . $this->get('dso.id');
     }
 
-    public function title($verb=null)
+    public function title($verb = null)
     {
         if ($this->get('digraph.title')) {
             return $this->factory->cms()->helper('filters')->sanitize($this->get('digraph.title'));
@@ -254,7 +264,7 @@ class Noun extends DSO implements NounInterface
         return $this->name($verb);
     }
 
-    public function link(string $text=null, string $verb=null, array $args=null, bool $canonical=false)
+    public function link(string $text = null, string $verb = null, array $args = null, bool $canonical = false)
     {
         if (method_exists($this, 'tagLink')) {
             $args = [];
@@ -269,7 +279,7 @@ class Noun extends DSO implements NounInterface
         return @array_shift($slugs);
     }
 
-    public function url(string $verb=null, array $args=null, bool $canonical=false)
+    public function url(string $verb = null, array $args = null, bool $canonical = false)
     {
         if (!$verb) {
             $verb = 'display';

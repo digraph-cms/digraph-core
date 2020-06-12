@@ -101,6 +101,12 @@ class FormHelper extends AbstractHelper
                     $field->addTip($value, 'mapped_'.$key);
                 }
             }
+            //set up CSS classes
+            if (@$opt['cssClasses']) {
+                foreach ($opt['cssClasses'] as $value) {
+                    $field->addClass($value);
+                }
+            }
             //set default from noun value at location set in map ['field']
             if (@$opt['field']) {
                 $field->default($noun[@$opt['field']]);

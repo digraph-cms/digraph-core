@@ -26,7 +26,7 @@ class Actions extends AbstractHelper
         $p = $this->cms->helper('permissions');
         $types = array_filter(
             $types,
-            function ($e) use ($p,$search) {
+            function ($e) use ($p, $search) {
                 return $p->checkAddPermissions($search, $e);
             }
         );
@@ -42,20 +42,23 @@ class Actions extends AbstractHelper
      * Proper nouns always get their action list passed through the object, so
      * objects get to add/remove actions from their own lists.
      */
-    public function other($noun, $type='categorical')
+    public function other($noun, $type = 'categorical')
     {
         //make sure rules exist
-        if (!($rules = $this->cms->config['actions.'.$type])) {
+        if (!($rules = $this->cms->config['actions.' . $type])) {
             return [];
         }
         //return results
         return $this->results($noun, $rules);
     }
 
-    public function html($noun)
+    public function html($noun, $verb = null)
     {
         if (!$this->cms->config['actions.uiforguests'] && !$this->cms->helper('users')->id()) {
             return '';
+        }
+        if (!$verb) {
+            $verb = 'display';
         }
         $actions = $this->get($noun);
         $addable = [];
@@ -63,15 +66,22 @@ class Actions extends AbstractHelper
         //figure out title, addables
         $title = $this->cms->helper('strings')->string('actionbar.title.default');
         if ($object = $this->cms->read($noun)) {
-            $type = $object['dso.type'];
-            $addable = $this->cms->helper('actions')->addable($object['dso.type']);
-            $addable_url = $object->url('add', [], true)->string();
+            if ($object->addMenuEnabled($verb)) {
+                $addable = $this->cms->helper('actions')->addable($object['dso.type']);
+                //allow noun to filter add menu
+                $addable = array_filter(
+                    $addable,
+                    [$object,'addMenuFilter']
+                );
+                //get adding URL from noun
+                $addable_url = $object->url('add', [], true)->string();
+            }
             $title = $object->name();
         } elseif ($noun == '_user/guest') {
             $title = $this->cms->helper('strings')->string('actionbar.title.guest');
         } elseif ($noun == '_user/signedin') {
             if ($user = $this->cms->helper('users')->user()) {
-                $title = 'Welcome, '.$user->name();
+                $title = 'Welcome, ' . $user->name();
             } else {
                 $title = $this->cms->helper('strings')->string('actionbar.title.guest');
             }
@@ -97,7 +107,7 @@ class Actions extends AbstractHelper
             echo "<select class='linker'>";
             echo "<option>-- add --</option>";
             foreach ($addable as $type) {
-                $url = $addable_url.'?type='.$type;
+                $url = $addable_url . '?type=' . $type;
                 echo "<option value='$url'>";
                 echo str_replace('!type', $type, $this->cms->helper('strings')->string('actionbar.adder_item'));
                 echo "</option>";

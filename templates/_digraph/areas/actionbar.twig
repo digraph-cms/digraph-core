@@ -4,5 +4,5 @@
   {% else %}
     {{cms.helper('actions').html('_user/guest')|raw}}
   {% endif %}
-  {{cms.helper('actions').html(package.noun.dso.id)|raw}}
+  {{cms.helper('actions').html(package.noun.dso.id,package.verb)|raw}}
 </div>
