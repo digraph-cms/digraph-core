@@ -82,6 +82,7 @@ actions:
       edit: "!id/edit"
       rawedit: "!id/rawedit"
       urls: "!id/slugs"
+      meta: "!id/meta"
   common:
     '*': []
     '_user/guest':
@@ -332,6 +333,8 @@ permissions:
       - allow all
     '*/file':
       - allow all
+    '*/meta':
+      - allow group webmaster
     '_user/*':
       - allow all
     '_logging/*':
