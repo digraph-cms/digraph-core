@@ -25,3 +25,18 @@
 .notification-error {
   background-color: $(color_error);
 }
+
+.notification-bbcode-ambiguity {
+  padding: 0.25em;
+  font-size: 0.75em;
+}
+
+.notification-bbcode-ambiguity .bbcode-ambiguity-option {
+  padding: 0.25em;
+  border: 1px solid white;
+  border-bottom: 0;
+}
+
+.notification-bbcode-ambiguity .bbcode-ambiguity-option:last-child {
+  border-bottom: 1px solid white;
+}

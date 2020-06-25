@@ -27,7 +27,7 @@ EOT;
     const IDX = [
         'CREATE INDEX IF NOT EXISTS digraph_slugs_url_IDX ON digraph_slugs (slug_url);',
         'CREATE INDEX IF NOT EXISTS digraph_slugs_noun_IDX ON digraph_slugs (slug_noun);',
-        'CREATE UNIQUE INDEX IF NOT EXISTS digraph_slugs_url_noun_IDX ON digraph_slugs (slug_url,slug_noun);'
+        'CREATE UNIQUE INDEX IF NOT EXISTS digraph_slugs_url_noun_IDX ON digraph_slugs (slug_url,slug_noun);',
     ];
 
     public function hook_export(&$export)
@@ -68,9 +68,9 @@ EOT;
         trigger that gets called manually by add-type forms.
          */
         $h = $this->cms->helper('hooks');
-        $h->noun_register('delete_permanent', [$this,'deleteAll'], 'slug/deleteAll');
-        $h->noun_register('update', [$this,'updateSlug'], 'slug/updateSlug');
-        $h->noun_register('added', [$this,'updateSlug'], 'slug/updateSlug');
+        $h->noun_register('delete_permanent', [$this, 'deleteAll'], 'slug/deleteAll');
+        $h->noun_register('update', [$this, 'updateSlug'], 'slug/updateSlug');
+        $h->noun_register('added', [$this, 'updateSlug'], 'slug/updateSlug');
     }
 
     public function construct()
@@ -150,7 +150,9 @@ EOT;
         //clean up
         $slug = $this->sanitizeSlug($slug);
         //append number if slug exists already for a different noun
-        $slug = $this->uniqueSlug($slug, $noun['dso.id']);
+        if (!$this->cms->config['slugs.allow_ambiguity']) {
+            $slug = $this->uniqueSlug($slug, $noun['dso.id']);
+        }
         //return result
         return $slug;
     }
@@ -165,13 +167,13 @@ EOT;
         return $noun;
     }
 
-    public function uniqueSlug($slug, $noun=null)
+    public function uniqueSlug($slug, $noun = null)
     {
         $i = 1;
         $unique = $slug;
         while (($nouns = $this->nouns($unique)) && !in_array($noun, $nouns)) {
             $i++;
-            $unique = $slug.'-'.$i;
+            $unique = $slug . '-' . $i;
         }
         return $unique;
     }
@@ -182,7 +184,7 @@ EOT;
         $slug = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $slug);
         $slug = trim($slug, "\/ \t\n\r\0\x0B");
         $slug = preg_replace('/\s+/', '-', $slug);
-        $slug = preg_replace('/[^a-z0-9\/'.preg_quote(static::CHARS).']+/i', '', $slug);
+        $slug = preg_replace('/[^a-z0-9\/' . preg_quote(static::CHARS) . ']+/i', '', $slug);
         $slug = preg_replace('/\-?\/\-?/', '/', $slug);
         $slug = preg_replace('/\/+/', '/', $slug);
         $slug = preg_replace('/([^a-z0-9])+/', '$1', $slug);
@@ -193,8 +195,7 @@ EOT;
         return $slug;
     }
 
-    public function list(int $limit, int $offset)
-    {
+    function list(int $limit, int $offset) {
         $args = [];
         $l = '';
         if ($limit) {
@@ -206,7 +207,7 @@ EOT;
             $args[':offset'] = $offset;
         }
         $s = $this->pdo->prepare(
-            'SELECT * FROM digraph_slugs ORDER BY slug_id desc'.$l
+            'SELECT * FROM digraph_slugs ORDER BY slug_id desc' . $l
         );
         if ($s->execute($args)) {
             return $s->fetchAll(\PDO::FETCH_ASSOC);
@@ -237,7 +238,7 @@ EOT;
         $s = $this->pdo->prepare(
             'SELECT * FROM digraph_slugs WHERE slug_url = :slug ORDER BY slug_id desc'
         );
-        if ($s->execute([':slug'=>$slug])) {
+        if ($s->execute([':slug' => $slug])) {
             return array_map(
                 function ($e) {
                     return $e['slug_noun'];
@@ -259,7 +260,7 @@ EOT;
         $s = $this->pdo->prepare(
             'SELECT * FROM digraph_slugs WHERE slug_noun = :noun ORDER BY slug_id desc'
         );
-        if ($s->execute([':noun'=>$noun])) {
+        if ($s->execute([':noun' => $noun])) {
             return array_map(
                 function ($e) {
                     return $e['slug_url'];
@@ -281,7 +282,7 @@ EOT;
         $s = $this->pdo->prepare(
             'SELECT * FROM digraph_slugs WHERE slug_noun = :noun ORDER BY slug_id desc LIMIT 1'
         );
-        if ($s->execute([':noun'=>$noun])) {
+        if ($s->execute([':noun' => $noun])) {
             return $s->fetch(\PDO::FETCH_ASSOC)['slug_url'];
         }
         return null;
@@ -309,7 +310,7 @@ EOT;
         $s = $this->pdo->prepare(
             'INSERT INTO digraph_slugs (slug_url,slug_noun) VALUES (:url,:noun)'
         );
-        return $s->execute([':url'=>$url,':noun'=>$noun]);
+        return $s->execute([':url' => $url, ':noun' => $noun]);
     }
 
     /**
@@ -326,7 +327,7 @@ EOT;
         $s = $this->pdo->prepare(
             'DELETE FROM digraph_slugs WHERE slug_url = :url AND slug_noun = :noun'
         );
-        return $s->execute([':url'=>$url,':noun'=>$noun]);
+        return $s->execute([':url' => $url, ':noun' => $noun]);
     }
 
     /**
@@ -340,6 +341,6 @@ EOT;
         $s = $this->pdo->prepare(
             'DELETE FROM digraph_slugs WHERE slug_noun = :noun'
         );
-        return $s->execute([':noun'=>$noun]);
+        return $s->execute([':noun' => $noun]);
     }
 }
