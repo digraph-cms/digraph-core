@@ -281,7 +281,11 @@ class Noun extends DSO implements NounInterface
 
     public function slugIsAmbiguous()
     {
-        return count($this->cms()->helper('slugs')->slugs($this['dso.id'])) > 1;
+        if ($this->slug()) {
+            return count($this->cms()->helper('slugs')->nouns($this->slug())) > 1;
+        } else {
+            return false;
+        }
     }
 
     public function url(string $verb = null, array $args = null, bool $canonical = false)
