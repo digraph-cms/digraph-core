@@ -1,5 +1,5 @@
 <?php
-/* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
+/* Digraph Core | https://github.com/jobyone/digraph-core | MIT License */
 namespace Digraph\Permissions;
 
 use Digraph\Helpers\AbstractHelper;
@@ -25,6 +25,10 @@ class PermissionsHelper extends AbstractHelper
             }
             //use dso type as start of path
             $path = $noun['dso.type'];
+            //check for permissions based on specific noun
+            if ($this->check($noun['dso.id'].'/'.$url['verb'])) {
+                return true;
+            }
         } else {
             //use url noun
             $path = $url['noun'];
