@@ -3,6 +3,7 @@
 namespace Digraph\Mungers\Finalize;
 
 use Digraph\Mungers\AbstractMunger;
+use Digraph\Mungers\Package;
 use Flatrr\FlatArray;
 
 class Headers extends AbstractMunger
@@ -10,7 +11,7 @@ class Headers extends AbstractMunger
     protected function doMunge(&$package)
     {
         //record memory use
-        $package['peak_memory_use'] = (round(memory_get_peak_usage()/1024/1024*100)/100).'MB';
+        $package['peak_memory_use'] = (round(memory_get_peak_usage() / 1024 / 1024 * 100) / 100) . 'MB';
         /*
         Set up headers
          */
@@ -20,11 +21,14 @@ class Headers extends AbstractMunger
         $headers['Cache-Control'] = $this->cacheControl($package);
         $headers['Pragma'] = $this->pragma($package);
         if ($ttl = $package['response.browserttl']) {
-            $headers['Expires'] = gmdate('D, d M Y H:i:s T', time()+$ttl);
+            $headers['Expires'] = gmdate('D, d M Y H:i:s T', time() + $ttl);
         } else {
             $headers['Expires'] = gmdate('D, d M Y H:i:s T', 0);
         }
         // last-modified
+        if (!$package['response.last-modified']) {
+            $package['response.last-modified'] = $this->generateLastModified($package);
+        }
         if ($package['response.last-modified']) {
             $headers['Last-Modified'] = gmdate('D, d M Y H:i:s T', $package['response.last-modified']);
         }
@@ -41,7 +45,7 @@ class Headers extends AbstractMunger
         if ($package['response.filename']) {
             $fn = urlencode($package['response.filename']);
             $fn = str_replace('+', ' ', $fn);
-            $headers['Content-Disposition'] = $headers['Content-Disposition']."; filename=\"$fn\"";
+            $headers['Content-Disposition'] = $headers['Content-Disposition'] . "; filename=\"$fn\"";
         }
         //redirection
         if ($package['response.redirect']) {
@@ -51,9 +55,22 @@ class Headers extends AbstractMunger
         $url = $package->url();
         unset($url['args.digraph_url']);
         unset($url['args.digraph_redirect_count']);
-        $headers['Link'] = '<'.$url.'>; rel="canonical"';
+        $headers['Link'] = '<' . $url . '>; rel="canonical"';
         //merge into package, not overwriting so that previous mungers can set headers
         $package->merge($headers->get(), 'response.headers');
+    }
+
+    protected function generateLastModified(Package $package)
+    {
+        $best = 0;
+        foreach ($package['cachetags'] ?? [] as $id) {
+            if ($ob = $package->cms()->read($id, false)) {
+                if ($ob['dso.modified.date'] > $best) {
+                    $best = $ob['dso.modified.date'];
+                }
+            }
+        }
+        return $best;
     }
 
     protected function pragma($package)

@@ -4,7 +4,6 @@ namespace Digraph\Mungers;
 
 use Digraph\CMS;
 use Digraph\DSO\NounInterface;
-use Digraph\Logging\LogHelper;
 use Digraph\Urls\Url;
 use Flatrr\SelfReferencingFlatArray;
 
@@ -19,22 +18,22 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
     protected $unfiltered = [
         'response.content',
         'noun',
-        'url'
+        'url',
     ];
 
-    public function saveLog($message, $level=null, $id=null)
+    public function saveLog($message, $level = null, $id = null)
     {
         if (!$id) {
             $id = md5(
-                $this['request.hash'].
-                $this->hash('error').
+                $this['request.hash'] .
+                $this->hash('error') .
                 $this->hash('logging.messages')
             );
         } else {
             $id = md5($id);
         }
         $this['logging.save'] = $id;
-        $this['logging.messages.'.$id] = $message;
+        $this['logging.messages.' . $id] = $message;
         $log = $this->cms->helper('logging')->create($this, $level);
         $this['logging.save'] = false;
         return $log;
@@ -63,7 +62,7 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         return base64_decode($this['response.binarycontent']);
     }
 
-    public function template(string $set = null) : string
+    public function template(string $set = null): string
     {
         if ($set) {
             $this['response.template'] = $set;
@@ -73,15 +72,15 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         }
         if ($n = $this->noun()) {
             /*
-                This section allows template rules to be saved inside nouns, as
-                their data. Setting digraph.template to a template name will
-                request that template name.
+            This section allows template rules to be saved inside nouns, as
+            their data. Setting digraph.template to a template name will
+            request that template name.
 
-                Setting it to an array will allow templates to be specified by
-                verb, including a '*' wildcard key. For example, setting
-                digraph.template.display to 'content-only' would set that object
-                to use the content-only template, but only for the display verb.
-            */
+            Setting it to an array will allow templates to be specified by
+            verb, including a '*' wildcard key. For example, setting
+            digraph.template.display to 'content-only' would set that object
+            to use the content-only template, but only for the display verb.
+             */
             if ($t = $n['digraph.template']) {
                 if (is_string($t)) {
                     return $t;
@@ -119,7 +118,7 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         return parent::get($name, $raw);
     }
 
-    public function &cms(CMS &$set = null) : ?CMS
+    public function &cms(CMS &$set = null): ?CMS
     {
         if ($set) {
             $this->log('Set CMS');
@@ -128,12 +127,11 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         return $this->cms;
     }
 
-    public function noun(NounInterface $set = null) : ?NounInterface
+    public function noun(NounInterface $set = null): ?NounInterface
     {
         if ($set) {
-            $this->log('Set Noun: '.$set['dso.id'].': '.$set->name());
+            $this->log('Set Noun: ' . $set['dso.id'] . ': ' . $set->name());
             $this['noun'] = $set->get();
-            $this['response.last-modified'] = $set['dso.modified.date'];
             $this->url($set->url($this['url.verb'], $this['url.args']));
             $this->cacheTag($set['dso.id']);
         }
@@ -144,19 +142,19 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         }
     }
 
-    public function url(Url $set = null) : ?Url
+    public function url(Url $set = null): ?Url
     {
         if ($set) {
-            $this->log('Set URL: '.$set);
-            $this['url']= $set->get();
+            $this->log('Set URL: ' . $set);
+            $this['url'] = $set->get();
             $this['fields.page_name'] = $set['text'];
         }
         return new Url($this['url']);
     }
 
-    public function redirect($url, int $code=302)
+    public function redirect($url, int $code = 302)
     {
-        $this->log('Redirect: '.$code.': '.$url);
+        $this->log('Redirect: ' . $code . ': ' . $url);
         $this->skipGlob('setup**');
         $this->skipGlob('build**');
         $this->skipGlob('error**');
@@ -175,15 +173,15 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         $url = $this->url()->string();
         $actual = $this['request.actualurl'];
         if ("$url" != "$actual") {
-            $this->log('"'.$url.'" expected URL');
-            $this->log('"'.$actual.'" actual URL');
+            $this->log('"' . $url . '" expected URL');
+            $this->log('"' . $actual . '" actual URL');
             $this->redirect($url);
             return false;
         }
         return true;
     }
 
-    public function error(int $code, string $message='Unspecified error')
+    public function error(int $code, string $message = 'Unspecified error')
     {
         $this->log("Error $code: $message");
         $this->skipGlob('setup**');
@@ -200,13 +198,13 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         $this['uniqid'] = uniqid('package.', true);
     }
 
-    public function skip($name) : bool
+    public function skip($name): bool
     {
         if ($name instanceof MungerInterface) {
             $name = $name->name();
         }
         foreach ($this->skips as $pattern) {
-            if (preg_match('/'.$pattern.'/i', $name)) {
+            if (preg_match('/' . $pattern . '/i', $name)) {
                 return true;
             }
         }
@@ -221,7 +219,7 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         $pattern = str_replace('\\*\\*', '.*', $pattern);
         $pattern = str_replace('\\*', '[^\/]*', $pattern);
         $pattern = str_replace('\\?', '[^\/]', $pattern);
-        $pattern = '^'.$pattern;
+        $pattern = '^' . $pattern;
         $this->skips[] = $pattern;
         $this->skips = array_unique($this->skips);
     }
@@ -231,12 +229,12 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         $this->skips = [];
     }
 
-    public function hash(string $name = null) : string
+    public function hash(string $name = null): string
     {
         return md5($this->serialize($name));
     }
 
-    public function serialize(string $name = null) : string
+    public function serialize(string $name = null): string
     {
         //return json encoded package
         return json_encode($this->get($name));
@@ -247,19 +245,19 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         $this->set($name, json_decode($serialized, true));
     }
 
-    public function log($message=null)
+    public function log($message = null)
     {
         if ($message) {
-            $prefix = $this->msElapsed().': ';
+            $prefix = $this->msElapsed() . ': ';
             $prefix .= str_repeat('  ', $this->treeLevel);
-            $this->log[] = $prefix.$message;
+            $this->log[] = $prefix . $message;
         }
         return $this->log;
     }
 
     public function mungeStart(MungerInterface $munger)
     {
-        $this->log($munger->name().": started");
+        $this->log($munger->name() . ": started");
         $this->startTimes[$munger->name()] = $this->msElapsed();
         $this->treeLevel++;
     }
@@ -267,12 +265,12 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
     public function mungeFinished(MungerInterface $munger)
     {
         $this->treeLevel--;
-        $time = $this->msElapsed()-$this->startTimes[$munger->name()];
-        $this->log($munger->name().": finished in {$time}ms");
+        $time = $this->msElapsed() - $this->startTimes[$munger->name()];
+        $this->log($munger->name() . ": finished in {$time}ms");
     }
 
-    public function msElapsed() : int
+    public function msElapsed(): int
     {
-        return round((microtime(true)-$this->startTime)*(1000));
+        return round((microtime(true) - $this->startTime) * (1000));
     }
 }
