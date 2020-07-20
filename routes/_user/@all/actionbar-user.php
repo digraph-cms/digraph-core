@@ -1,5 +1,6 @@
 <?php
 $package->noCache();
+$package['response.browserttl'] = 0;
 $package->makeMediaFile('actionbar-user.txt');
 if ($cms->helper('users')->id()) {
     echo $cms->helper('actions')->html('_user/signedin');

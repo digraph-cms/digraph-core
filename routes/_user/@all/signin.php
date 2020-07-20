@@ -1,5 +1,7 @@
 <?php
 include $this->helper('routing')->hookFile('_user', 'core_init.php')['file'];
+$package->noCache();
+$package['response.browserttl'] = 0;
 
 //do login bounce if user is signed in
 $postSigninUrl = false;

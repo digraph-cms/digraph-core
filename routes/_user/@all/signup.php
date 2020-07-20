@@ -1,5 +1,7 @@
 <?php
 include $this->helper('routing')->hookFile('_user', 'core_init.php')['file'];
+$package->noCache();
+$package['response.browserttl'] = 0;
 
 //end if user is already signed in
 if ($users->id()) {
