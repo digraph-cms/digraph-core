@@ -62,7 +62,7 @@ bootstrap:
       table: digraph_log
 
 actions:
-  uiforguests: true
+  uiforguests: false
   categorical:
     '*': []
     _controlpanel:
@@ -469,7 +469,6 @@ theme:
   js-foot:
     _digraph:
       100-digraph-foot: ${url.base}digraph-foot.js
-      999-digraph-cron: ${url.base}_cron/
   # page areas
   areas:
     _override: []
@@ -729,6 +728,7 @@ media:
       minify: false
       cache: false
       rewrite_import_urls: false
+  static_cache: false
   get_cache_ttl: 60
   package:
     response:

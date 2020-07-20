@@ -4,33 +4,16 @@
  * Also contains some bare-minimum ajax request tools
  */
 var digraph = {
-  //store user ID and Session ID
-  user: {
-    id: null,
-    sid: null
-  },
   url: '{{config.url.base}}',
   autocomplete: {}
 };
 
 /**
  * Ajax GET utility function
- * Automatically prepends base URL so that other scripts don't need to deal
- * with it. Also automatically adds the user's SID as a GET variable.
  */
-digraph.get = function(url, success, error, sid) {
-  if (typeof sid === 'undefined') { sid = true; }
+digraph.get = function(url, success, error) {
   //set up url
   url = '{{config.url.base}}' + url;
-  //add session ID to url, so that Ajax requests are cached per-user
-  if (sid) {
-    if (url.includes('?')) {
-      url = url + '&';
-    } else {
-      url = url + '?';
-    }
-    url = url + 'sid=' + digraph.user.sid;
-  }
   //set up request
   var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
   xhr.open('GET', url);
@@ -55,8 +38,7 @@ digraph.get = function(url, success, error, sid) {
 /**
  * Utility function to handle parsing JSON for a get() call
  */
-digraph.getJSON = function(url, success, error, sid) {
-  if (typeof sid === 'undefined') { sid = true; }
+digraph.getJSON = function(url, success, error) {
   return digraph.get(
     url,
     function(text) {
@@ -64,7 +46,6 @@ digraph.getJSON = function(url, success, error, sid) {
     },
     function(text) {
       return error(JSON.parse(text));
-    },
-    sid
+    }
   );
 }

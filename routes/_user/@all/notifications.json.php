@@ -1,19 +1,16 @@
 <?php
-//moderately aggressive caching
-$package['response.ttl'] = 60;
-$package['response.browserttl'] = 60;
+//moderately aggressive caching for non-signed-in users
+$package['response.ttl'] = 10;
+$package['response.browserttl'] = 10;
 
 // much less aggressive caching for signed-in users
 if ($cms->helper('users')->user()) {
-    $package['response.ttl'] = 5;
-    $package['response.browserttl'] = 5;
+    $package['response.ttl'] = 0;
+    $package['response.browserttl'] = 0;
 }
 
 //make media file
 $package->makeMediaFile('notifications.json');
-
-//make it non-cacheable
-$package->noCache();
 
 //pull flashes from notifications helper
 echo json_encode($this->helper('notifications')->flashes());

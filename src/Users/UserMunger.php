@@ -14,7 +14,7 @@ class UserMunger extends AbstractMunger
             return;
         }
         //note that cache namespacing is always done by user identifier
-        $package['request.namespace'] = 'id/'.$users->userIdentifier();
+        $package['request.namespace'] = 'group/' . crc32(serialize($users->groups()));
     }
 
     protected function doConstruct($name)

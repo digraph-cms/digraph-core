@@ -5,6 +5,7 @@ namespace Digraph\Media;
 use Digraph\Helpers\AbstractHelper;
 use Digraph\Urls\Url;
 use MatthiasMullie\Minify;
+use Symfony\Component\Filesystem\Filesystem;
 
 class MediaHelper extends AbstractHelper
 {
@@ -30,24 +31,24 @@ class MediaHelper extends AbstractHelper
     public function importPaths($search = null)
     {
         if ($search !== null) {
-            $search = '/'.$search;
+            $search = '/' . $search;
         }
         $searches = [];
         foreach ($this->paths() as $path) {
-            $searches[] = $path.$search;
+            $searches[] = $path . $search;
         }
         foreach (array_reverse($this->cms->helper('templates')->theme()) as $theme) {
             foreach (array_reverse($this->cms->config['media.paths']) as $path) {
-                $searches[] = $path.'/_themes/'.$theme.$search;
+                $searches[] = $path . '/_themes/' . $theme . $search;
             }
         }
         foreach (array_reverse($this->cms->config['media.paths']) as $path) {
-            $searches[] = $path.'/_digraph'.$search;
+            $searches[] = $path . '/_digraph' . $search;
         }
         return $searches;
     }
 
-    public function get($search, $raw=false)
+    public function get($search, $raw = false)
     {
         //sort out URL
         $result = null;
@@ -60,7 +61,7 @@ class MediaHelper extends AbstractHelper
         }
         //load from cache if possible
         if ($this->cms->config['media.get_cache_ttl']) {
-            $cacheID = 'MediaHelper.get.'.md5(serialize([$search,$raw]));
+            $cacheID = 'MediaHelper.get.' . md5(serialize([$search, $raw]));
             $cache = $this->cms->cache();
             if ($cache->hasItem($cacheID)) {
                 return $cache->getItem($cacheID)->get();
@@ -74,9 +75,9 @@ class MediaHelper extends AbstractHelper
             if (!$result && is_file($path)) {
                 $result = $path;
             }
-            if (is_dir($path.'.d')) {
-                foreach (glob($path.'.d/*.'.$ext) as $f) {
-                    $dfiles[basename($f).$key] = $f;
+            if (is_dir($path . '.d')) {
+                foreach (glob($path . '.d/*.' . $ext) as $f) {
+                    $dfiles[basename($f) . $key] = $f;
                 }
             }
         }
@@ -84,18 +85,41 @@ class MediaHelper extends AbstractHelper
         if ($result) {
             ksort($dfiles);
             $result = $this->prepare($result, null, null, $dfiles, $raw);
+            $result['search'] = $search;
         }
-        //save to cache and return
-        if ($this->cms->config['media.get_cache_ttl']) {
+        //save to cache
+        if ($ttl = $this->cms->config['media.get_cache_ttl']) {
             $citem = $cache->getItem($cacheID);
-            $citem->expiresAfter($this->cms->config['media.get_cache_ttl']);
+            $citem->expiresAfter($ttl);
             $citem->set($result);
             $cache->save($citem);
         }
+        //save static cache if applicable
+        if ($this->canBeStaticCached($result)) {
+            $path = $this->cms->config['paths.web'] . '/' . $result['search'];
+            $fs = new Filesystem;
+            if (isset($result['content'])) {
+                $fs->dumpFile($path, $result['content']);
+            } else {
+                $fs->dumpFile($path, file_get_contents($result['path']));
+            }
+        }
+        //return
         return $result;
     }
 
-    public function getContent($search, $raw=false)
+    protected function canBeStaticCached($result)
+    {
+        if (!$this->cms->config['media.static_cache']) {
+            return false;
+        }
+        if (empty($result['search'])) {
+            return false;
+        }
+        return true;
+    }
+
+    public function getContent($search, $raw = false)
     {
         if ($res = $this->get($search, $raw)) {
             if (isset($res['content'])) {
@@ -110,7 +134,7 @@ class MediaHelper extends AbstractHelper
     protected function prepare_text_css($out)
     {
         $original = file_get_contents($out['path']);
-        $content = @$out['content']?$out['content']:$original;
+        $content = @$out['content'] ? $out['content'] : $original;
         //preprocess imports
         while (preg_match('/@import "(.+)"( (.+))?;/', $content)) {
             $content = preg_replace_callback(
@@ -121,12 +145,12 @@ class MediaHelper extends AbstractHelper
                     $content = $this->getContent($file, true);
                     if ($content !== null) {
                         if ($media) {
-                            $content = "@media $media {".PHP_EOL.$content.PHP_EOL."}";
+                            $content = "@media $media {" . PHP_EOL . $content . PHP_EOL . "}";
                         }
-                        $content = '/* import "'.$file.'" '.@$media.' */'.PHP_EOL.$content.PHP_EOL;
+                        $content = '/* import "' . $file . '" ' . @$media . ' */' . PHP_EOL . $content . PHP_EOL;
                         return $content;
                     } else {
-                        return '/* import couldn\'t find '.$file.' */';
+                        return '/* import couldn\'t find ' . $file . ' */';
                     }
                 },
                 $content
@@ -160,7 +184,7 @@ class MediaHelper extends AbstractHelper
     protected function prepare_application_javascript($out)
     {
         $original = file_get_contents($out['path']);
-        $content = @$out['content']?$out['content']:$original;
+        $content = @$out['content'] ? $out['content'] : $original;
         //preprocess theme
         $content = preg_replace_callback(
             '/\\/\*{theme\:([^\}]+)\}\*\//',
@@ -179,15 +203,15 @@ class MediaHelper extends AbstractHelper
             '/\\/\*{bundle\:([^\}]+)\}\*\//',
             function ($matches) {
                 $name = $matches[1];
-                if ($bundle = $this->cms->config['templates.jsbundles.'.$name]) {
-                    $out = ['/* begin bundle: '.$name.' */'];
+                if ($bundle = $this->cms->config['templates.jsbundles.' . $name]) {
+                    $out = ['/* begin bundle: ' . $name . ' */'];
                     foreach ($bundle as $file) {
-                        $out[] = '/*{include:'.$file.'}*/';
+                        $out[] = '/*{include:' . $file . '}*/';
                     }
-                    $out[] = '/* end bundle: '.$name.' */';
+                    $out[] = '/* end bundle: ' . $name . ' */';
                     return implode(PHP_EOL, $out);
                 }
-                return '/* NOTICE: bundle '.$name.' not found */';
+                return '/* NOTICE: bundle ' . $name . ' not found */';
             },
             $content
         );
@@ -196,16 +220,16 @@ class MediaHelper extends AbstractHelper
             '/\\/\*{include\:([^\}]+)\}\*\//',
             function ($matches) {
                 $name = $matches[1];
-                if (!($file = $this->cms->config['templates.js.'.$name])) {
+                if (!($file = $this->cms->config['templates.js.' . $name])) {
                     $file = $name;
                 }
                 if ($content = $this->getContent($file)) {
-                    $out = ['/* begin include: '.$name.' */'];
+                    $out = ['/* begin include: ' . $name . ' */'];
                     $out[] = $content;
-                    $out[] = '/* end include: '.$name.' */';
+                    $out[] = '/* end include: ' . $name . ' */';
                     return implode(PHP_EOL, $out);
                 }
-                return '/* NOTICE: file '.$name.' not found */';
+                return '/* NOTICE: file ' . $name . ' not found */';
             },
             $content
         );
@@ -227,9 +251,9 @@ class MediaHelper extends AbstractHelper
     {
         //build mime list from apache mime.types (included in repo)
         if (!$this->mimes) {
-            foreach (@explode("\n", @file_get_contents(__DIR__.'/mime.types'))as $x) {
-                if (isset($x[0]) && $x[0]!=='#' && preg_match_all('#([^\s]+)#', $x, $out) && isset($out[1]) && ($c=count($out[1])) > 1) {
-                    for ($i=1;$i<$c;$i++) {
+            foreach (@explode("\n", @file_get_contents(__DIR__ . '/mime.types')) as $x) {
+                if (isset($x[0]) && $x[0] !== '#' && preg_match_all('#([^\s]+)#', $x, $out) && isset($out[1]) && ($c = count($out[1])) > 1) {
+                    for ($i = 1; $i < $c; $i++) {
                         $this->mimes[$out[1][$i]] = $out[1][0];
                     }
                 }
@@ -243,7 +267,7 @@ class MediaHelper extends AbstractHelper
         return mime_content_type($filename);
     }
 
-    protected function prepare($file, $mime=null, $filename=null, $dfiles=[], $raw=false)
+    protected function prepare($file, $mime = null, $filename = null, $dfiles = [], $raw = false)
     {
         if (!$filename) {
             $filename = basename($file);
@@ -256,19 +280,19 @@ class MediaHelper extends AbstractHelper
         $out = [
             'path' => $file,
             'mime' => $mime,
-            'filename' => basename($file)
+            'filename' => basename($file),
         ];
         //if there are dfiles, load it all together
         if ($dfiles) {
             $content = [file_get_contents($file)];
             foreach ($dfiles as $df) {
-                $content[] = '/* '.$out['filename'].'.d/'.basename($df).' */';
+                $content[] = '/* ' . $out['filename'] . '.d/' . basename($df) . ' */';
                 $content[] = file_get_contents($df);
             }
             $out['content'] = implode(PHP_EOL, $content);
         }
         //check for handler function
-        $fn = 'prepare_'.preg_replace('/[^a-z]/', '_', $mime);
+        $fn = 'prepare_' . preg_replace('/[^a-z]/', '_', $mime);
         if (!$raw && method_exists($this, $fn)) {
             $out = $this->$fn($out);
         }
