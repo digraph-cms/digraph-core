@@ -1,8 +1,7 @@
 <div id="digraph-primary-actionbar">
-  {% if cms.helper('users').id() %}
-    {{cms.helper('actions').html('_user/signedin')|raw}}
-  {% else %}
-    {{cms.helper('actions').html('_user/guest')|raw}}
-  {% endif %}
-  {{cms.helper('actions').html(package.noun.dso.id,package.verb)|raw}}
+  <div class="digraph-actionbar digraph-actionbar-user"></div>
+  <div class="digraph-actionbar digraph-actionbar-noun"
+    data-actionbar-noun="{{package.noun.dso.id}}"
+    data-actionbar-verb="{{package.url.verb}}">
+  </div>
 </div>

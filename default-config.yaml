@@ -62,7 +62,7 @@ bootstrap:
       table: digraph_log
 
 actions:
-  uiforguests: true
+  uiforguests: false
   categorical:
     '*': []
     _controlpanel:

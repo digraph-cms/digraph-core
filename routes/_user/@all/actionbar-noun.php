@@ -1,0 +1,7 @@
+<?php
+$package->noCache();
+$package->makeMediaFile('actionbar-noun.txt');
+echo $cms->helper('actions')->html(
+    $package['url.args.noun'],
+    $package['url.args.verb']
+);
