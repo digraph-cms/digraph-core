@@ -7,7 +7,7 @@
 document.addEventListener("DOMContentLoaded", function (event) {
   if (container = document.getElementById('digraph-notifications')) {
     digraph.getJSON(
-      '_user/notifications.json?p=' + digraph.uniqid,
+      '_user/notifications.json',
       function (data) {
         for (var type in data) {
           if (data.hasOwnProperty(type)) {
