@@ -28,4 +28,5 @@ foreach ($this->helper('routing')->allHookFiles('_cron', 'cron.php') as $file) {
     $CRON_OUTPUT['hooks'][$file['module']] = $CRON;
 }
 
-echo 'digraph.cron_result = '.json_encode($CRON_OUTPUT).';';
+// echo 'digraph.cron_result = '.json_encode($CRON_OUTPUT).';';
+echo '/* script does nothing */';
