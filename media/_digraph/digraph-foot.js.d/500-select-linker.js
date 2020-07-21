@@ -1,6 +1,9 @@
 $(() => {
-    var $linkers = $('select.linker');
-    $linkers.on('change',(e)=>{
-        window.location.href = $(e.target).val();
-    });
+    $('body').on(
+        'change',
+        'select.linker',
+        (e)=>{
+            window.location.href = $(e.target).val();
+        }
+    );
 });
