@@ -1,5 +1,5 @@
 <?php
-$package->noCache();
+$package->cache_noStore();
 
 $noun = $package->noun();
 $cms->helper('notifications')->warning('<strong>Proceed with caution:</strong> this tool can irretrievably destroy data in the object you are editing.');

@@ -26,6 +26,10 @@ class Headers extends AbstractMunger
                 @header("$name: $value");
             }
         }
+        //remove headers that PHP may add
+        header_remove('pragma');
+        header_remove('x-powered-by');
+        header_remove('expires');
         //skip output if we're redirecting
         if ($package['response.redirect']) {
             $package->skipGlob('render**');

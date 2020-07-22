@@ -1,5 +1,5 @@
 <?php
-$package->noCache();
+$package->cache_noStore();
 $noun = $package->noun();
 $s = $cms->helper('strings');
 

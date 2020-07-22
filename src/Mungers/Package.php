@@ -21,6 +21,54 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         'url',
     ];
 
+    /**
+     * The response may be stored by any cache, even if the response is normally 
+     * non-cacheable.
+     *
+     * @return void
+     */
+    public function cache_public()
+    {
+        $this['response.cache.cacheability'] = 'public';
+    }
+
+    /**
+     * The response may be stored only by a browser's cache, even if the response 
+     * is normally non-cacheable.
+     *
+     * @return void
+     */
+    public function cache_private()
+    {
+        $this['response.cache.cacheability'] = 'private';
+    }
+
+    /**
+     * The response may be stored by any cache, even if the response is normally 
+     * non-cacheable. However, the stored response MUST always go through validation 
+     * with the origin server first before using it
+     *
+     * @return void
+     */
+    public function cache_noCache()
+    {
+        $this['response.cache.cacheability'] = 'no-cache';
+    }
+
+    /**
+     * The response may not be stored in any cache. Although other directives may be set, 
+     * this alone is the only directive you need in preventing cached responses on modern 
+     * browsers. max-age=0 is already implied.
+     *
+     * @return void
+     */
+    public function cache_noStore()
+    {
+        $this['response.cacheable'] = false;
+        $this['response.cache.cacheability'] = 'no-store';
+        $this['response.last-modified'] = false;
+    }
+
     public function saveLog($message, $level = null, $id = null)
     {
         if (!$id) {
@@ -44,12 +92,6 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         if (!$this['cachetags'] || !in_array($tag, $this['cachetags'])) {
             $this->push('cachetags', $tag);
         }
-    }
-
-    public function noCache()
-    {
-        $this['response.cacheable'] = false;
-        $this['response.ttl'] = 0;
     }
 
     public function binaryContent(string $set = null)

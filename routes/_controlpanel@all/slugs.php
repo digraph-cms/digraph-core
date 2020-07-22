@@ -1,5 +1,5 @@
 <?php
-$package->noCache();
+$package->cache_noStore();
 $s = $cms->helper('slugs');
 $p = $cms->helper('paginator');
 $n = $cms->helper('notifications');

@@ -1,5 +1,5 @@
 <?php
-$package->noCache();
+$package->cache_noStore();
 $token = $cms->helper('session')->getToken('emptytrash');
 
 $factory = $cms->factory($this->arg('factory'));

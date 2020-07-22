@@ -1,7 +1,7 @@
 <?php
 use Digraph\DataObject\FieldMutator\FieldMutatorArrayInterface;
 
-$package->noCache();
+$package->cache_noStore();
 
 $factory = $cms->factory($this->arg('factory'));
 $search = $factory->search();

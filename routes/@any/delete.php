@@ -1,5 +1,5 @@
 <?php
-$package->noCache();
+$package->cache_noStore();
 
 $s = $this->helper('strings');
 

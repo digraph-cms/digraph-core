@@ -1,6 +1,5 @@
 <?php
-$package->noCache();
-$package['response.browserttl'] = 0;
+$package->cache_noStore();
 $u = $package->cms()->helper('users');
 $s = $package->cms()->helper('strings');
 $urls = $package->cms()->helper('urls');

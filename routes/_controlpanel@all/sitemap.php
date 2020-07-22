@@ -1,5 +1,5 @@
 <?php
-$package->noCache();
+$package->cache_noStore();
 $roots = $cms->helper('edges')->roots(true);
 if ($home = $cms->read('home')) {
     array_unshift($roots, $home['dso.id']);

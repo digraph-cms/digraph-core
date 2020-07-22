@@ -1,8 +1,6 @@
 <?php
-$package['response.cacheable'] = false;
 $managerName = $this->helper('users')->userManager();
-$package->noCache();
-$package['response.browserttl'] = 0;
+$package->cache_noStore();
 
 //do signout bounces
 if ($package['url.args.bounce']) {

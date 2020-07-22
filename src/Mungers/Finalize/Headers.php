@@ -17,28 +17,16 @@ class Headers extends AbstractMunger
          */
         $headers = new FlatArray();
         // cache control
-        $headers['Date'] = gmdate('D, d M Y H:i:s T', time());
-        $headers['Cache-Control'] = $this->cacheControl($package);
-        $headers['Pragma'] = $this->pragma($package);
-        if ($ttl = $package['response.browserttl']) {
-            $headers['Expires'] = gmdate('D, d M Y H:i:s T', time() + $ttl);
-        } else {
-            $headers['Expires'] = gmdate('D, d M Y H:i:s T', 0);
-        }
+        $headers['cache-control'] = $this->cacheControl($package);
         // last-modified
-        if (!$package['response.last-modified']) {
-            $package['response.last-modified'] = $this->generateLastModified($package);
-        }
-        if ($package['response.last-modified']) {
-            $headers['Last-Modified'] = gmdate('D, d M Y H:i:s T', $package['response.last-modified']);
-        }
-        // Content-Type/encoding
+        $headers['last-modified'] = $this->lastModified($package);
+        // content-type/encoding
         if ($package['response.mime'] == 'text/html') {
             //include charset for text/html
-            $headers['Content-Type'] = '${response.mime}; charset=${response.charset}';
+            $headers['content-type'] = '${response.mime}; charset=${response.charset}';
         } else {
             //not for other content types
-            $headers['Content-Type'] = '${response.mime}';
+            $headers['content-type'] = '${response.mime}';
         }
         //content disposition/name
         $headers['Content-Disposition'] = '${response.disposition}';
@@ -53,16 +41,38 @@ class Headers extends AbstractMunger
         }
         //canonical url
         $url = $package->url();
-        unset($url['args.digraph_url']);
-        unset($url['args.digraph_redirect_count']);
-        $headers['Link'] = '<' . $url . '>; rel="canonical"';
+        if ($url->__toString() != $package['request.actualurl']) {
+            unset($url['args.digraph_url']);
+            unset($url['args.digraph_redirect_count']);
+            $headers['link'] = '<' . $url . '>; rel="canonical"';
+        }
+        //etag
+        $headers['etag'] = $package->hash('response');
         //merge into package, not overwriting so that previous mungers can set headers
         $package->merge($headers->get(), 'response.headers');
     }
 
+    protected function lastModified(Package $package) {
+        $result = $package['response.last-modified'];
+        if ($result === false) {
+            return false;
+        }
+        if ($result === null) {
+            $result = $this->generateLastModified($package);
+        }
+        if ($result === null) {
+            $result = time();
+        }
+        if ($result) {
+            return gmdate('D, d M Y H:i:s T', $result);
+        }else {
+            return false;
+        }
+    }
+
     protected function generateLastModified(Package $package)
     {
-        $best = 0;
+        $best = null;
         foreach ($package['cachetags'] ?? [] as $id) {
             if ($ob = $package->cms()->read($id, false)) {
                 if ($ob['dso.modified.date'] > $best) {
@@ -73,33 +83,38 @@ class Headers extends AbstractMunger
         return $best;
     }
 
-    protected function pragma($package)
-    {
-        if ($package['request.namespace'] == 'public' || $package['response.headers.pragma'] == 'public') {
-            return 'public';
-        } else {
-            return 'no-cache';
-        }
-    }
-
     protected function cacheControl($package)
     {
         //expiration/cache control
-        $cacheControl = array();
-        //privacy
-        if ($package['request.namespace'] == 'public' || $package['response.headers.pragma'] == 'public') {
-            $cacheControl['public'] = true;
-        } else {
-            $cacheControl['private'] = true;
-            $cacheControl['must-revalidate'] = true;
+        $cache = [];
+        //cacheability
+        switch ($package['response.cache.cacheability']) {
+            case 'public':
+                $cache['public'] = true;
+                break;
+            case 'private':
+                $cache['private'] = true;
+                break;
+            case 'no-cache':
+                $cache['no-cache'] = true;
+                unset($package['response.cache.immutable']);
+                break;
+            case 'no-store':
+                $cache['no-store'] = true;
+                unset($package['response.cache.max-age']);
+                break;
         }
-        //cache ttl
-        if ($ttl = $package['response.browserttl']) {
-            $cacheControl['max-age'] = $ttl;
+        //max-age
+        if (intval($package['response.cache.max-age'])) {
+            $cache['max-age'] = intval($package['response.cache.max-age']);
+        }
+        //immutable
+        if ($package['response.cache.immutable']) {
+            $cache['immutable'] = true;
         }
         //finish cache-control
-        $output = array();
-        foreach ($cacheControl as $key => $value) {
+        $output = [];
+        foreach ($cache as $key => $value) {
             if ($value === false) {
                 continue;
             } elseif ($value === true) {

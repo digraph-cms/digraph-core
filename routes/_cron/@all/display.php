@@ -3,7 +3,6 @@ ini_set('max_execution_time', 300);
 $package['response.ttl'] = $cms->config['cron.minttl'];
 $package['response.browserttl'] = $cms->config['cron.minttl'];
 $package->makeMediaFile('cron.js');
-$package['response.headers.pragma'] = 'public';
 
 $CRON_OUTPUT = [
     'started' => date('r'),

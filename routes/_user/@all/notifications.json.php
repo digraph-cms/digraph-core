@@ -1,12 +1,12 @@
 <?php
+$package->cache_noStore();
+
 //moderately aggressive caching for non-signed-in users
 $package['response.ttl'] = 10;
-$package['response.browserttl'] = 0;
 
 // much less aggressive caching for signed-in users
 if ($cms->helper('users')->user()) {
     $package['response.ttl'] = 0;
-    $package['response.browserttl'] = 0;
 }
 
 //make media file

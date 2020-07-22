@@ -1,5 +1,5 @@
 <?php
-$package->noCache();
+$package->cache_noStore();
 
 $package['fields.page_title'] = $package['url.text'];
 

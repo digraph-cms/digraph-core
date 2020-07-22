@@ -1,5 +1,5 @@
 <?php
-$package->noCache();
+$package->cache_noStore();
 $f = $cms->helper('forms');
 $s = $cms->helper('slugs');
 $n = $cms->helper('notifications');

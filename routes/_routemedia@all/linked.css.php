@@ -6,7 +6,6 @@ $package['response.browserttl'] = 86400;
 $package->makeMediaFile('linked.css');
 $nouns = json_decode($package['url.args.nouns'], true);
 $verbs = [$package['url.args.verb']];
-$package['response.headers.pragma'] = 'public';
 
 array_unshift($nouns, '_');
 array_unshift($verbs, '_');

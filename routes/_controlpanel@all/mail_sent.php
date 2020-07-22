@@ -1,5 +1,5 @@
 <?php
-$package->noCache();
+$package->cache_noStore();
 $mail = $cms->helper('mail');
 $paginator = $cms->helper('paginator');
 

@@ -1,5 +1,5 @@
 <?php
-$package->noCache();
+$package->cache_noStore();
 $mail = $cms->helper('mail');
 
 // $message = $mail->message();

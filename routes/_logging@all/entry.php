@@ -1,5 +1,5 @@
 <?php
-$package->noCache();
+$package->cache_noStore();
 $log = $cms->helper('logging')->factory()->read($package['url.args.id']);
 
 if (!$log) {
