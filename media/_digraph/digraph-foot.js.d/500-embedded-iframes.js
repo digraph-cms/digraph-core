@@ -14,11 +14,11 @@ $(() => {
             //add iframe-embedded class
             $contents.addClass('iframe-embedded');
             //set up load/unload listeners
-            iframe.onload = function(e) {
+            iframe.contentWindow.onload = function(e) {
                 $(iframe).parent('div.embedded-iframe').addClass('loaded').removeClass('loading');
                 updateSingleFrame(iframe);
             };
-            iframe.contentWindow.onunload = function(e) {
+            iframe.contentWindow.onbeforeunload = function(e) {
                 $(iframe).parent('div.embedded-iframe').removeClass('loaded').addClass('loading');
             };
         });
@@ -39,14 +39,16 @@ $(() => {
             if (!$contents.find('html').get(0)) {
                 return;
             }
+            //only continue if body has iframe-embedded class
+            if (!$contents.find('body').is('.iframe-embedded')) {
+                return;
+            }
             //get height from html tag
             var height = $contents.find('html').get(0).offsetHeight;
             //set height
             if ((height > 10 || !$iframe.is('.resized')) && height != $iframe.height()) {
                 $iframe.addClass('resized');
-                $iframe.animate({
-                    height: height+'px'
-                }),'fast';
+                $iframe.height(height);
             }
         }
     };
