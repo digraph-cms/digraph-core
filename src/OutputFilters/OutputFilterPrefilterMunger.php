@@ -6,7 +6,7 @@ use Digraph\Mungers\AbstractMunger;
 
 class OutputFilterPrefilterMunger extends AbstractMunger
 {
-    protected function doMunge(&$package)
+    protected function doMunge($package)
     {
         if ($filter = @$_GET['outputfilter']) {
             if (isset($package->cms()->config['outputfilters.'.$filter])) {

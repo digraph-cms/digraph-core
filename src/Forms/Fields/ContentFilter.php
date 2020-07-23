@@ -8,7 +8,7 @@ use Digraph\CMS;
 
 class ContentFilter extends Select
 {
-    public function __construct(string $label, string $name=null, FieldInterface $parent=null, CMS &$cms=null)
+    public function __construct(string $label, string $name=null, FieldInterface $parent=null, CMS $cms=null)
     {
         parent::__construct($label, $name, $parent);
         //load filters from cms

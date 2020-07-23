@@ -36,7 +36,7 @@ if ($form) {
     //set up validators
     $form['email']->addValidatorFunction(
         'unique',
-        function (&$field) {
+        function ($field) {
             $value = $field->value();
             if ($this->helper('users')->getByEmail($field->value())) {
                 $this->helper('notifications')->notice(

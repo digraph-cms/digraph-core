@@ -11,7 +11,7 @@ class FunctionMunger extends AbstractMunger
         $this->fn = $fn;
     }
 
-    protected function doMunge(&$package)
+    protected function doMunge($package)
     {
         ($this->fn)($package);
     }

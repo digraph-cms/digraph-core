@@ -25,7 +25,7 @@ class FileStoreFile
         'time'
     ];
 
-    public function __construct(array $e, Noun &$noun, string $path, FileStoreHelper &$fs)
+    public function __construct(array $e, Noun $noun, string $path, FileStoreHelper $fs)
     {
         $this->fs = $fs;
         $this->noun = $noun;

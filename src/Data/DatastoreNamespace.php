@@ -7,7 +7,7 @@ class DatastoreNamespace
     protected $namespace;
     protected $datastore;
 
-    public function __construct(string $namespace, &$datastore)
+    public function __construct(string $namespace, $datastore)
     {
         $this->namespace = $namespace;
         $this->datastore = $datastore;

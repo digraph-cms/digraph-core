@@ -4,7 +4,7 @@ namespace Digraph\Mungers;
 
 class NullMunger extends AbstractMunger
 {
-    protected function doMunge(&$package)
+    protected function doMunge($package)
     {
         //does nothing
     }

@@ -6,5 +6,5 @@ use Digraph\CMS;
 
 interface HelperInterface
 {
-    public function __construct(CMS &$cms);
+    public function __construct(CMS $cms);
 }

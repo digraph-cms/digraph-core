@@ -9,7 +9,7 @@ class UserHelper extends AbstractHelper
     protected $managers = [];
     protected $groupSources = [];
 
-    public function signinUrl(&$package = null)
+    public function signinUrl($package = null)
     {
         if ($package) {
             return $this->cms->helper('urls')->url('_user', 'signin', [
@@ -20,7 +20,7 @@ class UserHelper extends AbstractHelper
         return $this->cms->helper('urls')->url('_user', 'signin');
     }
 
-    public function signoutUrl(&$package = null)
+    public function signoutUrl($package = null)
     {
         if ($package) {
             return $this->cms->helper('urls')->url('_user', 'signout', [
@@ -31,7 +31,7 @@ class UserHelper extends AbstractHelper
         return $this->cms->helper('urls')->url('_user', 'signout');
     }
 
-    public function requireAuth(&$package)
+    public function requireAuth($package)
     {
         if (!$this->id()) {
             $url = $this->signinUrl($package);

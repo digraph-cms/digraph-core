@@ -42,7 +42,7 @@ class DigraphFactory extends Factory
         ]
     ];
 
-    protected function hook_create(DSOInterface &$dso)
+    protected function hook_create(DSOInterface $dso)
     {
         parent::hook_create($dso);
         if (!isset($dso['dso.created.user.id'])) {
@@ -54,7 +54,7 @@ class DigraphFactory extends Factory
         }
     }
 
-    protected function hook_update(DSOInterface &$dso)
+    protected function hook_update(DSOInterface $dso)
     {
         parent::hook_update($dso);
         if ($id = $this->cms->helper('users')->id()) {
@@ -78,7 +78,7 @@ class DigraphFactory extends Factory
         throw new \Exception("No class could be found for factory ".$this->name.", type ".$data['dso']['type'], 1);
     }
 
-    public function &cms(CMS &$set=null) : CMS
+    public function cms(CMS $set=null) : CMS
     {
         if ($set) {
             $this->cms = $set;

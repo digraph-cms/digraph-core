@@ -81,7 +81,7 @@ class LogHelper extends \Digraph\Helpers\AbstractHelper
         return $this->cms->factory('logging');
     }
 
-    public function create(&$package, $level)
+    public function create($package, $level)
     {
         //save to internal digraph log
         $new = false;

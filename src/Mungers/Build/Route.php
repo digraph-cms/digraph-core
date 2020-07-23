@@ -8,7 +8,7 @@ class Route extends AbstractMunger
 {
     const CACHE_ENABLED = true;
 
-    protected function doMunge(&$package)
+    protected function doMunge($package)
     {
         $noun = $package['url.noun'];
         $verb = $package['url.verb'];

@@ -93,7 +93,7 @@ EOT;
         $this->cms->helper('hooks')->noun_register('delete_permanent', [$this,'deleteAll']);
     }
 
-    public function hook_export(&$export)
+    public function hook_export($export)
     {
         $edges = [];
         foreach ($export['nouns'] as $noun) {

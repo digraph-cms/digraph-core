@@ -17,7 +17,7 @@ foreach ($roots as $root) {
     echo "</ul>";
 }
 
-function sitemap($obj, &$cms, $max=5, $depth=1, $seen=[])
+function sitemap($obj, $cms, $max=5, $depth=1, $seen=[])
 {
     if ($obj) {
         if (in_array($obj['dso.id'], $seen)) {

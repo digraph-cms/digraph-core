@@ -6,7 +6,7 @@ use Digraph\Mungers\AbstractMunger;
 
 class UserMunger extends AbstractMunger
 {
-    protected function doMunge(&$package)
+    protected function doMunge($package)
     {
         $users = $package->cms()->helper('users');
         if (!$users->id()) {

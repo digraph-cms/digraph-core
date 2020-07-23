@@ -10,7 +10,7 @@ class OutputFilterMunger extends AbstractMunger
     const CACHE_ENABLED = true;
     const CACHE_ON_KEY = 'response';
 
-    protected function doMunge(&$package)
+    protected function doMunge($package)
     {
         //check if outputfilter is set, so we can avoid instantiating the helper
         //if it isn't actually needed

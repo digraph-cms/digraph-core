@@ -6,7 +6,7 @@ use Digraph\Mungers\AbstractMunger;
 
 class Headers extends AbstractMunger
 {
-    protected function doMunge(&$package)
+    protected function doMunge($package)
     {
         /*
         output headers

@@ -34,7 +34,7 @@ class ImageHelper extends AbstractHelper
         }
     }
 
-    protected function imagine_size(&$image, $rules)
+    protected function imagine_size($image, $rules)
     {
         $box = $this->imagine_box($rules);
         $mode = $this->imagine_boxmode($rules);
@@ -79,7 +79,7 @@ class ImageHelper extends AbstractHelper
         return $base;
     }
 
-    public function output(&$package, FileStoreFile $file, string $preset=null)
+    public function output($package, FileStoreFile $file, string $preset=null)
     {
         if ($preset === null) {
             $preset = 'default';

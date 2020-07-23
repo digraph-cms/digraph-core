@@ -67,7 +67,7 @@ class Content extends Container
         return parent::value($value);
     }
 
-    public function __construct(string $label, string $name=null, FieldInterface $parent=null, CMS &$cms=null)
+    public function __construct(string $label, string $name=null, FieldInterface $parent=null, CMS $cms=null)
     {
         $s = $cms->helper('strings');
         $f = $cms->helper('filters');

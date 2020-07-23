@@ -188,7 +188,7 @@ class TemplateHelper extends AbstractHelper
         $this->fields[$name] = $value;
     }
 
-    public function &env()
+    public function env()
     {
         if (!$this->loader) {
             $loaders = [];
@@ -250,7 +250,7 @@ class TemplateHelper extends AbstractHelper
         $fields = new SelfReferencingFlatArray($fields);
         $fields->merge($this->fields);
         $fields->merge([
-            'helper' => &$this,
+            'helper' => $this,
             'config' => $this->cms->config,
             'cms' => $this->cms,
             'templateName' => $template,

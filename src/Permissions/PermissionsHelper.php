@@ -47,7 +47,7 @@ class PermissionsHelper extends AbstractHelper
      * to the parent type, which is controlled by
      * permissions.add.[parent type]/[child type]
      */
-    public function checkAddPermissions(&$parentOrType, $type, string $userID=null) : bool
+    public function checkAddPermissions($parentOrType, $type, string $userID=null) : bool
     {
         if ($parentOrType instanceof Noun) {
             $parentType = $parentOrType['dso.type'];

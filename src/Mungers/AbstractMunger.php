@@ -9,15 +9,15 @@ abstract class AbstractMunger implements MungerInterface
     protected $parent;
     protected $name;
 
-    abstract protected function doMunge(&$package);
+    abstract protected function doMunge($package);
     abstract protected function doConstruct($name);
 
-    protected function cacheHash(&$package)
+    protected function cacheHash($package)
     {
         return $package->hash(static::CACHE_ON_KEY);
     }
 
-    protected function doMunge_cached(&$package)
+    protected function doMunge_cached($package)
     {
         //if cache isn't enabled, just run doMunge
         if (!static::CACHE_ENABLED || !$package['response.cacheable']) {
@@ -75,7 +75,7 @@ abstract class AbstractMunger implements MungerInterface
         $this->doConstruct($name, $parent);
     }
 
-    public function munge(PackageInterface &$package)
+    public function munge(PackageInterface $package)
     {
         if ($package->skip($this)) {
             $package->log($this->name().': skipped');
@@ -107,7 +107,7 @@ abstract class AbstractMunger implements MungerInterface
         return '';
     }
 
-    public function &parent(MungerInterface &$parent = null) : ?MungerInterface
+    public function parent(MungerInterface $parent = null) : ?MungerInterface
     {
         if ($parent !== null) {
             $this->parent = $parent;

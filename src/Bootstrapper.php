@@ -33,7 +33,7 @@ class Bootstrapper
         return $url;
     }
 
-    protected static function buildFactories(&$cms, &$config=null)
+    protected static function buildFactories($cms, $config=null)
     {
         if (!$config) {
             $config = $cms->config;
@@ -79,7 +79,7 @@ class Bootstrapper
         unset($config['bootstrap']);
     }
 
-    public static function bootstrap(ConfigInterface &$config)
+    public static function bootstrap(ConfigInterface $config)
     {
         //set up new CMS
         $cms = new CMS($config);

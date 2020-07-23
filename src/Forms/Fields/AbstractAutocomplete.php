@@ -23,7 +23,7 @@ class AbstractAutocomplete extends Container
         return $this['actual']->default($set);
     }
 
-    public function __construct(string $label, string $name = null, FieldInterface $parent = null, CMS &$cms = null)
+    public function __construct(string $label, string $name = null, FieldInterface $parent = null, CMS $cms = null)
     {
         parent::__construct('', $name, $parent);
         $this->addClass('DigraphAutocomplete');

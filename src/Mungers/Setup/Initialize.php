@@ -8,7 +8,7 @@ class Initialize extends AbstractMunger
 {
     const CACHE_ENABLED = true;
 
-    protected function doMunge(&$package)
+    protected function doMunge($package)
     {
         //merged default settings into package
         $package->merge($package->cms()->config['package.defaults']);

@@ -7,7 +7,7 @@ use Destructr\DSOFactoryInterface;
 
 class LogEntry extends \Destructr\DSO
 {
-    public function __construct(array $data = null, DSOFactoryInterface &$factory = null)
+    public function __construct(array $data = null, DSOFactoryInterface $factory = null)
     {
         parent::__construct($data, $factory);
     }

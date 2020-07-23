@@ -17,7 +17,7 @@ class NotificationsHelper extends AbstractHelper
         'notice' => []
     ];
 
-    public function __construct(\Digraph\CMS &$cms)
+    public function __construct(\Digraph\CMS $cms)
     {
         parent::__construct($cms);
         $this->sessionTraitInit();

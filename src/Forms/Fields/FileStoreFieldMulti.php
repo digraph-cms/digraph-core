@@ -43,7 +43,7 @@ class FileStoreFieldMulti extends \Formward\Fields\Container
      * array $exts an array of allowed file extensions
      * int $maxSize the maximum file size (per file) in bytes
      */
-    public function __construct(string $label, string $name=null, FieldInterface $parent=null, CMS &$cms=null, string $path=null, array $exts=null, int $maxSize=null)
+    public function __construct(string $label, string $name=null, FieldInterface $parent=null, CMS $cms=null, string $path=null, array $exts=null, int $maxSize=null)
     {
         if (!$path) {
             $path = 'filefield';
@@ -103,7 +103,7 @@ class FileStoreFieldMulti extends \Formward\Fields\Container
             ),
             'maxsize'
         );
-        $this['upload']->addValidatorFunction('maxSize', function (&$field) use ($size,$s) {
+        $this['upload']->addValidatorFunction('maxSize', function ($field) use ($size,$s) {
             if (!$field->value()) {
                 return true;
             }
@@ -125,7 +125,7 @@ class FileStoreFieldMulti extends \Formward\Fields\Container
             ),
             'allowedExts'
         );
-        $this['upload']->addValidatorFunction('allowedExts', function (&$field) use ($exts,$s) {
+        $this['upload']->addValidatorFunction('allowedExts', function ($field) use ($exts,$s) {
             if (!$field->value()) {
                 return true;
             }
@@ -160,7 +160,7 @@ class FileStoreFieldMulti extends \Formward\Fields\Container
         return $value;
     }
 
-    public function hook_formWrite(Noun &$noun, array $map)
+    public function hook_formWrite(Noun $noun, array $map)
     {
         $fs = $this->cms->helper('filestore');
         /*
@@ -200,7 +200,7 @@ class FileStoreFieldMulti extends \Formward\Fields\Container
         return AbstractField::required($set);
     }
 
-    public function dsoNoun(&$noun)
+    public function dsoNoun($noun)
     {
         $this->noun = $noun;
         if ($files = $this->nounValue()) {

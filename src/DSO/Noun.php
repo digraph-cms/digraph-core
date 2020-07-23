@@ -12,7 +12,7 @@ class Noun extends DSO implements NounInterface
     const ROUTING_NOUNS = [];
     const SLUG_ID_LENGTH = 4;
 
-    public function __construct(array $data = null, DSOFactoryInterface &$factory = null)
+    public function __construct(array $data = null, DSOFactoryInterface $factory = null)
     {
         parent::__construct($data, $factory);
         $this->merge($factory->cms()->config['defaultnoun']);

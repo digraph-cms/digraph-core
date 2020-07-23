@@ -55,7 +55,7 @@ class FilterHelper extends AbstractHelper
         return $this->context;
     }
 
-    public function filter(string $name, FilterInterface &$set = null) : ?FilterInterface
+    public function filter(string $name, FilterInterface $set = null) : ?FilterInterface
     {
         if (!isset($this->filters[$name])) {
             if (isset($this->cms->config['filters.classes.'.$name])) {

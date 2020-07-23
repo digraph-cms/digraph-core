@@ -11,14 +11,14 @@ class User extends Input
 {
     protected $cms;
 
-    public function __construct(string $label, string $name=null, FieldInterface $parent=null, &$cms=null)
+    public function __construct(string $label, string $name=null, FieldInterface $parent=null, $cms=null)
     {
         parent::__construct($label, $name, $parent);
         $this->cms = $cms;
         $this->addTip('Enter a valid user identifier, such as an email address or system identifier','entervalid');
         $this->addValidatorFunction(
             'validuser',
-            function(&$field) {
+            function($field) {
                 if ($field->submittedValue()) {
                     if (!$this->cms->helper('users')->search($field->submittedValue())) {
                         return 'User not found';

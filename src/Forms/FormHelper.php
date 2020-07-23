@@ -46,7 +46,7 @@ class FormHelper extends AbstractHelper
             throw new \Exception("Class not found for field type $type, class $class");
         }
         //set up args
-        $args = [$label,null,null,&$this->cms];
+        $args = [$label,null,null,$this->cms];
         if ($extraArgs) {
             foreach ($extraArgs as $a) {
                 $args[] = $a;
@@ -59,7 +59,7 @@ class FormHelper extends AbstractHelper
         return $field;
     }
 
-    protected function mapNoun(NounInterface &$noun, Form &$form, array $map, NounInterface &$parent = null)
+    protected function mapNoun(NounInterface $noun, Form $form, array $map, NounInterface $parent = null)
     {
         $form->object = $noun;
         foreach ($map as $name => $opt) {
@@ -128,7 +128,7 @@ class FormHelper extends AbstractHelper
         };
     }
 
-    public function getMap(NounInterface &$noun, string $action = 'all')
+    public function getMap(NounInterface $noun, string $action = 'all')
     {
         //load default map
         $map = new FlatArray($this->cms->config['forms.maps.default']);
@@ -155,7 +155,7 @@ class FormHelper extends AbstractHelper
         return $map;
     }
 
-    public function editNoun(NounInterface &$noun) : Form
+    public function editNoun(NounInterface $noun) : Form
     {
         $form = new Form('', 'edit-'.$noun['dso.id']);
         $form->cms($this->cms);

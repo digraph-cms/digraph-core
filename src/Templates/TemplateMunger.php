@@ -8,7 +8,7 @@ class TemplateMunger extends AbstractMunger
 {
     const CACHE_ENABLED = true;
 
-    protected function doMunge(&$package)
+    protected function doMunge($package)
     {
         // only run templates for text/html
         if ($package['response.mime'] != 'text/html') {

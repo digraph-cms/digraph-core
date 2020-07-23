@@ -6,7 +6,7 @@ use Digraph\Mungers\AbstractMunger;
 
 class MediaMunger extends AbstractMunger
 {
-    protected function doMunge(&$package)
+    protected function doMunge($package)
     {
         $m = $package->cms()->helper('media');
         if ($f = $m->get($package->url())) {

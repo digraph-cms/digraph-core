@@ -6,7 +6,7 @@ use Digraph\Mungers\AbstractMunger;
 
 class PermissionsMunger extends AbstractMunger
 {
-    protected function doMunge(&$package)
+    protected function doMunge($package)
     {
         $helper = $package->cms()->helper('permissions');
         if (!$helper->checkUrl($package->url())) {

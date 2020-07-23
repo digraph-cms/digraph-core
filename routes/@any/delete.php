@@ -13,7 +13,7 @@ $form['id'] = new Formward\Fields\Input(
     $s->string('forms.delete.confirm_field_label', [$package->noun()['dso.id']])
 );
 $form['id']->required(true);
-$form['id']->addValidatorFunction('match', function (&$field) use ($s) {
+$form['id']->addValidatorFunction('match', function ($field) use ($s) {
     if ($field->value() != $this->package->noun()['dso.id']) {
         return $s->string('forms.delete.confirm_match_error');
     }

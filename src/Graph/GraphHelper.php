@@ -45,7 +45,7 @@ class GraphHelper extends \Digraph\Helpers\AbstractHelper
         $found = null;
         $this->traverse(
             $start,
-            function ($id) use (&$found,$fnOrDSOType) {
+            function ($id) use ($found,$fnOrDSOType) {
                 if ($noun = $this->cms->read($id)) {
                     if (is_callable($fnOrDSOType)) {
                         if ($fnOrDSOType($noun)) {
@@ -132,7 +132,7 @@ class GraphHelper extends \Digraph\Helpers\AbstractHelper
         $edges = [];
         $this->traverse(
             $end,
-            function ($id, $depth, $last) use (&$edges) {
+            function ($id, $depth, $last) use ($edges) {
                 $edges[$id] = $last;
             },
             -1,

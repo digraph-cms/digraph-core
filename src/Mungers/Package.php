@@ -160,7 +160,7 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         return parent::get($name, $raw);
     }
 
-    public function &cms(CMS &$set = null): ?CMS
+    public function cms(CMS $set = null): ?CMS
     {
         if ($set) {
             $this->log('Set CMS');

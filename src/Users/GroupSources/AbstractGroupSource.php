@@ -8,7 +8,7 @@ abstract class AbstractGroupSource implements GroupSourceInterface
 {
     protected $cms;
 
-    public function __construct(CMS &$cms)
+    public function __construct(CMS $cms)
     {
         $this->cms = $cms;
     }

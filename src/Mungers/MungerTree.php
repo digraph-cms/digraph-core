@@ -6,7 +6,7 @@ class MungerTree extends AbstractMunger
 {
     protected $nodes = [];
 
-    public function add(MungerInterface &$munger)
+    public function add(MungerInterface $munger)
     {
         $munger->parent($this);
         $this->nodes[$munger->name()] = [
@@ -16,17 +16,17 @@ class MungerTree extends AbstractMunger
         ];
     }
 
-    public function pre($location, MungerInterface &$munger)
+    public function pre($location, MungerInterface $munger)
     {
         $this->hook('pre', $location, $munger);
     }
 
-    public function post($location, MungerInterface &$munger)
+    public function post($location, MungerInterface $munger)
     {
         $this->hook('post', $location, $munger);
     }
 
-    protected function hook($loc, $name, MungerInterface &$munger)
+    protected function hook($loc, $name, MungerInterface $munger)
     {
         if ($name instanceof MungerInterface) {
             $name = $name->name();
@@ -37,7 +37,7 @@ class MungerTree extends AbstractMunger
         }
     }
 
-    protected function doMunge(&$package)
+    protected function doMunge($package)
     {
         foreach ($this->nodes as $node) {
             foreach ($node['pre'] as $hook) {

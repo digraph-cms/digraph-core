@@ -20,7 +20,7 @@ class Form extends \Formward\Form
         $this->attr('enctype', 'multipart/form-data');
     }
 
-    public function &cms(CMS &$set = null) : CMS
+    public function cms(CMS $set = null) : CMS
     {
         if ($set) {
             $this->cms = $set;

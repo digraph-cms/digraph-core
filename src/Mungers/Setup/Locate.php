@@ -8,7 +8,7 @@ class Locate extends AbstractMunger
 {
     const CACHE_ENABLED = true;
 
-    protected function doMunge(&$package)
+    protected function doMunge($package)
     {
         $url = $package->url();
         if ($noun = $package->cms()->read($url['noun'], false)) {

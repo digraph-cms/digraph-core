@@ -8,7 +8,7 @@ class ParseUrl extends AbstractMunger
 {
     const CACHE_ENABLED = true;
 
-    protected function doMunge(&$package)
+    protected function doMunge($package)
     {
         //parse URL
         if (!($parsed = $package->cms()->helper('urls')->parse($package['request.url']))) {

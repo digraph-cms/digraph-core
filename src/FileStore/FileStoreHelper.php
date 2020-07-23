@@ -15,7 +15,7 @@ class FileStoreHelper extends AbstractHelper
         return $this->cms->helper('image');
     }
 
-    public function allFiles(&$noun)
+    public function allFiles($noun)
     {
         $files = [];
         foreach ($this->listPaths($noun) as $path) {
@@ -26,7 +26,7 @@ class FileStoreHelper extends AbstractHelper
         return $files;
     }
 
-    public function hook_export(&$export)
+    public function hook_export($export)
     {
         $out = [];
         foreach ($export['nouns'] as $noun) {
@@ -111,7 +111,7 @@ class FileStoreHelper extends AbstractHelper
     /**
      * Set up a package to output a FileStoreFile
      */
-    public function output(&$package, FileStoreFile $file)
+    public function output($package, FileStoreFile $file)
     {
         $package->makeMediaFile($file->nameWithHash());
         $package['response.outputmode'] = 'readfile';
@@ -164,7 +164,7 @@ class FileStoreHelper extends AbstractHelper
     /**
      * This is a CMS-aware helper
      */
-    public function cms(&$cms = null)
+    public function cms($cms = null)
     {
         if ($cms !== null) {
             $this->cms = $cms;
@@ -176,7 +176,7 @@ class FileStoreHelper extends AbstractHelper
      * get a file from a noun -- searches by both name and uniqid, and might
      * return more than one result
      */
-    public function get(Noun &$noun, string $s, string $path = null): array
+    public function get(Noun $noun, string $s, string $path = null): array
     {
         //loop through all paths
         if ($path === null) {
@@ -202,7 +202,7 @@ class FileStoreHelper extends AbstractHelper
     /**
      * clear all files at a particular path in a noun
      */
-    public function clear(Noun &$noun, string $path = 'default')
+    public function clear(Noun $noun, string $path = 'default')
     {
         foreach ($this->list($noun, $path) as $file) {
             $this->delete($noun, $file->uniqid());
@@ -363,7 +363,7 @@ class FileStoreHelper extends AbstractHelper
      *  * name - filename to give back to users
      *  * type - mime type to give back to users
      */
-    public function import(Noun &$noun, array $file, string $path = 'default')
+    public function import(Noun $noun, array $file, string $path = 'default')
     {
         //hash file, record time
         $tries = 0;

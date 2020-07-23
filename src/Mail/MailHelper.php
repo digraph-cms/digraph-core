@@ -299,7 +299,7 @@ EOT;
      *
      * @return void
      */
-    public function &mail()
+    public function mail()
     {
         $mail = new PHPMailer(true);
         //set subject to be "Message from site_name"

@@ -9,7 +9,7 @@ abstract class AbstractFilter implements FilterInterface
     protected $cms;
     protected $context = null;
 
-    public function __construct(CMS &$cms)
+    public function __construct(CMS $cms)
     {
         $this->cms = $cms;
     }

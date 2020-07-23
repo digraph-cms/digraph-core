@@ -13,7 +13,7 @@ foreach ($this->helper('routing')->allHookFiles($type, 'form_add.php') as $file)
 }
 
 $form->handle(
-    function (&$form) use ($package,$type) {
+    function ($form) use ($package,$type) {
         foreach ($this->helper('routing')->allHookFiles($type, 'form_handled.php') as $file) {
             include $file['file'];
         }

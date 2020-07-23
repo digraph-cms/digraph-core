@@ -30,7 +30,7 @@ EOT;
         'CREATE UNIQUE INDEX IF NOT EXISTS digraph_slugs_url_noun_IDX ON digraph_slugs (slug_url,slug_noun);',
     ];
 
-    public function hook_export(&$export)
+    public function hook_export($export)
     {
         $slugs = [];
         foreach ($export['nouns'] as $noun) {

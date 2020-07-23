@@ -6,7 +6,7 @@ use Digraph\Mungers\AbstractMunger;
 
 class LogMunger extends AbstractMunger
 {
-    protected function doMunge(&$package)
+    protected function doMunge($package)
     {
         if ($package->cms()->config['logging.debug']) {
             if ($package['response.status'] != 200) {

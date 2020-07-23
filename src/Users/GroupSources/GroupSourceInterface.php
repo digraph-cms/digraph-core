@@ -6,6 +6,6 @@ use Digraph\CMS;
 
 interface GroupSourceInterface
 {
-    public function __construct(CMS &$cms);
+    public function __construct(CMS $cms);
     public function groups(string $id) : ?array;
 }

@@ -8,7 +8,7 @@ use Digraph\Urls\Url;
 
 class OutputFilterHelper extends AbstractHelper
 {
-    public function filterPackage(PackageInterface &$package)
+    public function filterPackage(PackageInterface $package)
     {
         if ($filter = $package['response.outputfilter']) {
             if ($filter = $this->getFilter($filter)) {
@@ -17,7 +17,7 @@ class OutputFilterHelper extends AbstractHelper
         }
     }
 
-    public function preFilterPackage(PackageInterface &$package)
+    public function preFilterPackage(PackageInterface $package)
     {
         if ($filter = $package['response.outputfilter']) {
             if ($filter = $this->getFilter($filter)) {

@@ -13,7 +13,7 @@ class SlugPattern extends Container
     protected $noun;
     protected $pnoun;
 
-    public function __construct(string $label, string $name=null, FieldInterface $parent=null, &$cms=null)
+    public function __construct(string $label, string $name=null, FieldInterface $parent=null, $cms=null)
     {
         parent::__construct($label, $name, $parent);
         $this->cms = $cms;
@@ -23,7 +23,7 @@ class SlugPattern extends Container
         //add a validator to trim slugs and ensure they're valid
         $this->addValidatorFunction(
             'validurl',
-            function (&$field) {
+            function ($field) {
                 $value = $field->dsoValue();
                 if (!$value) {
                     return true;
@@ -52,7 +52,7 @@ class SlugPattern extends Container
         $this['use']->default(false);
     }
 
-    public function dsoNoun(&$noun)
+    public function dsoNoun($noun)
     {
         $this->noun = $noun;
         if ($noun->parent()) {
@@ -61,7 +61,7 @@ class SlugPattern extends Container
         }
     }
 
-    public function dsoParent(&$parent)
+    public function dsoParent($parent)
     {
         $this->pnoun = $parent;
     }

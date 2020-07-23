@@ -22,7 +22,7 @@ class Execute extends AbstractMunger
         return $this->package->cms()->read($id);
     }
 
-    protected function doMunge(&$package)
+    protected function doMunge($package)
     {
         try {
             if ($package->noun() && $package['response.status'] == 200) {
@@ -63,17 +63,17 @@ class Execute extends AbstractMunger
         ob_end_clean();
     }
 
-    protected function &factory(string $name='content')
+    protected function factory(string $name='content')
     {
         return $this->package->cms()->factory($name);
     }
 
-    protected function &helper(string $name)
+    protected function helper(string $name)
     {
         return $this->package->cms()->helper($name);
     }
 
-    protected function &cms()
+    protected function cms()
     {
         return $this->package->cms();
     }

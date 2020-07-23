@@ -44,7 +44,7 @@ class CMS
         $this->helper('hooks')->noun_register('child:delete', [$this,'invalidateCache'], 'cms/invalidateCache');
     }
 
-    public function &package(PackageInterface &$package = null) : ?PackageInterface
+    public function package(PackageInterface $package = null) : ?PackageInterface
     {
         if ($package) {
             $this->package = $package;
@@ -129,7 +129,7 @@ class CMS
         return $this->readCache[$id];
     }
 
-    public function fullMunge(PackageInterface &$package)
+    public function fullMunge(PackageInterface $package)
     {
         try {
             foreach ($this->config['fullmunge'] as $name) {
@@ -143,7 +143,7 @@ class CMS
         }
     }
 
-    public function munge(PackageInterface &$package, string $name = 'build')
+    public function munge(PackageInterface $package, string $name = 'build')
     {
         $p = $this->package;
         $start = microtime(true);
@@ -202,7 +202,7 @@ class CMS
         return $helpers;
     }
 
-    public function &helper(string $name, HelperInterface &$set=null) : ?HelperInterface
+    public function helper(string $name, HelperInterface $set=null) : ?HelperInterface
     {
         if ($set) {
             $this->helpers[] = $name;
@@ -217,7 +217,7 @@ class CMS
         return $this->valueFunction('helper/'.$name, $set);
     }
 
-    public function &munger(string $name='build', MungerInterface &$set=null) : ?MungerInterface
+    public function munger(string $name='build', MungerInterface $set=null) : ?MungerInterface
     {
         if ($set) {
             $set->name($name);
@@ -229,7 +229,7 @@ class CMS
         return $this->valueFunction('munger/'.$name, $set);
     }
 
-    public function &driver(string $name = 'default', DSODriverInterface &$set=null) : ?DSODriverInterface
+    public function driver(string $name = 'default', DSODriverInterface $set=null) : ?DSODriverInterface
     {
         if ($set) {
             $this->log('Setting driver '.$name.': '.get_class($set));
@@ -240,7 +240,7 @@ class CMS
         return $this->valueFunction('driver/'.$name, $set);
     }
 
-    public function &pdo(string $name = 'default', \PDO &$set=null) : ?\PDO
+    public function pdo(string $name = 'default', \PDO $set=null) : ?\PDO
     {
         if ($set) {
             $this->log('Setting PDO '.$name);
@@ -248,7 +248,7 @@ class CMS
         return $this->valueFunction('pdo/'.$name, $set);
     }
 
-    public function &factory(string $name = 'content', DSOFactoryInterface &$set=null) : ?DSOFactoryInterface
+    public function factory(string $name = 'content', DSOFactoryInterface $set=null) : ?DSOFactoryInterface
     {
         if ($set) {
             $this->log('Setting factory '.$name.': '.get_class($set));
@@ -274,7 +274,7 @@ class CMS
         return $caches;
     }
 
-    public function &cache(?string $name = 'default', TagAwareAdapterInterface &$set=null) : ?TagAwareAdapterInterface
+    public function cache(?string $name = 'default', TagAwareAdapterInterface $set=null) : ?TagAwareAdapterInterface
     {
         if ($set) {
             $this->caches[] = $name;
@@ -312,7 +312,7 @@ class CMS
         $this->cache()->invalidateTags([$dso_id]);
     }
 
-    protected function &valueFunction(string $name, &$value=null, $default=null)
+    protected function valueFunction(string $name, $value=null, $default=null)
     {
         if ($value !== null) {
             $this->values[$name] = $value;

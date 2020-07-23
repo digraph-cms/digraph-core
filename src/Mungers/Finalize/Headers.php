@@ -8,7 +8,7 @@ use Flatrr\FlatArray;
 
 class Headers extends AbstractMunger
 {
-    protected function doMunge(&$package)
+    protected function doMunge($package)
     {
         //record memory use
         $package['peak_memory_use'] = (round(memory_get_peak_usage() / 1024 / 1024 * 100) / 100) . 'MB';

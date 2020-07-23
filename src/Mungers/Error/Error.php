@@ -6,7 +6,7 @@ use Digraph\Mungers\Build\Execute;
 
 class Error extends Execute
 {
-    protected function doMunge(&$package)
+    protected function doMunge($package)
     {
         $status = $package['response.status'];
         if ($status != 200) {

@@ -91,7 +91,7 @@ class ContentDefault extends Content
         return $out;
     }
 
-    public function __construct(string $label, string $name=null, FieldInterface $parent=null, CMS &$cms=null)
+    public function __construct(string $label, string $name=null, FieldInterface $parent=null, CMS $cms=null)
     {
         parent::__construct($label, $name, $parent, $cms);
         $this->cms = $cms;

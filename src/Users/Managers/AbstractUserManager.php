@@ -9,7 +9,7 @@ abstract class AbstractUserManager implements UserManagerInterface
     protected $cms;
     protected $name;
 
-    public function __construct(CMS &$cms)
+    public function __construct(CMS $cms)
     {
         $this->cms = $cms;
     }

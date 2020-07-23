@@ -6,7 +6,7 @@ use Digraph\Mungers\AbstractMunger;
 
 class Output extends AbstractMunger
 {
-    protected function doMunge(&$package)
+    protected function doMunge($package)
     {
         switch ($package['response.outputmode']) {
             /* Send the contents of a file somewhere to the browser */

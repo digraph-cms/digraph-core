@@ -65,7 +65,7 @@ class SessionHelper extends AbstractHelper
         $this->session->deauthorize();
     }
 
-    public function __construct(CMS &$cms)
+    public function __construct(CMS $cms)
     {
         parent::__construct($cms);
         $this->session = Session::getInstance($cms->config['site_id']);
