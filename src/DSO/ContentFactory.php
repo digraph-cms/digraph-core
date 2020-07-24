@@ -35,7 +35,7 @@ class ContentFactory extends DigraphFactory
         //mark package as relying on results
         if ($package = $this->cms->package()) {
             foreach ($result as $n) {
-                $package->cacheTag($n['dso.id']);
+                $package->cacheTagNoun($n);
             }
         }
         //return

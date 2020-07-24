@@ -87,6 +87,18 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         return $log;
     }
 
+    public function cacheTagNoun(NounInterface $noun)
+    {
+        if (!$this['cachetags'] || !in_array($noun['dso.id'], $this['cachetags'])) {
+            $this->push('cachetags', $noun['dso.id']);
+            if ($this['response.last-modified'] !== false) {
+                if ($noun['dso.modified.date'] > $this['response.last-modified']) {
+                    $noun['dso.modified.date'] = $this['response.last-modified'];
+                }
+            }
+        }
+    }
+
     public function cacheTag(string $tag)
     {
         if (!$this['cachetags'] || !in_array($tag, $this['cachetags'])) {
@@ -175,7 +187,7 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
             $this->log('Set Noun: ' . $set['dso.id'] . ': ' . $set->name());
             $this['noun'] = $set->get();
             $this->url($set->url($this['url.verb'], $this['url.args']));
-            $this->cacheTag($set['dso.id']);
+            $this->cacheTagNoun($set);
         }
         if ($this['noun']) {
             return $this->cms->factory()->create($this['noun']);

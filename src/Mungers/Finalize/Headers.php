@@ -58,9 +58,6 @@ class Headers extends AbstractMunger
             return false;
         }
         if ($result === null) {
-            $result = $this->generateLastModified($package);
-        }
-        if ($result === null) {
             $result = time();
         }
         if ($result) {
@@ -68,19 +65,6 @@ class Headers extends AbstractMunger
         }else {
             return false;
         }
-    }
-
-    protected function generateLastModified(Package $package)
-    {
-        $best = null;
-        foreach ($package['cachetags'] ?? [] as $id) {
-            if ($ob = $package->cms()->read($id, false)) {
-                if ($ob['dso.modified.date'] > $best) {
-                    $best = $ob['dso.modified.date'];
-                }
-            }
-        }
-        return $best;
     }
 
     protected function cacheControl($package)
