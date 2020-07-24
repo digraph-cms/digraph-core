@@ -22,6 +22,11 @@ class Noun extends DSO implements NounInterface
         $this->resetChanges();
     }
 
+    public function breadcrumbName(string $verb): ?string
+    {
+        return null;
+    }
+
     public function addMenuEnabled(string $verb)
     {
         return $verb == 'display';

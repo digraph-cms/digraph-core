@@ -8,7 +8,7 @@ class NavigationHelper extends AbstractHelper
 {
     protected $parentOfCache = [];
 
-    public function breadcrumb($url) : array
+    public function breadcrumb($url): array
     {
         $bc = [];
         $bc[] = $url;
@@ -19,6 +19,20 @@ class NavigationHelper extends AbstractHelper
             function ($e) {
                 return $this->cms->helper('permissions')->checkUrl($e);
             }
+        );
+        //set titles based on breadcrumbName()
+        $bc = array_map(
+            function ($e) {
+                if ($e['object']) {
+                    if ($noun = $this->cms->read($e['object'])) {
+                        if ($name = $noun->breadcrumbName($e['verb'])) {
+                            $e['text'] = $name;
+                        }
+                    }
+                }
+                return $e;
+            },
+            $bc
         );
         return array_values(array_reverse($bc));
     }
@@ -48,10 +62,10 @@ class NavigationHelper extends AbstractHelper
         $vars = [
             'noun' => $url['noun'],
             'verb' => $url['verb'],
-            'args' => $url->argString()
+            'args' => $url->argString(),
         ];
         foreach ($url['args'] as $key => $value) {
-            $vars['arg_'.$key] = $value;
+            $vars['arg_' . $key] = $value;
         }
         $nouns = $verbs = [];
         $nouns[] = $url['noun'];
@@ -73,7 +87,7 @@ class NavigationHelper extends AbstractHelper
             foreach ($verbs as $verb) {
                 if ($path = $this->cms->config["navigation.parents.$type.$noun/$verb"]) {
                     foreach ($vars as $key => $value) {
-                        $path = str_replace('!'.$key, $value, $path);
+                        $path = str_replace('!' . $key, $value, $path);
                     }
                     return $this->cms->helper('urls')->parse($path);
                 } elseif ($path === false) {
@@ -101,11 +115,11 @@ class NavigationHelper extends AbstractHelper
         return @$this->parentOfCache["$url"];
     }
 
-    public function menu($conf) : array
+    public function menu($conf): array
     {
         $menu = [];
         if (!is_array($conf)) {
-            $conf = $this->cms->config['navigation.menus.'.$conf];
+            $conf = $this->cms->config['navigation.menus.' . $conf];
         }
         if ($conf) {
             $urls = $this->cms->helper('urls');
