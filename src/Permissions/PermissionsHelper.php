@@ -46,19 +46,20 @@ class PermissionsHelper extends AbstractHelper
             $paths[] = $url['noun']. '/' . $url['verb'];
         }
         // check all paths in decreasing order of specificity
-        foreach ($paths as $path) {
+        $output = null;
+        foreach (array_reverse($paths) as $path) {
             $result = $this->check($path,'url',$userID);
             // returns the first non-null result we get
             if ($result !== null) {
                 // if there is a noun and the verb is add, we also need to checkAddPermissions
                 if ($result && $noun && $url['verb'] == 'add') {
-                    return $this->checkAddPermissions($noun, $url['args']['type'], $userID);
+                    $result = $this->checkAddPermissions($noun, $url['args']['type'], $userID);
                 }
                 // otherwise we can just return the result
-                return $result;
+                $output = $result;
             }
         }
-        return null;
+        return $output;
     }
 
     /**
@@ -95,7 +96,7 @@ class PermissionsHelper extends AbstractHelper
      */
     public function check(string $path, string $category = 'url', string $userID = null): ?bool
     {
-        $allow = false;
+        $allow = null;
         $rules = @$this->cms->config['permissions'][$category];
         if ($userID === null) {
             $userID = $this->cms->helper('users')->id();
@@ -124,7 +125,6 @@ class PermissionsHelper extends AbstractHelper
             }
             foreach ($matchingKeys as $key) {
                 if (isset($rules[$key])) {
-                    // var_dump($key);
                     foreach ($rules[$key] as $rule) {
                         $new = $this->checkRule($rule, $userID, $groups);
                         if ($new !== null) {
