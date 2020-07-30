@@ -327,8 +327,6 @@ filters:
 
 permissions:
   url:
-    '*':
-      - deny all
     '*/display':
       - allow all
     '*/file':

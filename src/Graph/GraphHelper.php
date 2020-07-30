@@ -26,7 +26,7 @@ class GraphHelper extends \Digraph\Helpers\AbstractHelper
         'depth' => -1,
         'onlyTypes' => [],
         'omitTypes' => [],
-        'sort' => 'tree'
+        'sort' => 'tree',
     ];
 
     /**
@@ -40,12 +40,12 @@ class GraphHelper extends \Digraph\Helpers\AbstractHelper
      * @param boolean $reverse reverse order (searches up by default)
      * @return ?\Digraph\DSO\Noun
      */
-    public function nearest($start, $fnOrDSOType, $reverse=false)
+    public function nearest($start, $fnOrDSOType, $reverse = false)
     {
         $found = null;
         $this->traverse(
             $start,
-            function ($id) use ($found,$fnOrDSOType) {
+            function ($id) use (&$found, $fnOrDSOType) {
                 if ($noun = $this->cms->read($id)) {
                     if (is_callable($fnOrDSOType)) {
                         if ($fnOrDSOType($noun)) {
@@ -71,7 +71,7 @@ class GraphHelper extends \Digraph\Helpers\AbstractHelper
     Wrapper for childIDs that actually loads all the Nouns from the database.
     Maintains breadth-first order.
      */
-    public function children($id, $type=null, $depth=1, $order=null)
+    public function children($id, $type = null, $depth = 1, $order = null)
     {
         return $this->sqlResults($this->childIDs($id, $type, $depth), $order);
     }
@@ -80,7 +80,7 @@ class GraphHelper extends \Digraph\Helpers\AbstractHelper
     Wrapper for parentIDs that actually loads all the Nouns from the database.
     Maintains breadth-first order.
      */
-    public function parents($id, $type=null, $depth=1, $order=null)
+    public function parents($id, $type = null, $depth = 1, $order = null)
     {
         return $this->sqlResults($this->parentIDs($id, $type, $depth), $order);
     }
@@ -89,10 +89,10 @@ class GraphHelper extends \Digraph\Helpers\AbstractHelper
     Return all children of a given ID, optionally up to a given depth and/or of
     a specific edge type. Returns the IDs only.
      */
-    public function childIDs($id, $type=null, $depth=1)
+    public function childIDs($id, $type = null, $depth = 1)
     {
         $out = $this->traverse($id, null, $type, $depth);
-        array_shift($out);//shift first item off to not include root of search
+        array_shift($out); //shift first item off to not include root of search
         return $out;
     }
 
@@ -100,10 +100,10 @@ class GraphHelper extends \Digraph\Helpers\AbstractHelper
     Return all parents of a given ID, optionally up to a given depth and/or of
     a specific edge type. Returns the IDs only.
      */
-    public function parentIDs($id, $type=null, $depth=1)
+    public function parentIDs($id, $type = null, $depth = 1)
     {
         $out = $this->traverse($id, null, $type, $depth, true);
-        array_shift($out);//shift first item off to not include root of search
+        array_shift($out); //shift first item off to not include root of search
         return $out;
     }
 
@@ -111,7 +111,7 @@ class GraphHelper extends \Digraph\Helpers\AbstractHelper
     Wrapper for routeIDs that actually loads all the Nouns from the database.
     Maintains breadth-first order.
      */
-    public function route($start, $end, $reverse=false)
+    public function route($start, $end, $reverse = false)
     {
         return $this->sqlResults($this->routeIDs($start, $end, $reverse));
     }
@@ -119,7 +119,7 @@ class GraphHelper extends \Digraph\Helpers\AbstractHelper
     /*
     Get an array of IDs that form a route between a given start and end point.
      */
-    public function routeIDs($start, $end) : ?array
+    public function routeIDs($start, $end): ?array
     {
         /*
         It's noteworthy that this method works in a slightly unintuitive way.
@@ -152,7 +152,7 @@ class GraphHelper extends \Digraph\Helpers\AbstractHelper
         return null;
     }
 
-    protected function sqlResults($ids=[], $order=null)
+    protected function sqlResults($ids = [], $order = null)
     {
         if ($s = $this->sqlSearch($ids)) {
             if ($order === null) {
@@ -181,7 +181,7 @@ class GraphHelper extends \Digraph\Helpers\AbstractHelper
      * Creates a Destructr search object set up to return a given list of IDs,
      * optionally limiting to and omitting by type
      */
-    protected function sqlSearch($ids=[])
+    protected function sqlSearch($ids = [])
     {
         //sanitize IDs
         $ids = $this->regexFilter($ids, '/^[a-z0-9]+$/');
@@ -193,7 +193,7 @@ class GraphHelper extends \Digraph\Helpers\AbstractHelper
         $search = $this->cms->factory()->search();
         //set up where clause
         $ids = array_map([$search, 'quote'], $ids);
-        $search->where('${dso.id} in ('.implode(",", $ids).')');
+        $search->where('${dso.id} in (' . implode(",", $ids) . ')');
         //return search object
         return $search;
     }
@@ -224,17 +224,17 @@ class GraphHelper extends \Digraph\Helpers\AbstractHelper
      *
      * If no callback is provided, each item will simply be the ID of the noun.
      */
-    public function traverse($start, $fn=null, $type=null, $maxDepth=-1, $reverse=false)
+    public function traverse($start, $fn = null, $type = null, $maxDepth = -1, $reverse = false)
     {
-        $queue = [[0,$start,null]];
+        $queue = [[0, $start, null]];
         $results = [];
         while ($queue) {
             list($depth, $id, $last) = array_shift($queue);
             if (!$id || isset($results[$id])) {
                 continue;
             }
-            $r = $fn?$fn($id, $depth, $last):$id;
-            $results[$id] = $r?$r:false;
+            $r = $fn ? $fn($id, $depth, $last) : $id;
+            $results[$id] = $r ? $r : false;
             //if result is false, abort traverse
             //this means callback should return null if it doesn't want to abort
             if ($r === false) {
@@ -247,7 +247,7 @@ class GraphHelper extends \Digraph\Helpers\AbstractHelper
                     $new = $this->cms->helper('edges')->children($id, $type, true);
                 }
                 foreach ($new as $n) {
-                    $queue[] = [$depth+1,$n,$id];
+                    $queue[] = [$depth + 1, $n, $id];
                 }
             }
         }
