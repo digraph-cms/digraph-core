@@ -8,13 +8,15 @@ $noun = $package->noun();
 $form = new Formward\Form($s->string('forms.order.form_title'));
 
 /* sorting mode field */
+$options = $cms->config['strings.forms.order.mode.options'];
+$manual = $options['manual'];
+unset($options['manual']);
+$options['manual'] = $manual;
 $form['mode'] = new Formward\Fields\Select(
     $s->string('forms.order.mode.title')
 );
 $form['mode']->required('true');
-$form['mode']->options(
-    $cms->config['strings.forms.order.mode.options']
-);
+$form['mode']->options($options);
 $form['mode']->default($noun['digraph.order.mode']);
 
 /* unsorted field to specify what happens when unspecified children are found on manual sorting */
