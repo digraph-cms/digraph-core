@@ -4,6 +4,7 @@ namespace Digraph\FileStore;
 
 use Digraph\DSO\Noun;
 use Digraph\Helpers\AbstractHelper;
+use Digraph\Logging\LogHelper;
 
 class FileStoreHelper extends AbstractHelper
 {
@@ -113,6 +114,14 @@ class FileStoreHelper extends AbstractHelper
      */
     public function output($package, FileStoreFile $file)
     {
+        //log/error if file doesn't exist
+        if (!is_file($file->path())) {
+            $package->error(500, 'FileStoreHelper: the specified file does not exist');
+            $package['error.missing-file.name'] = $file->name();
+            $package['error.missing-file.path'] = $file->path();
+            return;
+        }
+        //otherwise output normally
         $package->makeMediaFile($file->nameWithHash());
         $package['response.outputmode'] = 'readfile';
         $package['response.readfile'] = $file->path();

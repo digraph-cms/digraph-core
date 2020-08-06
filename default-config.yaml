@@ -10,6 +10,9 @@ urls:
 
 logging:
   debug: false
+  mail:
+    threshold: 500
+    recipients: []
 
 mail:
   default:
@@ -23,8 +26,6 @@ cron:
   # the ttl to be applied to the cron-running page, used to rate-limit cron runs
   minttl: 300
   # how long complete log entries should last before they are removed by cron
-  # this only applies to the logging database in Digraph, any monolog loggers
-  # will need to be configured separately wherever they are instantiated
   logexpiration: 30 days
 
 # bootstrap settings are used by the Bootstrapper class, and are then removed

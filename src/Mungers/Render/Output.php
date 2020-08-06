@@ -16,7 +16,7 @@ class Output extends AbstractMunger
                 if ($package->cms()->config['send-content-length-header']) {
                     //send a content length header so that download progress works
                     $size = filesize($package['response.readfile']);
-                    @header('Content-Length:'.$size);
+                    @header('Content-Length:' . $size);
                 }
                 //send file to browser
                 readfile($package['response.readfile']);

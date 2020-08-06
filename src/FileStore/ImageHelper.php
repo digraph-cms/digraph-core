@@ -2,7 +2,6 @@
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
 namespace Digraph\FileStore;
 
-use Digraph\DSO\Noun;
 use Digraph\Helpers\AbstractHelper;
 
 class ImageHelper extends AbstractHelper
@@ -61,7 +60,7 @@ class ImageHelper extends AbstractHelper
         //set size
         $image = $this->imagine_size($image, $rules);
         //save
-        $image->save($output, @$rules['save']?$rules['save']:[]);
+        $image->save($output, @$rules['save'] ? $rules['save'] : []);
         //strip metadata
         if (@$rules['strip_exif']) {
         }
@@ -69,7 +68,7 @@ class ImageHelper extends AbstractHelper
 
     protected function rules($preset)
     {
-        if (!is_array($rules = $this->cms->config['image.presets.'.$preset])) {
+        if (!is_array($rules = $this->cms->config['image.presets.' . $preset])) {
             return null;
         }
         $base = $this->cms->config['image.preset_base'];
@@ -79,8 +78,16 @@ class ImageHelper extends AbstractHelper
         return $base;
     }
 
-    public function output($package, FileStoreFile $file, string $preset=null)
+    public function output($package, FileStoreFile $file, string $preset = null)
     {
+        //log/error if file doesn't exist
+        if (!is_file($file->path())) {
+            $package->error(500, 'ImageHelper::output: the specified file does not exist');
+            $package['error.missing-file.name'] = $file->name();
+            $package['error.missing-file.path'] = $file->path();
+            return;
+        }
+        //default preset
         if ($preset === null) {
             $preset = 'default';
         }
@@ -90,20 +97,20 @@ class ImageHelper extends AbstractHelper
             return;
         }
         //set extension from filename/rules
-        $extension = @$rules['extension']?$rules['extension']:preg_replace('/.+\./', '', $file->name());
+        $extension = @$rules['extension'] ? $rules['extension'] : preg_replace('/.+\./', '', $file->name());
         //set up the cache information we'll need
         //note that cache ID is based on preset and file hash, so the image
         //cache will be effectively deduplicated
-        $cacheID = md5(serialize([$file->hash(),$preset])).'.'.$extension;
+        $cacheID = md5(serialize([$file->hash(), $preset])) . '.' . $extension;
         $cacheDir = $this->cms->config['image.cache.dir'];
         if ($cacheDir && (is_dir($cacheDir) || mkdir($cacheDir))) {
-            $cacheFile = $this->cms->config['image.cache.dir'].'/'.$cacheID;
+            $cacheFile = $this->cms->config['image.cache.dir'] . '/' . $cacheID;
             $cacheable = true;
         } else {
-            $cacheFile = sys_get_temp_dir().'/'.uniqid().'.'.$extension;
+            $cacheFile = sys_get_temp_dir() . '/' . uniqid() . '.' . $extension;
             $cacheable = false;
         }
-        $cacheExpired = time()-$this->cms->config['image.cache.ttl'];
+        $cacheExpired = time() - $this->cms->config['image.cache.ttl'];
         if ($package['noun.dso.modified.date'] > $cacheExpired) {
             $cacheExpired = $package['noun.dso.modified.date'];
         }
@@ -113,10 +120,10 @@ class ImageHelper extends AbstractHelper
             $this->process($file->path(), $cacheFile, $rules);
         }
         //output
-        $filename = (($preset !== 'default')?$preset.'_':'').$file->nameWithHash();
+        $filename = (($preset !== 'default') ? $preset . '_' : '') . $file->nameWithHash();
         $originalExtension = preg_replace('/.+\./', '', $filename);
         if ($extension != $originalExtension) {
-            $filename .= '.'.$extension;
+            $filename .= '.' . $extension;
         }
         $package->makeMediaFile($filename);
         $package['response.outputmode'] = 'readfile';

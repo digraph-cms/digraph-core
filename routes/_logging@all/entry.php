@@ -16,7 +16,7 @@ function yaml($array)
     return $c->yaml();
 }
 
-$package['fields.page_name'] = 'Log: '.$log->name();
+$package['fields.page_name'] = 'Log: ' . $log->name();
 $s = $cms->helper('strings');
 ?>
 
@@ -28,34 +28,35 @@ $s = $cms->helper('strings');
     <li>Last recorded: <?php echo $s->dateTimeHTML($log['dso.modified.date']); ?></li>
 </ul>
 
-<h2>Users</h2>
-<ul>
-<?php
-foreach ($log['users'] as $a) {
-    foreach ($a as $b) {
-        echo @"<li>{$b['ip']} {$b['fw']} {$b['id']}<br>{$b['ua']}<br>{$b['url']}</li>";
-    }
-}
- ?>
-</ul>
-
-<h2>Referers</h2>
-<ul>
-<?php
-foreach ($log['referers'] as $r) {
-     echo @"<li>{$r['url']}: {$r['count']}</li>";
- }
- ?>
-</ul>
-
 <?php if ($log['package.error']) {
-     ?>
-<h2>Error trace</h2>
+    ?>
+<h2>Error info</h2>
 <pre style="white-space:pre-wrap;">
 <?php echo yaml($log['package.error']); ?>
 </pre>
 <?php
- } ?>
+}?>
+
+<h2>Users</h2>
+<?php
+foreach ($log['users'] as $a) {
+    foreach ($a as $b) {
+        echo @"<pre>{$b['ip']} {$b['fw']} {$b['id']}\r\n{$b['ua']}\r\n{$b['url']}</pre>";
+    }
+}
+?>
+
+<h2>Referers</h2>
+<pre>
+<?php
+echo implode("\r\n", array_map(
+    function ($r) {
+        return "{$r['url']} :: {$r['count']}";
+    },
+    $log['referers']
+));
+?>
+</pre>
 
 <h2>Package log</h2>
 <pre style="white-space:pre-wrap;">
@@ -69,6 +70,6 @@ foreach ($log['referers'] as $r) {
 
 <h2>Package dump</h2>
 <pre style="white-space:pre-wrap;">
-<?php unset($log['package.response.content']); ?>
+<?php unset($log['package.response.content']);?>
 <?php echo yaml($log['package']); ?>
 </pre>

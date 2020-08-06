@@ -72,13 +72,15 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
     public function saveLog($message, $level = null, $id = null)
     {
         if (!$id) {
-            $id = md5(
-                $this['request.hash'] .
-                $this->hash('error') .
+            $id = md5(serialize([
+                $this['request.actualurl'],
                 $this->hash('logging.messages')
-            );
+            ]));
         } else {
-            $id = md5($id);
+            $id = md5(serialize([
+                $this['request.actualurl'],
+                $id
+            ]));
         }
         $this['logging.save'] = $id;
         $this['logging.messages.' . $id] = $message;
