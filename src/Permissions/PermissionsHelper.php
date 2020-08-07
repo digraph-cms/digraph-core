@@ -139,7 +139,7 @@ class PermissionsHelper extends AbstractHelper
 
     protected function checkRule($rule, $userID, $groups)
     {
-        $rule = strtolower(trim($rule));
+        $rule = trim($rule);
         if ($rule == 'allow all') {
             return true;
         } elseif ($rule == 'deny all') {
