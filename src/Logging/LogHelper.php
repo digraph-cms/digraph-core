@@ -140,7 +140,7 @@ class LogHelper extends \Digraph\Helpers\AbstractHelper
             return;
         }
         $mail = $this->cms->helper('mail');
-        $message = new Message();
+        $message = $mail->message();
         $message->setSubject('Site error: ' . $entry['message']);
         $body = [
             'A new error has been logged at:',
