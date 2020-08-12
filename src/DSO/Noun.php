@@ -226,9 +226,16 @@ class Noun extends DSO implements NounInterface
             $sortRule = 'default';
         }
         $rule = $cms->config["child_sorting.$sortRule"];
-        $search->order($rule);
-        /* execute */
-        $children = $search->execute();
+        if (is_array($rule)) {
+            // if a rule is an array, it should be a helper name and method
+            // the given method should work like strcmp
+            $children = $search->execute();
+            usort($children, [$this->cms()->helper($rule[0]), $rule[1]]);
+        } else {
+            // if a rule is a single string, it should be a SQL ordering clause
+            $search->order($rule);
+            $children = $search->execute();
+        }
         /* manually sort */
         if ($manualSort) {
             // add all manually-specified ids to $manuallySorted, removing from

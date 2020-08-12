@@ -153,7 +153,6 @@ class LogHelper extends \Digraph\Helpers\AbstractHelper
         foreach ($this->cms->config['logging.mail.recipients'] as $recipient) {
             $message->addBCC($recipient);
         }
-        var_dump($message);
         $mail->send($message);
     }
 }
