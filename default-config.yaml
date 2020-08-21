@@ -15,6 +15,7 @@ logging:
     recipients: []
 
 mail:
+  enabled: true
   default:
     subject: Untitled message
     from: noreply@fake.domain

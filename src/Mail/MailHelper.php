@@ -123,6 +123,9 @@ EOT;
 
     public function doSend(QueuedMessage $qm)
     {
+        if (!$this->cms->config['mail.enabled']) {
+            return null;
+        }
         $success = false;
         $error = 'Unspecified error';
         try {
