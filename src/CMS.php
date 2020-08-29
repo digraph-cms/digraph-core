@@ -2,8 +2,8 @@
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
 namespace Digraph;
 
-use Destructr\Drivers\DSODriverInterface;
-use Destructr\DSOFactoryInterface;
+use Destructr\Drivers\AbstractDriver;
+use Destructr\Factory;
 use Digraph\DSO\Noun;
 use Digraph\Helpers\HelperInterface;
 use Digraph\Logging\LogHelper;
@@ -229,7 +229,7 @@ class CMS
         return $this->valueFunction('munger/'.$name, $set);
     }
 
-    public function driver(string $name = 'default', DSODriverInterface $set=null) : ?DSODriverInterface
+    public function driver(string $name = 'default', AbstractDriver $set=null) : ?AbstractDriver
     {
         if ($set) {
             $this->log('Setting driver '.$name.': '.get_class($set));
@@ -248,7 +248,7 @@ class CMS
         return $this->valueFunction('pdo/'.$name, $set);
     }
 
-    public function factory(string $name = 'content', DSOFactoryInterface $set=null) : ?DSOFactoryInterface
+    public function factory(string $name = 'content', Factory $set=null) : ?Factory
     {
         if ($set) {
             $this->log('Setting factory '.$name.': '.get_class($set));
@@ -256,7 +256,7 @@ class CMS
                 $set->cms($this);
             }
             $set->name($name);
-            $set->createTable();
+            $set->prepareEnvironment();
             $this->config->push('factories', $name);
         }
         return $this->valueFunction('factory/'.$name, $set);
