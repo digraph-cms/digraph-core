@@ -1,11 +1,13 @@
 <?php
-/* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
+/* Digraph Core | https://github.com/digraph-cms/digraph-core | MIT License */
 namespace Digraph\DSO;
 
-use Destructr\Factory;
-use Digraph\CMS;
-use Destructr\Search;
+use Destructr\Drivers\AbstractDriver;
 use Destructr\DSOInterface;
+use Destructr\Factory;
+use Destructr\Search;
+use Digraph\CMS;
+use Digraph\Logging\LogHelper;
 use Flatrr\FlatArray;
 
 class DigraphFactory extends Factory
@@ -14,7 +16,65 @@ class DigraphFactory extends Factory
     protected $cms;
     protected $name = 'system';
 
-    public function name($set = null) : string
+    protected $schema = [
+        'dso.id' => [
+            'name' => 'dso_id',
+            'type' => 'VARCHAR(16)',
+            'index' => 'BTREE',
+            'unique' => true,
+            'primary' => true,
+        ],
+        'dso.type' => [
+            'name' => 'dso_type',
+            'type' => 'VARCHAR(30)',
+            'index' => 'BTREE',
+        ],
+        'dso.deleted' => [
+            'name' => 'dso_deleted',
+            'type' => 'BIGINT',
+            'index' => 'BTREE',
+        ],
+    ];
+
+    public function updateEnvironment(): bool
+    {
+        //create downtime
+        $downtime = $this->cms->factory('downtime')->create([
+            'downtime.start' => time(),
+            'digraph' => [
+                'body' => [
+                    'filter' => 'default',
+                    'text' => 'A database schema update is in progress. This operation should be over shortly.',
+                ],
+                'name' => 'Factory ' . $this->name() . ' updateEnvironment',
+            ],
+        ]);
+        if (!$downtime->insert()) {
+            return false;
+        }
+        //execute
+        $result = parent::updateEnvironment();
+        //end downtime
+        if ($result) {
+            $this->cms->package()->saveLog(
+                'schema update successful: ' . $this->name(),
+                LogHelper::INFO,
+                'updateEnvironmentSuccess.' . $this->name()
+            );
+            $downtime['downtime.end'] = time();
+            $downtime->update();
+            return true;
+        } else {
+            $this->cms->package()->saveLog(
+                'schema update failed: ' . $this->name(),
+                LogHelper::EMERGENCY,
+                'updateEnvironmentFail.' . $this->name()
+            );
+            return false;
+        }
+    }
+
+    public function name($set = null): string
     {
         if ($set) {
             $this->name = $set;
@@ -22,25 +82,18 @@ class DigraphFactory extends Factory
         return $this->name;
     }
 
-    protected $virtualColumns = [
-        'dso.id' => [
-            'name'=>'dso_id',
-            'type'=>'VARCHAR(16)',
-            'index' => 'BTREE',
-            'unique' => true,
-            'primary' => true
-        ],
-        'dso.type' => [
-            'name'=>'dso_type',
-            'type'=>'VARCHAR(30)',
-            'index'=>'BTREE'
-        ],
-        'dso.deleted' => [
-            'name'=>'dso_deleted',
-            'type'=>'BIGINT',
-            'index'=>'BTREE'
-        ]
-    ];
+    public function __construct(AbstractDriver $driver, string $table)
+    {
+        parent::__construct($driver, $table);
+        // we need to revert to the legacy schema if there is no schema
+        // at all for this table in Destructr's schema management table
+        // this way the correct legacy schema gets saved into it
+        if (static::LEGACYSCHEMA) {
+            if (!$this->driver->tableExists(AbstractDriver::SCHEMA_TABLE) || !$this->driver->getSchema($table)) {
+                $this->schema = static::LEGACYSCHEMA;
+            }
+        }
+    }
 
     protected function hook_create(DSOInterface $dso)
     {
@@ -64,21 +117,20 @@ class DigraphFactory extends Factory
         }
     }
 
-
-    public function class(array $data) : ?string
+    function class (array $data): ?string
     {
         $data = new FlatArray($data);
         $type = $data['dso.type'];
-        if (!$type || !$this->cms->config['types.'.$this->name.'.'.$type]) {
+        if (!$type || !$this->cms->config['types.' . $this->name . '.' . $type]) {
             $type = 'default';
         }
-        if ($class = $this->cms->config['types.'.$this->name.'.'.$type]) {
+        if ($class = $this->cms->config['types.' . $this->name . '.' . $type]) {
             return $class;
         }
-        throw new \Exception("No class could be found for factory ".$this->name.", type ".$data['dso']['type'], 1);
+        throw new \Exception("No class could be found for factory " . $this->name . ", type " . $data['dso']['type'], 1);
     }
 
-    public function cms(CMS $set=null) : CMS
+    public function cms(CMS $set = null): CMS
     {
         if ($set) {
             $this->cms = $set;
@@ -86,24 +138,48 @@ class DigraphFactory extends Factory
         return $this->cms;
     }
 
-    public function executeSearch(Search $search, array $params = array(), $deleted = false) : array
+    public function executeSearch(Search $search, array $params = array(), $deleted = false): array
     {
         //add deletion clause and expand column names
         $search = $this->preprocessSearch($search, $deleted);
         //run select
         $start = microtime(true);
         $r = $this->driver->select(
-                $this->table,
-                $search,
-                $params
-            );
-        $duration = 1000*(microtime(true)-$start);
-        $this->cms->log('query took '.$duration.'ms');
-        $this->cms->log('  '.$search->where());
+            $this->table,
+            $search,
+            $params
+        );
+        $duration = 1000 * (microtime(true) - $start);
+        $this->cms->log('query took ' . $duration . 'ms');
+        $this->cms->log('  ' . $search->where());
         foreach ($params as $key => $value) {
-            $this->cms->log('  '.$key.' = '.$value);
+            $this->cms->log('  ' . $key . ' = ' . $value);
         }
         //return built list
         return $this->makeObjectsFromRows($r);
     }
+
+    /**
+     * This should never ever ever change, because it allows versions of Digraph
+     * from before Destructr had schema management to be updated.
+     */
+    const LEGACYSCHEMA = [
+        'dso.id' => [
+            'name' => 'dso_id',
+            'type' => 'VARCHAR(16)',
+            'index' => 'BTREE',
+            'unique' => true,
+            'primary' => true,
+        ],
+        'dso.type' => [
+            'name' => 'dso_type',
+            'type' => 'VARCHAR(30)',
+            'index' => 'BTREE',
+        ],
+        'dso.deleted' => [
+            'name' => 'dso_deleted',
+            'type' => 'BIGINT',
+            'index' => 'BTREE',
+        ],
+    ];
 }

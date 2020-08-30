@@ -30,3 +30,10 @@
 .FieldWrapper-AutocompleteActual {
     display: none;
 }
+
+.Container.DigraphAutocomplete {
+    .tips {
+        margin-top: -$(spacing_base);
+        padding-top: $(spacing_tight);
+    }
+}

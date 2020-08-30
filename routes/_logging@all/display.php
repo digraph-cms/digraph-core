@@ -1,33 +1,42 @@
 <?php
+$package->cache_noStore();
 $l = $cms->helper('logging');
-$logs = $l->list();
+$p = $cms->helper('paginator');
+$s = $cms->helper('strings');
 
-?>
-<table>
-    <thead>
-        <tr>
-            <th>Log</th>
-            <th>HTTP</th>
-            <th>Count</th>
-            <th>Request</th>
-        </tr>
-    </thead>
-<?php
+$search = $this->factory('logging')->search();
+$search->order('${dso.type} DESC, ${count} DESC, ${dso.modified.date} DESC');
+
 $classes = [
-    'INFO' => 'highlighted-notice',
+    'INFO' => '',
+    'DEBUG' => '',
     'NOTICE' => 'highlighted-notice',
     'WARNING' => 'highlighted-warning',
     'ERROR' => 'highlighted-error',
     'CRITICAL' => 'highlighted-error',
     'EMERGENCY' => 'highlighted-error',
 ];
-foreach ($logs as $log) {
-    echo "<tr class='log-entry log-level-".$log->level()." ".@$classes[$log->level()]."'>";
-    echo "<td><a href='".$log->url()."'>".$log->name()."</a></td>";
-    echo "<td>".$log['package.response.status']."</td>";
-    echo "<td>".$log['count']."</td>";
-    echo "<td style='width:25%;'><div style='max-width:10em;overflow:hidden;white-space:nowrap;'>".$log['package.request.url']."</div></td>";
-    echo "</tr>";
-}
-?>
-</table>
+
+echo $p->paginate(
+    $search->count(),
+    $package,
+    'page',
+    20,
+    function ($start, $end) use ($classes, $search) {
+        $out = '';
+        $out .= "<table>";
+        $out .= "<tr><th>Log</th><th>Count</th><th>Path</th></tr>";
+        $search = clone $search;
+        $search->limit($end - $start);
+        $search->offset($start - 1);
+        foreach ($search->execute() as $log) {
+            $out .= "<tr class='" . @$classes[$log->level()] . "'>";
+            $out .= "<td><a href='" . $log->url() . "'>" . $log->name() . "</a></td>";
+            $out .= "<td>" . $log['count'] . "</td>";
+            $out .= "<td style='width:25%;'><div style='max-width:10em;overflow:hidden;white-space:nowrap;'>" . $log['package.request.url'] . "</div></td>";
+            $out .= "</tr>";
+        }
+        $out .= "</table>";
+        return $out;
+    }
+);

@@ -2,6 +2,10 @@ digraph.autocomplete.noun = {
     source: digraph.url + '_json/autocomplete-noun',
     source_definitive: digraph.url + '_json/autocomplete-noun-definitive'
 };
+digraph.autocomplete.datetime = {
+    source: digraph.url + '_json/autocomplete-datetime',
+    source_definitive: digraph.url + '_json/autocomplete-datetime?definitive=true'
+};
 $(() => {
     var renderItem = function (item) {
         var $div = $('<div class="autocomplete-item">')

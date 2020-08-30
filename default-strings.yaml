@@ -135,17 +135,21 @@ urls:
     _controlpanel/config: Current configuration
     _controlpanel/content: Content
     _controlpanel/display: Control panel
-    _controlpanel/sitemap: Site map
     _controlpanel/edges: Manage all edges
-    _controlpanel/mail: Mail management
+    _controlpanel/mail_errors: Mail errors
     _controlpanel/mail_queue: Mail queue
     _controlpanel/mail_sent: Mail send log
-    _controlpanel/mail_errors: Mail errors
+    _controlpanel/mail: Mail management
+    _controlpanel/sitemap: Site map
+    _controlpanel/slugs: Manage all URLs
+    _destructr/display: Database management
+    _downtime/display: Downtime scheduler
+    _downtime/add: Add downtime
+    _downtime/edit: Downtime !arg_id
     _json/*: "!verb"
     _json/display: JSON API
     _logging/display: Logs
     _logging/entry: Log entry
-    _controlpanel/slugs: Manage all URLs
     _trash/display: Trash
     _trash/factory: Trash from "!arg_factory"
     _trash/item: Trash item !arg_id

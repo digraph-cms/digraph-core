@@ -30,7 +30,7 @@ cron:
   logexpiration: 30 days
 
 # bootstrap settings are used by the Bootstrapper class, and are then removed
-# from the config used in the created CMS. This is a nice secure way to handle
+# from the config used in the created CMS. This is a nice secure(er) way to handle
 # setting up drivers and factories, and you should use it if at all possible.
 bootstrap:
   pdos:
@@ -40,6 +40,8 @@ bootstrap:
       dsn: sqlite:${paths.storage}/datastore.sqlite
     logging:
       dsn: sqlite:${paths.storage}/logging.sqlite
+    downtime:
+      dsn: sqlite:${paths.storage}/downtime.sqlite
     mail:
       dsn: sqlite:${paths.storage}/mail.sqlite
   drivers:
@@ -49,6 +51,9 @@ bootstrap:
     logging:
       class: default
       pdo: logging
+    downtime:
+      class: default
+      pdo: downtime
   factories:
     content:
       class: \Digraph\DSO\ContentFactory
@@ -62,6 +67,10 @@ bootstrap:
       class: \Digraph\Logging\LogFactory
       driver: logging
       table: digraph_log
+    downtime:
+      class: \Digraph\Downtime\DowntimeFactory
+      driver: downtime
+      table: digraph_downtime
 
 actions:
   uiforguests: false
@@ -76,6 +85,8 @@ actions:
       sitemap: _controlpanel/sitemap
       trash: _trash/display
       urls: _controlpanel/slugs
+      database: _destructr/display
+      downtime: _downtime/display
   proper:
     '*':
       copy: "!id/copy"
@@ -379,6 +390,12 @@ permissions:
     _edges/*:
       - deny all
       - allow group webmaster
+    _destructr/*:
+      - deny all
+      - allow group webmaster
+    _downtime/*:
+      - deny all
+      - allow group webmaster
   add:
     '*':
       - allow all
@@ -428,6 +445,8 @@ navigation:
       _controlpanel/mail_queue: _controlpanel/mail
       _controlpanel/mail_sent: _controlpanel/mail
       _cron/display: _controlpanel/display
+      _destructr/display: _controlpanel/display
+      _downtime/display: _controlpanel/display
       _logging/display: _controlpanel/display
       _trash/display: _controlpanel/display
       _trash/item: _trash/factory?factory=!arg_factory
@@ -444,6 +463,8 @@ types:
     default: ${types.users.simple}
   logging:
     default: \Digraph\Logging\LogEntry
+  downtime:
+    default: \Digraph\Downtime\Downtime
 
 url:
   protocol: ''
@@ -581,6 +602,10 @@ mungers:
     initialize:
       weight: 200
       class: Digraph\Mungers\Setup\Initialize
+    # check for downtime
+    downtime:
+      weight: 250
+      class: Digraph\Downtime\DowntimeMunger
     # parses the URL
     parseurl: 
       weight: 300
@@ -663,6 +688,7 @@ helpers:
     actions: Digraph\Helpers\Actions
     cache: Digraph\Helpers\CacheHelper
     datastore: Digraph\Data\DatastoreHelper
+    downtime: Digraph\Downtime\DowntimeHelper
     edges: Digraph\Graph\EdgeHelper
     filestore: Digraph\FileStore\FileStoreHelper
     filters: Digraph\Filters\FilterHelper
@@ -720,6 +746,7 @@ defaultnoun:
       text: ""
       extra:
         bbcode_basic: true
+        bbcode_advanced: true
 
 media:
   css:

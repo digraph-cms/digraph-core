@@ -31,16 +31,16 @@ if ($form->handle()) {
                 ['name'=>$form->object->link()]
             )
         );
+        $package->redirect(
+            $form->object->hook_postEditUrl()
+        );
     } else {
-        $cms->helper('notifications')->flashError(
+        $cms->helper('notifications')->error(
             $cms->helper('strings')->string(
                 'notifications.edit.error'
             )
         );
     }
-    $package->redirect(
-        $form->object->hook_postEditUrl()
-    );
 }
 
 echo $form;

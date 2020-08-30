@@ -1,20 +1,20 @@
 <?php
-/* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
+/* Digraph Core | https://github.com/digraph-cms/digraph-core | MIT License */
 namespace Digraph\Logging;
 
 use Destructr\DSO;
-use Destructr\DSOFactoryInterface;
+use Destructr\Factory;
 
 class LogEntry extends \Destructr\DSO
 {
-    public function __construct(array $data = null, DSOFactoryInterface $factory = null)
+    public function __construct(array $data = null, Factory $factory = null)
     {
         parent::__construct($data, $factory);
     }
 
     public function name()
     {
-        return $this->level().': '.$this['message'];
+        return $this->level() . ': ' . $this['message'];
     }
 
     public function level()

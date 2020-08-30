@@ -1,8 +1,6 @@
 <?php
-/* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
+/* Digraph Core | https://github.com/digraph-cms/digraph-core | MIT License */
 namespace Digraph\Logging;
-
-use Digraph\Mail\Message;
 
 class LogHelper extends \Digraph\Helpers\AbstractHelper
 {
@@ -70,13 +68,6 @@ class LogHelper extends \Digraph\Helpers\AbstractHelper
         ];
     }
 
-    function list() {
-        $search = $this->factory()->search();
-        $search->limit(5);
-        $search->order('${count} DESC, ${dso.type} DESC, ${dso.modified.date} DESC');
-        return $search->execute();
-    }
-
     public function factory()
     {
         return $this->cms->factory('logging');
@@ -106,7 +97,7 @@ class LogHelper extends \Digraph\Helpers\AbstractHelper
         //record count
         $entry['count'] = $entry['count'] + 1;
         //record referer
-        $referer = $_SERVER['HTTP_REFERER'] ? $_SERVER['HTTP_REFERER'] : '[empty]';
+        $referer = @$_SERVER['HTTP_REFERER'] ? $_SERVER['HTTP_REFERER'] : '[empty]';
         $entry['referers.' . md5($referer) . '.url'] = $referer;
         $entry['referers.' . md5($referer) . '.count'] = $entry['referers.' . md5($referer) . '.count'] + 1;
         //record user/url

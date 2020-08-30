@@ -1,33 +1,46 @@
 <?php
-/* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
+/* Digraph Core | https://github.com/digraph-cms/digraph-core | MIT License */
 namespace Digraph\Forms;
 
-use Digraph\Helpers\AbstractHelper;
 use Digraph\DSO\NounInterface;
+use Digraph\Forms\Fields\Content;
+use Digraph\Forms\Fields\ContentDefault;
+use Digraph\Forms\Fields\DateTimeAutocomplete;
+use Digraph\Forms\Fields\Noun;
+use Digraph\Forms\Fields\SlugPattern;
+use Digraph\Forms\Fields\User;
+use Digraph\Helpers\AbstractHelper;
 use Flatrr\FlatArray;
+use Formward\Fields\Checkbox;
+use Formward\Fields\Date;
+use Formward\Fields\INI;
+use Formward\Fields\Input;
+use Formward\Fields\JSON;
+use Formward\Fields\Select;
+use Formward\Fields\YAML;
 
 class FormHelper extends AbstractHelper
 {
     protected $types = [
-        'digraph_content' => Fields\Content::class,
-        'digraph_content_default' => Fields\ContentDefault::class,
-        'digraph_name' => \Formward\Fields\Input::class,
-        'digraph_slug' => Fields\SlugPattern::class,
-        'digraph_title' => \Formward\Fields\Input::class,
-        'array' => \Formward\Fields\YAML::class,
-        'checkbox' => \Formward\Fields\Checkbox::class,
-        'date' => \Formward\Fields\Date::class,
-        'datetime' => \Formward\Fields\DateAndTime::class,
-        'ini' => \Formward\Fields\INI::class,
-        'json' => \Formward\Fields\JSON::class,
-        'noun' => Fields\Noun::class,
-        'select' => \Formward\Fields\Select::class,
-        'text' => \Formward\Fields\Input::class,
-        'user' => \Digraph\Forms\Fields\User::class,
-        'yaml' => \Formward\Fields\YAML::class,
+        'digraph_content' => Content::class,
+        'digraph_content_default' => ContentDefault::class,
+        'digraph_name' => Input::class,
+        'digraph_slug' => SlugPattern::class,
+        'digraph_title' => Input::class,
+        'array' => YAML::class,
+        'checkbox' => Checkbox::class,
+        'date' => Date::class,
+        'datetime' => DateTimeAutocomplete::class,
+        'ini' => INI::class,
+        'json' => JSON::class,
+        'noun' => Noun::class,
+        'select' => Select::class,
+        'text' => Input::class,
+        'user' => User::class,
+        'yaml' => YAML::class,
     ];
 
-    public function form($label='', $name=null)
+    public function form($label = '', $name = null)
     {
         $form = new Form($label, $name);
         $form->cms($this->cms);
@@ -41,12 +54,12 @@ class FormHelper extends AbstractHelper
 
     public function field($type, $label, $extraArgs = [])
     {
-        $class = isset($this->types[$type])?$this->types[$type]:$type;
+        $class = isset($this->types[$type]) ? $this->types[$type] : $type;
         if (!class_exists($class)) {
             throw new \Exception("Class not found for field type $type, class $class");
         }
         //set up args
-        $args = [$label,null,null,$this->cms];
+        $args = [$label, null, null, $this->cms];
         if ($extraArgs) {
             foreach ($extraArgs as $a) {
                 $args[] = $a;
@@ -82,7 +95,7 @@ class FormHelper extends AbstractHelper
             //allow map to call functions on field
             if (@$opt['call']) {
                 foreach ($opt['call'] as $fn => $args) {
-                    call_user_func_array([$field,$fn], $args);
+                    call_user_func_array([$field, $fn], $args);
                 }
             }
             //mark as required
@@ -98,7 +111,7 @@ class FormHelper extends AbstractHelper
             //set up tips
             if (@$opt['tips']) {
                 foreach ($opt['tips'] as $key => $value) {
-                    $field->addTip($value, 'mapped_'.$key);
+                    $field->addTip($value, 'mapped_' . $key);
                 }
             }
             //set up CSS classes
@@ -115,7 +128,7 @@ class FormHelper extends AbstractHelper
             $form[$name] = $field;
         }
         //set up function writing content to object
-        $form->digraphHandlerFn = function () use ($noun,$form,$map) {
+        $form->digraphHandlerFn = function () use ($noun, $form, $map) {
             foreach ($map as $name => $opt) {
                 if (method_exists($form[$name], 'hook_formWrite')) {
                     $form[$name]->hook_formWrite($noun, $opt);
@@ -135,9 +148,9 @@ class FormHelper extends AbstractHelper
         //load map from object
         $map->merge($noun->formMap($action), null, true);
         //load type map
-        $map->merge($this->cms->config['forms.maps.'.$noun['dso.type'].'.all'], null, true);
+        $map->merge($this->cms->config['forms.maps.' . $noun['dso.type'] . '.all'], null, true);
         //load type/action map
-        $map->merge($this->cms->config['forms.maps'.$noun['dso.type'].'.'.$action], null, true);
+        $map->merge($this->cms->config['forms.maps' . $noun['dso.type'] . '.' . $action], null, true);
         $map = $map->get();
         $map = array_filter($map);
         uasort(
@@ -155,9 +168,9 @@ class FormHelper extends AbstractHelper
         return $map;
     }
 
-    public function editNoun(NounInterface $noun) : Form
+    public function editNoun(NounInterface $noun): Form
     {
-        $form = new Form('', 'edit-'.$noun['dso.id']);
+        $form = new Form('', 'edit-' . $noun['dso.id']);
         $form->cms($this->cms);
         $form->addClass('editNoun');
         $this->mapNoun(
@@ -168,10 +181,10 @@ class FormHelper extends AbstractHelper
         return $form;
     }
 
-    public function addNoun(string $type, NounInterface $parent = null) : Form
+    public function addNoun(string $type, NounInterface $parent = null, string $factory = 'content'): Form
     {
-        $noun = $this->cms->factory()->create(['dso.type'=>$type]);
-        $form = new Form('', 'add-'.$type);
+        $noun = $this->cms->factory($factory)->create(['dso.type' => $type]);
+        $form = new Form('', 'add-' . $type);
         $form->cms($this->cms);
         $form->addClass('addNoun');
         $this->mapNoun(

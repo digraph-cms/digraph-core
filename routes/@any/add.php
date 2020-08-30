@@ -35,16 +35,16 @@ if ($form->handle()) {
                 ['name'=>$object->link()]
             )
         );
+        $package->redirect(
+            $form->object->hook_postAddUrl()
+        );
     } else {
-        $cms->helper('notifications')->flashError(
+        $cms->helper('notifications')->error(
             $cms->helper('strings')->string(
                 'notifications.add.error'
             )
         );
     }
-    $package->redirect(
-        $form->object->hook_postAddUrl()
-    );
 }
 
 echo $form;
