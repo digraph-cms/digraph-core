@@ -1,9 +1,9 @@
 <?php
-/* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
+/* Digraph Core | https://github.com/digraph-cms/digraph-core | MIT License */
 namespace Digraph;
 
-use Flatrr\Config\ConfigInterface;
 use Destructr\DriverFactory;
+use Flatrr\Config\ConfigInterface;
 
 class Bootstrapper
 {
@@ -24,16 +24,16 @@ class Bootstrapper
         $q = [];
         foreach ($_GET as $key => $value) {
             if ($key != 'digraph_url') {
-                $q[] = urlencode($key).'='.urlencode($value);
+                $q[] = urlencode($key) . '=' . urlencode($value);
             }
         }
         if ($q) {
-            $url .= '?'.implode('&', $q);
+            $url .= '?' . implode('&', $q);
         }
         return $url;
     }
 
-    protected static function buildFactories($cms, $config=null)
+    protected static function buildFactories($cms, $config = null)
     {
         if (!$config) {
             $config = $cms->config;
@@ -46,7 +46,7 @@ class Bootstrapper
                     @$cred['username'],
                     @$cred['password'],
                     @$cred['options']
-            );
+                );
                 $cms->pdo($k, $pdo);
             }
         }
@@ -71,7 +71,7 @@ class Bootstrapper
                 $factory = new $class(
                     $cms->driver($c['driver']),
                     $c['table']
-            );
+                );
                 $cms->factory($k, $factory);
             }
         }
@@ -97,6 +97,8 @@ class Bootstrapper
         static::buildFactories($cms);
         //set timezone
         date_default_timezone_set($config['timezone']);
+        //do final initialization in CMS
+        $cms->finalInitialize();
         //return
         $cms->log('Bootstrapper::bootstrap finished');
         return $cms;
@@ -109,9 +111,9 @@ class Bootstrapper
             $newUrl = preg_replace('/index\.(php)$/i', '', $newUrl);
             $get = $_GET;
             unset($get['digraph_url']);
-            $get['digraph_redirect_count'] = @$get['digraph_redirect_count']+1;
+            $get['digraph_redirect_count'] = @$get['digraph_redirect_count'] + 1;
             if ($get) {
-                $newUrl .= '?'.http_build_query($get);
+                $newUrl .= '?' . http_build_query($get);
             }
             if ($get['digraph_redirect_count'] <= 3) {
                 header("Location: $newUrl");

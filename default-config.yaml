@@ -29,6 +29,11 @@ cron:
   # how long complete log entries should last before they are removed by cron
   logexpiration: 30 days
 
+# used to create additional columns in factory tables, so modules that are using
+# specific columns heavily can make optimizations to the database schema for their
+# own improved performance
+factory_columns: []
+
 # bootstrap settings are used by the Bootstrapper class, and are then removed
 # from the config used in the created CMS. This is a nice secure(er) way to handle
 # setting up drivers and factories, and you should use it if at all possible.

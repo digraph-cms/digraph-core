@@ -16,6 +16,8 @@ class DigraphFactory extends Factory
     protected $cms;
     protected $name = 'system';
 
+    protected $schemaIsLegacy = false;
+
     protected $schema = [
         'dso.id' => [
             'name' => 'dso_id',
@@ -82,6 +84,25 @@ class DigraphFactory extends Factory
         return $this->name;
     }
 
+    public function addColumn(string $path, array $col)
+    {
+        // does nothing if we're using the legacy schema
+        if ($this->schemaIsLegacy) {
+            return;
+        }
+        // compute a decent column name from path, if necessary
+        $col['name'] = @$col['name'] ?? preg_replace('/[^a-z]/', '_', strtolower($path));
+        // remove existing duplicate column names from schema
+        $this->schema = array_filter(
+            $this->schema,
+            function ($e) use ($col) {
+                return $e['name'] != $col['name'];
+            }
+        );
+        // add new column to schema
+        $this->schema[$path] = $col;
+    }
+
     public function __construct(AbstractDriver $driver, string $table)
     {
         parent::__construct($driver, $table);
@@ -90,6 +111,7 @@ class DigraphFactory extends Factory
         // this way the correct legacy schema gets saved into it
         if (static::LEGACYSCHEMA) {
             if (!$this->driver->tableExists(AbstractDriver::SCHEMA_TABLE) || !$this->driver->getSchema($table)) {
+                $this->schemaIsLegacy = true;
                 $this->schema = static::LEGACYSCHEMA;
             }
         }
