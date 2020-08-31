@@ -84,7 +84,7 @@ class CMS
         foreach ($this->config['factory_columns'] as $name => $cols) {
             $factory = $this->factory($name);
             foreach ($cols as $path => $col) {
-                $path = str_replace('_', '.', $path);
+                $path = str_replace('__', '.', $path);
                 $factory->addColumn($path, $col);
             }
         }
