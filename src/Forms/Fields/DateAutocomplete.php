@@ -4,15 +4,15 @@ namespace Digraph\Forms\Fields;
 
 use Formward\FieldInterface;
 
-class DateTimeAutocomplete extends AbstractAutocomplete
+class DateAutocomplete extends AbstractAutocomplete
 {
-    const SOURCE = 'datetime';
+    const SOURCE = 'date';
 
     public function __construct(string $label, string $name = null, FieldInterface $parent = null, $cms = null)
     {
         parent::__construct($label, $name, $parent);
         $this->cms = $cms;
-        $this->addTip('You can enter exact date/time strings in a variety of formats, or fuzzy relative terms such as "now" or "2 hours"');
+        $this->addTip('You can enter exact date strings in a variety of formats, or fuzzy relative terms such as "now" or "1 week"');
         $this->addValidatorFunction(
             'validtimestamp',
             function ($field) {

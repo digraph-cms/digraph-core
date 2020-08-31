@@ -6,6 +6,10 @@ digraph.autocomplete.datetime = {
     source: digraph.url + '_json/autocomplete-datetime',
     source_definitive: digraph.url + '_json/autocomplete-datetime?definitive=true'
 };
+digraph.autocomplete.date = {
+    source: digraph.url + '_json/autocomplete-datetime?date=true',
+    source_definitive: digraph.url + '_json/autocomplete-datetime?date=true&definitive=true'
+};
 $(() => {
     var renderItem = function (item) {
         var $div = $('<div class="autocomplete-item">')

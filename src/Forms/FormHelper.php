@@ -5,6 +5,7 @@ namespace Digraph\Forms;
 use Digraph\DSO\NounInterface;
 use Digraph\Forms\Fields\Content;
 use Digraph\Forms\Fields\ContentDefault;
+use Digraph\Forms\Fields\DateAutocomplete;
 use Digraph\Forms\Fields\DateTimeAutocomplete;
 use Digraph\Forms\Fields\Noun;
 use Digraph\Forms\Fields\SlugPattern;
@@ -12,7 +13,6 @@ use Digraph\Forms\Fields\User;
 use Digraph\Helpers\AbstractHelper;
 use Flatrr\FlatArray;
 use Formward\Fields\Checkbox;
-use Formward\Fields\Date;
 use Formward\Fields\INI;
 use Formward\Fields\Input;
 use Formward\Fields\JSON;
@@ -29,7 +29,7 @@ class FormHelper extends AbstractHelper
         'digraph_title' => Input::class,
         'array' => YAML::class,
         'checkbox' => Checkbox::class,
-        'date' => Date::class,
+        'date' => DateAutocomplete::class,
         'datetime' => DateTimeAutocomplete::class,
         'ini' => INI::class,
         'json' => JSON::class,

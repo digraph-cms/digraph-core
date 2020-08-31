@@ -29,14 +29,21 @@ class Downtime extends Noun
         $map['downtime_start'] = [
             'weight' => 200,
             'field' => 'downtime.start',
-            'label' => 'Start at',
+            'label' => 'Start downtime at',
             'class' => 'datetime',
             'required' => true,
         ];
         $map['downtime_end'] = [
             'weight' => 200,
             'field' => 'downtime.end',
-            'label' => 'End at',
+            'label' => 'End downtime at',
+            'class' => 'datetime',
+            'required' => false,
+        ];
+        $map['downtime_prenotify'] = [
+            'weight' => 200,
+            'field' => 'downtime.prenotify',
+            'label' => 'Prenotification start',
             'class' => 'datetime',
             'required' => false,
         ];
