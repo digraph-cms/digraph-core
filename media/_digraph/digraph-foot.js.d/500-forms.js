@@ -4,7 +4,6 @@
 $(()=>{
   $('.Form.autosubmit .FieldWrapper-Button').hide();
   $('.Form.autosubmit select').change((e)=>{
-    console.log(e);
     $(e.target).closest('.Form')
       .hide().submit();
   });
@@ -15,7 +14,6 @@ $(()=>{
  */
 $(()=>{
   $('.Form').on('submit',(e)=>{
-    console.log(e);
     $(e.target).find('button.Submit')
       .addClass('loading')
       .attr('disabled',true);
@@ -82,7 +80,6 @@ function sortablelist_dragStart(e) {
   e.dataTransfer.effectAllowed = "move";
   var noun = '';
   var $target = $(e.target);
-  console.log(e);
   //ensure target is top level ordering item
   if (!$target.is('li.form-ordering-item')) {
     $target = $target.parents('li.form-ordering-item');
