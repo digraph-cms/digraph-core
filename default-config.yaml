@@ -810,7 +810,7 @@ package:
       namespace: public
     response:
       status: 200
-      ttl: 1800
+      ttl: 300
       cacheable: true
       content: ''
       ready: false
