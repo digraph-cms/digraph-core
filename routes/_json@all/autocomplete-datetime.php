@@ -1,4 +1,5 @@
 <?php
+$package->cache_noCache();
 $package->makeMediaFile('results.json');
 $q = $package['url.args.term'];
 $results = [];
