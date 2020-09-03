@@ -39,7 +39,7 @@ class DowntimeMunger extends AbstractMunger
                 $package['downtime.message'] = $downtime->body();
                 $package['downtime.end'] = $downtime['downtime.end'];
             } else {
-                $message = 'The site is currently down for maintenance. Unless you are the webmaster, you will likely be unable to access any other content.';
+                $message = 'The site is currently down for maintenance. Unless you are the site administrator, you will likely be unable to access any other content.';
                 if ($downtime['downtime.end']) {
                     $message .= '<br>Scheduled end: ' . $package->cms()->helper('strings')->datetimeHTML($downtime['downtime.end']);
                 }

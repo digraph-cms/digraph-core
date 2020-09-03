@@ -350,76 +350,76 @@ permissions:
     '*/file':
       - allow all
     '*/meta':
-      - allow group webmaster
+      - allow group admin
     '_user/*':
       - allow all
     '_logging/*':
       - deny all
-      - allow group webmaster
+      - allow group admin
     '*/rawedit':
-      - allow group webmaster
+      - allow group admin
     '*/copy':
-      - allow group webmaster, editor
+      - allow group admin, editor
     '*/edit':
-      - allow group webmaster, editor
+      - allow group admin, editor
     '*/order':
-      - allow group webmaster, editor
+      - allow group admin, editor
     '*/add':
-      - allow group webmaster, editor
+      - allow group admin, editor
     '*/delete':
-      - allow group webmaster, editor
+      - allow group admin, editor
     _routemedia/*:
       - allow all
     _json/*:
       - allow all
     _trash/*:
       - deny all
-      - allow group webmaster, editor
+      - allow group admin, editor
     _controlpanel/*:
       - deny all
-      - allow group webmaster
+      - allow group admin
     _controlpanel/display:
       - deny all
-      - allow group editor, webmaster
+      - allow group editor, admin
     '*/slugs':
-      - allow group webmaster
+      - allow group admin
     '*/edges':
-      - allow group webmaster
+      - allow group admin
     _controlpanel/sitemap:
       - allow group editor
     _cron/display:
       - allow all
     _slugs/*:
       - deny all
-      - allow group webmaster
+      - allow group admin
     _edges/*:
       - deny all
-      - allow group webmaster
+      - allow group admin
     _destructr/*:
       - deny all
-      - allow group webmaster
+      - allow group admin
     _downtime/*:
       - deny all
-      - allow group webmaster
+      - allow group admin
   add:
     '*':
       - allow all
   filter:
     '*':
       - deny all
-      - allow group webmaster
+      - allow group admin
     'preset/default':
       - allow all
     'unsafe':
       - deny all
-      - allow group webmaster
+      - allow group admin
     'safe':
       - allow all
     'preset/html':
-      - allow group webmaster, editor
+      - allow group admin, editor
     'extra/*':
       - deny all
-      - allow group webmaster
+      - allow group admin
     'extra/bbcode_basic':
       - allow all
     'extra/bbcode_advanced':
