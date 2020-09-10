@@ -13,7 +13,7 @@ function yaml($array)
         $array = $array->get();
     }
     $c = new \Flatrr\Config\Config($array);
-    return $c->yaml();
+    return htmlentities($c->yaml());
 }
 
 $package['fields.page_name'] = 'Log: ' . $log->name();
