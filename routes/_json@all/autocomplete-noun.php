@@ -47,7 +47,7 @@ echo json_encode(array_values(array_map(
 )));
 
 // function for adding to results
-function runSearch($search, $args, $results)
+function runSearch($search, $args, &$results)
 {
     foreach ($search->execute($args) as $n) {
         if (!isset($results[$n['dso.id']])) {
