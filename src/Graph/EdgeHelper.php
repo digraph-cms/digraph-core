@@ -313,7 +313,7 @@ EOT;
             'SELECT * FROM digraph_edges WHERE edge_start = \'{ROOT}\' ORDER BY edge_weight desc, edge_id asc'
         );
         //execute
-        if ($s->execute($args)) {
+        if ($s->execute()) {
             if ($ids) {
                 return array_map(
                     function ($e) {

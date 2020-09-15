@@ -71,7 +71,7 @@ class Actions extends AbstractHelper
                 //allow noun to filter add menu
                 $addable = array_filter(
                     $addable,
-                    [$object,'addMenuFilter']
+                    [$object, 'addMenuFilter']
                 );
                 //get adding URL from noun
                 $addable_url = $object->url('add', [], true)->string();
@@ -186,7 +186,7 @@ class Actions extends AbstractHelper
             }
         );
         //return links
-        asort($links);
+        ksort($links);
         return array_values($links);
     }
 }

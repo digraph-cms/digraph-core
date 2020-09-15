@@ -104,11 +104,11 @@ actions:
   common:
     '*': []
     '_user/guest':
-      _signin: _user/signin
-      _signup: _user/signup
+      zzz_signin: _user/signin
+      zzz_signup: _user/signup
     '_user/signedin':
-      _signout: _user/signout
-      controlpanel: _controlpanel/display
+      zzz_signout: _user/signout
+      yyy_controlpanel: _controlpanel/display
 
 groups: []
 
@@ -374,7 +374,7 @@ permissions:
       - allow all
     _trash/*:
       - deny all
-      - allow group admin, editor
+      - allow group admin
     _controlpanel/*:
       - deny all
       - allow group admin
@@ -382,19 +382,17 @@ permissions:
       - deny all
       - allow group editor, admin
     '*/slugs':
-      - allow group admin
+      - 'allow group editor, admin'
     '*/edges':
       - allow group admin
     _controlpanel/sitemap:
       - allow group editor
+    _controlpanel/content:
+      - allow group editor
+    _controlpanel/slugs:
+      - allow group editor
     _cron/display:
       - allow all
-    _slugs/*:
-      - deny all
-      - allow group admin
-    _edges/*:
-      - deny all
-      - allow group admin
     _destructr/*:
       - deny all
       - allow group admin
