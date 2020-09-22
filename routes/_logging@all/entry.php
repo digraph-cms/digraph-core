@@ -1,6 +1,8 @@
 <?php
 $package->cache_noStore();
 $log = $cms->helper('logging')->factory()->read($package['url.args.id']);
+$n = $cms->helper('notifications');
+
 
 if (!$log) {
     $package->error(404);
@@ -30,46 +32,65 @@ $s = $cms->helper('strings');
 
 <?php if ($log['package.error']) {
     ?>
-<h2>Error info</h2>
-<pre style="white-space:pre-wrap;">
+    <h2>Error info</h2>
+    <pre style="white-space:pre-wrap;">
 <?php echo yaml($log['package.error']); ?>
 </pre>
 <?php
-}?>
+} ?>
 
 <h2>Users</h2>
 <?php
-foreach ($log['users'] as $a) {
-    foreach ($a as $b) {
-        echo @"<pre>{$b['ip']} {$b['fw']} {$b['id']}\r\n{$b['ua']}\r\n{$b['url']}</pre>";
+if (!$log['users']) {
+        $n->printWarning('Empty');
+    } else {
+        foreach ($log['users'] as $a) {
+            foreach ($a as $b) {
+                echo @"<pre>{$b['ip']} {$b['fw']} {$b['id']}\r\n{$b['ua']}\r\n{$b['url']}</pre>";
+            }
+        }
     }
-}
 ?>
 
 <h2>Referers</h2>
-<pre>
 <?php
-echo implode("\r\n", array_map(
-    function ($r) {
-        return "{$r['url']} :: {$r['count']}";
-    },
-    $log['referers']
-));
+if (!$log['referers']) {
+    $n->printWarning('Empty');
+} else {
+    echo implode("\r\n", array_map(
+        function ($r) {
+            return "{$r['url']} :: {$r['count']}";
+        },
+        $log['referers']
+    ));
+}
 ?>
 </pre>
 
 <h2>Package log</h2>
-<pre style="white-space:pre-wrap;">
-<?php echo implode(PHP_EOL, $log['log.package']); ?>
-</pre>
+<?php
+if (!$log['log.package']) {
+    $n->printWarning('Empty');
+} else {
+    echo '<pre> style="white-space:pre-wrap;"' . implode(PHP_EOL, $log['log.package']) . '</pre>';
+}
+?>
 
 <h2>CMS log</h2>
-<pre style="white-space:pre-wrap;">
-<?php echo implode(PHP_EOL, $log['log.cms']); ?>
-</pre>
+<?php
+if (!$log['log.cms']) {
+    $n->printWarning('Empty');
+} else {
+    echo '<pre> style="white-space:pre-wrap;"' . implode(PHP_EOL, $log['log.cms']) . '</pre>';
+}
+?>
 
 <h2>Package dump</h2>
-<pre style="white-space:pre-wrap;">
-<?php unset($log['package.response.content']);?>
-<?php echo yaml($log['package']); ?>
-</pre>
+<?php
+if (!$log['package']) {
+    $n->printWarning('Empty');
+} else {
+    unset($log['package.response.content']);
+    echo '<pre> style="white-space:pre-wrap;"' . yaml($log['package']) . '</pre>';
+}
+?>

@@ -139,7 +139,7 @@ class DigraphFactory extends Factory
         }
     }
 
-    function class (array $data): ?string
+    function class(?array $data): ?string
     {
         $data = new FlatArray($data);
         $type = $data['dso.type'];
