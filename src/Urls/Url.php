@@ -76,6 +76,12 @@ class Url extends FlatArray
         if ($out == '/') {
             $out = '';
         }
+        $out = implode('/', array_map(
+            function ($e) {
+                return urlencode(urldecode($e));
+            },
+            explode('/', $out)
+        ));
         return $out;
     }
 
