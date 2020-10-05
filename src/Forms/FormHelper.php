@@ -5,6 +5,7 @@ namespace Digraph\Forms;
 use Digraph\DSO\NounInterface;
 use Digraph\Forms\Fields\Content;
 use Digraph\Forms\Fields\ContentDefault;
+use Digraph\Forms\Fields\DateAndTimeRange;
 use Digraph\Forms\Fields\DateAutocomplete;
 use Digraph\Forms\Fields\DateTimeAutocomplete;
 use Digraph\Forms\Fields\Noun;
@@ -31,6 +32,7 @@ class FormHelper extends AbstractHelper
         'checkbox' => Checkbox::class,
         'date' => DateAutocomplete::class,
         'datetime' => DateTimeAutocomplete::class,
+        'datetime_range' => DateAndTimeRange::class,
         'ini' => INI::class,
         'json' => JSON::class,
         'noun' => Noun::class,

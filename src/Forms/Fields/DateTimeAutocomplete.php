@@ -12,7 +12,7 @@ class DateTimeAutocomplete extends AbstractAutocomplete
     {
         parent::__construct($label, $name, $parent);
         $this->cms = $cms;
-        $this->addTip('You can enter exact date/time strings in a variety of formats, or fuzzy relative terms such as "now" or "2 hours"');
+        $this->addTip('You can enter exact date/time strings in a variety of formats, or fuzzy relative terms such as "now" or "2 hours"', 'format');
         $this->addValidatorFunction(
             'validtimestamp',
             function ($field) {
