@@ -1,4 +1,6 @@
 <?php
+$package->cache_private();
+$package['response.ttl'] = 30;
 $package->makeMediaFile('results.json');
 $q = $package['url.args.term'];
 $base = $cms->config['url.base'];

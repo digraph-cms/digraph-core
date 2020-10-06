@@ -1,10 +1,11 @@
 <?php
-$package->cache_noCache();
+$package->cache_public();
+$package['response.ttl'] = 30;
 $package->makeMediaFile('results.json');
 $q = $package['url.args.term'];
 $results = [];
-$date = $package['url.args.date'] == 'true';
-$definitive = $package['url.args.definitive'] == 'true';
+$date = $package['url.args._date'] == 'true';
+$definitive = $package['url.args._definitive'] == 'true';
 
 // set results to query for definitive request
 if ($definitive) {

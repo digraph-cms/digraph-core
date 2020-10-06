@@ -8,6 +8,7 @@ use Digraph\Forms\Fields\ContentDefault;
 use Digraph\Forms\Fields\DateAndTimeRange;
 use Digraph\Forms\Fields\DateAutocomplete;
 use Digraph\Forms\Fields\DateTimeAutocomplete;
+use Digraph\Forms\Fields\FieldValueAutocomplete;
 use Digraph\Forms\Fields\Noun;
 use Digraph\Forms\Fields\SlugPattern;
 use Digraph\Forms\Fields\User;
@@ -33,6 +34,7 @@ class FormHelper extends AbstractHelper
         'date' => DateAutocomplete::class,
         'datetime' => DateTimeAutocomplete::class,
         'datetime_range' => DateAndTimeRange::class,
+        'fieldvalue' => FieldValueAutocomplete::class,
         'ini' => INI::class,
         'json' => JSON::class,
         'noun' => Noun::class,

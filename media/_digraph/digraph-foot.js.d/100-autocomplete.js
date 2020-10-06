@@ -4,11 +4,15 @@ digraph.autocomplete.noun = {
 };
 digraph.autocomplete.datetime = {
     source: digraph.url + '_json/autocomplete-datetime',
-    source_definitive: digraph.url + '_json/autocomplete-datetime?definitive=true'
+    source_definitive: digraph.url + '_json/autocomplete-datetime?_definitive=true'
 };
 digraph.autocomplete.date = {
     source: digraph.url + '_json/autocomplete-datetime?date=true',
-    source_definitive: digraph.url + '_json/autocomplete-datetime?date=true&definitive=true'
+    source_definitive: digraph.url + '_json/autocomplete-datetime?_date=true&_definitive=true'
+};
+digraph.autocomplete.fieldvalue = {
+    source: digraph.url + '_json/autocomplete-fieldvalue?_token=%token%',
+    source_definitive: digraph.url + '_json/autocomplete-fieldvalue?_definitive=true&_token=%token%'
 };
 $(() => {
     var renderItem = function (item) {
@@ -25,9 +29,12 @@ $(() => {
     $('.DigraphAutocomplete').each(function (index) {
         var $this = $(this);
         var $input = $this.find('.AutocompleteActual');
-        var $wrapper = $('<div class="autocomplete-wrapper">');
         var $userInput = $this.find('.AutocompleteUser');
-        var $selection = $('<div class="autocomplete-selection" tabindex="0">&nbsp;</div>').insertAfter($userInput).hide();
+        var $selectionWrapper = $('<div class="autocomplete-selection-wrapper"></div>').insertAfter($userInput).hide();
+        var $selection = $('<div class="autocomplete-selection" tabindex="0">&nbsp;</div>');
+        var $clearButton = $('<a class="autocomplete-clear" title="clear field">clear field</a>');
+        $selectionWrapper.append($selection);
+        $selectionWrapper.append($clearButton);
         // set up options
         var readyOptions = {};
         var options = digraph.autocomplete[$this.attr('data-autocomplete')];
@@ -36,10 +43,22 @@ $(() => {
                 readyOptions[key] = options[key];
             }
         }
+        // set up clear button
+        $clearButton.click(function(){
+            $input.val('');
+            $userInput.val('').show();
+            $selection.html('&nbsp;');
+            $selectionWrapper.hide();
+        });
+        // get config token
+        var token = $this.attr('data-autocomplete-token');
+        readyOptions.source = readyOptions.source.replace('%token%',token);
+        readyOptions.source_definitive = readyOptions.source_definitive.replace('%token%',token);
         // custom select callback for transferring selection to actual field
         let select = readyOptions.select;
         readyOptions.select = function (event, ui) {
-            $selection.empty().append(renderItem(ui.item)).show();
+            $selection.empty().append(renderItem(ui.item));
+            $selectionWrapper.show();
             $input.val(ui.item.value);
             $userInput.hide();
             $userInput.attr('data-user-val', $userInput.val());
@@ -61,14 +80,14 @@ $(() => {
             $userInput.attr('data-user-val', $userInput.val())
         });
         $selection.focus(function () {
-            $selection.hide();
+            $selectionWrapper.hide();
             $userInput.show();
             $userInput.focus();
             $userInput.val($userInput.attr('data-user-val'));
             $userInput.autocomplete('search', $userInput.val());
         });
         $userInput.blur(function () {
-            $selection.show();
+            $selectionWrapper.show();
             $userInput.hide();
             $userInput.val($userInput.attr('data-user-val'));
         });
