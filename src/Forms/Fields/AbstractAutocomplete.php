@@ -41,6 +41,7 @@ class AbstractAutocomplete extends Container
     protected function htmlContent(): ?string
     {
         $out = $this->label() ? '<label>' . $this->label() . '</label>' : '';
+        $out .= '<noscript><div class="notification notification-error">Javascript is required to use this form field</div></noscript>';
         $out .= PHP_EOL . implode(PHP_EOL, array_map(
             function ($item) {
                 return $this->containerItemHtml($item);

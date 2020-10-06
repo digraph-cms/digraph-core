@@ -16,8 +16,8 @@ class DateTimeAutocomplete extends AbstractAutocomplete
         $this->addValidatorFunction(
             'validtimestamp',
             function ($field) {
-                if (@$field->value() != intval(@$field->value())) {
-                    return 'Input must be a valid UNIX timestamp. This field is not easily usable without Javascript enabled.';
+                if (preg_match('/[^0-9]/', @$field['actual']->value())) {
+                    return 'Input must be a valid UNIX timestamp.<noscript><br>This field is not usable without Javascript enabled.</noscript>';
                 }
                 return true;
             }

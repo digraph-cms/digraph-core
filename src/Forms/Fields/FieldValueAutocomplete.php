@@ -16,20 +16,36 @@ class FieldValueAutocomplete extends AbstractAutocomplete
         $config = [
             'types' => $types,
             'fields' => $fields,
-            'allowAdding' => $allowAdding
+            'allowAdding' => $allowAdding,
         ];
         $this->configToken = md5(static::class . serialize($config));
         $session = $this->cms->helper('session');
         $session->set($this->configToken, $config);
         $this->attr('data-autocomplete-token', $this->configToken);
-        // $this->addValidatorFunction(
-        //     'validtimestamp',
-        //     function ($field) {
-        //         if (@$field->value() != intval(@$field->value())) {
-        //             return 'Input must be a valid UNIX timestamp. This field is not easily usable without Javascript enabled.';
-        //         }
-        //         return true;
-        //     }
-        // );
+        // validator to prevent adding new values without permission
+        if (!$allowAdding) {
+            $this->addValidatorFunction(
+                'validfieldvalue',
+                function ($field) use ($types, $fields) {
+                    $search = $this->cms->factory()->search();
+                    $where = [];
+                    if ($types) {
+                        $where[] = '${dso.type} in ("' . implode('","', $types) . '")';
+                    }
+                    $fieldSearch = [];
+                    foreach ($fields as $f) {
+                        $fieldSearch[] = '${' . $f . '} = :q';
+                    }
+                    $where[] = '(' . implode(' OR ', $fieldSearch) . ')';
+                    $where = implode(' AND ', $where);
+                    $search->where($where);
+                    $search->limit(1);
+                    if (!$search->execute(['q' => $field['user']->value()])) {
+                        return 'Input must be a valid existing value.<noscript><br>This field is not easily usable without Javascript enabled.</noscript>';
+                    }
+                    return true;
+                }
+            );
+        }
     }
 }
