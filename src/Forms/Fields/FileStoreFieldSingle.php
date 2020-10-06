@@ -175,9 +175,9 @@ class FileStoreFieldSingle extends \Formward\Fields\Container
     }
 
 
-    public function required($set = null)
+    public function required($set = null, $clientSide = true)
     {
-        return AbstractField::required($set);
+        return AbstractField::required($set, $clientSide);
     }
 
     public function dsoNoun($noun)

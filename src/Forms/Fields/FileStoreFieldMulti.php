@@ -43,7 +43,7 @@ class FileStoreFieldMulti extends \Formward\Fields\Container
      * array $exts an array of allowed file extensions
      * int $maxSize the maximum file size (per file) in bytes
      */
-    public function __construct(string $label, string $name=null, FieldInterface $parent=null, CMS $cms=null, string $path=null, array $exts=null, int $maxSize=null)
+    public function __construct(string $label, string $name = null, FieldInterface $parent = null, CMS $cms = null, string $path = null, array $exts = null, int $maxSize = null)
     {
         if (!$path) {
             $path = 'filefield';
@@ -99,16 +99,16 @@ class FileStoreFieldMulti extends \Formward\Fields\Container
         $this['upload']->addTip(
             $s->string(
                 'forms.file.max_size',
-                ['size'=>$s->filesizeHTML($size)]
+                ['size' => $s->filesizeHTML($size)]
             ),
             'maxsize'
         );
-        $this['upload']->addValidatorFunction('maxSize', function ($field) use ($size,$s) {
+        $this['upload']->addValidatorFunction('maxSize', function ($field) use ($size, $s) {
             if (!$field->value()) {
                 return true;
             }
             if ($field->value()['size'] > $size) {
-                return $s->string('forms.file.max_size_error', ['max'=>$s->filesizeHTML($size)]);
+                return $s->string('forms.file.max_size_error', ['max' => $s->filesizeHTML($size)]);
             }
             return true;
         });
@@ -125,7 +125,7 @@ class FileStoreFieldMulti extends \Formward\Fields\Container
             ),
             'allowedExts'
         );
-        $this['upload']->addValidatorFunction('allowedExts', function ($field) use ($exts,$s) {
+        $this['upload']->addValidatorFunction('allowedExts', function ($field) use ($exts, $s) {
             if (!$field->value()) {
                 return true;
             }
@@ -135,7 +135,7 @@ class FileStoreFieldMulti extends \Formward\Fields\Container
             }
             $ext = strtolower(preg_replace('/.*\./', '', $ext));
             if (!in_array($ext, $exts)) {
-                return $s->string('forms.file.extension_invalid', ['ext'=>$ext]);
+                return $s->string('forms.file.extension_invalid', ['ext' => $ext]);
             }
             return true;
         });
@@ -175,10 +175,10 @@ class FileStoreFieldMulti extends \Formward\Fields\Container
          */
         $arr = [];
         foreach ($this['current']->value() as $uniqid) {
-            $arr[$uniqid] = $noun['filestore.'.$this->path.'.'.$uniqid];
+            $arr[$uniqid] = $noun['filestore.' . $this->path . '.' . $uniqid];
         }
-        unset($noun['filestore.'.$this->path]);
-        $noun['filestore.'.$this->path] = $arr;
+        unset($noun['filestore.' . $this->path]);
+        $noun['filestore.' . $this->path] = $arr;
         $noun->update(true);
         /*
         save uploaded files to the noun using the filestore helper
@@ -195,9 +195,9 @@ class FileStoreFieldMulti extends \Formward\Fields\Container
         }
     }
 
-    public function required($set = null)
+    public function required($set = null, $clientSide = true)
     {
-        return AbstractField::required($set);
+        return AbstractField::required($set, $clientSide);
     }
 
     public function dsoNoun($noun)
@@ -206,14 +206,13 @@ class FileStoreFieldMulti extends \Formward\Fields\Container
         if ($files = $this->nounValue()) {
             $opts = [];
             foreach ($files as $file) {
-                $opts[$file->uniqid()]= $file->metaCard(false, true);
+                $opts[$file->uniqid()] = $file->metaCard(false, true);
             }
             $this['current']->opts($opts);
         }
     }
 
-    public function default($set = null)
-    {
+    function default($set = null) {
         return parent::default();
     }
 }
