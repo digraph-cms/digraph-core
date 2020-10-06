@@ -319,6 +319,8 @@ progressively-enhanced ordering field
     bottom: 0;
     width: 1.5em;
     line-height: 1.5em;
+    font-size: inherit;
+    padding-left: 0;
   }
 }
 
