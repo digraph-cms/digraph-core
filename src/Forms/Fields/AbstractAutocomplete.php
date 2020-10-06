@@ -9,9 +9,17 @@ use Formward\Fields\Input;
 
 class AbstractAutocomplete extends Container
 {
-    public function required($set = null)
+    public function required($set = null, $clientSide = true)
     {
-        return $this['actual']->required($set);
+        if ($set !== null) {
+            $this['actual']->required($set,false);
+            if ($set) {
+                $this->addClass('required');
+            } else {
+                $this->removeClass('required');
+            }
+        }
+        return $this['actual']->required();
     }
 
     public function value($set = null)
@@ -31,7 +39,7 @@ class AbstractAutocomplete extends Container
         $this->attr('data-autocomplete', static::SOURCE);
         $this['user'] = new Input($label);
         $this['user']->addClass('AutocompleteUser');
-        $this['actual'] = new Input('Actual input');
+        $this['actual'] = new Input($label);
         $this['actual']->addClass('AutocompleteActual');
     }
 

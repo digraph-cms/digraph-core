@@ -12,7 +12,7 @@ class Content extends Container
     protected $_extra = true;
     protected $_selectable = true;
 
-    public function required($set=null)
+    public function required($set=null, $clientSide=true)
     {
         parent::required($set);
         $this['text']->required(false);

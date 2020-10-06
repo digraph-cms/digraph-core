@@ -5,6 +5,7 @@
 
     .autocomplete-item-label {
         font-weight: bold;
+
         strong {
             font-weight: bolder;
             text-decoration: underline;
@@ -26,15 +27,28 @@
     display: none;
 }
 
+.Container.required.DigraphAutocomplete>div>label:after {
+    display: inline;
+    content: '\2055';
+    color: $(color_accent);
+    margin-left: 0.5em;
+    font-size: 0.75em;
+    vertical-align: middle;
+}
+
 .Container.DigraphAutocomplete {
+    label {
+        margin-bottom: 0.25em;
+    }
+
     .tips {
         margin-top: -$(spacing_base);
-        padding-top: $(spacing_base);
+        padding-top: $(spacing_tight);
     }
 
     .autocomplete-selection-wrapper {
         position: relative;
-        height: 2.3em;
+
         .autocomplete-item-label {
             strong {
                 font-weight: inherit;
@@ -46,8 +60,6 @@
     .autocomplete-selection,
     .autocomplete-clear {
         display: block;
-        position: absolute;
-        top: 0;
         border: 1px solid $(color_shade);
         border-radius: $(border_radius_accent);
         background: #fff;
@@ -57,13 +69,14 @@
     }
 
     .autocomplete-selection {
-        left: 0;
-        right: 2.5rem;
+        margin-right: 2.5rem;
         cursor: text;
         color: #000;
     }
 
     .autocomplete-clear {
+        position: absolute;
+        top: 0;
         right: 0;
         top: 0.5rem;
         width: 2rem;
