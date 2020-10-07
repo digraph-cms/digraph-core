@@ -94,7 +94,7 @@ function printEdges($edges, $reverse=false)
 {
     global $noun,$cms,$package;
     $token = $cms->helper('session')->getToken('edge.delete');
-    echo "<table>";
+    echo "<table style='width:100%!important;min-width:100%!important;max-width:100%!important;'>";
     echo "<tr><th>".($reverse?'From':'To')."</th><th>Type</th><th>&nbsp;</th></tr>";
     foreach ($edges as $edge) {
         if ($reverse) {
