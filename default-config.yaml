@@ -559,6 +559,8 @@ modules:
   sources: []
 
 users:
+  namespacing:
+    enabled: false # whether request namespacing should be done per-user
   defaultmanager: default
   managers:
     default:
