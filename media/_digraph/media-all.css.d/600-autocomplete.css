@@ -41,9 +41,8 @@
         margin-bottom: 0.25em;
     }
 
-    .tips {
-        margin-top: -$(spacing_base);
-        padding-top: $(spacing_tight);
+    &>.FieldWrapper {
+        margin-bottom: 0;
     }
 
     .autocomplete-selection-wrapper {

@@ -1,11 +1,16 @@
 <?php
 $package->cache_public();
-$package['response.ttl'] = 30;
+$package['response.ttl'] = 60;
 $package->makeMediaFile('results.json');
 $q = $package['url.args.term'];
 $results = [];
 $date = $package['url.args._date'] == 'true';
 $definitive = $package['url.args._definitive'] == 'true';
+
+// longer TTL for dates
+if ($date) {
+    $package['response.ttl'] = 3600;
+}
 
 // set results to query for definitive request
 if ($definitive) {

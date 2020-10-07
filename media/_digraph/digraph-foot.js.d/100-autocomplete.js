@@ -14,7 +14,7 @@ digraph.autocomplete.datetime = {
 
 // endpoint for returning dates
 digraph.autocomplete.date = {
-    source: digraph.url + '_json/autocomplete-datetime?date=true',
+    source: digraph.url + '_json/autocomplete-datetime?_date=true',
     source_definitive: digraph.url + '_json/autocomplete-datetime?_date=true&_definitive=true',
     autoFocus: true
 };
