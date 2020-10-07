@@ -1,19 +1,31 @@
+// endpoint for returning nouns
 digraph.autocomplete.noun = {
     source: digraph.url + '_json/autocomplete-noun',
-    source_definitive: digraph.url + '_json/autocomplete-noun-definitive'
+    source_definitive: digraph.url + '_json/autocomplete-noun-definitive',
+    autoFocus: true
 };
+
+// endpoint for returning dates/times
 digraph.autocomplete.datetime = {
     source: digraph.url + '_json/autocomplete-datetime',
-    source_definitive: digraph.url + '_json/autocomplete-datetime?_definitive=true'
+    source_definitive: digraph.url + '_json/autocomplete-datetime?_definitive=true',
+    autoFocus: true
 };
+
+// endpoint for returning dates
 digraph.autocomplete.date = {
     source: digraph.url + '_json/autocomplete-datetime?date=true',
-    source_definitive: digraph.url + '_json/autocomplete-datetime?_date=true&_definitive=true'
+    source_definitive: digraph.url + '_json/autocomplete-datetime?_date=true&_definitive=true',
+    autoFocus: true
 };
+
+// endpoint for matching existing values in fields
 digraph.autocomplete.fieldvalue = {
     source: digraph.url + '_json/autocomplete-fieldvalue?_token=%token%',
-    source_definitive: digraph.url + '_json/autocomplete-fieldvalue?_definitive=true&_token=%token%'
+    source_definitive: digraph.url + '_json/autocomplete-fieldvalue?_definitive=true&_token=%token%',
+    autoFocus: false
 };
+
 $(() => {
     var renderItem = function (item) {
         var $div = $('<div class="autocomplete-item">')
