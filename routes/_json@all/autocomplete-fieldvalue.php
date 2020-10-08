@@ -8,6 +8,7 @@ $definitive = $package['url.args._definitive'] == 'true';
 // token arg must exist
 if (!$package['url.args._token']) {
     $package->error(404);
+    return;
 }
 
 // load config from session
@@ -20,6 +21,7 @@ $allowAdding = $config['allowAdding'];
 // config must exist
 if (!$config) {
     $package->error(404);
+    return;
 }
 
 // find results
