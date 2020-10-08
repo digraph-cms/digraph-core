@@ -14,7 +14,14 @@ class UserMunger extends AbstractMunger
             return;
         }
         //note that cache namespacing is always done by user identifier
-        $package['request.namespace'] = 'group/' . crc32(serialize($users->groups()));
+        if($package->cms()->config['users.namespacing.enabled']) {
+            // namespace by user
+            $namespace = 'user/'.crc32($users->id());
+        }else {
+            // namespace by groups
+            $namespace = 'group/' . crc32(serialize($users->groups()));
+        }
+        $package['request.namespace'] = $namespace;
     }
 
     protected function doConstruct($name)
