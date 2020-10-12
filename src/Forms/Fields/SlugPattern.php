@@ -68,12 +68,19 @@ class SlugPattern extends Container
 
     public function default($value = null)
     {
-        if (!$value) {
-            $value = null;
-        } else {
-            $this['use']->default(true);
+        if ($value !== null) {
+            if (is_string($value)) {
+                $this['use']->default(true);
+                $this['slug']->default($value);
+            }else {
+                $this['use']->default($value);
+            }
         }
-        return $this['slug']->default($value);
+        if ($this['use']->default()) {
+            return $this['slug']->default();
+        }else {
+            return $this['use']->default();
+        }
     }
 
     public function dsoValue()
