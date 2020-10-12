@@ -54,6 +54,21 @@
   }
 }
 
+.Form {
+  .FieldWrapper {
+    margin: $(spacing_base) 0;
+
+    &:last-child,
+    &.FieldWrapper-class-Submit {
+      margin-bottom: 0;
+    }
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+}
+
 .Form .inline-children>.FieldWrapper,
 .Form .inline-children>.Container {
   display: inline-block;
@@ -161,11 +176,10 @@
 
 .Form .Field.class-Checkbox+label {
   display: inline-block;
-  vartical-align: middle;
+  vertical-align: middle;
   cursor: pointer;
   font-weight: normal;
-  opacity: 0.5;
-  font-size: 0.9em;
+  opacity: 0.6;
 }
 
 .Form .Field.class-Checkbox+label:hover {
@@ -180,7 +194,8 @@
   font-family: 'Font Awesome 5 Free';
   content: '\f0c8\00A0';
   display: inline-block;
-  opacity: 0.25;
+  padding-right: 0.25em;
+  opacity: 0.5;
 }
 
 .Form .Field.class-Checkbox:checked+label {

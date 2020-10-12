@@ -172,6 +172,20 @@ class FormHelper extends AbstractHelper
         return $map;
     }
 
+    public function mapForm(NounInterface $noun, array $map): Form
+    {
+        $form = new Form('', 'mapForm-' . $noun['dso.id']);
+        $form->cms($this->cms);
+        $form->addClass('mapForm');
+        $this->mapNoun(
+            $noun,
+            $form,
+            $map,
+            $noun->parent()
+        );
+        return $form;
+    }
+
     public function editNoun(NounInterface $noun): Form
     {
         $form = new Form('', 'edit-' . $noun['dso.id']);
