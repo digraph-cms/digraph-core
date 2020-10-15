@@ -1,6 +1,6 @@
 $(() => {
     var $iframes = $('iframe.embedded-iframe');
-    setInterval(()=>{
+    setInterval(() => {
         $iframes = $('iframe.embedded-iframe');
         $iframes.each((i) => {
             var $iframe = $iframes.eq(i);
@@ -11,18 +11,21 @@ $(() => {
             if (!$iframe.parent().is('div.embedded-iframe')) {
                 $iframe.wrap('<div class="embedded-iframe loading" />');
             }
-            //add iframe-embedded class
-            $contents.addClass('iframe-embedded');
-            //set up load/unload listeners
-            iframe.contentWindow.onload = function(e) {
-                $(iframe).parent('div.embedded-iframe').addClass('loaded').removeClass('loading');
-                updateSingleFrame(iframe);
-            };
-            iframe.contentWindow.onbeforeunload = function(e) {
-                $(iframe).parent('div.embedded-iframe').removeClass('loaded').addClass('loading');
-            };
+            //ensure body is embedded properly
+            if (!$contents.is('.iframe-embedded')) {
+                //add iframe-embedded class
+                $contents.addClass('iframe-embedded');
+                //set up load/unload listeners
+                iframe.contentWindow.onload = function (e) {
+                    $(iframe).parent('div.embedded-iframe').addClass('loaded').removeClass('loading');
+                    updateSingleFrame(iframe);
+                };
+                iframe.contentWindow.onbeforeunload = function (e) {
+                    $(iframe).parent('div.embedded-iframe').removeClass('loaded').addClass('loading');
+                };
+            }
         });
-    },100);
+    }, 300);
     var updateFrames = () => {
         $iframes.each((i) => {
             var $iframe = $iframes.eq(i);
@@ -53,8 +56,10 @@ $(() => {
         }
     };
     updateFrames();
-    $(window).on('resize',updateFrames);
-    setInterval(updateFrames,250);
+    $(window).on('resize', updateFrames);
+    setInterval(updateFrames, 250);
 });
 
-if (window!=window.top) { $('body').addClass('iframe-embedded'); }
+if (window != window.top) {
+    $('body').addClass('iframe-embedded');
+}

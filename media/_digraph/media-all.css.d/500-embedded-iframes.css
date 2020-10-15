@@ -1,56 +1,61 @@
 iframe.embedded-iframe {
-    width:100%;
-    border:0;
-    background:transparent;
-    display:block;
-    margin:$(spacing_base) 0;
-    padding:0;
-    overflow:hidden;
+    width: 100%;
+    border: 0;
+    background: transparent;
+    display: block;
+    margin: $(spacing_base) 0;
+    padding: 0;
+    overflow: hidden;
 }
 
 div.embedded-iframe {
-    position:relative;
-    margin:$(spacing_base) 0;
+    position: relative;
+    margin: $(spacing_base) 0;
 
     iframe.embedded-iframe {
-        margin:0;
-        display:block;
+        margin: 0;
+        display: block;
+        overflow: hidden;
     }
 
     &:after {
-        content:"";
-        display:none;
-        position:absolute;
-        top:0;
-        left:0;
-        right:0;
-        bottom:0;
-        background:#f00;
-        z-index:1000;
-        background:#fafafa url({{url.base}}digraph/loading-dark.gif);
-        background-position:center center;
-        background-repeat:no-repeat;
+        content: "";
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: #f00;
+        z-index: 1;
+        background:#eee url({{url.base}}digraph/loading-dark.gif);
+        background-position: center center;
+        background-repeat: no-repeat;
+        opacity: 0.6;
     }
 
     &.loading:after {
-        display:block;
+        display: block;
     }
 }
 
 body.iframe-embedded {
-    margin:0;
-    padding:0;
-    background:transparent;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+
     .digraph-area {
-        display:none;
-        margin:0;
-        padding:0;
+        display: none;
+        margin: 0;
+        padding: 0;
     }
+
     #digraph-body {
-        display:block;
+        display: block;
+
         .digraph-area-wrapper {
-            margin:0;
-            padding:0;
+            margin: 0;
+            padding: 0;
         }
     }
 }
