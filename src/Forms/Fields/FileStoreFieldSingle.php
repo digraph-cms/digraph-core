@@ -79,7 +79,7 @@ class FileStoreFieldSingle extends \Formward\Fields\Container
         $s = $this->cms->helper('strings');
         $this['upload']->addTip(
             $s->string(
-                'forms.file.max_size',
+                'forms.file.tips.max_size',
                 ['size'=>$s->filesizeHTML($size)]
             ),
             'maxsize'
@@ -89,7 +89,7 @@ class FileStoreFieldSingle extends \Formward\Fields\Container
                 return true;
             }
             if ($field->value()['size'] > $size) {
-                return $s->string('forms.file.max_size_error', ['max'=>$s->filesizeHTML($size)]);
+                return $s->string('forms.file.error.max_size', ['max'=>$s->filesizeHTML($size)]);
             }
             return true;
         });
@@ -101,7 +101,7 @@ class FileStoreFieldSingle extends \Formward\Fields\Container
         asort($exts);
         $this['upload']->addTip(
             $s->string(
-                'forms.file.allowed_extensions',
+                'forms.file.tips.allowed_extensions',
                 ['exts' => implode(', ', $exts)]
             ),
             'allowedExts'
@@ -112,11 +112,11 @@ class FileStoreFieldSingle extends \Formward\Fields\Container
             }
             $ext = $field->value()['name'];
             if (strpos($ext, '.') === false) {
-                return $s->string('forms.file.extension_required');
+                return $s->string('forms.file.error.extension_required');
             }
             $ext = strtolower(preg_replace('/.*\./', '', $ext));
             if (!in_array($ext, $exts)) {
-                return $s->string('forms.file.extension_invalid', ['ext'=>$ext]);
+                return $s->string('forms.file.error.extension_invalid', ['ext'=>$ext]);
             }
             return true;
         });

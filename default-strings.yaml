@@ -69,13 +69,17 @@ forms:
     confirm_deleted: Successfully deleted "!0"
     confirm_deleted_error: Error deleting "!0"
   file:
-    extension_invalid: <code>!ext</code> files are not allowed in this field
-    extension_required: File must have an extension
+    error:
+      extension_invalid: <code>!ext</code> files are not allowed in this field
+      extension_required: File must have an extension
+      max_size: 'The uploaded file is too big. The file size limit is !max.'
     tips:
       limit_count: Maximum !0 files at a time. If you need to upload more, you have to do it in multiple steps.
       limit_size_each: Each file can be at most !0. Larger files can't be uploaded through this form.
       limit_size_total: Total upload must total no more than !0. If you need to upload multiple files that combined are bigger than !0, you have to do it in multiple steps.
       upload_clear_warning: 'Warning: Uploading a new file here will remove the file(s) currently stored in this field.'
+      max_size: 'File size limit: !size'
+      allowed_extensions: 'Allowed file types: !exts'
     upload_single:
       container: Attached file
       current: ''

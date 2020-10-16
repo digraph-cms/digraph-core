@@ -11,6 +11,7 @@ use Digraph\Forms\Fields\DateTimeAutocomplete;
 use Digraph\Forms\Fields\FieldValueAutocomplete;
 use Digraph\Forms\Fields\Noun;
 use Digraph\Forms\Fields\SlugPattern;
+use Formward\Fields\Textarea;
 use Digraph\Forms\Fields\User;
 use Digraph\Helpers\AbstractHelper;
 use Flatrr\FlatArray;
@@ -40,6 +41,7 @@ class FormHelper extends AbstractHelper
         'noun' => Noun::class,
         'select' => Select::class,
         'text' => Input::class,
+        'textarea' => Textarea::class,
         'user' => User::class,
         'yaml' => YAML::class,
     ];
