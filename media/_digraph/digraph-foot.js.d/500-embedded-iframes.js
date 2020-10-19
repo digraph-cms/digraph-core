@@ -5,7 +5,6 @@ $(() => {
         $iframes = $('iframe.embedded-iframe');
         $iframes.each((i) => {
             var $iframe = $iframes.eq(i);
-            var $contents = $iframe.contents();
             //ensure iframe is wrapped
             if (!$iframe.parent().is('div.embedded-iframe')) {
                 $iframe.wrap('<div class="embedded-iframe" />');
@@ -15,7 +14,7 @@ $(() => {
                 },'iframe.embedded-iframe');
             }
             //ensure body is classed/embedded properly
-            $contents.addClass('iframe-embedded');
+            $iframe.contents().addClass('iframe-embedded');
         });
     };
     setInterval(setupFrames, 100);
