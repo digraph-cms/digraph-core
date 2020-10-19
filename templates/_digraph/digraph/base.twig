@@ -34,6 +34,15 @@
         <script src="{{file|raw}}"></script>
     {% endfor %}
     {% block body_end %}{% include 'body_end.twig' %}{% endblock %}
+{% block finalscripts %}
+<script>
+setTimeout(()=>{
+    if (window.Worker) {
+        new Worker(digraph.url+'_cron/');
+    }
+},5000);
+</script>
+{% endblock %}
   </body>
 
 </html>
