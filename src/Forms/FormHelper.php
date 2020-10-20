@@ -11,7 +11,6 @@ use Digraph\Forms\Fields\DateTimeAutocomplete;
 use Digraph\Forms\Fields\FieldValueAutocomplete;
 use Digraph\Forms\Fields\Noun;
 use Digraph\Forms\Fields\SlugPattern;
-use Formward\Fields\Textarea;
 use Digraph\Forms\Fields\User;
 use Digraph\Helpers\AbstractHelper;
 use Flatrr\FlatArray;
@@ -20,6 +19,7 @@ use Formward\Fields\INI;
 use Formward\Fields\Input;
 use Formward\Fields\JSON;
 use Formward\Fields\Select;
+use Formward\Fields\Textarea;
 use Formward\Fields\YAML;
 
 class FormHelper extends AbstractHelper
@@ -174,9 +174,9 @@ class FormHelper extends AbstractHelper
         return $map;
     }
 
-    public function mapForm(NounInterface $noun, array $map): Form
+    public function mapForm(NounInterface $noun, array $map, string $name = 'default'): Form
     {
-        $form = new Form('', 'mapForm-' . $noun['dso.id']);
+        $form = new Form('', 'mapForm-' . $noun['dso.id'] . '-' . $name);
         $form->cms($this->cms);
         $form->addClass('mapForm');
         $this->mapNoun(
