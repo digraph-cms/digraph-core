@@ -10,7 +10,7 @@ $(() => {
                 $iframe.wrap('<div class="embedded-iframe" />');
                 $iframe.addClass('resizer-activated');
                 iFrameResize({
-                    log: true
+                    log: false
                 },'iframe.embedded-iframe');
             }
             //ensure body is classed/embedded properly
