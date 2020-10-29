@@ -23,7 +23,7 @@ $form['id']->addValidatorFunction('match', function ($field) use ($s) {
 $form['recurse'] = new Formward\Fields\Checkbox(
     $s->string('forms.delete.confirm_delete_children')
 );
-$form['recurse']->default(true);
+$form['recurse']->default(false);
 
 //submit button
 $form->submitButton()->label($s->string('forms.confirm_button'));

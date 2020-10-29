@@ -13,7 +13,7 @@ echo $paginator->paginate(
         $s = $cms->helper('strings');
         echo "<table>";
         echo "<tr><th>Created</th><th>Send after</th><th>Message</th></tr>";
-        foreach ($mail->sent($start, $end-$start) as $qm) {
+        foreach ($mail->sent($start-1, $end-$start) as $qm) {
             echo "<tr>";
             echo "<td valign='top'>".$s->dateHTML($qm->created)."</td>";
             echo "<td valign='top'>".($qm->sendAfter?$s->dateHTML($qm->sendAfter):'')."</td>";

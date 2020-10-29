@@ -11,7 +11,7 @@ class QueuedMessage
     public $error;
     public $tags;
     public $message;
-    
+
     public function __construct($row)
     {
         $this->id = $row['mail_id'];
@@ -23,41 +23,42 @@ class QueuedMessage
         $this->message = unserialize($row['mail_message']);
     }
 
-    public function summaryText($options=[])
+    public function summaryText($options = [])
     {
         ob_start();
         echo "<dl>";
         echo "<dt>Subject</dt>";
-        echo "<dd>".$this->message->subject()."</dd>";
+        echo "<dd>" . $this->message->subject() . "</dd>";
         if (!@$options['hidefrom']) {
             echo "<dt>From</dt>";
-            echo "<dd>".$this->fmtAddress($this->message->from())."</dd>";
+            echo "<dd>" . $this->fmtAddress($this->message->from()) . "</dd>";
         }
         if (!@$options['hidereplyto'] && $this->message->replyTo()) {
             echo "<dt>Reply to</dt>";
-            echo "<dd>".$this->fmtAddress($this->message->replyTo())."</dd>";
+            echo "<dd>" . $this->fmtAddress($this->message->replyTo()) . "</dd>";
         }
         if (!@$options['hideto']) {
             echo "<dt>To</dt>";
-            echo "<dd>".$this->fmtMultipleAddresses($this->message->to())."</dd>";
+            echo "<dd>" . $this->fmtMultipleAddresses($this->message->to()) . "</dd>";
         }
         if (!@$options['hidecc'] && $this->message->cc()) {
             echo "<dt>CC</dt>";
-            echo "<dd>".$this->fmtMultipleAddresses($this->message->cc())."</dd>";
+            echo "<dd>" . $this->fmtMultipleAddresses($this->message->cc()) . "</dd>";
         }
         if (!@$options['hidebcc'] && $this->message->bcc()) {
             echo "<dt>BCC</dt>";
-            echo "<dd>".$this->fmtMultipleAddresses($this->message->bcc())."</dd>";
+            echo "<dd>" . $this->fmtMultipleAddresses($this->message->bcc()) . "</dd>";
         }
         if (!@$options['hidetags'] && $this->tags) {
             echo "<dt>Tags</dt>";
-            echo "<dd>".implode(', ', $this->tags)."</dd>";
+            echo "<dd>" . implode(', ', $this->tags) . "</dd>";
         }
         echo "<dt>Body</dt>";
-        echo "<dd>".$this->message->body()."</dd>";
+        echo "<dd>" . $this->message->body() . "</dd>";
         echo "</dl>";
         return ob_get_clean();
     }
+
     protected function fmtMultipleAddresses(array $addresses)
     {
         return implode(', ', array_map(
@@ -71,7 +72,7 @@ class QueuedMessage
     protected function fmtAddress($addr)
     {
         if (is_array($addr)) {
-            return '"'.$addr[1].'" &lt;'.$addr[0].'&gt;';
+            return '"' . $addr[1] . '" &lt;' . $addr[0] . '&gt;';
         } else {
             return $addr;
         }
