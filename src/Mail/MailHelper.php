@@ -111,6 +111,7 @@ EOT;
 
     public function hook_cron()
     {
+        // send unset messages
         $unsent = $this->fetch(
             'SELECT * FROM digraph_mail WHERE mail_sendafter <= :time and mail_sent is null and mail_error is null ORDER BY mail_created asc LIMIT 20',
             ['time' => time()]
@@ -118,6 +119,12 @@ EOT;
         foreach ($unsent as $qm) {
             $this->doSend($qm);
         }
+        // clear errors older than 30 days
+        $this->execute(
+            'DELETE FROM digraph_mail WHERE mail_error is not null AND mail_sent < :time;',
+            ['time' => time()-(86400*30)]
+        );
+        // return number of sent messages
         return count($unsent);
     }
 
