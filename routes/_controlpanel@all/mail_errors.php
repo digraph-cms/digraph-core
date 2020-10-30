@@ -8,16 +8,16 @@ echo $paginator->paginate(
     $package,
     'page',
     20,
-    function ($start, $end) use ($mail,$cms) {
+    function ($start, $end) use ($mail, $cms) {
         ob_start();
         $s = $cms->helper('strings');
         echo "<table>";
         echo "<tr><th>Date sent</th><th>Error</th><th>Message</th></tr>";
-        foreach ($mail->errors($start-1, $end-$start) as $qm) {
+        foreach ($mail->errors($start - 1, $end - $start + 1) as $qm) {
             echo "<tr>";
-            echo "<td valign='top'>".($qm->sent?$s->dateHTML($qm->sent):'')."</td>";
-            echo "<td valign='top'>".($qm->error??'')."</td>";
-            echo "<td valign='top'>".$qm->summaryText()."</td>";
+            echo "<td valign='top'>" . ($qm->sent ? $s->dateHTML($qm->sent) : '') . "</td>";
+            echo "<td valign='top'>" . ($qm->error ?? '') . "</td>";
+            echo "<td valign='top'>" . $qm->summaryText() . "</td>";
             echo "</tr>";
         }
         echo "</table>";
