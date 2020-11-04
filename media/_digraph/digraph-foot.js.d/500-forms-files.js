@@ -30,7 +30,7 @@ $(() => {
                     .removeClass('drag')
                     .removeClass('drag-onlyfield')
                     .height('auto');
-            });
+            }, 500);
         });
     //add filled cues to file fields
     $('.Form input[type="file"]')
