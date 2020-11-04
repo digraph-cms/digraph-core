@@ -1,0 +1,56 @@
+.Form {
+    input[type="file"] {
+
+        &:hover {
+            color: #fff;
+            background: $(color_notice);
+            border-color: $(color_notice);
+        }
+
+        &.drag {
+            color: #fff;
+            background: $(color_notice);
+            border-color: $(color_notice);
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 10000;
+
+            &:after {
+                content: 'Drop a single file here to select it for uploading';
+                background: $(color_notice);
+                background-image: url({{url.base}}digraph/upload.png);
+                background-repeat: no-repeat;
+                background-position: center center;
+                box-sizing: border-box;
+                display: block;
+                text-align: center;
+                padding-top: 1rem;
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 10000;
+            }
+
+            &[multiple="1"] {
+                &:after {
+                    content: 'Drop files here to select them for uploading';
+                }
+            }
+
+            &.drag-onlyfield {
+                position: fixed;
+            }
+        }
+
+        &.filled {
+            color: #fff;
+            background: $(color_notice);
+            border-color: $(color_notice);
+        }
+    }
+}
