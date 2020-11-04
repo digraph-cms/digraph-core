@@ -13,17 +13,20 @@ class ImageFieldSingle extends FileStoreFieldSingle
         $this['upload']->attr('accept', 'image/*');
         $this->addValidatorFunction('valid-image', function () {
             $value = $this['upload']->value();
+            if (!$value) {
+                return true;
+            }
             $valid = true;
             if (!preg_match('/^image\//', $value['type'])) {
                 $valid = false;
-            }
-            if (!preg_match('/\.(jpe?g|gif|png|webp|tiff?|w?bmp)$/i', $value['name'])) {
+            } elseif (!preg_match('/\.(jpe?g|gif|png|webp|tiff?|w?bmp)$/i', $value['name'])) {
                 $valid = false;
-            }
-            $finfo = new \finfo(FILEINFO_MIME_TYPE);
-            $mime = $finfo->file($value['file']);
-            if (!preg_match('/^image\//', $mime)) {
-                $valid = false;
+            } else {
+                $finfo = new \finfo(FILEINFO_MIME_TYPE);
+                $mime = $finfo->file($value['file']);
+                if (!preg_match('/^image\//', $mime)) {
+                    $valid = false;
+                }
             }
             return $valid ? true : "Error uploading file. Please ensure that it is a valid image file.";
         });
