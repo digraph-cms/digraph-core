@@ -11,6 +11,8 @@ class Noun extends DSO implements NounInterface
     const FILESTORE = false;
     const ROUTING_NOUNS = [];
     const SLUG_ID_LENGTH = 4;
+    const HOOK_TRIGGER_PARENTS = true;
+    const HOOK_TRIGGER_CHILDREN = true;
 
     public function __construct(array $data = null, Factory $factory = null)
     {

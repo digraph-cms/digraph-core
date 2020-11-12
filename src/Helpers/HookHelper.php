@@ -8,13 +8,13 @@ class HookHelper extends \Digraph\Helpers\AbstractHelper
 {
     protected $hooks = [];
 
-    public function register(string $target, string $event, $callable, $name=null)
+    public function register(string $target, string $event, $callable, $name = null)
     {
         if (!$name) {
             $name = uniqid();
         }
         @$this->hooks[$target][$event][$name] = $callable;
-        $this->cms->log('registering hook: '.(implode(', ', [$target,$event,$name])));
+        $this->cms->log('registering hook: ' . (implode(', ', [$target, $event, $name])));
         return $name;
     }
 
@@ -27,7 +27,7 @@ class HookHelper extends \Digraph\Helpers\AbstractHelper
         }
     }
 
-    public function noun_register(string $event, $callable, $name=null)
+    public function noun_register(string $event, $callable, $name = null)
     {
         return $this->register('nouns', $event, $callable, $name);
     }
@@ -36,9 +36,13 @@ class HookHelper extends \Digraph\Helpers\AbstractHelper
     {
         $this->trigger('nouns', $event, [$noun]);
         //recurse into parents, triggering child:$event events
-        $this->noun_recurse_up($noun, 'child:'.$event);
+        if ($noun::HOOK_TRIGGER_PARENTS) {
+            $this->noun_recurse_up($noun, 'child:' . $event);
+        }
         //recurse into children, triggering parent:$event events
-        $this->noun_recurse_down($noun, 'parent:'.$event);
+        if ($noun::HOOK_TRIGGER_CHILDREN) {
+            $this->noun_recurse_down($noun, 'parent:' . $event);
+        }
     }
 
     protected function noun_recurse_up($noun, $event)
