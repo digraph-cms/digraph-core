@@ -8,7 +8,7 @@ table,
 }
 
 #digraph-body aside, #digraph-body figure {
-  max-width: 75%;
+  max-width: 50%;
   float: right;
   clear: right;
   margin-left: 0.5rem;
