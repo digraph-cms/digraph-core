@@ -25,9 +25,9 @@ class PermissionsHelper extends AbstractHelper
      */
     public function checkUrl(Url $url, string $userID = null): ?bool
     {
-        $id = md5(serialize([$url,$userID]));
+        $id = md5(serialize([$url->string(), $userID]));
         if (!isset($this->urlCache[$id])) {
-            $this->urlCache[$id] = $this->doCheckUrl($url,$userID);
+            $this->urlCache[$id] = $this->doCheckUrl($url, $userID);
         }
         return $this->urlCache[$id];
     }
@@ -38,17 +38,17 @@ class PermissionsHelper extends AbstractHelper
         $noun = $this->cms->helper('urls')->noun($url);
         if ($noun) {
             // check based on specific noun
-            $paths[] = $noun['dso.id']. '/' . $url['verb'];
+            $paths[] = $noun['dso.id'] . '/' . $url['verb'];
             // check based on dso type
-            $paths[] = $noun['dso.type']. '/' . $url['verb'];
+            $paths[] = $noun['dso.type'] . '/' . $url['verb'];
         } else {
             // check using url type
-            $paths[] = $url['noun']. '/' . $url['verb'];
+            $paths[] = $url['noun'] . '/' . $url['verb'];
         }
         // check all paths in decreasing order of specificity
         $output = null;
         foreach (array_reverse($paths) as $path) {
-            $result = $this->check($path,'url',$userID);
+            $result = $this->check($path, 'url', $userID);
             // returns the first non-null result we get
             if ($result !== null) {
                 // if there is a noun and the verb is add, we also need to checkAddPermissions

@@ -17,6 +17,7 @@ class DigraphFactory extends Factory
     protected $name = 'system';
 
     protected $schemaIsLegacy = false;
+    protected $searchCache = [];
 
     protected $schema = [
         'dso.id' => [
@@ -162,23 +163,27 @@ class DigraphFactory extends Factory
 
     public function executeSearch(Search $search, array $params = array(), $deleted = false): array
     {
-        //add deletion clause and expand column names
-        $search = $this->preprocessSearch($search, $deleted);
-        //run select
-        $start = microtime(true);
-        $r = $this->driver->select(
-            $this->table,
-            $search,
-            $params
-        );
-        $duration = 1000 * (microtime(true) - $start);
-        $this->cms->log('query took ' . $duration . 'ms');
-        $this->cms->log('  ' . $search->where());
-        foreach ($params as $key => $value) {
-            $this->cms->log('  ' . $key . ' = ' . $value);
+        $id = md5(serialize([$search,$params,$deleted]));
+        if (!isset($this->searchCache[$id])) {
+            //add deletion clause and expand column names
+            $search = $this->preprocessSearch($search, $deleted);
+            //run select
+            $start = microtime(true);
+            $r = $this->driver->select(
+                $this->table,
+                $search,
+                $params
+            );
+            $duration = 1000 * (microtime(true) - $start);
+            $this->cms->log('query took ' . $duration . 'ms');
+            $this->cms->log('  ' . $search->where());
+            foreach ($params as $key => $value) {
+                $this->cms->log('  ' . $key . ' = ' . $value);
+            }
+            //cache built list
+            $this->searchCache[$id] = $r;
         }
-        //return built list
-        return $this->makeObjectsFromRows($r);
+        return $this->makeObjectsFromRows($this->searchCache[$id]);
     }
 
     /**

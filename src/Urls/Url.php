@@ -2,6 +2,7 @@
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
 namespace Digraph\Urls;
 
+use Digraph\DSO\Noun;
 use Flatrr\FlatArray;
 use HtmlObjectStrings\A;
 
@@ -14,6 +15,8 @@ class Url extends FlatArray
     const DEFAULTVERB = 'display';
     const HOMEALIAS = 'home';
 
+    protected $noun = null;
+
     public function __construct(array $data = null)
     {
         parent::__construct($data);
@@ -23,8 +26,17 @@ class Url extends FlatArray
             'verb' => static::DEFAULTVERB,
             'args' => [],
             'text' => 'untitled',
-            'canonical' => false
+            'canonical' => false,
         ]);
+    }
+
+    public function noun(Noun $set = null): ?Noun
+    {
+        if ($set !== null) {
+            $this->set('object', $set['dso.id']);
+            $this->noun = $set;
+        }
+        return $this->noun;
     }
 
     public function canonical(bool $set = null)
@@ -46,17 +58,17 @@ class Url extends FlatArray
         return $a;
     }
 
-    public function string(bool $canonical = null) : string
+    public function string(bool $canonical = null): string
     {
-        return $this->get('base').$this->routeString($canonical);
+        return $this->get('base') . $this->routeString($canonical);
     }
 
-    public function routeString(bool $canonical = null) : string
+    public function routeString(bool $canonical = null): string
     {
-        return $this->pathString($canonical).$this->argString();
+        return $this->pathString($canonical) . $this->argString();
     }
 
-    public function pathString(bool $canonical = null) : string
+    public function pathString(bool $canonical = null): string
     {
         if ($canonical === null) {
             $canonical = $this->get('canonical');
@@ -69,7 +81,7 @@ class Url extends FlatArray
         if ($noun == static::HOMEALIAS && $verb == static::DEFAULTVERB) {
             return '';
         }
-        $out = $noun.static::VERBSEPARATOR;
+        $out = $noun . static::VERBSEPARATOR;
         if ($verb != static::DEFAULTVERB) {
             $out .= $verb;
         }
@@ -85,7 +97,7 @@ class Url extends FlatArray
         return $out;
     }
 
-    public function argString() : string
+    public function argString(): string
     {
         if ($this->get('args')) {
             $args = [];
@@ -100,10 +112,10 @@ class Url extends FlatArray
                 if (!strval($value)) {
                     // it is best to omit args with values that can't be represented as strings
                 } else {
-                    $args[] = $key.static::ARGVALUESEPARATOR.urlencode($value);
+                    $args[] = $key . static::ARGVALUESEPARATOR . urlencode($value);
                 }
             }
-            return static::ARGINITIALSEPARATOR.implode(static::ARGSEPARATOR, $args);
+            return static::ARGINITIALSEPARATOR . implode(static::ARGSEPARATOR, $args);
         }
         return '';
     }

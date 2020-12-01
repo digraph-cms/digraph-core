@@ -318,6 +318,7 @@ class Noun extends DSO implements NounInterface
         }
         $url = $this->factory->cms()->helper('urls')->url($noun, $verb, $args);
         $url['object'] = $this['dso.id'];
-        return $this->factory->cms()->helper('urls')->addText($url);
+        $url->noun($this);
+        return $this->factory->cms()->helper('urls')->addText($url, $this);
     }
 }

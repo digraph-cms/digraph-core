@@ -2,18 +2,22 @@
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
 namespace Digraph\Urls;
 
+use Digraph\DSO\Noun;
 use Digraph\Helpers\AbstractHelper;
 
 class UrlHelper extends AbstractHelper
 {
     public function noun($url)
     {
+        if ($url->noun()) {
+            return $url->noun();
+        }
         if ($url['object']) {
             return $this->cms->read($url['object']);
         }
     }
 
-    public function parse(string $input) : ?Url
+    public function parse(string $input): ?Url
     {
         $url = $this->url();
         //break the URL into its parts
@@ -37,7 +41,7 @@ class UrlHelper extends AbstractHelper
             $args = explode(Url::ARGSEPARATOR, $args);
             foreach ($args as $part) {
                 list($key, $value) = explode(Url::ARGVALUESEPARATOR, $part, 2);
-                $argarr[$key] = $value?urldecode($value):false;
+                $argarr[$key] = $value ? urldecode($value) : false;
             }
             $url['args'] = $argarr;
         }
@@ -45,13 +49,13 @@ class UrlHelper extends AbstractHelper
         //create list of possible noun/verb combinations
         $slugs = [];
         if ($url->pathString() == '') {
-            $slugs = [['home',null]];
+            $slugs = [['home', null]];
         } else {
-            $slugs = [[$url->pathString(),null]];
+            $slugs = [[$url->pathString(), null]];
             if (strpos($url->pathString(), '/') !== false) {
                 $path = explode('/', $url->pathString());
                 $verb = array_pop($path);
-                $slugs[] = [implode('/', $path),$verb];
+                $slugs[] = [implode('/', $path), $verb];
             }
         }
         //search for possible slug matches
@@ -63,12 +67,13 @@ class UrlHelper extends AbstractHelper
                 } else {
                     $url->canonical(false);
                 }
+                $url->noun($dso);
                 return $this->addText($url);
             }
         }
         //check if alias exists
         $url['base'] = '';
-        if ($alias = $this->cms->config['urls.aliases.'.$url]) {
+        if ($alias = $this->cms->config['urls.aliases.' . $url]) {
             return $this->parse($alias);
         }
         //return
@@ -76,17 +81,17 @@ class UrlHelper extends AbstractHelper
         return $this->addText($url);
     }
 
-    public function addText($url)
+    public function addText($url, Noun $object = null)
     {
         $vars = [
             'noun' => $url['noun'],
             'verb' => $url['verb'],
-            'name' => $url['noun']
+            'name' => $url['noun'],
         ];
         foreach ($url['args'] as $key => $value) {
-            $vars['arg_'.$key] = $value;
+            $vars['arg_' . $key] = $value;
         }
-        if ($object = $this->noun($url)) {
+        if ($object = $object ?? $url->noun() ?? $this->noun($url)) {
             $vars['type'] = $object['dso.type'];
             $vars['name'] = $object->name();
             $vars['title'] = $object->title();
@@ -108,7 +113,7 @@ class UrlHelper extends AbstractHelper
             foreach ($verbs as $verb) {
                 if ($text = $this->cms->config["strings.urls.$type.$noun/$verb"]) {
                     foreach ($vars as $key => $value) {
-                        $text = str_replace('!'.$key, $value, $text);
+                        $text = str_replace('!' . $key, $value, $text);
                     }
                     $url['text'] = $text;
                     return $url;
@@ -118,7 +123,7 @@ class UrlHelper extends AbstractHelper
         return $url;
     }
 
-    public function url($noun=null, $verb=null, $args=null)
+    public function url($noun = null, $verb = null, $args = null)
     {
         $url = new Url();
         $url['base'] = $this->cms->config['url.base'];
