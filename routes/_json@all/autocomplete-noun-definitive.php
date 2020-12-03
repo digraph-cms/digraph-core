@@ -8,15 +8,19 @@ if (substr($q, 0, strlen($base)) == $base) {
     $q = substr($q, strlen($base));
 }
 
+$types = array_filter(explode(',', $package['url.args.types']));
+
 $results = false;
 
 // look for exact matches
 if ($n = $cms->read($q)) {
-    $results = [
-        'value' => $n['dso.id'],
-        'label' => $n->name(),
-        'url' => $n->url()->__toString(),
-    ];
+    if (in_array($n['dso.type'], $types)) {
+        $results = [
+            'value' => $n['dso.id'],
+            'label' => $n->name(),
+            'url' => $n->url()->__toString(),
+        ];
+    }
 }
 
 // build final JSON output

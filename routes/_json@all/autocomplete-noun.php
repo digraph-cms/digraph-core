@@ -9,10 +9,29 @@ if (substr($q, 0, strlen($base)) == $base) {
 }
 
 $results = [];
+$where = '';
+
+// get type limits from args
+if ($types = array_filter(explode(',', $package['url.args.types']))) {
+    $where = '${dso.type} in (' . implode(',', array_map(
+        function ($t) {
+            $t = preg_replace('/[^a-z\-]/', '', $t);
+            return '"' . $t . '"';
+        },
+        $types
+    )) . ')';
+}
+
+// set up where clause
+if ($where) {
+    $where = ' AND (' . $where . ')';
+}
 
 // look for exact matches
 foreach ($cms->locate($q) as $n) {
-    $results[$n['dso.id']] = $n;
+    if (in_array($n['dso.type'], $types)) {
+        $results[$n['dso.id']] = $n;
+    }
 }
 
 // set up basic search
@@ -21,19 +40,19 @@ $search->limit(20);
 $search->order('${dso.modified.date} desc');
 
 // look for leading dso ID matches
-$search->where('${dso.id} like :q');
+$search->where('(${dso.id} like :q)' . $where);
 runsearch($search, ['q' => "$q%"], $results);
 
 // look for exact name/title matches
-$search->where('${digraph.name} = :q OR ${digraph.title} = :q');
+$search->where('(${digraph.name} = :q OR ${digraph.title} = :q)' . $where);
 runsearch($search, ['q' => "$q"], $results);
 
 // look for leading name/title matches
-$search->where('${digraph.name} like :q OR ${digraph.title} like :q');
+$search->where('(${digraph.name} like :q OR ${digraph.title} like :q)' . $where);
 runsearch($search, ['q' => "$q%"], $results);
 
 // look for partial name/title matches
-$search->where('${digraph.name} like :q OR ${digraph.title} like :q');
+$search->where('(${digraph.name} like :q OR ${digraph.title} like :q)' . $where);
 runsearch($search, ['q' => "%$q%"], $results);
 
 // build final JSON output

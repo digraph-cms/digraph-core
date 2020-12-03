@@ -9,10 +9,21 @@ use Formward\Fields\Input;
 
 class AbstractAutocomplete extends Container
 {
+    protected $srcArgs = [];
+
+    public function srcArg(string $key, string $value = null)
+    {
+        if ($value !== null) {
+            $this->srcArgs[$key] = $value;
+            $this->attr('data-srcargs', json_encode($this->srcArgs));
+        }
+        return @$this->srcArgs[$key];
+    }
+
     public function required($set = null, $clientSide = true)
     {
         if ($set !== null) {
-            $this['actual']->required($set,false);
+            $this['actual']->required($set, false);
             if ($set) {
                 $this->addClass('required');
             } else {

@@ -66,6 +66,19 @@ $(() => {
         var token = $this.attr('data-autocomplete-token');
         readyOptions.source = readyOptions.source.replace('%token%',token);
         readyOptions.source_definitive = readyOptions.source_definitive.replace('%token%',token);
+        // add extra args
+        var srcArgs = JSON.parse($this.attr('data-srcargs'));
+        if (srcArgs) {
+            for (const key in srcArgs) {
+                if (srcArgs.hasOwnProperty(key)) {
+                    const val = srcArgs[key];
+                    var p = readyOptions.source.indexOf('?') == -1 ? '?' : '&';
+                    readyOptions.source = readyOptions.source+p+key+'='+val;
+                    p = readyOptions.source_definitive.indexOf('?') == -1 ? '?' : '&';
+                    readyOptions.source_definitive = readyOptions.source_definitive+p+key+'='+val;
+                }
+            }
+        }
         // custom select callback for transferring selection to actual field
         let select = readyOptions.select;
         readyOptions.select = function (event, ui) {
