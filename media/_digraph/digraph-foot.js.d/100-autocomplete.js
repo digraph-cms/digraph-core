@@ -67,7 +67,10 @@ $(() => {
         readyOptions.source = readyOptions.source.replace('%token%',token);
         readyOptions.source_definitive = readyOptions.source_definitive.replace('%token%',token);
         // add extra args
-        var srcArgs = JSON.parse($this.attr('data-srcargs'));
+        var srcArgs = {};
+        if ($this.attr('data-srcargs')) {
+            srcArgs = JSON.parse($this.attr('data-srcargs'));
+        }
         if (srcArgs) {
             for (const key in srcArgs) {
                 if (srcArgs.hasOwnProperty(key)) {
