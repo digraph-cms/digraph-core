@@ -58,7 +58,7 @@ class Execute extends AbstractMunger
             include $this->package['response.handler.file'];
         } else {
             $this->package['error.handler'] = $this->package['response.handler'];
-            $this->package->error(500, 'Handler file doesn\'t exist');
+            $this->package->error(404, 'Handler file doesn\'t exist');
         }
         $this->package['response.content'] = ob_get_contents();
         ob_end_clean();
