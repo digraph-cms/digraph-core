@@ -14,9 +14,7 @@ class Content extends Container
 
     public function required($set=null, $clientSide=true)
     {
-        parent::required($set);
-        $this['text']->required(false);
-        return parent::required();
+        return $this['text']->required($set,$clientSide);
     }
 
     public function extra($set=null)
