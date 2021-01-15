@@ -16,13 +16,13 @@ $(() => {
           autoDownloadFontAwesome: false,
           spellChecker: false
         });
-        $textArea.addClass('hidden');
+        $textArea.addClass('mde-active');
       }
       if (!markdown && simpleMDE) {
         // should not be markdown, disable simpleMDE
         simpleMDE.toTextArea();
         simpleMDE = null;
-        $textArea.removeClass('hidden');
+        $textArea.removeClass('mde-active');
         setTimeout(function () {
           $textArea.height($textArea[0].scrollHeight);
         }, 10);
