@@ -20,6 +20,11 @@ class AbstractAutocomplete extends Container
         return @$this->srcArgs[$key];
     }
 
+    protected function validateValue(string $value): bool
+    {
+        return true;
+    }
+
     public function required($set = null, $clientSide = true)
     {
         if ($set !== null) {
@@ -45,6 +50,7 @@ class AbstractAutocomplete extends Container
     public function __construct(string $label, string $name = null, FieldInterface $parent = null, CMS $cms = null)
     {
         parent::__construct('', $name, $parent);
+        $this->cms = $cms;
         $this->addClass('DigraphAutocomplete');
         $this->addClass('TransparentContainer');
         $this->attr('data-autocomplete', static::SOURCE);
@@ -52,6 +58,18 @@ class AbstractAutocomplete extends Container
         $this['user']->addClass('AutocompleteUser');
         $this['actual'] = new Input($label);
         $this['actual']->addClass('AutocompleteActual');
+        $this->addValidatorFunction(
+            'valid-autocomplete-value',
+            function ($field) {
+                if (!$field->value()) {
+                    return true;
+                }
+                if (!$this->validateValue($field->value())) {
+                    return 'Autocomplete value failed validation. Please try again.';
+                }
+                return true;
+            }
+        );
     }
 
     /**
