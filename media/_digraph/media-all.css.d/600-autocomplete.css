@@ -4,10 +4,9 @@
     font-weight: normal;
 
     .autocomplete-item-label {
-        font-weight: bold;
 
         strong {
-            font-weight: bolder;
+            font-weight: bold;
             text-decoration: underline;
         }
     }
@@ -20,6 +19,13 @@
     .autocomplete-item-desc {
         font-size: 0.7em;
     }
+}
+
+.ui-autocomplete {
+    max-height: 20em;
+    max-height: 20vh;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .FieldWrapper-AutocompleteUserIndex,
@@ -43,6 +49,36 @@
 
     &>.FieldWrapper {
         margin-bottom: 0;
+    }
+
+    .autocomplete-input-wrapper {
+        position: relative;
+
+        input {
+            position: relative;
+            margin-right: 2em;
+
+            z-index: 2;
+
+            &.ui-autocomplete-loading {
+                z-index: 0;
+            }
+        }
+
+        &:after {
+            content: "";
+            display: block;
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 2.5em;
+            height: 100%;
+            background:transparent url({{url.base}}digraph/loading-dark.gif);
+            background-size: 1.5em;
+            background-position: center center;
+            background-repeat: no-repeat;
+            z-index: 1;
+        }
     }
 
     .autocomplete-selection-wrapper {

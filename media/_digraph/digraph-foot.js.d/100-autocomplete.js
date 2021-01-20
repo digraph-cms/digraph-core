@@ -47,6 +47,9 @@ $(() => {
         var $clearButton = $('<a class="autocomplete-clear" title="clear field">clear field</a>');
         $selectionWrapper.append($selection);
         $selectionWrapper.append($clearButton);
+        // wrap user input and set up loading icon
+        var $userInputWrapper = $('<div class="autocomplete-input-wrapper"></div>').insertAfter($userInput);
+        $userInputWrapper.append($userInput);
         // set up options
         var readyOptions = {};
         var options = digraph.autocomplete[$this.attr('data-autocomplete')];
@@ -123,12 +126,15 @@ $(() => {
         $userInput.autocomplete(readyOptions);
         // check for filled value, try to locate from definitive source
         if ($input.val()) {
+            $userInput.addClass('ui-autocomplete-loading');
+            $userInput.prop('disabled', true);
             $.getJSON(
                 readyOptions.source_definitive, {
                     'term': $input.val()
                 },
                 function (item) {
                     if (item) {
+                        $userInput.prop('disabled', false);
                         readyOptions.select({}, {
                             'item': item
                         });
