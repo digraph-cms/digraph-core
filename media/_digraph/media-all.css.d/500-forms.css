@@ -37,6 +37,7 @@
     padding: 0 !important;
     background: transparent !important;
     border-radius: 0 !important;
+    color: inherit !important;
   }
 
   .Container,
