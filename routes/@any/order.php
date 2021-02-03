@@ -15,7 +15,7 @@ $options['manual'] = $manual;
 $form['mode'] = new Formward\Fields\Select(
     $s->string('forms.order.mode.title')
 );
-$form['mode']->required('true');
+$form['mode']->required(true, false);
 $form['mode']->options($options);
 $form['mode']->default($noun['digraph.order.mode']);
 
@@ -23,11 +23,10 @@ $form['mode']->default($noun['digraph.order.mode']);
 $form['unsorted'] = new Formward\Fields\Select(
     $s->string('forms.order.unsorted.title')
 );
-$form['unsorted']->required('true');
-$form['unsorted']->options(
-    $cms->config['strings.forms.order.unsorted.options']
-);
-$form['unsorted']->default($noun['digraph.order.unsorted']);
+$form['unsorted']->required(true, false);
+$options = $cms->config['strings.forms.order.unsorted.options'];
+$form['unsorted']->options($options);
+$form['unsorted']->default($noun['digraph.order.unsorted'] ?? key($options));
 
 /* field for specifying manual sorting */
 $form['manual'] = new Formward\Fields\Ordering(
@@ -42,7 +41,7 @@ $form['manual']->opts($children);
 /* handle form */
 if ($form->handle()) {
     $order = [
-        'mode' => $form['mode']->value()
+        'mode' => $form['mode']->value(),
     ];
     if ($form['mode']->value() == 'manual') {
         $order['unsorted'] = $form['unsorted']->value();

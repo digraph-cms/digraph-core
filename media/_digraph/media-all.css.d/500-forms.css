@@ -78,11 +78,14 @@
   margin-bottom: 0;
 }
 
-.Form .tips .tip {
+.Form .tips {
   font-size: 0.85em;
   opacity: 0.8;
   line-height: 1.2em;
-  margin: 0.5em 0;
+
+  .tip {
+    margin: 0.5em 0;
+  }
 }
 
 .Form .tips .tip:first-child {

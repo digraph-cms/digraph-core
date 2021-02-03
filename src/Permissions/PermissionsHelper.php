@@ -36,7 +36,12 @@ class PermissionsHelper extends AbstractHelper
     {
         $paths = [];
         $noun = $this->cms->helper('urls')->noun($url);
+        $userID = $userID ?? $this->cms->helper('users')->id();
         if ($noun) {
+            // allow noun to override
+            if (null !== $override = $noun->permissions($url['verb'], $userID)) {
+                return $override;
+            }
             // check based on specific noun
             $paths[] = $noun['dso.id'] . '/' . $url['verb'];
             // check based on dso type

@@ -51,6 +51,21 @@
         margin-bottom: 0;
     }
 
+    &.autocomplete-empty.autocomplete-touched {
+        .autocomplete-input-wrapper {
+            input:not(:focus) {
+                color: $(color_warning);
+            }
+        }
+
+        .tips:before {
+            content: "This autocomplete field currently has no value selected. To select a value please pick an option from the dropdown menu.";
+            display: block;
+            color: $(color_warning);
+            margin: 0.5em 0;
+        }
+    }
+
     .autocomplete-input-wrapper {
         position: relative;
 

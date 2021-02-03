@@ -2,10 +2,6 @@
 $package->cache_noStore();
 
 $noun = $package->noun();
-if (!$noun->isEditable()) {
-    $package->error(401);
-    return;
-}
 
 $forms = $this->helper('forms');
 $form = $forms->editNoun($noun);
@@ -28,7 +24,7 @@ if ($form->handle()) {
         $cms->helper('notifications')->flashConfirmation(
             $cms->helper('strings')->string(
                 'notifications.edit.confirmation',
-                ['name'=>$form->object->link()]
+                ['name' => $form->object->link()]
             )
         );
         $package->redirect(

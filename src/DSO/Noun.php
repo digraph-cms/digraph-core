@@ -24,6 +24,23 @@ class Noun extends DSO implements NounInterface
         $this->resetChanges();
     }
 
+    /**
+     * Allow nouns to override configured permissions for their own
+     * verb URLs. This plugs directly into the permissions helper, so
+     * it operates at the lowest possible level for permissions.
+     *
+     * Return null to use permissions from config, or a boolean value
+     * to override them.
+     *
+     * @param string $verb
+     * @param string $user
+     * @return boolean|null
+     */
+    public function permissions(string $verb, ?string $user): ?bool
+    {
+        return null;
+    }
+
     public function breadcrumbName(string $verb): ?string
     {
         return null;
