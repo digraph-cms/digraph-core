@@ -7,6 +7,7 @@ env.yaml
 example/cache/*
 example/storage/*
 example/modules_env/*
+debug.log
 
 *.ignore
 *.sqlite
