@@ -14,7 +14,7 @@ $results = false;
 
 // look for exact matches
 if ($n = $cms->read($q)) {
-    if (in_array($n['dso.type'], $types)) {
+    if (!$types || in_array($n['dso.type'], $types)) {
         $results = [
             'value' => $n['dso.id'],
             'label' => $n->name(),

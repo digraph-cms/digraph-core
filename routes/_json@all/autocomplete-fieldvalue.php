@@ -51,7 +51,7 @@ foreach ($search->execute(['q' => "%$q%"]) as $n) {
             $exactMatch = true;
         }
         if (stristr($value, $q)) {
-            $results[] = [
+            $results[$value] = [
                 'value' => $value,
                 'label' => preg_replace("/" . preg_quote($q) . "/i", "<strong>$0</strong>", $value),
                 'score' => $score,
@@ -60,12 +60,13 @@ foreach ($search->execute(['q' => "%$q%"]) as $n) {
     }
 }
 if (!$exactMatch && $allowAdding) {
-    $results[] = [
+    $results[$q] = [
         'value' => $q,
-        'label' => "<strong>$q</strong>",
+        'label' => "Add: <strong>$q</strong>",
         'score' => 1,
     ];
 }
+$results = array_values($results);
 usort($results, function ($a, $b) {
     if ($a['score'] > $b['score']) {
         return -1;

@@ -31,30 +31,68 @@ $form->submitButton()->label($s->string('forms.confirm_button'));
 //do deletion
 if ($form->handle()) {
     $n = $package->cms()->helper('notifications');
+    $g = $cms->helper('graph');
     $noun = $package->noun();
+    $deleteChildren = [];
     if ($form['recurse']->value()) {
         //get list of all children, in breadth-first order
-        $toDelete = $cms->helper('graph')->traverse($noun['dso.id']);
+        $deleteChildren = $g->traverse($noun['dso.id']);
+        $fullTree = $deleteChildren;
+        array_shift($deleteChildren);
+        $keptChildren = [];
+        //filter out those with parents outside the given tree
+        $deleteChildren = array_filter(
+            $deleteChildren,
+            function ($id) use ($g, $fullTree, &$keptChildren) {
+                foreach ($g->parentIDs($id) as $pid) {
+                    if (in_array($pid, $keptChildren) || !in_array($pid, $fullTree)) {
+                        $keptChildren[] = $id;
+                        return false;
+                    }
+                }
+                return true;
+            }
+        );
+        //notify about children being kept
+        foreach ($keptChildren as $tk) {
+            if ($tk == $noun['dso.id']) {
+                continue;
+            }
+            $tkn = $cms->read($tk);
+            $tkn = $tkn ? $tkn->link() : "<code>$tk</code>";
+            $n->flashNotice("$tkn has ancestors outside the tree, it is not being deleted.");
+        }
         //reverse order to delete children from leaves in
-        $toDelete = array_reverse($toDelete);
+        $deleteChildren = array_reverse($deleteChildren);
     }
-    $toDelete[] = $noun['dso.id'];
     //try to set max execution time to unlimited
     ini_set('max_execution_time', 0);
     //set time limit
     $limit = intval(ini_get('max_execution_time'));
-    $limit = $limit?$limit-2:0;
+    $limit = $limit ? $limit - 2 : 0;
     $start = time();
-    foreach ($toDelete as $id) {
-        if ($n = $cms->read($id, false)) {
-            $n->delete();
+    //try to delete as many children as possible in time limit
+    $childrenDeleted = 0;
+    foreach ($deleteChildren as $id) {
+        if ($child = $cms->read($id, false)) {
+            $child->delete();
+            $childrenDeleted++;
         }
-        if ($limit && time()-$start >= $limit) {
-            $cms->helper('notifications')->flashError('Ran out of time while deleting child pages. Please run again to complete deletion process.');
+        if ($limit && time() - $start >= $limit) {
+            $n->flashWarning('Ran out of time while deleting children. Please run again to complete deletion process.');
             $package->redirect($package->url()->string());
             return;
         }
     }
+    //delete noun and redirect to either parent or home
+    $afterUrl = $noun->parentUrl() ?? $cms->helper('urls')->parse('home');
+    $noun->delete();
+    if ($childrenDeleted) {
+        $n->flashConfirmation('Deleted ' . $noun->name() . ' and ' . $childrenDeleted . ' children');
+    } else {
+        $n->flashConfirmation('Deleted ' . $noun->name());
+    }
+    $package->redirect($afterUrl);
     return;
 }
 
