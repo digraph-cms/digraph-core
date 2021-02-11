@@ -27,6 +27,9 @@ class FieldValueAutocomplete extends AbstractAutocomplete
             $this->addValidatorFunction(
                 'validfieldvalue',
                 function ($field) use ($types, $fields) {
+                    if (!$field['actual']->value()) {
+                        return true;
+                    }
                     $search = $this->cms->factory()->search();
                     $where = [];
                     if ($types) {
@@ -40,8 +43,8 @@ class FieldValueAutocomplete extends AbstractAutocomplete
                     $where = implode(' AND ', $where);
                     $search->where($where);
                     $search->limit(1);
-                    if (!$search->execute(['q' => $field['user']->value()])) {
-                        return 'Input must be a valid existing value.<noscript><br>This field is not easily usable without Javascript enabled.</noscript>';
+                    if (!$search->execute(['q' => $field['actual']->value()])) {
+                        return 'Autocomplete field must be a valid existing value.<noscript><br>This field is not easily usable without Javascript enabled.</noscript>';
                     }
                     return true;
                 }
