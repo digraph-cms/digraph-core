@@ -15,11 +15,26 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
     protected $skips = [];
     protected $log = [];
     protected $cms;
+    protected $overrideParent;
     protected $unfiltered = [
         'response.content',
         'noun',
         'url',
     ];
+
+    /**
+     * Allow overriding parent URL for the purposes of generating breadcrumbs
+     *
+     * @param Url $set
+     * @return Url|null
+     */
+    public function overrideParent(Url $set=null): ?Url
+    {
+        if ($set) {
+            $this->overrideParent = $set;
+        }
+        return $this->overrideParent;
+    }
 
     /**
      * The response may be stored by any cache, even if the response is normally 

@@ -1,4 +1,4 @@
-{% set breadcrumb = package.cms.helper('navigation').breadcrumb(url) %}
+{% set breadcrumb = package.cms.helper('navigation').breadcrumb(url,overrideParent) %}
 {% if breadcrumb | length > 2 or (breadcrumb | length > 1 and breadcrumb[0] != url.base) %}
   <div class="breadcrumb">
     {% for link in breadcrumb %}

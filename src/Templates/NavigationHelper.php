@@ -8,10 +8,13 @@ class NavigationHelper extends AbstractHelper
 {
     protected $parentOfCache = [];
 
-    public function breadcrumb($url): array
+    public function breadcrumb($url,$overrideParent = null): array
     {
         $bc = [];
         $bc[] = $url;
+        if ($overrideParent) {
+            $bc[] = $overrideParent;
+        }
         $bc = $this->bcBuilder($bc);
         //filter with permissions
         $bc = array_filter(

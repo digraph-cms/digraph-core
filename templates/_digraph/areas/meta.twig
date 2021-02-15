@@ -1,6 +1,7 @@
 {% include 'digraph/notifications.twig' %}
 {% if package.response.status == 200 %}
   {% include 'digraph/breadcrumb.twig' with {
-    url : package.url()
+    url : package.url(),
+    overrideParent : package.overrideParent()
   } %}
 {% endif %}
