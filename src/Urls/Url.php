@@ -1,5 +1,5 @@
 <?php
-/* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
+/* Digraph Core | https://github.com/digraph-cms/digraph-core | MIT License */
 namespace Digraph\Urls;
 
 use Digraph\DSO\Noun;
@@ -28,6 +28,29 @@ class Url extends FlatArray
             'text' => 'untitled',
             'canonical' => false,
         ]);
+    }
+
+    public function setData($data, $field = '__data')
+    {
+        $this['args.' . $field] = base64_encode(gzcompress(json_encode($data)));
+    }
+
+    public function getData($field = '__data')
+    {
+        if (!$this['args.' . $field]) {
+            return null;
+        }
+        if (!($data = @base64_decode($this['args.' . $field]))) {
+            throw new \Exception("Error base64 decoding $field in URL");
+        }
+        if (!($data = @gzuncompress($data))) {
+            throw new \Exception("Error uncompressing $field in URL");
+        }
+        $data = @json_decode($data, true);
+        if ($data === null || $data === false) {
+            throw new \Exception("Error json decoding $field in URL");
+        }
+        return $data;
     }
 
     public function noun(Noun $set = null): ?Noun

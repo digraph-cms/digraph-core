@@ -1,5 +1,5 @@
 <?php
-/* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
+/* Digraph Core | https://github.com/digraph-cms/digraph-core | MIT License */
 namespace Digraph\Mungers;
 
 use Digraph\CMS;
@@ -22,13 +22,20 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         'url',
     ];
 
+    public function requireUrlHash()
+    {
+        if (!$this->cms->helper('urls')->checkHash($this->url())) {
+            throw new \Exception("Required URL hashing failed");
+        }
+    }
+
     /**
      * Allow overriding parent URL for the purposes of generating breadcrumbs
      *
      * @param Url $set
      * @return Url|null
      */
-    public function overrideParent(Url $set=null): ?Url
+    public function overrideParent(Url $set = null): ?Url
     {
         if ($set) {
             $this->overrideParent = $set;
@@ -37,7 +44,7 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
     }
 
     /**
-     * The response may be stored by any cache, even if the response is normally 
+     * The response may be stored by any cache, even if the response is normally
      * non-cacheable.
      *
      * @return void
@@ -48,7 +55,7 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
     }
 
     /**
-     * The response may be stored only by a browser's cache, even if the response 
+     * The response may be stored only by a browser's cache, even if the response
      * is normally non-cacheable.
      *
      * @return void
@@ -59,8 +66,8 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
     }
 
     /**
-     * The response may be stored by any cache, even if the response is normally 
-     * non-cacheable. However, the stored response MUST always go through validation 
+     * The response may be stored by any cache, even if the response is normally
+     * non-cacheable. However, the stored response MUST always go through validation
      * with the origin server first before using it
      *
      * @return void
@@ -71,8 +78,8 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
     }
 
     /**
-     * The response may not be stored in any cache. Although other directives may be set, 
-     * this alone is the only directive you need in preventing cached responses on modern 
+     * The response may not be stored in any cache. Although other directives may be set,
+     * this alone is the only directive you need in preventing cached responses on modern
      * browsers. max-age=0 is already implied.
      *
      * @return void
@@ -89,12 +96,12 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         if (!$id) {
             $id = md5(serialize([
                 $this['request.actualurl'],
-                $this->hash('logging.messages')
+                $this->hash('logging.messages'),
             ]));
         } else {
             $id = md5(serialize([
                 $this['request.actualurl'],
-                $id
+                $id,
             ]));
         }
         $this['logging.save'] = $id;

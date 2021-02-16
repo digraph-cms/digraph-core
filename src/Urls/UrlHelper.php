@@ -1,5 +1,5 @@
 <?php
-/* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
+/* Digraph Core | https://github.com/digraph-cms/digraph-core | MIT License */
 namespace Digraph\Urls;
 
 use Digraph\DSO\Noun;
@@ -15,6 +15,33 @@ class UrlHelper extends AbstractHelper
         if ($url['object']) {
             return $this->cms->read($url['object']);
         }
+    }
+
+    public function hash(Url &$url)
+    {
+        unset($url['args.__hash']);
+        $url['args.__hash'] = $this->hashUrl($url);
+    }
+
+    public function checkHash(Url $url): ?bool
+    {
+        // if url doesn't have a hash return null
+        if (!$url['args.__hash']) {
+            return null;
+        }
+        // otherwise return bool
+        $hash = $url['args.__hash'];
+        $url = clone $url;
+        unset($url['args.__hash']);
+        return $hash == $this->hashUrl($url);
+    }
+
+    protected function hashUrl(Url $url): string
+    {
+        if (!$this->cms->config['secret']) {
+            throw new \Exception("You must set a value for config[\"secret\"] to use hash-protected URLs");
+        }
+        return hash('sha256', $url->string(true) . $this->cms->config['secret']);
     }
 
     public function parse(string $input): ?Url
