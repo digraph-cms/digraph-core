@@ -29,7 +29,7 @@ class Execute extends AbstractMunger
                 $package->merge(
                     [
                         'page_name' => $package->noun()->name($package->url()['verb']),
-                        'page_title' => $package->noun()->title($package->url()['verb'])
+                        'page_title' => $package->noun()->title($package->url()['verb']),
                     ],
                     'fields',
                     true
@@ -39,7 +39,7 @@ class Execute extends AbstractMunger
             $this->execute();
         } catch (\Throwable $e) {
             @ob_end_clean();
-            $package->error(500, get_class($e).": ".$e->getMessage().": ".$e->getFile().": ".$e->getLine());
+            $package->error(500, get_class($e) . ": " . $e->getMessage() . ": " . $e->getFile() . ": " . $e->getLine());
             $package->set('error.trace', $e->getTrace());
         }
     }
@@ -51,20 +51,33 @@ class Execute extends AbstractMunger
     protected function execute()
     {
         ob_start();
-        if (file_exists($this->package['response.handler.file'])) {
-            //use included file to generate
-            $package = $this->package;
-            $cms = $package->cms();
-            include $this->package['response.handler.file'];
-        } else {
-            $this->package['error.handler'] = $this->package['response.handler'];
-            $this->package->error(404, 'Handler file doesn\'t exist');
-        }
+        // before hooks
+        $this->nounHooks('first');
+        $this->nounHooks('before');
+        // include main file
+        $package = $this->package;
+        $cms = $package->cms();
+        include $this->package['response.handler.file'];
+        // after hooks
+        $this->nounHooks('after');
+        $this->nounHooks('last');
+        // grab output buffer and return
         $this->package['response.content'] = ob_get_contents();
         ob_end_clean();
     }
 
-    protected function factory(string $name='content')
+    protected function nounHooks($hookName)
+    {
+        $noun = $this->package['noun.dso.type'] ?? $this->package['url.noun'];
+        $verb = $this->package['url.verb'];
+        foreach ($this->package->cms()->helper('routing')->allHookFiles($noun, $verb . '_' . $hookName . '.php') as $file) {
+            $package = $this->package;
+            $cms = $package->cms();
+            include $file['file'];
+        }
+    }
+
+    protected function factory(string $name = 'content')
     {
         return $this->package->cms()->factory($name);
     }
@@ -79,7 +92,7 @@ class Execute extends AbstractMunger
         return $this->package->cms();
     }
 
-    protected function url($noun, $verb, $args=[])
+    protected function url($noun, $verb, $args = [])
     {
         return $this->package->cms()->helper('urls')->url($noun, $verb, $args);
     }
