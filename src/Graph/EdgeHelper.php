@@ -1,5 +1,5 @@
 <?php
-/* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
+/* Digraph Core | https://github.com/digraph-cms/digraph-core | MIT License */
 namespace Digraph\Graph;
 
 use Digraph\DSO\Noun;
@@ -29,7 +29,7 @@ EOT;
         'CREATE INDEX IF NOT EXISTS digraph_edges_start_IDX ON digraph_edges (edge_start);',
         'CREATE INDEX IF NOT EXISTS digraph_edges_end_IDX ON digraph_edges (edge_end);',
         'CREATE INDEX IF NOT EXISTS digraph_edges_end_IDX ON digraph_edges (edge_type);',
-        'CREATE UNIQUE INDEX IF NOT EXISTS digraph_edges_start_end_IDX ON digraph_edges (edge_start,edge_end,edge_type);'
+        'CREATE UNIQUE INDEX IF NOT EXISTS digraph_edges_start_end_IDX ON digraph_edges (edge_start,edge_end,edge_type);',
     ];
 
     protected function toObjects($rows)
@@ -48,7 +48,7 @@ EOT;
         );
     }
 
-    public function list(int $limit, int $offset) : array
+    function list(int $limit, int $offset): array
     {
         $args = [];
         $l = '';
@@ -61,7 +61,7 @@ EOT;
             $args[':offset'] = $offset;
         }
         $s = $this->pdo->prepare(
-            'SELECT * FROM digraph_edges ORDER BY edge_id desc'.$l
+            'SELECT * FROM digraph_edges ORDER BY edge_id desc' . $l
         );
         if ($s->execute($args)) {
             return $this->toObjects($s->fetchAll(\PDO::FETCH_ASSOC));
@@ -90,7 +90,7 @@ EOT;
             $this->pdo->exec($idx);
         }
         //set up hooks to delete edges
-        $this->cms->helper('hooks')->noun_register('delete_permanent', [$this,'deleteAll']);
+        $this->cms->helper('hooks')->noun_register('delete_permanent', [$this, 'deleteAll']);
     }
 
     public function hook_export($export)
@@ -109,7 +109,7 @@ EOT;
             $out[$e->id()] = [
                 'start' => $e->start(),
                 'end' => $e->end(),
-                'type' => $e->type()
+                'type' => $e->type(),
             ];
         }
         return array_values($out);
@@ -127,15 +127,15 @@ EOT;
                     $log[] = "$start =&gt; $end ($type)";
                 }
             } catch (\Exception $e) {
-                $log[] = "Exception: ".serialize($item);
+                $log[] = "Exception: " . serialize($item);
             }
         }
         return $log;
     }
 
-    public function get(string $start, string $end, $type=null)
+    public function get(string $start, string $end, $type = null)
     {
-        $args = [':start'=>$start,':end'=>$end];
+        $args = [':start' => $start, ':end' => $end];
         if (!$type) {
             $s = $this->pdo->prepare(
                 'SELECT * FROM digraph_edges WHERE edge_start = :start AND edge_end = :end LIMIT 1'
@@ -156,10 +156,9 @@ EOT;
         return null;
     }
 
-    public function children(string $start, $type=null, $ids=false)
+    public function children(string $start, $type = null, $ids = false)
     {
-        $r = [];
-        $args = [':start'=>$start];
+        $args = [':start' => $start];
         if (!$type) {
             $s = $this->pdo->prepare(
                 'SELECT * FROM digraph_edges WHERE edge_start <> \'{ROOT}\' AND edge_start = :start ORDER BY edge_weight desc, edge_id asc'
@@ -187,10 +186,9 @@ EOT;
         }
     }
 
-    public function parents(string $end, $type=null, $ids=false)
+    public function parents(string $end, $type = null, $ids = false)
     {
-        $r = [];
-        $args = [':end'=>$end];
+        $args = [':end' => $end];
         if (!$type) {
             $s = $this->pdo->prepare(
                 'SELECT * FROM digraph_edges WHERE edge_start <> \'{ROOT}\' AND edge_end = :end ORDER BY edge_weight desc, edge_id asc'
@@ -244,7 +242,7 @@ EOT;
     /**
      * create a new edge, or alter the weight of an existing edge
      */
-    public function create(string $start, string $end, $type=null, $weight=0)
+    public function create(string $start, string $end, $type = null, $weight = 0)
     {
         if (!$type) {
             $type = $this->autoType($start, $end);
@@ -261,23 +259,62 @@ EOT;
                 if ($start !== '{ROOT}') {
                     $this->updateRootTracking($end);
                 }
-                return $s->execute([':start'=>$start,':end'=>$end,':type'=>$type,':weight'=>$weight]);
+                return $s->execute([':start' => $start, ':end' => $end, ':type' => $type, ':weight' => $weight]);
             }
         }
         //need to make a new edge
         $s = $this->pdo->prepare(
             'INSERT INTO digraph_edges (edge_start,edge_end,edge_type,edge_weight) VALUES (:start,:end,:type,:weight)'
         );
-        $out = $s->execute([':start'=>$start,':end'=>$end,':type'=>$type,':weight'=>$weight]);
+        $out = $s->execute([':start' => $start, ':end' => $end, ':type' => $type, ':weight' => $weight]);
         if ($start !== '{ROOT}') {
             $this->updateRootTracking($end);
         }
         return $out;
     }
 
-    public function delete(string $start, string $end, $type=null)
+    public function deleteParents(string $end, $type = null)
     {
-        $args = [':start'=>$start,':end'=>$end];
+        $args = [':end' => $end];
+        if (!$type) {
+            $s = $this->pdo->prepare(
+                'DELETE FROM digraph_edges WHERE edge_end = :end'
+            );
+        } else {
+            $args[':type'] = $type;
+            $s = $this->pdo->prepare(
+                'DELETE FROM digraph_edges WHERE edge_end = :end AND edge_type = :type'
+            );
+        }
+        $out = $s->execute($args);
+        $this->updateRootTracking($end);
+        return $out;
+    }
+
+    public function deleteChildren(string $start, $type = null)
+    {
+        $args = [':start' => $start];
+        $children = $this->children($start, $type, true);
+        if (!$type) {
+            $s = $this->pdo->prepare(
+                'DELETE FROM digraph_edges WHERE edge_start = :start'
+            );
+        } else {
+            $args[':type'] = $type;
+            $s = $this->pdo->prepare(
+                'DELETE FROM digraph_edges WHERE edge_start = :start AND edge_type = :type'
+            );
+        }
+        $out = $s->execute($args);
+        foreach ($children as $child) {
+            $this->updateRootTracking($child);
+        }
+        return $out;
+    }
+
+    public function delete(string $start, string $end, $type = null)
+    {
+        $args = [':start' => $start, ':end' => $end];
         if (!$type) {
             $s = $this->pdo->prepare(
                 'DELETE FROM digraph_edges WHERE edge_start = :start AND edge_end = :end'
@@ -304,10 +341,10 @@ EOT;
         $s = $this->pdo->prepare(
             'DELETE FROM digraph_edges WHERE edge_start = :id OR edge_end = :id'
         );
-        return $s->execute([':id'=>$id]);
+        return $s->execute([':id' => $id]);
     }
 
-    public function roots($ids=false)
+    public function roots($ids = false)
     {
         $s = $this->pdo->prepare(
             'SELECT * FROM digraph_edges WHERE edge_start = \'{ROOT}\' ORDER BY edge_weight desc, edge_id asc'
