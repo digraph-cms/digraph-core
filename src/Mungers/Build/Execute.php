@@ -55,9 +55,7 @@ class Execute extends AbstractMunger
         $this->nounHooks('first');
         $this->nounHooks('before');
         // include main file
-        $package = $this->package;
-        $cms = $package->cms();
-        include $this->package['response.handler.file'];
+        $this->includeFile($this->package['response.handler.file']);
         // after hooks
         $this->nounHooks('after');
         $this->nounHooks('last');
@@ -71,10 +69,38 @@ class Execute extends AbstractMunger
         $noun = $this->package['noun.dso.type'] ?? $this->package['url.noun'];
         $verb = $this->package['url.verb'];
         foreach ($this->package->cms()->helper('routing')->allHookFiles($noun, $verb . '_' . $hookName . '.php') as $file) {
-            $package = $this->package;
-            $cms = $package->cms();
-            include $file['file'];
+            $this->includeFile($file['file']);
         }
+    }
+
+    /**
+     * There's a weird hack here because I, the developer, deploy this thing
+     * in an environment where VERY occasionally included files will appear
+     * as non-existant, and when included they appear as empty at the time.
+     *
+     * So to keep things working in that very odd circumstance we just wait
+     * a second and try again.
+     *
+     * @param string $file
+     * @param integer $depth
+     * @return void
+     */
+    protected function includeFile(string $file, $depth = 0)
+    {
+        // check file exists
+        if (!file_exists($file)) {
+            if ($depth == 5) {
+                throw new \Exception("Error including file '" . $file . "' after trying $depth times");
+
+            }
+            sleep(1);
+            $this->includeFile($file, $depth + 1);
+            return;
+        }
+        // include file
+        $package = $this->package;
+        $cms = $package->cms();
+        include $file;
     }
 
     protected function factory(string $name = 'content')
