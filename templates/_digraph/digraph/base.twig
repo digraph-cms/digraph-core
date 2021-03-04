@@ -35,13 +35,15 @@
     {% endfor %}
     {% block body_end %}{% include 'body_end.twig' %}{% endblock %}
 {% block finalscripts %}
-<script>
-setTimeout(()=>{
-    if (window.Worker) {
-        new Worker(digraph.url+'_cron/');
-    }
-},5000);
-</script>
+  {% if config.poormanscron %}
+  <script>
+  setTimeout(()=>{
+      if (window.Worker) {
+          new Worker(digraph.url+'_cron/');
+      }
+  },5000);
+  </script>
+  {% endif %}
 {% endblock %}
   </body>
 

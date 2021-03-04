@@ -2,6 +2,10 @@ send-content-length-header: true
 site_id: ${url.base}
 timezone: GMT-0
 
+# Poor man's cron runs cron on every pagview
+# not really suitable for high traffic sites
+poormanscron: true
+
 # settings regarding urls
 urls:
   # aliases
@@ -696,6 +700,7 @@ helpers:
     downtime: Digraph\Downtime\DowntimeHelper
     edges: Digraph\Graph\EdgeHelper
     filestore: Digraph\FileStore\FileStoreHelper
+    filesystem: Digraph\Helpers\FilesystemHelper
     filters: Digraph\Filters\FilterHelper
     forms: Digraph\Forms\FormHelper
     graph: Digraph\Graph\GraphHelper
@@ -754,13 +759,15 @@ defaultnoun:
         bbcode_advanced: true
 
 media:
+  assets:
+    url: '${url.base}assets/'
+    ttl: 86400
   css:
     crush-enabled: true
     crush-options:
       minify: false
       cache: false
       rewrite_import_urls: false
-  static_cache: false
   get_cache_ttl: 60
   package:
     response:

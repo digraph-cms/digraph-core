@@ -14,6 +14,7 @@ demo/cache/*
 demo/storage/logging.sqlite
 demo/modules/digraph_debug_module/
 demo/modules/digraph-debug-module/
+demo/assets/*
 
 *.ignore
 !.keep
