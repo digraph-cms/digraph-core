@@ -33,5 +33,18 @@
         "psr-4": {
             "Digraph\\": "src/"
         }
+    },
+    "require-dev": {
+        "oomphinc/composer-installers-extender": "^1.1|^2.0"
+    },
+    "extra": {
+        "installer-types": [
+            "digraph-module"
+        ],
+        "installer-paths": {
+            "vendor/digraphcms/modules/{$name}/": [
+                "type:digraph-module"
+            ]
+        }
     }
 }

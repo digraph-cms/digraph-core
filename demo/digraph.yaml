@@ -1,0 +1,30 @@
+# Default contents of packages
+package:
+  defaults:
+    fields:
+      site_name: Demo Digraph site
+
+# Generally if you want to move your storage/cache directories you should keep
+# them somehow relative to paths.site
+paths:
+  storage: ${paths.site}/storage
+  cache: ${paths.site}/cache
+
+# Template helper options
+templates:
+  # templates.theme can be either a single theme name or an array of theme names
+  # that will have their css/js included after core code, in the given order
+  # theme: [digraph-basic,digraph-colors-dark]
+  theme: [digraph-basic]
+  # Additional paths can be added here, they will be used in the reverse of the
+  # order they're listed here
+  paths:
+    site: ${paths.site}/templates
+  twigconfig:
+    cache: ${paths.cache}/twig
+
+# Configure module directories for site
+modules:
+  sources:
+    200-composer: composer-dir ${paths.site}/../vendor/digraphcms/modules
+    300-site: dir ${paths.site}/modules

@@ -9,8 +9,13 @@ example/storage/*
 example/modules_env/*
 debug.log
 
+#demo site parts
+demo/cache/*
+demo/storage/logging.sqlite
+demo/modules/digraph_debug_module/
+demo/modules/digraph-debug-module/
+
 *.ignore
-*.sqlite
 !.keep
 .DS_Store
 .vscode
