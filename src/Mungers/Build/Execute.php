@@ -85,8 +85,12 @@ class Execute extends AbstractMunger
      * @param integer $depth
      * @return void
      */
-    protected function includeFile(string $file, $depth = 0)
+    protected function includeFile(?string $file, $depth = 0)
     {
+        // return on empty files
+        if (!$file) {
+            return;
+        }
         // check file exists
         if (!file_exists($file)) {
             if ($depth == 5) {
