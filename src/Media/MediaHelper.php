@@ -10,8 +10,10 @@ class MediaHelper extends AbstractHelper
 {
     protected $mimes;
 
-    public function create($filename, $content, $identifier = null): Asset
+    public function create($filename, $content, $identifier = null, int $ttl = null): Asset
     {
+        // load ttl from config if not specified
+        $ttl = $ttl ?? $this->cms->config['media.assets.ttl'];
         // generate an identifier if none is specified
         // note that this loses the potential performance gains if
         // using a callback for content, as it forces the callback to run
@@ -23,7 +25,7 @@ class MediaHelper extends AbstractHelper
         }
         // determine if we need to write content to asset file
         $path = $this->assetPath($filename, $identifier);
-        if (!is_file($path) || time() > filemtime($path) + $this->cms->config['media.assets.ttl']) {
+        if (!is_file($path) || time() > filemtime($path) + $ttl) {
             $this->writeAsset($this->cms->config['paths.assets'] . '/' . $path, $content);
         }
         $url = $this->cms->config['media.assets.url'] . $path;
@@ -159,6 +161,7 @@ class MediaHelper extends AbstractHelper
 
     protected function prepare_text_css($out)
     {
+        //TODO: need to rewrite asset URLs in CSS
         $original = file_get_contents($out['path']);
         $content = @$out['content'] ? $out['content'] : $original;
         //preprocess imports

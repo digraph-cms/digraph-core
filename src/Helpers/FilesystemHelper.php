@@ -1,5 +1,5 @@
 <?php
-/* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
+/* Digraph Core | https://github.com/digraph-cms/digraph-core | MIT License */
 namespace Digraph\Helpers;
 
 use Digraph\CMS;
@@ -55,13 +55,14 @@ class FilesystemHelper extends AbstractHelper
         }
     }
 
-    public function copy($source, $dest, $overwrite = false)
+    public function copy($source, $dest, $overwrite = false, $link = false)
     {
         if (\file_exists($dest) && !$overwrite) {
             return;
         }
         $this->mkdir_for($dest);
         \umask($this->umask_file);
+        // TODO: make link instead of copying if possible
         \copy($source, $dest);
         \umask($this->umask_prev);
     }

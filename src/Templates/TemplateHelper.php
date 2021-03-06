@@ -72,9 +72,9 @@ class TemplateHelper extends AbstractHelper
         }
         // if it's prefixed with the base URL we can also search
         $base = $this->cms->config['url.base'];
-        if (substr($url,0,strlen($base)) == $base) {
+        if (substr($url, 0, strlen($base)) == $base) {
             $asset = $this->cms->helper('media')->get(
-                substr($url,strlen($base))
+                substr($url, strlen($base))
             );
             return $asset ? $asset['url'] : $url;
         }
@@ -103,21 +103,38 @@ class TemplateHelper extends AbstractHelper
         return array_map(
             [$this, 'assetUrl'],
             array_unique($urls)
-        );;
+        );
     }
 
     public function css()
     {
         $css = $this->getThemeConfig('css');
+        //add noun/verb-driven route media
         $nouns = [];
         if ($noun = $this->cms->package()->noun()) {
             $nouns = $noun::ROUTING_NOUNS;
             $nouns[] = $noun['dso.type'];
             $nouns = array_unique($nouns);
         }
-        //add verb-driven route media
-        $verb = $this->cms->package()['url.verb'];
-        $css[] = $this->cms->helper('urls')->url('_routemedia', 'linked.css', ['nouns' => json_encode($nouns), 'verb' => $verb]);
+        $linkedCSS = '';
+        $verbs = [$this->cms->package()['url.verb']];
+        array_unshift($nouns, '_');
+        array_unshift($verbs, '_');
+        foreach ($nouns as $noun) {
+            foreach ($verbs as $verb) {
+                if ($link = $this->cms->helper('media')->getContent('_routemedia/' . $noun . '/' . $verb . '/linked.css')) {
+                    $linkedCSS .= "/* $noun $verb */" . PHP_EOL;
+                    $linkedCSS .= $link . PHP_EOL;
+                }
+            }
+        }
+        if ($linkedCSS) {
+            $linkedCSS = $this->cms->helper('media')->create(
+                'linked.css',
+                $linkedCSS
+            );
+            $css[] = $linkedCSS['url'];
+        }
         //add custom-added css
         $css = $css + $this->css;
         //return

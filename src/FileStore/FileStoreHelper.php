@@ -1,10 +1,9 @@
 <?php
-/* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
+/* Digraph Core | https://github.com/digraph-cms/digraph-core | MIT License */
 namespace Digraph\FileStore;
 
 use Digraph\DSO\Noun;
 use Digraph\Helpers\AbstractHelper;
-use Digraph\Logging\LogHelper;
 
 class FileStoreHelper extends AbstractHelper
 {

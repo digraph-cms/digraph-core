@@ -1,8 +1,9 @@
 <?php
-/* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
+/* Digraph Core | https://github.com/digraph-cms/digraph-core | MIT License */
 namespace Digraph\FileStore;
 
 use Digraph\Helpers\AbstractHelper;
+use Digraph\Media\Asset;
 
 class ImageHelper extends AbstractHelper
 {
@@ -50,6 +51,27 @@ class ImageHelper extends AbstractHelper
             case 'gmagick':
                 return new \Imagine\Gmagick\Imagine();
         }
+    }
+
+    public function create($src, $rulesOrPreset = null): Asset
+    {
+        if (is_string($rulesOrPreset)) {
+            $rules = $this->rules($rulesOrPreset);
+        } elseif (!is_array($rulesOrPreset)) {
+            $rules = $this->rules('default');
+        } else {
+            $rules = $rulesOrPreset;
+        }
+        return $this->cms->helper('media')->create(
+            basename($src),
+            function ($dest) use ($src, $rules) {
+                $this->cms->helper('filesystem')
+                    ->mkdir_for($dest);
+                $this->process($src, $dest, $rules);
+            },
+            [md5_file($src), $rules],
+            $this->cms->config['media.assets.image_ttl']
+        );
     }
 
     public function process($input, $output, $rules)
