@@ -25,7 +25,8 @@ class MediaHelper extends AbstractHelper
         }
         // determine if we need to write content to asset file
         $path = $this->assetPath($filename, $identifier);
-        if (!is_file($path) || time() > filemtime($path) + $ttl) {
+        $mtime = @filemtime($path . '.lastwrite') ?? filemtime($path);
+        if (!is_file($path) || time() > $mtime + $ttl) {
             $this->writeAsset($this->cms->config['paths.assets'] . '/' . $path, $content);
         }
         $url = $this->cms->config['media.assets.url'] . $path;
@@ -49,6 +50,7 @@ class MediaHelper extends AbstractHelper
                 true
             );
         }
+        touch($path . '.lastwrite');
     }
 
     protected function assetPath($filename, $identifier = null): string
@@ -138,7 +140,7 @@ class MediaHelper extends AbstractHelper
                         );
                     }
                 },
-                [$result, $dfiles, $raw]
+                [$result, array_map('\md5_file', $dfiles), $raw]
             );
             $result['search'] = $search;
             return $result;
@@ -161,7 +163,6 @@ class MediaHelper extends AbstractHelper
 
     protected function prepare_text_css($out)
     {
-        //TODO: need to rewrite asset URLs in CSS
         $original = file_get_contents($out['path']);
         $content = @$out['content'] ? $out['content'] : $original;
         //preprocess imports
@@ -198,6 +199,32 @@ class MediaHelper extends AbstractHelper
                 $options
             );
         }
+        //rewrite asset URLs
+        $content = preg_replace_callback(
+            "/url\(([\"']?)([^\"'\)]+)([\"']?)\)/",
+            function ($matches) {
+                // quotes must match or it's malformed
+                if ($matches[1] != $matches[3]) {
+                    return $matches[0];
+                }
+                //skip data urls
+                if (substr($matches[2], 0, 5) == 'data:') {
+                    return $matches[0];
+                }
+                //get url from matches
+                $url = $matches[2];
+                $base = $this->cms->config['url.base'];
+                if (substr($url, 0, strlen($base)) == $base) {
+                    $url = substr($url, strlen($base));
+                }
+                if ($asset = $this->get($url)) {
+                    return 'url(' . $asset['url'] . ')';
+                } else {
+                    return $matches[0];
+                }
+            },
+            $content
+        );
         //minify if enabled
         if ($this->cms->config['media.css.minify']) {
             $minifier = new Minify\CSS($content);

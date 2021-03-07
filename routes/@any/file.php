@@ -13,36 +13,19 @@ if (!($files = $fs->get($noun, $f))) {
     return;
 }
 
-//if more than one file is returned, generate a 300 page with uniqid links
-if (count($files) > 1) {
-    $s = $cms->helper('strings');
-    $package->error(300, 'Multiple files match');
-    $package['response.300'] = [];
-    foreach ($files as $f) {
-        $args = $package['url.args'];
-        $args['f'] = $f->uniqid();//use file's uniqid instead of filename
-        $package->push('response.300', [
-            'link' => $noun->link(
-                $f->name().' uploaded '.$s->datetimeHTML($f->time()),//link text
-                'file',//link verb
-                $args,//args with uniqid
-                true//canonical URL
-            )
-        ]);
-    }
-    return;
-}
-
 //finally if everything is good, output the file
+/** @var Digraph\FileStore\FileStoreFile */
 $f = array_pop($files);
 
 //if image handler can do this file, use it
 $i = $cms->helper('image');
 $ext = preg_replace('/.+\./', '', $f->name());
 if ($i->supports($ext)) {
-    $i->output($package, $f, $package['url.args.a']);
-    return;
+    $url = $f->imageUrl($package['url.args.a']);
+} else {
+    // otherwise use regular file URL
+    $url = $f->url();
 }
 
-//output with fs if image handler can't process this file
-$fs->output($package, $f);
+//set up redirect to asset file
+$package->redirect($url, 301);
