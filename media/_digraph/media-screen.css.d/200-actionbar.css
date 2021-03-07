@@ -7,12 +7,16 @@
 .digraph-actionbar {
   background: $(color_actionbar_bg);
   color: $(color_actionbar_fg);
-  line-height: $(line_height_compact);
+  line-height: $(line_height_base);
   font-family: sans-serif;
   font-size: 0.8em;
   padding: 0 0.5rem;
   display: none;
   flex-wrap: wrap;
+
+  select {
+    border: 0;
+  }
 }
 
 .digraph-actionbar.active {
@@ -37,7 +41,8 @@
   margin: 0 0.5rem
 }
 
-.digraph-actionbar a:hover, .digraph-actionbar a[aria-selected="true"] {
+.digraph-actionbar a:hover,
+.digraph-actionbar a[aria-selected="true"] {
   background: $(color_actionbar_fg);
   color: $(color_actionbar_bg) !important;
   opacity: 1;
@@ -69,8 +74,9 @@
 
   .digraph-actionbar-user {
     order: 1;
+
     &:first-child:last-child {
-      text-align:right;
+      text-align: right;
     }
   }
 }

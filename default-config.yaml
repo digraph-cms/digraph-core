@@ -527,11 +527,11 @@ theme:
       font_family_body: sans-serif
       font_family_code: monospace
       font_family_headers: serif
-      font_size_extralarge: 1.3rem
-      font_size_large: 1.2rem
-      font_size_medium: 1.1rem
+      font_size_extralarge: 1.2rem
+      font_size_large: 1.1rem
+      font_size_medium: 1rem
       font_size_print: 12pt
-      font_size_small: 1rem
+      font_size_small: 0.9rem
       heading_ratio: 0.9
       heading_size: 2
       line_height_base: 1.4em
