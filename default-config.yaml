@@ -765,8 +765,8 @@ media:
     image_ttl: 2592000
   css:
     crush-enabled: true
+    minify: false
     crush-options:
-      minify: false
       cache: false
       rewrite_import_urls: false
   paths:
