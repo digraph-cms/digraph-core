@@ -8,22 +8,12 @@ class MediaMunger extends AbstractMunger
 {
     protected function doMunge($package)
     {
-        $m = $package->cms()->helper('media');
-        if ($f = $m->get($package->url())) {
-            $package->log('media located: '.$f['path']);
-            //set package to output this file
-            if (@$f['content'] !== null) {
-                $package['response.content'] = $f['content'];
-                unset($package['response.readfile']);
-            } else {
-                $package['response.readfile'] = $f['path'];
-                $package['response.outputmode'] = 'readfile';
-                unset($package['response.content']);
-            }
-            $package['response.mime'] = $f['mime'];
-            $package['response.filename'] = $f['filename'];
-            //set up media-specific package defaults
-            $package->merge($package->cms()->config['media.package'], null, true);
+        $f = $package->cms()->helper('media')
+            ->get($package->url());
+        if ($f !== null) {
+            $package->log('media located: ' . $f['path']);
+            //set package to redirect to static asset
+            $package->redirect($f['url'], 301);
             //skip everything up until rendering
             $package->skipGlob('setup**');
             $package->skipGlob('build**');

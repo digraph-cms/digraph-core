@@ -1,15 +1,63 @@
 <?php
-/* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
+/* Digraph Core | https://github.com/digraph-cms/digraph-core | MIT License */
 namespace Digraph\Media;
 
 use Digraph\Helpers\AbstractHelper;
 use Digraph\Urls\Url;
 use MatthiasMullie\Minify;
-use Symfony\Component\Filesystem\Filesystem;
 
 class MediaHelper extends AbstractHelper
 {
     protected $mimes;
+
+    public function create($filename, $content, $identifier = null, int $ttl = null): Asset
+    {
+        // load ttl from config if not specified
+        $ttl = $ttl ?? $this->cms->config['media.assets.ttl'];
+        // generate an identifier if none is specified
+        // note that this loses the potential performance gains if
+        // using a callback for content, as it forces the callback to run
+        if ($identifier === null) {
+            if (is_callable($content)) {
+                $content = $content();
+            }
+            $identifier = md5($content);
+        }
+        // determine if we need to write content to asset file
+        $path = $this->assetPath($filename, $identifier);
+        if (!is_file($path) || time() > filemtime($path) + $ttl) {
+            $this->writeAsset($this->cms->config['paths.assets'] . '/' . $path, $content);
+        }
+        $url = $this->cms->config['media.assets.url'] . $path;
+        return new Asset([
+            'filename' => $filename,
+            'url' => $url,
+            'path' => $this->cms->config['paths.assets'] . '/' . $path,
+            'mime' => $this->mime($filename),
+        ]);
+    }
+
+    protected function writeAsset($path, $content)
+    {
+        if (is_callable($content)) {
+            // use a callback to write content into a file
+            $content($path);
+        } else {
+            $this->cms->helper('filesystem')->put(
+                $content,
+                $path,
+                true
+            );
+        }
+    }
+
+    protected function assetPath($filename, $identifier = null): string
+    {
+        $path = md5(serialize($identifier));
+        $path = preg_replace('/^(..)(..)(.+)$/', '$1/$2/$3/', $path);
+        $path .= $filename;
+        return $path;
+    }
 
     /**
      * Get all the paths from CMS config, with 'site' swapped to the end, and
@@ -52,20 +100,8 @@ class MediaHelper extends AbstractHelper
     {
         //sort out URL
         $result = null;
-        $args = [];
-        $argString = '';
         if ($search instanceof Url) {
-            $args = $search['args'];
-            $argString = $search->argString();
             $search = preg_replace('/\/$/', '', $search->pathString());
-        }
-        //load from cache if possible
-        if ($this->cms->config['media.get_cache_ttl']) {
-            $cacheID = 'MediaHelper.get.' . md5(serialize([$search, $raw]));
-            $cache = $this->cms->cache();
-            if ($cache->hasItem($cacheID)) {
-                return $cache->getItem($cacheID)->get();
-            }
         }
         //search in media paths and theme paths
         $dfiles = [];
@@ -84,39 +120,31 @@ class MediaHelper extends AbstractHelper
         //prepare
         if ($result) {
             ksort($dfiles);
-            $result = $this->prepare($result, null, null, $dfiles, $raw);
+            $result = $this->create(
+                basename($search),
+                function ($dest) use ($result, $dfiles, $raw) {
+                    $result = $this->prepare($result, null, null, $dfiles, $raw);
+                    if (isset($result['content'])) {
+                        $this->cms->helper('filesystem')->put(
+                            $result['content'],
+                            $dest,
+                            true
+                        );
+                    } else {
+                        $this->cms->helper('filesystem')->copy(
+                            $result['path'],
+                            $dest,
+                            true
+                        );
+                    }
+                },
+                [$result, $dfiles, $raw]
+            );
             $result['search'] = $search;
+            return $result;
         }
-        //save to cache
-        if ($ttl = $this->cms->config['media.get_cache_ttl']) {
-            $citem = $cache->getItem($cacheID);
-            $citem->expiresAfter($ttl);
-            $citem->set($result);
-            $cache->save($citem);
-        }
-        //save static cache if applicable
-        if ($this->canBeStaticCached($result)) {
-            $path = $this->cms->config['paths.web'] . '/' . $result['search'];
-            $fs = new Filesystem;
-            if (isset($result['content'])) {
-                $fs->dumpFile($path, $result['content']);
-            } else {
-                $fs->dumpFile($path, file_get_contents($result['path']));
-            }
-        }
-        //return
-        return $result;
-    }
-
-    protected function canBeStaticCached($result)
-    {
-        if (!$this->cms->config['media.static_cache']) {
-            return false;
-        }
-        if (empty($result['search'])) {
-            return false;
-        }
-        return true;
+        //return null by default
+        return null;
     }
 
     public function getContent($search, $raw = false)
@@ -133,6 +161,7 @@ class MediaHelper extends AbstractHelper
 
     protected function prepare_text_css($out)
     {
+        //TODO: need to rewrite asset URLs in CSS
         $original = file_get_contents($out['path']);
         $content = @$out['content'] ? $out['content'] : $original;
         //preprocess imports

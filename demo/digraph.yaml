@@ -4,11 +4,16 @@ package:
     fields:
       site_name: Demo Digraph site
 
+# Poor man's cron isn't really suitable for high traffic sites
+# it's good for a dev site though
+poormanscron: true
+
 # Generally if you want to move your storage/cache directories you should keep
 # them somehow relative to paths.site
 paths:
   storage: ${paths.site}/storage
   cache: ${paths.site}/cache
+  assets: ${paths.site}/assets
 
 # Template helper options
 templates:
