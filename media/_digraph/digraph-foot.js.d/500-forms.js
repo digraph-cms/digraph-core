@@ -85,7 +85,7 @@ function sortablelist_dragStart(e) {
     $target = $target.parents('li.form-ordering-item');
   }
   if (digraph.noun) noun = ':' + digraph.noun;
-  e.dataTransfer.setData("text/plain", "[file" + noun + " id=\"" + $target.attr('data-value') + "\"]");
+  e.dataTransfer.setData("text/plain", "[file" + noun + " id=\"" + $target.attr('data-value') + "\" /]");
   _sortablelist_el = e.target;
   _sortablelist_el.classList.add('dragging');
 }
