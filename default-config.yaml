@@ -6,6 +6,10 @@ timezone: GMT-0
 # not really suitable for high traffic sites
 poormanscron: true
 
+# Filesystem helper settings
+filesystem:
+  symlinks: false # used to enable symlinking to save space and increase speed for some copy operations
+
 # settings regarding urls
 urls:
   # aliases

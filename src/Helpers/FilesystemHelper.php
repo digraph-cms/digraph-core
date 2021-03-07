@@ -62,8 +62,16 @@ class FilesystemHelper extends AbstractHelper
         }
         $this->mkdir_for($dest);
         \umask($this->umask_file);
-        // TODO: make link instead of copying if possible
-        \copy($source, $dest);
+        if ($link && $this->cms->config['filesystem.symlinks']) {
+            // symlink if requested and enabled
+            if (file_exists($dest)) {
+                \unlink($dest);
+            }
+            \symlink($source, $dest);
+        } else {
+            // otherwise copy
+            \copy($source, $dest);
+        }
         \umask($this->umask_prev);
     }
 
