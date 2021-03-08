@@ -5,7 +5,7 @@ $p = $cms->helper('paginator');
 $s = $cms->helper('strings');
 
 $search = $this->factory('logging')->search();
-$search->order('${dso.type} DESC, ${count} DESC, ${dso.modified.date} DESC');
+$search->order('${dso.modified.date} DESC');
 
 $classes = [
     'INFO' => '',
