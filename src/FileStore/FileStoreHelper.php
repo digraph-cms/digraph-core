@@ -383,7 +383,7 @@ class FileStoreHelper extends AbstractHelper
             usleep(50 + random_int(0, 100));
         }
         $file['time'] = time();
-        if (!$file['uniqid']) {
+        if (!@$file['uniqid']) {
             $file['uniqid'] = uniqid();
         }
         //copy file into filestore directory structure
