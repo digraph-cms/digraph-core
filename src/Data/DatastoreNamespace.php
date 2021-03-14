@@ -28,6 +28,40 @@ class DatastoreNamespace
     }
 
     /**
+     * Get all keys containing the given value
+     *
+     * @param string $value
+     * @param integer $limit
+     * @param string $sort
+     * @return void
+     */
+    public function query(string $value, int $limit = null, string $sort = 'data_id DESC')
+    {
+        return $this->datastore->query(
+            $this->namespace,
+            $value,
+            $limit,
+            $sort
+        );
+    }
+
+    /**
+     * Get all key/value pairs up to $limit
+     *
+     * @param integer $limit
+     * @param string $sort
+     * @return void
+     */
+    public function getN(int $limit = null, string $sort = 'data_id DESC')
+    {
+        return $this->datastore->getN(
+            $this->namespace,
+            $limit,
+            $sort
+        );
+    }
+
+    /**
      * Get all values in a given namespace
      *
      * @return array

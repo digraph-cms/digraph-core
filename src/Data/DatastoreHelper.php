@@ -79,10 +79,33 @@ EOT;
      * to providing the most recent entries as sorted/identified by primary key)
      *
      * @param string $namespace
+     * @param string $value
      * @param int $limit the maximum to return (0/null returns all)
      * @param string $sort SQL sorting rules
      */
-    public function query(string $namespace, int $limit=null, string $sort='data_id DESC')
+    public function query(string $namespace, string $value, int $limit=null, string $sort='data_id DESC')
+    {
+        $sql = 'SELECT * FROM digraph_datastore';
+        $sql .= ' WHERE data_namespace = :namespace AND data_value = :value';
+        $sql .= ' ORDER BY '.$sort;
+        if ($limit) {
+            $sql .= ' LIMIT '.$limit;
+        }
+        return $this->fetch($sql, [
+            'namespace' => $namespace,
+            'value' => json_encode($value)
+        ]);
+    }
+
+    /**
+     * Retrieve a specific number of values, with an optional sorting rule (defaults
+     * to providing the most recent entries as sorted/identified by primary key)
+     *
+     * @param string $namespace
+     * @param int $limit the maximum to return (0/null returns all)
+     * @param string $sort SQL sorting rules
+     */
+    public function getN(string $namespace, int $limit=null, string $sort='data_id DESC')
     {
         $sql = 'SELECT * FROM digraph_datastore';
         $sql .= ' WHERE data_namespace = :namespace';
@@ -91,7 +114,7 @@ EOT;
             $sql .= ' LIMIT '.$limit;
         }
         return $this->fetch($sql, [
-            'namespace' => $namespace
+            'namespace' => $namespace,
         ]);
     }
 

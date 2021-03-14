@@ -88,14 +88,14 @@ abstract class AbstractQueueLikeStructure extends DatastoreNamespace
     }
 
     /**
-     * Pull a given number of items from the structure and delete them.
+     * Pull a given number of items from the structure and do not delete them.
      *
      * @param integer $n
      * @return array
      */
     public function peek(int $n=1)
     {
-        return $this->datastore->query(
+        return $this->datastore->getN(
             $this->namespace,
             $n,
             static::SORT
