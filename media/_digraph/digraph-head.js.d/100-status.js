@@ -14,7 +14,6 @@ $(() => {
     }
 
     function listActionBarNouns($actionBars) {
-        console.log($actionBars.length);
         if ($actionBars.length == 0) {
             return 'false';
         }
