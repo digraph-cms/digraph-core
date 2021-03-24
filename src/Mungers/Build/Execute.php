@@ -52,13 +52,17 @@ class Execute extends AbstractMunger
     {
         ob_start();
         // before hooks
-        $this->nounHooks('first');
-        $this->nounHooks('before');
+        if ($this->package['response.status'] == 200) {
+            $this->nounHooks('first');
+            $this->nounHooks('before');
+        }
         // include main file
         $this->includeFile($this->package['response.handler.file']);
         // after hooks
-        $this->nounHooks('after');
-        $this->nounHooks('last');
+        if ($this->package['response.status'] == 200) {
+            $this->nounHooks('after');
+            $this->nounHooks('last');
+        }
         // grab output buffer and return
         $this->package['response.content'] = ob_get_contents();
         ob_end_clean();

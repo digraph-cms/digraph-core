@@ -25,6 +25,7 @@ class PermissionsHelper extends AbstractHelper
      */
     public function checkUrl(Url $url, string $userID = null): ?bool
     {
+        $userID = $userID ?? $this->cms->helper('users')->id();
         $id = md5(serialize([$url->string(), $userID]));
         if (!isset($this->urlCache[$id])) {
             $this->urlCache[$id] = $this->doCheckUrl($url, $userID);
@@ -32,18 +33,15 @@ class PermissionsHelper extends AbstractHelper
         return $this->urlCache[$id];
     }
 
-    public function doCheckUrl(Url $url, string $userID = null): ?bool
+    protected function doCheckUrl(Url $url, ?string $userID): ?bool
     {
         $paths = [];
         $noun = $this->cms->helper('urls')->noun($url);
-        $userID = $userID ?? $this->cms->helper('users')->id();
         if ($noun) {
             // allow noun to override
             if (null !== $override = $noun->permissions($url['verb'], $userID)) {
                 return $override;
             }
-            // check based on specific noun
-            $paths[] = $noun['dso.id'] . '/' . $url['verb'];
             // check based on dso type
             $paths[] = $noun['dso.type'] . '/' . $url['verb'];
         } else {
@@ -52,7 +50,7 @@ class PermissionsHelper extends AbstractHelper
         }
         // check all paths in decreasing order of specificity
         $output = null;
-        foreach (array_reverse($paths) as $path) {
+        foreach ($paths as $path) {
             $result = $this->check($path, 'url', $userID);
             // returns the first non-null result we get
             if ($result !== null) {
