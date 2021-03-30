@@ -5,6 +5,7 @@ $noun = $package->noun();
 
 $forms = $this->helper('forms');
 $form = $forms->editNoun($noun);
+$form->action($package->url());
 
 foreach ($this->helper('routing')->allHookFiles($noun['dso.type'], 'form.php') as $file) {
     include $file['file'];

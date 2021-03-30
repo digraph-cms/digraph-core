@@ -6,6 +6,7 @@ $package['fields.page_title'] = $package['url.text'];
 $type = $package['url.args.type'];
 $forms = $this->helper('forms');
 $form = $forms->addNoun($type, $package->noun());
+$form->action($package->url());
 
 foreach ($this->helper('routing')->allHookFiles($type, 'form.php') as $file) {
     include $file['file'];
