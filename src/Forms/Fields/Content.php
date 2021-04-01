@@ -72,6 +72,7 @@ class Content extends Container
         $this['text'] = new ContentTextarea($s->string('forms.digraph_content.label_text'));
         $this['filter'] = new ContentFilter($s->string('forms.digraph_content.label_filter'), null, null, $cms);
         $this['filter']->addClass('FilterSelector');
+        $this['filter']->default('default');
         $this->addClass('DigraphContent');
         //find allowed extras and add field
         $extrasAllowed = false;

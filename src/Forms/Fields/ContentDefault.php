@@ -28,18 +28,10 @@ class ContentDefault extends Content
             },
             array_keys(array_filter($this->extra()))
         ));
-        if ($labels) {
-            $this->addTip(implode('<br>', $labels), 'extra_filters');
-        } else {
+        // remove tips
             $this->removeTip('extra_filters');
-        }
-        //set filter tip
-        if ($label = $this->cms->config['filters.labels.'.$this->filter()]) {
-            $this->addTip('Parsed as: '.$label, 'content_filter');
-        } else {
             $this->removeTip('content_filter');
-        }
-        //otherwise unchanged
+        // otherwise unchanged
         return parent::string();
     }
 
