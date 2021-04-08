@@ -6,3 +6,7 @@
 @import "media-screen-breakpoints/breakpoints.css";
 
 @import "media-print.css" print;
+
+@media all and (-ms-high-contrast: none),(-ms-high-contrast: active) {
+    @import "media-ie.css";
+}
