@@ -11,32 +11,33 @@ class UserHelper extends AbstractHelper
 
     public function signinUrl($package = null)
     {
+        /** @var \Digraph\Urls\UrlHelper */
+        $u = $this->cms->helper('urls');
+        $url = $u->url('_user', 'signin');
         if ($package) {
-            return $this->cms->helper('urls')->url('_user', 'signin', [
-                'bounce' => $package['request.url'],
-                'bounce_token' => $this->cms->helper('session')->getToken('bounce.'.$package['request.url'])
-            ]);
+            $url->setData($package->url()->__toString());
+            $u->hash($url);
         }
-        return $this->cms->helper('urls')->url('_user', 'signin');
+        return $url;
     }
 
     public function signoutUrl($package = null)
     {
+        /** @var \Digraph\Urls\UrlHelper */
+        $u = $this->cms->helper('urls');
+        $url = $u->url('_user', 'signout');
         if ($package) {
-            return $this->cms->helper('urls')->url('_user', 'signout', [
-                'bounce' => $package['request.url'],
-                'bounce_token' => $this->cms->helper('session')->getToken('bounce.'.$package['request.url'])
-            ]);
+            $url->setData($package->url()->__toString());
+            $u->hash($url);
         }
-        return $this->cms->helper('urls')->url('_user', 'signout');
+        return $url;
     }
 
     public function requireAuth($package)
     {
         if (!$this->id()) {
-            $url = $this->signinUrl($package);
             $package->redirect(
-                $url,
+                $this->signinUrl($package),
                 303
             );
             return false;

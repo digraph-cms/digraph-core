@@ -1,3 +1,5 @@
+secret: bad secret replace me in production
+
 # Default contents of packages
 package:
   defaults:

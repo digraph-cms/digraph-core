@@ -2,14 +2,11 @@
 include $this->helper('routing')->hookFile('_user', 'core_init.php')['file'];
 $package->cache_noStore();
 
-//do login bounce if user is signed in
-$postSigninUrl = false;
-if ($package['url.args.bounce']) {
-    if ($cms->helper('session')->checkToken('bounce.'.$package['url.args.bounce'], $package['url.args.bounce_token'], true)) {
-        $postSigninUrl = $this->helper('urls')->parse($package['url.args.bounce']);
-    }
-}
-if (!$postSigninUrl) {
+// determine post-signin bounce destination
+/** @var \Digraph\Urls\UrlHelper */
+$u = $cms->helper('urls');
+$postSigninUrl = $package->url()->getData();
+if (!$postSigninUrl || !$cms->helper('urls')->checkHash($package->url())) {
     $postSigninUrl = $this->helper('urls')->parse('_user');
 }
 

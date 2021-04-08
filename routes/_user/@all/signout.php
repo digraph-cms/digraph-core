@@ -2,18 +2,15 @@
 $managerName = $this->helper('users')->userManager();
 $package->cache_noStore();
 
-//do signout bounces
-if ($package['url.args.bounce']) {
-    if ($cms->helper('session')->checkToken('bounce.'.$package['url.args.bounce'], $package['url.args.bounce_token'], true)) {
-        $postSignoutUrl = $this->helper('urls')->parse($package['url.args.bounce']);
-    }
-}
-if (!$postSignoutUrl) {
-    $cms->helper('notifications')->flashConfirmation('You are now signed out');
+// determine post-signout bounce destination
+/** @var \Digraph\Urls\UrlHelper */
+$u = $cms->helper('urls');
+$postSignoutUrl = $package->url()->getData();
+if (!$postSignoutUrl || !$cms->helper('urls')->checkHash($package->url())) {
     $postSignoutUrl = $this->helper('urls')->parse('_user');
 }
-$package->redirect($postSignoutUrl, 303);
 
+// flash notice if not signed in
 if (!$managerName) {
     $cms->helper('notifications')->flashNotice('You are not signed in');
     return;
@@ -37,3 +34,9 @@ foreach ($this->helper('routing')->allHookFiles('_user', $managerName.'/signout_
 foreach ($this->helper('routing')->allHookFiles('_user', 'signout_post.php') as $file) {
     include $file['file'];
 }
+
+//do redirect last, in case of errors above
+$package->redirect(
+    $postSignoutUrl,
+    303
+);
