@@ -17,6 +17,7 @@ $config['url'] = [
 
 # load config
 $config->readFile(__DIR__ . '/digraph.yaml', null, true);
+$config->readFile(__DIR__ . '/env.yaml', null, true);
 
 # set up CMS using Bootstrapper
 # everything the bootstrapper does can be done manually, but
@@ -25,6 +26,7 @@ $cms = \Digraph\Bootstrapper::bootstrap($config);
 
 # load config again to overwrite module settings
 $config->readFile(__DIR__ . '/digraph.yaml', null, true);
+$config->readFile(__DIR__ . '/env.yaml', null, true);
 
 # set up new request/response package
 # it's advisable to use the Bootstrapper url() method for
