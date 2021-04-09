@@ -52,9 +52,7 @@ class UrlHelper extends AbstractHelper
         if (!$this->cms->config['secret']) {
             throw new \Exception("You must set a value for config[\"secret\"] to use hash-protected URLs");
         }
-        $url = clone $url;
-        unset($url['base']); // unset base because it isn't necessarily set yet at parse step
-        return hash('sha256', $url->string(true) . $this->cms->config['secret']);
+        return hash('sha256', $url['args.__data'] . $this->cms->config['secret']);
     }
 
     public function parse(string $input): ?Url
