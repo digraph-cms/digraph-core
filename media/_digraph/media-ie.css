@@ -1,8 +1,8 @@
 /* use media-ie.css to feed CSS specifically to IE */
 .ie-visible {
-    visibility: visible;
+    display: block;
 }
 
 .ie-hidden {
-    visibility: hidden;
+    display: none;
 }

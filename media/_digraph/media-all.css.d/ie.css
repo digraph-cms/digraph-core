@@ -1,7 +1,7 @@
 .ie-visible {
-    visibility: hidden;
+    display: none;
 }
 
 .ie-hidden {
-    visibility: visible;
+    display: block;
 }

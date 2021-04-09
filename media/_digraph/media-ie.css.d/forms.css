@@ -1,0 +1,23 @@
+.Form {
+
+    .FieldWrapper-class-Ordering,
+    .class-FileStoreFieldMulti,
+    .DigraphAutocomplete {
+        * {
+            display: none;
+        }
+
+        >label {
+            display: block;
+        }
+
+        &:after {
+            display: block;
+            content: "This form field's functionality is not supported in Internet Explorer.";
+            background: #fff;
+            color: $(color_error);
+            padding: $(spacing_tight);
+            border-radius: $(border_radius_accent);
+        }
+    }
+}
