@@ -14,6 +14,8 @@ class Url extends FlatArray
     const ARGVALUESEPARATOR = '=';
     const DEFAULTVERB = 'display';
     const HOMEALIAS = 'home';
+    /** @var UrlHelper */
+    public static $helper;
 
     protected $noun = null;
 
@@ -30,25 +32,26 @@ class Url extends FlatArray
         ]);
     }
 
-    public function setData($data, $field = '__data')
+    public function setData($data)
     {
-        $this['args.' . $field] = base64_encode(gzcompress(json_encode($data)));
+        $this['args.__data'] = base64_encode(gzcompress(json_encode($data), 9));
+        static::$helper->hash($this);
     }
 
-    public function getData($field = '__data')
+    public function getData()
     {
-        if (!$this['args.' . $field]) {
+        if (!$this['args.__data']) {
             return null;
         }
-        if (!($data = @base64_decode($this['args.' . $field]))) {
-            throw new \Exception("Error base64 decoding $field in URL");
+        if (!($data = @base64_decode($this['args.__data']))) {
+            throw new \Exception("Error base64 decoding __data in URL");
         }
         if (!($data = @gzuncompress($data))) {
-            throw new \Exception("Error uncompressing $field in URL");
+            throw new \Exception("Error uncompressing __data in URL");
         }
         $data = @json_decode($data, true);
         if ($data === null || $data === false) {
-            throw new \Exception("Error json decoding $field in URL");
+            throw new \Exception("Error json decoding __data in URL");
         }
         return $data;
     }

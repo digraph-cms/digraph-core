@@ -22,13 +22,6 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
         'url',
     ];
 
-    public function requireUrlHash()
-    {
-        if (!$this->cms->helper('urls')->checkHash($this->url())) {
-            throw new \Exception("Required URL hashing failed");
-        }
-    }
-
     /**
      * Allow overriding parent URL for the purposes of generating breadcrumbs
      *

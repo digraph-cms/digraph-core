@@ -5,10 +5,7 @@ $package->cache_noStore();
 // determine post-signin bounce destination
 /** @var \Digraph\Urls\UrlHelper */
 $u = $cms->helper('urls');
-$postSigninUrl = $package->url()->getData();
-if (!$postSigninUrl || !$cms->helper('urls')->checkHash($package->url())) {
-    $postSigninUrl = $this->helper('urls')->parse('_user');
-}
+$postSigninUrl = $package->url()->getData() ?? $this->helper('urls')->parse('_user');
 
 //end if user is already signed in
 if ($users->user()) {
@@ -26,10 +23,10 @@ if (!$this->helper("users")->signinAllowed($managerName)) {
 }
 
 //build form
-$form = new Formward\Form('', 'signin-'.$managerName);
+$form = new Formward\Form('', 'signin-' . $managerName);
 
 //check for form setup pre-hooks
-foreach ($this->helper('routing')->allHookFiles('_user', $managerName.'/signin_form_pre.php') as $file) {
+foreach ($this->helper('routing')->allHookFiles('_user', $managerName . '/signin_form_pre.php') as $file) {
     include $file['file'];
 }
 foreach ($this->helper('routing')->allHookFiles('_user', 'signin_form_pre.php') as $file) {
@@ -45,7 +42,7 @@ if ($form) {
 }
 
 //check for form setup post-hooks
-foreach ($this->helper('routing')->allHookFiles('_user', $managerName.'/signin_form_post.php') as $file) {
+foreach ($this->helper('routing')->allHookFiles('_user', $managerName . '/signin_form_post.php') as $file) {
     include $file['file'];
 }
 foreach ($this->helper('routing')->allHookFiles('_user', 'signin_form_post.php') as $file) {
@@ -59,7 +56,7 @@ if ($form) {
 
 if ($form && $form->handle()) {
     //check for handle hooks
-    foreach ($this->helper('routing')->allHookFiles('_user', $managerName.'/signin_handle.php') as $file) {
+    foreach ($this->helper('routing')->allHookFiles('_user', $managerName . '/signin_handle.php') as $file) {
         include $file['file'];
     }
     foreach ($this->helper('routing')->allHookFiles('_user', 'signin_handle.php') as $file) {
@@ -92,7 +89,7 @@ if ($form && $form->handle()) {
 //check for hooks regarding user being signed in
 if ($users->user()) {
     //check for signed in hooks
-    foreach ($this->helper('routing')->allHookFiles('_user', $managerName.'/signin_complete.php') as $file) {
+    foreach ($this->helper('routing')->allHookFiles('_user', $managerName . '/signin_complete.php') as $file) {
         include $file['file'];
     }
     foreach ($this->helper('routing')->allHookFiles('_user', 'signin_complete.php') as $file) {

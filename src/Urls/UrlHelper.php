@@ -7,6 +7,11 @@ use Digraph\Helpers\AbstractHelper;
 
 class UrlHelper extends AbstractHelper
 {
+    public function construct()
+    {
+        Url::$helper = $this;
+    }
+
     public function noun($url)
     {
         if ($url->noun()) {
@@ -15,6 +20,12 @@ class UrlHelper extends AbstractHelper
         if ($url['object']) {
             return $this->cms->read($url['object']);
         }
+    }
+
+    public function data(Url &$url, $data)
+    {
+        $url->setData($data);
+        $this->hash($url);
     }
 
     public function hash(Url &$url)
@@ -41,6 +52,8 @@ class UrlHelper extends AbstractHelper
         if (!$this->cms->config['secret']) {
             throw new \Exception("You must set a value for config[\"secret\"] to use hash-protected URLs");
         }
+        $url = clone $url;
+        unset($url['base']); // unset base because it isn't necessarily set yet at parse step
         return hash('sha256', $url->string(true) . $this->cms->config['secret']);
     }
 
@@ -103,9 +116,21 @@ class UrlHelper extends AbstractHelper
         if ($alias = $this->cms->config['urls.aliases.' . $url]) {
             return $this->parse($alias);
         }
+        //check hash, remove data/hash if invalid
+        $this->removeInvalidData($url);
         //return
         $url['base'] = $this->cms->config['url.base'];
         return $this->addText($url);
+    }
+
+    public function removeInvalidData(Url &$url)
+    {
+        if ($url['args.__data']) {
+            if (!$this->checkHash($url)) {
+                unset($url['args.__data']);
+                unset($url['args.__hash']);
+            }
+        }
     }
 
     public function addText($url, Noun $object = null)
@@ -157,6 +182,8 @@ class UrlHelper extends AbstractHelper
         $url['noun'] = $noun;
         $url['verb'] = $verb;
         $url['args'] = $args;
+        //check hash, remove data/hash if invalid
+        $this->removeInvalidData($url);
         return $url;
     }
 }
