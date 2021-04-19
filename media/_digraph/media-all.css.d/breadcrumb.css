@@ -1,12 +1,11 @@
 .breadcrumb {
-  @include .digraph-block;
-  font-size: 0.8em;
+  font-size: 0.6em;
   margin-left: auto;
   margin-right: auto;
   line-height: 1.5em;
   display: flex;
   background: $(color_shade);
-  padding: 0.5em;
+  padding: 0.5em $(spacing_base);
   border-radius: $(border_radius_accent);
 }
 

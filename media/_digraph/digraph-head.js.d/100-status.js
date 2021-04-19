@@ -1,7 +1,7 @@
 $(() => {
     var $userBars = $('.digraph-actionbar-user');
     var $actionBars = $('.digraph-actionbar-noun');
-    var notifications = document.getElementById('digraph-notifications');
+    var notifications = document.getElementById('digraph-notifications').getElementsByClassName('digraph-area-wrapper')[0];
 
     function buildUserActionBars(data) {
         $userBars.html(data);

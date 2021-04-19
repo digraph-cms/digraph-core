@@ -18,3 +18,7 @@
     background: transparent;
   }
 }
+
+#digraph-breadcrumb, #digraph-notifications {
+  margin: 0;
+}

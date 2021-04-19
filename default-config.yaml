@@ -148,6 +148,13 @@ image:
       extension: jpg
       save:
         jpeg_quality: 80
+    hero-main:
+      size: 960 540 inset
+    hero-background:
+      size: 1920 1080 inset
+      extension: jpg
+      save:
+        jpeg_quality: 70
 
 filestore:
   path: ${paths.storage}/filestore
@@ -407,9 +414,19 @@ permissions:
     _downtime/*:
       - deny all
       - allow group admin
+    hero/*:
+      - deny all
+      - allow group admin
+    hero/slugs:
+      - deny all
   add:
     '*':
       - allow all
+    '*/hero':
+      - deny all
+      - allow group admin
+    'hero/*':
+      - deny all
   filter:
     '*':
       - deny all
@@ -469,6 +486,7 @@ types:
     default: \Destructr\DSO
   content:
     default: \Digraph\DSO\Noun
+    hero: \Digraph\DSO\Hero
   users:
     simple: \Digraph\Users\Managers\Simple\SimpleUser
     default: ${types.users.simple}
@@ -504,7 +522,7 @@ theme:
   # page areas
   areas:
     _override: []
-    _digraph: [actionbar,masthead,navbar,meta,body,footer]
+    _digraph: [actionbar,masthead,navbar,breadcrumb,hero,notifications,body,footer]
   # theme variables
   variables:
     _override: []

@@ -1,4 +1,4 @@
-#digraph-body, #digraph-meta {
+#digraph-body {
   .digraph-area-wrapper {
     padding: 0 $(spacing_base);
   }

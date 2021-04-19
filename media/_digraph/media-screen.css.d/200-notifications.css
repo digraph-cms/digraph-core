@@ -13,6 +13,10 @@
   }
 }
 
+#digraph-notifications .notification {
+  border-radius: 0;
+}
+
 .notification a {
   color: #fff !important;
   font-weight: bold;

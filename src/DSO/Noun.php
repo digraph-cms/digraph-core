@@ -1,5 +1,6 @@
 <?php
-/* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
+/* Digraph Core | https://github.com/jobyone/digraph-core | MIT License */
+
 namespace Digraph\DSO;
 
 use Destructr\DSO;
@@ -69,10 +70,10 @@ class Noun extends DSO implements NounInterface
     public function infoCard()
     {
         return
-        "<article class='digraph-card type-" . $this['dso.type'] . "'>" .
-        "<h1>" . $this->title() . "</h1>" .
-        $this->content_text(50) .
-        "<a href='" . $this->url() . "'>read more</a>" .
+            "<article class='digraph-card type-" . $this['dso.type'] . "'>" .
+            "<h1>" . $this->title() . "</h1>" .
+            $this->content_text(50) .
+            "<a href='" . $this->url() . "'>read more</a>" .
             "</article>";
     }
 
