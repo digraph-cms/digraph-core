@@ -14,7 +14,7 @@
     {% block head_end %}{% include 'head_end.twig' %}{% endblock %}
   </head>
 
-  <body>
+  <body{% if package.response.status == 200 and cms.helper('graph').children(package.noun.dso.id,'hero') %} class="page-has-hero"{% endif %}>
     {% block body_start %}{% include 'body_start.twig' %}{% endblock %}
 
     <div id="page-wrapper">
