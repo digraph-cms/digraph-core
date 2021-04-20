@@ -392,6 +392,10 @@ progressively-enhanced ordering field
   margin-bottom: 0 !important;
 }
 
+.ace_editor {
+  height: 30em;
+}
+
 /* buttons */
 @fragment button(.Form .Button, $(color_notice));
 @fragment button(.Form .Button.Submit, $(color_confirmation));

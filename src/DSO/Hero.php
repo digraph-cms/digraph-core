@@ -12,11 +12,17 @@ class Hero extends Noun
 {
     public function body(): string
     {
-        $body = '<div class="' . $this->classes() . '" style="' . $this->contentCSS() . '">';
+        $body = '';
+        if ($css = $this->css()) {
+            $body .= '<style>';
+            $body .= $css;
+            $body .= '</style>';
+        }
+        $body .= '<div class="' . $this->classes() . '" style="' . $this->contentCSS() . '">';
         $body .= '<div class="digraph-actionbar digraph-actionbar-noun" data-actionbar-noun="' . $this['dso.id'] . '" data-actionbar-verb="display"></div>';
         $body .= '<div class="digraph-hero-content-wrapper">';
         if ($mainImage = $this->mainImage()) {
-            $body .= '<div class="digraph-hero-main-image" style="background-image:url('.$mainImage.')">';
+            $body .= '<div class="digraph-hero-main-image" style="background-image:url(' . $mainImage . ')">';
         }
         $body .= '<div class="digraph-hero-content">';
         $body .= $this->contentHTML();
@@ -24,20 +30,34 @@ class Hero extends Noun
         if ($mainImage) {
             $body .= '</div>';
         }
+        if ($this['link']) {
+            $body .= '<a href="'.$this['link'].'" class="digraph-hero-overlay-link">'.$this->name().'</a>';
+        }
         $body .= '</div>';
         $body .= '</div>';
         return $body;
     }
 
+    protected function css(): string
+    {
+        if (!$this['css']) {
+            return '';
+        }
+        $css = '.digraph-hero-' . $this['dso.id'] . ' .digraph-hero-content {' . PHP_EOL;
+        $css .= $this['css'];
+        $css .= PHP_EOL . '}';
+        return $this->cms()->helper('media')->prepareCSS($css);
+    }
+
     public function mainImage(): ?string
     {
-        $files = $this->cms()->helper('filestore')->list($this,'main');
+        $files = $this->cms()->helper('filestore')->list($this, 'main');
         return $files ? reset($files)->imageUrl('hero-main') : null;
     }
 
     public function backgroundImage(): ?string
     {
-        $files = $this->cms()->helper('filestore')->list($this,'background');
+        $files = $this->cms()->helper('filestore')->list($this, 'background');
         return $files ? reset($files)->imageUrl('hero-background') : null;
     }
 
@@ -48,26 +68,27 @@ class Hero extends Noun
 
     protected function classes(): string
     {
-        $classes = ['digraph-hero'];
+        $classes = [
+            'digraph-hero',
+            'digraph-hero-' . $this['dso.id']
+        ];
         $classes[] = 'bg-position-' . $this['bg.position'];
         return implode(' ', $classes);
     }
 
     protected function contentCSS(): string
     {
-        $style = [
-            'background-color' => $this['bg.color'] ?? '#ccc'
-        ];
+        $style = [];
         if ($url = $this->backgroundImage()) {
             $style['background-image'] = "url($url)";
         }
-       array_walk(
+        array_walk(
             $style,
-            function(&$v,$k) {
+            function (&$v, $k) {
                 $v = "$k:$v";
             }
         );
-        return implode(';',$style);
+        return implode(';', $style);
     }
 
     protected function contentHTML(): string
@@ -79,48 +100,36 @@ class Hero extends Noun
     {
         $map = parent::formMap($action);
         $map['digraph_title'] = false;
-        $map['background_color'] = [
-            'label' => 'Background color',
-            'class' => 'text',
-            'required' => false,
-            'weight' => 300,
-            'field' => 'bg.color'
-        ];
         $map['background_image'] = [
             'label' => 'Background image',
             'class' => ImageFieldSingle::class,
             'extraConstructArgs' => ['background'],
             'weight' => 300
         ];
-        $map['background_position'] = [
-            'label' => 'Background image size/position',
-            'class' => 'select',
-            'field' => 'bg.position',
-            'weight' => 300,
-            'default' => 'cover',
-            'required' => true,
-            'options' => [
-                'cover' => 'Cover (cropping if necessary)',
-                'tile' => 'Tile (centered)'
-            ]
-        ];
         $map['main_image'] = [
-            'label' => 'Main image',
+            'label' => 'Main/overlay image',
             'class' => ImageFieldSingle::class,
             'extraConstructArgs' => ['main'],
             'weight' => 350
         ];
         $map['main_link'] = [
-            'label' => 'Main link',
+            'label' => 'Main/overlay link',
             'class' => Url::class,
             'field' => 'link',
             'weight' => 350
         ];
         $map['files'] = [
-            'label' => 'Files',
+            'label' => 'Additional files',
             'class' => FileStoreFieldMulti::class,
             'extraConstructArgs' => ['files'],
             'weight' => 600
+        ];
+        $map['css'] = [
+            'label' => 'CSS',
+            'class' => 'code',
+            'extraConstructArgs' => ['css'],
+            'field' => 'css',
+            'weight' => 500
         ];
         return $map;
     }

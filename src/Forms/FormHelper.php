@@ -1,8 +1,10 @@
 <?php
 /* Digraph Core | https://github.com/digraph-cms/digraph-core | MIT License */
+
 namespace Digraph\Forms;
 
 use Digraph\DSO\NounInterface;
+use Digraph\Forms\Fields\CodeEditor;
 use Digraph\Forms\Fields\Content;
 use Digraph\Forms\Fields\ContentDefault;
 use Digraph\Forms\Fields\DateAndTimeRange;
@@ -44,6 +46,7 @@ class FormHelper extends AbstractHelper
         'textarea' => Textarea::class,
         'user' => User::class,
         'yaml' => YAML::class,
+        'code' => CodeEditor::class
     ];
 
     public function form($label = '', $name = null)

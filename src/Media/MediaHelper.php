@@ -161,10 +161,15 @@ class MediaHelper extends AbstractHelper
         return null;
     }
 
+    public function prepareCSS($css)
+    {
+        $res = $this->prepare_text_css(['content'=>$css]);
+        return $res['content'];
+    }
+
     protected function prepare_text_css($out)
     {
-        $original = file_get_contents($out['path']);
-        $content = @$out['content'] ? $out['content'] : $original;
+        $content = @$out['content'] ? $out['content'] : file_get_contents($out['path']);
         //preprocess imports
         while (preg_match('/@import "(.+)"( (.+))?;/', $content)) {
             $content = preg_replace_callback(
@@ -231,9 +236,7 @@ class MediaHelper extends AbstractHelper
             $content = $minifier->minify();
         }
         //set content
-        if ($original != $content) {
-            $out['content'] = $content;
-        }
+        $out['content'] = $content;
         return $out;
     }
 
