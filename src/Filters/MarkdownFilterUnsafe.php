@@ -9,6 +9,7 @@ class MarkdownFilterUnsafe extends AbstractFilter
         $text = str_replace('\\[', '\\\\\\[', $text);
         $text = str_replace('\\]', '\\\\\\]', $text);
         return \ParsedownExtra::instance()
+            ->setMarkupEscaped(false)
             ->setUrlsLinked(false)
             ->text($text);
     }
