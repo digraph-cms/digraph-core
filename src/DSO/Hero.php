@@ -43,7 +43,7 @@ class Hero extends Noun
         if (!$this['css']) {
             return '';
         }
-        $css = '.digraph-hero-' . $this['dso.id'] . ' .digraph-hero-content {' . PHP_EOL;
+        $css = '.digraph-hero-' . $this['dso.id'] . ' {' . PHP_EOL;
         $css .= $this['css'];
         $css .= PHP_EOL . '}';
         return $this->cms()->helper('media')->prepareCSS($css);
@@ -122,14 +122,14 @@ class Hero extends Noun
             'label' => 'Additional files',
             'class' => FileStoreFieldMulti::class,
             'extraConstructArgs' => ['files'],
-            'weight' => 600
+            'weight' => 500
         ];
         $map['css'] = [
             'label' => 'CSS',
             'class' => 'code',
             'extraConstructArgs' => ['css'],
             'field' => 'css',
-            'weight' => 500
+            'weight' => 600
         ];
         return $map;
     }
