@@ -43,7 +43,7 @@ class Hero extends Noun
         if (!$this['css']) {
             return '';
         }
-        $css = '.digraph-hero-' . $this['dso.id'] . ' {' . PHP_EOL;
+        $css = '.digraph-hero.digraph-hero-' . $this['dso.id'] . ' {' . PHP_EOL;
         $css .= $this['css'];
         $css .= PHP_EOL . '}';
         return $this->cms()->helper('media')->prepareCSS($css);
