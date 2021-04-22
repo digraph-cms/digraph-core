@@ -80,7 +80,7 @@ class Hero extends Noun
     {
         $style = [];
         if ($url = $this->backgroundImage()) {
-            $style['background-image'] = "url($url)";
+            $style['background-image'] = "url('$url')";
         }
         array_walk(
             $style,
