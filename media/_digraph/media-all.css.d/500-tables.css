@@ -152,25 +152,37 @@ th {
 }
 
 tr.highlighted,
-td.highlighted,
-tr.highlighted-notice,
-td.highlighted-notice {
+tr.highlighted-notice {
   background-color: a-adjust($(color_notice) -80);
 }
 
-tr.highlighted-warning,
-td.highlighted-warning {
+td.highlighted,
+td.highlighted-notice {
+  border: 1px solid $(color_notice);
+}
+
+tr.highlighted-warning {
   background-color: a-adjust($(color_warning) -80);
 }
 
-tr.highlighted-confirmation,
-td.highlighted-confirmation {
+td.highlighted-warning {
+  border: 1px solid $(color_warning);
+}
+
+tr.highlighted-confirmation {
   background-color: a-adjust($(color_confirmation) -80);
 }
 
-tr.highlighted-error,
-td.highlighted-error {
+td.highlighted-confirmation {
+  border: 1px solid $(color_confirmation);
+}
+
+tr.highlighted-error {
   background-color: a-adjust($(color_error) -80);
+}
+
+td.highlighted-error {
+  border: 1px solid $(color_error);
 }
 
 tr:nth-child(odd) td {
