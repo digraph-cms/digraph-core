@@ -152,19 +152,24 @@ th {
 }
 
 tr.highlighted,
-tr.highlighted-notice {
+td.highlighted,
+tr.highlighted-notice,
+td.highlighted-notice {
   background-color: a-adjust($(color_notice) -80);
 }
 
-tr.highlighted-warning {
+tr.highlighted-warning,
+td.highlighted-warning {
   background-color: a-adjust($(color_warning) -80);
 }
 
-tr.highlighted-confirmation {
+tr.highlighted-confirmation,
+td.highlighted-confirmation {
   background-color: a-adjust($(color_confirmation) -80);
 }
 
-tr.highlighted-error {
+tr.highlighted-error,
+td.highlighted-error {
   background-color: a-adjust($(color_error) -80);
 }
 
