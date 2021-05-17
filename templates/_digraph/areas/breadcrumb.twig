@@ -1,6 +1,0 @@
-{% if package.response.status == 200 %}
-  {% include 'digraph/breadcrumb.twig' with {
-    url : package.url(),
-    overrideParent : package.overrideParent()
-  } %}
-{% endif %}

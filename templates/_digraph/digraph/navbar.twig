@@ -1,9 +1,0 @@
-<!-- note that digraph/navbar.twig doesn't wrap anything, it just makes a bunch of A tags -->
-{% if package.cms.helper('navigation').menu('main') %}
-  {% for link in package.cms.helper('navigation').menu('main') %}
-    {% set link = helper.link(link) %}
-    {% do
-      link.addClass('menuitem') %}
-    {{link|raw}}
-  {% endfor %}
-{% endif %}

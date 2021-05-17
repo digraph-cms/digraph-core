@@ -1,5 +1,0 @@
-{% if package.response.status == 200 and package.url.verb == 'display' %}
-  {% for hero in cms.helper('graph').children(package.noun.dso.id,'hero') %}
-    {{hero.body()|raw}}
-  {% endfor %}
-{% endif %}

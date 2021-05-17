@@ -1,22 +1,5 @@
-#composer
 /vendor
 composer.lock
-
-#environment-specific config and modules
-env.yaml
-example/cache/*
-example/storage/*
-example/modules_env/*
-debug.log
-
-#demo site parts
-demo/cache/*
-demo/storage/logging.sqlite
-demo/storage/filestore
-demo/modules/digraph_debug_module/
-demo/modules/digraph-debug-module/
-demo/assets/*
-
 *.ignore
 !.keep
 .DS_Store

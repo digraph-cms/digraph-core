@@ -1,3 +1,0 @@
-@import "media-screen-breakpoints/medium.css" screen and (min-width: $(breakpoint_medium));
-@import "media-screen-breakpoints/large.css" screen and (min-width: $(breakpoint_large));
-@import "media-screen-breakpoints/extralarge.css" screen and (min-width:  $(breakpoint_extralarge));
