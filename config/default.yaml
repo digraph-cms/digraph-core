@@ -1,0 +1,17 @@
+paths:
+    web: "${paths.base}/web"
+    storage: "${paths.base}/storage"
+    cache: "${paths.base}/cache"
+
+files:
+    path: "${paths.web}/files"
+    url: /files
+
+fs:
+    links: false
+
+db:
+    adapter: mysql
+    charset: utf8
+    sqlite_create_functions: true
+    pdo_options: []

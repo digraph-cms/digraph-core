@@ -1,0 +1,79 @@
+<?php
+
+namespace DigraphCMS;
+
+class FS
+{
+    public static $umask_file = 0117;
+    public static $umask_dir = 0002;
+
+    public static function contain($path, string $contain = null)
+    {
+        $contain = $contain ?? Config::get('fs.contain');
+        $path = self::normalize($path);
+    }
+
+    public static function mirror(string $src, string $dest, $link = false)
+    {
+        if (!is_dir($src)) {
+            throw new \Exception("Couldn't mirror $src because it's not a directory.");
+        }
+        self::mkdir($dest);
+        if ($handle = opendir($src)) {
+            while (false !== ($entry = readdir($handle))) {
+                if ($entry == '.' || $entry == '..') {
+                    continue;
+                }
+                if (is_dir($src . '/' . $entry)) {
+                    self::mirror(
+                        $src . '/' . $entry,
+                        $dest . '/' . $entry,
+                        $link
+                    );
+                } else {
+                    self::copy(
+                        $src . '/' . $entry,
+                        $dest . '/' . $entry,
+                        $link
+                    );
+                }
+            }
+        }
+    }
+
+    public static function copy(string $src, string $dest, $link = false, $allow_uploads = false)
+    {
+        $umask = umask(self::$umask_file);
+        if ($allow_uploads && is_uploaded_file($src)) {
+            move_uploaded_file($src, $dest);
+        } elseif ($link && Config::get('fs.links')) {
+            symlink($src, $dest);
+        } else {
+            copy($src, $dest);
+        }
+        umask($umask);
+    }
+
+    /**
+     * Make a directory, including parent directories.
+     *
+     * @param string $path
+     * @return void
+     */
+    public static function mkdir(string $path)
+    {
+        if (!is_dir($path)) {
+            $parent = dirname($path);
+            if (!is_dir($parent)) {
+                self::mkdir($parent);
+            }
+            if (!\is_writeable($parent)) {
+                throw new \Exception("Couldn't mkdir $path because parent isn't writeable.");
+            }
+            $umask = umask(self::$umask_dir);
+            mkdir($path);
+            umask($umask);
+        }
+        return is_dir($path);
+    }
+}

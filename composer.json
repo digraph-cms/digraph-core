@@ -3,18 +3,28 @@
     "description": "Source and API version of a CMS that emphasizes flexibility and content permanence. Generally this package is only used for development.",
     "type": "digraph-core",
     "license": "MIT",
-    "authors": [{
-        "name": "Joby Elliott",
-        "email": "joby@byjoby.com"
-    }],
+    "authors": [
+        {
+            "name": "Joby Elliott",
+            "email": "joby@byjoby.com"
+        }
+    ],
     "require": {
-        "php": ">=7.1"
+        "php": ">=7.1",
+        "byjoby/flatrr": "^1.3",
+        "fpdo/fluentpdo": "^2.2",
+        "robmorgan/phinx": "^0.12.7"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "autoload": {
         "psr-4": {
-            "Digraph\\": "src/"
+            "DigraphCMS\\": "src/"
         }
+    },
+    "require-dev": {
+        "codeception/codeception": "^4.1",
+        "codeception/module-phpbrowser": "^1.0.0",
+        "codeception/module-asserts": "^1.0.0"
     }
 }
