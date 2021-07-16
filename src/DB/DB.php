@@ -9,6 +9,7 @@ use PDO;
 
 class DB
 {
+    const TOUCH = true;
     protected static $pdo, $driver, $query;
     protected static $migrationPaths = [];
 

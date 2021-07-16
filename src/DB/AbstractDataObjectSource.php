@@ -15,46 +15,66 @@ abstract class AbstractDataObjectSource
     protected static $delete = [];
     protected static $cache = [];
 
-    abstract protected static function objectClass(array $result): string;
-
     public static function __init()
     {
         Dispatcher::addSubscriber(static::class);
     }
 
+    public static function select(): DataObjectSelect
+    {
+        return new DataObjectSelect(DB::query()->from(static::TABLE), static::class);
+    }
+
+    protected static function insertObjectValues(AbstractDataObject $object): array
+    {
+        return [
+            'uuid' => $object->uuid(),
+            'data' => json_encode($object->get()),
+            'created_by' => $object->createdBy(),
+            'updated_by' => $object->updatedBy(),
+        ];
+    }
+
+    protected static function updateObjectValues(AbstractDataObject $object): array
+    {
+        return [
+            'data' => json_encode($object->get()),
+            'updated_by' => Session::user()
+        ];
+    }
+
     protected static function deleteObject(AbstractDataObject $object)
     {
-        $query = DB::query()->delete('pages');
-        $query->where('uuid = ? AND updated = ?', [$object->uuid(), $object->updatedLast()->format("Y-m-d H:i:s")])
-            ->limit(1)
-            ->execute();
+        $query = DB::query()->delete(static::TABLE);
+        $query->where(
+            'uuid = ? AND updated = ?',
+            [
+                $object->uuid(),
+                $object->updatedLast()->format("Y-m-d H:i:s")
+            ]
+        )->execute();
     }
 
     protected static function insertObject(AbstractDataObject $object)
     {
         $query = DB::query();
         $query->insertInto(
-            'pages',
-            [
-                'uuid' => $object->uuid(),
-                'class' => $object->class(),
-                'data' => json_encode($object->get()),
-                'created_by' => $object->createdBy(),
-                'updated_by' => $object->updatedBy(),
-            ]
+            static::TABLE,
+            static::insertObjectValues($object)
         )->execute();
     }
 
     protected static function updateObject(AbstractDataObject $object)
     {
-        $query = DB::query()->update('pages');
-        $query->where('uuid = ? AND updated = ?', [$object->uuid(), $object->updatedLast()->format("Y-m-d H:i:s")])
-            ->limit(1)
-            ->set([
-                'data' => json_encode($object->get()),
-                'class' => $object->class(),
-                'updated_by' => Session::user()
-            ])
+        $query = DB::query()->update(static::TABLE);
+        $query->where(
+            'uuid = ? AND updated = ?',
+            [
+                $object->uuid(),
+                $object->updatedLast()->format("Y-m-d H:i:s")
+            ]
+        )
+            ->set(static::updateObjectValues($object))
             ->execute();
     }
 
@@ -98,21 +118,27 @@ abstract class AbstractDataObjectSource
 
     public static function insert(AbstractDataObject $object)
     {
+        DB::TOUCH;
         static::$insert[$object->uuid()] = $object;
     }
 
     public static function update(AbstractDataObject $object)
     {
+        DB::TOUCH;
         static::$update[$object->uuid()] = $object;
     }
 
     public static function delete(AbstractDataObject $object)
     {
+        DB::TOUCH;
         static::$delete[$object->uuid()] = $object;
     }
 
-    public static function resultToObject(array $result): AbstractDataObject
+    public static function resultToObject($result): ?AbstractDataObject
     {
+        if (!is_array($result)) {
+            return null;
+        }
         if (isset(static::$cache[$result['uuid']])) {
             return static::$cache[$result['uuid']];
         }
