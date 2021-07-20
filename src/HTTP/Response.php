@@ -2,7 +2,7 @@
 
 namespace DigraphCMS\HTTP;
 
-use DigraphCMS\URL;
+use DigraphCMS\URL\URL;
 
 class Response
 {

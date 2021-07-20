@@ -2,7 +2,7 @@
 
 namespace DigraphCMS\HTTP;
 
-use DigraphCMS\URL;
+use DigraphCMS\URL\URL;
 
 class Request
 {
@@ -10,7 +10,8 @@ class Request
 
     public function __construct(URL $url, string $method, RequestHeaders $headers)
     {
-        $this->url = $this->originalUrl = clone $url;
+        $this->originalUrl = clone $url;
+        $this->url($url);
         $this->method = $method;
         $this->headers = $headers;
     }
@@ -29,6 +30,7 @@ class Request
     {
         if ($url) {
             $this->url = clone $url;
+            $this->url->normalize();
         }
         return clone $this->url;
     }

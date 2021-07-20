@@ -9,11 +9,21 @@ use DigraphCMS\Session\Session;
 abstract class AbstractDataObjectSource
 {
     const TABLE = null;
+    const COLNAMES = [
+        'uuid' => 'uuid',
+        'data' => false,
+        'created' => 'created',
+        'created_by' => 'created_by',
+        'updated' => 'updated',
+        'updated_by' => 'updated_by',
+    ];
 
     protected static $insert = [];
     protected static $update = [];
     protected static $delete = [];
     protected static $cache = [];
+
+    abstract public static function objectClass(array $result): string;
 
     public static function __init()
     {
@@ -105,7 +115,7 @@ abstract class AbstractDataObjectSource
         if (!isset(static::$cache[$uuid])) {
             $query = DB::query()->from(static::TABLE)
                 ->limit(1)
-                ->where('uuid = ?', [$uuid]);
+                ->where(static::COLNAMES['uuid'] . ' = ?', [$uuid]);
             $result = $query->execute();
             if ($result && $result = $result->fetch()) {
                 static::$cache[$uuid] = static::resultToObject($result);
@@ -139,21 +149,25 @@ abstract class AbstractDataObjectSource
         if (!is_array($result)) {
             return null;
         }
-        if (isset(static::$cache[$result['uuid']])) {
-            return static::$cache[$result['uuid']];
+        if (isset(static::$cache[$result[static::COLNAMES['uuid']]])) {
+            return static::$cache[$result[static::COLNAMES['uuid']]];
         }
-        if (false === ($data = json_decode($result['data'], true))) {
-            throw new \Exception("Error decoding Data Object json data");
+        if (static::COLNAMES['data']) {
+            if (false === ($data = json_decode($result[static::COLNAMES['data']], true))) {
+                throw new \Exception("Error decoding Data Object json data");
+            }
+        } else {
+            $data = [];
         }
         $class = static::objectClass($result);
-        static::$cache[$result['uuid']] = new $class(
+        static::$cache[$result[static::COLNAMES['uuid']]] = new $class(
             $data,
-            $result['uuid'],
-            new DateTime($result['created']),
-            $result['created_by'],
-            new DateTime($result['updated']),
-            $result['updated_by'],
+            $result[static::COLNAMES['uuid']],
+            new DateTime($result[static::COLNAMES['created']]),
+            $result[static::COLNAMES['created_by']],
+            new DateTime($result[static::COLNAMES['updated']]),
+            $result[static::COLNAMES['updated_by']],
         );
-        return static::$cache[$result['uuid']];
+        return static::$cache[$result[static::COLNAMES['uuid']]];
     }
 }

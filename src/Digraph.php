@@ -7,6 +7,8 @@ use DigraphCMS\HTTP\Redirect;
 use DigraphCMS\HTTP\Request;
 use DigraphCMS\HTTP\RequestHeaders;
 use DigraphCMS\HTTP\Response;
+use DigraphCMS\URL\URL;
+use DigraphCMS\URL\URLs;
 
 class Digraph
 {
@@ -96,20 +98,24 @@ class Digraph
      */
     public static function makeResponse(Request $request): Response
     {
-        URL::beginContext($request->url());
+        URLs::beginContext($request->url());
         Dispatcher::dispatchEvent('onMakeResponse', [$request]);
         // redirect if URL has changed
-        if ($request->url() != $request->originalUrl()) {
+        if ($request->url()->__toString() != $request->originalUrl()->__toString()) {
             $response = new Redirect($request->url());
         }
         // try to get a response
         $response = $response
             ?? Dispatcher::firstValue('onRequest', [$request])
-            ?? Dispatcher::firstValue('onRequest_' . $request->method(), [$request])
             ?? self::errorResponse(404, $request);
         // return
-        URL::endContext();
+        URLs::endContext();
         return $response;
+    }
+
+    public static function onRequest(Request $request)
+    {
+
     }
 
     /**

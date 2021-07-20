@@ -4,13 +4,12 @@ namespace DigraphCMS;
 
 class FS
 {
-    public static $umask_file = 0117;
-    public static $umask_dir = 0002;
+    public static $umask_file, $umask_dir;
 
-    public static function contain($path, string $contain = null)
+    public static function __init()
     {
-        $contain = $contain ?? Config::get('fs.contain');
-        $path = self::normalize($path);
+        self::$umask_file = Config::get('fs.umask_file');
+        self::$umask_dir = Config::get('fs.umask_dir');
     }
 
     public static function mirror(string $src, string $dest, $link = false)
@@ -77,3 +76,5 @@ class FS
         return is_dir($path);
     }
 }
+
+FS::__init();

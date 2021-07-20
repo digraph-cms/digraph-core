@@ -39,6 +39,12 @@ class DataObjectSelect implements \Countable, \Iterator
         return $this;
     }
 
+    public function leftJoin(string $table)
+    {
+        $this->query->leftJoin($table);
+        return $this;
+    }
+
     /**
      * Add to the WHERE clause, defaulting to appending with "AND"
      *

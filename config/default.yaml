@@ -9,6 +9,8 @@ files:
 
 fs:
     links: false
+    umask_file: 0117
+    umask_dir: 0002
 
 db:
     adapter: mysql

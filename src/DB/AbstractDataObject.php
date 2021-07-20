@@ -35,6 +35,9 @@ abstract class AbstractDataObject implements ArrayAccess
 
     public function set(?string $name, $value)
     {
+        if (!(static::SOURCE)::COLNAMES['data']) {
+            throw new \Exception("This DataObject class doesn't support arbitrary JSON data");
+        }
         $name = strtolower($name);
         if ($this->get($name) === $value) {
             return;

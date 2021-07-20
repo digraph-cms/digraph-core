@@ -1,6 +1,7 @@
 <?php
 
 use DigraphCMS\Config;
+use DigraphCMS\Content\Page;
 use DigraphCMS\Content\Pages;
 use DigraphCMS\Digraph;
 
@@ -14,12 +15,12 @@ Config::merge([
     'paths.web' => __DIR__
 ]);
 
-// Digraph::renderActualRequest();
+Digraph::renderActualRequest();
 
 // ini_set('memory_limit','10480M');
 // set_time_limit(0);
 // Dispatcher::$closeResponseBeforeShutdown = false;
-// for ($i = 0; $i < 1000000; $i++) {
+// for ($i = 0; $i < 1000; $i++) {
 //     $page = new Page([
 //         'foo' => [
 //             'bar' => bin2hex(random_bytes(8)),
@@ -29,7 +30,8 @@ Config::merge([
 //     $page->insert();
 // }
 
-// $page = Pages::get('d26bda95-9fe0-b1be-551a-cb6e55bdf279');
+$page = Pages::get('fa9c5979-b83e-375f-1e14-6752a8e06103');
+var_dump($page);
 // var_dump($page['random']);
 // $page['random'] = bin2hex(random_bytes(12));
 // var_dump($page['random']);
@@ -45,10 +47,12 @@ Config::merge([
 // $query->execute();
 // var_dump($query->fetchAll());
 
-$select = Pages::select();
-$select->select('class, COUNT(*) as c',true);
-$select->where('uuid like ?', ['6666%']);
-var_dump($select->fetchPairs('uuid','JSON_VALUE(data,"$.foo.bar")'));
+// $select = Pages::select();
+// $select->select('class, COUNT(*) as c',true);
+// $select->where('uuid like ?', ['666%']);
+// $select->fetchAll();
+// $select->fetchPairs('uuid','JSON_VALUE(data,"$.foo.bar")');
+// var_dump($select->fetchPairs('uuid','JSON_VALUE(data,"$.foo.bar")'));
 
 $time = microtime(true) - START_TIME;
 $time = round($time * 1000);
