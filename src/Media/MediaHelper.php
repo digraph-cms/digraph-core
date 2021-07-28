@@ -1,5 +1,6 @@
 <?php
 /* Digraph Core | https://github.com/digraph-cms/digraph-core | MIT License */
+
 namespace Digraph\Media;
 
 use Digraph\Helpers\AbstractHelper;
@@ -9,9 +10,24 @@ use MatthiasMullie\Minify;
 class MediaHelper extends AbstractHelper
 {
     protected $mimes;
+    protected $cache = [];
 
     public function create($filename, $content, $identifier = null, int $ttl = null): Asset
     {
+        if ($identifier === null) {
+            return $this->doCreate($filename, $content, $identifier, $ttl);
+        } else {
+            $cid = md5(serialize([$filename, $identifier]));
+            if (!isset($this->cache[$cid])) {
+                $this->cache[$cid] = $this->doCreate($filename, $content, $identifier, $ttl);
+            }
+            return $this->cache[$cid];
+        }
+    }
+
+    public function doCreate($filename, $content, $identifier = null, int $ttl = null): Asset
+    {
+        $this->cms->log('creating media: ' . $filename);
         // load ttl from config if not specified
         $ttl = $ttl ?? $this->cms->config['media.assets.ttl'];
         // generate an identifier if none is specified
@@ -30,6 +46,7 @@ class MediaHelper extends AbstractHelper
             $this->writeAsset($this->cms->config['paths.assets'] . '/' . $path, $content);
         }
         $url = $this->cms->config['media.assets.url'] . $path;
+        $this->cms->log('created media: ' . $filename);
         return new Asset([
             'filename' => $filename,
             'url' => $url,
@@ -163,81 +180,94 @@ class MediaHelper extends AbstractHelper
 
     public function prepareCSS($css)
     {
-        $res = $this->prepare_text_css(['content'=>$css]);
+        $res = $this->prepare_text_css(['content' => $css]);
         return $res['content'];
     }
 
     protected function prepare_text_css($out)
     {
-        $content = @$out['content'] ? $out['content'] : file_get_contents($out['path']);
-        //preprocess imports
-        while (preg_match('/@import "(.+)"( (.+))?;/', $content)) {
-            $content = preg_replace_callback(
-                '/@import "(.+)"( (.+))?;/',
-                function ($matches) {
-                    $file = $matches[1];
-                    $media = @trim($matches[3]);
-                    $content = $this->getContent($file, true);
-                    if ($content !== null) {
-                        if ($media) {
-                            $content = "@media $media {" . PHP_EOL . $content . PHP_EOL . "}";
+        $cache = $this->cms->cache();
+        $id = md5(serialize($out));
+        if ($cache->hasItem($id)) {
+            $this->cms->log('loaded processed CSS from cache (' . $id . ')');
+            return $cache->getItem($id)->get();
+        } else {
+            $this->cms->log('processing css (' . $id . ')');
+            $content = @$out['content'] ? $out['content'] : file_get_contents($out['path']);
+            //preprocess imports
+            while (preg_match('/@import "(.+)"( (.+))?;/', $content)) {
+                $content = preg_replace_callback(
+                    '/@import "(.+)"( (.+))?;/',
+                    function ($matches) {
+                        $file = $matches[1];
+                        $media = @trim($matches[3]);
+                        $content = $this->getContent($file, true);
+                        if ($content !== null) {
+                            if ($media) {
+                                $content = "@media $media {" . PHP_EOL . $content . PHP_EOL . "}";
+                            }
+                            $content = '/* import "' . $file . '" ' . @$media . ' */' . PHP_EOL . $content . PHP_EOL;
+                            return $content;
+                        } else {
+                            return '/* import couldn\'t find ' . $file . ' */';
                         }
-                        $content = '/* import "' . $file . '" ' . @$media . ' */' . PHP_EOL . $content . PHP_EOL;
-                        return $content;
+                    },
+                    $content
+                );
+            }
+            //run through template helper (that means we can do twig inside css!)
+            $content = $this->cms->helper('templates')->renderString($content, $this->fields());
+            //run through css crush
+            if ($this->cms->config['media.css.crush-enabled']) {
+                $options = $this->cms->config['media.css.crush-options'];
+                if ($this->cms->config['media.css.minify']) {
+                    $options['minify'] = true;
+                }
+                $content = csscrush_string(
+                    $content,
+                    $options
+                );
+            }
+            //rewrite asset URLs
+            $content = preg_replace_callback(
+                "/url\(([\"']?)([^\"'\)]+)([\"']?)\)/",
+                function ($matches) {
+                    // quotes must match or it's malformed
+                    if ($matches[1] != $matches[3]) {
+                        return $matches[0];
+                    }
+                    //skip data urls
+                    if (substr($matches[2], 0, 5) == 'data:') {
+                        return $matches[0];
+                    }
+                    //get url from matches
+                    $url = $matches[2];
+                    $base = $this->cms->config['url.base'];
+                    if (substr($url, 0, strlen($base)) == $base) {
+                        $url = substr($url, strlen($base));
+                    }
+                    if ($asset = $this->get($url)) {
+                        return 'url(' . $asset['url'] . ')';
                     } else {
-                        return '/* import couldn\'t find ' . $file . ' */';
+                        return $matches[0];
                     }
                 },
                 $content
             );
-        }
-        //run through template helper (that means we can do twig inside css!)
-        $content = $this->cms->helper('templates')->renderString($content, $this->fields());
-        //run through css crush
-        if ($this->cms->config['media.css.crush-enabled']) {
-            $options = $this->cms->config['media.css.crush-options'];
+            //minify if enabled
             if ($this->cms->config['media.css.minify']) {
-                $options['minify'] = true;
+                $minifier = new Minify\CSS($content);
+                $content = $minifier->minify();
             }
-            $content = csscrush_string(
-                $content,
-                $options
-            );
+            //set content and cache before returning
+            $out['content'] = $content;
+            $this->cms->log('caching processed css  (' . $id . ')');
+            $citem = $cache->getItem($id);
+            $citem->expiresAfter($this->cms->config['media.assets.ttl']);
+            $citem->set($out);
+            $cache->save($citem);
+            return $out;
         }
-        //rewrite asset URLs
-        $content = preg_replace_callback(
-            "/url\(([\"']?)([^\"'\)]+)([\"']?)\)/",
-            function ($matches) {
-                // quotes must match or it's malformed
-                if ($matches[1] != $matches[3]) {
-                    return $matches[0];
-                }
-                //skip data urls
-                if (substr($matches[2], 0, 5) == 'data:') {
-                    return $matches[0];
-                }
-                //get url from matches
-                $url = $matches[2];
-                $base = $this->cms->config['url.base'];
-                if (substr($url, 0, strlen($base)) == $base) {
-                    $url = substr($url, strlen($base));
-                }
-                if ($asset = $this->get($url)) {
-                    return 'url(' . $asset['url'] . ')';
-                } else {
-                    return $matches[0];
-                }
-            },
-            $content
-        );
-        //minify if enabled
-        if ($this->cms->config['media.css.minify']) {
-            $minifier = new Minify\CSS($content);
-            $content = $minifier->minify();
-        }
-        //set content
-        $out['content'] = $content;
-        return $out;
     }
 
     protected function prepare_application_javascript($out)
