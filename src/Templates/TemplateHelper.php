@@ -1,5 +1,6 @@
 <?php
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
+
 namespace Digraph\Templates;
 
 use Digraph\Helpers\AbstractHelper;
@@ -294,6 +295,7 @@ class TemplateHelper extends AbstractHelper
 
     public function render($template = 'default.twig', $fields = array())
     {
+        $this->cms->log('rendering template: ' . $template);
         //set template name and get environment
         $env = $this->env();
         //merge fields
@@ -326,6 +328,7 @@ class TemplateHelper extends AbstractHelper
         $package = $this->package;
         $this->package = $fields['package'];
         try {
+            $this->cms->log('rendered template: ' . $template);
             return $loaded->render($fields->get());
         } catch (\Exception $e) {
             return '<div class="notification notification-error">Exception rendering ' . $template . ': ' . $e->getMessage() . '</div>';
