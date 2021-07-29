@@ -40,7 +40,7 @@ $(() => {
     }
 
     $.get({
-        url: digraph.url + "_json/status.json",
+        url: digraph.url + "_fastphp/status.json",
         data: {
             actionbars: listActionBarNouns($actionBars),
             notifications: !!notifications,

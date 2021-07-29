@@ -28,8 +28,8 @@ class CMS
     {
         $this->start = microtime(true);
         $this->config = $config;
-        $this->config->readFile(__DIR__ . '/../default-config.yaml');
-        $this->config->readFile(__DIR__ . '/../default-strings.yaml', 'strings');
+        $this->config->readFile(__DIR__ . '/../default-config.json');
+        $this->config->readFile(__DIR__ . '/../default-strings.json', 'strings');
         $this->config['paths.core'] = realpath(__DIR__ . '/..');
         $this->log('CMS::__construct finished');
         //register hooks for invalidating caches by noun IDs

@@ -1,0 +1,1065 @@
+{
+    "send-content-length-header": true,
+    "site_id": "${url.base}",
+    "timezone": "GMT-0",
+    "poormanscron": true,
+    "filesystem": {
+        "symlinks": false
+    },
+    "urls": {
+        "aliases": {
+            "?arg_parent/": "home"
+        }
+    },
+    "logging": {
+        "debug": false,
+        "mail": {
+            "threshold": 500,
+            "recipients": []
+        }
+    },
+    "mail": {
+        "enabled": true,
+        "default": {
+            "subject": "Untitled message",
+            "from": "noreply@fake.domain",
+            "replyto": null,
+            "cc": [],
+            "bcc": []
+        }
+    },
+    "cron": {
+        "minttl": 300,
+        "logexpiration": "30 days"
+    },
+    "factory_columns": [],
+    "bootstrap": {
+        "pdos": {
+            "default": {
+                "dsn": "sqlite:${paths.storage}/digraph.sqlite"
+            },
+            "datastore": {
+                "dsn": "sqlite:${paths.storage}/datastore.sqlite"
+            },
+            "logging": {
+                "dsn": "sqlite:${paths.storage}/logging.sqlite"
+            },
+            "downtime": {
+                "dsn": "sqlite:${paths.storage}/downtime.sqlite"
+            },
+            "mail": {
+                "dsn": "sqlite:${paths.storage}/mail.sqlite"
+            }
+        },
+        "drivers": {
+            "default": {
+                "class": "default",
+                "pdo": "default"
+            },
+            "logging": {
+                "class": "default",
+                "pdo": "logging"
+            },
+            "downtime": {
+                "class": "default",
+                "pdo": "downtime"
+            }
+        },
+        "factories": {
+            "content": {
+                "class": "\\Digraph\\DSO\\ContentFactory",
+                "driver": "default",
+                "table": "digraph_content"
+            },
+            "users": {
+                "class": "\\Digraph\\Users\\UserFactory",
+                "driver": "default",
+                "table": "digraph_users"
+            },
+            "logging": {
+                "class": "\\Digraph\\Logging\\LogFactory",
+                "driver": "logging",
+                "table": "digraph_log"
+            },
+            "downtime": {
+                "class": "\\Digraph\\Downtime\\DowntimeFactory",
+                "driver": "downtime",
+                "table": "digraph_downtime"
+            }
+        }
+    },
+    "actions": {
+        "uiforguests": false,
+        "categorical": {
+            "*": [],
+            "_controlpanel": {
+                "config": "_controlpanel/config",
+                "content": "_controlpanel/content",
+                "edges": "_controlpanel/edges",
+                "logging": "_logging/display",
+                "mail": "_controlpanel/mail",
+                "sitemap": "_controlpanel/sitemap",
+                "trash": "_trash/display",
+                "urls": "_controlpanel/slugs",
+                "database": "_destructr/display",
+                "downtime": "_downtime/display"
+            }
+        },
+        "proper": {
+            "*": {
+                "copy": "!id/copy",
+                "delete": "!id/delete",
+                "edges": "!id/edges",
+                "edit": "!id/edit",
+                "rawedit": "!id/rawedit",
+                "urls": "!id/slugs",
+                "meta": "!id/meta"
+            }
+        },
+        "common": {
+            "*": [],
+            "_user/guest": {
+                "zzz_signin": "_user/signin",
+                "zzz_signup": "_user/signup"
+            },
+            "_user/signedin": {
+                "zzz_signout": "_user/signout",
+                "yyy_controlpanel": "_controlpanel/display"
+            }
+        }
+    },
+    "groups": [],
+    "child_sorting": {
+        "default": "${child_sorting.date_desc}",
+        "date_asc": "${dso.modified.date} ASC",
+        "date_desc": "${dso.modified.date} DESC",
+        "name_asc": "${digraph.name} ASC",
+        "name_desc": "${digraph.name} DESC",
+        "manual_before": "${child_sorting.date_desc}",
+        "manual_after": "${child_sorting.date_asc}"
+    },
+    "image": {
+        "driver": "gd",
+        "cache": {
+            "ttl": 604800,
+            "dir": "${paths.cache}/image"
+        },
+        "preset_base": {
+            "size": "3840 2160 inset"
+        },
+        "presets": {
+            "default": [],
+            "tag-embed": {
+                "size": "1500 900 inset"
+            },
+            "filestore-thumbnail": {
+                "size": "108 144 cover",
+                "extension": "jpg",
+                "save": {
+                    "jpeg_quality": 80
+                }
+            },
+            "hero-main": {
+                "size": "960 540 inset"
+            },
+            "hero-background": {
+                "size": "1920 1080 inset",
+                "extension": "jpg",
+                "save": {
+                    "jpeg_quality": 70
+                }
+            }
+        }
+    },
+    "filestore": {
+        "path": "${paths.storage}/filestore",
+        "icons": {
+            "html": {
+                "archive": "<i class=\"fas fa-file-archive\"></i>",
+                "audio": "<i class=\"fas fa-file-audio\"></i>",
+                "blank": "<i class=\"fas fa-file\"></i>",
+                "code": "<i class=\"fas fa-file-code\"></i>",
+                "csv": "<i class=\"fas fa-file-csv\"></i>",
+                "excel": "<i class=\"fas fa-file-excel\"></i>",
+                "image": "<i class=\"fas fa-file-image\"></i>",
+                "pdf": "<i class=\"fas fa-file-pdf\"></i>",
+                "powerpoint": "<i class=\"fas fa-file-powerpoint\"></i>",
+                "signature": "<i class=\"fas fa-file-signature\"></i>",
+                "text": "<i class=\"fas fa-file-alt\"></i>",
+                "video": "<i class=\"fas fa-file-video\"></i>",
+                "word": "<i class=\"fas fa-file-word\"></i>"
+            },
+            "default": "${filestore.icons.html.blank}",
+            "mime_left": {
+                "text": "${filestore.icons.html.text}",
+                "image": "${filestore.icons.html.image}",
+                "audio": "${filestore.icons.html.audio}",
+                "video": "${filestore.icons.html.audio}"
+            },
+            "extension": {
+                "7z": "${filestore.icons.html.archive}",
+                "action": "${filestore.icons.html.code}",
+                "apk": "${filestore.icons.html.archive}",
+                "apl": "${filestore.icons.html.code}",
+                "as": "${filestore.icons.html.code}",
+                "ashx": "${filestore.icons.html.code}",
+                "asmx": "${filestore.icons.html.code}",
+                "asp": "${filestore.icons.html.code}",
+                "aspx": "${filestore.icons.html.code}",
+                "asx": "${filestore.icons.html.code}",
+                "aww": "${filestore.icons.html.word}",
+                "axd": "${filestore.icons.html.code}",
+                "basic": "${filestore.icons.html.code}",
+                "bat": "${filestore.icons.html.code}",
+                "bz2": "${filestore.icons.html.archive}",
+                "c": "${filestore.icons.html.code}",
+                "cab": "${filestore.icons.html.archive}",
+                "cc": "${filestore.icons.html.code}",
+                "cfm": "${filestore.icons.html.code}",
+                "cgi": "${filestore.icons.html.code}",
+                "cpp": "${filestore.icons.html.code}",
+                "cs": "${filestore.icons.html.code}",
+                "css": "${filestore.icons.html.code}",
+                "csv": "${filestore.icons.html.csv}",
+                "csvx": "${filestore.icons.html.excel}",
+                "cwk": "${filestore.icons.html.word}",
+                "cxx": "${filestore.icons.html.code}",
+                "d": "${filestore.icons.html.code}",
+                "dll": "${filestore.icons.html.code}",
+                "dmg": "${filestore.icons.html.archive}",
+                "do": "${filestore.icons.html.code}",
+                "doc": "${filestore.icons.html.word}",
+                "docx": "${filestore.icons.html.word}",
+                "dot": "${filestore.icons.html.word}",
+                "dotx": "${filestore.icons.html.word}",
+                "dox": "${filestore.icons.html.word}",
+                "go": "${filestore.icons.html.code}",
+                "gz": "${filestore.icons.html.archive}",
+                "htm": "${filestore.icons.html.code}",
+                "html": "${filestore.icons.html.code}",
+                "id": "${filestore.icons.html.word}",
+                "iso": "${filestore.icons.html.archive}",
+                "j": "${filestore.icons.html.code}",
+                "jar": "${filestore.icons.html.archive}",
+                "jav": "${filestore.icons.html.code}",
+                "java": "${filestore.icons.html.code}",
+                "jhtml": "${filestore.icons.html.code}",
+                "js": "${filestore.icons.html.code}",
+                "jse": "${filestore.icons.html.code}",
+                "jsl": "${filestore.icons.html.code}",
+                "jsp": "${filestore.icons.html.code}",
+                "jspx": "${filestore.icons.html.code}",
+                "lisp": "${filestore.icons.html.code}",
+                "lz": "${filestore.icons.html.archive}",
+                "lzma": "${filestore.icons.html.archive}",
+                "lzo": "${filestore.icons.html.archive}",
+                "m": "${filestore.icons.html.code}",
+                "mm": "${filestore.icons.html.code}",
+                "ms": "${filestore.icons.html.excel}",
+                "numbers": "${filestore.icons.html.excel}",
+                "odp": "${filestore.icons.html.powerpoint}",
+                "ods": "${filestore.icons.html.excel}",
+                "odt": "${filestore.icons.html.word}",
+                "opml": "${filestore.icons.html.word}",
+                "pdf": "${filestore.icons.html.pdf}",
+                "php": "${filestore.icons.html.code}",
+                "php3": "${filestore.icons.html.code}",
+                "php4": "${filestore.icons.html.code}",
+                "php5": "${filestore.icons.html.code}",
+                "phtml": "${filestore.icons.html.code}",
+                "pl": "${filestore.icons.html.code}",
+                "pmd": "${filestore.icons.html.excel}",
+                "pmx": "${filestore.icons.html.word}",
+                "pot": "${filestore.icons.html.powerpoint}",
+                "potx": "${filestore.icons.html.powerpoint}",
+                "pps": "${filestore.icons.html.powerpoint}",
+                "ppsm": "${filestore.icons.html.powerpoint}",
+                "ppsx": "${filestore.icons.html.powerpoint}",
+                "ppt": "${filestore.icons.html.powerpoint}",
+                "pptm": "${filestore.icons.html.powerpoint}",
+                "pptx": "${filestore.icons.html.powerpoint}",
+                "pub": "${filestore.icons.html.word}",
+                "pxl": "${filestore.icons.html.excel}",
+                "py": "${filestore.icons.html.code}",
+                "rar": "${filestore.icons.html.archive}",
+                "rb": "${filestore.icons.html.code}",
+                "rhtml": "${filestore.icons.html.code}",
+                "rss": "${filestore.icons.html.code}",
+                "rtf": "${filestore.icons.html.word}",
+                "sh": "${filestore.icons.html.code}",
+                "shtml": "${filestore.icons.html.code}",
+                "sxc": "${filestore.icons.html.excel}",
+                "sxw": "${filestore.icons.html.word}",
+                "tar": "${filestore.icons.html.archive}",
+                "tdl": "${filestore.icons.html.excel}",
+                "uc": "${filestore.icons.html.code}",
+                "wks": "${filestore.icons.html.excel}",
+                "wpd": "${filestore.icons.html.word}",
+                "wps": "${filestore.icons.html.word}",
+                "wss": "${filestore.icons.html.code}",
+                "xcel": "${filestore.icons.html.excel}",
+                "xhtml": "${filestore.icons.html.code}",
+                "xls": "${filestore.icons.html.excel}",
+                "xlsb": "${filestore.icons.html.excel}",
+                "xlsm": "${filestore.icons.html.excel}",
+                "xlsx": "${filestore.icons.html.excel}",
+                "xlt": "${filestore.icons.html.excel}",
+                "xlxml": "${filestore.icons.html.excel}",
+                "xml": "${filestore.icons.html.code}",
+                "xmlx": "${filestore.icons.html.excel}",
+                "xps": "${filestore.icons.html.powerpoint}",
+                "yaws": "${filestore.icons.html.code}",
+                "zip": "${filestore.icons.html.archive}",
+                "zipx": "${filestore.icons.html.archive}"
+            }
+        },
+        "chmod": {
+            "dir": 0,
+            "file": 0
+        }
+    },
+    "filters": {
+        "labels": {
+            "default": "${strings.filters.default}",
+            "text-safe": "${strings.filters.text-safe}",
+            "text-unsafe": "${strings.filters.text-unsafe}",
+            "markdown-safe": "${strings.filters.markdown-safe}",
+            "markdown-unsafe": "${strings.filters.markdown-unsafe}",
+            "html": "${strings.filters.html}",
+            "html-unsafe": "${strings.filters.html-unsafe}"
+        },
+        "extras": {
+            "bbcode_basic": true,
+            "bbcode_advanced": true,
+            "bbcode_extended": true,
+            "bbcode_unsafe": true
+        },
+        "always": [],
+        "presets": {
+            "default": [
+                [
+                    "preset",
+                    "markdown-safe"
+                ]
+            ],
+            "text-safe": [
+                [
+                    "class",
+                    "sanitize"
+                ],
+                [
+                    "class",
+                    "text"
+                ],
+                [
+                    "class",
+                    "xss"
+                ]
+            ],
+            "text-unsafe": [
+                [
+                    "class",
+                    "text"
+                ],
+                [
+                    "class",
+                    "code_highlight"
+                ]
+            ],
+            "markdown-safe": [
+                [
+                    "class",
+                    "sanitize"
+                ],
+                [
+                    "class",
+                    "markdown"
+                ],
+                [
+                    "class",
+                    "code_highlight"
+                ],
+                [
+                    "class",
+                    "xss"
+                ]
+            ],
+            "markdown-unsafe": [
+                [
+                    "class",
+                    "markdown_unsafe"
+                ],
+                [
+                    "class",
+                    "code_highlight"
+                ]
+            ],
+            "html": [
+                [
+                    "class",
+                    "htmlfilter"
+                ],
+                [
+                    "class",
+                    "code_highlight"
+                ],
+                [
+                    "class",
+                    "xss"
+                ]
+            ],
+            "html-unsafe": [
+                [
+                    "class",
+                    "code_highlight"
+                ]
+            ],
+            "_sanitize": [
+                [
+                    "class",
+                    "allhtmlfilter"
+                ],
+                [
+                    "class",
+                    "xss"
+                ]
+            ]
+        },
+        "classes": {
+            "code_highlight": "Digraph\\Filters\\CodeHighlightFilter",
+            "allhtmlfilter": "Digraph\\Filters\\AllHTMLFilter",
+            "htmlfilter": "Digraph\\Filters\\HTMLFilter",
+            "markdown": "Digraph\\Filters\\MarkdownFilter",
+            "markdown_unsafe": "Digraph\\Filters\\MarkdownFilterUnsafe",
+            "sanitize": "Digraph\\Filters\\SanitizeFilter",
+            "text": "Digraph\\Filters\\TextFilter",
+            "xss": "Digraph\\Filters\\XSSFilter",
+            "bbcode_basic": "Digraph\\Filters\\BBCode\\BBCodeBasicFilter",
+            "bbcode_advanced": "Digraph\\Filters\\BBCode\\BBCodeAdvancedFilter",
+            "bbcode_extended": "Digraph\\Filters\\BBCode\\BBCodeExtendedFilter",
+            "bbcode_unsafe": "Digraph\\Filters\\BBCode\\BBCodeUnsafeFilter"
+        },
+        "htmlfilter": {
+            "allowed": [
+                "a",
+                "b",
+                "blockquote",
+                "code",
+                "del",
+                "dd",
+                "dl",
+                "em",
+                "figure",
+                "figcaption",
+                "h1",
+                "h2",
+                "h3",
+                "h4",
+                "h5",
+                "h6",
+                "i",
+                "img",
+                "li",
+                "ol",
+                "p",
+                "pre",
+                "s",
+                "sup",
+                "sub",
+                "strong",
+                "strike",
+                "ul",
+                "br",
+                "hr"
+            ]
+        }
+    },
+    "permissions": {
+        "url": {
+            "*/display": [
+                "allow all"
+            ],
+            "*/file": [
+                "allow all"
+            ],
+            "*/meta": [
+                "allow group admin"
+            ],
+            "_user/*": [
+                "allow all"
+            ],
+            "_logging/*": [
+                "deny all",
+                "allow group admin"
+            ],
+            "*/rawedit": [
+                "allow group admin"
+            ],
+            "*/copy": [
+                "allow group admin, editor"
+            ],
+            "*/edit": [
+                "allow group admin, editor"
+            ],
+            "*/order": [
+                "allow group admin, editor"
+            ],
+            "*/add": [
+                "allow group admin, editor"
+            ],
+            "*/delete": [
+                "allow group admin, editor"
+            ],
+            "_routemedia/*": [
+                "allow all"
+            ],
+            "_json/*": [
+                "allow all"
+            ],
+            "_trash/*": [
+                "deny all",
+                "allow group admin"
+            ],
+            "_controlpanel/*": [
+                "deny all",
+                "allow group admin"
+            ],
+            "_controlpanel/display": [
+                "deny all",
+                "allow group editor, admin"
+            ],
+            "*/slugs": [
+                "allow group editor, admin"
+            ],
+            "*/edges": [
+                "allow group admin"
+            ],
+            "_controlpanel/sitemap": [
+                "allow group editor"
+            ],
+            "_controlpanel/content": [
+                "allow group editor"
+            ],
+            "_controlpanel/slugs": [
+                "allow group editor"
+            ],
+            "_cron/display": [
+                "allow all"
+            ],
+            "_destructr/*": [
+                "deny all",
+                "allow group admin"
+            ],
+            "_downtime/*": [
+                "deny all",
+                "allow group admin"
+            ],
+            "hero/*": [
+                "deny all",
+                "allow group admin"
+            ],
+            "hero/slugs": [
+                "deny all"
+            ]
+        },
+        "add": {
+            "*": [
+                "allow all"
+            ],
+            "*/hero": [
+                "deny all",
+                "allow group admin"
+            ],
+            "hero/*": [
+                "deny all"
+            ]
+        },
+        "filter": {
+            "*": [
+                "deny all",
+                "allow group admin"
+            ],
+            "preset/default": [
+                "allow all"
+            ],
+            "unsafe": [
+                "deny all",
+                "allow group admin"
+            ],
+            "safe": [
+                "allow all"
+            ],
+            "preset/html": [
+                "allow group admin, editor"
+            ],
+            "extra/*": [
+                "deny all",
+                "allow group admin"
+            ],
+            "extra/bbcode_basic": [
+                "allow all"
+            ],
+            "extra/bbcode_advanced": [
+                "allow group editor"
+            ],
+            "extra/bbcode_extended": [
+                "allow group editor"
+            ]
+        }
+    },
+    "navigation": {
+        "menus": {
+            "main": [
+                "home",
+                {
+                    "children": "home"
+                }
+            ]
+        },
+        "parents": {
+            "fallback": "home",
+            "proper": {
+                "*/*": "!noun/display",
+                "*/display": false
+            },
+            "common": {
+                "*/*": "!noun/display",
+                "*/display": false,
+                "_controlpanel/display": "_controlpanel/display",
+                "_controlpanel/mail_errors": "_controlpanel/mail",
+                "_controlpanel/mail_queue": "_controlpanel/mail",
+                "_controlpanel/mail_sent": "_controlpanel/mail",
+                "_cron/display": "_controlpanel/display",
+                "_destructr/display": "_controlpanel/display",
+                "_downtime/display": "_controlpanel/display",
+                "_logging/display": "_controlpanel/display",
+                "_trash/display": "_controlpanel/display",
+                "_trash/item": "_trash/factory?factory=!arg_factory",
+                "_user/display": "__none"
+            }
+        }
+    },
+    "types": {
+        "system": {
+            "user": "\\Digraph\\Users\\",
+            "default": "\\Destructr\\DSO"
+        },
+        "content": {
+            "default": "\\Digraph\\DSO\\Noun",
+            "hero": "\\Digraph\\DSO\\Hero"
+        },
+        "users": {
+            "simple": "\\Digraph\\Users\\Managers\\Simple\\SimpleUser",
+            "default": "${types.users.simple}"
+        },
+        "logging": {
+            "default": "\\Digraph\\Logging\\LogEntry"
+        },
+        "downtime": {
+            "default": "\\Digraph\\Downtime\\Downtime"
+        }
+    },
+    "url": {
+        "protocol": "",
+        "domain": "",
+        "path": "/",
+        "base": "${url.protocol}${url.domain}${url.path}"
+    },
+    "paths": {
+        "storage": "${paths.site}/storage"
+    },
+    "theme": {
+        "prefetch": {
+            "_digraph": {
+                "loading-light": "${url.base}digraph/loading-light.gif",
+                "loading-dark": "${url.base}digraph/loading-dark.gif"
+            }
+        },
+        "css": {
+            "_digraph": {
+                "100-digraph": "${url.base}digraph.css"
+            }
+        },
+        "js-head": {
+            "_digraph": {
+                "100-digraph-1-init": "${url.base}digraph-init.js",
+                "100-digraph-2-main": "${url.base}digraph-head.js"
+            }
+        },
+        "js-foot": {
+            "_digraph": {
+                "100-digraph-foot": "${url.base}digraph-foot.js"
+            }
+        },
+        "areas": {
+            "_override": [],
+            "_digraph": [
+                "actionbar",
+                "masthead",
+                "navbar",
+                "breadcrumb",
+                "hero",
+                "notifications",
+                "body",
+                "footer"
+            ]
+        },
+        "variables": {
+            "_override": [],
+            "_digraph": {
+                "border_radius_accent": "0.3rem",
+                "breakpoint_extralarge": "70em",
+                "breakpoint_large": "50em",
+                "breakpoint_medium": "30em",
+                "color_accent": "#1565C0",
+                "color_actionbar_bg": "#1565C0",
+                "color_actionbar_fg": "#fff",
+                "color_background": "#fafafa",
+                "color_confirmation": "#2E7D32",
+                "color_error": "#b71c1c",
+                "color_foreground": "#222",
+                "color_link_active": "#c00",
+                "color_link_hover": "#f90",
+                "color_link_visited": "#6d4b6d",
+                "color_link": "#2345cd",
+                "color_notice": "#1A78C2",
+                "color_shade": "rgba(31,31,31,0.15)",
+                "color_lightbox_shade": "rgba(223,223,223,0.8)",
+                "color_warning": "#E65100",
+                "font_family_body": "sans-serif",
+                "font_family_code": "monospace",
+                "font_family_headers": "serif",
+                "font_size_extralarge": "1.2rem",
+                "font_size_large": "1.1rem",
+                "font_size_medium": "1rem",
+                "font_size_print": "12pt",
+                "font_size_small": "0.9rem",
+                "heading_ratio": 0.9,
+                "heading_size": 2,
+                "line_height_base": "1.4em",
+                "line_height_compact": "1.3em",
+                "spacing_base": "1rem",
+                "spacing_tight": "0.5rem;"
+            }
+        }
+    },
+    "templates": {
+        "default": "default.twig",
+        "theme": "digraph-core",
+        "paths": {
+            "core": "${paths.core}/templates",
+            "site": "${paths.site}/templates"
+        },
+        "twigconfig": {
+            "cache": "${paths.cache}/twig",
+            "auto_reload": true
+        }
+    },
+    "routing": {
+        "paths": {
+            "core": "${paths.core}/routes"
+        }
+    },
+    "modules": {
+        "sources": []
+    },
+    "users": {
+        "namespacing": {
+            "enabled": false
+        },
+        "defaultmanager": "default",
+        "managers": {
+            "default": {
+                "name": "Built-in",
+                "class": "Digraph\\Users\\Managers\\Simple\\SimpleUserManager",
+                "signup": true,
+                "signin": true
+            },
+            "null": {
+                "name": "Null users",
+                "class": "Digraph\\Users\\Managers\\Null\\NullUserManager",
+                "signup": false,
+                "signin": false
+            },
+            "system": {
+                "name": "System users",
+                "class": "Digraph\\Users\\Managers\\Null\\NullUserManager",
+                "signup": false,
+                "signin": false
+            }
+        },
+        "groups": {
+            "guests": [
+                "guest"
+            ],
+            "allusers": [
+                "user"
+            ],
+            "canroot": {
+                "config": false
+            },
+            "sources": {
+                "config": {
+                    "class": "Digraph\\Users\\GroupSources\\ConfigGroups",
+                    "args": []
+                }
+            }
+        }
+    },
+    "fullmunge": [
+        "setup",
+        "build",
+        "error",
+        "template",
+        "finalize",
+        "render",
+        "cleanup"
+    ],
+    "mungers": {
+        "setup": {
+            "userinitialize": {
+                "weight": 100,
+                "class": "Digraph\\Users\\UserMunger"
+            },
+            "initialize": {
+                "weight": 200,
+                "class": "Digraph\\Mungers\\Setup\\Initialize"
+            },
+            "downtime": {
+                "weight": 250,
+                "class": "Digraph\\Downtime\\DowntimeMunger"
+            },
+            "parseurl": {
+                "weight": 300,
+                "class": "Digraph\\Mungers\\Setup\\ParseUrl"
+            },
+            "fastphp": {
+                "weight": 350,
+                "class": "Digraph\\FastPHP\\FastPHPMunger"
+            },
+            "media": {
+                "weight": 400,
+                "class": "Digraph\\Media\\MediaMunger"
+            },
+            "locate": {
+                "weight": 500,
+                "class": "Digraph\\Mungers\\Setup\\Locate"
+            }
+        },
+        "build": {
+            "permissions": {
+                "weight": 500,
+                "class": "Digraph\\Permissions\\PermissionsMunger"
+            },
+            "route": {
+                "weight": 400,
+                "class": "Digraph\\Mungers\\Build\\Route"
+            },
+            "execute": {
+                "weight": 600,
+                "class": "Digraph\\Mungers\\Build\\Execute"
+            },
+            "outputfilter": {
+                "weight": 900,
+                "class": "Digraph\\OutputFilters\\OutputFilterPrefilterMunger"
+            }
+        },
+        "error": {
+            "error": {
+                "weight": 100,
+                "class": "Digraph\\Mungers\\Error\\Error"
+            }
+        },
+        "template": {
+            "templates": {
+                "weight": 100,
+                "class": "Digraph\\Templates\\TemplateMunger"
+            }
+        },
+        "finalize": {
+            "outputfilter": {
+                "weight": 50,
+                "class": "Digraph\\OutputFilters\\OutputFilterMunger"
+            },
+            "headers": {
+                "weight": 100,
+                "class": "Digraph\\Mungers\\Finalize\\Headers"
+            }
+        },
+        "render": {
+            "headers": {
+                "weight": 0,
+                "class": "Digraph\\Mungers\\Render\\Headers"
+            },
+            "output": {
+                "weight": 900,
+                "class": "Digraph\\Mungers\\Render\\Output"
+            }
+        },
+        "cleanup": {
+            "logging": {
+                "weight": 999,
+                "class": "Digraph\\Logging\\LogMunger"
+            }
+        }
+    },
+    "helpers": {
+        "initialized": {
+            "slugs": true
+        },
+        "classes": {
+            "actions": "Digraph\\Helpers\\Actions",
+            "cache": "Digraph\\Helpers\\CacheHelper",
+            "datastore": "Digraph\\Data\\DatastoreHelper",
+            "downtime": "Digraph\\Downtime\\DowntimeHelper",
+            "edges": "Digraph\\Graph\\EdgeHelper",
+            "filestore": "Digraph\\FileStore\\FileStoreHelper",
+            "filesystem": "Digraph\\Helpers\\FilesystemHelper",
+            "filters": "Digraph\\Filters\\FilterHelper",
+            "forms": "Digraph\\Forms\\FormHelper",
+            "graph": "Digraph\\Graph\\GraphHelper",
+            "hooks": "Digraph\\Helpers\\HookHelper",
+            "image": "Digraph\\FileStore\\ImageHelper",
+            "logging": "Digraph\\Logging\\LogHelper",
+            "mail": "Digraph\\Mail\\MailHelper",
+            "media": "Digraph\\Media\\MediaHelper",
+            "modules": "Digraph\\Modules\\ModuleHelper",
+            "navigation": "Digraph\\Templates\\NavigationHelper",
+            "notifications": "Digraph\\Templates\\NotificationsHelper",
+            "outputfilters": "Digraph\\OutputFilters\\OutputFilterHelper",
+            "paginator": "Digraph\\Helpers\\Paginator",
+            "permissions": "Digraph\\Permissions\\PermissionsHelper",
+            "routing": "Digraph\\Helpers\\Routing",
+            "session": "Digraph\\Users\\SessionHelper",
+            "slugs": "Digraph\\Helpers\\SlugHelper",
+            "strings": "Digraph\\Helpers\\Strings",
+            "templates": "Digraph\\Templates\\TemplateHelper",
+            "urls": "Digraph\\Urls\\UrlHelper",
+            "users": "Digraph\\Users\\UserHelper"
+        }
+    },
+    "forms": {
+        "maps": {
+            "default": {
+                "digraph_name": {
+                    "weight": 100,
+                    "field": "digraph.name",
+                    "label": "${strings.forms.digraph_name_label}",
+                    "class": "digraph_name",
+                    "required": true
+                },
+                "digraph_title": {
+                    "weight": 101,
+                    "field": "digraph.title",
+                    "label": "${strings.forms.digraph_title_label}",
+                    "class": "digraph_title"
+                },
+                "digraph_slug": {
+                    "weight": 950,
+                    "field": "digraph.slugpattern",
+                    "label": "${strings.forms.slug_label}",
+                    "class": "digraph_slug",
+                    "default": "[parent]/[name]"
+                },
+                "digraph_body": {
+                    "weight": 500,
+                    "field": "digraph.body",
+                    "label": "${strings.forms.digraph_body_label}",
+                    "class": "digraph_content"
+                }
+            }
+        }
+    },
+    "defaultnoun": {
+        "digraph": {
+            "body": {
+                "filter": "default",
+                "text": "",
+                "extra": {
+                    "bbcode_basic": true,
+                    "bbcode_advanced": true
+                }
+            }
+        }
+    },
+    "media": {
+        "assets": {
+            "url": "${url.base}assets/",
+            "ttl": 86400,
+            "image_ttl": 2592000
+        },
+        "css": {
+            "crush-enabled": true,
+            "minify": false,
+            "crush-options": {
+                "cache": false,
+                "rewrite_import_urls": false
+            }
+        },
+        "paths": {
+            "digraph_core": "${paths.core}/media"
+        }
+    },
+    "cache": {
+        "mungercache": {
+            "adapter": "default",
+            "threshold": 10
+        },
+        "factorycache": {
+            "adapter": "default",
+            "threshold": 5
+        },
+        "adapters": {
+            "default": {
+                "items": {
+                    "class": "\\Symfony\\Component\\Cache\\Adapter\\FilesystemAdapter",
+                    "args": {
+                        "namespace": "default",
+                        "defaultlifetime": 60,
+                        "directory": "${paths.cache}/defaultcache"
+                    }
+                },
+                "tags": null
+            }
+        }
+    },
+    "package": {
+        "error_defaults": {
+            "response": {
+                "ttl": 30,
+                "cache": {
+                    "cacheability": "no-store",
+                    "max-age": "${response.ttl}"
+                }
+            }
+        },
+        "defaults": {
+            "error": false,
+            "logging": {
+                "save": false,
+                "messages": []
+            },
+            "fields": {
+                "page_title": "${page_name}",
+                "favicon": "${url.base}favicon.ico"
+            },
+            "request": {
+                "namespace": "public"
+            },
+            "response": {
+                "status": 200,
+                "ttl": 3600,
+                "cacheable": true,
+                "content": "",
+                "ready": false,
+                "mime": "text/html",
+                "charset": "utf-8",
+                "disposition": "inline",
+                "cache": {
+                    "cacheability": "public",
+                    "max-age": "${response.ttl}"
+                }
+            }
+        }
+    }
+}
