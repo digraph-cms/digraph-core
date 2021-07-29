@@ -7,15 +7,15 @@ digraph.autocomplete.noun = {
 
 // endpoint for returning dates/times
 digraph.autocomplete.datetime = {
-    source: digraph.url + '_json/autocomplete-datetime',
-    source_definitive: digraph.url + '_json/autocomplete-datetime?_definitive=true',
+    source: digraph.url + '_fastphp/autocomplete-datetime.json',
+    source_definitive: digraph.url + '_fastphp/autocomplete-datetime.json?_definitive=true',
     autoFocus: true
 };
 
 // endpoint for returning dates
 digraph.autocomplete.date = {
-    source: digraph.url + '_json/autocomplete-datetime?_date=true',
-    source_definitive: digraph.url + '_json/autocomplete-datetime?_date=true&_definitive=true',
+    source: digraph.url + '_fastphp/autocomplete-datetime.json?_date=true',
+    source_definitive: digraph.url + '_fastphp/autocomplete-datetime.json?_date=true&_definitive=true',
     autoFocus: true
 };
 

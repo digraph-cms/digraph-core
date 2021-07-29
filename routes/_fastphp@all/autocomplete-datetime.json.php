@@ -1,7 +1,4 @@
 <?php
-$package->cache_public();
-$package['response.ttl'] = 60;
-$package->makeMediaFile('results.json');
 $q = $package['url.args.term'];
 $results = [];
 $date = $package['url.args._date'] == 'true';
