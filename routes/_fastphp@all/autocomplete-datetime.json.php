@@ -1,4 +1,5 @@
 <?php
+$cms = $package->cms();
 $q = $package['url.args.term'];
 $results = [];
 $date = $package['url.args._date'] == 'true';
