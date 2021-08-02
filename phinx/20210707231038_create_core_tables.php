@@ -28,8 +28,8 @@ final class CreateCoreTables extends AbstractMigration
         $aliases = $this->table('aliases');
         $aliases
             ->addColumn('alias_uuid', 'uuid')
-            ->addColumn('alias_start', ['length' => 100])
-            ->addColumn('alias_end', ['length' => 100])
+            ->addColumn('alias_start', 'string', ['length' => 100])
+            ->addColumn('alias_end', 'string', ['length' => 100])
             ->addIndex(['alias_start'])
             ->addIndex(['alias_end'])
             ->addIndex(['alias_start', 'alias_end'], ['unique' => true])
