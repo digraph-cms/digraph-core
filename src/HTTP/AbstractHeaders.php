@@ -1,7 +1,9 @@
 <?php
+
 namespace DigraphCMS\HTTP;
 
-abstract class AbstractHeaders {
+abstract class AbstractHeaders
+{
     const AUTO_INGEST = [];
     protected $headers = [];
 
@@ -13,6 +15,11 @@ abstract class AbstractHeaders {
                 $this->set($key, $value);
             }
         }
+    }
+
+    public function toArray(): array
+    {
+        return $this->headers;
     }
 
     public function set(string $key, $value): string
@@ -28,15 +35,10 @@ abstract class AbstractHeaders {
     public function get(string $key): ?string
     {
         $key = strtolower($key);
-        if (isset($this->headers[$key])) {
-            $fn = 'get_' . str_replace('-', '_', $key);
-            if (method_exists($this, $fn)) {
-                return $this->$fn($this->headers[$key]);
-            } else {
-                return $this->headers[$key];
-            }
-        } else {
-            return null;
+        $fn = 'get_' . str_replace('-', '_', $key);
+        if (method_exists($this, $fn)) {
+            return $this->$fn(@$this->headers[$key]);
         }
+        return @$this->headers[$key];
     }
 }

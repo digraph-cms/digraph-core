@@ -22,12 +22,29 @@ abstract class AbstractDataObjectSource
     protected static $update = [];
     protected static $delete = [];
     protected static $cache = [];
+    protected static $exists = [];
 
     abstract public static function objectClass(array $result): string;
 
     public static function __init()
     {
         Dispatcher::addSubscriber(static::class);
+    }
+
+    public static function exists(string $uuid): bool
+    {
+        if (!isset(self::$exists[$uuid])) {
+            self::$exists[$uuid] = self::doExists($uuid);
+        }
+        return self::$exists[$uuid];
+    }
+
+    protected static function doExists(string $uuid): bool
+    {
+        $query = DB::query()->from(static::TABLE)
+            ->where(static::COLNAMES['uuid'] . ' = ?', [$uuid])
+            ->limit(1);
+        return !!$query->count();
     }
 
     public static function select(): DataObjectSelect
@@ -57,7 +74,7 @@ abstract class AbstractDataObjectSource
     {
         $query = DB::query()->delete(static::TABLE);
         $query->where(
-            'uuid = ? AND updated = ?',
+            static::COLNAMES['uuid'] . ' = ? AND ' . static::COLNAMES['updated'] . ' = ?',
             [
                 $object->uuid(),
                 $object->updatedLast()->format("Y-m-d H:i:s")
@@ -78,7 +95,7 @@ abstract class AbstractDataObjectSource
     {
         $query = DB::query()->update(static::TABLE);
         $query->where(
-            'uuid = ? AND updated = ?',
+            static::COLNAMES['uuid'] . ' = ? AND ' . static::COLNAMES['updated'] . ' = ?',
             [
                 $object->uuid(),
                 $object->updatedLast()->format("Y-m-d H:i:s")
@@ -162,11 +179,13 @@ abstract class AbstractDataObjectSource
         $class = static::objectClass($result);
         static::$cache[$result[static::COLNAMES['uuid']]] = new $class(
             $data,
-            $result[static::COLNAMES['uuid']],
-            new DateTime($result[static::COLNAMES['created']]),
-            $result[static::COLNAMES['created_by']],
-            new DateTime($result[static::COLNAMES['updated']]),
-            $result[static::COLNAMES['updated_by']],
+            [
+                'uuid' => $result[static::COLNAMES['uuid']],
+                'created' => new DateTime($result[static::COLNAMES['created']]),
+                'created_by' => $result[static::COLNAMES['created_by']],
+                'updated' => new DateTime($result[static::COLNAMES['updated']]),
+                'updated_by' => $result[static::COLNAMES['updated_by']],
+            ]
         );
         return static::$cache[$result[static::COLNAMES['uuid']]];
     }

@@ -17,3 +17,9 @@ db:
     charset: utf8
     sqlite_create_functions: true
     pdo_options: []
+
+page:
+    cachettl:
+        _any: null
+    browserttl:
+        _any: null

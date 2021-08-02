@@ -2,6 +2,9 @@
 
 namespace DigraphCMS\URL;
 
+use DigraphCMS\Content\Page;
+use DigraphCMS\Content\Pages;
+
 /**
  * A URL represents a URL within the site defined by URL::$siteHost and 
  * URL::$sitePath, and including the in-site path and query parameters. A key
@@ -28,8 +31,8 @@ class URL
     public function __construct(string $url)
     {
         // replace empty url with context
-        if ($url == '' || $url == '/') {
-            $url = URLs::context()->directory()->__toString();
+        if ($url == '') {
+            $url = URLs::context()->directory();
         }
         // prefix with context for empty or query-only strings
         if (!$url || $url[0] == '?') {
@@ -49,7 +52,7 @@ class URL
         }
         // otherwise add it to the context directory
         elseif ($url[0] != '/') {
-            $url = URLs::context()->directory() . $url;
+            $url = URLs::site() . URLs::context()->directory() . $url;
         }
         // strip protocol
         $url = preg_replace('@^(https?:)?//@', '//', $url);
@@ -70,12 +73,41 @@ class URL
         }
     }
 
+    public function page(): ?Page
+    {
+        return Pages::get($this->route());
+    }
+
+    public function html(array $class = [], string $target = null): string
+    {
+        if ($class) {
+            $class = ' class="' . implode(' ', $class) . '"';
+        }else {
+            $class = '';
+        }
+        if ($target) {
+            $target = ' target="' . $target . '"';
+        }
+        return "<a href=\"$this\"$class$target>" . $this->name() . "</a>";
+    }
+
+    public function name(): string
+    {
+        if ($this->page()) {
+            return $this->page()->urlName($this);
+        } else {
+            return $this->path();
+        }
+    }
+
     public function normalize()
     {
         // key sort query arguments
         ksort($this->query);
-        // ensure path ends in either a slash or .html
-        if (!preg_match('@(/|\.html)$@', $this->path)) {
+        // strip trailing index.html
+        $this->path = preg_replace('@/index\.html$@', '/', $this->path);
+        // ensure path ends in either a slash or file extension
+        if (!preg_match('@(/|\.([a-z0-9]+))$@', $this->path)) {
             $this->path .= '/';
         }
     }
@@ -83,19 +115,53 @@ class URL
     /**
      * Get the directory portion of the URL path, without any trailing filename
      *
-     * @return URL
+     * @return string
      */
-    public function directory(): URL
+    public function directory(): string
     {
         $url = clone $this;
         $url->query([]);
         if (!preg_match('@/$@', $url->path())) {
-            $url->path(dirname($url->path()));
-            if ($url->path() != '/') {
-                $url->path($url->path() . '/');
+            $path = dirname($url->path());
+            if ($path != '/') {
+                $path .= '/';
             }
+            return $path;
         }
-        return $url;
+        return $url->path();
+    }
+
+    /**
+     * Get the trailing filename, returns null if nothing specified
+     *
+     * @return string
+     */
+    public function file(): ?string
+    {
+        $url = clone $this;
+        $url->query([]);
+        if (!preg_match('@/$@', $url->path())) {
+            return basename($url->path());
+        }
+        return null;
+    }
+
+    public function route(): string
+    {
+        return trim($this->directory(), '/');
+    }
+
+    /**
+     * Get the name of the "action" to be used for routing purposes
+     *
+     * @return string
+     */
+    public function action(): string
+    {
+        if ($file = $this->file()) {
+            return preg_replace('/\.html$/', '', $file);
+        }
+        return 'index';
     }
 
     public function __toString(): string

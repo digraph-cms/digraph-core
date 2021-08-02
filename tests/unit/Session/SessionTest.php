@@ -55,7 +55,7 @@ class SessionTest extends \Codeception\Test\Unit
     public function testUserChanging()
     {
         // user is initially false
-        $this->assertFalse(Session::user());
+        $this->assertEquals('guest@system',Session::user());
         // setting user should:
         Session::setUser('user');
         // set user in both Session and $_Session
@@ -63,8 +63,7 @@ class SessionTest extends \Codeception\Test\Unit
         $this->assertEquals('user', $_SESSION['user']);
         // deauthorizing should do the same
         Session::deauthorize();
-        $this->assertFalse(Session::user());
-        $this->assertFalse($_SESSION['user']);
+        $this->assertEquals('guest@system', Session::user());
     }
 
     public function testAutomaticDeauthorization()
@@ -75,7 +74,7 @@ class SessionTest extends \Codeception\Test\Unit
         $_SERVER['HTTP_USER_AGENT'] = 'Another fake browser';
         // reinitializing should clear user
         Session::__init();
-        $this->assertFalse(Session::user());
+        $this->assertEquals('guest@system', Session::user());
     }
 
     public function testProtectedNamespaces()

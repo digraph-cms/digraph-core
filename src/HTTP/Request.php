@@ -2,11 +2,16 @@
 
 namespace DigraphCMS\HTTP;
 
+use DigraphCMS\Content\Page;
 use DigraphCMS\URL\URL;
 
 class Request
 {
-    protected $url, $originalUrl, $method, $headers;
+    protected $page = null;
+    protected $url = null;
+    protected $originalUrl = null;
+    protected $method = null;
+    protected $headers = null;
 
     public function __construct(URL $url, string $method, RequestHeaders $headers)
     {
@@ -14,6 +19,14 @@ class Request
         $this->url($url);
         $this->method = $method;
         $this->headers = $headers;
+    }
+
+    public function page(Page $page = null): ?Page
+    {
+        if ($page) {
+            $this->page = $page;
+        }
+        return $this->page;
     }
 
     public function headers(): RequestHeaders

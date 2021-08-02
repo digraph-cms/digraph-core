@@ -2,6 +2,9 @@
 
 namespace DigraphCMS;
 
+use DigraphCMS\Content\FilesystemRouter;
+use DigraphCMS\Content\Page;
+use DigraphCMS\Content\Pages;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTTP\Redirect;
 use DigraphCMS\HTTP\Request;
@@ -99,23 +102,58 @@ class Digraph
     public static function makeResponse(Request $request): Response
     {
         URLs::beginContext($request->url());
-        Dispatcher::dispatchEvent('onMakeResponse', [$request]);
         // redirect if URL has changed
         if ($request->url()->__toString() != $request->originalUrl()->__toString()) {
             $response = new Redirect($request->url());
         }
         // try to get a response
         $response = $response
-            ?? Dispatcher::firstValue('onRequest', [$request])
+            ?? self::doMakeResponse($request)
             ?? self::errorResponse(404, $request);
         // return
         URLs::endContext();
         return $response;
     }
 
-    public static function onRequest(Request $request)
+    public static function doMakeResponse(Request $request): ?Response
     {
+        $route = $request->url()->route();
+        $action = $request->url()->action();
+        $page = Pages::get($route);
+        if ($page) {
+            $request->page($page);
+            return
+                Dispatcher::firstValue('onPageRoute_' . $action, [$request, $page]) ??
+                Dispatcher::firstValue('onPageRoute', [$request, $page, $action]) ??
+                (method_exists($page, 'route_' . $action) ? call_user_func([$page, 'route_' . $action], $request) : null) ??
+                self::pageRoute($request, $page, $action);
+        } else {
+            return
+                Dispatcher::firstValue('onStaticRoute_' . $action, [$request, $route]) ??
+                Dispatcher::firstValue('onStaticRoute', [$request, $route, $action]) ??
+                self::staticRoute($request, $route, $action);
+        }
+    }
 
+    protected static function pageRoute(Request $request, Page $page, string $action): ?Response
+    {
+        $response = new Response($request->url(), 200);
+        $response->page($page);
+        if ($content = FilesystemRouter::pageRoute($request, $response, $page, $action)) {
+            $response->content($content);
+            return $response;
+        }
+        return null;
+    }
+
+    protected static function staticRoute(Request $request, string $route, string $action): ?Response
+    {
+        $response = new Response($request->url(), 200);
+        if ($content = FilesystemRouter::staticRoute($request, $response, $route, $action)) {
+            $response->content($content);
+            return $response;
+        }
+        return null;
     }
 
     /**
@@ -127,12 +165,11 @@ class Digraph
      */
     public static function errorResponse(int $status, Request $request): Response
     {
-        if ($response = Dispatcher::firstValue('onErrorResponse', [$status, $request])) {
-            return $response;
-        }
-        return new Response(
-            $request ? $request->url() : new URL("/error_$status/"),
-            $status
-        );
+        return
+            Dispatcher::firstValue('onErrorResponse', [$status, $request]) ??
+            new Response(
+                $request ? $request->url() : new URL("/error_$status/"),
+                $status
+            );
     }
 }

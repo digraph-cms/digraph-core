@@ -53,7 +53,7 @@ class DB
                         Config::get('db.pdo_options')
                     );
                     if (Config::get('db.sqlite_create_functions')) {
-                        SqliteJsonShim::createFunctions(self::$pdo);
+                        SqliteShim::createFunctions(self::$pdo);
                     }
                     break;
                 case 'mysql':

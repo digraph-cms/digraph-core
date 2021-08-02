@@ -4,7 +4,7 @@ namespace DigraphCMS\DB;
 
 use PDO;
 
-class SqliteJsonShim
+class SqliteShim
 {
     public static function createFunctions(PDO $pdo)
     {

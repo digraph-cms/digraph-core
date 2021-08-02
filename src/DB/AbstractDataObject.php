@@ -20,15 +20,21 @@ abstract class AbstractDataObject implements ArrayAccess
 
     protected $changed = false;
 
-    public function __construct(array $data = [], string $uuid = null, DateTime $created = null, string $created_by = null, DateTime $updated = null, string $updated_by = null)
+    protected function construct(array $data, array $metadata)
     {
-        $this->uuid = $uuid ?? Digraph::uuid();
-        $this->created = $created ?? new DateTime();
-        $this->created_by = $created_by ?? Session::user();
-        $this->updated = $updated ?? new DateTime();
+        //does nothing
+    }
+
+    public function __construct(array $data = [], array $metadata = [])
+    {
+        $this->uuid = @$metadata['uuid'] ?? Digraph::uuid();
+        $this->created = @$metadata['created'] ?? new DateTime();
+        $this->created_by = @$metadata['created_by'] ?? Session::user();
+        $this->updated = @$metadata['updated'] ?? new DateTime();
         $this->updated_last = clone $this->updated;
-        $this->updated_by = $updated_by ?? Session::user();
-        $this->rawSet(null,$data);
+        $this->updated_by = @$metadata['updated_by'] ?? Session::user();
+        $this->rawSet(null, $data);
+        $this->construct($data, $metadata);
         Dispatcher::dispatchEvent('onPageConstruct', [$this]);
         $this->changed = false;
     }
