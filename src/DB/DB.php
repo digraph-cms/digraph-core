@@ -9,27 +9,8 @@ use PDO;
 
 class DB
 {
-    const TOUCH = true;
     protected static $pdo, $driver, $query;
     protected static $migrationPaths = [];
-
-    public static function __init()
-    {
-        Dispatcher::addSubscriber(static::class);
-        self::addMigrationPath(__DIR__ . '/../../phinx');
-    }
-
-    public static function onShutdown()
-    {
-        self::commit();
-    }
-
-    public static function commit()
-    {
-        self::pdo()->beginTransaction();
-        Dispatcher::dispatchEvent('onDatabaseCommit');
-        self::pdo()->commit();
-    }
 
     public static function migrationPaths(): array
     {
@@ -109,5 +90,3 @@ class DB
         return self::$query;
     }
 }
-
-DB::__init();

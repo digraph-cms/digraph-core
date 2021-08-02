@@ -18,11 +18,7 @@ abstract class AbstractDataObjectSource
         'updated_by' => 'updated_by',
     ];
 
-    protected static $insert = [];
-    protected static $update = [];
-    protected static $delete = [];
     protected static $cache = [];
-    protected static $exists = [];
 
     abstract public static function objectClass(array $result): string;
 
@@ -33,17 +29,8 @@ abstract class AbstractDataObjectSource
 
     public static function exists(string $uuid): bool
     {
-        if (!isset(self::$exists[$uuid])) {
-            self::$exists[$uuid] = self::doExists($uuid);
-        }
-        return self::$exists[$uuid];
-    }
-
-    protected static function doExists(string $uuid): bool
-    {
         $query = DB::query()->from(static::TABLE)
-            ->where(static::COLNAMES['uuid'] . ' = ?', [$uuid])
-            ->limit(1);
+            ->where(static::COLNAMES['uuid'] . ' = ?', [$uuid]);
         return !!$query->count();
     }
 
@@ -70,7 +57,7 @@ abstract class AbstractDataObjectSource
         ];
     }
 
-    protected static function deleteObject(AbstractDataObject $object)
+    public static function delete(AbstractDataObject $object)
     {
         $query = DB::query()->delete(static::TABLE);
         $query->where(
@@ -80,9 +67,25 @@ abstract class AbstractDataObjectSource
                 $object->updatedLast()->format("Y-m-d H:i:s")
             ]
         )->execute();
+        static::filterCache($object);
     }
 
-    protected static function insertObject(AbstractDataObject $object)
+    /**
+     * Remove a given object from the 
+     *
+     * @param AbstractDataObject $object
+     * @return void
+     */
+    protected static function filterCache(AbstractDataObject $object)
+    {
+        foreach (static::$cache as $i => $v) {
+            if ($v->uuid() == $object->uuid()) {
+                unset(static::$cache[$i]);
+            }
+        }
+    }
+
+    public static function insert(AbstractDataObject $object)
     {
         $query = DB::query();
         $query->insertInto(
@@ -91,7 +94,7 @@ abstract class AbstractDataObjectSource
         )->execute();
     }
 
-    protected static function updateObject(AbstractDataObject $object)
+    public static function update(AbstractDataObject $object)
     {
         $query = DB::query()->update(static::TABLE);
         $query->where(
@@ -103,28 +106,6 @@ abstract class AbstractDataObjectSource
         )
             ->set(static::updateObjectValues($object))
             ->execute();
-    }
-
-    public static function onDatabaseCommit()
-    {
-        // do deletions
-        foreach (static::$delete as $uuid => $object) {
-            static::deleteObject($object);
-            unset(static::$cache[$uuid]);
-            unset(static::$delete[$uuid]);
-            unset(static::$insert[$uuid]);
-            unset(static::$update[$uuid]);
-        }
-        // do insertions
-        foreach (static::$insert as $uuid => $object) {
-            static::insertObject($object);
-            unset(static::$insert[$uuid]);
-        }
-        // do updates
-        foreach (static::$update as $uuid => $object) {
-            static::updateObject($object);
-            unset(static::$update[$uuid]);
-        }
     }
 
     public static function get(string $uuid): ?AbstractDataObject
@@ -141,24 +122,6 @@ abstract class AbstractDataObjectSource
             }
         }
         return static::$cache[$uuid];
-    }
-
-    public static function insert(AbstractDataObject $object)
-    {
-        DB::TOUCH;
-        static::$insert[$object->uuid()] = $object;
-    }
-
-    public static function update(AbstractDataObject $object)
-    {
-        DB::TOUCH;
-        static::$update[$object->uuid()] = $object;
-    }
-
-    public static function delete(AbstractDataObject $object)
-    {
-        DB::TOUCH;
-        static::$delete[$object->uuid()] = $object;
     }
 
     public static function resultToObject($result): ?AbstractDataObject

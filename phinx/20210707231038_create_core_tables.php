@@ -19,7 +19,7 @@ final class CreateCoreTables extends AbstractMigration
             ->addColumn('created_by', 'string')
             ->addColumn('updated', 'timestamp', ['default' => 'CURRENT_TIMESTAMP', 'update' => 'CURRENT_TIMESTAMP', 'timezone' => true])
             ->addColumn('updated_by', 'string')
-            ->addIndex(['page_uuid'])
+            ->addIndex(['page_uuid'], ['unique' => true])
             ->addIndex(['page_class'])
             ->addIndex(['created'])
             ->addIndex(['updated'])
@@ -27,7 +27,6 @@ final class CreateCoreTables extends AbstractMigration
         // aliases table holds URL aliases/redirects
         $aliases = $this->table('aliases');
         $aliases
-            ->addColumn('alias_uuid', 'uuid')
             ->addColumn('alias_start', 'string', ['length' => 100])
             ->addColumn('alias_end', 'string', ['length' => 100])
             ->addIndex(['alias_start'])
@@ -37,7 +36,6 @@ final class CreateCoreTables extends AbstractMigration
         // links table holds edges between pages
         $links = $this->table('links');
         $links
-            ->addColumn('link_uuid', 'uuid')
             ->addColumn('link_start', 'uuid')
             ->addColumn('link_end', 'uuid')
             ->addColumn('link_type', 'string', ['length' => 50])

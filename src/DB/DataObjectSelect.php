@@ -2,7 +2,9 @@
 
 namespace DigraphCMS\DB;
 
+use ArrayIterator;
 use Envms\FluentPDO\Queries\Select;
+use PDOStatement;
 
 class DataObjectSelect implements \Countable, \Iterator
 {
@@ -212,6 +214,12 @@ class DataObjectSelect implements \Countable, \Iterator
     {
         if ($this->iterator === null) {
             $this->iterator = $this->query->getIterator();
+            // convert non-buffered queries into ArrayIterators, which is slower but
+            // should make them work the same everywhere (this should maybe do
+            // some checking other than "is it MySQL" but meh)
+            if (DB::driver() != 'mysql' && $this->iterator instanceof PDOStatement) {
+                $this->iterator = new ArrayIterator($this->iterator->fetchAll());
+            }
         }
         return $this->iterator;
     }

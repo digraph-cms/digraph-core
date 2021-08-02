@@ -12,7 +12,7 @@ class Page extends AbstractDataObject
 
     protected function construct(array $data, array $metadata)
     {
-        $this->slug(@$metadata['slug'] ?? substr($this->uuid(), 0, 8), true);
+        $this->slug(@$metadata['slug'] ?? substr($this->uuid(), 0, 8), false);
         $this->previousSlug = null;
     }
 
@@ -35,7 +35,7 @@ class Page extends AbstractDataObject
             } else {
                 // otherwise slug must still *never* collide with a UUID
                 // UUIDs *must* be usable for unique/canonical URLs
-                while (Pages::uuidExists($this->slug)) {
+                while (Pages::exists($this->slug)) {
                     $this->slug = $slug .= '-' . bin2hex(random_bytes(4));
                 }
             }

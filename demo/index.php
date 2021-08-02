@@ -1,8 +1,10 @@
 <?php
 
 use DigraphCMS\Config;
+use DigraphCMS\Content\Graph;
 use DigraphCMS\Content\Page;
 use DigraphCMS\Content\Pages;
+use DigraphCMS\DB\DB;
 use DigraphCMS\DB\SqliteShim;
 use DigraphCMS\Digraph;
 use DigraphCMS\Events\Dispatcher;
@@ -17,8 +19,8 @@ Config::merge([
     'paths.web' => __DIR__
 ]);
 
-// Dispatcher::$closeResponseBeforeShutdown = false;
-// Digraph::renderActualRequest();
+Dispatcher::$closeResponseBeforeShutdown = false;
+Digraph::renderActualRequest();
 
 // $page = new Page([],[
 //     'slug'=>'fdd2b9ba-59ab-7769-62de-68a11b4dadb6'
@@ -28,6 +30,7 @@ Config::merge([
 
 // ini_set('memory_limit','10480M');
 // set_time_limit(0);
+// DB::pdo()->beginTransaction();
 // for ($i = 0; $i < 10000; $i++) {
 //     $page = new Page([
 //         'foo' => [
@@ -37,9 +40,11 @@ Config::merge([
 //     ]);
 //     $page->insert();
 // }
+// DB::pdo()->commit();
 
-$page = Pages::get('cd3b826f-2fd4-d173-6c26-3655c2ff097e');
-var_dump($page);
+// Graph::removeLink('foo','bar');
+// $page = Pages::get('ace00b01');
+// var_dump($page);
 
 $time = microtime(true) - START_TIME;
 $time = round($time * 1000);
