@@ -7,6 +7,8 @@ use DigraphCMS\Events\Dispatcher;
 use Envms\FluentPDO\Query;
 use PDO;
 
+DB::addMigrationPath(__DIR__ . '/../../phinx');
+
 class DB
 {
     protected static $pdo, $driver, $query;

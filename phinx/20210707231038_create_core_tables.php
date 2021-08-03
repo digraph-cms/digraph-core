@@ -24,14 +24,15 @@ final class CreateCoreTables extends AbstractMigration
             ->addIndex(['created'])
             ->addIndex(['updated'])
             ->create();
-        // aliases table holds URL aliases/redirects
-        $aliases = $this->table('aliases');
-        $aliases
-            ->addColumn('alias_start', 'string', ['length' => 100])
-            ->addColumn('alias_end', 'string', ['length' => 100])
-            ->addIndex(['alias_start'])
-            ->addIndex(['alias_end'])
-            ->addIndex(['alias_start', 'alias_end'], ['unique' => true])
+        // slugs table holds additional older slugs
+        $slugs = $this->table('slugs');
+        $slugs
+            ->addColumn('slug_slug', 'string', ['length' => 100])
+            ->addColumn('slug_page', 'uuid')
+            ->addIndex(['slug_slug'])
+            ->addIndex(['slug_page'])
+            ->addIndex(['slug_slug', 'slug_page'], ['unique' => true])
+            ->addForeignKey('slug_page', 'pages', 'page_uuid')
             ->create();
         // links table holds edges between pages
         $links = $this->table('links');

@@ -1,12 +1,12 @@
 <?php
 
-namespace DigraphCMS\DB;
+namespace DigraphCMS\Content;
 
 use ArrayIterator;
 use Envms\FluentPDO\Queries\Select;
 use PDOStatement;
 
-class DataObjectSelect implements \Countable, \Iterator
+class PageSelect implements \Countable, \Iterator
 {
     protected $query, $iterator;
     protected $returnDataObjects = true;
@@ -30,14 +30,14 @@ class DataObjectSelect implements \Countable, \Iterator
      *
      * @param string $columns
      * @param boolean $overrideDefault
-     * @return void
+     * @return PageSelect
      */
-    public function select($columns, bool $overrideDefault = false)
+    public function select($columns, bool $overrideDefault = false): PageSelect
     {
         if ($overrideDefault) {
             $this->returnDataObjects = false;
         }
-        $this->query->select($columns,$overrideDefault);
+        $this->query->select($columns, $overrideDefault);
         return $this;
     }
 
@@ -53,9 +53,9 @@ class DataObjectSelect implements \Countable, \Iterator
      * @param string|array $condition
      * @param array $parameters
      * @param string $separator
-     * @return void
+     * @return PageSelect
      */
-    public function where($condition, $parameters = [], $separator = "AND")
+    public function where($condition, $parameters = [], $separator = "AND"): PageSelect
     {
         $this->query->where($condition, $parameters, $separator);
         return $this;
@@ -67,9 +67,9 @@ class DataObjectSelect implements \Countable, \Iterator
      * @param string|array $condition
      * @param array $parameters
      * @param string $separator
-     * @return void
+     * @return PageSelect
      */
-    public function whereOr($condition, $parameters = [], $separator = "AND")
+    public function whereOr($condition, $parameters = [], $separator = "AND"): PageSelect
     {
         $this->query->whereOr($condition, $parameters, $separator);
         return $this;
@@ -89,9 +89,9 @@ class DataObjectSelect implements \Countable, \Iterator
      * Add an ORDER BY clause
      *
      * @param string $column
-     * @return DataObjectSelect
+     * @return PageSelect
      */
-    public function order(string $column): DataObjectSelect
+    public function order(string $column): PageSelect
     {
         $this->query->order($column);
         return $this;
@@ -101,9 +101,9 @@ class DataObjectSelect implements \Countable, \Iterator
      * Add a HAVING clause
      *
      * @param string $column
-     * @return DataObjectSelect
+     * @return PageSelect
      */
-    public function having(string $column): DataObjectSelect
+    public function having(string $column): PageSelect
     {
         $this->query->having($column);
         return $this;
@@ -113,9 +113,9 @@ class DataObjectSelect implements \Countable, \Iterator
      * Add a LIMIT clause
      *
      * @param integer $column
-     * @return DataObjectSelect
+     * @return PageSelect
      */
-    public function limit(int $column): DataObjectSelect
+    public function limit(int $column): PageSelect
     {
         $this->query->limit($column);
         return $this;
@@ -125,9 +125,9 @@ class DataObjectSelect implements \Countable, \Iterator
      * Add an OFFSET clause
      *
      * @param integer $column
-     * @return DataObjectSelect
+     * @return PageSelect
      */
-    public function offset(int $column): DataObjectSelect
+    public function offset(int $column): PageSelect
     {
         $this->query->offset($column);
         return $this;
@@ -137,9 +137,9 @@ class DataObjectSelect implements \Countable, \Iterator
      * Add a GROUP BY clause
      *
      * @param string $column
-     * @return DataObjectSelect
+     * @return PageSelect
      */
-    public function group(string $column): DataObjectSelect
+    public function group(string $column): PageSelect
     {
         $this->returnDataObjects = false;
         $this->query->group($column);
@@ -160,12 +160,12 @@ class DataObjectSelect implements \Countable, \Iterator
     /**
      * Fetch first DataObject, or raw row if returnDataObjects
      *
-     * @return AbstractDataObject|array|null
+     * @return Page|array|null
      */
     public function fetch()
     {
         if ($this->returnDataObjects) {
-            return ($this->source)::resultToObject($this->query->fetch());
+            return ($this->source)::resultToPage($this->query->fetch());
         } else {
             $this->query->fetch();
         }
@@ -183,7 +183,7 @@ class DataObjectSelect implements \Countable, \Iterator
         if ($this->returnDataObjects) {
             $out = [];
             foreach ($this->query->fetchAll($index, $selectOnly) as $result) {
-                $out[] = ($this->source)::resultToObject($result) ?? false;
+                $out[] = ($this->source)::resultToPage($result) ?? false;
             }
             return array_filter($out);
         } else {
@@ -232,7 +232,7 @@ class DataObjectSelect implements \Countable, \Iterator
     public function current()
     {
         if ($this->returnDataObjects) {
-            return ($this->source)::resultToObject($this->getIterator()->current());
+            return ($this->source)::resultToPage($this->getIterator()->current());
         } else {
             $this->getIterator()->current();
         }

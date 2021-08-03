@@ -20,12 +20,9 @@ class FilesystemRouter
 
     public static function pageRoute(Request $request, Response $response, Page $page, string $action): ?string
     {
-        $classes = [
-            '@' . $page->class(),
-            '@_any'
-        ];
-        foreach ($classes as $class) {
-            $output = self::tryRoute("$class/$action", $request, $response, $page);
+        $classes = $page->routeClasses();
+        foreach ($classes as $c) {
+            $output = self::tryRoute("@$c/$action", $request, $response, $page);
             if ($output !== null) {
                 return $output;
             }
@@ -35,7 +32,34 @@ class FilesystemRouter
 
     public static function staticRoute(Request $request, Response $response, string $route, string $action): ?string
     {
+        $routes = [
+            $route,
+            '_any'
+        ];
+        foreach ($routes as $r) {
+            $output = self::tryRoute("~$r/$action", $request, $response);
+            if ($output !== null) {
+                return $output;
+            }
+        }
         return null;
+    }
+
+    public static function staticRouteExists(string $route, string $action): bool
+    {
+        $routes = [
+            $route,
+            '_any'
+        ];
+        foreach ($routes as $r) {
+            foreach (self::$sources as $source) {
+                $path = "$source/~$r/$action.action.php";
+                if (is_file($path)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     protected static function tryRoute(string $route, Request $request, Response $response, Page $page = null): ?string
@@ -43,9 +67,18 @@ class FilesystemRouter
         foreach (self::$sources as $source) {
             $path = "$source/$route.action.php";
             if (is_file($path)) {
-                return Route::include_file($path, $request, $response, $page);
+                return include_file($path, $request, $response, $page);
             }
         }
         return null;
     }
+}
+
+function include_file(string $file, Request $request, Response $response, Page $page = null): string
+{
+    Route::beginContext($request, $response, $page);
+    ob_start();
+    include $file;
+    Route::endContext();
+    return ob_get_clean();
 }

@@ -75,14 +75,18 @@ class URL
 
     public function page(): ?Page
     {
-        return Pages::get($this->route());
+        if ($this->explicitlyStaticRoute()) {
+            return null;
+        } else {
+            return Pages::get($this->route());
+        }
     }
 
     public function html(array $class = [], string $target = null): string
     {
         if ($class) {
             $class = ' class="' . implode(' ', $class) . '"';
-        }else {
+        } else {
             $class = '';
         }
         if ($target) {
@@ -148,7 +152,25 @@ class URL
 
     public function route(): string
     {
-        return trim($this->directory(), '/');
+        $route = trim($this->directory(), '/');
+        if (substr($route, 0, 1) == '~') {
+            $route = substr($route, 1);
+        }
+        if ($route == '') {
+            $route = 'home';
+        }
+        return $route;
+    }
+
+    /**
+     * Return whether or not the current URL is an explicitly static route
+     * (meaning that the base directory starts with "~")
+     *
+     * @return boolean
+     */
+    public function explicitlyStaticRoute(): bool
+    {
+        return substr($this->directory(), 0, 2) == '/~';
     }
 
     /**
@@ -164,9 +186,18 @@ class URL
         return 'index';
     }
 
+    protected function pathString(): string
+    {
+        // strip trailing index.html
+        $path = preg_replace('@/index.html$@', '/', $this->path());
+        // strip leading ~home or home directory
+        $path = preg_replace('@^/~?home/@', '/', $path);
+        return $path;
+    }
+
     public function __toString(): string
     {
-        return URLs::site() . $this->path() . $this->queryString();
+        return URLs::site() . $this->pathString() . $this->queryString();
     }
 
     protected function queryString(): string

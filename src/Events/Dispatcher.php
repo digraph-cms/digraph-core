@@ -86,6 +86,7 @@ class Dispatcher
      */
     public static function firstValue(string $event, array $args = [])
     {
+        $event = static::normalizeEventName($event);
         foreach (array_reverse(self::$listeners[$event] ?? []) as $callback) {
             if (null !== ($value = call_user_func_array($callback, $args))) {
                 return $value;
@@ -103,11 +104,24 @@ class Dispatcher
      */
     public static function dispatchEvent(string $event, array $args = [])
     {
+        $event = static::normalizeEventName($event);
         foreach (self::$listeners[$event] ?? [] as $callback) {
             if (call_user_func_array($callback, $args) === false) {
                 break;
             }
         }
+    }
+
+    /**
+     * Ensure that event names only contain characters that are valid function
+     * names so that they can be called on listeners/subscribers.
+     *
+     * @param string $name
+     * @return string
+     */
+    protected static function normalizeEventName(string $name): string
+    {
+        return preg_replace('/[^a-zA-Z0-9_]/', '_', $name);
     }
 
     /**

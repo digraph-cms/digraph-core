@@ -2,36 +2,44 @@
 
 namespace DigraphCMS\Content;
 
-use DigraphCMS\DB\AbstractDataObject;
-use DigraphCMS\DB\AbstractDataObjectSource;
-use DigraphCMS\DB\DataObjectSelect;
+use DateTime;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\Session\Session;
 use Envms\FluentPDO\Queries\Select;
 
-class Pages extends AbstractDataObjectSource
+Dispatcher::addSubscriber(Pages::class);
+
+class Pages
 {
-    const TABLE = 'pages';
-    const COLNAMES = [
-        'uuid' => 'page_uuid',
-        'slug' => 'page_slug',
-        'data' => 'page_data',
-        'class' => 'page_class',
-        'created' => 'created',
-        'created_by' => 'created_by',
-        'updated' => 'updated',
-        'updated_by' => 'updated_by',
-    ];
+    const SLUG_CHARS = 'a-zA-Z0-9\\-_';
+    protected static $cache = [];
+
+    public static function validateSlug(string $slug): bool
+    {
+        return preg_match("@^[" . static::SLUG_CHARS . "]*(/[" . static::SLUG_CHARS . "]+)*$@", $slug);
+    }
+
+    public static function exists(string $uuid): bool
+    {
+        $query = DB::query()->from('pages')
+            ->where('page_uuid = ?', [$uuid]);
+        return !!$query->count();
+    }
+
+    public static function select(): PageSelect
+    {
+        return new PageSelect(DB::query()->from('pages'), static::class);
+    }
 
     /**
      * Get the child Pages of a given Page uuid
      *
      * @param string $start
      * @param string $order
-     * @return DataObjectSelect
+     * @return PageSelect
      */
-    public static function children(string $start, string $order = 'created ASC'): DataObjectSelect
+    public static function children(string $start, string $order = 'created ASC'): PageSelect
     {
         $query = static::select();
         $query->leftJoin('links ON link_end = page_uuid');
@@ -98,33 +106,48 @@ class Pages extends AbstractDataObjectSource
     }
 
     /**
-     * Undocumented function
+     * Determine whether a slug already exists (also searches UUIDs, because
+     * they are implicitly slugs)
      *
      * @param string $uuid_or_slug
      * @return boolean
      */
-    public static function validateSlug(string $uuid_or_slug): bool
-    {
-        return !self::slugExists($uuid_or_slug) && !self::exists($uuid_or_slug);
-    }
-
     public static function slugExists(string $uuid_or_slug): bool
     {
-        $query = DB::query()->from(static::TABLE)
+        $query = DB::query()->from('pages')
             ->where('page_uuid = :q OR page_slug = :q', [':q' => $uuid_or_slug]);
         return !!$query->count();
     }
 
-    public function getAll(string $uuid_or_slug): DataObjectSelect
+    /**
+     * Get all pages that match the given slug/UUID, including those indicated
+     * by an alias. Significantly slower than get(). A UUID match will be first,
+     * followed by slug matches, followed by alias matches. Within slugs and
+     * aliases pages are sorted by creation date, with older pages first.
+     *
+     * @param string $uuid_or_slug
+     * @return PageSelect
+     */
+    public static function getAll(string $uuid_or_slug): PageSelect
     {
-        $select = $this->select();
+        $select = static::select();
         $select->where('page_uuid = :q OR page_slug = :q', [':q' => $uuid_or_slug]);
         $select->order('CASE WHEN :q = page_uuid THEN 0 ELSE 1 END ASC, created ASC');
         // TODO: get by alias and append (will require multiple DB calls and returning an array)
         return $select;
     }
 
-    public static function get(string $uuid_or_slug): ?AbstractDataObject
+    /**
+     * Get the top result for a given slug/UUID. Will be fastest for UUID and
+     * slug matches, but will run an additional query and search aliases if
+     * UUID or slug matches are not found. A UUID match will take precedence,
+     * followed by the oldest creation date slug match, followed by the oldest
+     * alias match.
+     *
+     * @param string $uuid_or_slug
+     * @return Page|null
+     */
+    public static function get(string $uuid_or_slug): ?Page
     {
         if (!isset(static::$cache[$uuid_or_slug])) {
             static::$cache[$uuid_or_slug] =
@@ -135,7 +158,7 @@ class Pages extends AbstractDataObjectSource
         return static::$cache[$uuid_or_slug];
     }
 
-    protected static function doGet(string $uuid_or_slug): ?AbstractDataObject
+    protected static function doGet(string $uuid_or_slug): ?Page
     {
         $query = DB::query()->from('pages')
             ->where('page_uuid = :q OR page_slug = :q', [':q' => $uuid_or_slug])
@@ -143,7 +166,7 @@ class Pages extends AbstractDataObjectSource
             ->limit(1);
         $result = $query->execute();
         if ($result && $result = $result->fetch()) {
-            return static::resultToObject($result);
+            return static::resultToPage($result);
         } else {
             return null;
         }
@@ -154,27 +177,112 @@ class Pages extends AbstractDataObjectSource
         return Page::class;
     }
 
-    protected static function insertObjectValues(AbstractDataObject $object): array
+    public static function update(Page $page)
+    {
+        //TODO: insert alias if slug updated
+        // update values
+        $query = DB::query()->update('pages');
+        $query->where(
+            'page_uuid = ? AND updated = ?',
+            [
+                $page->uuid(),
+                $page->updatedLast()->format("Y-m-d H:i:s")
+            ]
+        )
+            ->set(static::updateObjectValues($page))
+            ->execute();
+    }
+
+    public static function insert(Page $page)
+    {
+        // insert value
+        $query = DB::query();
+        $query->insertInto(
+            'pages',
+            static::insertObjectValues($page)
+        )->execute();
+    }
+
+    public static function delete(Page $page)
+    {
+        //TODO: delete links
+        //TODO: delete linked aliases
+        // delete object
+        $query = DB::query()->delete('pages');
+        $query->where(
+            'page_uuid = ? AND updated = ?',
+            [
+                $page->uuid(),
+                $page->updatedLast()->format("Y-m-d H:i:s")
+            ]
+        )->execute();
+        static::filterCache($page);
+    }
+
+    protected static function insertObjectValues(Page $page): array
     {
         return [
-            static::COLNAMES['uuid'] => $object->uuid(),
-            static::COLNAMES['slug'] => $object->slug(),
-            static::COLNAMES['data'] => json_encode($object->get()),
-            static::COLNAMES['class'] => $object->class(),
-            static::COLNAMES['created_by'] => $object->createdBy(),
-            static::COLNAMES['updated_by'] => $object->updatedBy(),
+            'page_uuid' => $page->uuid(),
+            'page_slug' => $page->slug(),
+            'page_data' => json_encode($page->get()),
+            'page_class' => $page->class(),
+            'created_by' => $page->createdBy(),
+            'updated_by' => $page->updatedBy(),
         ];
     }
 
-    protected static function updateObjectValues(AbstractDataObject $object): array
+    protected static function updateObjectValues(Page $page): array
     {
         return [
-            static::COLNAMES['slug'] => $object->slug(),
-            static::COLNAMES['data'] => json_encode($object->get()),
-            static::COLNAMES['class'] => $object->class(),
-            static::COLNAMES['updated_by'] => Session::user()
+            'page_slug' => $page->slug(),
+            'page_data' => json_encode($page->get()),
+            'page_class' => $page->class(),
+            'updated_by' => Session::user()
         ];
+    }
+
+    /**
+     * Remove a given object from the 
+     *
+     * @param Page $page
+     * @return void
+     */
+    protected static function filterCache(Page $page)
+    {
+        foreach (static::$cache as $i => $v) {
+            if ($v->uuid() == $page->uuid()) {
+                unset(static::$cache[$i]);
+            }
+        }
+    }
+
+    public static function resultToPage($result): ?Page
+    {
+        if (!is_array($result)) {
+            return null;
+        }
+        if (isset(static::$cache[$result['page_uuid']])) {
+            return static::$cache[$result['page_uuid']];
+        }
+        if ('page_data') {
+            if (false === ($data = json_decode($result['page_data'], true))) {
+                throw new \Exception("Error decoding Page json data");
+            }
+        } else {
+            $data = [];
+        }
+        $class = static::objectClass($result);
+        static::$cache[$result['page_uuid']] = new $class(
+            $data,
+            [
+                'uuid' => $result['page_uuid'],
+                'slug' => $result['page_slug'],
+                'created' => new DateTime($result['created']),
+                'created_by' => $result['created_by'],
+                'updated' => new DateTime($result['updated']),
+                'updated_by' => $result['updated_by'],
+            ]
+        );
+        return static::$cache[$result['page_uuid']];
     }
 }
-
-Pages::__init();

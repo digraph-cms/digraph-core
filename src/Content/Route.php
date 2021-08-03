@@ -42,16 +42,7 @@ class Route
         }
     }
 
-    public static function include_file(string $file, Request $request, Response $response, Page $page = null): string
-    {
-        self::beginContext($request, $response, $page);
-        ob_start();
-        include_file($file);
-        self::endContext();
-        return ob_get_clean();
-    }
-
-    protected static function beginContext(Request $request, Response $response, Page $page = null)
+    public static function beginContext(Request $request, Response $response, Page $page = null)
     {
         self::$context[] = [
             'request' => $request,
@@ -60,13 +51,8 @@ class Route
         ];
     }
 
-    protected static function endContext()
+    public static function endContext()
     {
         array_pop(self::$context);
     }
-}
-
-function include_file($file)
-{
-    include $file;
 }
