@@ -16,6 +16,8 @@ class Response
     protected $browserTTL = null;
     protected $cacheTTL = null;
     protected $private = null;
+    protected $template = null;
+    protected $mime = 'text/html';
 
     public function __construct(URL $url, int $status = null)
     {
@@ -23,6 +25,29 @@ class Response
         $this->status($status);
         $this->headers = new ResponseHeaders();
         $this->headers->response($this);
+    }
+
+    public function mime(string $mime = null): string
+    {
+        if ($mime !== null) {
+            $this->mime = $mime;
+        }
+        return $this->mime;
+    }
+
+    public function template(string $template = null): string
+    {
+        if ($template !== null) {
+            $this->template = $template;
+        }
+        return $this->template
+            ?? Config::get("templates.default." . $this->status())
+            ?? ($this->status() == 200 ? Config::get("templates.default.default") : Config::get("templates.default.minimal"));
+    }
+
+    public function resetTemplate()
+    {
+        $this->template = null;
     }
 
     public function redirect(string $url, bool $permanent = false)
@@ -91,7 +116,7 @@ class Response
 
     public function url(): URL
     {
-        return clone $this->url;
+        return $this->url;
     }
 
     public function status(int $status = null): int
@@ -121,6 +146,7 @@ class Response
         foreach ($this->headers()->toArray() as $key => $value) {
             header("$key: $value");
         }
+        header('Content-Type: ' . $this->mime());
         http_response_code($this->status());
     }
 

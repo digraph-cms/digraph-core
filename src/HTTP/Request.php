@@ -2,12 +2,10 @@
 
 namespace DigraphCMS\HTTP;
 
-use DigraphCMS\Content\Page;
 use DigraphCMS\URL\URL;
 
 class Request
 {
-    protected $page = null;
     protected $url = null;
     protected $originalUrl = null;
     protected $method = null;
@@ -19,14 +17,6 @@ class Request
         $this->url($url);
         $this->method = $method;
         $this->headers = $headers;
-    }
-
-    public function page(Page $page = null): ?Page
-    {
-        if ($page) {
-            $this->page = $page;
-        }
-        return $this->page;
     }
 
     public function headers(): RequestHeaders
@@ -45,7 +35,7 @@ class Request
             $this->url = clone $url;
             $this->url->normalize();
         }
-        return clone $this->url;
+        return $this->url;
     }
 
     public function originalUrl(): URL

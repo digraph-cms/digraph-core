@@ -23,3 +23,17 @@ page:
         _any: null
     browserttl:
         _any: null
+
+templates:
+    default:
+        default: digraph/default.php
+        minimal: digraph/minimal.php
+        500: digraph/error.php
+    fields:
+        site:
+            name: Default site
+        page:
+            name: null
+
+errors:
+    display: true

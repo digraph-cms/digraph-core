@@ -2,15 +2,22 @@
 
 namespace DigraphCMS\Content;
 
-use DigraphCMS\HTTP\Request;
-use DigraphCMS\HTTP\Response;
+use DigraphCMS\Context;
 
+// Always add the default system routes directory
 FilesystemRouter::addSource(__DIR__ . '/../../routes');
 
 class FilesystemRouter
 {
     protected static $sources = [];
 
+    /**
+     * Add a source directory to the top of the list of directories to search in
+     * for filesystem route handlers. 
+     *
+     * @param string $dir
+     * @return void
+     */
     public static function addSource(string $dir)
     {
         if (($dir = realpath($dir)) && is_dir($dir) && !in_array($dir, self::$sources)) {
@@ -18,26 +25,38 @@ class FilesystemRouter
         }
     }
 
-    public static function pageRoute(Request $request, Response $response, Page $page, string $action): ?string
+    /**
+     * Search for and execute a route handler for a given request, response, and
+     * page. Returns a string if handler is executed, null otherwise.
+     */
+    public static function pageRoute(Page $page, string $action): ?string
     {
+        Context::clone();
+        Context::page($page);
         $classes = $page->routeClasses();
         foreach ($classes as $c) {
-            $output = self::tryRoute("@$c/$action", $request, $response, $page);
+            $output = self::tryRoute("@$c/$action");
             if ($output !== null) {
+                Context::end();
                 return $output;
             }
         }
+        Context::end();
         return null;
     }
 
-    public static function staticRoute(Request $request, Response $response, string $route, string $action): ?string
+    /**
+     * Search for and execute a static route for a given request and response. 
+     * Returns a string if handler is executed, null otherwise.
+     */
+    public static function staticRoute(string $route, string $action): ?string
     {
         $routes = [
             $route,
             '_any'
         ];
         foreach ($routes as $r) {
-            $output = self::tryRoute("~$r/$action", $request, $response);
+            $output = self::tryRoute("~$r/$action");
             if ($output !== null) {
                 return $output;
             }
@@ -45,6 +64,14 @@ class FilesystemRouter
         return null;
     }
 
+    /**
+     * Check whether a handler for a given static route exists, but do not
+     * actually execute it yet.
+     *
+     * @param string $route
+     * @param string $action
+     * @return boolean
+     */
     public static function staticRouteExists(string $route, string $action): bool
     {
         $routes = [
@@ -62,23 +89,26 @@ class FilesystemRouter
         return false;
     }
 
-    protected static function tryRoute(string $route, Request $request, Response $response, Page $page = null): ?string
+    protected static function tryRoute(string $route): ?string
     {
         foreach (self::$sources as $source) {
             $path = "$source/$route.action.php";
             if (is_file($path)) {
-                return include_file($path, $request, $response, $page);
+                return require_file($path);
             }
         }
         return null;
     }
 }
 
-function include_file(string $file, Request $request, Response $response, Page $page = null): string
+function require_file(string $file): string
 {
-    Route::beginContext($request, $response, $page);
     ob_start();
-    include $file;
-    Route::endContext();
+    try {
+        require $file;
+    } catch (\Throwable $th) {
+        ob_end_clean();
+        throw $th;
+    }
     return ob_get_clean();
 }

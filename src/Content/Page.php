@@ -111,12 +111,8 @@ class Page implements ArrayAccess
         if ($action && !preg_match('/\.[a-z0-9]+$/', $action)) {
             $action .= '.html';
         }
-        $url = new URL(
-            '/' .
-                ($uuid ?? $this->slugCollisions() ? $this->uuid() : $this->slug()) .
-                '/' .
-                $action
-        );
+        $slug = ($uuid ?? $this->slugCollisions()) ? $this->uuid() : $this->slug();
+        $url = new URL("/$slug/$action");
         $url->query($args);
         return $url;
     }
