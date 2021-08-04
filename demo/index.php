@@ -2,7 +2,6 @@
 
 use DigraphCMS\Config;
 use DigraphCMS\Digraph;
-use DigraphCMS\Events\Dispatcher;
 
 include "../vendor/autoload.php";
 
@@ -12,5 +11,4 @@ Config::merge([
     'paths.web' => __DIR__
 ]);
 
-Dispatcher::$closeResponseBeforeShutdown = false;
 Digraph::renderActualRequest();

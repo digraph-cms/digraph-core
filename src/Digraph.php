@@ -111,8 +111,8 @@ class Digraph
             }
             // try to build a response
             Context::response(
-                static::doMakeResponse() ??
-                    static::errorResponse(404)
+                static::doMakeResponse()
+                    ?? static::errorResponse(404)
             );
             // if response URL doesn't match original URL, set canonical header
             if ($request->originalUrl() != Context::response()->url()) {
@@ -189,17 +189,16 @@ class Digraph
 
     protected static function errorResponse(int $status): Response
     {
-        $errorURL = new URL("/~error/$status.html");
         $response =
-            Dispatcher::firstValue('onErrorResponse', [$status]) ??
-            static::doStaticRoute($errorURL->route(), $status) ??
-            static::doStaticRoute($errorURL->route(), floor($status / 100) . 'xx') ??
-            static::doStaticRoute($errorURL->route(), 'xxx') ??
+            static::doStaticRoute('error', $status) ??
+            static::doStaticRoute('error', floor($status / 100) . 'xx') ??
+            static::doStaticRoute('error', 'xxx') ??
             false;
-        $response->status($status);
         if (!$response) {
-            $response = new Response($request->url(), $status);
-            $response->content("<h1>Error: $status</h1><p>Additionally, no error response was generated.</p>");
+            $response = new Response(clone Context::request()->url(), $status);
+            $response->content("<h1>Error: $status</h1><p>Additionally, no error response was correctly generated.</p>");
+        } else {
+            $response->status($status);
         }
         return $response;
     }

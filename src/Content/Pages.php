@@ -4,11 +4,8 @@ namespace DigraphCMS\Content;
 
 use DateTime;
 use DigraphCMS\DB\DB;
-use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\Session\Session;
 use Envms\FluentPDO\Queries\Select;
-
-Dispatcher::addSubscriber(Pages::class);
 
 class Pages
 {
@@ -150,10 +147,7 @@ class Pages
     public static function get(string $uuid_or_slug): ?Page
     {
         if (!isset(static::$cache[$uuid_or_slug])) {
-            static::$cache[$uuid_or_slug] =
-                self::doGet($uuid_or_slug) ??
-                // TODO: get by alias if necessary
-                Dispatcher::firstValue('onGetPage', [$uuid_or_slug]);
+            static::$cache[$uuid_or_slug] = self::doGet($uuid_or_slug);
         }
         return static::$cache[$uuid_or_slug];
     }
