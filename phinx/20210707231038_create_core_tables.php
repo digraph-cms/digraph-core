@@ -20,6 +20,7 @@ final class CreateCoreTables extends AbstractMigration
             ->addColumn('updated', 'timestamp', ['default' => 'CURRENT_TIMESTAMP', 'update' => 'CURRENT_TIMESTAMP', 'timezone' => true])
             ->addColumn('updated_by', 'string')
             ->addIndex(['page_uuid'], ['unique' => true])
+            ->addIndex(['page_slug'])
             ->addIndex(['page_class'])
             ->addIndex(['created'])
             ->addIndex(['updated'])
@@ -27,11 +28,11 @@ final class CreateCoreTables extends AbstractMigration
         // slugs table holds additional older slugs
         $slugs = $this->table('slugs');
         $slugs
-            ->addColumn('slug_slug', 'string', ['length' => 100])
+            ->addColumn('slug_url', 'string', ['length' => 100])
             ->addColumn('slug_page', 'uuid')
-            ->addIndex(['slug_slug'])
+            ->addIndex(['slug_url'])
             ->addIndex(['slug_page'])
-            ->addIndex(['slug_slug', 'slug_page'], ['unique' => true])
+            ->addIndex(['slug_url', 'slug_page'], ['unique' => true])
             ->addForeignKey('slug_page', 'pages', 'page_uuid')
             ->create();
         // links table holds edges between pages

@@ -12,7 +12,7 @@ $pages = Pages::getAll($route);
 
 ?>
 <h1>Multiple options</h1>
-<p>The requested URL can be resolved to more than one current piece of information. Please select one of the options below.</p>
+<p>The requested URL <code><?php echo htmlentities($rUrl); ?></code> currently refers to more than one page. Please select one of the options below to continue.</p>
 <ul>
     <?php
     while ($page = $pages->fetch()) {
