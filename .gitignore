@@ -1,7 +1,5 @@
 # demo storage/cache
 /demo/storage/*
-!/demo/storage/cache
-/demo/storage/cache/*
 /demo/files/*
 /demo/phinx/*
 

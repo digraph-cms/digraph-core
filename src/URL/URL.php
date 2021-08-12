@@ -98,7 +98,7 @@ class URL
     public function name(): string
     {
         if ($this->page()) {
-            return $this->page()->urlName($this);
+            return $this->page()->title($this);
         } else {
             return $this->path();
         }

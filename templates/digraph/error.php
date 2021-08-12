@@ -7,6 +7,7 @@ resources than absolutely necessary.
 */
 
 use DigraphCMS\Context;
+use DigraphCMS\Media\Media;
 
 $response = Context::response();
 $fields = Context::fields();
@@ -20,6 +21,9 @@ $fields = Context::fields();
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $fields['page.name'] ?? 'Error'; ?> :: <?php echo $fields['site.name']; ?></title>
+    <style>
+        <?php echo Media::get('/digraph/error.css')->content(); ?>
+    </style>
 </head>
 
 <body class='template-error'>

@@ -3,7 +3,6 @@
 namespace DigraphCMS\DB;
 
 use DigraphCMS\Config;
-use DigraphCMS\Events\Dispatcher;
 use Envms\FluentPDO\Query;
 use PDO;
 
@@ -13,6 +12,23 @@ class DB
 {
     protected static $pdo, $driver, $query;
     protected static $migrationPaths = [];
+    protected static $transactions = 0;
+
+    public static function beginTransaction()
+    {
+        static::$transactions++;
+        if (!static::pdo()->inTransaction()) {
+            static::pdo()->beginTransaction();
+        }
+    }
+
+    public static function commit()
+    {
+        static::$transactions--;
+        if (static::$transactions == 0) {
+            static::pdo()->commit();
+        }
+    }
 
     public static function migrationPaths(): array
     {

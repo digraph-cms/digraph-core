@@ -1,11 +1,15 @@
 paths:
     web: "${paths.base}/web"
     storage: "${paths.base}/storage"
-    cache: "${paths.base}/cache"
 
 files:
     path: "${paths.web}/files"
     url: /files
+    ttl: false
+    css:
+        minify: false
+        sourcemap: true
+        keepimportantcomments: false
 
 fs:
     links: false

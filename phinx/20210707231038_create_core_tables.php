@@ -13,6 +13,7 @@ final class CreateCoreTables extends AbstractMigration
         $pages
             ->addColumn('page_uuid', 'uuid')
             ->addColumn('page_slug', 'string', ['length' => 100])
+            ->addColumn('page_name', 'string', ['length' => 100])
             ->addColumn('page_class', 'string', ['length' => 50])
             ->addColumn('page_data', 'json')
             ->addColumn('created', 'timestamp', ['default' => 'CURRENT_TIMESTAMP', 'timezone' => true])
@@ -21,6 +22,7 @@ final class CreateCoreTables extends AbstractMigration
             ->addColumn('updated_by', 'string')
             ->addIndex(['page_uuid'], ['unique' => true])
             ->addIndex(['page_slug'])
+            ->addIndex(['page_name'])
             ->addIndex(['page_class'])
             ->addIndex(['created'])
             ->addIndex(['updated'])

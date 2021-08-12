@@ -5,11 +5,14 @@ namespace DigraphCMS\Content;
 use DigraphCMS\Context;
 
 // Always add the default system routes directory
-FilesystemRouter::addSource(__DIR__ . '/../../routes');
+Router::addSource(__DIR__ . '/../../routes');
 
-class FilesystemRouter
+class Router
 {
     protected static $sources = [];
+    const ROUTE_DONE = null;
+    const ROUTE_CONTINUE = 1;
+    const ROUTE_ABORT = 2;
 
     /**
      * Add a source directory to the top of the list of directories to search in
@@ -26,10 +29,9 @@ class FilesystemRouter
     }
 
     /**
-     * Search for and execute a route handler for a given request, response, and
-     * page. Returns a string if handler is executed, null otherwise.
+     * Search for and execute a route handler for a given page and action.
      */
-    public static function pageRoute(Page $page, string $action): ?string
+    public static function pageRoute(Page $page, string $action)
     {
         Context::clone();
         Context::page($page);
@@ -46,20 +48,13 @@ class FilesystemRouter
     }
 
     /**
-     * Search for and execute a static route for a given request and response. 
-     * Returns a string if handler is executed, null otherwise.
+     * Search for and execute a static route for a given route and action. 
      */
-    public static function staticRoute(string $route, string $action): ?string
+    public static function staticRoute(string $route, string $action)
     {
-        $routes = [
-            $route,
-            '_any'
-        ];
-        foreach ($routes as $r) {
-            $output = self::tryRoute("~$r/$action");
-            if ($output !== null) {
-                return $output;
-            }
+        $output = self::tryRoute("~$route/$action");
+        if ($output !== null) {
+            return $output;
         }
         return null;
     }
@@ -89,7 +84,7 @@ class FilesystemRouter
         return false;
     }
 
-    protected static function tryRoute(string $route): ?string
+    protected static function tryRoute(string $route)
     {
         foreach (self::$sources as $source) {
             $path = "$source/$route.action.php";
@@ -101,11 +96,15 @@ class FilesystemRouter
     }
 }
 
-function require_file(string $file): string
+function require_file(string $file)
 {
     ob_start();
     try {
-        require $file;
+        $return = require $file;
+        if ($return !== 1) {
+            ob_end_clean();
+            return $return;
+        }
     } catch (\Throwable $th) {
         ob_end_clean();
         throw $th;

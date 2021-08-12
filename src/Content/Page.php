@@ -6,6 +6,7 @@ use ArrayAccess;
 use DateTime;
 use DigraphCMS\Digraph;
 use DigraphCMS\Events\Dispatcher;
+use DigraphCMS\Forms\Fields;
 use DigraphCMS\Session\Session;
 use DigraphCMS\URL\URL;
 use Flatrr\FlatArrayTrait;
@@ -17,11 +18,28 @@ class Page implements ArrayAccess
         unset as protected rawUnset;
     }
 
-    protected $slug, $previousSlug, $slugCollisions;
+    protected $uuid, $slug, $previousSlug, $name;
+    protected $created, $created_by;
+    protected $updated, $updated_by;
+    protected $slugCollisions;
+
+    public function fields($action = null): array
+    {
+        $fields = [];
+        $fields['page_name'] = [
+            'weight' => 100,
+            'field' => $field = Fields::name($this),
+            'sets' => function() use ($field) {
+                $this->name($field);
+            }
+        ];
+        return $fields;
+    }
 
     public function __construct(array $data = [], array $metadata = [])
     {
         $this->uuid = @$metadata['uuid'] ?? Digraph::uuid();
+        $this->name = @$metadata['name'] ?? 'Untitled';
         $this->created = @$metadata['created'] ?? new DateTime();
         $this->created_by = @$metadata['created_by'] ?? Session::user();
         $this->updated = @$metadata['updated'] ?? new DateTime();
@@ -82,16 +100,19 @@ class Page implements ArrayAccess
         return $this->previousSlug;
     }
 
-    public function name(): string
+    public function name(string $name = null): string
     {
-        return substr($this->uuid(), 0, 8);
+        if ($name) {
+            $this->name = $name;
+        }
+        return $this->name;
     }
 
-    public function urlName(URL $url): string
+    public function title(URL $url = null): string
     {
         $name = $this->name();
-        if ($url->action() != 'index') {
-            $name .= ' ' . $url->action();
+        if ($url && $url->action() != 'index') {
+            $name .= ': ' . $url->action();
         }
         return $name;
     }
@@ -111,7 +132,7 @@ class Page implements ArrayAccess
         if ($action && !preg_match('/\.[a-z0-9]+$/', $action)) {
             $action .= '.html';
         }
-        $slug = ($uuid ?? $this->slugCollisions()) ? $this->uuid() : $this->slug();
+        $slug = ($uuid || $this->slugCollisions()) ? $this->uuid() : $this->slug();
         $url = new URL("/$slug/$action");
         $url->query($args);
         return $url;

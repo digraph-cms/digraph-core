@@ -45,10 +45,7 @@ class SessionTest extends \Codeception\Test\Unit
     {
         Session::set('foo', 'bar');
         $this->assertEquals('bar', Session::get('foo'));
-        // shouldn't be in $_SESSION yet
-        $this->assertArrayNotHasKey('foo', $_SESSION);
-        // should after committing
-        Session::__commit();
+        // should now be set in $_SESSION
         $this->assertEquals('bar', $_SESSION['foo']);
     }
 
@@ -69,7 +66,6 @@ class SessionTest extends \Codeception\Test\Unit
     public function testAutomaticDeauthorization()
     {
         Session::setUser('user');
-        Session::__commit();
         // change user agent
         $_SERVER['HTTP_USER_AGENT'] = 'Another fake browser';
         // reinitializing should clear user
@@ -130,7 +126,6 @@ class SessionTest extends \Codeception\Test\Unit
         // foo shouldn't exist in current()
         $this->assertArrayNotHasKey('foo', $flash->current());
         // simulate reload
-        Session::__commit();
         session::__init();
         // flash() should still be set into next()
         $flash->flash('foo', 'bar');
@@ -145,7 +140,6 @@ class SessionTest extends \Codeception\Test\Unit
         $flash->flash('baz', 'buzz');
         $this->assertEquals('buzz', $flash->next()['baz']);
         // simulate reload
-        Session::__commit();
         session::__init();
         // state should be the same
         $this->assertEquals('bar', $flash->current()['foo']);

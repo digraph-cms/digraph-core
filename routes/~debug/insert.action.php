@@ -5,8 +5,8 @@ use DigraphCMS\DB\DB;
 
 ini_set('max_execution_time', 0);
 ini_set('memory_limit','1G');
-DB::pdo()->beginTransaction();
-for ($i = 0; $i < 1000000; $i++) {
+DB::beginTransaction();
+for ($i = 0; $i < 100000; $i++) {
     $page = new Page([
         'foo' => [
             'bar' => bin2hex(random_bytes(8)),
@@ -15,4 +15,4 @@ for ($i = 0; $i < 1000000; $i++) {
     ]);
     $page->insert();
 }
-DB::pdo()->commit();
+DB::commit();

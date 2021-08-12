@@ -218,6 +218,7 @@ class Pages
         return [
             'page_uuid' => $page->uuid(),
             'page_slug' => $page->slug(),
+            'page_name' => $page->name(),
             'page_data' => json_encode($page->get()),
             'page_class' => $page->class(),
             'created_by' => $page->createdBy(),
@@ -229,6 +230,7 @@ class Pages
     {
         return [
             'page_slug' => $page->slug(),
+            'page_name' => $page->name(),
             'page_data' => json_encode($page->get()),
             'page_class' => $page->class(),
             'updated_by' => Session::user()
@@ -271,6 +273,7 @@ class Pages
             [
                 'uuid' => $result['page_uuid'],
                 'slug' => $result['page_slug'],
+                'name' => $result['page_name'],
                 'created' => new DateTime($result['created']),
                 'created_by' => $result['created_by'],
                 'updated' => new DateTime($result['updated']),

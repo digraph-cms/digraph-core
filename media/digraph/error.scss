@@ -1,0 +1,68 @@
+body {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.error {
+    color: #900;
+}
+
+.stack-trace {
+    >div {
+        line-height: 1.5em;
+        box-sizing: border-box;
+        background: #eee;
+        padding: 0.25em 0.5em;
+        margin: 0.5em 0;
+        color: #900;
+    }
+}
+
+.trace-args {
+    >div {
+        color: #000;
+        white-space: pre;
+        line-height: 1.5em;
+        box-sizing: border-box;
+        background: #ddd;
+        padding: 0.25em 0.5em;
+        overflow: auto;
+        margin: 0.25em 0;
+
+        &.collapsible-multiline {
+            overflow: hidden;
+            height: 2em;
+            padding: 0;
+
+            >div {
+                padding: 0.25em 0.5em;
+            }
+
+            a {
+                display: inline-block;
+                text-decoration: none;
+                color: #fff;
+                background: #999;
+                width: 1.5em;
+                text-align: center;
+                font-weight: bold;
+                margin-left: -0.25em;
+            }
+
+            a.collapse {
+                display: none;
+            }
+
+            &:target {
+                height: auto;
+
+                a.expand {
+                    display: none;
+                }
+
+                a.collapse {
+                    display: inline-block;
+                }
+            }
+        }
+    }
+}

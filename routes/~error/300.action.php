@@ -3,7 +3,7 @@
 use DigraphCMS\Context;
 
 $requestUrl = Context::request()->url();
-$staticUrl = Context::data('300_data');
+$staticUrl = Context::data('300_static');
 $pages = Context::data('300_pages');
 
 ?>
@@ -17,7 +17,7 @@ $pages = Context::data('300_pages');
     while ($page = $pages->fetch()) {
         $url = $page->url($requestUrl->action(), $requestUrl->query(), true);
         $url->normalize();
-        echo "<li>" . $url->html() . "</li>";
+        echo "<li>" . $url->html() . " <small>#" . $page->uuid() . "</small></li>";
     }
     ?>
 </ul>

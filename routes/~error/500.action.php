@@ -5,37 +5,51 @@ use DigraphCMS\Context;
 
 if (!Config::get('errors.display')) {
     echo "<h1>Server error</h1>";
-    echo "<div class='notification error'>Error message display is turned off.</div>";
+    echo "<div class='error'>Error message display is turned off.</div>";
 } else {
     $thrown = Context::thrown();
-    echo "<h1><code>" . get_class($thrown) . "</code></h1>";
-    echo "<div class='notification error'>";
-    echo "<strong style='color:#900;'><code>" . $thrown->getMessage() . "</code></strong>";
+    echo "<h1>" . get_class($thrown) . "</h1>";
+    echo "<div class='error'>";
+    echo "<strong>" . htmlentities($thrown->getMessage()) . "</strong>";
     echo '<br>';
-    echo '<code style="color:#066;">' . trim_file($thrown->getFile()) . ':' . $thrown->getLine() . '</code>';
+    echo trim_file($thrown->getFile()) . ':' . $thrown->getLine();
     echo "</div>";
-    echo "<h2><code>Stack trace</code></h2>";
-    echo "<ul>";
+    echo "<h2>Stack trace</h2>";
+    echo "<div class='stack-trace'>";
     foreach ($thrown->getTrace() as $t) {
-        echo "<li>";
-        echo "<strong style='color:#039;'><code>" . trim_file($t['file']) . ":$t[line]</code></strong><br>";
-        echo '<code style="color:#066;">' . @$t['class'] . @$t['type'] . @$t['function'] . '()</code>';
-        if (@$t['args']) {
-            echo "<ol>";
-            foreach ($t['args'] as $arg) {
-                echo "<li><code>" . serialize($arg) . "</code></li>";
-            }
-            echo "</ol>";
+        echo "<div>";
+        if (@$t['file']) {
+            echo "<strong>" . htmlentities(trim_file(@$t['file'])) . ":" . @$t['line'] . "</strong><br>";
         }
-        echo "</li>";
+        echo "<em>" . @$t['class'] . @$t['type'] . @$t['function'] . '()</em>';
+        if (@$t['args']) {
+            echo "<div class='trace-args'>";
+            foreach ($t['args'] as $arg) {
+                $arg = htmlentities(print_r($arg, true));
+                if (strpos($arg, "\n")) {
+                    $id = md5(serialize([@$t['class'], @$t['type'], @$t['function'], $arg]));
+                    echo "<div class=\"collapsible-multiline\" id=\"$id\">";
+                    echo "<div id=\"$id-collapsed\">";
+                    echo "<a class=\"expand\" href=\"#$id\">+</a>";
+                    echo "<a class=\"collapse\" href=\"#$id-collapsed\">-</a>";
+                    echo '&nbsp;'.$arg;
+                    echo "</div>";
+                    echo "</div>";
+                } else {
+                    echo "<div>$arg</div>";
+                }
+            }
+            echo "</div>";
+        }
+        echo "</div>";
     }
-    echo "<ul>";
-    echo "</ul>";
+    echo "</div>";
 }
 
 function trim_file($file)
 {
-    $base = Config::get('paths.base');
+    $file = realpath($file);
+    $base = realpath(Config::get('paths.base'));
     if (substr($file, 0, strlen($base)) == $base) {
         $file = substr($file, strlen($base));
     }

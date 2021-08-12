@@ -2,12 +2,10 @@
 
 namespace DigraphCMS\Session;
 
+Session::__init();
+
 class Session
 {
-    protected static $data = [];
-    protected static $changed = [];
-    protected static $deleted = [];
-
     /**
      * Number of seconds for session authorization to time out. Allows configurable auth
      * expirations faster (but not slower) than the expiration time in cookieParams().
@@ -23,39 +21,13 @@ class Session
     }
 
     /**
-     * Session cookie params as accepted by the first argument of session_cookie_params(),
-     * so the easiest way is to just set an expiration time in seconds. The default is 30 days.
-     * 
-     * Overridden with constant SESSION_COOKIE_PARAMS
-     *
-     * @return int|array
-     */
-    public static function cookieParams()
-    {
-        return defined('SESSION_COOKIE_PARAMS') ? SESSION_COOKIE_PARAMS : 86400 * 30;
-    }
-
-    /**
-     * Cookie name to be used for PHP session saving/loading. Defaults to a hash
-     * based on the called class.
-     * 
-     * Overridden with constant SESSION_COOKIE_NAME
-     *
-     * @return string
-     */
-    public static function cookieName(): string
-    {
-        return defined('SESSION_COOKIE_NAME') ? SESSION_COOKIE_NAME : 'S_' . md5(get_called_class());
-    }
-
-    /**
      * Dump all session data as a raw array.
      *
      * @return array
      */
     public static function dump(): array
     {
-        return self::$data;
+        return $_SESSION;
     }
 
     /**
@@ -64,19 +36,11 @@ class Session
      *
      * @param string $key
      * @param mixed $value
-     * @param boolean $immediate
      * @return void
      */
-    public static function set(string $key, $value, $immediate = false): void
+    public static function set(string $key, $value): void
     {
-        if (@self::$data[$key] !== $value) {
-            self::$changed[$key] = true;
-            self::$data[$key] = $value;
-            unset(self::$deleted[$key]);
-            if ($immediate) {
-                self::__commit();
-            }
-        }
+        $_SESSION[$key] = $value;
     }
 
     /**
@@ -87,7 +51,7 @@ class Session
      */
     public static function get(string $key)
     {
-        return @self::$data[$key];
+        return @$_SESSION[$key];
     }
 
     /**
@@ -96,17 +60,11 @@ class Session
      *
      * @param string $key
      * @param mixed $value
-     * @param boolean $immediate
      * @return void
      */
-    public static function unset(string $key, $immediate = false): void
+    public static function unset(string $key): void
     {
-        unset(self::$data[$key]);
-        unset(self::$changed[$key]);
-        self::$deleted[$key] = true;
-        if ($immediate) {
-            self::__commit();
-        }
+        unset($_SESSION[$key]);
     }
 
     /**
@@ -135,7 +93,7 @@ class Session
         // * matches anything but : and /
         $pattern = str_replace('\\*', '[^\:\/]*', $pattern);
         $result = [];
-        foreach (self::$data as $key => $value) {
+        foreach ($_SESSION as $key => $value) {
             if (preg_match("/$pattern/", $key)) {
                 $result[$key] = $value;
             }
@@ -177,7 +135,6 @@ class Session
             self::set('user_history/' . time(), $user);
         }
         self::set('user', $user);
-        self::__commit();
     }
 
     /**
@@ -217,9 +174,6 @@ class Session
      */
     public static function __init()
     {
-        // set cookie parameters
-        session_name(self::cookieName());
-        session_set_cookie_params(self::cookieParams());
         // start/grab session
         @session_start();
         // initialize data
@@ -246,10 +200,6 @@ class Session
         // set touch time
         $_SESSION['touch'] = time();
         $_SESSION['auth_expires'] = $_SESSION['touch'] + self::authTimeout();
-        // pull our own copy of data from session
-        self::$data = $_SESSION;
-        // close session to avoid locking
-        session_write_close();
     }
 
     /**
@@ -270,34 +220,6 @@ class Session
             'remote_history/' . $time => $remote,
             'user_history/' . $time => 'guest@system'
         ];
-    }
-
-    /**
-     * Commit changes to session, may have to wait if there are concurrent requests
-     * because it has to lock the session first.
-     *
-     * @return void
-     */
-    public static function __commit()
-    {
-        // does nothing if no values are changed or deleted
-        if (!self::$changed && !self::$deleted) {
-            return;
-        }
-        // reopen session
-        @session_start();
-        // apply changes
-        foreach (array_keys(self::$changed) as $key) {
-            $_SESSION[$key] = self::$data[$key];
-        }
-        self::$changed = [];
-        // apply deletions
-        foreach (array_keys(self::$deleted) as $key) {
-            unset($_SESSION[$key]);
-        }
-        self::$deleted = [];
-        // write session
-        session_write_close();
     }
 
     /**
@@ -367,6 +289,3 @@ class Session
         ];
     }
 }
-
-Session::__init();
-register_shutdown_function(Session::class . '::__commit');

@@ -2,9 +2,8 @@
 
 namespace DigraphCMS;
 
-use DigraphCMS\Content\FilesystemRouter;
+use DigraphCMS\Content\Router;
 use DigraphCMS\Content\Pages;
-use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTTP\Redirect;
 use DigraphCMS\HTTP\Request;
 use DigraphCMS\HTTP\RequestHeaders;
@@ -114,6 +113,13 @@ class Digraph
                 static::doMakeResponse()
                     ?? static::errorResponse(404)
             );
+            // change response URL to static if status is 200 and no page is associated
+            // this will cause a canonical header to be added next
+            if (Context::response()->status() == 200 && !Context::page()) {
+                $url = Context::response()->url();
+                $url->path(preg_replace('@^/([^~][^\/]*/)@', '/~$1', $url->path()));
+                Context::response()->url($url);
+            }
             // if response URL doesn't match original URL, set canonical header
             if ($request->originalUrl() != Context::response()->url()) {
                 Context::response()->headers()->set('Link', '<' . Context::response()->url() . '>; rel="canonical"');
@@ -144,14 +150,11 @@ class Digraph
         $action = $url->action();
         if ($url->explicitlyStaticRoute() || ($pages = Pages::getAll($route))->count() == 0) {
             // run static routing if URL is explicitly static or no pages were found
-            $url = $request->url();
-            $url->path(preg_replace('@^/([^~][^\/]*/)@', '/~$1', $url->path()));
-            $request->url($url);
             return static::doStaticRoute($route, $action);
-        } elseif ($pages->count() > 1 || FilesystemRouter::staticRouteExists($route, $action)) {
+        } elseif ($pages->count() > 1 || Router::staticRouteExists($route, $action)) {
             // create a multiple options page if multiple pages or 1+ page and a static route exist
             Context::data('300_pages', $pages);
-            if (FilesystemRouter::staticRouteExists($route, $action)) {
+            if (Router::staticRouteExists($route, $action)) {
                 $staticUrl = new URL("/~$route/$action.html");
                 $staticUrl->query($url->query());
                 $staticUrl->normalize();
@@ -168,18 +171,24 @@ class Digraph
     protected static function doPageRoute(string $action): ?Response
     {
         Context::response(new Response(Context::request()->url(), 200));
-        $content = FilesystemRouter::pageRoute(Context::page(), $action);
-        if ($content !== null) {
+        $content = Router::pageRoute(Context::page(), $action);
+        if ($content === null) {
+            return null;
+        } elseif (is_string($content)) {
             Context::response()->content($content);
             return Context::response();
+        } elseif ($content instanceof Response) {
+            Context::response($content);
+            return Context::response();
+        } else {
+            return null;
         }
-        return null;
     }
 
     protected static function doStaticRoute(string $route, string $action): ?Response
     {
         Context::response(new Response(Context::request()->url(), 200));
-        $content = FilesystemRouter::staticRoute($route, $action);
+        $content = Router::staticRoute($route, $action);
         if ($content !== null) {
             Context::response()->content($content);
             return Context::response();

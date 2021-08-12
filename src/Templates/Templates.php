@@ -3,13 +3,10 @@
 namespace DigraphCMS\Templates;
 
 use DigraphCMS\Context;
-use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTTP\Response;
 
-// Always add the default system routes directory
+// Always add the default system templates directory
 Templates::addSource(__DIR__ . '/../../templates');
-// Add this as an event handler
-Dispatcher::addSubscriber(Templates::class);
 
 class Templates
 {
@@ -33,7 +30,7 @@ class Templates
     {
         Context::response($response);
         $template = $response->template();
-        $extension = preg_replace('/.+\./', '', $template);
+        $extension = strtolower(pathinfo($template, PATHINFO_EXTENSION));
         $file = static::locateFile($template);
         if (!$file) {
             throw new \Exception("Couldn't locate template file for template $template");
