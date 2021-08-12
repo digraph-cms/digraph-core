@@ -3,8 +3,6 @@
 namespace DigraphCMS\Forms;
 
 use DigraphCMS\DB\DB;
-use DigraphCMS\Forms\Fields\Token;
-use Formward\SystemFields\TokenNoCSRF;
 
 class Form extends \Formward\Form
 {

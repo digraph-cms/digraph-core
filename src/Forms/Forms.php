@@ -6,6 +6,13 @@ use DigraphCMS\Content\Page;
 
 class Forms
 {
+    /**
+     * Given a page and action, create a form related to the specified page.
+     *
+     * @param Page $page
+     * @param string $action
+     * @return Form
+     */
     public static function pageForm(Page $page, string $action = null): Form
     {
         // prepare, sort, and filter fields
@@ -45,6 +52,5 @@ class Forms
     protected static function handlePageForm(Form $form, Page $page, string $action)
     {
         throw new \Exception("Form error");
-        
     }
 }
