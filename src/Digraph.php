@@ -196,7 +196,7 @@ class Digraph
         return null;
     }
 
-    protected static function errorResponse(int $status): Response
+    public static function errorResponse(int $status): Response
     {
         $response =
             static::doStaticRoute('error', $status) ??

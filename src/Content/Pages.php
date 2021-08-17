@@ -260,12 +260,8 @@ class Pages
         if (isset(static::$cache[$result['page_uuid']])) {
             return static::$cache[$result['page_uuid']];
         }
-        if ('page_data') {
-            if (false === ($data = json_decode($result['page_data'], true))) {
-                throw new \Exception("Error decoding Page json data");
-            }
-        } else {
-            $data = [];
+        if (false === ($data = json_decode($result['page_data'], true))) {
+            throw new \Exception("Error decoding Page json data");
         }
         $class = static::objectClass($result);
         static::$cache[$result['page_uuid']] = new $class(

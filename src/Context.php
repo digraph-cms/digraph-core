@@ -12,6 +12,20 @@ class Context
 {
     protected static $context = [];
 
+    public static function arg(string $key)
+    {
+        if (static::request()) {
+            return @static::request()->url()->query()[$key];
+        } else {
+            return null;
+        }
+    }
+
+    public static function error(int $code)
+    {
+        static::response(Digraph::errorResponse(404));
+    }
+
     public static function fields(): SelfReferencingFlatArray
     {
         if (!static::data('fields')) {

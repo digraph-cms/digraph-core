@@ -10,9 +10,21 @@ Router::addSource(__DIR__ . '/../../routes');
 class Router
 {
     protected static $sources = [];
-    const ROUTE_DONE = null;
-    const ROUTE_CONTINUE = 1;
-    const ROUTE_ABORT = 2;
+
+    public static function include(string $glob)
+    {
+        $route = Context::request()->url()->route();
+        if (!Context::page()) {
+            $route = preg_replace('@^([^~])@', '~$1', $route);
+        }
+        foreach (static::$sources as $source) {
+            foreach (glob("$source/$route/$glob") as $file) {
+                if (is_file($file)) {
+                    echo require_file($file);
+                }
+            }
+        }
+    }
 
     /**
      * Add a source directory to the top of the list of directories to search in
@@ -100,11 +112,7 @@ function require_file(string $file)
 {
     ob_start();
     try {
-        $return = require $file;
-        if ($return !== 1) {
-            ob_end_clean();
-            return $return;
-        }
+        require $file;
     } catch (\Throwable $th) {
         ob_end_clean();
         throw $th;

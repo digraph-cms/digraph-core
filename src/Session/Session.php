@@ -109,7 +109,7 @@ class Session
      */
     public static function deauthorize()
     {
-        self::setUser('guest@system');
+        self::setUser('guest');
     }
 
     /**
@@ -188,13 +188,13 @@ class Session
             $_SESSION['remote'] = $remote;
             // manually deauthorize
             if ($_SESSION['user']) {
-                $_SESSION['user_history/' . time()] = $_SESSION['user'] = 'guest@system';
+                $_SESSION['user_history/' . time()] = $_SESSION['user'] = 'guest';
             }
         }
         // deauthorize if touch is too long ago
         if ($_SESSION['user']) {
             if (time() - $_SESSION['touch'] > self::authTimeout()) {
-                $_SESSION['user_history/' . time()] = $_SESSION['user'] = 'guest@system';
+                $_SESSION['user_history/' . time()] = $_SESSION['user'] = 'guest';
             }
         }
         // set touch time
@@ -215,10 +215,10 @@ class Session
             'start' => $time,
             'touch' => 0,
             'auth_expires' => 0,
-            'user' => 'guest@system',
+            'user' => 'guest',
             'remote' => $remote,
             'remote_history/' . $time => $remote,
-            'user_history/' . $time => 'guest@system'
+            'user_history/' . $time => 'guest'
         ];
     }
 

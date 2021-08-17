@@ -1,0 +1,6 @@
+oauth2:
+  providers:
+    github:
+      title: GitHub
+      class: \League\OAuth2\Client\Provider\Github
+      scope: ["user:email"]
