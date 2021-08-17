@@ -4,6 +4,10 @@ oauth2:
       title: GitHub
       class: \League\OAuth2\Client\Provider\Github
       scope: ["user:email"]
+    google:
+      title: Google
+      class: \League\OAuth2\Client\Provider\Google
+      scope: ["userinfo.email"]
     facebook:
       title: Facebook
       class: \League\OAuth2\Client\Provider\Facebook

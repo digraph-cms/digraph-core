@@ -29,7 +29,13 @@ $name = $url->query()['_provider'];
 $provider = $source->provider($name);
 echo "<h1>" . Config::get("oauth2.providers.$name.title") . "</h1>";
 
-if (!isset($_GET['code'])) {
+if (!empty($_GET['error'])) {
+    // Got an error, probably user denied access
+    echo '<p>Got error: ' . htmlspecialchars($_GET['error'], ENT_QUOTES, 'UTF-8') . '</p>';
+    echo "<p><a href='" . new URL('/~signin/') . "'>Restart the sign-in process?</a></p>";
+    Context::response()->status(500);
+} elseif (empty($_GET['code'])) {
+    // If we don't have an authorization code then get one
     $authUrl = $provider->getAuthorizationUrl([
         'scope' => Config::get("oauth2.providers.$name.scope")
     ]);
@@ -37,6 +43,7 @@ if (!isset($_GET['code'])) {
     $_SESSION['oauth2state'] = $provider->getState();
     return;
 } elseif (empty($_GET['state']) || (isset($_SESSION['oauth2state']) && $_GET['state'] !== $_SESSION['oauth2state'])) {
+    // State is invalid, possible CSRF attack in progress
     if (isset($_SESSION['oauth2state'])) {
         unset($_SESSION['oauth2state']);
     }
