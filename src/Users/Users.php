@@ -78,17 +78,38 @@ class Users
     public static function insert(User $user)
     {
         // insert value
-        $query = DB::query();
-        $query->insertInto(
-            'users',
-            [
-                'user_uuid' => $user->uuid(),
+        DB::query()
+            ->insertInto(
+                'users',
+                [
+                    'user_uuid' => $user->uuid(),
+                    'user_name' => $user->name(),
+                    'user_data' => json_encode($user->get()),
+                    'created_by' => $user->createdBy(),
+                    'updated_by' => $user->updatedBy()
+                ]
+            )
+            ->execute();
+    }
+
+    public static function update(User $user)
+    {
+        // update values
+        DB::query()
+            ->update('users')
+            ->where(
+                'user_uuid = ? AND updated = ?',
+                [
+                    $user->uuid(),
+                    $user->updatedLast()->format("Y-m-d H:i:s")
+                ]
+            )
+            ->set([
                 'user_name' => $user->name(),
                 'user_data' => json_encode($user->get()),
-                'created_by' => $user->createdBy(),
-                'updated_by' => $user->updatedBy()
-            ]
-        )->execute();
+                'updated_by' => Session::user()
+            ])
+            ->execute();
     }
 
     protected static function doGet(string $uuid_or_slug): ?User

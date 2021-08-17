@@ -34,6 +34,42 @@ class User implements ArrayAccess
         $this->changed = false;
     }
 
+    public function addEmail(string $email, string $comment = '')
+    {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new \Exception("Invalid email address");
+        }
+        foreach ($this['emails'] ?? [] as $k => $existing) {
+            if ($existing[0] == $email) {
+                $this['emails'][$k] = [$email, time(), $comment];
+                return;
+            }
+        }
+        $this->push('emails', [$email, time(), $comment]);
+    }
+
+    public function removeEmail(string $email)
+    {
+        $emails = array_filter(
+            $this['emails'],
+            function ($e) use ($email) {
+                return $email != $e[0];
+            }
+        );
+        unset($this['emails']);
+        $this['emails'] = $emails;
+    }
+
+    public function emails()
+    {
+        return array_map(
+            function ($e) {
+                return $e[0];
+            },
+            $this['emails']
+        );
+    }
+
     public function name(string $name = null): string
     {
         if ($name) {

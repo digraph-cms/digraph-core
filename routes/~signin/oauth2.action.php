@@ -77,8 +77,17 @@ if (!empty($_GET['error'])) {
         }
         DB::commit();
     }
+    // look through resource owner array for emails, add them to user
+    $user = Users::current();
+    $ownerData = $resourceOwner->toArray();
+    foreach ($ownerData as $key => $value) {
+        if (stripos($key, 'email') !== false && filter_var($value, FILTER_VALIDATE_EMAIL)) {
+            $user->addEmail($value, 'Added from OAuth ' . Config::get("oauth2.providers.$name.title"));
+        }
+    }
+    $user->update();
     // redirect to profile page
     Context::response()->redirect(
-        Users::current()->profile()
+        $user->profile()
     );
 }

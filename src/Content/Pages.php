@@ -190,11 +190,12 @@ class Pages
     public static function insert(Page $page)
     {
         // insert value
-        $query = DB::query();
-        $query->insertInto(
-            'pages',
-            static::insertObjectValues($page)
-        )->execute();
+        DB::query()
+            ->insertInto(
+                'pages',
+                static::insertObjectValues($page)
+            )
+            ->execute();
     }
 
     public static function delete(Page $page)
@@ -202,14 +203,16 @@ class Pages
         //TODO: delete links
         //TODO: delete linked aliases
         // delete object
-        $query = DB::query()->delete('pages');
-        $query->where(
-            'page_uuid = ? AND updated = ?',
-            [
-                $page->uuid(),
-                $page->updatedLast()->format("Y-m-d H:i:s")
-            ]
-        )->execute();
+        DB::query()
+            ->delete('pages')
+            ->where(
+                'page_uuid = ? AND updated = ?',
+                [
+                    $page->uuid(),
+                    $page->updatedLast()->format("Y-m-d H:i:s")
+                ]
+            )
+            ->execute();
         static::filterCache($page);
     }
 
