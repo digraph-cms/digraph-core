@@ -1,43 +1,50 @@
 paths:
-    web: "${paths.base}/web"
-    storage: "${paths.base}/storage"
+  web: "${paths.base}/web"
+  storage: "${paths.base}/storage"
+
+urls:
+  protocol: null
 
 files:
-    path: "${paths.web}/files"
-    url: /files
-    ttl: false
-    css:
-        minify: false
-        sourcemap: true
-        keepimportantcomments: false
+  path: "${paths.web}/files"
+  url: /files
+  ttl: false
+  css:
+  minify: false
+  sourcemap: true
+  keepimportantcomments: false
 
 fs:
-    links: false
-    umask_file: 0117
-    umask_dir: 0002
+  links: false
+  umask_file: 0117
+  umask_dir: 0002
 
 db:
-    adapter: mysql
-    charset: utf8
-    sqlite_create_functions: true
-    pdo_options: []
+  adapter: mysql
+  charset: utf8
+  sqlite_create_functions: true
+  pdo_options: []
 
 page:
-    cachettl:
-        _any: null
-    browserttl:
-        _any: null
+  cachettl:
+    _any: null
+  browserttl:
+    _any: null
 
 templates:
-    default:
-        default: digraph/default.php
-        minimal: digraph/minimal.php
-        500: digraph/error.php
-    fields:
-        site:
-            name: Default site
-        page:
-            name: null
+  default:
+    default: digraph/default.php
+    minimal: digraph/minimal.php
+    500: digraph/error.php
+  fields:
+    site:
+      name: Default site
+    page:
+      name: null
 
 errors:
-    display: true
+  display: true
+
+users:
+  sources:
+    oauth2: \DigraphCMS\Users\OAuth2UserSource
