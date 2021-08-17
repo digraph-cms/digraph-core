@@ -2,6 +2,9 @@ paths:
   web: "${paths.base}/web"
   storage: "${paths.base}/storage"
 
+urls:
+  protocol: null
+
 files:
   path: "${paths.web}/files"
   url: /files

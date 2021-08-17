@@ -4,3 +4,9 @@ oauth2:
       title: GitHub
       class: \League\OAuth2\Client\Provider\Github
       scope: ["user:email"]
+    facebook:
+      title: Facebook
+      class: \League\OAuth2\Client\Provider\Facebook
+      scope: ["email"]
+      config:
+        graphApiVersion: v2.10

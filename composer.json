@@ -16,8 +16,11 @@
         "robmorgan/phinx": "^0.12.7",
         "byjoby/formward": "^0.4",
         "tubalmartin/cssmin": "^4.1",
-        "scssphp/scssphp": "^1.6",
-        "league/oauth2-github": "^3.0"
+        "scssphp/scssphp": "^1.6"
+    },
+    "suggest": {
+        "league/oauth2-github": "Allows OAuth sign-in using GitHub",
+        "league/oauth2-facebook": "Allows OAuth sign-in using Facebook"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -29,6 +32,8 @@
     "require-dev": {
         "codeception/codeception": "^4.1",
         "codeception/module-phpbrowser": "^1.0.0",
-        "codeception/module-asserts": "^1.0.0"
+        "codeception/module-asserts": "^1.0.0",
+        "league/oauth2-github": "^3.0",
+        "league/oauth2-facebook": "^2.0"
     }
 }

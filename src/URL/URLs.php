@@ -2,6 +2,8 @@
 
 namespace DigraphCMS\URL;
 
+use DigraphCMS\Config;
+
 class URLs
 {
     public static $siteHost, $sitePath;
@@ -107,12 +109,23 @@ class URLs
      */
     public static function site(): string
     {
-        return '//' . self::$siteHost . self::$sitePath;
+        return Config::get('urls.protocol') . '//' . self::$siteHost . self::$sitePath;
     }
 
     public static function sitePath(): string
     {
         return self::$sitePath;
+    }
+
+    public static function siteProtocol(): string
+    {
+        return Config::get('urls.protocol') ?? (static::isHTTPS() ? 'https' : 'http');
+    }
+
+    protected static function isHTTPS()
+    {
+        return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+            || $_SERVER['SERVER_PORT'] == 443;
     }
 }
 

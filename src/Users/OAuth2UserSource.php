@@ -4,6 +4,8 @@ namespace DigraphCMS\Users;
 
 use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
+use DigraphCMS\URL\URL;
+use DigraphCMS\URL\URLs;
 use League\OAuth2\Client\Provider\AbstractProvider;
 
 class OAuth2UserSource extends AbstractUserSource
@@ -70,14 +72,23 @@ class OAuth2UserSource extends AbstractUserSource
             if (Config::get("oauth2.providers.$name.id") && Config::get("oauth2.providers.$name.secret")) {
                 $provider = Config::get("oauth2.providers.$name");
                 $class = $provider['class'];
-                $this->providers[$name] = new $class([
-                    'clientId' => $provider['id'],
-                    'clientSecret' => $provider['secret']
-                ]);
+                $config = @$provider['config'] ?? [];
+                $config['clientId'] = $provider['id'];
+                $config['clientSecret'] = $provider['secret'];
+                $config['redirectUri'] = $this->redirectUrl($name);
+                $this->providers[$name] = new $class($config);
             } else {
                 $this->providers[$name] = null;
             }
         }
         return $this->providers[$name];
+    }
+
+    public static function redirectUrl($name)
+    {
+        $url = new URL('/~signin/oauth2.html?_provider=' . $name);
+        $url = $url->__toString();
+        $url = preg_replace('@^//@', URLs::siteProtocol() . '://', $url);
+        return $url;
     }
 }
