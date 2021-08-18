@@ -43,30 +43,34 @@ class DB
     public static function pdo(): PDO
     {
         if (!self::$pdo) {
-            switch (Config::get('db.adapter')) {
-                case 'sqlite':
-                    self::$pdo = new PDO(
-                        Config::get('db.dsn') ?? self::buildDSN(),
-                        null,
-                        null,
-                        Config::get('db.pdo_options')
-                    );
-                    if (Config::get('db.sqlite_create_functions')) {
-                        SqliteShim::createFunctions(self::$pdo);
-                    }
-                    break;
-                case 'mysql':
-                    self::$pdo = new PDO(
-                        Config::get('db.dsn') ?? self::buildDSN(),
-                        Config::get('db.user'),
-                        Config::get('db.pass'),
-                        Config::get('db.pdo_options')
-                    );
-                    self::$pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
-                    break;
-                default:
-                    throw new \Exception("Unsupported DB adapter " . Config::get('db.adapter'));
-                    break;
+            try {
+                switch (Config::get('db.adapter')) {
+                    case 'sqlite':
+                        self::$pdo = new PDO(
+                            Config::get('db.dsn') ?? self::buildDSN(),
+                            null,
+                            null,
+                            Config::get('db.pdo_options')
+                        );
+                        if (Config::get('db.sqlite_create_functions')) {
+                            SqliteShim::createFunctions(self::$pdo);
+                        }
+                        break;
+                    case 'mysql':
+                        self::$pdo = new PDO(
+                            Config::get('db.dsn') ?? self::buildDSN(),
+                            Config::get('db.user'),
+                            Config::get('db.pass'),
+                            Config::get('db.pdo_options')
+                        );
+                        self::$pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+                        break;
+                    default:
+                        throw new \Exception("Unsupported DB adapter " . Config::get('db.adapter'));
+                        break;
+                }
+            } catch (\Throwable $th) {
+                throw new \Exception("Error setting up PDO: " . $th->getMessage());
             }
             // throw exceptions on PDO errors
             self::$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
