@@ -59,8 +59,9 @@ class URL
         // parse
         $parsed = parse_url($url);
         // URL must be inside site
-        if (substr($url, 0, strlen(URLs::site())) != URLs::site()) {
-            throw new \Exception('Trying to parse URL ' . $url . ' failed, URLs must be in site ' . URLs::site());
+        $site = preg_replace('@^(https?:)?//@', '//', URLs::site());
+        if (substr($url, 0, strlen($site)) != $site) {
+            throw new \Exception('Trying to parse URL ' . $url . ' failed, URLs must be in site ' . $site);
         }
         // pull out in-site path
         $this->path(substr($parsed['path'], strlen(URLs::sitePath())));
