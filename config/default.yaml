@@ -10,9 +10,9 @@ files:
   url: /files
   ttl: false
   css:
-  minify: false
-  sourcemap: true
-  keepimportantcomments: false
+    minify: false
+    sourcemap: true
+    keepimportantcomments: false
 
 fs:
   links: false
