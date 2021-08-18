@@ -27,7 +27,7 @@ if (!Config::get('errors.display')) {
             foreach ($t['args'] as $arg) {
                 $arg = htmlentities(print_r($arg, true));
                 if (strpos($arg, "\n")) {
-                    $id = md5(serialize([@$t['class'], @$t['type'], @$t['function'], $arg]));
+                    $id = crc32(serialize([@$t['class'], @$t['type'], @$t['function'], $arg]));
                     echo "<div class=\"collapsible-multiline\" id=\"$id\">";
                     echo "<div id=\"$id-collapsed\">";
                     echo "<a class=\"expand\" href=\"#$id\">+</a>";

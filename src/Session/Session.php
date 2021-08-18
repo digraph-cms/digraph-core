@@ -255,8 +255,8 @@ class Session
     }
 
     /**
-     * Generate a prefix for a namespace name, including a hash of the user
-     * if necessary.
+     * Generate a prefix for a namespace name, including user as an additional
+     * sub-prefix if necessary (if $unprotected is false)
      *
      * @param boolean $unprotected
      * @return string
@@ -265,11 +265,9 @@ class Session
     {
         $prefix = '_ns:';
         if ($unprotected) {
-            $prefix .= '_up:';
-        } elseif (self::user()) {
-            $prefix .= md5(serialize(self::user())) . ':';
+            $prefix .= '_unprotected:';
         } else {
-            $prefix .= '_guest:';
+            $prefix .= self::user() . ':';
         }
         return $prefix;
     }
