@@ -13,6 +13,7 @@ class Users
 {
     protected static $sources = [];
     protected static $cache = [];
+    protected static $null = [];
 
     public static function signinUrl(URL $bounce = null): URL
     {
@@ -26,9 +27,9 @@ class Users
         return $url;
     }
 
-    public static function randomName(): string
+    public static function randomName(string $seed = null): string
     {
-        return Dispatcher::firstValue('onRandomName') ?? static::doRandomName();
+        return Dispatcher::firstValue('onRandomName', [$seed]) ?? static::doRandomName($seed);
     }
 
     public static function setUserID(string $uuid)
@@ -39,7 +40,7 @@ class Users
         Session::setUser($uuid);
     }
 
-    protected static function doRandomName(): string
+    protected static function doRandomName(string $seed = null): string
     {
         static $animals;
         static $adjectives;
@@ -49,7 +50,14 @@ class Users
         if (!$adjectives) {
             $adjectives = preg_split('/[\r\n]+/', trim(file_get_contents(__DIR__ . '/adjectives.txt')));
         }
-        $adjective = $adjectives[random_int(0, count($adjectives) - 1)];
+        // seed random generator if necessary
+        if ($seed) {
+            mt_srand(crc32($seed));
+        } else {
+            mt_srand(rand());
+        }
+        // generate name
+        $adjective = $adjectives[mt_rand(0, count($adjectives) - 1)];
         $adjective_start = substr($adjective, 0, 1);
         $animals_filtered = array_values(array_filter(
             $animals,
@@ -57,7 +65,8 @@ class Users
                 return substr($e, 0, 1) == $adjective_start;
             }
         ));
-        $animal = $animals_filtered[random_int(0, count($animals_filtered) - 1)];
+        $animal = $animals_filtered[mt_rand(0, count($animals_filtered) - 1)];
+        // return name
         return ucwords("$adjective $animal");
     }
 
@@ -86,6 +95,44 @@ class Users
             static::$cache[$uuid] = self::doGet($uuid);
         }
         return static::$cache[$uuid];
+    }
+
+    /**
+     * Works fundamentally the same way as get(), but instead of returning null
+     * for nonexistent users, will return a NullUser even for nonexistent users
+     * which means that it can be used to safely display potentially missing
+     * users.
+     *
+     * @param string $uuid
+     * @return User
+     */
+    public static function user(string $uuid): User
+    {
+        return static::get($uuid) ?? static::null($uuid);
+    }
+
+    public static function guest(): NullUser
+    {
+        static $guest;
+        $guest = $guest ?? new NullUser([], [
+            'uuid' => 'guest',
+            'name' => "Guest"
+        ]);
+        return $guest;
+    }
+
+    public static function null($uuid): NullUser
+    {
+        if ($uuid == 'guest') {
+            return static::guest();
+        }
+        if (!isset(static::$null[$uuid])) {
+            static::$null[$uuid] = new NullUser([], [
+                'uuid' => $uuid,
+                'name' => Users::randomName($uuid)
+            ]);
+        }
+        return static::$null[$uuid];
     }
 
     public static function insert(User $user)

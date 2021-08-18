@@ -34,6 +34,16 @@ class User implements ArrayAccess
         $this->changed = false;
     }
 
+    public function __toString()
+    {
+        return $this->uuid();
+    }
+
+    public function html(): string
+    {
+        return "<a href='" . $this->profile() . "' class='user-link'>" . $this->name() . "<a>";
+    }
+
     public function addEmail(string $email, string $comment = '')
     {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -93,24 +103,19 @@ class User implements ArrayAccess
         return Users::update($this);
     }
 
-    public function delete()
-    {
-        return Users::delete($this);
-    }
-
     public function uuid(): string
     {
         return $this->uuid;
     }
 
-    public function createdBy(): string
+    public function createdBy(): User
     {
-        return $this->created_by;
+        return Users::user($this->created_by);
     }
 
-    public function updatedBy(): string
+    public function updatedBy(): User
     {
-        return $this->updated_by;
+        return Users::user($this->updated_by);
     }
 
     public function created(): DateTime

@@ -9,6 +9,8 @@ use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\Forms\Fields;
 use DigraphCMS\Session\Session;
 use DigraphCMS\URL\URL;
+use DigraphCMS\Users\User;
+use DigraphCMS\Users\Users;
 use Flatrr\FlatArrayTrait;
 
 class Page implements ArrayAccess
@@ -29,7 +31,7 @@ class Page implements ArrayAccess
         $fields['page_name'] = [
             'weight' => 100,
             'field' => $field = Fields::name($this),
-            'sets' => function() use ($field) {
+            'sets' => function () use ($field) {
                 $this->name($field);
             }
         ];
@@ -148,14 +150,14 @@ class Page implements ArrayAccess
         return $this->uuid;
     }
 
-    public function createdBy(): string
+    public function createdBy(): User
     {
-        return $this->created_by;
+        return Users::user($this->created_by);
     }
 
-    public function updatedBy(): string
+    public function updatedBy(): User
     {
-        return $this->updated_by;
+        return Users::user($this->updated_by);
     }
 
     public function created(): DateTime
