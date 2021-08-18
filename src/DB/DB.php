@@ -85,7 +85,7 @@ class DB
             default:
                 return (Config::get('db.adapter_dsn') ?? Config::get('db.adapter')) . ':' .
                     implode(';', array_filter([
-                        Config::get('db.host'),
+                        'host=' . Config::get('db.host'),
                         Config::get('db.port') ? 'port=' . Config::get('db.port') : false,
                         Config::get('db.name') ? 'dbname=' . Config::get('db.name') : false,
                         Config::get('db.charset') ? 'charset=' . Config::get('db.charset') : false
