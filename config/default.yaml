@@ -48,3 +48,20 @@ errors:
 users:
   sources:
     oauth2: \DigraphCMS\Users\OAuth2UserSource
+
+oauth2:
+  providers:
+    github:
+      name: GitHub
+      class: \League\OAuth2\Client\Provider\Github
+      scope: ["user:email"]
+    google:
+      name: Google
+      class: \League\OAuth2\Client\Provider\Google
+      scope: ["userinfo.email"]
+    facebook:
+      name: Facebook
+      class: \League\OAuth2\Client\Provider\Facebook
+      scope: ["email"]
+      config:
+        graphApiVersion: v2.10

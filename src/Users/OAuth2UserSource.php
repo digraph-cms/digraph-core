@@ -12,6 +12,15 @@ class OAuth2UserSource extends AbstractUserSource
 {
     protected $providers = [];
 
+    public function signinUrl(string $bounce): URL
+    {
+        $url = parent::signinUrl($bounce);
+        if (count($this->providers()) == 1) {
+            $url->arg('_provider', $this->providers()[0]);
+        }
+        return $url;
+    }
+
     public static function authorizeUser(string $oauth_provider, string $oauth_id, string $user_uuid)
     {
         DB::query()->insertInto(
@@ -31,9 +40,19 @@ class OAuth2UserSource extends AbstractUserSource
             ->execute();
     }
 
+    public function active(): bool
+    {
+        return count($this->providers()) > 0;
+    }
+
     public function title(): string
     {
-        return 'Third-party OAuth signin';
+        if (count($this->providers()) == 1) {
+            $name = $this->providers()[0];
+            return Config::get("oauth2.providers.$name.name") . ' signin';
+        } else {
+            return 'Third-party OAuth signin';
+        }
     }
 
     /**
@@ -66,7 +85,7 @@ class OAuth2UserSource extends AbstractUserSource
         );
     }
 
-    public function provider(string $name): ?AbstractProvider
+    public function provider(string $name, string $bounce = null): ?AbstractProvider
     {
         if (!isset($this->providers[$name])) {
             if (Config::get("oauth2.providers.$name.id") && Config::get("oauth2.providers.$name.secret")) {
@@ -75,7 +94,7 @@ class OAuth2UserSource extends AbstractUserSource
                 $config = @$provider['config'] ?? [];
                 $config['clientId'] = $provider['id'];
                 $config['clientSecret'] = $provider['secret'];
-                $config['redirectUri'] = $this->redirectUrl($name);
+                $config['redirectUri'] = $this->redirectUrl($name, $bounce);
                 $this->providers[$name] = new $class($config);
             } else {
                 $this->providers[$name] = null;
@@ -84,9 +103,12 @@ class OAuth2UserSource extends AbstractUserSource
         return $this->providers[$name];
     }
 
-    public static function redirectUrl($name)
+    public static function redirectUrl($name, string $bounce = null)
     {
         $url = new URL('/~signin/oauth2.html?_provider=' . $name);
+        if ($bounce) {
+            $url->arg('bounce', $bounce);
+        }
         $url = $url->__toString();
         $url = preg_replace('@^//@', URLs::siteProtocol() . '://', $url);
         return $url;

@@ -15,7 +15,7 @@ class Context
     public static function arg(string $key)
     {
         if (static::request()) {
-            return @static::request()->url()->query()[$key];
+            return @static::request()->url()->arg($key);
         } else {
             return null;
         }

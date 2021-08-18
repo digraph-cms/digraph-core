@@ -7,11 +7,24 @@ use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\Session\Session;
+use DigraphCMS\URL\URL;
 
 class Users
 {
     protected static $sources = [];
     protected static $cache = [];
+
+    public static function signinUrl(URL $bounce = null): URL
+    {
+        if (count(static::sources()) == 1) {
+            return static::sources()[0]->signinUrl($bounce);
+        }
+        $url = new URL('/~signin/');
+        if ($bounce) {
+            $url->arg('bounce', $bounce);
+        }
+        return $url;
+    }
 
     public static function randomName(): string
     {
@@ -151,7 +164,12 @@ class Users
 
     public static function sources(): array
     {
-        return array_map(static::class . '::source', array_keys(Config::get('users.sources')));
+        return array_filter(
+            array_map(static::class . '::source', array_keys(Config::get('users.sources'))),
+            function (?AbstractUserSource $source) {
+                return $source && $source->active();
+            }
+        );
     }
 
     public static function source(string $name): ?AbstractUserSource

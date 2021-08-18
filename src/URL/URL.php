@@ -262,4 +262,21 @@ class URL
         }
         return $this->query;
     }
+
+    /**
+     * Get or set a single arg in the query. Setting will normalize the order
+     * of query arguments.
+     *
+     * @param string $name
+     * @param string $value
+     * @return string|null
+     */
+    public function arg(string $name, string $value = null): ?string
+    {
+        if ($value !== null) {
+            $this->query[$name] = $value;
+            ksort($this->query);
+        }
+        return @$this->query[$name];
+    }
 }

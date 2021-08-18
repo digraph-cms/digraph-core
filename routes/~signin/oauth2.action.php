@@ -10,14 +10,26 @@ use DigraphCMS\Users\Users;
 /** @var \DigraphCMS\Users\OAuth\OAuth2UserSource */
 $source = Users::source('oauth2');
 $url = Context::response()->url();
+$bounce = $url->arg('bounce');
+if ($bounce) {
+    $bounce = new URL($bounce);
+}
 
-// list available oauth providers
+// no provider is specified
 if (!isset($url->query()['_provider'])) {
+    // if there is only one provider redirect straight to it
+    if (count($source->providers()) == 1) {
+        $name = $source->providers()[0];
+        Context::response()->redirect(new URL("&_provider=$name"));
+        return;
+    }
+    // list all providers
     echo '<h1>' . $source->title() . '</h1>';
     echo "<ul class='oauth-providers'>";
     foreach ($source->providers() as $name) {
+        $url = new URL("&_provider=$name");
         echo "<li class='oauth-provider oauth-provider_$name'>";
-        echo "<a href='" . new URL("&_provider=$name") . "'>" . Config::get("oauth2.providers.$name.title") . "</a>";
+        echo "<a href='$url'>" . Config::get("oauth2.providers.$name.name") . "</a>";
         echo "</li>";
     }
     echo "</ul>";
@@ -26,8 +38,8 @@ if (!isset($url->query()['_provider'])) {
 
 // display individual provider
 $name = $url->query()['_provider'];
-$provider = $source->provider($name);
-echo "<h1>" . Config::get("oauth2.providers.$name.title") . "</h1>";
+$provider = $source->provider($name, $bounce);
+echo "<h1>" . Config::get("oauth2.providers.$name.name") . "</h1>";
 
 if (!empty($_GET['error'])) {
     // Got an error, probably user denied access
@@ -82,12 +94,17 @@ if (!empty($_GET['error'])) {
     $ownerData = $resourceOwner->toArray();
     foreach ($ownerData as $key => $value) {
         if (stripos($key, 'email') !== false && filter_var($value, FILTER_VALIDATE_EMAIL)) {
-            $user->addEmail($value, 'Added from OAuth ' . Config::get("oauth2.providers.$name.title"));
+            $user->addEmail($value, 'Added from OAuth ' . Config::get("oauth2.providers.$name.name"));
         }
     }
     $user->update();
-    // redirect to profile page
-    Context::response()->redirect(
-        $user->profile()
-    );
+    // if there is a bounce target, try to make it into a URL and redirect
+    if ($bounce) {
+        Context::response()->redirect($bounce);
+    } else {
+        // otherwise redirect to profile page
+        Context::response()->redirect(
+            $user->profile()
+        );
+    }
 }
