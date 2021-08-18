@@ -5,7 +5,6 @@ namespace DigraphCMS\Content;
 use ArrayAccess;
 use DateTime;
 use DigraphCMS\Digraph;
-use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\Forms\Fields;
 use DigraphCMS\Session\Session;
 use DigraphCMS\URL\URL;
@@ -49,15 +48,13 @@ class Page implements ArrayAccess
         $this->updated_by = @$metadata['updated_by'] ?? Session::user();
         $this->rawSet(null, $data);
         $this->slug(@$metadata['slug'] ?? substr($this->uuid(), 0, 8), false);
-        $this->previousSlug = null;
-        Dispatcher::dispatchEvent('onPageConstruct', [$this]);
         $this->changed = false;
     }
 
     public function slugCollisions(): bool
     {
         if ($this->slugCollisions === null) {
-            $this->slugCollisions = Pages::getAll($this->slug())->count() > 1;
+            $this->slugCollisions = Pages::countAll($this->slug()) > 1;
         }
         return $this->slugCollisions;
     }
@@ -75,7 +72,7 @@ class Page implements ArrayAccess
     public function slug(string $slug = null, $unique = false): string
     {
         if ($slug !== null) {
-            $this->previousSlug = $this->slug;
+            $this->previousSlug = $this->previousSlug ?? $this->slug;
             $this->slug = $slug;
             if (!Pages::validateSlug($this->slug)) {
                 throw new \Exception("Slug $slug is not valid");
@@ -129,12 +126,18 @@ class Page implements ArrayAccess
         return null;
     }
 
-    public function url(string $action = '', array $args = [], bool $uuid = false): URL
+    public function url(string $action = null, array $args = null, bool $uuid = null): URL
     {
         if ($action && !preg_match('/\.[a-z0-9]+$/', $action)) {
             $action .= '.html';
         }
-        $slug = ($uuid || $this->slugCollisions()) ? $this->uuid() : $this->slug();
+        if ($uuid === true) {
+            $slug = $this->uuid();
+        } elseif ($uuid === false) {
+            $slug = $this->slug();
+        } else {
+            $slug = $this->slugCollisions() ? $this->uuid() : $this->slug();
+        }
         $url = new URL("/$slug/$action");
         $url->query($args);
         return $url;
@@ -172,6 +175,6 @@ class Page implements ArrayAccess
 
     public function updatedLast(): DateTime
     {
-        return clone $this->updated;
+        return clone $this->updated_last;
     }
 }

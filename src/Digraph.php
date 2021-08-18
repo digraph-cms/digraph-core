@@ -124,6 +124,16 @@ class Digraph
             if ($request->originalUrl() != Context::response()->url()) {
                 Context::response()->headers()->set('Link', '<' . Context::response()->url() . '>; rel="canonical"');
             }
+            // if response URL doesn't match page URL, set canonical header
+            if (Context::response()->status() == 200 && Context::page()) {
+                $pageUrl = Context::page()->url(
+                    $request->originalUrl()->action(),
+                    $request->originalUrl()->query()
+                );
+                if ($request->originalUrl() != $pageUrl) {
+                    Context::response()->headers()->set('Link', '<' . $pageUrl . '>; rel="canonical"');
+                }
+            }
             // wrap with template (HTML only)
             if (Context::response()->mime() == 'text/html') {
                 Templates::wrapResponse(Context::response());
@@ -148,10 +158,10 @@ class Digraph
         $url = $request->url();
         $route = $url->route();
         $action = $url->action();
-        if ($url->explicitlyStaticRoute() || ($pages = Pages::getAll($route))->count() == 0) {
+        if ($url->explicitlyStaticRoute() || !($pages = Pages::getAll($route))) {
             // run static routing if URL is explicitly static or no pages were found
             return static::doStaticRoute($route, $action);
-        } elseif ($pages->count() > 1 || Router::staticRouteExists($route, $action)) {
+        } elseif (count($pages) > 1 || Router::staticRouteExists($route, $action)) {
             // create a multiple options page if multiple pages or 1+ page and a static route exist
             Context::data('300_pages', $pages);
             if (Router::staticRouteExists($route, $action)) {
@@ -163,7 +173,7 @@ class Digraph
             return static::errorResponse(300);
         } else {
             // run page routing if a single page was found, and no static routes
-            Context::page($pages->fetch());
+            Context::page(reset($pages));
             return static::doPageRoute($action);
         }
     }

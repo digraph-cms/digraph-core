@@ -14,8 +14,8 @@ $pages = Context::data('300_pages');
     if ($staticUrl) {
         echo "<li>" . $staticUrl->html() . "</li>";
     }
-    while ($page = $pages->fetch()) {
-        $url = $page->url($requestUrl->action(), $requestUrl->query(), true);
+    foreach ($pages as $page) {
+        $url = $page->url($requestUrl->action(), $requestUrl->query());
         $url->normalize();
         echo "<li>" . $url->html() . " <small>#" . $page->uuid() . "</small></li>";
     }

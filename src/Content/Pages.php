@@ -12,11 +12,46 @@ class Pages
     const SLUG_CHARS = 'a-zA-Z0-9\\-_';
     protected static $cache = [];
 
+    /**
+     * Retrieve all the alternate slugs for a given page UUID
+     *
+     * @param string $uuid
+     * @return array
+     */
+    public static function alternateSlugs(string $uuid): array
+    {
+        return array_map(
+            function ($e) {
+                return $e['slug_url'];
+            },
+            DB::query()
+                ->from('slugs')
+                ->where('slug_page = ?', [$uuid])
+                ->orderBy('id DESC')
+                ->fetchAll()
+        );
+    }
+
+    /**
+     * Determine whether a given string is a valid slug. Needs to be a valid
+     * directory without leading or trailing slashes, with no crazy characters
+     * in it.
+     *
+     * @param string $slug
+     * @return boolean
+     */
     public static function validateSlug(string $slug): bool
     {
         return preg_match("@^[" . static::SLUG_CHARS . "]*(/[" . static::SLUG_CHARS . "]+)*$@", $slug);
     }
 
+    /**
+     * Quickly determine whether a given UUID exists. Does not check slugs,
+     * primary or alternate.
+     *
+     * @param string $uuid
+     * @return boolean
+     */
     public static function exists(string $uuid): bool
     {
         $query = DB::query()->from('pages')
@@ -24,9 +59,17 @@ class Pages
         return !!$query->count();
     }
 
+    /**
+     * Generate a PageSelect object for building queries to the pages table
+     *
+     * @return PageSelect
+     */
     public static function select(): PageSelect
     {
-        return new PageSelect(DB::query()->from('pages'), static::class);
+        return new PageSelect(
+            DB::query()->from('pages'),
+            static::class
+        );
     }
 
     /**
@@ -118,28 +161,61 @@ class Pages
 
     /**
      * Get all pages that match the given slug/UUID, including those indicated
-     * by an alias. Significantly slower than get(). A UUID match will be first,
-     * followed by slug matches, followed by alias matches. Within slugs and
-     * aliases pages are sorted by creation date, with older pages first.
+     * by a slug. Significantly slower than get(). A UUID match will be first,
+     * followed by primary slug matches, followed by alternate slug matches.
+     * Within the groups pages are sorted oldest creation date first.
      *
      * @param string $uuid_or_slug
-     * @return PageSelect
+     * @return array
      */
-    public static function getAll(string $uuid_or_slug): PageSelect
+    public static function getAll(string $uuid_or_slug): array
     {
-        $select = static::select();
-        $select->where('page_uuid = :q OR page_slug = :q', [':q' => $uuid_or_slug]);
-        $select->order('CASE WHEN :q = page_uuid THEN 0 ELSE 1 END ASC, created ASC');
-        // TODO: get by alias and append (will require multiple DB calls and returning an array)
-        return $select;
+        // get best-case scenarios by uuid or primary slug
+        $main = static::select()
+            ->where('page_uuid = :q OR page_slug = :q', [':q' => $uuid_or_slug])
+            ->order('CASE WHEN :q = page_uuid THEN 0 ELSE 1 END ASC, created ASC')
+            ->fetchAll();
+        // search in alternate slugs as well
+        $alts = DB::query()->from('slugs')
+            ->select('pages.*')
+            ->leftJoin('pages ON page_uuid = slug_page')
+            ->where('slug_url = ?', [$uuid_or_slug])
+            ->order('pages.created ASC')
+            ->fetchAll();
+        $alts = array_map(static::class . '::resultToPage', $alts);
+        // return results
+        return array_merge($main, $alts);
+    }
+
+    /**
+     * Does the same basic operation as getAll(), but only counts the results,
+     * so it can be used to much more quickly determine whether and the number
+     * of results available for a given UUID or slug.
+     *
+     * @param string $uuid_or_slug
+     * @return integer
+     */
+    public static function countAll(string $uuid_or_slug): int
+    {
+        // get best-case scenarios by uuid or primary slug
+        $main = static::select()
+            ->where('page_uuid = :q OR page_slug = :q', [':q' => $uuid_or_slug])
+            ->order('CASE WHEN :q = page_uuid THEN 0 ELSE 1 END ASC, created ASC')
+            ->count();
+        // search in alternate slugs as well
+        $alts = DB::query()->from('slugs')
+            ->where('slug_url = ?', [$uuid_or_slug])
+            ->count();
+        // return results
+        return $main + $alts;
     }
 
     /**
      * Get the top result for a given slug/UUID. Will be fastest for UUID and
-     * slug matches, but will run an additional query and search aliases if
-     * UUID or slug matches are not found. A UUID match will take precedence,
-     * followed by the oldest creation date slug match, followed by the oldest
-     * alias match.
+     * primary slug matches, but will run an additional query and search
+     * alternate slugs if UUID or primary slug matches are not found. A UUID 
+     * match will take precedence, followed by the oldest creation date primary 
+     * slug match, followed by the oldest alternate slug match.
      *
      * @param string $uuid_or_slug
      * @return Page|null
@@ -147,18 +223,36 @@ class Pages
     public static function get(string $uuid_or_slug): ?Page
     {
         if (!isset(static::$cache[$uuid_or_slug])) {
-            static::$cache[$uuid_or_slug] = self::doGet($uuid_or_slug);
+            static::$cache[$uuid_or_slug] =
+                self::doGet($uuid_or_slug) ??
+                self::doGetByAlternateSlug($uuid_or_slug);
         }
         return static::$cache[$uuid_or_slug];
     }
 
     protected static function doGet(string $uuid_or_slug): ?Page
     {
-        $query = DB::query()->from('pages')
+        $result = DB::query()->from('pages')
             ->where('page_uuid = :q OR page_slug = :q', [':q' => $uuid_or_slug])
             ->order('CASE WHEN :q = page_uuid THEN 0 ELSE 1 END ASC, created ASC')
-            ->limit(1);
-        $result = $query->execute();
+            ->limit(1)
+            ->execute();
+        if ($result && $result = $result->fetch()) {
+            return static::resultToPage($result);
+        } else {
+            return null;
+        }
+    }
+
+    protected static function doGetByAlternateSlug(string $slug): ?Page
+    {
+        $result = DB::query()->from('slugs')
+            ->select('pages.*')
+            ->leftJoin('pages ON page_uuid = slug_page')
+            ->where('slug_url = ?', [$slug])
+            ->order('pages.created ASC')
+            ->limit(1)
+            ->execute();
         if ($result && $result = $result->fetch()) {
             return static::resultToPage($result);
         } else {
@@ -171,20 +265,51 @@ class Pages
         return Page::class;
     }
 
+    public static function insertSlug(string $page_uuid, string $slug)
+    {
+        if (!static::validateSlug($slug)) {
+            throw new \Exception("Invalid slug");
+        }
+        $check = DB::query()
+            ->from('slugs')
+            ->where('slug_url = ? AND slug_page = ?', [$slug, $page_uuid]);
+        if (!$check->count()) {
+            DB::query()->insertInto(
+                'slugs',
+                [
+                    'slug_url' => $slug,
+                    'slug_page' => $page_uuid
+                ]
+            );
+        }
+    }
+
     public static function update(Page $page)
     {
-        //TODO: insert alias if slug updated
+        DB::beginTransaction();
+        // insert old slug into slugs if slug is updated
+        if ($page->previousSlug()) {
+            static::insertSlug($page->uuid(), $page->previousSlug());
+        }
         // update values
-        $query = DB::query()->update('pages');
-        $query->where(
-            'page_uuid = ? AND updated = ?',
-            [
-                $page->uuid(),
-                $page->updatedLast()->format("Y-m-d H:i:s")
-            ]
-        )
-            ->set(static::updateObjectValues($page))
+        DB::query()
+            ->update('pages')
+            ->where(
+                'page_uuid = ? AND updated = ?',
+                [
+                    $page->uuid(),
+                    $page->updatedLast()->format("Y-m-d H:i:s")
+                ]
+            )
+            ->set([
+                'page_slug' => $page->slug(),
+                'page_name' => $page->name(),
+                'page_data' => json_encode($page->get()),
+                'page_class' => $page->class(),
+                'updated_by' => Session::user()
+            ])
             ->execute();
+        DB::commit();
     }
 
     public static function insert(Page $page)
@@ -193,16 +318,33 @@ class Pages
         DB::query()
             ->insertInto(
                 'pages',
-                static::insertObjectValues($page)
+                [
+                    'page_uuid' => $page->uuid(),
+                    'page_slug' => $page->slug(),
+                    'page_name' => $page->name(),
+                    'page_data' => json_encode($page->get()),
+                    'page_class' => $page->class(),
+                    'created_by' => $page->createdBy(),
+                    'updated_by' => $page->updatedBy(),
+                ]
             )
             ->execute();
     }
 
     public static function delete(Page $page)
     {
-        //TODO: delete links
-        //TODO: delete linked aliases
-        // delete object
+        DB::beginTransaction();
+        // delete links
+        DB::query()
+            ->delete('links')
+            ->where('link_start = :uuid OR link_end = :uuid', ['uuid' => $page->uuid()])
+            ->execute();
+        // delete alternate slugs
+        DB::query()
+            ->delete('slugs')
+            ->where('slug_page = ?', [$page->uuid()])
+            ->execute();
+        // delete page
         DB::query()
             ->delete('pages')
             ->where(
@@ -213,35 +355,14 @@ class Pages
                 ]
             )
             ->execute();
+        // filter cache
         static::filterCache($page);
-    }
-
-    protected static function insertObjectValues(Page $page): array
-    {
-        return [
-            'page_uuid' => $page->uuid(),
-            'page_slug' => $page->slug(),
-            'page_name' => $page->name(),
-            'page_data' => json_encode($page->get()),
-            'page_class' => $page->class(),
-            'created_by' => $page->createdBy(),
-            'updated_by' => $page->updatedBy(),
-        ];
-    }
-
-    protected static function updateObjectValues(Page $page): array
-    {
-        return [
-            'page_slug' => $page->slug(),
-            'page_name' => $page->name(),
-            'page_data' => json_encode($page->get()),
-            'page_class' => $page->class(),
-            'updated_by' => Session::user()
-        ];
+        DB::commit();
     }
 
     /**
-     * Remove a given object from the 
+     * Remove a given object from the object cache so that it will be recreated
+     * if pulled again
      *
      * @param Page $page
      * @return void
@@ -255,7 +376,14 @@ class Pages
         }
     }
 
-    public static function resultToPage($result): ?Page
+    /**
+     * Convert a raw row out of the database into a Page object. Will return
+     * from the cache if the given uuid has been seen before.
+     *
+     * @param array $result
+     * @return Page|null
+     */
+    public static function resultToPage(array $result): ?Page
     {
         if (!is_array($result)) {
             return null;
