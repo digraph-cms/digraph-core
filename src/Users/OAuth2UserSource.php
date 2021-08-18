@@ -12,7 +12,7 @@ class OAuth2UserSource extends AbstractUserSource
 {
     protected $providers = [];
 
-    public function signinUrl(string $bounce): URL
+    public function signinUrl(?string $bounce): URL
     {
         $url = parent::signinUrl($bounce);
         if (count($this->providers()) == 1) {

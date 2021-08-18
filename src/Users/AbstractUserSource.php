@@ -20,7 +20,7 @@ abstract class AbstractUserSource
         return $this->name;
     }
 
-    public function signinUrl(string $bounce): URL
+    public function signinUrl(?string $bounce): URL
     {
         $url = new URL('/~signin/' . $this->name() . '.html');
         if ($bounce) {
