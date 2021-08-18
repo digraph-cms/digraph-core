@@ -109,7 +109,8 @@ class URLs
      */
     public static function site(): string
     {
-        return Config::get('urls.protocol') . '//' . self::$siteHost . self::$sitePath;
+        $protocol = Config::get('urls.protocol') ? Config::get('urls.protocol') . ':' : '';
+        return $protocol . '//' . self::$siteHost . self::$sitePath;
     }
 
     public static function sitePath(): string
