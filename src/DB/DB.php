@@ -52,7 +52,7 @@ class DB
                             null,
                             Config::get('db.pdo_options')
                         );
-                        if (Config::get('db.sqlite_create_functions')) {
+                        if (Config::get('db.sqlite.create_functions')) {
                             SqliteShim::createFunctions(self::$pdo);
                         }
                         break;

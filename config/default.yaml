@@ -8,11 +8,11 @@ urls:
 files:
   path: "${paths.web}/files"
   url: /files
-  ttl: false
+  ttl: 86400
   css:
-    minify: false
+    minify: true
     sourcemap: true
-    keepimportantcomments: false
+    keepimportantcomments: true
 
 fs:
   links: false
@@ -22,8 +22,9 @@ fs:
 db:
   adapter: mysql
   charset: utf8
-  sqlite_create_functions: true
   pdo_options: []
+  sqlite:
+    create_functions: true
 
 page:
   cachettl:
@@ -43,7 +44,7 @@ templates:
       name: null
 
 errors:
-  display: true
+  display: false
 
 users:
   sources:
