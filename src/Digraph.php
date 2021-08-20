@@ -4,6 +4,7 @@ namespace DigraphCMS;
 
 use DigraphCMS\Content\Router;
 use DigraphCMS\Content\Pages;
+use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\HTTP\Redirect;
 use DigraphCMS\HTTP\Request;
@@ -12,6 +13,7 @@ use DigraphCMS\HTTP\Response;
 use DigraphCMS\UI\Templates;
 use DigraphCMS\URL\URL;
 use DigraphCMS\URL\URLs;
+use Throwable;
 
 class Digraph
 {
@@ -101,6 +103,7 @@ class Digraph
      */
     public static function makeResponse(Request $request): Response
     {
+        ob_start();
         URLs::beginContext($request->url());
         Context::begin();
         Context::request($request);
@@ -122,7 +125,7 @@ class Digraph
                 Context::response()->url($url);
             }
             // if response URL doesn't match original URL, set canonical header
-            if ($request->originalUrl() != Context::response()->url()) {
+            if (Context::response()->status() == 200 && $request->originalUrl() != Context::response()->url()) {
                 Context::response()->headers()->set('Link', '<' . Context::response()->url() . '>; rel="canonical"');
             }
             // if response URL doesn't match page URL, set canonical header
@@ -142,16 +145,21 @@ class Digraph
         } catch (HttpError $error) {
             // generate exception-handling page
             Context::thrown($error);
-            Context::response(static::errorResponse($error->status(), $request));
+            Context::response(static::errorResponse($error->status(), $error->getMessage()));
             Context::response()->resetTemplate();
             Templates::wrapResponse(Context::response());
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             // generate a fallback exception handling error page
+            $response =
+                Dispatcher::firstValue('onException_' . get_class($th), [$th]) ??
+                Dispatcher::firstValue('onException', [$th]) ??
+                static::errorResponse(500);
             Context::thrown($th);
-            Context::response(static::errorResponse(500, $request));
-            Context::response()->resetTemplate();
+            Context::response($response);
+            Context::response()->template('digraph/error.php');
             Templates::wrapResponse(Context::response());
         }
+        ob_end_clean();
         // return
         $response = Context::response();
         Context::end();
@@ -213,8 +221,11 @@ class Digraph
         return null;
     }
 
-    public static function errorResponse(int $status): Response
+    public static function errorResponse(int $status, string $message = null): Response
     {
+        Context::clone();
+        Context::url(new URL("/~error/$status.html"));
+        Context::data('error_message', $message);
         $response =
             static::doStaticRoute('error', $status) ??
             static::doStaticRoute('error', floor($status / 100) . 'xx') ??
@@ -226,6 +237,7 @@ class Digraph
         } else {
             $response->status($status);
         }
+        Context::end();
         return $response;
     }
 }

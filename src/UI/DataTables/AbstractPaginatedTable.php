@@ -40,9 +40,7 @@ abstract class AbstractPaginatedTable
             }
         }
         echo "</section>";
-        $return = ob_get_contents();
-        ob_end_clean();
-        return $return;
+        return ob_get_clean();
     }
 
     public function printHeaders()

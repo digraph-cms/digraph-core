@@ -27,6 +27,31 @@ class Users
         );
     }
 
+    /**
+     * Get a list of all groups
+     *
+     * @return Group[]
+     */
+    public static function allGroups(): array
+    {
+        static $groups;
+        if (!$groups) {
+            $groups = [new Group('users')];
+            $query = DB::pdo()->query('SELECT group_name FROM user_groups GROUP BY group_name ORDER BY count(*)');
+            $query->execute();
+            while ($g = $query->fetch()) {
+                $groups[] = new Group($g['group_name']);
+            }
+        }
+        return $groups;
+    }
+
+    /**
+     * Get all groups a user belongs to
+     *
+     * @param string $user_uuid
+     * @return Group[]
+     */
     public static function groups(string $user_uuid): array
     {
         return array_map(

@@ -46,7 +46,7 @@ templates:
       name: null
 
 errors:
-  display: false
+  display_trace: false
 
 users:
   sources:

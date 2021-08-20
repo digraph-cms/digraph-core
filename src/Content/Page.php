@@ -99,19 +99,27 @@ class Page implements ArrayAccess
         return $this->previousSlug;
     }
 
-    public function name(string $name = null): string
+    public function name(string $name = null, bool $unfiltered = false): string
     {
         if ($name) {
             $this->name = $name;
         }
-        return $this->name;
+        if ($unfiltered) {
+            return $this->name;
+        } else {
+            return htmlentities($this->name);
+        }
     }
 
-    public function title(URL $url = null): string
+    public function title(URL $url = null, bool $omitName = false): string
     {
         $name = $this->name();
         if ($url && $url->action() != 'index') {
-            $name .= ': ' . $url->action();
+            if ($omitName) {
+                return $url->action();
+            } else {
+                return $name . ': ' . $url->action();
+            }
         }
         return $name;
     }

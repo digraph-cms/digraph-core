@@ -20,6 +20,7 @@ class User implements ArrayAccess
     protected $created, $created_by;
     protected $updated, $updated_by;
     protected $slugCollisions;
+    protected $groups;
 
     public function __construct(array $data = [], array $metadata = [])
     {
@@ -36,12 +37,17 @@ class User implements ArrayAccess
 
     public function groups(): array
     {
-        static $groups;
-        if ($groups === null) {
-            $groups = ['users'];
-            $groups = array_merge($groups,Users::groups($this->uuid()));
+        if ($this->groups === null) {
+            $this->groups = ['users'];
+            $this->groups = array_merge($this->groups, Users::groups($this->uuid()));
+            $this->groups = array_map(
+                function ($group) {
+                    return new Group($group);
+                },
+                $this->groups
+            );
         }
-        return $groups;
+        return $this->groups;
     }
 
     public function __toString()
@@ -95,7 +101,7 @@ class User implements ArrayAccess
 
     public function profile(): URL
     {
-        return new URL('/~user/profile.html?uuid=' . $this->uuid());
+        return new URL('/~users/' . $this->uuid() . '.html');
     }
 
     public function insert()

@@ -245,11 +245,11 @@ class Pages
 
     protected static function doGetByAlternateSlug(string $slug): ?Page
     {
-        $result = DB::query()->from('page_slug')
-            ->select('pages.*')
-            ->leftJoin('pages ON page_uuid = slug_page')
+        $result = DB::query()->from('page_slugs')
+            ->select('page.*')
+            ->leftJoin('page ON page_uuid = slug_page')
             ->where('slug_url = ?', [$slug])
-            ->order('pages.created ASC')
+            ->order('page.created ASC')
             ->limit(1)
             ->execute();
         if ($result && $result = $result->fetch()) {
@@ -270,7 +270,7 @@ class Pages
             throw new \Exception("Invalid slug");
         }
         $check = DB::query()
-            ->from('page_slug')
+            ->from('page_slugs')
             ->where('slug_url = ? AND slug_page = ?', [$slug, $page_uuid]);
         if (!$check->count()) {
             DB::query()->insertInto(
@@ -340,7 +340,7 @@ class Pages
             ->execute();
         // delete alternate slugs
         DB::query()
-            ->delete('page_slug')
+            ->delete('page_slugs')
             ->where('slug_page = ?', [$page->uuid()])
             ->execute();
         // delete page

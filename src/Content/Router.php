@@ -3,6 +3,7 @@
 namespace DigraphCMS\Content;
 
 use DigraphCMS\Context;
+use DigraphCMS\URL\URL;
 
 // Always add the default system routes directory
 Router::addSource(__DIR__ . '/../../routes');
@@ -11,9 +12,68 @@ class Router
 {
     protected static $sources = [];
 
+    /**
+     * Get a list of all the actions available for the given page
+     *
+     * @param Page $page
+     * @return URL[]
+     */
+    public static function pageActions(Page $page): array
+    {
+        $urls = [];
+        foreach ($page->routeClasses() as $c) {
+            foreach (self::search("@$c/*.action.php") as $file) {
+                $action = basename($file);
+                $action = substr($action, 0, strlen($action) - 11);
+                if ($action == '@wildcard' || $action == 'index') {
+                    continue;
+                }
+                if (!preg_match('/\.[a-z0-9]+$/', $action)) {
+                    $urls[] = $page->url($action);
+                }
+            }
+        }
+        return $urls;
+    }
+
+    /**
+     * Get a list of all the static actions available for the given route
+     *
+     * @param string $route
+     * @return URL[]
+     */
+    public static function staticActions(string $route): array
+    {
+        $urls = [];
+        foreach (self::search("~$route/*.action.php") as $file) {
+            $action = basename($file);
+            $action = substr($action, 0, strlen($action) - 11);
+            if ($action == '@wildcard' || $action == 'index') {
+                continue;
+            }
+            if (!preg_match('/\.[a-z0-9]+$/', $action)) {
+                $urls[] = new URL("/~$route/$action.html");
+            }
+        }
+        return $urls;
+    }
+
+    public static function search(string $glob): array
+    {
+        $files = [];
+        foreach (static::$sources as $source) {
+            foreach (glob("$source/$glob") as $file) {
+                if (is_file($file)) {
+                    $files[] = $file;
+                }
+            }
+        }
+        return $files;
+    }
+
     public static function include(string $glob)
     {
-        $route = Context::request()->url()->route();
+        $route = Context::url()->route();
         if (!Context::page()) {
             $route = preg_replace('@^([^~])@', '~$1', $route);
         }
@@ -47,9 +107,17 @@ class Router
     {
         Context::clone();
         Context::page($page);
-        $classes = $page->routeClasses();
-        foreach ($classes as $c) {
+        // try specific routes first
+        foreach ($page->routeClasses() as $c) {
             $output = self::tryRoute("@$c/$action");
+            if ($output !== null) {
+                Context::end();
+                return $output;
+            }
+        }
+        // try wildcard routes last
+        foreach ($page->routeClasses() as $c) {
+            $output = self::tryRoute("@$c/@wildcard");
             if ($output !== null) {
                 Context::end();
                 return $output;
@@ -64,7 +132,13 @@ class Router
      */
     public static function staticRoute(string $route, string $action)
     {
+        // try specific route
         $output = self::tryRoute("~$route/$action");
+        if ($output !== null) {
+            return $output;
+        }
+        // try wildcard route
+        $output = self::tryRoute("~$route/@wildcard");
         if ($output !== null) {
             return $output;
         }
@@ -87,6 +161,11 @@ class Router
         ];
         foreach ($routes as $r) {
             foreach (self::$sources as $source) {
+                // check wildcard route
+                // if (is_file("$source/~$r/@wildcard.action.php")) {
+                //     return true;
+                // }
+                // check individual/specific route
                 $path = "$source/~$r/$action.action.php";
                 if (is_file($path)) {
                     return true;

@@ -2,7 +2,6 @@
 
 namespace DigraphCMS\UI\DataTables;
 
-use DigraphCMS\URL\URL;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\UserSelect;
 
@@ -26,13 +25,7 @@ class UserTable extends SelectTable
         return [
             $user,
             $user->created()->format('Y-m-d'),
-            implode(', ', array_map(
-                function ($group) {
-                    $url = new URL('/~user/group.html?group=' . $group);
-                    return "<a href='$url'>$group</a>";
-                },
-                $user->groups()
-            ))
+            implode(', ', $user->groups())
         ];
     }
 }

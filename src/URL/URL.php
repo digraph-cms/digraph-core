@@ -4,6 +4,7 @@ namespace DigraphCMS\URL;
 
 use DigraphCMS\Content\Page;
 use DigraphCMS\Content\Pages;
+use DigraphCMS\Context;
 
 /**
  * A URL represents a URL within the site defined by URL::$siteHost and 
@@ -74,6 +75,24 @@ class URL
         }
     }
 
+    public function html(array $class = [], bool $omitPageName = false, string $target = null): string
+    {
+        $normalized = clone ($this);
+        $normalized->normalize();
+        if ($normalized->pathString() == Context::url()->pathString()) {
+            $class[] = 'current-page';
+        }
+        if ($class) {
+            $class = ' class="' . implode(' ', $class) . '"';
+        } else {
+            $class = '';
+        }
+        if ($target) {
+            $target = ' target="' . $target . '"';
+        }
+        return "<a href=\"$normalized\"$class$target>" . $normalized->name($omitPageName) . "</a>";
+    }
+
     public function page(): ?Page
     {
         if ($this->explicitlyStaticRoute()) {
@@ -83,23 +102,10 @@ class URL
         }
     }
 
-    public function html(array $class = [], string $target = null): string
-    {
-        if ($class) {
-            $class = ' class="' . implode(' ', $class) . '"';
-        } else {
-            $class = '';
-        }
-        if ($target) {
-            $target = ' target="' . $target . '"';
-        }
-        return "<a href=\"$this\"$class$target>" . $this->name() . "</a>";
-    }
-
-    public function name(): string
+    public function name(bool $omitPageName = false): string
     {
         if ($this->page()) {
-            return $this->page()->title($this);
+            return $this->page()->title($this, $omitPageName);
         } else {
             return $this->path();
         }

@@ -3,6 +3,7 @@
 use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
+use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\User;
@@ -62,7 +63,7 @@ if (!empty(Context::arg('error'))) {
     if (isset($_SESSION['oauth2state'])) {
         unset($_SESSION['oauth2state']);
     }
-    throw new \Exception("Invalid OAuth 2 state");
+    throw new HttpError(500, "Invalid OAuth 2 state");
 } else {
     // get access token and resource owner, pass to user source for sign-in
     $accessToken = $provider->getAccessToken('authorization_code', [

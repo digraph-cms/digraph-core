@@ -9,9 +9,6 @@ resources than absolutely necessary.
 use DigraphCMS\Context;
 use DigraphCMS\Media\Media;
 
-$response = Context::response();
-$fields = Context::fields();
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -20,14 +17,16 @@ $fields = Context::fields();
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $fields['page.name'] ?? 'Error'; ?> :: <?php echo $fields['site.name']; ?></title>
+    <title><?php echo Context::fields()['page.name'] ?? 'Error'; ?> :: <?php echo Context::fields()['site.name']; ?></title>
     <style>
         <?php echo Media::get('/digraph/error.css')->content(); ?>
     </style>
 </head>
 
 <body class='template-error'>
-    <?php echo $response->content(); ?>
+    <main>
+        <?php echo Context::response()->content(); ?>
+    </main>
 </body>
 
 </html>

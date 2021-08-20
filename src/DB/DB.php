@@ -3,16 +3,30 @@
 namespace DigraphCMS\DB;
 
 use DigraphCMS\Config;
+use DigraphCMS\Digraph;
+use DigraphCMS\Events\Dispatcher;
+use DigraphCMS\HTTP\Response;
 use Envms\FluentPDO\Query;
 use PDO;
+use PDOException;
 
 DB::addMigrationPath(__DIR__ . '/../../phinx');
+Dispatcher::addSubscriber(DB::class);
 
 class DB
 {
     protected static $pdo, $driver, $query;
     protected static $migrationPaths = [];
     protected static $transactions = 0;
+
+    public static function onException_PDOException(PDOException $exception): ?Response
+    {
+        switch ($exception->getMessage()) {
+            case 'SQLSTATE[HY000]: General error: 5 database is locked':
+                return Digraph::errorResponse(503, 'Database is locked for writing or maintenance, please try again in a few minutes');
+        }
+        return null;
+    }
 
     public static function beginTransaction()
     {

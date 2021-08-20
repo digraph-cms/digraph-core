@@ -20,8 +20,11 @@ class Context
         static::response()->staleTTL(0);
     }
 
-    public static function url(): URL
+    public static function url(URL $url = null): URL
     {
+        if ($url) {
+            static::request()->url($url);
+        }
         return clone static::request()->url();
     }
 
@@ -31,7 +34,7 @@ class Context
      * @param string $key
      * @return mixed
      */
-    public static function arg(string $key): mixed
+    public static function arg(string $key)
     {
         if (static::request()) {
             return @static::request()->url()->arg($key);
@@ -67,10 +70,11 @@ class Context
      * @param mixed $value
      * @return void
      */
-    public static function correctArg(string $key, $value) {
+    public static function correctArg(string $key, $value)
+    {
         if (static::response()) {
             $url = static::response()->url();
-            $url->arg($key,$value);
+            $url->arg($key, $value);
             static::response()->url($url);
         } else {
             return null;
@@ -131,6 +135,8 @@ class Context
     public static function clone()
     {
         static::$context[] = end(static::$context) ?? [];
+        static::request(static::request() ? clone static::request() : null);
+        static::response(static::response() ? clone static::response() : null);
     }
 
     public static function end()

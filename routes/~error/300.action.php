@@ -2,7 +2,7 @@
 
 use DigraphCMS\Context;
 
-$requestUrl = Context::request()->url();
+$requestUrl = Context::request()->originalUrl();
 $staticUrl = Context::data('300_static');
 $pages = Context::data('300_pages');
 

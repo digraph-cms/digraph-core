@@ -7,6 +7,7 @@ the name of speed and efficiency for users.
 */
 
 use DigraphCMS\Context;
+use DigraphCMS\UI\Actionbar;
 
 $response = Context::response();
 $fields = Context::fields();
@@ -23,7 +24,13 @@ $fields = Context::fields();
 </head>
 
 <body class='template-minimal'>
-    <?php echo $response->content(); ?>
+    <a href="#main-content" id="skip-to-content">Skip to content</a>
+    <?php echo new Actionbar(Context::url()); ?>
+    <main>
+        <article id="main-content">
+            <?php echo $response->content(); ?>
+        </article>
+    </main>
 </body>
 
 </html>
