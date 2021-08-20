@@ -24,7 +24,7 @@ class OAuth2UserSource extends AbstractUserSource
     public static function authorizeUser(string $oauth_provider, string $oauth_id, string $user_uuid)
     {
         DB::query()->insertInto(
-            'oauth2',
+            'user_oauth2',
             [
                 'oauth_user' => $user_uuid,
                 'oauth_provider' => $oauth_provider,
@@ -35,7 +35,7 @@ class OAuth2UserSource extends AbstractUserSource
 
     public static function deauthorizeUser(string $oauth_provider, string $user_uuid)
     {
-        DB::query()->deleteFrom('oauth2')
+        DB::query()->deleteFrom('user_oauth2')
             ->where('oauth_user = ? AND oauth_provider = ?', [$oauth_provider, $user_uuid])
             ->execute();
     }
@@ -65,7 +65,7 @@ class OAuth2UserSource extends AbstractUserSource
      */
     public static function lookupUser(string $provider, string $id): ?string
     {
-        $result = DB::query()->from('oauth2')
+        $result = DB::query()->from('user_oauth2')
             ->where('oauth_provider = ? AND oauth_id = ?', [$provider, $id])
             ->execute();
         if ($result && $result = $result->fetch()) {

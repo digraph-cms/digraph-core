@@ -3,6 +3,7 @@
 use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
+use DigraphCMS\UI\Notifications;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
@@ -10,13 +11,13 @@ use DigraphCMS\Users\Users;
 /** @var \DigraphCMS\Users\OAuth\OAuth2UserSource */
 $source = Users::source('oauth2');
 $url = Context::response()->url();
-$bounce = $url->arg('bounce');
+$bounce = Context::arg('bounce');
 if ($bounce) {
     $bounce = new URL($bounce);
 }
 
 // no provider is specified
-if (!isset($url->query()['_provider'])) {
+if (!Context::arg('_provider')) {
     // if there is only one provider redirect straight to it
     if (count($source->providers()) == 1) {
         $name = $source->providers()[0];
@@ -37,16 +38,18 @@ if (!isset($url->query()['_provider'])) {
 }
 
 // display individual provider
-$name = $url->query()['_provider'];
+$name = Context::arg('_provider');
 $provider = $source->provider($name, $bounce);
 echo "<h1>" . Config::get("oauth2.providers.$name.name") . "</h1>";
 
-if (!empty($_GET['error'])) {
+if (!empty(Context::arg('error'))) {
     // Got an error, probably user denied access
-    echo '<p>Got error: ' . htmlspecialchars($_GET['error'], ENT_QUOTES, 'UTF-8') . '</p>';
-    echo "<p><a href='" . new URL('/~signin/') . "'>Restart the sign-in process?</a></p>";
+    Notifications::printError(
+        'Got error: ' . htmlspecialchars(Context::arg('error'), ENT_QUOTES, 'UTF-8') .
+            "<br><a href='" . new URL('/~signin/') . "'>Restart the sign-in process?</a>"
+    );
     Context::response()->status(500);
-} elseif (empty($_GET['code'])) {
+} elseif (empty(Context::arg('code'))) {
     // If we don't have an authorization code then get one
     $authUrl = $provider->getAuthorizationUrl([
         'scope' => Config::get("oauth2.providers.$name.scope")
@@ -54,7 +57,7 @@ if (!empty($_GET['error'])) {
     Context::response()->redirect($authUrl);
     $_SESSION['oauth2state'] = $provider->getState();
     return;
-} elseif (empty($_GET['state']) || (isset($_SESSION['oauth2state']) && $_GET['state'] !== $_SESSION['oauth2state'])) {
+} elseif (empty(Context::arg('state')) || (isset($_SESSION['oauth2state']) && Context::arg('state') !== $_SESSION['oauth2state'])) {
     // State is invalid, possible CSRF attack in progress
     if (isset($_SESSION['oauth2state'])) {
         unset($_SESSION['oauth2state']);
@@ -63,7 +66,7 @@ if (!empty($_GET['error'])) {
 } else {
     // get access token and resource owner, pass to user source for sign-in
     $accessToken = $provider->getAccessToken('authorization_code', [
-        'code' => $_GET['code']
+        'code' => Context::arg('code')
     ]);
     $resourceOwner = $provider->getResourceOwner($accessToken);
     $id = $resourceOwner->getID();

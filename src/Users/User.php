@@ -34,12 +34,17 @@ class User implements ArrayAccess
         $this->changed = false;
     }
 
-    public function __toString()
+    public function groups(): array
     {
-        return $this->uuid();
+        static $groups;
+        if ($groups === null) {
+            $groups = ['users'];
+            $groups = array_merge($groups,Users::groups($this->uuid()));
+        }
+        return $groups;
     }
 
-    public function html(): string
+    public function __toString()
     {
         return "<a href='" . $this->profile() . "' class='user-link'>" . $this->name() . "<a>";
     }

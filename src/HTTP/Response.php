@@ -79,8 +79,26 @@ class Response
             ($this->page() ? Config::get('page.cachettl.' . $this->page()->class()) : null) ??
             // page object's ttl
             ($this->page() ? $this->page->cacheTTL($this->url()->action()) : null) ??
-            // default of 60
-            60;
+            // default of 0
+            0;
+    }
+
+    public function staleTTL(int $ttl = null): int
+    {
+        if ($ttl !== null) {
+            $this->staleTTL = $ttl;
+        }
+        return
+            // explicitly set value
+            $this->staleTTL ??
+            // config value for any page class
+            Config::get('page.stalettl._any') ??
+            // config value for this page class
+            ($this->page() ? Config::get('page.stalettl.' . $this->page()->class()) : null) ??
+            // page object's ttl
+            ($this->page() ? $this->page->staleTTL($this->url()->action()) : null) ??
+            // default of 0
+            0;
     }
 
     public function browserTTL(int $ttl = null): int
@@ -97,8 +115,8 @@ class Response
             ($this->page() ? Config::get('page.browserttl.' . $this->page()->class()) : null) ??
             // page object's ttl
             ($this->page() ? $this->page->browserTTL($this->url()->action()) : null) ??
-            // default of 60
-            60;
+            // default of 0
+            0;
     }
 
     public function page(Page $page = null): ?Page

@@ -731,8 +731,8 @@ Holy
 Homely
 Honest
 Honeyed
-Honorary
 Honorable
+Honorary
 Honored
 Hopeful
 Hortative
@@ -1171,8 +1171,8 @@ Principled
 Pristine
 Privileged
 Prize
-Prizewinning
 Prized
+Prizewinning
 Pro
 Proactive
 Probable
@@ -1385,8 +1385,8 @@ Singular
 Sisterly
 Sizable
 Sizzling
-Skillful
 Skilled
+Skillful
 Sleek
 Slick
 Slinky
@@ -1440,8 +1440,8 @@ Sporting
 Sportive
 Sporty
 Spot
-Spotless
 Spot on
+Spotless
 Sprightly
 Spruce
 Spry
@@ -1452,9 +1452,9 @@ Stacked
 Stainless
 Stalwart
 Staminal
+Stand-up
 Standard
 Standing
-Stand-up
 Star
 Starry
 State
@@ -1496,8 +1496,8 @@ Stylish
 Suasive
 Suave
 Sublime
-Substantial
 Substant
+Substantial
 Substantive
 Subtle
 Successful
@@ -1513,13 +1513,13 @@ Sumptuous
 Sun-kissed
 Sunny
 Super
-Superabundant
 Super-duper
+Superabundant
+Superb
+Supercalifragilisticexpialidocious
 Supereminent
 Superethical
 Superexcellent
-Superb
-Supercalifragilisticexpialidocious
 Superfluous
 Superior
 Superlative
@@ -1690,7 +1690,7 @@ Unobjectionable
 Unobstructed
 Unobtrusive
 Unopposed
-UnUnprejudiced
+Unprejudiced
 Unpretentious
 Unquestionable
 Unrefuted

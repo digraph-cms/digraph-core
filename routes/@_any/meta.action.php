@@ -12,14 +12,14 @@ $page = Context::page();
         <td>Created</td>
         <td>
             <?php echo $page->created()->format('Y-m-d H:i:s') ?>
-            by <?php echo $page->createdBy()->html(); ?>
+            by <?php echo $page->createdBy(); ?>
         </td>
     </tr>
     <tr>
         <td>Last modified</td>
         <td>
             <?php echo $page->updated()->format('Y-m-d H:i:s') ?>
-            by <?php echo $page->updatedBy()->html(); ?>
+            by <?php echo $page->updatedBy(); ?>
         </td>
     </tr>
     <tr>

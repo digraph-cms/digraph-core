@@ -25,7 +25,7 @@ class Pages
                 return $e['slug_url'];
             },
             DB::query()
-                ->from('slugs')
+                ->from('page_slugs')
                 ->where('slug_page = ?', [$uuid])
                 ->orderBy('id DESC')
                 ->fetchAll()
@@ -54,7 +54,7 @@ class Pages
      */
     public static function exists(string $uuid): bool
     {
-        $query = DB::query()->from('pages')
+        $query = DB::query()->from('page')
             ->where('page_uuid = ?', [$uuid]);
         return !!$query->count();
     }
@@ -67,8 +67,7 @@ class Pages
     public static function select(): PageSelect
     {
         return new PageSelect(
-            DB::query()->from('pages'),
-            static::class
+            DB::query()->from('page')
         );
     }
 
@@ -98,7 +97,7 @@ class Pages
      */
     public static function childIDs(string $start, string $order = 'created ASC'): Select
     {
-        $query = DB::query()->from('links');
+        $query = DB::query()->from('page_links');
         $query->where('link_start = ?', [$start]);
         $query->order($order);
         return $query->execute()->fetchColumn('link_end');
@@ -116,7 +115,7 @@ class Pages
     public static function insertLink(string $start, string $end, string $type = null)
     {
         return DB::query()->insertInto(
-            'links',
+            'page_links',
             [
                 'link_start' => $start,
                 'link_end' => $end,
@@ -137,7 +136,7 @@ class Pages
      */
     public static function deleteLink(string $start, string $end, string $type = null)
     {
-        $query = DB::query()->deleteFrom('links');
+        $query = DB::query()->deleteFrom('page_links');
         $query->where('link_start = ? AND link_end = ?', [$start, $end]);
         if ($type) {
             $query->where('link_type = ?', [$type]);
@@ -154,7 +153,7 @@ class Pages
      */
     public static function slugExists(string $uuid_or_slug): bool
     {
-        $query = DB::query()->from('pages')
+        $query = DB::query()->from('page')
             ->where('page_uuid = :q OR page_slug = :q', [':q' => $uuid_or_slug]);
         return !!$query->count();
     }
@@ -176,11 +175,11 @@ class Pages
             ->order('CASE WHEN :q = page_uuid THEN 0 ELSE 1 END ASC, created ASC')
             ->fetchAll();
         // search in alternate slugs as well
-        $alts = DB::query()->from('slugs')
-            ->select('pages.*')
-            ->leftJoin('pages ON page_uuid = slug_page')
+        $alts = DB::query()->from('page_slugs')
+            ->select('page.*')
+            ->leftJoin('page ON page_uuid = slug_page')
             ->where('slug_url = ?', [$uuid_or_slug])
-            ->order('pages.created ASC')
+            ->order('page.created ASC')
             ->fetchAll();
         $alts = array_map(static::class . '::resultToPage', $alts);
         // return results
@@ -203,7 +202,7 @@ class Pages
             ->order('CASE WHEN :q = page_uuid THEN 0 ELSE 1 END ASC, created ASC')
             ->count();
         // search in alternate slugs as well
-        $alts = DB::query()->from('slugs')
+        $alts = DB::query()->from('page_slugs')
             ->where('slug_url = ?', [$uuid_or_slug])
             ->count();
         // return results
@@ -232,7 +231,7 @@ class Pages
 
     protected static function doGet(string $uuid_or_slug): ?Page
     {
-        $result = DB::query()->from('pages')
+        $result = DB::query()->from('page')
             ->where('page_uuid = :q OR page_slug = :q', [':q' => $uuid_or_slug])
             ->order('CASE WHEN :q = page_uuid THEN 0 ELSE 1 END ASC, created ASC')
             ->limit(1)
@@ -246,7 +245,7 @@ class Pages
 
     protected static function doGetByAlternateSlug(string $slug): ?Page
     {
-        $result = DB::query()->from('slugs')
+        $result = DB::query()->from('page_slug')
             ->select('pages.*')
             ->leftJoin('pages ON page_uuid = slug_page')
             ->where('slug_url = ?', [$slug])
@@ -271,11 +270,11 @@ class Pages
             throw new \Exception("Invalid slug");
         }
         $check = DB::query()
-            ->from('slugs')
+            ->from('page_slug')
             ->where('slug_url = ? AND slug_page = ?', [$slug, $page_uuid]);
         if (!$check->count()) {
             DB::query()->insertInto(
-                'slugs',
+                'page_slug',
                 [
                     'slug_url' => $slug,
                     'slug_page' => $page_uuid
@@ -293,7 +292,7 @@ class Pages
         }
         // update values
         DB::query()
-            ->update('pages')
+            ->update('page')
             ->where(
                 'page_uuid = ? AND updated = ?',
                 [
@@ -317,15 +316,15 @@ class Pages
         // insert value
         DB::query()
             ->insertInto(
-                'pages',
+                'page',
                 [
                     'page_uuid' => $page->uuid(),
                     'page_slug' => $page->slug(),
                     'page_name' => $page->name(),
                     'page_data' => json_encode($page->get()),
                     'page_class' => $page->class(),
-                    'created_by' => $page->createdBy(),
-                    'updated_by' => $page->updatedBy(),
+                    'created_by' => $page->createdBy()->uuid(),
+                    'updated_by' => $page->updatedBy()->uuid(),
                 ]
             )
             ->execute();
@@ -336,17 +335,17 @@ class Pages
         DB::beginTransaction();
         // delete links
         DB::query()
-            ->delete('links')
+            ->delete('page_link')
             ->where('link_start = :uuid OR link_end = :uuid', ['uuid' => $page->uuid()])
             ->execute();
         // delete alternate slugs
         DB::query()
-            ->delete('slugs')
+            ->delete('page_slug')
             ->where('slug_page = ?', [$page->uuid()])
             ->execute();
         // delete page
         DB::query()
-            ->delete('pages')
+            ->delete('page')
             ->where(
                 'page_uuid = ? AND updated = ?',
                 [

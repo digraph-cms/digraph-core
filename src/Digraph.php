@@ -4,11 +4,12 @@ namespace DigraphCMS;
 
 use DigraphCMS\Content\Router;
 use DigraphCMS\Content\Pages;
+use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\HTTP\Redirect;
 use DigraphCMS\HTTP\Request;
 use DigraphCMS\HTTP\RequestHeaders;
 use DigraphCMS\HTTP\Response;
-use DigraphCMS\Templates\Templates;
+use DigraphCMS\UI\Templates;
 use DigraphCMS\URL\URL;
 use DigraphCMS\URL\URLs;
 
@@ -138,8 +139,14 @@ class Digraph
             if (Context::response()->mime() == 'text/html') {
                 Templates::wrapResponse(Context::response());
             }
+        } catch (HttpError $error) {
+            // generate exception-handling page
+            Context::thrown($error);
+            Context::response(static::errorResponse($error->status(), $request));
+            Context::response()->resetTemplate();
+            Templates::wrapResponse(Context::response());
         } catch (\Throwable $th) {
-            // generate an exception handling error page
+            // generate a fallback exception handling error page
             Context::thrown($th);
             Context::response(static::errorResponse(500, $request));
             Context::response()->resetTemplate();

@@ -25,12 +25,12 @@ class ResponseHeaders extends AbstractHeaders
 
     public function get_Cache_Control(): string
     {
-        $cacheTTL = $this->response->cacheTTL();
+        $staleTTL = $this->response->staleTTL();
         $output = [
             $this->private ? 'no-store' : 'public',
             'max-age=' . $this->response->browserTTL(),
-            'max-stale=' . $cacheTTL,
-            'stale-if-error=' . $cacheTTL * 10,
+            'max-stale=' . $staleTTL,
+            'stale-if-error=' . $staleTTL,
         ];
         return implode(', ', array_filter($output));
     }

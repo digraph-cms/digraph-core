@@ -4,9 +4,15 @@ namespace DigraphCMS\Users;
 
 class NullUser extends User
 {
-    public function html(): string
+    public function __toString()
     {
-        return "<a class='user-link null-user-link'>" . $this->name() . "<a>";
+        $name = $this->name();
+        if ($this->uuid() != 'guest') {
+            $name = "<s>$name</s>";
+        }else {
+            $name = "<em>$name</em>";
+        }
+        return "<a class='user-link null-user-link'>$name<a>";
     }
 
     public function insert()
@@ -17,5 +23,10 @@ class NullUser extends User
     public function update()
     {
         // does nothing, null users shouldn't be put into the database
+    }
+
+    public function groups(): array
+    {
+        return ['null users'];
     }
 }

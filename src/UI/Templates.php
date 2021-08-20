@@ -1,6 +1,6 @@
 <?php
 
-namespace DigraphCMS\Templates;
+namespace DigraphCMS\UI;
 
 use DigraphCMS\Context;
 use DigraphCMS\HTTP\Response;

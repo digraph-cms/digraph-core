@@ -15,6 +15,32 @@ class Users
     protected static $cache = [];
     protected static $null = [];
 
+    /**
+     * Generate a UserSelect object for building queries to the pages table
+     *
+     * @return UserSelect
+     */
+    public static function select(): UserSelect
+    {
+        return new UserSelect(
+            DB::query()->from('user')
+        );
+    }
+
+    public static function groups(string $user_uuid): array
+    {
+        return array_map(
+            function ($row) {
+                return $row['group_name'];
+            },
+            DB::query()
+                ->from('user_groups')
+                ->select('group_name')
+                ->where('group_user = ?', [$user_uuid])
+                ->fetchAll()
+        );
+    }
+
     public static function signinUrl(URL $bounce = null): URL
     {
         if (count(static::sources()) == 1) {
@@ -140,13 +166,13 @@ class Users
         // insert value
         DB::query()
             ->insertInto(
-                'users',
+                'user',
                 [
                     'user_uuid' => $user->uuid(),
                     'user_name' => $user->name(),
                     'user_data' => json_encode($user->get()),
-                    'created_by' => $user->createdBy(),
-                    'updated_by' => $user->updatedBy()
+                    'created_by' => $user->createdBy()->uuid(),
+                    'updated_by' => $user->updatedBy()->uuid()
                 ]
             )
             ->execute();
@@ -156,7 +182,7 @@ class Users
     {
         // update values
         DB::query()
-            ->update('users')
+            ->update('user')
             ->where(
                 'user_uuid = ? AND updated = ?',
                 [
@@ -174,7 +200,7 @@ class Users
 
     protected static function doGet(string $uuid_or_slug): ?User
     {
-        $query = DB::query()->from('users')
+        $query = DB::query()->from('user')
             ->where('user_uuid = ?', [$uuid_or_slug]);
         $result = $query->execute();
         if ($result && $result = $result->fetch()) {

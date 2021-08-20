@@ -31,6 +31,8 @@ page:
     _any: null
   browserttl:
     _any: null
+  stalettl:
+    _any: 600
 
 templates:
   default:

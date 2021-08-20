@@ -2,10 +2,11 @@
 
 use DigraphCMS\Config;
 use DigraphCMS\Context;
+use DigraphCMS\UI\Notifications;
 
 if (!Config::get('errors.display')) {
     echo "<h1>Server error</h1>";
-    echo "<div class='error'>Error message display is turned off.</div>";
+    Notifications::printError('Error message display is turned off.');
 } else {
     $thrown = Context::thrown();
     echo "<h1>" . get_class($thrown) . "</h1>";

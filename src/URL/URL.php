@@ -280,4 +280,15 @@ class URL
         }
         return @$this->query[$name];
     }
+
+    /**
+     * Unset an argument from the query.
+     *
+     * @param string $name
+     * @return void
+     */
+    public function unsetArg(string $name)
+    {
+        unset($this->query[$name]);
+    }
 }
