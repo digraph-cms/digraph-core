@@ -2,7 +2,7 @@
 
 namespace DigraphCMS\Users;
 
-use DigraphCMS\HTTP\HttpError;
+use DigraphCMS\HTTP\AccessDeniedError;
 use DigraphCMS\URL\URL;
 
 class Permissions
@@ -73,7 +73,7 @@ class Permissions
     public static function requireGroup(string $group)
     {
         if (!static::inGroup($group)) {
-            throw new HttpError(401, "Must be a member of the group $group");
+            throw new AccessDeniedError("Must be a member of the group $group");
         }
     }
 
@@ -88,7 +88,7 @@ class Permissions
     public static function requireGroups(array $groups)
     {
         if (!static::inGroups($groups)) {
-            throw new HttpError(401, "Must be a member of one of the groups: " . implode(', ', $groups));
+            throw new AccessDeniedError("Must be a member of one of the groups: " . implode(', ', $groups));
         }
     }
 }

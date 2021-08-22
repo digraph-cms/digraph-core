@@ -1,4 +1,4 @@
-<h1>Sign-in required</h1>
+<h1>Access denied</h1>
 <?php
 
 use DigraphCMS\Content\Router;
@@ -13,8 +13,7 @@ echo "</p>";
 
 $user = Users::current();
 $signinUrl = Users::signinUrl(Context::request()->originalUrl());
-if (!$user) {
-    echo "<p>You are not signed in, you can try <a href='$signinUrl'>signing in</a> if you have an account.</p>";
-}
+$signoutUrl = Users::signoutUrl($signinUrl);
+echo "<p>You are currently signed in as $user. If this is not you, please <a href='$signoutUrl'>sign out</a> and try again.<p>";
 
 Router::include('trace.php');
