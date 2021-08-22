@@ -10,4 +10,4 @@ composer.lock
 !.keep
 .DS_Store
 .vscode
-env.yaml
+env.json

@@ -1,0 +1,101 @@
+{
+    "paths": {
+      "web": "${paths.base}/web",
+      "storage": "${paths.base}/storage"
+    },
+    "urls": {
+      "protocol": null,
+      "home_name": "Home"
+    },
+    "files": {
+      "path": "${paths.web}/files",
+      "url": "/files",
+      "ttl": 86400,
+      "css": {
+        "minify": true,
+        "sourcemap": true,
+        "keepimportantcomments": true
+      }
+    },
+    "ui": {
+      "breadcrumb": {
+        "min_length": 1,
+        "include_current": true
+      },
+      "action-menu": {
+        "guestui": true
+      }
+    },
+    "templates": {
+      "default": {
+        "500": "digraph/error.php",
+        "default": "digraph/default.php",
+        "error": "digraph/minor-error.php"
+      }
+    },
+    "fields": {
+      "site": {
+        "name": "Unnamed site"
+      }
+    },
+    "fs": {
+      "links": false,
+      "umask_file": 79,
+      "umask_dir": 2
+    },
+    "db": {
+      "adapter": "mysql",
+      "charset": "utf8",
+      "pdo_options": [],
+      "sqlite": {
+        "create_functions": true
+      }
+    },
+    "page": {
+      "cachettl": {
+        "_any": null
+      },
+      "browserttl": {
+        "_any": null
+      },
+      "stalettl": {
+        "_any": 600
+      }
+    },
+    "errors": {
+      "display_trace": false
+    },
+    "users": {
+      "sources": {
+        "oauth2": "\\DigraphCMS\\Users\\OAuth2UserSource"
+      }
+    },
+    "oauth2": {
+      "providers": {
+        "github": {
+          "name": "GitHub",
+          "class": "\\League\\OAuth2\\Client\\Provider\\Github",
+          "scope": [
+            "user:email"
+          ]
+        },
+        "google": {
+          "name": "Google",
+          "class": "\\League\\OAuth2\\Client\\Provider\\Google",
+          "scope": [
+            "userinfo.email"
+          ]
+        },
+        "facebook": {
+          "name": "Facebook",
+          "class": "\\League\\OAuth2\\Client\\Provider\\Facebook",
+          "scope": [
+            "email"
+          ],
+          "config": {
+            "graphApiVersion": "v2.10"
+          }
+        }
+      }
+    }
+  }

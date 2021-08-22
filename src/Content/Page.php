@@ -48,10 +48,10 @@ class Page implements ArrayAccess
      * they return null, which allows other permissions checks to be run.
      *
      * @param URL $url
-     * @param User $user
+     * @param User|null $user
      * @return boolean|null
      */
-    public function permissions(URL $url, User $user): ?bool
+    public function permissions(URL $url, User $user = null): ?bool
     {
         return null;
     }
