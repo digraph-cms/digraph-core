@@ -4,6 +4,7 @@ paths:
 
 urls:
   protocol: null
+  home_name: Home
 
 files:
   path: "${paths.web}/files"
@@ -13,6 +14,23 @@ files:
     minify: true
     sourcemap: true
     keepimportantcomments: true
+
+ui:
+  breadcrumb:
+    min_length: 1
+    include_current: true
+  action-menu:
+    guestui: true
+
+templates:
+  default:
+    default: digraph/default.php
+    error: digraph/minor-error.php
+    500: digraph/error.php
+
+fields:
+  site:
+    name: Unnamed site
 
 fs:
   links: false
@@ -33,17 +51,6 @@ page:
     _any: null
   stalettl:
     _any: 600
-
-templates:
-  default:
-    default: digraph/default.php
-    minimal: digraph/minimal.php
-    500: digraph/error.php
-  fields:
-    site:
-      name: Default site
-    page:
-      name: null
 
 errors:
   display_trace: false

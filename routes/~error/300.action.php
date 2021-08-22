@@ -1,5 +1,6 @@
 <?php
 
+use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
 
 $requestUrl = Context::request()->originalUrl();
@@ -21,3 +22,6 @@ $pages = Context::data('300_pages');
     }
     ?>
 </ul>
+
+<?php
+Router::include('trace.php');

@@ -3,6 +3,7 @@
 namespace DigraphCMS\UI\DataTables;
 
 use DigraphCMS\Context;
+use DigraphCMS\UI\Breadcrumb;
 
 class ColumnHeader
 {
@@ -22,15 +23,34 @@ class ColumnHeader
                 if ($order == 'asc') {
                     $this->order = 'asc';
                     ($this->sorter)(true);
+                    $this->updateBreadcrumb($this->label, 'ascending');
                 } elseif ($order == 'desc') {
                     $this->order = 'desc';
                     ($this->sorter)(false);
+                    $this->updateBreadcrumb($this->label, 'descending');
+                } else {
+                    Context::unsetArg('_sortorder');
+                    Context::unsetArg('_sortcolumn');
                 }
             }
         } else {
             // is not sortable
             Context::unsetArg($this->id());
         }
+    }
+
+    protected function updateBreadcrumb(string $label, string $order)
+    {
+        $top = clone Breadcrumb::top();
+        $top->setName("Sorted: $label $order");
+        Breadcrumb::pushParent(clone Breadcrumb::top());
+        foreach (Breadcrumb::parents() as $parent) {
+            if ($parent->pathString() == $top->pathString()) {
+                $parent->unsetArg('_sortorder');
+                $parent->unsetArg('_sortcolumn');
+            }
+        }
+        Breadcrumb::top($top);
     }
 
     public function __toString()
@@ -65,23 +85,23 @@ class ColumnHeader
             $url->arg('_sortorder', $order);
             $url->arg('_sortcolumn', $this->id());
             $classes[] = 'column-sort-' . $order;
-        } elseif ($this->id() == $url->arg('_sortcolumn')) {
+        } elseif ($this->id() == $url->arg('_sortcolumn') && in_array($url->arg('_sortorder'), ['asc', 'desc'])) {
             $url->unsetArg('_sortorder');
             $url->unsetArg('_sortcolumn');
             $classes[] = 'column-sort-clear';
-        }else {
+        } else {
             // this is a reset link for a column that isn't sorted, return nothing
             return '';
         }
         if (Context::arg('_sortorder') == $order && Context::arg('_sortcolumn') == $this->id()) {
             // this is a link to the current sorting, return a link that isn't href-ed
-            return "<a title='$tip' class='" . implode(' ', $classes) . " column-sort-active'>$text</a>";
+            return "<a title='$tip' aria-label='$tip' class='" . implode(' ', $classes) . " column-sort-active'>$text</a>";
         }
-        return "<a href='$url' title='$tip' class='" . implode(' ', $classes) . "'>$text</a>";
+        return "<a href='$url' title='$tip' aria-label='$tip' class='" . implode(' ', $classes) . "'>$text</a>";
     }
 
     public function id(): string
     {
-        return 'c'.$this->myID;
+        return 'c' . $this->myID;
     }
 }

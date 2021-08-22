@@ -9,7 +9,7 @@ class NullUser extends User
         $name = $this->name();
         if ($this->uuid() != 'guest') {
             $name = "<s>$name</s>";
-        }else {
+        } else {
             $name = "<em>$name</em>";
         }
         return "<a class='user-link null-user-link'>$name<a>";
@@ -25,8 +25,18 @@ class NullUser extends User
         // does nothing, null users shouldn't be put into the database
     }
 
+    /**
+     * Return the groups this user belongs to. Will be empty for all null users
+     * except "guest" which will be part of "guests"
+     *
+     * @return array
+     */
     public function groups(): array
     {
-        return ['null users'];
+        if ($this->uuid() == 'guest') {
+            return [new Group('guests')];
+        } else {
+            return [];
+        }
     }
 }

@@ -11,6 +11,8 @@ class Dispatcher
 
     public static function __shutdown()
     {
+        // dispatch onBeforeShutdown event for anything that needs the session
+        self::dispatchEvent('onBeforeShutdown');
         // if close before shutdown is false, don't do anything to close connection
         if (!self::$closeResponseBeforeShutdown) {
             self::dispatchEvent('onShutdown');

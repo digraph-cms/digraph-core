@@ -2,9 +2,14 @@
 
 namespace DigraphCMS\URL;
 
+use DigraphCMS\Config;
 use DigraphCMS\Content\Page;
 use DigraphCMS\Content\Pages;
+use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
+use DigraphCMS\Events\Dispatcher;
+use DigraphCMS\Users\Permissions;
+use DigraphCMS\Users\User;
 
 /**
  * A URL represents a URL within the site defined by URL::$siteHost and 
@@ -13,6 +18,7 @@ use DigraphCMS\Context;
  */
 class URL
 {
+    protected $name;
     protected $path = '';
     protected $query = [];
 
@@ -75,6 +81,60 @@ class URL
         }
     }
 
+    public function permissions(User $user = null): bool
+    {
+        if ($this->page()) {
+            // first try page permissions handler
+            if (null !== $value = $this->page()->permissions($this, $user)) {
+                return $value;
+            }
+            // first try to find a route class event handler 
+            foreach ($this->page()->routeClasses() as $class) {
+                if (null !== $value = Dispatcher::firstValue("onPageUrlPermissions_$class", [$this])) {
+                    return $value;
+                }
+            }
+            // then try generic events, Permissions handler
+            return
+                Dispatcher::firstValue('onPageUrlPermissions', [$this]) ??
+                Permissions::pageUrl($this, $user) ??
+                true;
+        } else {
+            // ask for permissions with events, permissions handler
+            return
+                Dispatcher::firstValue('onStaticUrlPermissions', [$this]) ??
+                Permissions::staticUrl($this, $user) ??
+                true;
+        }
+    }
+
+    public function parent(): ?URL
+    {
+        $parent = $this->doParent();
+        if ($parent->__toString() == $this->__toString()) {
+            return null;
+        } else {
+            return $parent;
+        }
+    }
+
+    protected function doParent(): ?URL
+    {
+        $parent = $this->pathString();
+        while ($parent != 'home') {
+            $parent = trim(dirname($parent), '/\\');
+            if ($parent == '' || $parent == '.') {
+                $home = new URL("/");
+                $home->setName(Config::get('urls.home_name'));
+                return $home;
+            }
+            if (Router::staticRouteExists($parent, 'index') || Pages::countAll($parent) > 0) {
+                return new URL("/$parent/");
+            }
+        }
+        return null;
+    }
+
     public function html(array $class = [], bool $omitPageName = false, string $target = null): string
     {
         $normalized = clone ($this);
@@ -102,12 +162,36 @@ class URL
         }
     }
 
-    public function name(bool $omitPageName = false): string
+    public function setName(string $name = null)
     {
-        if ($this->page()) {
-            return $this->page()->title($this, $omitPageName);
+        $this->name = $name;
+    }
+
+    public function name(bool $inPageContext = false): string
+    {
+        // first return override name if possible
+        if ($this->name) {
+            return $this->name;
+        }
+        // then send out events and such
+        if ($page = $this->page()) {
+            // dispatch events to try and get url name by route classes of page
+            foreach ($page->routeClasses() as $class) {
+                if ($name = Dispatcher::firstValue("onPageUrlName_$class", [$this, $inPageContext])) {
+                    return $name;
+                }
+            }
+            // fall back to generic event, page title(), and then path
+            return
+                Dispatcher::firstValue('onPageUrlName', [$this, $inPageContext]) ??
+                $this->page()->title($this, $inPageContext) ??
+                $this->path();
         } else {
-            return $this->path();
+            // look for static route names by route-specific events, then generic, then fall back to path
+            return
+                Dispatcher::firstValue('onStaticUrlName_' . $this->route(), [$this, $inPageContext]) ??
+                Dispatcher::firstValue('onStaticUrlName', [$this, $inPageContext]) ??
+                $this->path();
         }
     }
 
@@ -193,7 +277,7 @@ class URL
         return 'index';
     }
 
-    protected function pathString(): string
+    public function pathString(): string
     {
         // strip trailing index.html
         $path = preg_replace('@/index.html$@', '/', $this->path());

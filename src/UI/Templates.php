@@ -2,7 +2,9 @@
 
 namespace DigraphCMS\UI;
 
+use DigraphCMS\Config;
 use DigraphCMS\Context;
+use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTTP\Response;
 
 // Always add the default system templates directory
@@ -26,18 +28,54 @@ class Templates
         }
     }
 
-    public static function wrapResponse(Response $response)
+    protected static function render(string $template, array $fields = []): string
     {
-        Context::response($response);
-        $template = $response->template();
-        $extension = strtolower(pathinfo($template, PATHINFO_EXTENSION));
+        Context::clone();
+        $template = Config::get("templates.aliases.$template") ?? $template;
+        $output = static::doRender($template, $fields);
+        Context::end();
+        return $output;
+    }
+
+    protected static function doRender(string $template, array $fields = []): string
+    {
+        // make sure file exists
         $file = static::locateFile($template);
         if (!$file) {
             throw new \Exception("Couldn't locate template file for template $template");
         }
-        if ($extension == 'php') {
-            $response->content(require_file($file));
+        $extension = strtolower(pathinfo($template, PATHINFO_EXTENSION));
+        // add fields to context
+        Context::fields()->merge($fields);
+        // built-in handlers
+        switch ($extension) {
+            case 'php':
+                return require_file($file);
         }
+        // try dispatching event in case something else wants to handle this extension
+        if ($return = Dispatcher::firstValue("onTemplateApply_$extension", [$file])) {
+            return $return;
+        }
+        // throw exception if we haven't returned anything yet
+        throw new \Exception("Nothing could handle a .$extension template");
+    }
+
+    public static function wrapResponse(Response $response)
+    {
+        Context::clone();
+        Context::response($response);
+        $fields = Context::fields();
+        if (!$fields['page.name']) {
+            // try to infer page name from response content
+            $content = $response->content();
+            if (preg_match("@<h1[^>]*>(.+)</h1>@i", $content, $matches)) {
+                $fields['page.name'] = strip_tags($matches[1]);
+            } else {
+                $fields['page.name'] = strip_tags(Context::url()->name());
+            }
+        }
+        $response->content(static::render($response->template()));
+        Context::end();
     }
 
     protected static function locateFile(string $template): ?string

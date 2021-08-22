@@ -76,6 +76,7 @@ if (!empty(Context::arg('error'))) {
     if ($userID = $source->lookupUser($name, $id)) {
         // this provider/id pair is tied to a user, sign in as that user
         Users::setUserID($userID);
+        Notifications::flashConfirmation('Successfully signed in with ' . Config::get("oauth2.providers.$name.name") . '. Welcome back, ' . Users::user($userID) . '.');
     } else {
         // this provider/id pair is not tied to a user
         // either link it to the current user or create a new user
@@ -83,6 +84,7 @@ if (!empty(Context::arg('error'))) {
         if ($user = Users::current()) {
             // user is signed in, link this pair to their account
             $source->authorizeUser($name, $id, $user->uuid());
+            Notifications::flashConfirmation('Your ' . Config::get("oauth2.providers.$name.name") . ' account can now be used to sign in as ' . $user);
         } else {
             // user is not signed in, create a new user and link pair to it
             $user = new User();
@@ -90,6 +92,7 @@ if (!empty(Context::arg('error'))) {
             $source->authorizeUser($name, $id, $user->uuid());
             // sign in as new user
             Users::setUserID($user->uuid());
+            Notifications::flashConfirmation('Welcome, your ' . Config::get("oauth2.providers.$name.name") . ' account can now be used to sign in as the new user ' . $user);
         }
         DB::commit();
     }
@@ -98,7 +101,11 @@ if (!empty(Context::arg('error'))) {
     $ownerData = $resourceOwner->toArray();
     foreach ($ownerData as $key => $value) {
         if (stripos($key, 'email') !== false && filter_var($value, FILTER_VALIDATE_EMAIL)) {
+            $count = count($user->emails());
             $user->addEmail($value, 'Added from OAuth ' . Config::get("oauth2.providers.$name.name"));
+            if (count($user->emails()) != $count) {
+                Notifications::flashConfirmation('The email address ' . $value . ' is now associated with your account');
+            }
         }
     }
     $user->update();

@@ -87,7 +87,7 @@ class Context
             static::data(
                 'fields',
                 new SelfReferencingFlatArray(
-                    Config::get('templates.fields')
+                    Config::get('fields')
                 )
             );
         }

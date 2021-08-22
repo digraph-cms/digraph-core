@@ -1,12 +1,10 @@
-body {
-    font-family: 'Courier New', Courier, monospace;
-}
-
 .error {
     color: #900;
 }
 
 .stack-trace {
+    font-family: 'Courier New', Courier, monospace;
+
     >div {
         line-height: 1.5em;
         box-sizing: border-box;

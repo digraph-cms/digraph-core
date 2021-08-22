@@ -2,20 +2,18 @@
 
 use DigraphCMS\Config;
 use DigraphCMS\Context;
-use DigraphCMS\UI\Notifications;
 
 if (Config::get('errors.display_trace')) {
     if (!($thrown = Context::thrown())) {
-        Notifications::printNotice('Error trace display is active, but no Throwable was found in Context');
         return;
     }
-    echo "<h1>" . get_class($thrown) . "</h1>";
+    echo "<section class='stack-trace'>";
+    echo "<h1>Stack trace:<br>" . get_class($thrown) . "</h1>";
     echo "<div class='error'>";
     echo "<strong>" . htmlentities($thrown->getMessage()) . "</strong>";
     echo '<br>';
     echo trim_file($thrown->getFile()) . ':' . $thrown->getLine();
     echo "</div>";
-    echo "<h2>Stack trace</h2>";
     echo "<div class='stack-trace'>";
     foreach ($thrown->getTrace() as $t) {
         echo "<div>";
@@ -45,6 +43,7 @@ if (Config::get('errors.display_trace')) {
         echo "</div>";
     }
     echo "</div>";
+    echo "</section>";
 }
 
 function trim_file($file)

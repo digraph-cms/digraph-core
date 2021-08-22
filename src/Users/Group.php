@@ -28,6 +28,10 @@ class Group
 
     public function __toString()
     {
-        return "<a href='" . $this->url() . "' class='user-group-link'>" . $this->name() . "</a>";
+        if ($this->name() == 'guests') {
+            return "<a class='user-group-link user-group-null-link'><em>" . $this->name() . "</em></a>";
+        }else {
+            return "<a href='" . $this->url() . "' class='user-group-link'>" . $this->name() . "</a>";
+        }
     }
 }

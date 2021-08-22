@@ -10,12 +10,13 @@ class Paginator
     protected static $id = 0;
     protected $myID, $count, $perPage, $groupPages;
 
-    public function __construct(int $itemCount, int $perPage = 10, int $groupPages = 10)
+    public function __construct(int $itemCount, int $perPage = 25, int $groupPages = 10)
     {
         $this->myID = self::$id++;
         $this->count = $itemCount;
         $this->perPage = $perPage;
         $this->groupPages = $groupPages;
+        $this->updateBreadcrumb();
     }
 
     public function __toString()
@@ -24,6 +25,21 @@ class Paginator
             return '';
         }
         return "<div class='paginator'>" . implode(' ', $this->links()) . "</div>";
+    }
+
+    protected function updateBreadcrumb()
+    {
+        if (($page = $this->page()) > 1) {
+            $top = clone Breadcrumb::top();
+            $top->setName("Page " . number_format($page) . ' of ' . number_format($this->pages()));
+            Breadcrumb::pushParent(clone Breadcrumb::top());
+            foreach (Breadcrumb::parents() as $parent) {
+                if ($parent->pathString() == $top->pathString()) {
+                    $parent->unsetArg($this->arg());
+                }
+            }
+            Breadcrumb::top($top);
+        }
     }
 
     public function page(): int
@@ -78,7 +94,7 @@ class Paginator
         $links = [];
         // link to previous page
         if ($this->page() > 1) {
-            $links[] = $this->link($this->page()-1,'previous','link-previous');
+            $links[] = $this->link($this->page() - 1, 'previous', 'link-previous');
         }
         // link to first page
         if ($this->group() > 0) {
@@ -100,7 +116,7 @@ class Paginator
         }
         // link to next page
         if ($this->page() < $this->pages()) {
-            $links[] = $this->link($this->page()+1,'next','link-next');
+            $links[] = $this->link($this->page() + 1, 'next', 'link-next');
         }
         return $links;
     }

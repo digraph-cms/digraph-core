@@ -132,6 +132,7 @@ class Router
      */
     public static function staticRoute(string $route, string $action)
     {
+        $route = preg_replace('/^~/', '', $route);
         // try specific route
         $output = self::tryRoute("~$route/$action");
         if ($output !== null) {
@@ -155,21 +156,12 @@ class Router
      */
     public static function staticRouteExists(string $route, string $action): bool
     {
-        $routes = [
-            $route,
-            '_any'
-        ];
-        foreach ($routes as $r) {
-            foreach (self::$sources as $source) {
-                // check wildcard route
-                // if (is_file("$source/~$r/@wildcard.action.php")) {
-                //     return true;
-                // }
-                // check individual/specific route
-                $path = "$source/~$r/$action.action.php";
-                if (is_file($path)) {
-                    return true;
-                }
+        $route = preg_replace('/^~/', '', $route);
+        foreach (self::$sources as $source) {
+            // check individual/specific route
+            $path = "$source/~$route/$action.action.php";
+            if (is_file($path)) {
+                return true;
             }
         }
         return false;

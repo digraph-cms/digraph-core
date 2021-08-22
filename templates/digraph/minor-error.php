@@ -1,13 +1,12 @@
 <?php
 /*
-This template is designed for use on serious error pages, and vigorously avoids 
-calling any unnecessary outside resources. No extra database calls, linked media 
-files or anything else that might make an error message take up any more
-resources than absolutely necessary.
+This is a template that includes the bare minimum UI. Notifications and content.
 */
 
 use DigraphCMS\Context;
 use DigraphCMS\Media\Media;
+use DigraphCMS\UI\Notifications;
+use DigraphCMS\UI\Theme;
 
 ?>
 <!DOCTYPE html>
@@ -24,10 +23,17 @@ use DigraphCMS\Media\Media;
     <style>
         <?php echo Media::get('/digraph/error.css')->content(); ?>
     </style>
+    <?php echo Theme::head(); ?>
 </head>
 
-<body class='template-error'>
-    <?php echo Context::response()->content(); ?>
+<body class='template-minimal'>
+    <?php
+    Notifications::printSection();
+    ?>
+    <main id="content">
+        <?php echo Context::response()->content(); ?>
+    </main>
+    <?php echo Theme::body(); ?>
 </body>
 
 </html>

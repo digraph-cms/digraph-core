@@ -35,6 +35,11 @@ class User implements ArrayAccess
         $this->changed = false;
     }
 
+    /**
+     * Get all the groups to which this user belongs
+     *
+     * @return Group[]
+     */
     public function groups(): array
     {
         if ($this->groups === null) {
@@ -87,7 +92,7 @@ class User implements ArrayAccess
             function ($e) {
                 return $e[0];
             },
-            $this['emails']
+            $this['emails'] ?? []
         );
     }
 

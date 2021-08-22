@@ -25,7 +25,7 @@ class DB
             case 'SQLSTATE[HY000]: General error: 5 database is locked':
                 return Digraph::errorResponse(503, 'Database is locked for writing or maintenance, please try again in a few minutes');
         }
-        return null;
+        return Digraph::errorResponse(500, 'Database error');
     }
 
     public static function beginTransaction()

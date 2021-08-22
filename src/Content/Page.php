@@ -24,17 +24,9 @@ class Page implements ArrayAccess
     protected $updated, $updated_by;
     protected $slugCollisions;
 
-    public function fields($action = null): array
+    public function body(): string
     {
-        $fields = [];
-        $fields['page_name'] = [
-            'weight' => 100,
-            'field' => $field = Fields::name($this),
-            'sets' => function () use ($field) {
-                $this->name($field);
-            }
-        ];
-        return $fields;
+        return "<h1>" . $this->title() . "</h1>";
     }
 
     public function __construct(array $data = [], array $metadata = [])
@@ -49,6 +41,19 @@ class Page implements ArrayAccess
         $this->rawSet(null, $data);
         $this->slug(@$metadata['slug'] ?? substr($this->uuid(), 0, 8), false);
         $this->changed = false;
+    }
+
+    /**
+     * Pages may override all other permissions for their own URLs. By default
+     * they return null, which allows other permissions checks to be run.
+     *
+     * @param URL $url
+     * @param User $user
+     * @return boolean|null
+     */
+    public function permissions(URL $url, User $user): ?bool
+    {
+        return null;
     }
 
     public function slugCollisions(): bool
@@ -111,11 +116,20 @@ class Page implements ArrayAccess
         }
     }
 
-    public function title(URL $url = null, bool $omitName = false): string
+    /**
+     * Produce a title for a given URL, which may vary depending on whether
+     * $inPageContext has been flagged to indicate that which page this URL
+     * belongs to should be clear from the use's surrounding context.
+     *
+     * @param URL $url
+     * @param boolean $inPageContext whether page name is obvious from context and should be omitted
+     * @return string
+     */
+    public function title(URL $url = null, bool $inPageContext = false): string
     {
         $name = $this->name();
         if ($url && $url->action() != 'index') {
-            if ($omitName) {
+            if ($inPageContext) {
                 return $url->action();
             } else {
                 return $name . ': ' . $url->action();
@@ -172,6 +186,9 @@ class Page implements ArrayAccess
             $slug = $this->slug();
         } else {
             $slug = $this->slugCollisions() ? $this->uuid() : $this->slug();
+        }
+        if ($slug == 'home' && $action != 'index.html' && $action != '') {
+            $slug = $this->uuid();
         }
         $url = new URL("/$slug/$action");
         $url->query($args);

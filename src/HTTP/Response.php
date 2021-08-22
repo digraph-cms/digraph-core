@@ -42,7 +42,7 @@ class Response
         }
         return $this->template
             ?? Config::get("templates.default." . $this->status())
-            ?? ($this->status() == 200 ? Config::get("templates.default.default") : Config::get("templates.default.minimal"));
+            ?? ($this->status() == 200 ? Config::get("templates.default.default") : Config::get("templates.default.error"));
     }
 
     public function resetTemplate()

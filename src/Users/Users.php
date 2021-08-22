@@ -4,6 +4,7 @@ namespace DigraphCMS\Users;
 
 use DateTime;
 use DigraphCMS\Config;
+use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\Session\Session;
@@ -69,12 +70,17 @@ class Users
     public static function signinUrl(URL $bounce = null): URL
     {
         if (count(static::sources()) == 1) {
-            return static::sources()[0]->signinUrl($bounce);
+            return static::sources()[0]->signinUrl($bounce ?? Context::url());
         }
         $url = new URL('/~signin/');
-        if ($bounce) {
-            $url->arg('bounce', $bounce);
-        }
+        $url->arg('bounce', $bounce ?? Context::url());
+        return $url;
+    }
+
+    public static function signoutUrl(URL $bounce = null): URL
+    {
+        $url = new URL('/~signout/');
+        $url->arg('bounce', $bounce ?? Context::url());
         return $url;
     }
 

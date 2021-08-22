@@ -150,11 +150,11 @@ class Digraph
             Templates::wrapResponse(Context::response());
         } catch (Throwable $th) {
             // generate a fallback exception handling error page
+            Context::thrown($th);
             $response =
                 Dispatcher::firstValue('onException_' . get_class($th), [$th]) ??
                 Dispatcher::firstValue('onException', [$th]) ??
                 static::errorResponse(500);
-            Context::thrown($th);
             Context::response($response);
             Context::response()->template('digraph/error.php');
             Templates::wrapResponse(Context::response());

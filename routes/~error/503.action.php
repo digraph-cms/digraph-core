@@ -7,8 +7,11 @@
 
 <?php
 
+use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
 
 if ($message = Context::data('error_message')) {
     echo "<p>$message</p>";
 }
+
+Router::include('trace.php');
