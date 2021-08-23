@@ -17,6 +17,11 @@
         "keepimportantcomments": true
       }
     },
+    "cache": {
+      "path": "${paths.storage}/cache",
+      "driver": "\\DigraphCMS\\Cache\\OpCache",
+      "ttl": 60
+    },
     "ui": {
       "breadcrumb": {
         "min_length": 1,
