@@ -2,6 +2,7 @@
 
 namespace DigraphCMS\UI;
 
+use DigraphCMS\Cache\UserCacheNamespace;
 use DigraphCMS\Config;
 use DigraphCMS\Content\Router;
 use DigraphCMS\URL\URL;
@@ -9,34 +10,40 @@ use DigraphCMS\Users\Users;
 
 class ActionMenu
 {
-    protected $url, $user;
+    protected $url, $user, $cache;
 
     public function __construct(URL $url, $user = false)
     {
         $this->url = clone $url;
         $this->user = $user;
+        $this->cache = new UserCacheNamespace('actionmenu');
     }
 
     public function __toString()
     {
-        ob_start();
-        echo "<nav class='action-menu'><h1>Action menu</h1>";
-        // output buffer contents separately
-        ob_start();
-        $this->printUserActions();
-        $this->printStaticActions();
-        $this->printPageActions();
-        // return empty if no contents
-        if (!ob_get_length()) {
-            ob_end_clean();
-            ob_end_clean();
-            return '';
-        } else {
-            ob_end_flush();
-        }
-        // close up and return
-        echo "</nav>";
-        return ob_get_clean();
+        return $this->cache->get(
+            md5(serialize([$this->url, $this->user])),
+            function () {
+                ob_start();
+                echo "<nav class='action-menu'><h1>Action menu</h1>";
+                // output buffer contents separately
+                ob_start();
+                $this->printUserActions();
+                $this->printStaticActions();
+                $this->printPageActions();
+                // return empty if no contents
+                if (!ob_get_length()) {
+                    ob_end_clean();
+                    ob_end_clean();
+                    return '';
+                } else {
+                    ob_end_flush();
+                }
+                // close up and return
+                echo "</nav>";
+                return ob_get_clean();
+            }
+        ) ?? '';
     }
 
     protected function printUserActions()

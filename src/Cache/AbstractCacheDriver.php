@@ -10,8 +10,9 @@ abstract class AbstractCacheDriver
 
     abstract public function exists(string $name): bool;
     abstract public function expired(string $name): bool;
-    abstract public function get(string $name, callable $callback = null, int $ttl = null);
+    abstract public function get(string $name);
     abstract public function set(string $name, $value, int $ttl = null);
+    abstract public function invalidate(string $glob);
 
     public function __construct()
     {

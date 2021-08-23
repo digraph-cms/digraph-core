@@ -2,6 +2,7 @@
 
 namespace DigraphCMS\Cache;
 
+use Brick\VarExporter\VarExporter;
 use DigraphCMS\Config;
 use DigraphCMS\FS;
 
@@ -9,21 +10,40 @@ class OpCache extends AbstractCacheDriver
 {
     protected $dir;
     protected $cache = [];
+    protected $lockHandles = [];
+    protected $fuzz;
 
     public function __construct()
     {
         $this->dir = Config::get('cache.path');
         $this->ttl = Config::get('cache.ttl');
+        $this->fuzz = Config::get('cache.fuzz');
     }
 
     protected function filename(string $name): string
     {
-        return $this->dir . "/$name.opcache";
+        return $this->dir . "/" . $name . ".opcache";
+    }
+
+    protected function handle(string $filename)
+    {
+        if (!isset($this->lockHandles[$filename]) && is_file($filename)) {
+            $this->lockHandles[$filename] = fopen($filename, 'c');
+        }
+        return @$this->lockHandles[$filename];
+    }
+
+    protected function closeHandle(string $filename)
+    {
+        if (isset($this->lockHandles[$filename])) {
+            fclose($this->lockHandles[$filename]);
+            unset($this->lockHandles[$filename]);
+        }
     }
 
     public function exists(string $name): bool
     {
-        return is_file($this->filename($name));
+        return @$this->cache[$name] ?? is_file($this->filename($name));
     }
 
     public function expired(string $name): bool
@@ -32,7 +52,7 @@ class OpCache extends AbstractCacheDriver
         return time() > @$this->cache[$name][0];
     }
 
-    public function get(string $name, callable $callback = null, int $ttl = null)
+    public function get(string $name)
     {
         $this->readInternally($name);
         return @$this->cache[$name][1];
@@ -45,27 +65,80 @@ class OpCache extends AbstractCacheDriver
             if (!$this->exists($name)) {
                 $this->cache[$name] = null;
             } else {
-                include $this->filename($name);
-                $this->cache[$name] = [$exp, $val];
+                $filename = $this->filename($name);
+                // wait for a read lock
+                $this->lockRead($filename);
+                // include file
+                include $filename;
+                // unlock
+                $this->unlock($filename);
+                // check expiration
+                if (time() > $exp) {
+                    // expired, expire and internally cache null result
+                    $this->invalidate($name);
+                    $this->cache[$name] = null;
+                } else {
+                    // not expired, save into internal cache
+                    $this->cache[$name] = [$exp + random_int(-$this->fuzz, $this->fuzz), $val];
+                }
             }
+        }
+    }
+
+    public function invalidate(string $glob)
+    {
+        Cache::checkGlob($glob);
+        $glob = $this->filename($glob);
+        foreach (glob($glob) as $filename) {
+            $name = substr($filename, 0, strlen($this->dir) + 1);
+            $name = substr($name, 0, strlen($name) - 8);
+            $this->cache[$name] = null;
+            $this->unlock($filename);
+            unlink($filename);
+            opcache_invalidate($filename);
         }
     }
 
     public function set(string $name, $value, int $ttl = null)
     {
         Cache::checkName($name);
-        $value = var_export($value, true);
-        $exp = time() + ($ttl ?? $this->ttl);
-        // save into file and compile opcache
-        $filename = $this->filename($name);
-        FS::mkdir(dirname($filename));
-        file_put_contents(
-            $filename,
-            "<?php \$exp = $exp; \$val = $value;",
-            LOCK_EX
-        );
-        opcache_compile_file($filename);
         // save into internal cache
+        $ttl = $ttl ?? $this->ttl;
+        $exp = time() + $ttl;
         $this->cache[$name] = [$exp, $value];
+        // save into external cache if ttl is > 0
+        // this means TTLs of 0 can be safely used like a fast ephemeral cache
+        if ($ttl > 0) {
+            $value = VarExporter::export($value);
+            // save into file and compile opcache
+            $filename = $this->filename($name);
+            FS::mkdir(dirname($filename));
+            // write
+            file_put_contents(
+                $filename,
+                "<?php \$exp = $exp; \$val = $value;",
+                LOCK_EX
+            );
+        }
+    }
+
+    protected function lockWrite(string $filename)
+    {
+        while (!flock($this->handle($filename), LOCK_EX)) {
+            usleep(random_int(1, 100));
+        }
+    }
+
+    protected function lockRead(string $filename)
+    {
+        while (!flock($this->handle($filename), LOCK_SH)) {
+            usleep(random_int(1, 100));
+        }
+    }
+
+    protected function unlock(string $filename)
+    {
+        flock($this->handle($filename), LOCK_UN);
+        $this->closeHandle($filename);
     }
 }

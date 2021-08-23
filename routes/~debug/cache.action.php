@@ -2,16 +2,14 @@
 <?php
 
 use DigraphCMS\Cache\Cache;
-use DigraphCMS\URL\URL;
+use DigraphCMS\Content\Pages;
 
 $value = Cache::get(
     'debug',
     function () {
         var_dump('doing a slow thing!');
-        sleep(1);
-        return [new URL('?rand=' . random_int(1, 1000))];
-    },
-    10
+        return Pages::get('3453e110');
+    }
 );
 
 var_dump($value);

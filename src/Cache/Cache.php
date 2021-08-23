@@ -24,12 +24,11 @@ class Cache
 {
     /** @var AbstractCacheDriver */
     protected static $driver;
-    protected static $ttl;
 
     public static function __init()
     {
-        static::$driver = new (Config::get('cache.driver'));
-        static::$ttl = Config::get('cache.ttl');
+        $class = Config::get('cache.driver');
+        static::$driver = new $class;
     }
 
     public static function exists(string $name): bool
@@ -37,35 +36,54 @@ class Cache
         return static::$driver->exists($name);
     }
 
+    public static function expired(string $name): bool
+    {
+        return static::$driver->expired($name);
+    }
+
     public static function set(string $name, $value, int $ttl = null)
     {
-        return static::$driver->set($name, $value, $ttl ?? static::$ttl);
+        return static::$driver->set($name, $value, $ttl);
     }
 
     /**
      * Attempt to get a value, optionally with a read-through callback that will
-     * be executed and used to set the cache item's value for the default TTL if
+     * be executed and used to set the cache item's value for the given TTL if
      * it does not exist or is expired.
      *
      * @param string $name
      * @param callable $callback
-     * @return void
+     * @param int $ttl
+     * @return mixed
      */
     public static function get(string $name, callable $callback = null, int $ttl = null)
     {
         if (static::$driver->exists($name) && !static::$driver->expired($name)) {
             return static::$driver->get($name);
+        } elseif ($callback) {
+            static::$driver->set($name, call_user_func($callback), $ttl);
+            return static::$driver->get($name);
         } else {
-            $value = call_user_func($callback);
-            static::$driver->set($name, $value, $ttl);
-            return $value;
+            return null;
         }
+    }
+
+    public static function invalidate(string $glob)
+    {
+        static::$driver->invalidate($glob);
     }
 
     public static function checkName(string $name)
     {
         if (!preg_match('/[a-z0-9\-_]+(\/[a-z0-9\-_]+)*/', $name)) {
-            throw new \Exception("Invalid cache name. Item names must be valid directory paths consisting of only lower-case alphanumerics, dashes, and underscores");
+            throw new \Exception("Invalid cache name. Item names must be valid directory paths consisting of only lower-case alphanumerics, dashes, and underscores.");
+        }
+    }
+
+    public static function checkGlob(string $glob)
+    {
+        if (!preg_match('/[a-z0-9\-_\*\?\[\]]+(\/[a-z0-9\-_\*\?\[\]]+)*/', $glob)) {
+            throw new \Exception("Invalid cache glob. Item globs must be valid directory paths consisting of only lower-case alphanumerics, dashes, underscores, and glob characters.");
         }
     }
 }

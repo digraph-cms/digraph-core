@@ -22,16 +22,6 @@ class URL
     protected $path = '';
     protected $query = [];
 
-    public static function __set_state($properties)
-    {
-        $url = new (static::class)($properties['path']);
-        $url->query($properties['query']);
-        if ($properties['name']) {
-            $url->setName($properties['name']);
-        }
-        return $url;
-    }
-
     /**
      * Parse a string and attempt to turn it into an in-site URL. Accepts both
      * relative and leading-slash site-absolute URLs. Also accepts full query
