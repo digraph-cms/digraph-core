@@ -6,7 +6,7 @@ use DigraphCMS\Config;
 
 class URLs
 {
-    public static $siteHost, $sitePath;
+    public static $protocol, $siteHost, $sitePath;
     public static $context = [];
 
     /**
@@ -19,9 +19,10 @@ class URLs
      */
     public static function __init(array $SERVER)
     {
-        self::$siteHost = @$SERVER['HTTP_HOST'];
-        self::$sitePath = preg_replace('/index\.php$/', '', $SERVER['SCRIPT_NAME']);
-        self::$sitePath = preg_replace('@/$@', '', self::$sitePath);
+        static::$siteHost = @$SERVER['HTTP_HOST'];
+        static::$sitePath = preg_replace('/index\.php$/', '', $SERVER['SCRIPT_NAME']);
+        static::$sitePath = preg_replace('@/$@', '', static::$sitePath);
+        static::$protocol = Config::get('urls.protocol') ? Config::get('urls.protocol') . ':' : '';
     }
 
     /**
@@ -62,7 +63,7 @@ class URLs
      */
     public static function beginContext(URL $context): void
     {
-        self::$context[] = $context;
+        static::$context[] = $context;
     }
 
     /**
@@ -73,10 +74,10 @@ class URLs
      */
     public static function context(): URL
     {
-        if (self::$context) {
-            return end(self::$context);
+        if (static::$context) {
+            return end(static::$context);
         } else {
-            return new URL(self::site() . '/');
+            return new URL(static::site() . '/');
         }
     }
 
@@ -88,7 +89,7 @@ class URLs
      */
     public static function endContext(): void
     {
-        array_pop(self::$context);
+        array_pop(static::$context);
     }
 
     /**
@@ -98,7 +99,7 @@ class URLs
      */
     public static function clearContext(): void
     {
-        self::$context = [];
+        static::$context = [];
     }
 
     /**
@@ -109,13 +110,12 @@ class URLs
      */
     public static function site(): string
     {
-        $protocol = Config::get('urls.protocol') ? Config::get('urls.protocol') . ':' : '';
-        return $protocol . '//' . self::$siteHost . self::$sitePath;
+        return static::$protocol . '//' . static::$siteHost . static::$sitePath;
     }
 
     public static function sitePath(): string
     {
-        return self::$sitePath;
+        return static::$sitePath;
     }
 
     public static function siteProtocol(): string

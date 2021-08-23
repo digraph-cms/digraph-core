@@ -39,7 +39,10 @@ class Page implements ArrayAccess
         $this->updated_last = clone $this->updated;
         $this->updated_by = @$metadata['updated_by'] ?? Session::user();
         $this->rawSet(null, $data);
-        $this->slug(@$metadata['slug'] ?? substr($this->uuid(), 0, 8), false);
+        $this->slug = @$metadata['slug'] ?? substr($this->uuid(), 0, 8);
+        if (!Pages::validateSlug($this->slug)) {
+            throw new \Exception("Slug " . $this->slug . " is not valid");
+        }
         $this->changed = false;
     }
 

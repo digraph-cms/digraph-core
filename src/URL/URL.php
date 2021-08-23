@@ -83,14 +83,14 @@ class URL
 
     public function permissions(User $user = null): bool
     {
-        if ($this->page()) {
+        if ($page = $this->page()) {
             // first try page permissions handler
-            if (null !== $value = $this->page()->permissions($this, $user)) {
+            if (null !== ($value = $page->permissions($this, $user))) {
                 return $value;
             }
             // first try to find a route class event handler 
-            foreach ($this->page()->routeClasses() as $class) {
-                if (null !== $value = Dispatcher::firstValue("onPageUrlPermissions_$class", [$this])) {
+            foreach ($page->routeClasses() as $class) {
+                if (null !== ($value = Dispatcher::firstValue("onPageUrlPermissions_$class", [$this]))) {
                     return $value;
                 }
             }

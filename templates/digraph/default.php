@@ -9,6 +9,7 @@ use DigraphCMS\UI\ActionMenu;
 use DigraphCMS\UI\Breadcrumb;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\Theme;
+use DigraphCMS\UI\UserMenu;
 
 ?>
 <!DOCTYPE html>
@@ -30,14 +31,17 @@ use DigraphCMS\UI\Theme;
         <a href="#content">Skip to content</a>
     </section>
     <?php
-    echo new ActionMenu(Context::url(), true);
+    echo new UserMenu();
     Breadcrumb::print();
     Notifications::printSection();
     ?>
     <main id="content">
         <?php echo Context::response()->content(); ?>
     </main>
-    <?php echo Theme::body(); ?>
+    <?php
+    echo new ActionMenu(Context::url());
+    echo Theme::body();
+    ?>
 </body>
 
 </html>

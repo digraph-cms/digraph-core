@@ -20,7 +20,7 @@ class ActionMenu
     public function __toString()
     {
         ob_start();
-        echo "<section class='action-menu'><h1>Action menu</h1><nav class='action-menu'>";
+        echo "<nav class='action-menu'><h1>Action menu</h1>";
         // output buffer contents separately
         ob_start();
         $this->printUserActions();
@@ -35,7 +35,7 @@ class ActionMenu
             ob_end_flush();
         }
         // close up and return
-        echo "</nav></section>";
+        echo "</nav>";
         return ob_get_clean();
     }
 
@@ -46,47 +46,62 @@ class ActionMenu
         }
         $user = Users::current();
         if ($user) {
-            echo "<li class='user-actions user-actions-signedin'><h2><span class='user-welcome'>Welcome </span>$user</h2><nav>";
+            echo "<div class='user-actions user-actions-signedin'><h2>$user</h2><nav><ul>";
             echo "<li class='signout-link'>" . Users::signoutUrl()->html(['signout-link']) . "</li>";
             foreach (Router::staticActions('user') as $url) {
                 echo "<li>" . $url->html([], true) . "</li>";
             }
-            echo "</nav></li>";
-        } elseif (Config::get('ui.action-menus.guestui')) {
+            echo "</ul></nav></div>";
+        } elseif (Config::get('ui.action-menu.guestui')) {
             $user = Users::guest();
-            echo "<li class='user-actions user-actions-guest'><h2><span class='user-welcome'>Welcome </span>$user</h2><nav>";
+            echo "<div class='user-actions user-actions-guest'><h2>$user</h2><nav><ul>";
             echo "<li class='signin-link'>" . Users::signinUrl()->html(['signin-link']) . "</li>";
             foreach (Router::staticActions('guest') as $url) {
                 echo "<li>" . $url->html([], true) . "</li>";
             }
-            echo "</nav></li>";
+            echo "</ul></nav></div>";
         }
     }
 
     protected function printPageActions()
     {
-        if ($this->url->page() && $actions = Router::pageActions($this->url->page())) {
-            echo "<li class='page-actions'><h2><span class='action-menu-sublabel'>Page </span>" . $this->url->page()->url()->html() . "</h2><nav>";
+        if (!$this->url->page()) {
+            return;
+        }
+        $actions = array_filter(
+            Router::staticActions($this->url->route()),
+            function (URL $url) {
+                return $url->permissions();
+            }
+        );
+        if ($actions = Router::pageActions($this->url->page())) {
+            echo "<div class='page-actions'><h2>" . $this->url->page()->url()->html() . "</h2><nav><ul>";
             foreach ($actions as $url) {
                 echo "<li>" . $url->html([], true) . "</li>";
             }
-            echo "</nav></li>";
+            echo "</ul></nav></div>";
         }
     }
 
     protected function printStaticActions()
     {
-        if ($actions = Router::staticActions($this->url->route())) {
+        $actions = array_filter(
+            Router::staticActions($this->url->route()),
+            function (URL $url) {
+                return $url->permissions();
+            }
+        );
+        if ($actions) {
             if (Router::staticRouteExists($this->url->route(), 'index')) {
                 $title = (new URL('/~' . $this->url->route()))->html();
             } else {
                 $title = '<a>' . $this->url->route() . '</a>';
             }
-            echo "<li class='static-actions'><h2><span class='action-menu-sublabel'>Section </span>$title</h2><nav>";
+            echo "<div class='static-actions'><h2>$title</h2><nav><ul>";
             foreach ($actions as $url) {
                 echo "<li>" . $url->html([], true) . "</li>";
             }
-            echo "</nav></li>";
+            echo "</ul></nav></div>";
         }
     }
 }

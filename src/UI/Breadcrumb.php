@@ -15,7 +15,7 @@ class Breadcrumb
     {
         $breadcrumb = static::breadcrumb();
         if (count($breadcrumb) >= Config::get('ui.breadcrumb.min_length')) {
-            echo "<section class='breadcrumb'><h1>Breadcrumb</h1><nav class='breadcrumb'>";
+            echo "<nav class='breadcrumb'><h1>Breadcrumb</h1><ul>";
 
             foreach ($breadcrumb as $url) {
                 echo "<li>" . $url->html() . "</li>";
@@ -23,7 +23,7 @@ class Breadcrumb
             if (Config::get('ui.breadcrumb.include_current')) {
                 echo "<li>" . static::top()->html(['breadcrumb-current']) . "</li>";
             }
-            echo "</nav></section>";
+            echo "</ul></nav>";
         }
     }
 
@@ -94,7 +94,12 @@ class Breadcrumb
     {
         $breadcrumb = static::parents();
         static::helper($breadcrumb);
-        return $breadcrumb;
+        return array_filter(
+            $breadcrumb,
+            function (URL $url) {
+                return $url->permissions();
+            }
+        );
     }
 
     /**
