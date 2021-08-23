@@ -105,7 +105,6 @@ class Router
      */
     public static function pageRoute(Page $page, string $action)
     {
-        Context::clone();
         Context::page($page);
         // try specific routes first
         foreach ($page->routeClasses() as $c) {
@@ -123,7 +122,6 @@ class Router
                 return $output;
             }
         }
-        Context::end();
         return null;
     }
 

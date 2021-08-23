@@ -7,6 +7,8 @@ use DigraphCMS\UI\DataTables\UserTable;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\UserSelect;
 
+Context::response()->enableCache();
+
 $group = Context::url()->action();
 
 $users = new UserSelect(

@@ -1,8 +1,11 @@
 <?php
 
+use DigraphCMS\Context;
 use DigraphCMS\UI\DataTables\UserTable;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
+
+Context::response()->enableCache();
 
 $users = Users::select();
 

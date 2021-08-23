@@ -43,7 +43,7 @@ class OpCache extends AbstractCacheDriver
 
     public function exists(string $name): bool
     {
-        return @$this->cache[$name] ?? is_file($this->filename($name));
+        return @$this->cache[$name][0] ?? is_file($this->filename($name));
     }
 
     public function expired(string $name): bool

@@ -30,8 +30,12 @@ class Templates
 
     protected static function render(string $template, array $fields = []): string
     {
+        // add fields to context
         Context::clone();
+        Context::fields()->merge($fields);
+        // get template alias
         $template = Config::get("templates.aliases.$template") ?? $template;
+        // do rendering and output
         $output = static::doRender($template, $fields);
         Context::end();
         return $output;
@@ -45,8 +49,6 @@ class Templates
             throw new \Exception("Couldn't locate template file for template $template");
         }
         $extension = strtolower(pathinfo($template, PATHINFO_EXTENSION));
-        // add fields to context
-        Context::fields()->merge($fields);
         // built-in handlers
         switch ($extension) {
             case 'php':
@@ -62,7 +64,6 @@ class Templates
 
     public static function wrapResponse(Response $response)
     {
-        Context::clone();
         Context::response($response);
         $fields = Context::fields();
         if (!$fields['page.name']) {
@@ -75,7 +76,6 @@ class Templates
             }
         }
         $response->content(static::render($response->template()));
-        Context::end();
     }
 
     protected static function locateFile(string $template): ?string

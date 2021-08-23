@@ -23,7 +23,7 @@ class CacheNamespace
      */
     public function get(string $name, callable $callback = null, int $ttl = null)
     {
-        Cache::get($this->name . '/' . $name, $callback, $ttl);
+        return Cache::get($this->name . '/' . $name, $callback, $ttl);
     }
 
     public function exists(string $name): bool

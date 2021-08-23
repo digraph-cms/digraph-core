@@ -11,7 +11,7 @@ use DigraphCMS\Users\Users;
 
 /** @var \DigraphCMS\Users\OAuth\OAuth2UserSource */
 $source = Users::source('oauth2');
-$url = Context::response()->url();
+$url = Context::url();
 $bounce = Context::arg('bounce');
 if ($bounce) {
     $bounce = new URL($bounce);

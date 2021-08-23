@@ -22,7 +22,6 @@ class Breadcrumb
                 $breadcrumb = static::breadcrumb();
                 if (count($breadcrumb) >= Config::get('ui.breadcrumb.min_length')) {
                     echo "<nav class='breadcrumb'><h1>Breadcrumb</h1><ul>";
-
                     foreach ($breadcrumb as $url) {
                         echo "<li>" . $url->html() . "</li>";
                     }

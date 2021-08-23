@@ -2,7 +2,9 @@
 
 namespace DigraphCMS\DB;
 
+use ArrayIterator;
 use Envms\FluentPDO\Queries\Select;
+use PDOStatement;
 
 /**
  * Wraps an FPDO Select object in an analogous interface, but converts results

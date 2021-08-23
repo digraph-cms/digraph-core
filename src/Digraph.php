@@ -2,6 +2,8 @@
 
 namespace DigraphCMS;
 
+use DigraphCMS\Cache\UserCacheNamespace;
+use DigraphCMS\Content\Page;
 use DigraphCMS\Content\Router;
 use DigraphCMS\Content\Pages;
 use DigraphCMS\Events\Dispatcher;
@@ -26,8 +28,8 @@ class Digraph
      */
     public static function renderActualRequest(): void
     {
-        $response = static::makeResponse(static::actualRequest());
-        $response->render();
+        static::makeResponse(static::actualRequest());
+        Context::response()->render();
     }
 
     /**
@@ -90,53 +92,54 @@ class Digraph
         return new Request(
             static::actualUrl(),
             $_SERVER['REQUEST_METHOD'],
-            new RequestHeaders(getallheaders())
+            new RequestHeaders(getallheaders()),
+            $_POST
         );
     }
 
-    /**
-     * Make a Response from a Request. Responses include everything necessary to
-     * render output: headers, content, status, and URL
-     *
-     * @param Request $request
-     * @return Response
-     */
-    public static function makeResponse(Request $request): Response
+    public static function makeResponse(Request $request)
     {
         ob_start();
         URLs::beginContext($request->url());
         Context::begin();
+        Context::url($request->url())->normalize();
         Context::request($request);
+        Context::response(new Response());
+        // redirect if normalizing changed URL
+        if ($request->url()->__toString() != $request->originalUrl()->__toString()) {
+            Context::response()->redirect($request->url());
+            return;
+        }
         try {
-            // redirect if URL has changed
-            if ($request->url()->__toString() != $request->originalUrl()->__toString()) {
-                return Context::response(new Redirect($request->url()));
-            }
-            // try to build a response
-            Context::response(
-                static::doMakeResponse()
-                    ?? static::errorResponse(404)
-            );
-            // change response URL to static if status is 200 and no page is associated
-            // this will cause a canonical header to be added next
-            if (Context::response()->status() == 200 && !Context::page()) {
-                $url = Context::response()->url();
-                $url->path(preg_replace('@^/([^~][^\/]*/)@', '/~$1', $url->path()));
-                Context::response()->url($url);
-            }
-            // if response URL doesn't match original URL, set canonical header
-            if (Context::response()->status() == 200 && $request->originalUrl() != Context::response()->url()) {
-                Context::response()->headers()->set('Link', '<' . Context::response()->url() . '>; rel="canonical"');
-            }
-            // if response URL doesn't match page URL, set canonical header
-            if (Context::response()->status() == 200 && Context::page()) {
-                $pageUrl = Context::page()->url(
-                    $request->originalUrl()->action(),
-                    $request->originalUrl()->query()
-                );
-                if ($request->originalUrl() != $pageUrl) {
-                    Context::response()->headers()->set('Link', '<' . $pageUrl . '>; rel="canonical"');
+            // search for relevant pages and handle putting them into Context
+            if (!$request->url()->explicitlyStaticRoute() && $pages = Pages::getAll($request->url()->route())) {
+                // this route relates to one or more pages
+                $route = $request->url()->route();
+                $action = $request->url()->action();
+                if (count($pages) == 1 && !Router::staticRouteExists($route, $action)) {
+                    // one page with no matching static route: put it in Context and build content
+                    Context::page(reset($pages));
+                    static::buildResponseContent();
+                } else {
+                    // create a multiple options page if multiple pages or 1+ page and a static route exists
+                    Context::data('300_pages', $pages);
+                    if (Router::staticRouteExists($route, $action)) {
+                        $staticUrl = new URL("/~$route/$action.html");
+                        $staticUrl->query($request->url()->query());
+                        $staticUrl->normalize();
+                        Context::data('300_static', $staticUrl);
+                    }
+                    static::buildErrorContent(300);
                 }
+            } else {
+                // this route does not relate to any pages
+                // make sure context url is explicitly static
+                if (!Context::url()->explicitlyStaticRoute()) {
+                    Context::url()->path(
+                        preg_replace('@^/([^~])@', '/~$1', Context::url()->path())
+                    );
+                }
+                static::buildResponseContent();
             }
             // wrap with template (HTML only)
             if (Context::response()->mime() == 'text/html') {
@@ -145,17 +148,17 @@ class Digraph
         } catch (HttpError $error) {
             // generate exception-handling page
             Context::thrown($error);
-            Context::response(static::errorResponse($error->status(), $error->getMessage()));
+            static::buildErrorContent($error->status(), $error->getMessage());
             Context::response()->resetTemplate();
             Templates::wrapResponse(Context::response());
         } catch (Throwable $th) {
             // generate a fallback exception handling error page
             Context::thrown($th);
-            $response =
-                Dispatcher::firstValue('onException_' . get_class($th), [$th]) ??
-                Dispatcher::firstValue('onException', [$th]) ??
-                static::errorResponse(500);
-            Context::response($response);
+            if (!Dispatcher::firstValue('onException_' . get_class($th), [$th])) {
+                if (!Dispatcher::firstValue('onException', [$th])) {
+                    static::buildErrorContent(500);
+                }
+            }
             Context::response()->template('digraph/error.php');
             Templates::wrapResponse(Context::response());
         }
@@ -167,77 +170,74 @@ class Digraph
         return $response;
     }
 
-    protected static function doMakeResponse(): ?Response
+    protected static function buildResponseContent()
     {
-        $request = Context::request();
-        $url = $request->url();
-        $route = $url->route();
-        $action = $url->action();
-        if ($url->explicitlyStaticRoute() || !($pages = Pages::getAll($route))) {
-            // run static routing if URL is explicitly static or no pages were found
-            return static::doStaticRoute($route, $action);
-        } elseif (count($pages) > 1 || Router::staticRouteExists($route, $action)) {
-            // create a multiple options page if multiple pages or 1+ page and a static route exist
-            Context::data('300_pages', $pages);
-            if (Router::staticRouteExists($route, $action)) {
-                $staticUrl = new URL("/~$route/$action.html");
-                $staticUrl->query($url->query());
-                $staticUrl->normalize();
-                Context::data('300_static', $staticUrl);
+        // check output cache
+        if (Config::get('content_cache.enabled')) {
+            $cache = new UserCacheNamespace('content_cache');
+            $hash = md5(serialize(Context::request()));
+            if ($cache->exists($hash) && !$cache->expired($hash)) {
+                Context::response($cache->get($hash));
+                return;
             }
-            return static::errorResponse(300);
+            $time = microtime(true);
         } else {
-            // run page routing if a single page was found, and no static routes
-            Context::page(reset($pages));
-            return static::doPageRoute($action);
+            $cache = null;
+        }
+        // generate response
+        if (!static::normalResponse()) {
+            static::buildErrorContent(404);
+        }
+        // output caching: cache for response cacheTTL if generating content
+        // took longer in ms than config content_cache.min_ms
+        if ($cache && $ttl = Context::response()->cacheTTL()) {
+            $time = round((microtime(true) - $time) * 1000);
+            if ($time > Config::get('content_cache.min_ms')) {
+                $cache->set($hash, Context::response(), $ttl);
+            }
         }
     }
 
-    protected static function doPageRoute(string $action): ?Response
+    protected static function normalResponse(): bool
     {
-        Context::response(new Response(Context::request()->url(), 200));
-        $content = Router::pageRoute(Context::page(), $action);
-        if ($content === null) {
-            return null;
-        } elseif (is_string($content)) {
-            Context::response()->content($content);
-            return Context::response();
-        } elseif ($content instanceof Response) {
-            Context::response($content);
-            return Context::response();
+        if (Context::page()) {
+            return static::doPageRoute();
         } else {
-            return null;
+            return static::doStaticRoute();
         }
     }
 
-    protected static function doStaticRoute(string $route, string $action): ?Response
+    protected static function doPageRoute(): bool
     {
-        Context::response(new Response(Context::request()->url(), 200));
-        $content = Router::staticRoute($route, $action);
+        $content = Router::pageRoute(Context::page(), Context::url()->action());
         if ($content !== null) {
             Context::response()->content($content);
-            return Context::response();
+            return true;
         }
-        return null;
+        return false;
     }
 
-    public static function errorResponse(int $status, string $message = null): Response
+    protected static function doStaticRoute(): bool
     {
-        Context::clone();
+        $content = Router::staticRoute(Context::url()->route(), Context::url()->action());
+        if ($content !== null) {
+            Context::response()->content($content);
+            return true;
+        }
+        return false;
+    }
+
+    public static function buildErrorContent(int $status, string $message = null): bool
+    {
         Context::url(new URL("/~error/$status.html"));
         Context::data('error_message', $message);
-        $response =
-            static::doStaticRoute('error', $status) ??
+        Context::response()->status($status);
+        $built = static::doStaticRoute('error', $status) ??
             static::doStaticRoute('error', floor($status / 100) . 'xx') ??
-            static::doStaticRoute('error', 'xxx') ??
-            false;
-        if (!$response) {
-            $response = new Response(clone Context::request()->url(), $status);
-            $response->content("<h1>Error: $status</h1><p>Additionally, no error response was correctly generated.</p>");
-        } else {
-            $response->status($status);
+            static::doStaticRoute('error', 'xxx');
+        if (!$built) {
+            throw new \Exception("Failed to build error content");
         }
-        Context::end();
-        return $response;
+        return true;
     }
 }

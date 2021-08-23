@@ -4,6 +4,8 @@ namespace DigraphCMS\HTTP;
 
 use DigraphCMS\Config;
 use DigraphCMS\Content\Page;
+use DigraphCMS\Context;
+use DigraphCMS\Session\Session;
 use DigraphCMS\URL\URL;
 
 class Response
@@ -11,7 +13,6 @@ class Response
     protected $status = 200;
     protected $headers = [];
     protected $content = '';
-    protected $url = null;
     protected $page = null;
     protected $browserTTL = null;
     protected $cacheTTL = null;
@@ -19,12 +20,10 @@ class Response
     protected $template = null;
     protected $mime = 'text/html';
 
-    public function __construct(URL $url, int $status = null)
+    public function __construct(int $status = null)
     {
-        $this->url = clone $url;
         $this->status($status);
         $this->headers = new ResponseHeaders();
-        $this->headers->response($this);
     }
 
     public function mime(string $mime = null): string
@@ -59,10 +58,14 @@ class Response
     public function private(bool $private = null): bool
     {
         if ($private !== null) {
-            $this->headers()->private($private);
             $this->private = $private;
         }
-        return $this->private;
+        return $this->private || Session::user() != 'guest';
+    }
+
+    public function enableCache()
+    {
+        $this->cacheTTL($this->cacheTTL() ? $this->cacheTTL() : Config::get('content_cache.default_ttl'));
     }
 
     public function cacheTTL(int $ttl = null): int
@@ -132,11 +135,6 @@ class Response
         return $this->headers;
     }
 
-    public function url(): URL
-    {
-        return $this->url;
-    }
-
     public function status(int $status = null): int
     {
         if ($status !== null) {
@@ -161,11 +159,52 @@ class Response
 
     public function renderHeaders()
     {
+        // render normal header
         foreach ($this->headers()->toArray() as $key => $value) {
             header("$key: $value");
         }
         header('Content-Type: ' . $this->mime());
+        header('Cache-Control: ' . $this->cacheControlHeader());
+        if ($this->private()) {
+            header('Pragma: no-cache');
+        } else {
+            header('Pragma: public');
+        }
         http_response_code($this->status());
+        // check if we need a canonical link
+        // if response URL doesn't match original URL, set canonical header
+        if ($this->status == 200) {
+            $canonical = null;
+            if (Context::url() != Context::request()->originalUrl()) {
+                // check if original request URL matches context URL
+                $canonical = Context::url();
+            } elseif (Context::page()) {
+                // check if canonical URL from page matches context URL
+                $pageUrl = Context::page()->url(
+                    Context::request()->originalUrl()->action(),
+                    Context::request()->originalUrl()->query()
+                );
+                if (Context::request()->originalUrl() != $pageUrl) {
+                    $canonical = $pageUrl;
+                }
+            }
+            // check if we made a canonical url
+            if ($canonical) {
+                header('Link: <' . $canonical . '>; rel="canonical"');
+            }
+        }
+    }
+
+    protected function cacheControlHeader(): string
+    {
+        $staleTTL = $this->staleTTL();
+        $output = [
+            $this->private() ? 'no-store' : 'public',
+            'max-age=' . $this->browserTTL(),
+            'max-stale=' . $staleTTL,
+            'stale-if-error=' . $staleTTL,
+        ];
+        return implode(', ', array_filter($output));
     }
 
     public function renderContent()

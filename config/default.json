@@ -23,6 +23,11 @@
     "ttl": 60,
     "fuzz": 15
   },
+  "content_cache": {
+    "enabled": true,
+    "min_ms": 100,
+    "default_ttl": 60
+  },
   "ui": {
     "breadcrumb": {
       "min_length": 1,
