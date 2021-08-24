@@ -7,7 +7,7 @@ Config::merge([
     'paths.base' => __DIR__.'/demo',
     'paths.web' => __DIR__.'/demo'
 ]);
-Config::readFile(__DIR__ . '/env.yaml');
+Config::readFile(__DIR__ . '/env.json');
 
 return
     [
