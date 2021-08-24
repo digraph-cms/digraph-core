@@ -17,8 +17,8 @@ class ColumnHeader
         $this->sorter = $sorter;
         if ($this->sorter) {
             // is sortable
-            $order = Context::arg('_sortorder');
-            $column = Context::arg('_sortcolumn');
+            $order = Context::url()->arg('_sortorder');
+            $column = Context::url()->arg('_sortcolumn');
             if ($column == $this->id()) {
                 if ($order == 'asc') {
                     $this->order = 'asc';
@@ -29,13 +29,13 @@ class ColumnHeader
                     ($this->sorter)(false);
                     $this->updateBreadcrumb($this->label, 'descending');
                 } else {
-                    Context::unsetArg('_sortorder');
-                    Context::unsetArg('_sortcolumn');
+                    Context::url()->unsetArg('_sortorder');
+                    Context::url()->unsetArg('_sortcolumn');
                 }
             }
         } else {
             // is not sortable
-            Context::unsetArg($this->id());
+            Context::url()->unsetArg($this->id());
         }
     }
 
@@ -80,7 +80,7 @@ class ColumnHeader
     protected function link($order, $text, $tip): string
     {
         $classes = ['column-sort'];
-        $url = Context::url();
+        $url = clone Context::url();
         if ($order) {
             $url->arg('_sortorder', $order);
             $url->arg('_sortcolumn', $this->id());
@@ -93,7 +93,7 @@ class ColumnHeader
             // this is a reset link for a column that isn't sorted, return nothing
             return '';
         }
-        if (Context::arg('_sortorder') == $order && Context::arg('_sortcolumn') == $this->id()) {
+        if (Context::url()->arg('_sortorder') == $order && Context::url()->arg('_sortcolumn') == $this->id()) {
             // this is a link to the current sorting, return a link that isn't href-ed
             return "<a title='$tip' aria-label='$tip' class='" . implode(' ', $classes) . " column-sort-active'>$text</a>";
         }

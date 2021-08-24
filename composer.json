@@ -16,7 +16,8 @@
         "robmorgan/phinx": "^0.12.7",
         "byjoby/formward": "^0.4",
         "tubalmartin/cssmin": "^4.1",
-        "scssphp/scssphp": "^1.6"
+        "scssphp/scssphp": "^1.6",
+        "brick/varexporter": "^0.3.5"
     },
     "suggest": {
         "league/oauth2-github": "Allows OAuth sign-in using GitHub",

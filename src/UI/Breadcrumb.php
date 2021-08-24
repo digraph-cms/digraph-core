@@ -2,6 +2,7 @@
 
 namespace DigraphCMS\UI;
 
+use DigraphCMS\Cache\UserCacheNamespace;
 use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\URL\URL;
@@ -13,18 +14,25 @@ class Breadcrumb
 
     public static function print()
     {
-        $breadcrumb = static::breadcrumb();
-        if (count($breadcrumb) >= Config::get('ui.breadcrumb.min_length')) {
-            echo "<nav class='breadcrumb'><h1>Breadcrumb</h1><ul>";
-
-            foreach ($breadcrumb as $url) {
-                echo "<li>" . $url->html() . "</li>";
+        $cache = new UserCacheNamespace('breadcrumb');
+        echo $cache->get(
+            md5(Context::url()),
+            function () {
+                ob_start();
+                $breadcrumb = static::breadcrumb();
+                if (count($breadcrumb) >= Config::get('ui.breadcrumb.min_length')) {
+                    echo "<nav class='breadcrumb'><h1>Breadcrumb</h1><ul>";
+                    foreach ($breadcrumb as $url) {
+                        echo "<li>" . $url->html() . "</li>";
+                    }
+                    if (Config::get('ui.breadcrumb.include_current')) {
+                        echo "<li>" . static::top()->html(['breadcrumb-current']) . "</li>";
+                    }
+                    echo "</ul></nav>";
+                }
+                return ob_get_clean();
             }
-            if (Config::get('ui.breadcrumb.include_current')) {
-                echo "<li>" . static::top()->html(['breadcrumb-current']) . "</li>";
-            }
-            echo "</ul></nav>";
-        }
+        );
     }
 
     /**

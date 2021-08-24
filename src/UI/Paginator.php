@@ -46,7 +46,7 @@ class Paginator
     {
         $page = Context::arg($this->arg());
         if ($page < 1 || $page > $this->pages()) {
-            Context::unsetArg($this->arg());
+            Context::url()->unsetArg($this->arg());
             return 1;
         } else {
             return $page;

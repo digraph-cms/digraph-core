@@ -11,12 +11,18 @@ class Request
     protected $method = null;
     protected $headers = null;
 
-    public function __construct(URL $url, string $method, RequestHeaders $headers)
+    public function __construct(URL $url, string $method, RequestHeaders $headers, array $post)
     {
         $this->originalUrl = clone $url;
         $this->url($url);
         $this->method = $method;
         $this->headers = $headers;
+        $this->post = $post;
+    }
+
+    public function post(): array
+    {
+        return $this->post;
     }
 
     public function headers(): RequestHeaders

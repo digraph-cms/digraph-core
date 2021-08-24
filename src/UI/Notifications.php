@@ -2,6 +2,7 @@
 
 namespace DigraphCMS\UI;
 
+use DigraphCMS\Context;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\Session\FlashSessionNamespace;
 use DigraphCMS\Session\Session;
@@ -17,8 +18,11 @@ class Notifications
     public static function printSection()
     {
         static::flashNamespace()->advance();
+        if ($flash = static::flashNamespace()->current()) {
+            Context::response()->private(true);
+        }
         $notifications = array_merge(
-            static::flashNamespace()->current(),
+            $flash,
             static::$notifications
         );
         if ($notifications) {

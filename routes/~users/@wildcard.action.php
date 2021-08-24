@@ -7,6 +7,8 @@ use DigraphCMS\UI\DataTables\PageTable;
 use DigraphCMS\Users\Group;
 use DigraphCMS\Users\Users;
 
+Context::response()->enableCache();
+
 $user = Users::get(Context::url()->action());
 if (!$user) {
     throw new HttpError(404, 'User not found');
