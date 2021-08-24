@@ -2,7 +2,7 @@
 
 namespace DigraphCMS\Session;
 
-Session::__init();
+Session::_init();
 
 class Session
 {
@@ -172,13 +172,13 @@ class Session
      *
      * @return void
      */
-    public static function __init()
+    public static function _init()
     {
         // start/grab session
         @session_start();
         // initialize data
         if (!@$_SESSION) {
-            $_SESSION = self::__initData();
+            $_SESSION = self::_initData();
         }
         // if remote is different, deauthorize and save it into remote_history
         $remote = self::remote();
@@ -207,7 +207,7 @@ class Session
      *
      * @return array
      */
-    protected static function __initData(): array
+    protected static function _initData(): array
     {
         $time = time();
         $remote = self::remote();

@@ -9,7 +9,7 @@ class Config
     /** @var FlatrrConfig */
     protected static $config;
 
-    public static function __init()
+    public static function _init()
     {
         self::$config = new FlatrrConfig();
         self::$config->readDir(__DIR__ . '/../config');
@@ -45,4 +45,4 @@ class Config
     }
 }
 
-Config::__init();
+Config::_init();

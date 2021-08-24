@@ -6,7 +6,7 @@ class FS
 {
     public static $umask_file, $umask_dir;
 
-    public static function __init()
+    public static function _init()
     {
         self::$umask_file = Config::get('fs.umask_file');
         self::$umask_dir = Config::get('fs.umask_dir');
@@ -77,4 +77,4 @@ class FS
     }
 }
 
-FS::__init();
+FS::_init();

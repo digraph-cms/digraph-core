@@ -17,7 +17,7 @@ class URLs
      * @param array $SERVER
      * @return void
      */
-    public static function __init(array $SERVER)
+    public static function _init(array $SERVER)
     {
         static::$siteHost = @$SERVER['HTTP_HOST'];
         static::$sitePath = preg_replace('/index\.php$/', '', $SERVER['SCRIPT_NAME']);
@@ -130,4 +130,4 @@ class URLs
     }
 }
 
-URLs::__init($_SERVER);
+URLs::_init($_SERVER);

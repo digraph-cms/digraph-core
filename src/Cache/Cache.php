@@ -4,7 +4,7 @@ namespace DigraphCMS\Cache;
 
 use DigraphCMS\Config;
 
-Cache::__init();
+Cache::_init();
 
 /**
  * Because Digraph is a majestic monolith, its caching strategy is based on
@@ -25,7 +25,7 @@ class Cache
     /** @var AbstractCacheDriver */
     protected static $driver;
 
-    public static function __init()
+    public static function _init()
     {
         $class = Config::get('cache.driver');
         static::$driver = new $class;

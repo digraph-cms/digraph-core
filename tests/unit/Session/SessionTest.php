@@ -21,7 +21,7 @@ class SessionTest extends \Codeception\Test\Unit
         $_SESSION = [];
         $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
         $_SERVER['HTTP_USER_AGENT'] = 'Fake browser';
-        Session::__init();
+        Session::_init();
     }
 
     protected function _after()
@@ -69,7 +69,7 @@ class SessionTest extends \Codeception\Test\Unit
         // change user agent
         $_SERVER['HTTP_USER_AGENT'] = 'Another fake browser';
         // reinitializing should clear user
-        Session::__init();
+        Session::_init();
         $this->assertEquals('guest@system', Session::user());
     }
 
@@ -126,7 +126,7 @@ class SessionTest extends \Codeception\Test\Unit
         // foo shouldn't exist in current()
         $this->assertArrayNotHasKey('foo', $flash->current());
         // simulate reload
-        session::__init();
+        session::_init();
         // flash() should still be set into next()
         $flash->flash('foo', 'bar');
         $this->assertEquals('bar', $flash->next()['foo']);
@@ -140,7 +140,7 @@ class SessionTest extends \Codeception\Test\Unit
         $flash->flash('baz', 'buzz');
         $this->assertEquals('buzz', $flash->next()['baz']);
         // simulate reload
-        session::__init();
+        session::_init();
         // state should be the same
         $this->assertEquals('bar', $flash->current()['foo']);
         $this->assertEquals('buzz', $flash->next()['baz']);

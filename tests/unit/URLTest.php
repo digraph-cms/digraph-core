@@ -14,7 +14,7 @@ class URLTest extends \Codeception\Test\Unit
     {
         $_SERVER['HTTP_HOST'] = 'www.test.com';
         $_SERVER['SCRIPT_NAME'] = '/digraph/index.php';
-        URLs::__init($_SERVER);
+        URLs::_init($_SERVER);
         URLs::clearContext();
     }
 
@@ -25,7 +25,7 @@ class URLTest extends \Codeception\Test\Unit
     public function testStaticInitialization()
     {
         $this->assertEquals('//www.test.com/digraph', URLs::site());
-        URLs::__init([
+        URLs::_init([
             'HTTP_HOST' => 'www.test.com',
             'SCRIPT_NAME' => '/index.php'
         ]);
