@@ -1,7 +1,6 @@
 <?php
 
 use DigraphCMS\Context;
-use DigraphCMS\HTTP\Redirect;
 use DigraphCMS\Users\Users;
 
 $sources = Users::sources();
@@ -12,7 +11,7 @@ if (!$sources) {
     throw new \Exception("No user sources are available");
 } elseif (count($sources) == 1) {
     $source = reset($sources);
-    Context::response(new Redirect($source->signinUrl($bounce)));
+    Context::response()->redirect($source->signinUrl($bounce));
     return;
 }
 

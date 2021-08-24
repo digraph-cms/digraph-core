@@ -3,12 +3,10 @@
 namespace DigraphCMS;
 
 use DigraphCMS\Cache\UserCacheNamespace;
-use DigraphCMS\Content\Page;
 use DigraphCMS\Content\Router;
 use DigraphCMS\Content\Pages;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTTP\HttpError;
-use DigraphCMS\HTTP\Redirect;
 use DigraphCMS\HTTP\Request;
 use DigraphCMS\HTTP\RequestHeaders;
 use DigraphCMS\HTTP\Response;
