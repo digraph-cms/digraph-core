@@ -1,5 +1,5 @@
 <?php
 
-use DigraphCMS\Users\Permissions;
+use DigraphCMS\Context;
 
-Permissions::requireGroup('users');
+Context::requireGroup('users');

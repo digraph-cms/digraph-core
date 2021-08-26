@@ -6,6 +6,7 @@ use DigraphCMS\Cache\UserCacheNamespace;
 use DigraphCMS\Config;
 use DigraphCMS\Content\Router;
 use DigraphCMS\URL\URL;
+use DigraphCMS\URL\URLs;
 use DigraphCMS\Users\Users;
 
 class ActionMenu
@@ -16,7 +17,7 @@ class ActionMenu
     {
         $this->url = clone $url;
         $this->user = $user;
-        $this->cache = new UserCacheNamespace('actionmenu');
+        $this->cache = new UserCacheNamespace('action-menu');
     }
 
     public function __toString()
@@ -54,10 +55,11 @@ class ActionMenu
         $user = Users::current();
         if ($user) {
             echo "<div class='user-actions user-actions-signedin'><h2>$user</h2><nav><ul>";
-            echo "<li class='signout-link'>" . Users::signoutUrl()->html(['signout-link']) . "</li>";
+            echo "<li class='profile-link'><a href='" . $user->profile() . "'>My profile</a></li>";
             foreach (Router::staticActions('user') as $url) {
                 echo "<li>" . $url->html([], true) . "</li>";
             }
+            echo "<li class='signout-link'>" . Users::signoutUrl()->html(['signout-link']) . "</li>";
             echo "</ul></nav></div>";
         } elseif (Config::get('ui.action-menu.guestui')) {
             $user = Users::guest();
@@ -102,7 +104,7 @@ class ActionMenu
             if (Router::staticRouteExists($this->url->route(), 'index')) {
                 $title = (new URL('/~' . $this->url->route()))->html();
             } else {
-                $title = '<a>' . $this->url->route() . '</a>';
+                $title = '<a>' . URLs::pathToName($this->url->route()) . '</a>';
             }
             echo "<div class='static-actions'><h2>$title</h2><nav><ul>";
             foreach ($actions as $url) {

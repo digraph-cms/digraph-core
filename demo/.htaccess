@@ -7,3 +7,6 @@
   RewriteCond %{REQUEST_FILENAME}/index.php !-f
   RewriteRule ^([^?]*)$ index.php [NC,L,QSA]
 </IfModule>
+
+# disable session auto start so that it isn't used if not needed
+php_value session.auto_start 0

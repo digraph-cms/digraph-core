@@ -2,12 +2,16 @@
 
 namespace DigraphCMS\UI\DataTables;
 
-use DigraphCMS\Context;
-use DigraphCMS\DB\AbstractMappedSelect;
-
 class QueryColumnHeader extends ColumnHeader
 {
-    public function __construct(string $label, string $column, AbstractMappedSelect $select)
+    /**
+     * Undocumented function
+     *
+     * @param string $label
+     * @param string $column
+     * @param \DigraphCMS\DB\AbstractMappedSelect|\Envms\FluentPDO\Queries\Select $select
+     */
+    public function __construct(string $label, string $column, $select)
     {
         parent::__construct(
             $label,

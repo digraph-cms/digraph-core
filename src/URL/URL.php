@@ -48,7 +48,7 @@ class URL
         // merge in query for partial query strings
         if ($url[0] == '&') {
             parse_str(substr($url, 1), $query);
-            $url = URLs::context();
+            $url = clone URLs::context();
             $query = array_merge($url->query(), $query);
             $url->query($query);
             $url = $url->__toString();
@@ -83,29 +83,7 @@ class URL
 
     public function permissions(User $user = null): bool
     {
-        if ($page = $this->page()) {
-            // first try page permissions handler
-            if (null !== ($value = $page->permissions($this, $user))) {
-                return $value;
-            }
-            // first try to find a route class event handler 
-            foreach ($page->routeClasses() as $class) {
-                if (null !== ($value = Dispatcher::firstValue("onPageUrlPermissions_$class", [$this]))) {
-                    return $value;
-                }
-            }
-            // then try generic events, Permissions handler
-            return
-                Dispatcher::firstValue('onPageUrlPermissions', [$this]) ??
-                Permissions::pageUrl($this, $user) ??
-                true;
-        } else {
-            // ask for permissions with events, permissions handler
-            return
-                Dispatcher::firstValue('onStaticUrlPermissions', [$this]) ??
-                Permissions::staticUrl($this, $user) ??
-                true;
-        }
+        return Permissions::url($this, $user);
     }
 
     public function parent(): ?URL
@@ -185,13 +163,13 @@ class URL
             return
                 Dispatcher::firstValue('onPageUrlName', [$this, $inPageContext]) ??
                 $this->page()->title($this, $inPageContext) ??
-                $this->path();
+                URLs::pathToName($this->path(), $inPageContext);
         } else {
             // look for static route names by route-specific events, then generic, then fall back to path
             return
                 Dispatcher::firstValue('onStaticUrlName_' . $this->route(), [$this, $inPageContext]) ??
                 Dispatcher::firstValue('onStaticUrlName', [$this, $inPageContext]) ??
-                $this->path();
+                URLs::pathToName($this->path(), $inPageContext);
         }
     }
 

@@ -3,9 +3,11 @@
 namespace DigraphCMS;
 
 use DigraphCMS\Cache\UserCacheNamespace;
+use DigraphCMS\Content\Page;
 use DigraphCMS\Content\Router;
 use DigraphCMS\Content\Pages;
 use DigraphCMS\Events\Dispatcher;
+use DigraphCMS\HTTP\AccessDeniedError;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\HTTP\Request;
 use DigraphCMS\HTTP\RequestHeaders;
@@ -13,7 +15,11 @@ use DigraphCMS\HTTP\Response;
 use DigraphCMS\UI\Templates;
 use DigraphCMS\URL\URL;
 use DigraphCMS\URL\URLs;
+use DigraphCMS\Users\Permissions;
 use Throwable;
+
+// register core event subscriber
+Dispatcher::addSubscriber(CoreEventSubscriber::class);
 
 class Digraph
 {
@@ -109,6 +115,9 @@ class Digraph
             return;
         }
         try {
+            if (Permissions::url(Context::url()) === false) {
+                throw new AccessDeniedError('');
+            }
             // search for relevant pages and handle putting them into Context
             if (!$request->url()->explicitlyStaticRoute() && $pages = Pages::getAll($request->url()->route())) {
                 // this route relates to one or more pages
@@ -152,7 +161,7 @@ class Digraph
         } catch (Throwable $th) {
             // generate a fallback exception handling error page
             Context::thrown($th);
-            if (!Dispatcher::firstValue('onException_' . get_class($th), [$th])) {
+            if (!Dispatcher::firstValue('onException_' . basename(get_class($th)), [$th])) {
                 if (!Dispatcher::firstValue('onException', [$th])) {
                     static::buildErrorContent(500);
                 }
@@ -196,41 +205,42 @@ class Digraph
         }
     }
 
-    protected static function normalResponse(): bool
+    protected static function normalResponse(): ?bool
     {
         if (Context::page()) {
-            return static::doPageRoute();
+            return static::doPageRoute(Context::page(), Context::url()->action());
         } else {
-            return static::doStaticRoute();
+            return static::doStaticRoute(Context::url()->route(), Context::url()->action());
         }
     }
 
-    protected static function doPageRoute(): bool
+    protected static function doPageRoute(Page $page, string $action): ?bool
     {
-        $content = Router::pageRoute(Context::page(), Context::url()->action());
+        $content = Router::pageRoute($page, $action);
         if ($content !== null) {
             Context::response()->content($content);
             return true;
         }
-        return false;
+        return null;
     }
 
-    protected static function doStaticRoute(): bool
+    protected static function doStaticRoute(string $route, string $action): ?bool
     {
-        $content = Router::staticRoute(Context::url()->route(), Context::url()->action());
+        $content = Router::staticRoute($route, $action);
         if ($content !== null) {
             Context::response()->content($content);
             return true;
         }
-        return false;
+        return null;
     }
 
-    public static function buildErrorContent(int $status, string $message = null): bool
+    public static function buildErrorContent(float $status, string $message = null): bool
     {
-        Context::url(new URL("/~error/$status.html"));
         Context::data('error_message', $message);
-        Context::response()->status($status);
-        $built = static::doStaticRoute('error', $status) ??
+        Context::response()->status(floor($status));
+        $built =
+            static::doStaticRoute('error', $status) ??
+            static::doStaticRoute('error', round($status)) ??
             static::doStaticRoute('error', floor($status / 100) . 'xx') ??
             static::doStaticRoute('error', 'xxx');
         if (!$built) {

@@ -4,30 +4,29 @@ namespace DigraphCMS\UI;
 
 use DigraphCMS\Context;
 use DigraphCMS\Events\Dispatcher;
-use DigraphCMS\Session\FlashSessionNamespace;
-use DigraphCMS\Session\Session;
+use DigraphCMS\Session\Cookies;
 
 Dispatcher::addSubscriber(Notifications::class);
 
 class Notifications
 {
-    protected static $flash;
-    protected static $notifications = [];
     protected static $flashes = [];
+    protected static $notifications = [];
 
     public static function printSection()
     {
-        static::flashNamespace()->advance();
-        if ($flash = static::flashNamespace()->current()) {
+        // pull flash notifications
+        if ($flashes = Cookies::get('system', 'flashnotifications')) {
             Context::response()->private(true);
+            foreach ($flashes as list($message, $type, $class)) {
+                static::add($message, "$type flash-notification", $class);
+            }
+            Cookies::unset('system', 'flashnotifications');
         }
-        $notifications = array_merge(
-            $flash,
-            static::$notifications
-        );
-        if ($notifications) {
+        // display notifications
+        if (static::$notifications) {
             echo "<section id='notifications'><h1>Notifications</h1>";
-            foreach ($notifications as list($message, $type, $class)) {
+            foreach (static::$notifications as list($message, $type, $class)) {
                 static::print($message, $type, $class);
             }
             echo "</section>";
@@ -81,25 +80,17 @@ class Notifications
 
     public static function flash(string $message, string $type = 'unspecified', string $class = '')
     {
+        Cookies::require('system');
         static::$flashes[] = [$message, $type, $class];
     }
 
     public static function onBeforeShutdown()
     {
-        foreach (static::$flashes as $flash) {
-            static::flashNamespace()->flash(
-                bin2hex(random_bytes(8)),
-                $flash
-            );
+        if (static::$flashes) {
+            $flashes = Cookies::get('system', 'flashnotifications') ?? [];
+            $flashes = array_merge($flashes, static::$flashes);
+            Cookies::set('system', 'flashnotifications', $flashes);
         }
-    }
-
-    protected static function flashNamespace(): FlashSessionNamespace
-    {
-        if (!static::$flash) {
-            static::$flash = Session::flashNamespace('notifications', true);
-        }
-        return static::$flash;
     }
 
     public static function printNotice(string $message, string $class = '')

@@ -6,8 +6,6 @@ are not some sort of error or special case.
 
 use DigraphCMS\Context;
 use DigraphCMS\UI\ActionMenu;
-use DigraphCMS\UI\Breadcrumb;
-use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\Theme;
 
 ?>
@@ -25,14 +23,7 @@ use DigraphCMS\UI\Theme;
     <?php echo Theme::head(); ?>
 </head>
 
-<body class='template-default'>
-    <section id="skip-to-content">
-        <a href="#content">Skip to content</a>
-    </section>
-    <?php
-    Breadcrumb::print();
-    Notifications::printSection();
-    ?>
+<body class='template-minimal'>
     <main id="content">
         <?php echo Context::response()->content(); ?>
     </main>

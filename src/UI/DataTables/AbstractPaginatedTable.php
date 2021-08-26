@@ -34,7 +34,11 @@ abstract class AbstractPaginatedTable
             echo $this->paginator();
             if ($this->paginator()->pages() > 1) {
                 $start = number_format($this->paginator->startItem() + 1);
-                $end = number_format($this->paginator->endItem() + 1);
+                $end = $this->paginator->endItem() + 1;
+                if ($end > $this->paginator->count()) {
+                    $end = $this->paginator->count();
+                }
+                $end = number_format($end);
                 $count = number_format($this->paginator->count());
                 echo "<small class='paginator-status'>Displaying $start to $end of $count</small>";
             }

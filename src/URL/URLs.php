@@ -25,6 +25,18 @@ class URLs
         static::$protocol = Config::get('urls.protocol') ? Config::get('urls.protocol') . ':' : '';
     }
 
+    public static function pathToName(string $path, bool $inPageContext = false): string
+    {
+        if ($inPageContext) {
+            if ($basename = basename($path)) {
+                $path = $basename;
+            }
+        }
+        $path = preg_replace('/\.[a-z0-9]+$/i', '', $path);
+        $path = trim(preg_replace('@[~_.\/]+@', ' ', $path));
+        return ucfirst($path);
+    }
+
     /**
      * Encode text to base64 in a way that doesn't use any special/reserved
      * characters, so it can be used without urlencoding.
@@ -111,6 +123,11 @@ class URLs
     public static function site(): string
     {
         return static::$protocol . '//' . static::$siteHost . static::$sitePath;
+    }
+
+    public static function siteHost(): string
+    {
+        return static::$siteHost;
     }
 
     public static function sitePath(): string
