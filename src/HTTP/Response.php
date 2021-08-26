@@ -49,10 +49,14 @@ class Response
         $this->template = null;
     }
 
-    public function redirect(string $url, bool $permanent = false)
+    public function redirect(string $url, bool $permanent = false, bool $post = false)
     {
         $this->headers()->set('Location', $url);
-        $this->status($permanent ? 308 : 307);
+        if ($post) {
+            $this->status($permanent ? 308 : 307);
+        } else {
+            $this->status($permanent ? 301 : 302);
+        }
     }
 
     public function private(bool $private = null): bool

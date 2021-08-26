@@ -2,288 +2,134 @@
 
 namespace DigraphCMS\Session;
 
+use DateInterval;
+use DateTime;
+use DigraphCMS\Config;
+use DigraphCMS\DB\DB;
+use DigraphCMS\URL\URLs;
+
 Session::_init();
 
-class Session
+final class Session
 {
-    /**
-     * Number of seconds for session authorization to time out. Allows configurable auth
-     * expirations faster (but not slower) than the expiration time in cookieParams().
-     * Default is one hour.
-     * 
-     * Overridden with constant SESSION_AUTH_TIMEOUT
-     *
-     * @return integer
-     */
-    public static function authTimeout(): int
-    {
-        return defined('SESSION_AUTH_TIMEOUT') ? SESSION_AUTH_TIMEOUT : 3600;
-    }
+    private static $now, $auth;
 
-    /**
-     * Dump all session data as a raw array.
-     *
-     * @return array
-     */
-    public static function dump(): array
-    {
-        return $_SESSION;
-    }
-
-    /**
-     * Set a value, which unless $immediate is true will be queued for after
-     * page is finished.
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return void
-     */
-    public static function set(string $key, $value): void
-    {
-        $_SESSION[$key] = $value;
-    }
-
-    /**
-     * Get a value, as it stood during the Session was last read.
-     *
-     * @param string $key
-     * @return mixed
-     */
-    public static function get(string $key)
-    {
-        return @$_SESSION[$key];
-    }
-
-    /**
-     * Unset a value, which unless $immediate is true will be queued for after
-     * page is finished.
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return void
-     */
-    public static function unset(string $key): void
-    {
-        unset($_SESSION[$key]);
-    }
-
-    /**
-     * Use a glob-style search to retrieve all key/value pairs in which the 
-     * key matches the supplied glob. Different numbers of `*` characters match
-     * different levels of specificity.
-     * 
-     * `***` matches anything string
-     * 
-     * `**` matches anything without passing `:` characters (which are used to
-     * delineate something along the lines of namespaces)
-     * 
-     * `*` matches anything without passing `:` or `/` characters (which allows
-     * `/` to be used something like directories in a normal glob
-     *
-     * @param string $glob
-     * @return array
-     */
-    public static function glob(string $glob): array
-    {
-        $pattern = preg_quote($glob, '/');
-        // *** matches anything
-        $pattern = str_replace('\\*\\*\\*', '.*', $pattern);
-        // ** matches anything but a :
-        $pattern = str_replace('\\*\\*', '[^\:]*', $pattern);
-        // * matches anything but : and /
-        $pattern = str_replace('\\*', '[^\:\/]*', $pattern);
-        $result = [];
-        foreach ($_SESSION as $key => $value) {
-            if (preg_match("/$pattern/", $key)) {
-                $result[$key] = $value;
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * Set user to false, and attempt to immediately get a lock on
-     * the session and save the change.
-     *
-     * @return void
-     */
-    public static function deauthorize()
-    {
-        self::setUser('guest');
-    }
-
-    /**
-     * Return the current user.
-     *
-     * @return string
-     */
-    public static function user(): string
-    {
-        return self::get('user');
-    }
-
-    /**
-     * Set the current user (and attempt to immediately get a lock
-     * and save the change)
-     *
-     * @param string $user
-     * @return void
-     */
-    public static function setUser(string $user)
-    {
-        if ($user != self::user()) {
-            self::set('user_history/' . time(), $user);
-        }
-        self::set('user', $user);
-    }
-
-    /**
-     * Retrieve a list of all remote() values (IP/proxy, UA) that have
-     * been seen for this session, indexed by timestamp.
-     *
-     * @return array
-     */
-    public static function remoteHistory(): array
-    {
-        $return = [];
-        foreach (self::glob('remote_history/*') as $key => $value) {
-            $return[substr($key, 15)] = $value;
-        }
-        return $return;
-    }
-
-    /**
-     * Retrieve a list of all user() values that have been seen for this 
-     * session, indexed by timestamp.
-     *
-     * @return array
-     */
-    public static function userHistory(): array
-    {
-        $return = [];
-        foreach (self::glob('user_history/*') as $key => $value) {
-            $return[substr($key, 12)] = $value;
-        }
-        return $return;
-    }
-
-    /**
-     * Initialize session. Called automatically when class is loaded.
-     *
-     * @return void
-     */
     public static function _init()
     {
-        // start/grab session
-        @session_start();
-        // initialize data
-        if (!@$_SESSION) {
-            $_SESSION = self::_initData();
-        }
-        // if remote is different, deauthorize and save it into remote_history
-        $remote = self::remote();
-        if ($remote != $_SESSION['remote']) {
-            // record new remote/history
-            $_SESSION['remote_history/' . time()] = $_SESSION['remote'];
-            $_SESSION['remote'] = $remote;
-            // manually deauthorize
-            if ($_SESSION['user']) {
-                $_SESSION['user_history/' . time()] = $_SESSION['user'] = 'guest';
+        static::$now = date("Y-m-d H:i:s");
+        // user must have an auth and token cookie to get authenticated
+        if ($cookie = static::getAuthCookie()) {
+            $row = DB::query()
+                ->from('sess_auth')
+                ->disableSmartJoin()
+                ->where(
+                    'sess_auth.id = ? AND sess_auth.secret = ? AND sess_auth.expires > ?',
+                    [$cookie['id'], $cookie['secret'], static::$now]
+                )
+                ->where(
+                    'NOT EXISTS (SELECT 1 FROM sess_exp WHERE sess_exp.auth = sess_auth.id)',
+                )
+                ->fetch();
+            if ($row) {
+                static::setAuth(new Authentication($row));
             }
         }
-        // deauthorize if touch is too long ago
-        if ($_SESSION['user']) {
-            if (time() - $_SESSION['touch'] > self::authTimeout()) {
-                $_SESSION['user_history/' . time()] = $_SESSION['user'] = 'guest';
-            }
+    }
+
+    public static function user(): ?string
+    {
+        if (static::$auth) {
+            return static::$auth->user()->uuid();
+        } else {
+            return 'guest';
         }
-        // set touch time
-        $_SESSION['touch'] = time();
-        $_SESSION['auth_expires'] = $_SESSION['touch'] + self::authTimeout();
+    }
+
+    public static function authentication(): ?Authentication
+    {
+        return static::$auth;
     }
 
     /**
-     * Generate the data to initially populate session
+     * Set a new auth for the current session and then check it for anything
+     * suspicious that might lead to deauthentication
      *
-     * @return array
+     * @param Authentication $auth
+     * @return void
      */
-    protected static function _initData(): array
+    protected static function setAuth(Authentication $auth)
     {
-        $time = time();
-        $remote = self::remote();
-        return [
-            'start' => $time,
-            'touch' => 0,
-            'auth_expires' => 0,
-            'user' => 'guest',
-            'remote' => $remote,
-            'remote_history/' . $time => $remote,
-            'user_history/' . $time => 'guest'
+        static::$auth = $auth;
+        if (Config::get('session.strict_ip_check') && $auth->ip() != $_SERVER['REMOTE_ADDR']) {
+            static::deauthenticate("IP address changed");
+        } elseif ($auth->ip() != $_SERVER['REMOTE_ADDR'] && $auth->ua() != $_SERVER['HTTP_USER_AGENT']) {
+            static::deauthenticate("IP address and user agent changed");
+        }
+    }
+
+    public static function authenticate(string $user, string $comment, bool $rememberme): Authentication
+    {
+        if (static::$auth) {
+            static::deauthenticate('signed in as a different user');
+        }
+        $expires = new DateTime();
+        $expires->add(DateInterval::createFromDateString(Cookies::expiration('auth')));
+        $row = [
+            'user' => $user,
+            'comment' => $comment,
+            'secret' => static::generateSecret(),
+            'created' => static::$now,
+            'expires' => $expires->format("Y-m-d H:i:s"),
+            'ip' => $_SERVER['REMOTE_ADDR'],
+            'ua' => $_SERVER['HTTP_USER_AGENT']
         ];
+        $row['id'] = DB::query()
+            ->insertInto('sess_auth', $row)
+            ->execute();
+        static::setAuthCookie(
+            $row['id'],
+            $row['secret'],
+            $rememberme
+        );
+        return static::$auth = new Authentication($row);
     }
 
-    /**
-     * Retrieve a namespace for isolating and easily working with a subset of session
-     * variables, as well as controlling whether they should be keyed to be accessible
-     * only to the currently-authorized user.
-     *
-     * @param string $name
-     * @param boolean $unprotected set to true to make this namespace available to all users (in the same session)
-     * @return SessionNamespace
-     */
-    public static function namespace(string $name, $unprotected = false): SessionNamespace
+    public static function deauthenticate(string $reason)
     {
-        $name = self::namespacePrefix($unprotected) . $name;
-        return new SessionNamespace($name);
+        if (static::$auth) {
+            static::$auth->deauthenticate($reason);
+            Cookies::unset('auth', 'session');
+        }
     }
 
-    /**
-     * Flash namespaces are similar to a normal namespace, but have additional features
-     * for storing both a "current" and "next" set of values, and choosing when to advance
-     * "next" to replace "current"
-     * 
-     * Useful for things like flashing notifications to users on their *next* pageview
-     *
-     * @param string $name
-     * @param boolean $unprotected set to true to make this namespace available to all users (in the same session)
-     * @return SessionNamespace
-     */
-    public static function flashNamespace(string $name, $unprotected = false): FlashSessionNamespace
+    protected static function getAuthCookie(): array
     {
-        $name = self::namespacePrefix($unprotected) . $name;
-        return new FlashSessionNamespace($name);
+        return Cookies::get('auth', 'session') ?? [];
+    }
+
+    protected static function setAuthCookie(int $id, string $secret, bool $rememberme)
+    {
+        Cookies::set(
+            'auth',
+            'session',
+            ["id" => $id, "secret" => $secret],
+            $rememberme
+        );
+    }
+
+    protected static function clearAuthCookie()
+    {
+        Cookies::unset('auth', 'auth');
     }
 
     /**
-     * Generate a prefix for a namespace name, including user as an additional
-     * sub-prefix if necessary (if $unprotected is false)
+     * Generates a random 64 character string, consisting of the characters in
+     * base 64 encoding (so it's 384 bits)
      *
-     * @param boolean $unprotected
      * @return string
      */
-    protected static function namespacePrefix(bool $unprotected): string
+    protected static function generateSecret(): string
     {
-        $prefix = '_ns:';
-        if ($unprotected) {
-            $prefix .= '_unprotected:';
-        } else {
-            $prefix .= self::user() . ':';
-        }
-        return $prefix;
-    }
-
-    /**
-     * Current remote client's IP, forwarding information, and user agent.
-     *
-     * @return array
-     */
-    public static function remote(): array
-    {
-        return [
-            'REMOTE_ADDR' => $_SERVER['REMOTE_ADDR'],
-            'HTTP_CLIENT_IP' => @$_SERVER['HTTP_CLIENT_IP'],
-            'HTTP_X_FORWARDED_FOR' => @$_SERVER['HTTP_X_FORWARDED_FOR'],
-            'HTTP_USER_AGENT' => @$_SERVER['HTTP_USER_AGENT']
-        ];
+        return URLs::base64_encode(random_bytes(48));
     }
 }

@@ -28,7 +28,7 @@ class Templates
         }
     }
 
-    protected static function render(string $template, array $fields = []): string
+    public static function render(string $template, array $fields = []): string
     {
         // add fields to context
         Context::clone();

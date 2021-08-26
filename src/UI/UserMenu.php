@@ -3,6 +3,7 @@
 namespace DigraphCMS\UI;
 
 use DigraphCMS\Cache\UserCacheNamespace;
+use DigraphCMS\Context;
 
 class UserMenu extends ActionMenu
 {
@@ -10,13 +11,13 @@ class UserMenu extends ActionMenu
     {
         // does nothing
         $this->user = true;
-        $this->cache = new UserCacheNamespace('actionmenu');
+        $this->cache = new UserCacheNamespace('user-menu');
     }
 
     public function __toString()
     {
         return $this->cache->get(
-            md5(serialize([$this->url, $this->user])),
+            md5(serialize([Context::url(), $this->user])),
             function () {
                 ob_start();
                 echo "<nav class='action-menu user-menu'><h1>User menu</h1>";

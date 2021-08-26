@@ -1,7 +1,10 @@
 <?php
 
 use DigraphCMS\Context;
+use DigraphCMS\Session\Cookies;
 use DigraphCMS\Users\Users;
+
+Cookies::require('auth');
 
 $sources = Users::sources();
 $bounce = Context::arg('bounce');

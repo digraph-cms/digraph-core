@@ -69,32 +69,32 @@ class Users
 
     public static function signinUrl(URL $bounce = null): URL
     {
+        $bounce = $bounce ?? Context::url();
+        if ($bounce && $bounce->route() == 'signin') {
+            $bounce = null;
+        }
         if (count(static::sources()) == 1) {
-            return static::sources()[0]->signinUrl($bounce ?? Context::url());
+            return static::sources()[0]->signinUrl($bounce);
         }
         $url = new URL('/~signin/');
-        $url->arg('bounce', $bounce ?? Context::url());
+        $url->arg('bounce', $bounce);
         return $url;
     }
 
     public static function signoutUrl(URL $bounce = null): URL
     {
+        $bounce = $bounce ?? Context::url();
+        if ($bounce && $bounce->path() == '~signin') {
+            $bounce = null;
+        }
         $url = new URL('/~signout/');
-        $url->arg('bounce', $bounce ?? Context::url());
+        $url->arg('bounce', $bounce);
         return $url;
     }
 
     public static function randomName(string $seed = null): string
     {
         return Dispatcher::firstValue('onRandomName', [$seed]) ?? static::doRandomName($seed);
-    }
-
-    public static function setUserID(string $uuid)
-    {
-        if (!static::get($uuid)) {
-            throw new \Exception("Tried to set user UUID to a nonexistent user");
-        }
-        Session::setUser($uuid);
     }
 
     protected static function doRandomName(string $seed = null): string

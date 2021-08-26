@@ -5,7 +5,7 @@ namespace DigraphCMS\UI\DataTables;
 use DigraphCMS\Content\Page;
 use DigraphCMS\Content\PageSelect;
 
-class PageTable extends SelectTable
+class PageTable extends QueryTable
 {
     public function __construct(PageSelect $select)
     {
