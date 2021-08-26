@@ -5,6 +5,7 @@ use DigraphCMS\DB\DB;
 use DigraphCMS\UI\DataTables\ColumnHeader;
 use DigraphCMS\UI\DataTables\QueryColumnHeader;
 use DigraphCMS\UI\DataTables\QueryTable;
+use donatj\UserAgent\UserAgentParser;
 
 $query = DB::query()
     ->from('sess_auth')
@@ -12,14 +13,16 @@ $query = DB::query()
     ->leftJoin('sess_exp on sess_exp.auth = sess_auth.id')
     ->order('sess_auth.created desc');
 
+$parser = new UserAgentParser();
 $table = new QueryTable(
     $query,
-    function (array $row) {
+    function (array $row) use ($parser) {
+        $ua = $parser->parse($row['ua']);
         return [
             $row['created'],
             $row['comment'],
             $row['ip'],
-            $row['ua'],
+            $ua->browser() . ' on ' . $ua->platform() . '<br><small>' . $row['ua'] . '</small>',
             $row['expires'],
             @$row['date'] ?? "<em>N/A</em>",
             @$row['reason'] ?? "<em>N/A</em>"
@@ -35,5 +38,6 @@ $table = new QueryTable(
         new ColumnHeader('Deauthorization reason'),
     ]
 );
+$table->paginator()->perPage(10);
 
 echo $table;

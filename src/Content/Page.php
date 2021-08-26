@@ -5,7 +5,6 @@ namespace DigraphCMS\Content;
 use ArrayAccess;
 use DateTime;
 use DigraphCMS\Digraph;
-use DigraphCMS\Forms\Fields;
 use DigraphCMS\Session\Session;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\User;

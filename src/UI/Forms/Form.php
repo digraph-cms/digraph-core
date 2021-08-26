@@ -1,10 +1,11 @@
 <?php
 
-namespace DigraphCMS\Forms;
+namespace DigraphCMS\UI\Forms;
 
-use DigraphCMS\DB\DB;
+use Formward\Form as FormwardForm;
+use Formward\SystemFields\TokenNoCSRF;
 
-class Form extends \Formward\Form
+class Form extends FormwardForm
 {
     protected $callbacks = [];
 
@@ -17,12 +18,19 @@ class Form extends \Formward\Form
     {
         $result = parent::handle($validFn, $invalidFn, $notSubmittedFn);
         if ($result) {
-            DB::beginTransaction();
             foreach ($this->callbacks as $callback) {
                 $callback();
             }
-            DB::commit();
         }
         return $result;
+    }
+
+    protected function setupToken()
+    {
+        if ($this->csrf() === false) {
+            $this->systemFields['token'] = new TokenNoCSRF('Token field', 'token', $this);
+        } else {
+            $this->systemFields['token'] = new CsrfToken('Token field', 'token', $this);
+        }
     }
 }

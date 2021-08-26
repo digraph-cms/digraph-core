@@ -12,7 +12,7 @@ use DigraphCMS\URL\URL;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
 
-Cookies::require('auth');
+Cookies::require(['auth', 'csrf']);
 
 /** @var \DigraphCMS\Users\OAuth\OAuth2UserSource */
 $source = Users::source('oauth2');
@@ -55,11 +55,11 @@ if (!empty(Context::arg('error'))) {
         'scope' => Config::get("oauth2.providers.$name.scope")
     ]);
     Context::response()->redirect($authUrl);
-    Cookies::set('auth', 'oauth2state', $provider->getState());
+    Cookies::set('csrf', 'oauth2state', $provider->getState());
     return;
-} elseif (empty(Context::arg('state')) || Context::arg('state') !== Cookies::get('auth', 'oauth2state')) {
+} elseif (empty(Context::arg('state')) || Context::arg('state') !== Cookies::get('csrf', 'oauth2state')) {
     // State is invalid, possible CSRF attack in progress
-    Cookies::unset('auth', 'oauth2state');
+    Cookies::unset('csrf', 'oauth2state');
     throw new HttpError(500, "Invalid OAuth 2 state");
 } else {
     // prompt for whether we should remember user
@@ -77,7 +77,7 @@ if (!empty(Context::arg('error'))) {
     $accessToken = $provider->getAccessToken('authorization_code', [
         'code' => Context::arg('code')
     ]);
-    Cookies::unset('auth', 'oauth2state');
+    Cookies::unset('csrf', 'oauth2state');
     $resourceOwner = $provider->getResourceOwner($accessToken);
     $id = $resourceOwner->getID();
     // try to look up user by provider/ID, if found sign in as that user,

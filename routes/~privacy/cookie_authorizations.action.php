@@ -24,6 +24,7 @@ Context::response()->private(true);
     You can also use the form below to alter your cookie selections.
     Removing authorizations does not delete existing cookies, but will prevent them from being updated.
     If you would like to delete existing cookies, you can always view and delete any cookies using the <a href="<?php echo new URL('current_cookies.html'); ?>">current cookies page</a>.
+    You can read more about how this site uses your information on the <a href="<?php echo new URL('current_cookies.html'); ?>">privacy page</a>.
 </p>
 
 <?php

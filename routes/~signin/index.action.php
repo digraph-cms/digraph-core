@@ -4,7 +4,7 @@ use DigraphCMS\Context;
 use DigraphCMS\Session\Cookies;
 use DigraphCMS\Users\Users;
 
-Cookies::require('auth');
+Cookies::require(['auth', 'csrf']);
 
 $sources = Users::sources();
 $bounce = Context::arg('bounce');
