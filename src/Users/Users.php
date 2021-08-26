@@ -17,6 +17,24 @@ class Users
     protected static $null = [];
 
     /**
+     * Undocumented function
+     *
+     * @param string|null $bounce
+     * @return URL[]
+     */
+    public static function allSigninURLs(string $bounce = null): array
+    {
+        static $urls;
+        if (!$urls) {
+            $urls = [];
+            foreach (static::sources() as $source) {
+                $urls = array_merge($urls, $source->allSigninURLs($bounce));
+            }
+        }
+        return $urls;
+    }
+
+    /**
      * Generate a UserSelect object for building queries to the pages table
      *
      * @return UserSelect
@@ -70,12 +88,6 @@ class Users
     public static function signinUrl(URL $bounce = null): URL
     {
         $bounce = $bounce ?? Context::url();
-        if ($bounce && $bounce->route() == 'signin') {
-            $bounce = null;
-        }
-        if (count(static::sources()) == 1) {
-            return static::sources()[0]->signinUrl($bounce);
-        }
         $url = new URL('/~signin/');
         $url->arg('bounce', $bounce);
         return $url;
@@ -266,6 +278,11 @@ class Users
         return static::$cache[$result['user_uuid']];
     }
 
+    /**
+     * return all the user sources that are currently active
+     *
+     * @return AbstractUserSource[]
+     */
     public static function sources(): array
     {
         return array_filter(

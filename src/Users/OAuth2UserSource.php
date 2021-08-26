@@ -12,10 +12,16 @@ class OAuth2UserSource extends AbstractUserSource
 {
     protected $providers = [];
 
-    public function signinUrl(?string $bounce): URL
+    public function allSigninURLs(?string $bounce): array
     {
-        $url = parent::signinUrl($bounce);
-        return $url;
+        $urls = [];
+        foreach ($this->providers() as $id) {
+            $url = $this->signinUrl($bounce);
+            $url->arg('_provider',$id);
+            $url->setName(Config::get("oauth2.providers.$id.name"));
+            $urls[$this->name()."_$id"] = $url;
+        }
+        return $urls;
     }
 
     public static function authorizeUser(string $oauth_provider, string $oauth_id, string $user_uuid)
@@ -44,12 +50,7 @@ class OAuth2UserSource extends AbstractUserSource
 
     public function title(): string
     {
-        if (count($this->providers()) == 1) {
-            $name = $this->providers()[0];
-            return Config::get("oauth2.providers.$name.name") . ' signin';
-        } else {
-            return 'Third-party OAuth signin';
-        }
+        return 'Third-party OAuth signin';
     }
 
     /**

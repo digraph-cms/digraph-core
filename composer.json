@@ -21,9 +21,10 @@
         "donatj/phpuseragentparser": "^1.4"
     },
     "suggest": {
-        "league/oauth2-github": "Allows OAuth sign-in using GitHub",
-        "league/oauth2-facebook": "Allows OAuth sign-in using Facebook",
-        "league/oauth2-google": "Allows OAuth sign-in using Google"
+        "league/oauth2-github": "Needed to support OAuth sign-ins using GitHub",
+        "league/oauth2-facebook": "Needed to support OAuth sign-ins using Facebook",
+        "league/oauth2-google": "Needed to support OAuth sign-ins using Google",
+        "jasig/phpcas": "Needed to support CAS sign-ins"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -38,6 +39,7 @@
         "codeception/module-asserts": "^1.0.0",
         "league/oauth2-github": "^3.0",
         "league/oauth2-facebook": "^2.0",
-        "league/oauth2-google": "^4.0"
+        "league/oauth2-google": "^4.0",
+        "jasig/phpcas": "^1.4"
     }
 }

@@ -3,6 +3,7 @@
 namespace DigraphCMS\Content;
 
 use DigraphCMS\Context;
+use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\URL\URL;
 
 // Always add the default system routes directory
@@ -33,7 +34,16 @@ class Router
                 }
             }
         }
-        return $urls;
+        Dispatcher::dispatchEvent('onPageActions', [&$urls]);
+        foreach ($page->routeClasses() as $c) {
+            Dispatcher::dispatchEvent('onPageActions_' . $c, [&$urls]);
+        }
+        return array_filter(
+            $urls,
+            function (URL $url) {
+                return $url->permissions();
+            }
+        );
     }
 
     /**
@@ -55,7 +65,14 @@ class Router
                 $urls[] = new URL("/~$route/$action.html");
             }
         }
-        return $urls;
+        Dispatcher::dispatchEvent('onStaticActions', [&$urls]);
+        Dispatcher::dispatchEvent('onStaticActions_' . $route, [&$urls]);
+        return array_filter(
+            $urls,
+            function (URL $url) {
+                return $url->permissions();
+            }
+        );
     }
 
     public static function search(string $glob): array

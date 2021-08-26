@@ -72,20 +72,6 @@ final class CreateCoreTables extends AbstractMigration
             ->addIndex(['oauth_provider', 'oauth_id'], ['unique' => true])
             ->addForeignKey(['oauth_user'], 'user', 'user_uuid')
             ->create();
-        // cas table holds extra data from user CAS providers
-        $this->table('user_cas')
-            ->addColumn('cas_user', 'uuid')
-            ->addColumn('cas_provider', 'string', ['length' => 100])
-            ->addColumn('cas_id', 'string', ['length' => 250])
-            ->addColumn('created', 'timestamp', ['default' => 'CURRENT_TIMESTAMP', 'timezone' => true])
-            ->addColumn('updated', 'timestamp', ['default' => 'CURRENT_TIMESTAMP', 'update' => 'CURRENT_TIMESTAMP', 'timezone' => true])
-            ->addIndex(['cas_user'])
-            ->addIndex(['cas_provider'])
-            ->addIndex(['cas_id'])
-            ->addIndex(['cas_user', 'cas_provider'], ['unique' => true])
-            ->addIndex(['cas_provider', 'cas_id'], ['unique' => true])
-            ->addForeignKey(['cas_user'], 'user', 'user_uuid')
-            ->create();
         // groups table holds the group names to which users belong
         $this->table('user_groups')
             ->addColumn('group_user', 'uuid')

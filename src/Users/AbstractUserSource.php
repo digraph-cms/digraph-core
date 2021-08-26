@@ -9,6 +9,8 @@ abstract class AbstractUserSource
     protected $name;
 
     abstract public function title(): string;
+    abstract public function allSigninURLs(?string $bounce): array;
+    abstract public function active(): bool;
 
     public function __construct(string $name)
     {
@@ -20,7 +22,7 @@ abstract class AbstractUserSource
         return $this->name;
     }
 
-    public function signinUrl(?string $bounce): URL
+    protected function signinUrl(?string $bounce): URL
     {
         $url = new URL('/~signin/' . $this->name() . '.html');
         if ($bounce) {

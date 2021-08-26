@@ -1,31 +1,24 @@
+<h1>Sign in</h1>
 <?php
 
 use DigraphCMS\Context;
 use DigraphCMS\Session\Cookies;
+use DigraphCMS\UI\Templates;
 use DigraphCMS\Users\Users;
 
 Cookies::require(['auth', 'csrf']);
 
-$sources = Users::sources();
-$bounce = Context::arg('bounce');
-
-// handle missing or single source cases
-if (!$sources) {
-    throw new \Exception("No user sources are available");
-} elseif (count($sources) == 1) {
-    $source = reset($sources);
-    Context::response()->redirect($source->signinUrl($bounce));
+// handle single signin option by bouncing directly to it
+$urls = Users::allSigninURLs(Context::arg('bounce'));
+if (count($urls) == 1) {
+    Context::response()->redirect(reset($urls));
     return;
 }
 
 // list signin options
-echo "<ul class='signin-sources'>";
-foreach ($sources as $source) {
-    $name = $source->name();
-    $title = $source->title();
-    $url = $source->signinUrl($bounce);
-    echo "<li class='signin-source signin-source_$name'>";
-    echo "<a href='$url'>$title</a>";
-    echo "</li>";
-}
-echo "</ul>";
+echo Templates::render(
+    'signin/options.php',
+    [
+        'bounce' => Context::arg('bounce')
+    ]
+);

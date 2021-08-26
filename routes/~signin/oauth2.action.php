@@ -14,27 +14,19 @@ use DigraphCMS\Users\Users;
 
 Cookies::require(['auth', 'csrf']);
 
-/** @var \DigraphCMS\Users\OAuth\OAuth2UserSource */
+/** @var \DigraphCMS\Users\OAuth2UserSource */
 $source = Users::source('oauth2');
 $url = Context::url();
 $bounce = Context::arg('bounce');
-if ($bounce) {
-    $bounce = new URL($bounce);
-}
 
 // no provider is specified
 if (!Context::arg('_provider')) {
-    // list all providers
-    echo '<h1>' . $source->title() . '</h1>';
-    echo "<ul class='oauth-providers'>";
-    foreach ($source->providers() as $name) {
-        $url = new URL("&_provider=$name");
-        echo "<li class='oauth-provider oauth-provider_$name'>";
-        echo "<a href='$url'>" . Config::get("oauth2.providers.$name.name") . "</a>";
-        echo "</li>";
-    }
-    echo "</ul>";
-    return;
+    Context::response()->redirect(Users::signinUrl($bounce));
+}
+
+// turn bounce string into URL
+if ($bounce) {
+    $bounce = new URL($bounce);
 }
 
 // display individual provider
