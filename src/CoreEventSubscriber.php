@@ -35,4 +35,26 @@ class CoreEventSubscriber
         }
         return null;
     }
+
+    /**
+     * Remove all static actions from signin path
+     *
+     * @param URL[] $urls
+     * @return void
+     */
+    public static function onStaticActions_signin(array &$urls)
+    {
+        $urls = [];
+    }
+
+    /**
+     * Remove all static actions from signout path
+     *
+     * @param URL[] $urls
+     * @return void
+     */
+    public static function onStaticActions_signout(array &$urls)
+    {
+        $urls = [];
+    }
 }

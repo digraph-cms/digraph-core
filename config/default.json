@@ -85,7 +85,8 @@
   },
   "users": {
     "sources": {
-      "oauth2": "\\DigraphCMS\\Users\\OAuth2UserSource"
+      "oauth2": "\\DigraphCMS\\Users\\OAuth2UserSource",
+      "cas": "\\DigraphCMS\\Users\\CASUserSource"
     }
   },
   "oauth2": {

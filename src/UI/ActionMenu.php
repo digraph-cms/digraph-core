@@ -64,7 +64,9 @@ class ActionMenu
         } elseif (Config::get('ui.action-menu.guestui')) {
             $user = Users::guest();
             echo "<div class='user-actions user-actions-guest'><h2>$user</h2><nav><ul>";
-            echo "<li class='signin-link'>" . Users::signinUrl()->html(['signin-link']) . "</li>";
+            if ($this->url->route() != 'signin') {
+                echo "<li class='signin-link'>" . Users::signinUrl()->html(['signin-link']) . "</li>";
+            }
             foreach (Router::staticActions('guest') as $url) {
                 echo "<li>" . $url->html([], true) . "</li>";
             }
@@ -77,12 +79,6 @@ class ActionMenu
         if (!$this->url->page()) {
             return;
         }
-        $actions = array_filter(
-            Router::staticActions($this->url->route()),
-            function (URL $url) {
-                return $url->permissions();
-            }
-        );
         if ($actions = Router::pageActions($this->url->page())) {
             echo "<div class='page-actions'><h2>" . $this->url->page()->url()->html() . "</h2><nav><ul>";
             foreach ($actions as $url) {
@@ -94,13 +90,7 @@ class ActionMenu
 
     protected function printStaticActions()
     {
-        $actions = array_filter(
-            Router::staticActions($this->url->route()),
-            function (URL $url) {
-                return $url->permissions();
-            }
-        );
-        if ($actions) {
+        if ($actions = Router::staticActions($this->url->route())) {
             if (Router::staticRouteExists($this->url->route(), 'index')) {
                 $title = (new URL('/~' . $this->url->route()))->html();
             } else {
