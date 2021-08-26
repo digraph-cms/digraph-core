@@ -166,7 +166,7 @@ class Digraph
                     static::buildErrorContent(500);
                 }
             }
-            Context::response()->template('digraph/error.php');
+            Context::response()->template('error.php');
             Templates::wrapResponse(Context::response());
         }
         ob_end_clean();

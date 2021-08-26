@@ -46,9 +46,9 @@
   },
   "templates": {
     "default": {
-      "500": "digraph/error.php",
-      "default": "digraph/default.php",
-      "error": "digraph/minor-error.php"
+      "500": "error.php",
+      "default": "default.php",
+      "error": "minor-error.php"
     }
   },
   "fields": {
