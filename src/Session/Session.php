@@ -61,9 +61,9 @@ final class Session
     {
         static::$auth = $auth;
         if (Config::get('session.strict_ip_check') && $auth->ip() != $_SERVER['REMOTE_ADDR']) {
-            static::deauthenticate("IP address changed");
+            static::deauthenticate("IP changed");
         } elseif ($auth->ip() != $_SERVER['REMOTE_ADDR'] && $auth->ua() != $_SERVER['HTTP_USER_AGENT']) {
-            static::deauthenticate("IP address and user agent changed");
+            static::deauthenticate("IP and user agent changed");
         }
     }
 

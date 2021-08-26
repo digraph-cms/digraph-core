@@ -37,7 +37,7 @@
   },
   "ui": {
     "breadcrumb": {
-      "min_length": 1,
+      "min_length": 2,
       "include_current": true
     },
     "action-menu": {

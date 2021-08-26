@@ -28,7 +28,7 @@ $table = new QueryTable(
     [
         new QueryColumnHeader('Date', 'sess_auth.created', $query),
         new ColumnHeader('Comment'),
-        new ColumnHeader('IP address'),
+        new ColumnHeader('IP'),
         new ColumnHeader('User agent'),
         new QueryColumnHeader('Expiration', 'sess_auth.expires', $query),
         new QueryColumnHeader('Deauthorized', 'sess_exp.date', $query),
