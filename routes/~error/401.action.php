@@ -17,4 +17,4 @@ if (!$user) {
     echo "<p>You are not signed in, you can try <a href='$signinUrl'>signing in</a> if you have an account.</p>";
 }
 
-Router::include('trace.php');
+Router::include('/~error/trace.php');

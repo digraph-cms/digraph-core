@@ -14,7 +14,7 @@ use Throwable;
 
 class Context
 {
-    protected static $request, $response, $url;
+    protected static $request, $response, $url, $thrown;
     protected static $data = [];
 
     public static function url(URL $url = null): URL
@@ -105,7 +105,10 @@ class Context
 
     public static function thrown(Throwable $thrown = null): ?Throwable
     {
-        return static::data('thrown', $thrown);
+        if ($thrown) {
+            static::$thrown = $thrown;
+        }
+        return static::$thrown;
     }
 
     public static function data($name, $value = null)

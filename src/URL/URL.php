@@ -169,7 +169,7 @@ class URL
             return
                 Dispatcher::firstValue('onStaticUrlName_' . $this->route(), [$this, $inPageContext]) ??
                 Dispatcher::firstValue('onStaticUrlName', [$this, $inPageContext]) ??
-                URLs::pathToName($this->path(), $inPageContext);
+                ($this->action() == 'index' ? URLs::pathToName($this->path()) : URLs::pathtoName($this->action()));
         }
     }
 

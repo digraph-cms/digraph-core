@@ -31,44 +31,47 @@ $provider = Context::arg('_provider');
 $config = Config::get("cas.providers.$provider");
 echo "<h1>" . $config['name'] . "</h1>";
 
-// BEGIN CONFIGURING CAS
+if (!@$config['mock_cas_user']) {
+    // BEGIN CONFIGURING CAS
+    // fudge $_SERVER values if you're in an environment where CAS can't tell you
+    // have HTTPS enabled, such as a proxy server handling SSL
+    if (@$config['fixhttpsproblems']) {
+        $_SERVER['SERVER_PORT'] = 443;
+        $_SERVER['HTTPS'] = 'on';
+    }
 
-// fudge $_SERVER values if you're in an environment where CAS can't tell you
-// have HTTPS enabled, such as a proxy server handling SSL
-if (@$config['fixhttpsproblems']) {
-    $_SERVER['SERVER_PORT'] = 443;
-    $_SERVER['HTTPS'] = 'on';
+    //set up client, initialize phpCAS
+    switch (@$config['version']) {
+        case 'CAS_VERSION_1_0':
+            $version = CAS_VERSION_1_0;
+            break;
+        case 'CAS_VERSION_2_0':
+            $version = CAS_VERSION_2_0;
+            break;
+        case 'CAS_VERSION_3_0':
+            $version = CAS_VERSION_3_0;
+            break;
+        default:
+            $version = CAS_VERSION_2_0;
+    }
+    \phpCAS::client(
+        CAS_VERSION_2_0,
+        $config['server'],
+        intval($config['port']),
+        $config['context']
+    );
+
+    //set up configured config calls
+    if (@$config['setnocasservervalidation']) {
+        \phpCAS::setNoCasServerValidation();
+    }
+
+    // TRY TO SIGN IN
+    $id = \phpCAS::getUser();
+} else {
+    // USE MOCK CAS USER
+    $id = $config['mock_cas_user'];
 }
-
-//set up client, initialize phpCAS
-switch (@$config['version']) {
-    case 'CAS_VERSION_1_0':
-        $version = CAS_VERSION_1_0;
-        break;
-    case 'CAS_VERSION_2_0':
-        $version = CAS_VERSION_2_0;
-        break;
-    case 'CAS_VERSION_3_0':
-        $version = CAS_VERSION_3_0;
-        break;
-    default:
-        $version = CAS_VERSION_2_0;
-}
-\phpCAS::client(
-    CAS_VERSION_2_0,
-    $config['server'],
-    intval($config['port']),
-    $config['context']
-);
-
-//set up configured config calls
-if (@$config['setnocasservervalidation']) {
-    \phpCAS::setNoCasServerValidation();
-}
-
-// TRY TO SIGN IN
-
-$id = \phpCAS::getUser();
 
 // There will be errors thrown if that fails, so assume it worked
 
@@ -85,19 +88,26 @@ if (Session::user() == 'guest' && !Context::arg('rememberme')) {
 }
 
 // handle signin within digraph
-DB::beginTransaction();
-if ($userID = $cas->lookupUser($provider,$id)) {
+if ($userID = $cas->lookupUser($provider, $id)) {
     // user is signed in, link this pair to their account
-    $source->authorizeUser($name, $id, $user->uuid());
+    Session::authenticate($userID, 'Signed in with ' . Config::get("cas.providers.$name.name"), Context::arg('rememberme') == 'y');
 } else {
-    // user is not signed in, create a new user and link pair to it
-    $user = new User();
-    $user->insert();
-    $source->authorizeUser($name, $id, $user->uuid());
-    // sign in as new user
-    Session::authenticate($user->uuid(), 'Signed up with ' . Config::get("oauth2.providers.$name.name"), Context::arg('rememberme') == 'y');
+    // this provider/id pair is not tied to a user
+    // either link it to the current user or create a new user
+    DB::beginTransaction();
+    if ($user = Users::current()) {
+        // user is signed in, link this pair to their account
+        $source->authorizeUser($name, $id, $user->uuid());
+    } else {
+        // user is not signed in, create a new user and link pair to it
+        $user = new User();
+        $user->insert();
+        $source->authorizeUser($name, $id, $user->uuid());
+        // sign in as new user
+        Session::authenticate($user->uuid(), 'Signed up with ' . Config::get("cas.providers.$name.name"), Context::arg('rememberme') == 'y');
+    }
+    DB::commit();
 }
-DB::commit();
 
 // if there is a bounce target, try to make it into a URL and redirect
 if ($bounce) {

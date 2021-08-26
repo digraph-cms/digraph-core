@@ -159,7 +159,6 @@ class Digraph
             Context::response()->resetTemplate();
             Templates::wrapResponse(Context::response());
         } catch (Throwable $th) {
-            throw $th;
             // generate a fallback exception handling error page
             Context::thrown($th);
             if (!Dispatcher::firstValue('onException_' . basename(get_class($th)), [$th])) {

@@ -16,4 +16,4 @@ $signinUrl = Users::signinUrl(Context::request()->originalUrl());
 $signoutUrl = Users::signoutUrl($signinUrl);
 echo "<p>You are currently signed in as $user. If this is not you, please <a href='$signoutUrl'>sign out</a> and try again.<p>";
 
-Router::include('trace.php');
+Router::include('/~error/trace.php');

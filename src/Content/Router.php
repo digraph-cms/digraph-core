@@ -90,12 +90,16 @@ class Router
 
     public static function include(string $glob)
     {
-        $route = Context::url()->route();
-        if (!Context::page()) {
-            $route = preg_replace('@^([^~])@', '~$1', $route);
+        if (substr($glob, 0, 1) != '/') {
+            $route = Context::url()->route();
+            if (!Context::page()) {
+                $route = preg_replace('@^([^~])@', '~$1', $route);
+            }
+            $glob = "$route/$glob";
+            var_dump($glob);
         }
         foreach (static::$sources as $source) {
-            foreach (glob("$source/$route/$glob") as $file) {
+            foreach (glob("$source$glob") as $file) {
                 if (is_file($file)) {
                     echo require_file($file);
                 }

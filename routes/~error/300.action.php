@@ -24,4 +24,4 @@ $pages = Context::data('300_pages');
 </ul>
 
 <?php
-Router::include('trace.php');
+Router::include('/~error/trace.php');

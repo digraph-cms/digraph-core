@@ -14,4 +14,4 @@ if ($message = Context::data('error_message')) {
     echo "<p>$message</p>";
 }
 
-Router::include('trace.php');
+Router::include('/~error/trace.php');
