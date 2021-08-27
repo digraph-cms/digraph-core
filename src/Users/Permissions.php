@@ -53,7 +53,7 @@ class Permissions
     public static function inGroup(string $group, User $user): bool
     {
         foreach ($user->groups() as $g) {
-            if ($g->name() == $group) {
+            if ($g->uuid() == $group) {
                 return true;
             }
         }

@@ -209,12 +209,22 @@ class Page implements ArrayAccess
 
     public function createdBy(): User
     {
-        return Users::user($this->created_by);
+        return $this->created_by ? Users::user($this->created_by) : Users::guest();
     }
 
     public function updatedBy(): User
     {
-        return Users::user($this->updated_by);
+        return $this->updated_by ? Users::user($this->updated_by) : Users::guest();
+    }
+
+    public function createdByUUID(): ?string
+    {
+        return $this->created_by;
+    }
+
+    public function updatedByUUID(): ?string
+    {
+        return $this->updated_by;
     }
 
     public function created(): DateTime

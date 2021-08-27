@@ -120,8 +120,8 @@ class Cookies
         $logURL = new URL('/~user/authentication_log.html');
         return
             "Used by this website for remembering the currently signed in user." .
-            "<br>These cookies' contents may be stored, logged, and for security and logging purposes will be associated with the date, time, your IP address, your browser's user agent string, and your account." .
-            "<br>Once you sign in you are able to view these records on <a href='$logURL'>your account's authorization log</a>.";
+            "<br>These cookies' contents may be stored, logged, and for security and troubleshooting purposes. They will be associated with personally identifiable information including the date, time, your public IP address, your browser's user agent string, and your account." .
+            " Once you sign in you are able to view these records on <a href='$logURL'>your account's authorization log</a>.";
     }
 
     public static function onCookieDescribe_system()

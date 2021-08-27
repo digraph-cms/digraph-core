@@ -32,10 +32,13 @@ class Context
      * @param string $group
      * @return void
      */
-    public static function requireGroup(string $group)
+    public static function requireGroup(string $uuid)
     {
-        if (!Permissions::inGroup($group, Users::current() ?? Users::guest())) {
-            throw new AccessDeniedError("Must be a member of the group $group");
+        if (!Permissions::inGroup($uuid, Users::current() ?? Users::guest())) {
+            if ($group = Users::group($uuid)) {
+                throw new AccessDeniedError("Must be a member of the group $group");
+            }
+            throw new AccessDeniedError("Must be a member of a nonexistent group");
         }
     }
 
@@ -49,8 +52,8 @@ class Context
      */
     public static function requireGroups(array $groups)
     {
-        if (!Permissions::inGroups($groups, Users::current() ?? Users::guest())) {
-            throw new AccessDeniedError("Must be a member of one of the groups: " . implode(', ', $groups));
+        foreach ($groups as $group) {
+            static::requireGroup($group);
         }
     }
 

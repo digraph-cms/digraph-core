@@ -12,6 +12,11 @@ class OAuth2UserSource extends AbstractUserSource
 {
     protected $providers = [];
 
+    public function title(): string
+    {
+        return 'Third-party OAuth signin';
+    }
+
     public function allSigninURLs(?string $bounce): array
     {
         $urls = [];
@@ -22,55 +27,6 @@ class OAuth2UserSource extends AbstractUserSource
             $urls[$this->name()."_$id"] = $url;
         }
         return $urls;
-    }
-
-    public static function authorizeUser(string $oauth_provider, string $oauth_id, string $user_uuid)
-    {
-        DB::query()->insertInto(
-            'user_oauth2',
-            [
-                'oauth_user' => $user_uuid,
-                'oauth_provider' => $oauth_provider,
-                'oauth_id' => $oauth_id
-            ]
-        )->execute();
-    }
-
-    public static function deauthorizeUser(string $oauth_provider, string $user_uuid)
-    {
-        DB::query()->deleteFrom('user_oauth2')
-            ->where('oauth_user = ? AND oauth_provider = ?', [$oauth_provider, $user_uuid])
-            ->execute();
-    }
-
-    public function active(): bool
-    {
-        return count($this->providers()) > 0;
-    }
-
-    public function title(): string
-    {
-        return 'Third-party OAuth signin';
-    }
-
-    /**
-     * Look up the user UUID associated with a given provider name and provider
-     * user ID.
-     *
-     * @param string $provider
-     * @param string $id
-     * @return string|null
-     */
-    public static function lookupUser(string $provider, string $id): ?string
-    {
-        $result = DB::query()->from('user_oauth2')
-            ->where('oauth_provider = ? AND oauth_id = ?', [$provider, $id])
-            ->execute();
-        if ($result && $result = $result->fetch()) {
-            return $result['oauth_user'];
-        } else {
-            return null;
-        }
     }
 
     public function providers(): array

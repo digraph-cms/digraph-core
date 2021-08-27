@@ -8,10 +8,10 @@ use DigraphCMS\UI\DataTables\QueryTable;
 use donatj\UserAgent\UserAgentParser;
 
 $query = DB::query()
-    ->from('sess_auth')
-    ->select('created, comment, ip, ua, expires, sess_exp.date as date, sess_exp.reason as reason')
-    ->leftJoin('sess_exp on sess_exp.auth = sess_auth.id')
-    ->order('sess_auth.created desc');
+    ->from('session')
+    ->select('created, comment, ip, ua, expires, session_expiration.date as date, session_expiration.reason as reason')
+    ->leftJoin('session_expiration on session_expiration.session_id = session.id')
+    ->order('session.created desc');
 
 $parser = new UserAgentParser();
 $table = new QueryTable(
@@ -29,12 +29,12 @@ $table = new QueryTable(
         ];
     },
     [
-        new QueryColumnHeader('Date', 'sess_auth.created', $query),
+        new QueryColumnHeader('Date', 'session.created', $query),
         new ColumnHeader('Comment'),
         new ColumnHeader('IP'),
         new ColumnHeader('User agent'),
-        new QueryColumnHeader('Expiration', 'sess_auth.expires', $query),
-        new QueryColumnHeader('Deauthorized', 'sess_exp.date', $query),
+        new QueryColumnHeader('Expiration', 'session.expires', $query),
+        new QueryColumnHeader('Deauthorized', 'session_expiration.date', $query),
         new ColumnHeader('Deauthorization reason'),
     ]
 );

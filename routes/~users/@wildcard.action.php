@@ -11,7 +11,7 @@ Context::response()->enableCache();
 
 $user = Users::get(Context::url()->action());
 if (!$user) {
-    throw new HttpError(404, 'User not found');
+    throw new HttpError(404);
 }
 
 echo "<h1>" . $user->name() . "</h1>";

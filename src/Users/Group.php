@@ -6,11 +6,17 @@ use DigraphCMS\URL\URL;
 
 class Group
 {
-    protected $name;
+    protected $uuid, $name;
 
-    public function __construct(string $name)
+    public function __construct(string $uuid, string $name)
     {
+        $this->uuid = $uuid;
         $this->name = $name;
+    }
+
+    public function uuid(): string
+    {
+        return $this->uuid;
     }
 
     public function name(): string
@@ -20,15 +26,15 @@ class Group
 
     public function url(): URL
     {
-        if ($this->name == 'users') {
+        if ($this->uuid == 'users') {
             return new URL('/~users/');
         }
-        return new URL('/~groups/' . $this->name() . '.html');
+        return new URL('/~groups/' . $this->uuid() . '.html');
     }
 
     public function __toString()
     {
-        if ($this->name() == 'guests') {
+        if ($this->uuid == 'guests') {
             return "<a class='user-group-link user-group-null-link'><em>" . $this->name() . "</em></a>";
         }else {
             return "<a href='" . $this->url() . "' class='user-group-link'>" . $this->name() . "</a>";

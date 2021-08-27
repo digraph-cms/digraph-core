@@ -30,9 +30,9 @@ if ($bounce) {
 }
 
 // display individual provider
-$name = Context::arg('_provider');
-$provider = $source->provider($name, $bounce);
-echo "<h1>" . Config::get("oauth2.providers.$name.name") . "</h1>";
+$providerName = Context::arg('_provider');
+$provider = $source->provider($providerName, $bounce);
+echo "<h1>" . Config::get("oauth2.providers.$providerName.name") . "</h1>";
 
 if (!empty(Context::arg('error'))) {
     // Got an error, probably user denied access
@@ -44,7 +44,7 @@ if (!empty(Context::arg('error'))) {
 } elseif (empty(Context::arg('code'))) {
     // If we don't have an authorization code then get one
     $authUrl = $provider->getAuthorizationUrl([
-        'scope' => Config::get("oauth2.providers.$name.scope")
+        'scope' => Config::get("oauth2.providers.$providerName.scope")
     ]);
     Context::response()->redirect($authUrl);
     Cookies::set('csrf', 'oauth2state', $provider->getState());
@@ -55,7 +55,7 @@ if (!empty(Context::arg('error'))) {
     throw new HttpError(500, "Invalid OAuth 2 state");
 } else {
     // prompt for whether we should remember user
-    if (Session::user() == 'guest' && !Context::arg('rememberme')) {
+    if (!Session::user() && !Context::arg('rememberme')) {
         echo Templates::render(
             '/signin/rememberme.php',
             [
@@ -74,23 +74,23 @@ if (!empty(Context::arg('error'))) {
     $id = $resourceOwner->getID();
     // try to look up user by provider/ID, if found sign in as that user,
     // otherwise create a new user and attach this provider/ID to them
-    if ($userID = $source->lookupUser($name, $id)) {
+    if ($userID = $source->lookupUser($providerName, $id)) {
         // this provider/id pair is tied to a user, sign in as that user
-        Session::authenticate($userID, 'Signed in with ' . Config::get("oauth2.providers.$name.name"), Context::arg('rememberme') == 'y');
+        Session::authenticate($userID, 'Signed in with ' . Config::get("oauth2.providers.$providerName.name"), Context::arg('rememberme') == 'y');
     } else {
         // this provider/id pair is not tied to a user
         // either link it to the current user or create a new user
         DB::beginTransaction();
-        if ($user = Users::current()) {
+        if ($user = Session::user()) {
             // user is signed in, link this pair to their account
-            $source->authorizeUser($name, $id, $user->uuid());
+            $source->authorizeUser($user, $providerName, $id);
         } else {
             // user is not signed in, create a new user and link pair to it
             $user = new User();
             $user->insert();
-            $source->authorizeUser($name, $id, $user->uuid());
+            $source->authorizeUser($user->uuid(), $providerName, $id);
             // sign in as new user
-            Session::authenticate($user->uuid(), 'Signed up with ' . Config::get("oauth2.providers.$name.name"), Context::arg('rememberme') == 'y');
+            Session::authenticate($user->uuid(), 'Signed up with ' . Config::get("oauth2.providers.$providerName.name"), Context::arg('rememberme') == 'y');
         }
         DB::commit();
     }
@@ -100,7 +100,7 @@ if (!empty(Context::arg('error'))) {
     foreach ($ownerData as $key => $value) {
         if (stripos($key, 'email') !== false && filter_var($value, FILTER_VALIDATE_EMAIL)) {
             $count = count($user->emails());
-            $user->addEmail($value, 'Added from OAuth ' . Config::get("oauth2.providers.$name.name"));
+            $user->addEmail($value, 'Added from OAuth ' . Config::get("oauth2.providers.$providerName.name"));
         }
     }
     $user->update();

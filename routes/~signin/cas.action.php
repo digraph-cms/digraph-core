@@ -13,7 +13,7 @@ use DigraphCMS\Users\Users;
 Cookies::require(['auth', 'csrf']);
 
 /** @var \DigraphCMS\Users\CASUserSource */
-$cas = Users::source('cas');
+$source = Users::source('cas');
 $bounce = Context::arg('bounce');
 
 // no provider is specified
@@ -76,7 +76,7 @@ if (!@$config['mock_cas_user']) {
 // There will be errors thrown if that fails, so assume it worked
 
 // prompt for whether we should remember user
-if (Session::user() == 'guest' && !Context::arg('rememberme')) {
+if (!Session::user() && !Context::arg('rememberme')) {
     echo Templates::render(
         '/signin/rememberme.php',
         [
@@ -88,23 +88,23 @@ if (Session::user() == 'guest' && !Context::arg('rememberme')) {
 }
 
 // handle signin within digraph
-if ($userID = $cas->lookupUser($provider, $id)) {
+if ($userID = $source->lookupUser($provider, $id)) {
     // user is signed in, link this pair to their account
-    Session::authenticate($userID, 'Signed in with ' . Config::get("cas.providers.$name.name"), Context::arg('rememberme') == 'y');
+    Session::authenticate($userID, 'Signed in with ' . Config::get("cas.providers.$provider.name"), Context::arg('rememberme') == 'y');
 } else {
     // this provider/id pair is not tied to a user
     // either link it to the current user or create a new user
     DB::beginTransaction();
-    if ($user = Users::current()) {
+    if ($user = Session::user()) {
         // user is signed in, link this pair to their account
-        $source->authorizeUser($name, $id, $user->uuid());
+        $source->authorizeUser($user, $provider, $id);
     } else {
         // user is not signed in, create a new user and link pair to it
         $user = new User();
         $user->insert();
-        $source->authorizeUser($name, $id, $user->uuid());
+        $source->authorizeUser($user->uuid(), $provider, $id);
         // sign in as new user
-        Session::authenticate($user->uuid(), 'Signed up with ' . Config::get("cas.providers.$name.name"), Context::arg('rememberme') == 'y');
+        Session::authenticate($user->uuid(), 'Signed up with ' . Config::get("cas.providers.$provider.name"), Context::arg('rememberme') == 'y');
     }
     DB::commit();
 }
