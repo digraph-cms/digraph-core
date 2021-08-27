@@ -61,7 +61,9 @@ class Page implements ArrayAccess
     public function slugCollisions(): bool
     {
         if ($this->slugCollisions === null) {
-            $this->slugCollisions = Pages::countAll($this->slug()) > 1;
+            $this->slugCollisions =
+                Router::staticRouteExists($this->slug(), 'index') ||
+                Pages::countAll($this->slug()) > 1;
         }
         return $this->slugCollisions;
     }
@@ -187,7 +189,10 @@ class Page implements ArrayAccess
         } elseif ($uuid === false) {
             $slug = $this->slug();
         } else {
-            $slug = $this->slugCollisions() ? $this->uuid() : $this->slug();
+            $slug =
+                ($this->slugCollisions() ?? Router::staticRouteExists($this->slug(), $action))
+                ? $this->uuid()
+                : $this->slug();
         }
         if ($slug == 'home' && $action != 'index.html' && $action != '') {
             $slug = $this->uuid();
