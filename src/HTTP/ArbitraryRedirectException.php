@@ -2,23 +2,20 @@
 
 namespace DigraphCMS\HTTP;
 
-use DigraphCMS\URL\URL;
-use Exception;
-
-class RedirectException extends Exception
+class ArbitraryRedirectException extends RedirectException
 {
     protected $url, $permanent, $preserveMethod;
 
-    public function __construct(URL $url, bool $permanent = false, bool $preserveMethod = false)
+    public function __construct(string $url, bool $permanent = false, bool $preserveMethod = false)
     {
-        $this->url = clone $url;
+        $this->url = $url;
         $this->permanent = $permanent;
         $this->preserveMethod = $preserveMethod;
     }
 
     public function url(): string
     {
-        return $this->url->__toString();
+        return $this->url;
     }
 
     public function permanent(): bool

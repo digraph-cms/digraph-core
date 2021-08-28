@@ -99,8 +99,7 @@ class Router
             if (!Context::page()) {
                 $route = preg_replace('@^([^~])@', '~$1', $route);
             }
-            $glob = "$route/$glob";
-            var_dump($glob);
+            $glob = "/$route/$glob";
         }
         foreach (static::$sources as $source) {
             foreach (glob("$source$glob") as $file) {

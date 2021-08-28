@@ -99,7 +99,7 @@ class Users
     {
         $bounce = $bounce ?? Context::url();
         $url = new URL('/~signin/');
-        $url->arg('bounce', $bounce);
+        $url->arg('_bounce', $bounce);
         return $url;
     }
 
@@ -110,7 +110,7 @@ class Users
             $bounce = null;
         }
         $url = new URL('/~signout/');
-        $url->arg('bounce', $bounce);
+        $url->arg('_bounce', $bounce);
         return $url;
     }
 
@@ -237,7 +237,7 @@ class Users
         DB::query()
             ->update('user')
             ->where(
-                'user_uuid = ? AND updated = ?',
+                'uuid = ? AND updated = ?',
                 [
                     $user->uuid(),
                     $user->updatedLast()->format("Y-m-d H:i:s")

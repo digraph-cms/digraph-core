@@ -61,7 +61,7 @@ class User implements ArrayAccess
         }
         foreach ($this['emails'] ?? [] as $k => $existing) {
             if ($existing[0] == $email) {
-                $this['emails'][$k] = [$email, time(), $comment];
+                $this['emails.' . $k] = [$email, time(), $comment];
                 return;
             }
         }

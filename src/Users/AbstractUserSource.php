@@ -2,6 +2,7 @@
 
 namespace DigraphCMS\Users;
 
+use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
 use DigraphCMS\URL\URL;
 
@@ -11,7 +12,6 @@ abstract class AbstractUserSource
 
     abstract public function title(): string;
     abstract public function allSigninURLs(?string $bounce): array;
-    abstract public function providers(): array;
 
     public function __construct(string $name)
     {
@@ -23,11 +23,31 @@ abstract class AbstractUserSource
         return $this->name;
     }
 
+    public function providerName(string $provider): string
+    {
+        return Config::get("user_sources." . $this->name . ".providers.$provider.name");
+    }
+
+    public function providerActive(string $provider): bool
+    {
+        return !!Config::get("user_sources." . $this->name . ".providers.$provider.active");
+    }
+
+    public function providers(): array
+    {
+        return array_filter(
+            array_keys(Config::get('user_sources.' . $this->name . '.providers')),
+            function ($name) {
+                return Config::get('user_sources.' . $this->name . '.providers.' . $name . '.active');
+            }
+        );
+    }
+
     protected function signinUrl(?string $bounce): URL
     {
-        $url = new URL('/~signin/' . $this->name() . '.html');
+        $url = new URL('/~signin/_signin.html?_source=' . $this->name());
         if ($bounce) {
-            $url->arg('bounce', $bounce);
+            $url->arg('_bounce', $bounce);
         }
         return $url;
     }

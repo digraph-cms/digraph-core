@@ -7,7 +7,7 @@ use DigraphCMS\URL\URL;
 
 Session::deauthenticate('Used signout link');
 
-$bounce = Context::arg('bounce');
+$bounce = Context::arg('_bounce');
 if ($bounce) {
     $bounce = new URL($bounce);
 } else {
