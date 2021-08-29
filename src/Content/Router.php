@@ -55,6 +55,10 @@ class Router
     public static function staticActions(string $route): array
     {
         $urls = [];
+        foreach (self::search("~$route/*/index.action.php") as $file) {
+            $action = basename(dirname($file));
+            $urls[] = new URL("/~$route/$action/");
+        }
         foreach (self::search("~$route/*.action.php") as $file) {
             $action = basename($file);
             $action = substr($action, 0, strlen($action) - 11);
@@ -95,8 +99,7 @@ class Router
             if (!Context::page()) {
                 $route = preg_replace('@^([^~])@', '~$1', $route);
             }
-            $glob = "$route/$glob";
-            var_dump($glob);
+            $glob = "/$route/$glob";
         }
         foreach (static::$sources as $source) {
             foreach (glob("$source$glob") as $file) {
@@ -126,7 +129,6 @@ class Router
      */
     public static function pageRoute(Page $page, string $action)
     {
-        Context::page($page);
         // try specific routes first
         foreach ($page->routeClasses() as $c) {
             $output = self::tryRoute("@$c/$action");
@@ -144,6 +146,35 @@ class Router
             }
         }
         return null;
+    }
+
+    /**
+     * Check whether a handler for a given page route exists, but do not
+     * actually execute it yet.
+     *
+     * @param Page $route
+     * @param string $action
+     * @return boolean
+     */
+    public static function pageRouteExists(Page $page, string $action): bool
+    {
+        foreach (self::$sources as $source) {
+            // try specific routes first
+            foreach ($page->routeClasses() as $route) {
+                $path = "$source/@$route/$action.action.php";
+                if (is_file($path)) {
+                    return true;
+                }
+            }
+            // try wildcard routes last
+            foreach ($page->routeClasses() as $route) {
+                $path = "$source/@$route/$action.action.php";
+                if (is_file($path)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**

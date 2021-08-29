@@ -19,13 +19,16 @@ class DB
     protected static $migrationPaths = [];
     protected static $transactions = 0;
 
-    public static function onException_PDOException(PDOException $exception): ?Response
+    public static function onException_PDOException(PDOException $exception)
     {
         switch ($exception->getMessage()) {
             case 'SQLSTATE[HY000]: General error: 5 database is locked':
-                return Digraph::errorResponse(503, 'Database is locked for writing or maintenance, please try again in a few minutes');
+                Digraph::buildErrorContent(503, 'Database is locked for writing or maintenance, please try again in a few minutes');
+                break;
+            default:
+                Digraph::buildErrorContent(500, 'Unspecified database error');
         }
-        return Digraph::errorResponse(500, 'Database error');
+        return true;
     }
 
     public static function beginTransaction()

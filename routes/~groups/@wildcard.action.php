@@ -5,24 +5,25 @@ use DigraphCMS\DB\DB;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\UI\DataTables\UserTable;
 use DigraphCMS\Users\User;
+use DigraphCMS\Users\Users;
 use DigraphCMS\Users\UserSelect;
 
 Context::response()->enableCache();
 
-$group = Context::url()->action();
+$group = Users::group(Context::url()->action());
+if (!$group) {
+    throw new HttpError(404);
+}
 
 $users = new UserSelect(
     DB::query()
-        ->from('user_groups')
+        ->from('user_group_membership')
         ->select('user.*')
-        ->leftJoin('user on group_user = user_uuid')
-        ->where('group_name = ?', [$group])
+        ->leftJoin('user on user_uuid = user.uuid')
+        ->where('group_uuid = ?', [$group])
 );
-if (!$users->count()) {
-    throw new HttpError(404, 'Group empty or not found');
-}
 
-echo "<h1>" . ucfirst($group) . "</h1>";
+echo "<h1>" . ucfirst($group->name()) . "</h1>";
 
 $table = new UserTable(
     $users,

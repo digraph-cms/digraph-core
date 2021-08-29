@@ -61,7 +61,9 @@ class Page implements ArrayAccess
     public function slugCollisions(): bool
     {
         if ($this->slugCollisions === null) {
-            $this->slugCollisions = Pages::countAll($this->slug()) > 1;
+            $this->slugCollisions =
+                Router::staticRouteExists($this->slug(), 'index') ||
+                Pages::countAll($this->slug()) > 1;
         }
         return $this->slugCollisions;
     }
@@ -187,7 +189,10 @@ class Page implements ArrayAccess
         } elseif ($uuid === false) {
             $slug = $this->slug();
         } else {
-            $slug = $this->slugCollisions() ? $this->uuid() : $this->slug();
+            $slug =
+                ($this->slugCollisions() ?? Router::staticRouteExists($this->slug(), $action))
+                ? $this->uuid()
+                : $this->slug();
         }
         if ($slug == 'home' && $action != 'index.html' && $action != '') {
             $slug = $this->uuid();
@@ -209,12 +214,22 @@ class Page implements ArrayAccess
 
     public function createdBy(): User
     {
-        return Users::user($this->created_by);
+        return $this->created_by ? Users::user($this->created_by) : Users::guest();
     }
 
     public function updatedBy(): User
     {
-        return Users::user($this->updated_by);
+        return $this->updated_by ? Users::user($this->updated_by) : Users::guest();
+    }
+
+    public function createdByUUID(): ?string
+    {
+        return $this->created_by;
+    }
+
+    public function updatedByUUID(): ?string
+    {
+        return $this->updated_by;
     }
 
     public function created(): DateTime

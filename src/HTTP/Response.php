@@ -49,10 +49,10 @@ class Response
         $this->template = null;
     }
 
-    public function redirect(string $url, bool $permanent = false, bool $post = false)
+    public function redirect(string $url, bool $permanent = false, bool $preserveMethod = false)
     {
         $this->headers()->set('Location', $url);
-        if ($post) {
+        if ($preserveMethod) {
             $this->status($permanent ? 308 : 307);
         } else {
             $this->status($permanent ? 301 : 302);

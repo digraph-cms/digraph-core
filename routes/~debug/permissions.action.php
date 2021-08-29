@@ -2,4 +2,4 @@
 
 use DigraphCMS\Context;
 
-Context::requireGroup('users');
+Context::requireGroup('admins');

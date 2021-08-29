@@ -79,7 +79,13 @@ class ActionMenu
         if (!$this->url->page()) {
             return;
         }
-        if ($actions = Router::pageActions($this->url->page())) {
+        $actions = array_filter(
+            Router::pageActions($this->url->page()),
+            function(URL $url) {
+                return substr($url->action(),0,1) != '_';
+            }
+        );
+        if ($actions) {
             echo "<div class='page-actions'><h2>" . $this->url->page()->url()->html() . "</h2><nav><ul>";
             foreach ($actions as $url) {
                 echo "<li>" . $url->html([], true) . "</li>";
@@ -90,7 +96,13 @@ class ActionMenu
 
     protected function printStaticActions()
     {
-        if ($actions = Router::staticActions($this->url->route())) {
+        $actions = array_filter(
+            Router::staticActions($this->url->route()),
+            function(URL $url) {
+                return substr($url->action(),0,1) != '_';
+            }
+        );
+        if ($actions) {
             if (Router::staticRouteExists($this->url->route(), 'index')) {
                 $title = (new URL('/~' . $this->url->route()))->html();
             } else {

@@ -9,6 +9,7 @@ use DigraphCMS\Content\Pages;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTTP\AccessDeniedError;
 use DigraphCMS\HTTP\HttpError;
+use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\HTTP\Request;
 use DigraphCMS\HTTP\RequestHeaders;
 use DigraphCMS\HTTP\Response;
@@ -125,7 +126,15 @@ class Digraph
                 $action = $request->url()->action();
                 if (count($pages) == 1 && !Router::staticRouteExists($route, $action)) {
                     // one page with no matching static route: put it in Context and build content
-                    Context::page(reset($pages));
+                    /** @var Page */
+                    $page = reset($pages);
+                    // first check if this is the page's actual preferred URL
+                    $pageURL = $page->url($action, Context::url()->query());
+                    if ($pageURL->__toString() != Context::url()->__toString()) {
+                        throw new RedirectException($pageURL, false, true);
+                    }
+                    // build response content
+                    Context::page($page);
                     static::buildResponseContent();
                 } else {
                     // create a multiple options page if multiple pages or 1+ page and a static route exists
@@ -152,6 +161,9 @@ class Digraph
             if (Context::response()->mime() == 'text/html') {
                 Templates::wrapResponse(Context::response());
             }
+        } catch (RedirectException $r) {
+            // RedirectExceptions are used to allow exception handling that becomes a redirect
+            Context::response()->redirect($r->url(), $r->permanent(), $r->preserveMethod());
         } catch (HttpError $error) {
             // generate exception-handling page
             Context::thrown($error);

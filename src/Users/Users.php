@@ -55,14 +55,23 @@ class Users
     {
         static $groups;
         if (!$groups) {
-            $groups = [new Group('users')];
-            $query = DB::pdo()->query('SELECT group_name FROM user_groups GROUP BY group_name ORDER BY count(*)');
-            $query->execute();
+            $groups = [new Group('users', 'All users')];
+            $query = DB::query()->from('user_group');
             while ($g = $query->fetch()) {
-                $groups[] = new Group($g['group_name']);
+                $groups[] = new Group($g['uuid'], $g['name']);
             }
         }
         return $groups;
+    }
+
+    public static function group(string $uuid): ?Group
+    {
+        $query = DB::query()
+            ->from('user_group')
+            ->where('uuid = ?', [$uuid]);
+        if ($group = $query->fetch()) {
+            return new Group($group['uuid'], $group['name']);
+        }
     }
 
     /**
@@ -74,13 +83,14 @@ class Users
     public static function groups(string $user_uuid): array
     {
         return array_map(
-            function ($row) {
-                return $row['group_name'];
+            function ($group) {
+                return new Group($group['uuid'], $group['name']);
             },
             DB::query()
-                ->from('user_groups')
-                ->select('group_name')
-                ->where('group_user = ?', [$user_uuid])
+                ->from('user_group_membership')
+                ->leftJoin('user_group on user_group.uuid = group_uuid')
+                ->select('user_group.*')
+                ->where('user_uuid = ?', [$user_uuid])
                 ->fetchAll()
         );
     }
@@ -89,7 +99,7 @@ class Users
     {
         $bounce = $bounce ?? Context::url();
         $url = new URL('/~signin/');
-        $url->arg('bounce', $bounce);
+        $url->arg('_bounce', $bounce);
         return $url;
     }
 
@@ -100,7 +110,7 @@ class Users
             $bounce = null;
         }
         $url = new URL('/~signout/');
-        $url->arg('bounce', $bounce);
+        $url->arg('_bounce', $bounce);
         return $url;
     }
 
@@ -141,10 +151,10 @@ class Users
 
     public static function current(): ?User
     {
-        if (Session::user() == 'guest') {
-            return null;
-        } else {
+        if (Session::user()) {
             return static::get(Session::user());
+        } else {
+            return null;
         }
     }
 
@@ -211,11 +221,11 @@ class Users
             ->insertInto(
                 'user',
                 [
-                    'user_uuid' => $user->uuid(),
-                    'user_name' => $user->name(),
-                    'user_data' => json_encode($user->get()),
-                    'created_by' => $user->createdBy()->uuid(),
-                    'updated_by' => $user->updatedBy()->uuid()
+                    'uuid' => $user->uuid(),
+                    'name' => $user->name(),
+                    'data' => json_encode($user->get()),
+                    'created_by' => $user->createdByUUID(),
+                    'updated_by' => $user->updatedByUUID()
                 ]
             )
             ->execute();
@@ -227,24 +237,24 @@ class Users
         DB::query()
             ->update('user')
             ->where(
-                'user_uuid = ? AND updated = ?',
+                'uuid = ? AND updated = ?',
                 [
                     $user->uuid(),
                     $user->updatedLast()->format("Y-m-d H:i:s")
                 ]
             )
             ->set([
-                'user_name' => $user->name(),
-                'user_data' => json_encode($user->get()),
+                'name' => $user->name(),
+                'data' => json_encode($user->get()),
                 'updated_by' => Session::user()
             ])
             ->execute();
     }
 
-    protected static function doGet(string $uuid_or_slug): ?User
+    protected static function doGet(string $uuid): ?User
     {
         $query = DB::query()->from('user')
-            ->where('user_uuid = ?', [$uuid_or_slug]);
+            ->where('uuid = ?', [$uuid]);
         $result = $query->execute();
         if ($result && $result = $result->fetch()) {
             return static::resultToUser($result);
@@ -258,24 +268,24 @@ class Users
         if (!is_array($result)) {
             return null;
         }
-        if (isset(static::$cache[$result['user_uuid']])) {
-            return static::$cache[$result['user_uuid']];
+        if (isset(static::$cache[$result['uuid']])) {
+            return static::$cache[$result['uuid']];
         }
-        if (false === ($data = json_decode($result['user_data'], true))) {
+        if (false === ($data = json_decode($result['data'], true))) {
             throw new \Exception("Error decoding User json data");
         }
-        static::$cache[$result['user_uuid']] = new User(
+        static::$cache[$result['uuid']] = new User(
             $data,
             [
-                'uuid' => $result['user_uuid'],
-                'name' => $result['user_name'],
+                'uuid' => $result['uuid'],
+                'name' => $result['name'],
                 'created' => new DateTime($result['created']),
                 'created_by' => $result['created_by'],
                 'updated' => new DateTime($result['updated']),
                 'updated_by' => $result['updated_by'],
             ]
         );
-        return static::$cache[$result['user_uuid']];
+        return static::$cache[$result['uuid']];
     }
 
     /**

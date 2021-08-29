@@ -20,14 +20,14 @@ final class Session
         // user must have an auth and token cookie to get authenticated
         if ($cookie = static::getAuthCookie()) {
             $row = DB::query()
-                ->from('sess_auth')
+                ->from('session')
                 ->disableSmartJoin()
                 ->where(
-                    'sess_auth.id = ? AND sess_auth.secret = ? AND sess_auth.expires > ?',
+                    'session.id = ? AND session.secret = ? AND session.expires > ?',
                     [$cookie['id'], $cookie['secret'], static::$now]
                 )
                 ->where(
-                    'NOT EXISTS (SELECT 1 FROM sess_exp WHERE sess_exp.auth = sess_auth.id)',
+                    'NOT EXISTS (SELECT 1 FROM session_expiration WHERE session_expiration.session_id = session.id)',
                 )
                 ->fetch();
             if ($row) {
@@ -41,7 +41,7 @@ final class Session
         if (static::$auth) {
             return static::$auth->user()->uuid();
         } else {
-            return 'guest';
+            return null;
         }
     }
 
@@ -75,7 +75,7 @@ final class Session
         $expires = new DateTime();
         $expires->add(DateInterval::createFromDateString(Cookies::expiration('auth')));
         $row = [
-            'user' => $user,
+            'user_uuid' => $user,
             'comment' => $comment,
             'secret' => static::generateSecret(),
             'created' => static::$now,
@@ -84,7 +84,7 @@ final class Session
             'ua' => $_SERVER['HTTP_USER_AGENT']
         ];
         $row['id'] = DB::query()
-            ->insertInto('sess_auth', $row)
+            ->insertInto('session', $row)
             ->execute();
         static::setAuthCookie(
             $row['id'],

@@ -14,7 +14,7 @@ final class Authentication
     public function __construct(array $row)
     {
         $this->id = $row['id'];
-        $this->user = Users::user($row['user']);
+        $this->user = Users::user($row['user_uuid']);
         $this->comment = $row['comment'];
         $this->secret = $row['secret'];
         $this->created = new DateTime($row['created']);
@@ -62,9 +62,9 @@ final class Authentication
     {
         DB::query()
             ->insertInto(
-                'sess_exp',
+                'session_expiration',
                 [
-                    'auth' => $this->id,
+                    'session_id' => $this->id,
                     'date' => date("Y-m-d H:i:s"),
                     'reason' => $message
                 ]

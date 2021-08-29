@@ -34,7 +34,7 @@ class NullUser extends User
     public function groups(): array
     {
         if ($this->uuid() == 'guest') {
-            return [new Group('guests')];
+            return [new Group('guests', "Guests")];
         } else {
             return [];
         }

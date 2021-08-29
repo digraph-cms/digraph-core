@@ -22,11 +22,11 @@ class Pages
     {
         return array_map(
             function ($e) {
-                return $e['slug_url'];
+                return $e['url'];
             },
             DB::query()
-                ->from('page_slugs')
-                ->where('slug_page = ?', [$uuid])
+                ->from('page_slug')
+                ->where('page_uuid = ?', [$uuid])
                 ->orderBy('id DESC')
                 ->fetchAll()
         );
@@ -55,7 +55,7 @@ class Pages
     public static function exists(string $uuid): bool
     {
         $query = DB::query()->from('page')
-            ->where('page_uuid = ?', [$uuid]);
+            ->where('uuid = ?', [$uuid]);
         return !!$query->count();
     }
 
@@ -81,8 +81,8 @@ class Pages
     public static function children(string $start, string $order = 'created ASC'): PageSelect
     {
         $query = static::select();
-        $query->leftJoin('links ON link_end = page_uuid');
-        $query->where('link_start = ?', [$start]);
+        $query->leftJoin('page_link ON uuid = end_page');
+        $query->where('start_page = ?', [$start]);
         $query->order($order);
         return $query;
     }
@@ -97,10 +97,10 @@ class Pages
      */
     public static function childIDs(string $start, string $order = 'created ASC'): Select
     {
-        $query = DB::query()->from('page_links');
-        $query->where('link_start = ?', [$start]);
+        $query = DB::query()->from('page_link');
+        $query->where('start_page = ?', [$start]);
         $query->order($order);
-        return $query->execute()->fetchColumn('link_end');
+        return $query->execute()->fetchColumn('end_page');
     }
 
     /**
@@ -115,11 +115,11 @@ class Pages
     public static function insertLink(string $start, string $end, string $type = null)
     {
         return DB::query()->insertInto(
-            'page_links',
+            'page_link',
             [
-                'link_start' => $start,
-                'link_end' => $end,
-                'link_end' => $type ?? 'normal'
+                'start_page' => $start,
+                'end_page' => $end,
+                'type' => $type ?? 'normal'
             ]
         )->execute();
     }
@@ -136,10 +136,10 @@ class Pages
      */
     public static function deleteLink(string $start, string $end, string $type = null)
     {
-        $query = DB::query()->deleteFrom('page_links');
-        $query->where('link_start = ? AND link_end = ?', [$start, $end]);
+        $query = DB::query()->deleteFrom('page_link');
+        $query->where('start_page = ? AND end_page = ?', [$start, $end]);
         if ($type) {
-            $query->where('link_type = ?', [$type]);
+            $query->where('type = ?', [$type]);
         }
         return $query->execute();
     }
@@ -171,14 +171,14 @@ class Pages
     {
         // get best-case scenarios by uuid or primary slug
         $main = static::select()
-            ->where('page_uuid = :q OR page_slug = :q', [':q' => $uuid_or_slug])
-            ->order('CASE WHEN :q = page_uuid THEN 0 ELSE 1 END ASC, created ASC')
+            ->where('uuid = :q OR slug = :q', [':q' => $uuid_or_slug])
+            ->order('CASE WHEN :q = uuid THEN 0 ELSE 1 END ASC, created ASC')
             ->fetchAll();
         // search in alternate slugs as well
-        $alts = DB::query()->from('page_slugs')
+        $alts = DB::query()->from('page_slug')
             ->select('page.*')
-            ->leftJoin('page ON page_uuid = slug_page')
-            ->where('slug_url = ?', [$uuid_or_slug])
+            ->leftJoin('page ON page_uuid = page.uuid')
+            ->where('url = ?', [$uuid_or_slug])
             ->order('page.created ASC')
             ->fetchAll();
         $alts = array_map(static::class . '::resultToPage', $alts);
@@ -198,12 +198,12 @@ class Pages
     {
         // get best-case scenarios by uuid or primary slug
         $main = static::select()
-            ->where('page_uuid = :q OR page_slug = :q', [':q' => $uuid_or_slug])
-            ->order('CASE WHEN :q = page_uuid THEN 0 ELSE 1 END ASC, created ASC')
+            ->where('uuid = :q OR slug = :q', [':q' => $uuid_or_slug])
+            ->order('CASE WHEN uuid = :q THEN 0 ELSE 1 END ASC, created ASC')
             ->count();
         // search in alternate slugs as well
-        $alts = DB::query()->from('page_slugs')
-            ->where('slug_url = ?', [$uuid_or_slug])
+        $alts = DB::query()->from('page_slug')
+            ->where('url = ?', [$uuid_or_slug])
             ->count();
         // return results
         return $main + $alts;
@@ -232,8 +232,8 @@ class Pages
     protected static function doGet(string $uuid_or_slug): ?Page
     {
         $result = DB::query()->from('page')
-            ->where('page_uuid = :q OR page_slug = :q', [':q' => $uuid_or_slug])
-            ->order('CASE WHEN :q = page_uuid THEN 0 ELSE 1 END ASC, created ASC')
+            ->where('uuid = :q OR slug = :q', [':q' => $uuid_or_slug])
+            ->order('CASE WHEN uuid = :q THEN 0 ELSE 1 END ASC, created ASC')
             ->limit(1)
             ->execute();
         if ($result && $result = $result->fetch()) {
@@ -245,10 +245,10 @@ class Pages
 
     protected static function doGetByAlternateSlug(string $slug): ?Page
     {
-        $result = DB::query()->from('page_slugs')
+        $result = DB::query()->from('page_slug')
             ->select('page.*')
-            ->leftJoin('page ON page_uuid = slug_page')
-            ->where('slug_url = ?', [$slug])
+            ->leftJoin('page ON page_uuid = page.uuid')
+            ->where('url = ?', [$slug])
             ->order('page.created ASC')
             ->limit(1)
             ->execute();
@@ -270,14 +270,14 @@ class Pages
             throw new \Exception("Invalid slug");
         }
         $check = DB::query()
-            ->from('page_slugs')
-            ->where('slug_url = ? AND slug_page = ?', [$slug, $page_uuid]);
+            ->from('page_slug')
+            ->where('url = ? AND uuid = ?', [$slug, $page_uuid]);
         if (!$check->count()) {
             DB::query()->insertInto(
                 'page_slug',
                 [
-                    'slug_url' => $slug,
-                    'slug_page' => $page_uuid
+                    'url' => $slug,
+                    'page_uuid' => $page_uuid
                 ]
             );
         }
@@ -294,17 +294,17 @@ class Pages
         DB::query()
             ->update('page')
             ->where(
-                'page_uuid = ? AND updated = ?',
+                'uuid = ? AND updated = ?',
                 [
                     $page->uuid(),
                     $page->updatedLast()->format("Y-m-d H:i:s")
                 ]
             )
             ->set([
-                'page_slug' => $page->slug(),
-                'page_name' => $page->name(),
-                'page_data' => json_encode($page->get()),
-                'page_class' => $page->class(),
+                'slug' => $page->slug(),
+                'name' => $page->name(),
+                'data' => json_encode($page->get()),
+                'class' => $page->class(),
                 'updated_by' => Session::user()
             ])
             ->execute();
@@ -318,13 +318,13 @@ class Pages
             ->insertInto(
                 'page',
                 [
-                    'page_uuid' => $page->uuid(),
-                    'page_slug' => $page->slug(),
-                    'page_name' => $page->name(),
-                    'page_data' => json_encode($page->get()),
-                    'page_class' => $page->class(),
-                    'created_by' => $page->createdBy()->uuid(),
-                    'updated_by' => $page->updatedBy()->uuid(),
+                    'uuid' => $page->uuid(),
+                    'slug' => $page->slug(),
+                    'name' => $page->name(),
+                    'data' => json_encode($page->get()),
+                    'class' => $page->class(),
+                    'created_by' => $page->createdByUUID(),
+                    'updated_by' => $page->updatedByUUID(),
                 ]
             )
             ->execute();
@@ -336,18 +336,18 @@ class Pages
         // delete links
         DB::query()
             ->delete('page_link')
-            ->where('link_start = :uuid OR link_end = :uuid', ['uuid' => $page->uuid()])
+            ->where('start_page = :uuid OR end_page = :uuid', ['uuid' => $page->uuid()])
             ->execute();
         // delete alternate slugs
         DB::query()
-            ->delete('page_slugs')
-            ->where('slug_page = ?', [$page->uuid()])
+            ->delete('page_slug')
+            ->where('page_uuid = ?', [$page->uuid()])
             ->execute();
         // delete page
         DB::query()
             ->delete('page')
             ->where(
-                'page_uuid = ? AND updated = ?',
+                'uuid = ? AND updated = ?',
                 [
                     $page->uuid(),
                     $page->updatedLast()->format("Y-m-d H:i:s")
@@ -387,25 +387,25 @@ class Pages
         if (!is_array($result)) {
             return null;
         }
-        if (isset(static::$cache[$result['page_uuid']])) {
-            return static::$cache[$result['page_uuid']];
+        if (isset(static::$cache[$result['uuid']])) {
+            return static::$cache[$result['uuid']];
         }
-        if (false === ($data = json_decode($result['page_data'], true))) {
+        if (false === ($data = json_decode($result['data'], true))) {
             throw new \Exception("Error decoding Page json data");
         }
         $class = static::objectClass($result);
-        static::$cache[$result['page_uuid']] = new $class(
+        static::$cache[$result['uuid']] = new $class(
             $data,
             [
-                'uuid' => $result['page_uuid'],
-                'slug' => $result['page_slug'],
-                'name' => $result['page_name'],
+                'uuid' => $result['uuid'],
+                'slug' => $result['slug'],
+                'name' => $result['name'],
                 'created' => new DateTime($result['created']),
                 'created_by' => $result['created_by'],
                 'updated' => new DateTime($result['updated']),
                 'updated_by' => $result['updated_by'],
             ]
         );
-        return static::$cache[$result['page_uuid']];
+        return static::$cache[$result['uuid']];
     }
 }

@@ -43,14 +43,8 @@ class User implements ArrayAccess
     public function groups(): array
     {
         if ($this->groups === null) {
-            $this->groups = ['users'];
+            $this->groups = [new Group('users', 'All users')];
             $this->groups = array_merge($this->groups, Users::groups($this->uuid()));
-            $this->groups = array_map(
-                function ($group) {
-                    return new Group($group);
-                },
-                $this->groups
-            );
         }
         return $this->groups;
     }
@@ -67,7 +61,7 @@ class User implements ArrayAccess
         }
         foreach ($this['emails'] ?? [] as $k => $existing) {
             if ($existing[0] == $email) {
-                $this['emails'][$k] = [$email, time(), $comment];
+                $this['emails.' . $k] = [$email, time(), $comment];
                 return;
             }
         }
@@ -126,12 +120,22 @@ class User implements ArrayAccess
 
     public function createdBy(): User
     {
-        return Users::user($this->created_by);
+        return $this->created_by ? Users::user($this->created_by) : Users::guest();
     }
 
     public function updatedBy(): User
     {
-        return Users::user($this->updated_by);
+        return $this->updated_by ? Users::user($this->updated_by) : Users::guest();
+    }
+
+    public function createdByUUID(): ?string
+    {
+        return $this->created_by;
+    }
+
+    public function updatedByUUID(): ?string
+    {
+        return $this->updated_by;
     }
 
     public function created(): DateTime

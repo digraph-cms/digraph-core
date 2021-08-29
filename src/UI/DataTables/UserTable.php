@@ -5,7 +5,7 @@ namespace DigraphCMS\UI\DataTables;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\UserSelect;
 
-class UserTable extends UserTable
+class UserTable extends QueryTable
 {
     public function __construct(UserSelect $select)
     {

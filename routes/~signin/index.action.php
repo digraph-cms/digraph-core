@@ -9,7 +9,7 @@ use DigraphCMS\Users\Users;
 Cookies::require(['auth', 'csrf']);
 
 // handle single signin option by bouncing directly to it
-$urls = Users::allSigninURLs(Context::arg('bounce'));
+$urls = Users::allSigninURLs(Context::arg('_bounce'));
 if (count($urls) == 1) {
     Context::response()->redirect(reset($urls));
     return;
@@ -19,6 +19,6 @@ if (count($urls) == 1) {
 echo Templates::render(
     'signin/options.php',
     [
-        'bounce' => Context::arg('bounce')
+        'bounce' => Context::arg('_bounce')
     ]
 );
