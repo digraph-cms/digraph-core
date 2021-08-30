@@ -14,7 +14,7 @@ use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
 
 // require the necessary cookies
-Cookies::require(['auth', 'csrf']);
+Cookies::require(['system', 'auth', 'csrf']);
 
 // provider and source must be specified
 if (!Context::arg('_provider') || !Context::arg('_source')) {

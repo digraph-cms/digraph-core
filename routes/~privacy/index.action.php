@@ -10,7 +10,7 @@ use DigraphCMS\URL\URL;
 <h2>Data collected by the content management system</h2>
 
 <p>
-    This site's content management system respects your privacy, and strives to be transparent regarding its use of cookies and sharing of analytics data.
+    This site's content management system respects your privacy, and strives to be transparent regarding its use of cookies and personal data.
 </p>
 
 <h3>Content management system cookies</h3>
@@ -39,16 +39,3 @@ use DigraphCMS\URL\URL;
     }
     ?>
 </table>
-
-<h3>Analytics data</h3>
-
-<p>
-    On the server this site may associate your public IP address with analytics data, but unless you provide analytics cookie authorization this data will not be associated with any personal information.
-    Analytics data may also be shared and/or aggregated by third-party services or software not governed by this privacy policy.
-</p>
-
-<h4>Current analytics configuration</h4>
-
-<p>
-    TODO: finish analytics subsystem
-</p>

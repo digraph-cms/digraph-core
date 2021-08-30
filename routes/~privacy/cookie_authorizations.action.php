@@ -30,8 +30,5 @@ Context::response()->private(true);
 <?php
 
 $form = Cookies::form();
-if ($form->handle()) {
-    Context::response()->redirect(Context::url());
-} else {
-    echo $form;
-}
+$form->handle();
+echo $form;

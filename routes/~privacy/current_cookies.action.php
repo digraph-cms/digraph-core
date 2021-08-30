@@ -33,16 +33,25 @@ if (($post = Context::request()->post()) && @$post['delete']) {
 $table = new ArrayTable(
     $_COOKIE,
     function (string $key, string $item) {
+        if ($value = json_decode($_COOKIE[$key], true)) {
+            $value = json_encode($value, JSON_PRETTY_PRINT);
+        } else {
+            $value = $_COOKIE[$key];
+        }
+        $value = htmlspecialchars($value);
+        $value = preg_replace("/&quot;(secret)&quot;: &quot;(.+)&quot;/", '"$1": "<a class="spoiler">$2</a>"', $value);
         return [
-            "<input type='checkbox' name='delete[]' value='$key' id='" . md5($key) . "'>" .
-                "<label for='" . md5($key) . "'>$key</label>",
+            "<input type='checkbox' name='delete[]' value='" . htmlspecialchars($key) . "' id='" . md5($key) . "'>&nbsp;" .
+                "<label for='" . md5($key) . "'>" . htmlspecialchars($key) . "</label>",
             Cookies::describe($key),
+            "<pre><code class='hljs language-json'>$value</code></pre>",
             Cookies::expiration($key) ? 'After ' . Cookies::expiration($key) : 'When browser is closed'
         ];
     },
     [
         new ColumnHeader('Name'),
         new ColumnHeader('Description'),
+        new ColumnHeader('Value'),
         new ColumnHeader('Automatic expiration'),
     ]
 );
@@ -50,5 +59,7 @@ $table = new ArrayTable(
 echo "<form method='post'>";
 echo $table;
 echo "<input type='submit' value='Delete selected cookies'>";
-Notifications::printNotice("Please note: Some cookies may not be able to be deleted through this tool due to the way their path scopes are defined. You can always clear them using your browser's tools though.");
+Notifications::printNotice(
+    "Please note: Some cookies may not be able to be viewed or deleted through this tool due to the way their scopes are defined. For example if they are set to only be sent to specific pages (such as CSRF tokens that are only available on the page where a form is used). You can always clear them using your browser's tools though."
+);
 echo "</form>";
