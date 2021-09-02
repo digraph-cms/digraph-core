@@ -30,8 +30,8 @@ class ActionMenu
                 // output buffer contents separately
                 ob_start();
                 $this->printUserActions();
-                $this->printStaticActions();
                 $this->printPageActions();
+                $this->printStaticActions();
                 // return empty if no contents
                 if (!ob_get_length()) {
                     ob_end_clean();
@@ -81,8 +81,8 @@ class ActionMenu
         }
         $actions = array_filter(
             Router::pageActions($this->url->page()),
-            function(URL $url) {
-                return substr($url->action(),0,1) != '_';
+            function (URL $url) {
+                return substr($url->action(), 0, 1) != '_';
             }
         );
         if ($actions) {
@@ -98,17 +98,17 @@ class ActionMenu
     {
         $actions = array_filter(
             Router::staticActions($this->url->route()),
-            function(URL $url) {
-                return substr($url->action(),0,1) != '_';
+            function (URL $url) {
+                return substr($url->action(), 0, 1) != '_';
             }
         );
         if ($actions) {
+            echo "<div class='static-actions'>";
             if (Router::staticRouteExists($this->url->route(), 'index')) {
                 $title = (new URL('/~' . $this->url->route()))->html();
-            } else {
-                $title = '<a>' . URLs::pathToName($this->url->route()) . '</a>';
+                echo "<h2>$title</h2>";
             }
-            echo "<div class='static-actions'><h2>$title</h2><nav><ul>";
+            echo "<nav><ul>";
             foreach ($actions as $url) {
                 echo "<li>" . $url->html([], true) . "</li>";
             }

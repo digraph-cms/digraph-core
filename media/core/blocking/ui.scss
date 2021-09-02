@@ -1,0 +1,172 @@
+@import '/mixins/core.scss';
+
+body {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+
+    >* {
+        order: 65;
+        margin: 0;
+        padding: $grid-unit;
+    }
+
+    >.action-menu.user-menu {
+        order: 0;
+    }
+
+    >#header {
+        order: 10;
+    }
+
+    >#navbar {
+        order: 20;
+    }
+
+    >.action-menu {
+        order: 40;
+        padding: 0;
+    }
+
+    >.breadcrumb {
+        order: 30;
+    }
+
+    >#notifications {
+        order: 50;
+    }
+
+    >#content {
+        order: 60;
+
+        :first-child {
+            margin-top: 0;
+        }
+    }
+
+    >#footer {
+        order: 70;
+    }
+}
+
+#header {
+    padding: $grid-unit/2;
+    font-size: larger;
+
+    h1 {
+        margin: 0;
+    }
+
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+}
+
+#navbar {
+    padding: $grid-unit/2;
+    margin-bottom: 2*$grid-unit;
+}
+
+.breadcrumb {
+    font-size: smaller;
+    padding: $grid-unit/2;
+    background-color: rgba($color-neutral, 0.25);
+
+    h1 {
+        display: none;
+    }
+
+    ul,
+    li {
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+    }
+
+    ul {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    li {
+        display: flex;
+        white-space: nowrap;
+
+        a {
+            display: inline-block;
+            padding: 0.25em;
+        }
+
+        &:after {
+            display: block;
+            content: "/";
+            padding: 0.25em;
+        }
+
+        &.breadcrumb-current {
+
+            &:after {
+                display: none;
+            }
+        }
+    }
+
+    a {
+        color: inherit;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+#notifications {
+    padding: $grid-unit/2 $grid-unit;
+
+    >h1 {
+        display: none;
+    }
+
+    >.notification {
+        margin: $grid-unit/2 0;
+    }
+}
+
+.notification {
+    background-color: $color-accent;
+    color: contrast-color($color-accent);
+    padding: $grid-unit/2;
+
+    a {
+        color: inherit !important;
+        text-decoration: underline !important;
+    }
+
+    &.notice {
+        background-color: $color-info;
+        color: contrast-color($color-info);
+    }
+
+    &.confirmation {
+        background-color: $color-confirmation;
+        color: contrast-color($color-confirmation);
+    }
+
+    &.warning {
+        background-color: $color-warning;
+        color: contrast-color($color-warning);
+    }
+
+    &.error {
+        background-color: $color-error;
+        color: contrast-color($color-error);
+    }
+}
+
+#footer {
+    order: 70;
+    font-size: smaller;
+    padding: 3*$grid-unit $grid-unit;
+}

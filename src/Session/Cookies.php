@@ -31,9 +31,17 @@ class Cookies
         return $types;
     }
 
-    public static function form(array $types = null, $required = false): Form
+    public static function form(array $types = null, bool $required = false, bool $skipAllowed = false): Form
     {
         $types = $types ?? static::listTypes();
+        if ($skipAllowed) {
+            $types = array_filter(
+                $types,
+                function ($type) {
+                    return !Cookies::isAllowed($type);
+                }
+            );
+        }
         $form = new Form("Cookie authorization");
         foreach ($types as $type) {
             $form[$type] = new Checkbox(static::name($type));
@@ -202,12 +210,13 @@ class Cookies
     public static function disallow(string $type)
     {
         $current = static::get('system', 'cookierules') ?? [];
-        $current = array_filter(
+        $current = array_values(array_filter(
             $current,
             function ($e) use ($type) {
                 return $type != $e;
             }
-        );
+        ));
+        sort($current);
         static::set('system', 'cookierules', $current, true);
     }
 

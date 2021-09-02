@@ -1,0 +1,62 @@
+@import "/mixins/core.scss";
+
+a:link {
+    color: $color-link;
+}
+
+a:visited {
+    color: $color-link-visited;
+}
+
+a:focus {
+    color: $color-link-focus;
+}
+
+a:hover {
+    color: $color-link-hover;
+}
+
+a:active {
+    color: $color-link-active;
+}
+
+::selection,
+::-moz-selection {
+    background: $color-highlight;
+    color: contrast-color($color-highlight);
+}
+
+:focus {
+    outline: 0.25rem solid $color-info;
+    outline-offset: 0.125rem;
+    position: relative;
+}
+
+button,
+.button,
+input[type=submit] {
+    @include button;
+}
+
+input[type=submit] {
+    @include button-confirmation;
+}
+
+.button-menu {
+    input {
+        border-radius: 0;
+
+        &:first-of-type {
+            border-bottom-left-radius: $border-radius;
+            border-top-left-radius: $border-radius;
+        }
+
+        &:last-of-type {
+            border-bottom-right-radius: $border-radius;
+            border-top-right-radius: $border-radius;
+        }
+    }
+}
+
+@import "core/material-icons.scss";
+@import "core/formward.scss";

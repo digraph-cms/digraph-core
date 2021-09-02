@@ -5,6 +5,7 @@ namespace DigraphCMS\HTTP;
 use DigraphCMS\Config;
 use DigraphCMS\Content\Page;
 use DigraphCMS\Context;
+use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\Session\Session;
 use DigraphCMS\URL\URL;
 
@@ -213,6 +214,7 @@ class Response
 
     public function renderContent()
     {
+        Dispatcher::dispatchEvent('onBeforeRender', [$this]);
         echo $this->content();
     }
 }

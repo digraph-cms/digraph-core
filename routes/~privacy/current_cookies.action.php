@@ -13,20 +13,13 @@ Context::response()->private(true);
 <?php
 
 use DigraphCMS\Session\Cookies;
+use DigraphCMS\UI\ButtonMenus\SingleButton;
 use DigraphCMS\UI\DataTables\ArrayTable;
 use DigraphCMS\UI\DataTables\ColumnHeader;
 use DigraphCMS\UI\Notifications;
 
 if (!$_COOKIE) {
     Notifications::printConfirmation('No cookies set.');
-    return;
-}
-
-if (($post = Context::request()->post()) && @$post['delete']) {
-    foreach ($post['delete'] as $key) {
-        Cookies::unsetRaw($key);
-    }
-    Context::response()->redirect(Context::url());
     return;
 }
 
@@ -40,12 +33,20 @@ $table = new ArrayTable(
         }
         $value = htmlspecialchars($value);
         $value = preg_replace("/&quot;(secret)&quot;: &quot;(.+)&quot;/", '"$1": "<a class="spoiler">$2</a>"', $value);
+        $button = new SingleButton(
+            'Delete',
+            function () use ($key) {
+                Cookies::unsetRaw($key);
+                Context::response()->redirect(Context::url());
+            },
+            ['warning']
+        );
         return [
-            "<input type='checkbox' name='delete[]' value='" . htmlspecialchars($key) . "' id='" . md5($key) . "'>&nbsp;" .
-                "<label for='" . md5($key) . "'>" . htmlspecialchars($key) . "</label>",
+            htmlspecialchars($key),
             Cookies::describe($key),
             "<pre><code class='hljs language-json'>$value</code></pre>",
-            Cookies::expiration($key) ? 'After ' . Cookies::expiration($key) : 'When browser is closed'
+            Cookies::expiration($key) ? 'After ' . Cookies::expiration($key) : 'When browser is closed',
+            $button
         ];
     },
     [
@@ -53,12 +54,12 @@ $table = new ArrayTable(
         new ColumnHeader('Description'),
         new ColumnHeader('Value'),
         new ColumnHeader('Automatic expiration'),
+        new ColumnHeader('')
     ]
 );
 
-echo "<form method='post'>";
 echo $table;
-echo "<input type='submit' value='Delete selected cookies'>";
+
 Notifications::printNotice(
     "Please note: Some cookies may not be able to be viewed or deleted through this tool due to the way their scopes are defined. For example if they are set to only be sent to specific pages (such as CSRF tokens that are only available on the page where a form is used). You can always clear them using your browser's tools though."
 );

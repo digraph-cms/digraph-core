@@ -8,13 +8,14 @@ use DigraphCMS\UI\Breadcrumb;
 class ColumnHeader
 {
     protected static $id = 0;
-    protected $myID, $label, $sorter, $order;
+    protected $myID, $label, $sorter, $order, $header;
 
-    public function __construct(string $label, callable $sorter = null)
+    public function __construct(string $label, callable $sorter = null, bool $header = false)
     {
         $this->myID = self::$id++;
         $this->label = $label;
         $this->sorter = $sorter;
+        $this->header = $header;
         if ($this->sorter) {
             // is sortable
             $order = Context::url()->arg('_sortorder');
@@ -39,10 +40,32 @@ class ColumnHeader
         }
     }
 
+    protected function classes(): array
+    {
+        $classes = [
+            $this->order ? 'sorted' : 'unsorted'
+        ];
+        if ($this->order) {
+            $classes[] = 'sorted-' . $this->order;
+        }
+        if ($this->header) {
+            $classes[] = 'header';
+        }
+        if ($this->sorter) {
+            $classes[] = 'sortable';
+        }
+        return $classes;
+    }
+
+    public function colString(): string
+    {
+        return "<col class='" . implode(' ', $this->classes()) . "'></col>";
+    }
+
     protected function updateBreadcrumb(string $label, string $order)
     {
         $top = clone Breadcrumb::top();
-        $top->setName("Sorted: $label $order");
+        $top->setName("Sorted by: $label $order");
         Breadcrumb::pushParent(clone Breadcrumb::top());
         foreach (Breadcrumb::parents() as $parent) {
             if ($parent->pathString() == $top->pathString()) {
@@ -56,7 +79,7 @@ class ColumnHeader
     public function __toString()
     {
         ob_start();
-        echo "<th>";
+        echo "<th class='" . implode(' ', $this->classes()) . "'>";
         echo $this->label;
         $this->printSorter();
         echo "</th>";
@@ -70,11 +93,11 @@ class ColumnHeader
         if (!$this->sorter) {
             return;
         }
-        echo "<sup class='column-sorter inline-button-group'>";
+        echo "<span class='column-sorter'>";
         echo $this->link('asc', '[a..z]', 'Sort ascending');
         echo $this->link('desc', '[z..a]', 'Sort descending');
         echo $this->link(null, '[x]', 'Clear sort');
-        echo "</sup>";
+        echo "</span>";
     }
 
     protected function link($order, $text, $tip): string

@@ -6,12 +6,12 @@
 
 use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
-use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\Session\Session;
 use DigraphCMS\UI\ButtonMenus\SingleButton;
 use DigraphCMS\UI\DataTables\ColumnHeader;
 use DigraphCMS\UI\DataTables\QueryColumnHeader;
 use DigraphCMS\UI\DataTables\QueryTable;
+use DigraphCMS\UI\Format;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\Users\Users;
 
@@ -20,38 +20,45 @@ $query = DB::query()
     ->where('user_uuid = ?', [Session::user()])
     ->order('created DESC');
 
+$headers = [
+    new ColumnHeader('Provider'),
+    new ColumnHeader('ID'),
+    new QueryColumnHeader('Added', 'created', $query)
+];
+$count = $query->count();
+if ($count > 1) {
+    $headers[] = new ColumnHeader('');
+}
+
 $table = new QueryTable(
     $query,
-    function ($row) use ($query) {
+    function ($row) use ($count) {
         $source = Users::source($row['source']);
-        return [
+        $tr = [
             $source->providerName($row['provider']) . ' via ' . $source->title(),
             $row['provider_id'],
-            $row['created'],
-            $query->count() > 1
-                ? new SingleButton(
-                    'Remove',
-                    function () use ($source, $row) {
-                        DB::query()
-                            ->deleteFrom('user_source')
-                            ->where(
-                                'user_uuid = ? AND source = ? AND provider = ?',
-                                [Session::user(), $source->name(), $row['provider']]
-                            )
-                            ->execute();
-                        Notifications::flashConfirmation("Removed " . $source->providerName($row['provider']) . ' via ' . $source->title());
-                        throw new RefreshException();
-                    }
-                )
-                : ''
+            Format::date($row['created'])
         ];
+        if ($count > 1) {
+            $tr[] = new SingleButton(
+                'Remove',
+                function () use ($source, $row) {
+                    DB::query()
+                        ->deleteFrom('user_source')
+                        ->where(
+                            'user_uuid = ? AND source = ? AND provider = ?',
+                            [Session::user(), $source->name(), $row['provider']]
+                        )
+                        ->execute();
+                    Notifications::flashConfirmation("Removed " . $source->providerName($row['provider']) . ' via ' . $source->title());
+                    Context::response()->redirect(Context::url());
+                },
+                ['warning']
+            );
+        }
+        return $tr;
     },
-    [
-        new ColumnHeader('Provider'),
-        new ColumnHeader('ID'),
-        new QueryColumnHeader('Added', 'created', $query),
-        new ColumnHeader('')
-    ]
+    $headers
 );
 
 echo $table;

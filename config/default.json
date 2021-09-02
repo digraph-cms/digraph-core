@@ -37,7 +37,7 @@
   },
   "ui": {
     "breadcrumb": {
-      "min_length": 1,
+      "min_length": 2,
       "include_current": true
     },
     "action-menu": {
@@ -47,8 +47,12 @@
   "templates": {
     "default": {
       "default": "default.php",
-      "error": "error.php"
+      "error": "minimal.php",
+      "500": "minimal.php"
     }
+  },
+  "theme": {
+    "bundle_css": true
   },
   "fields": {
     "site": {

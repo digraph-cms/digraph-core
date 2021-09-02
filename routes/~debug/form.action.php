@@ -9,12 +9,21 @@ echo new ButtonMenu('Test button menu', [
         'Option A',
         function () {
             var_dump('clicked A');
-        }
+        },
+        ['warning']
     ),
     new ButtonMenuButton(
         'Option B',
         function () {
             var_dump('clicked B');
-        }
+        },
+        ['info']
+    ),
+    new ButtonMenuButton(
+        'Option C',
+        function () {
+            var_dump('clicked C');
+        },
+        ['confirmation']
     )
 ]);

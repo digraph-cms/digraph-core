@@ -8,7 +8,9 @@ use DigraphCMS\Context;
 use DigraphCMS\UI\ActionMenu;
 use DigraphCMS\UI\Breadcrumb;
 use DigraphCMS\UI\Notifications;
+use DigraphCMS\UI\Templates;
 use DigraphCMS\UI\Theme;
+use DigraphCMS\UI\UserMenu;
 
 ?>
 <!DOCTYPE html>
@@ -29,6 +31,12 @@ use DigraphCMS\UI\Theme;
     <section id="skip-to-content">
         <a href="#content">Skip to content</a>
     </section>
+    <section id="header">
+        <?php echo Templates::render('sections/header.php'); ?>
+    </section>
+    <nav id="navbar">
+        <?php echo Templates::render('sections/navbar.php'); ?>
+    </nav>
     <?php
     Breadcrumb::print();
     Notifications::printSection();
@@ -37,7 +45,13 @@ use DigraphCMS\UI\Theme;
         <?php echo Context::response()->content(); ?>
     </main>
     <?php
-    echo new ActionMenu(Context::url(), true);
+    echo new UserMenu(Context::url());
+    echo new ActionMenu(Context::url(), false);
+    ?>
+    <section id="footer">
+        <?php echo Templates::render('sections/footer.php'); ?>
+    </section>
+    <?php
     echo Theme::body();
     ?>
 </body>

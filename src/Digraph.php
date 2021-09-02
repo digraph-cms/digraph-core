@@ -14,6 +14,7 @@ use DigraphCMS\HTTP\Request;
 use DigraphCMS\HTTP\RequestHeaders;
 use DigraphCMS\HTTP\Response;
 use DigraphCMS\UI\Templates;
+use DigraphCMS\UI\Theme;
 use DigraphCMS\URL\URL;
 use DigraphCMS\URL\URLs;
 use DigraphCMS\Users\Permissions;
@@ -161,25 +162,37 @@ class Digraph
             if (Context::response()->mime() == 'text/html') {
                 Templates::wrapResponse(Context::response());
             }
-        } catch (RedirectException $r) {
-            // RedirectExceptions are used to allow exception handling that becomes a redirect
-            Context::response()->redirect($r->url(), $r->permanent(), $r->preserveMethod());
-        } catch (HttpError $error) {
-            // generate exception-handling page
-            Context::thrown($error);
-            static::buildErrorContent($error->status(), $error->getMessage());
-            Context::response()->resetTemplate();
-            Templates::wrapResponse(Context::response());
         } catch (Throwable $th) {
-            // generate a fallback exception handling error page
-            Context::thrown($th);
-            if (!Dispatcher::firstValue('onException_' . basename(get_class($th)), [$th])) {
-                if (!Dispatcher::firstValue('onException', [$th])) {
-                    static::buildErrorContent(500);
+            // do shared tasks, then re-throw to do things with different types
+            try {
+                // discard output buffers that were open when thrown
+                while (ob_get_status()['level'] > 1) {
+                    ob_end_clean();
                 }
+                // set up template and add error CSS
+                Theme::resetPage();
+                Theme::resetTheme();
+                Theme::addBlockingPageCss('/core/error_blocking.css');
+                Context::response()->resetTemplate();
+                Context::thrown($th);
+                // rethrow error
+                throw $th;
+            } catch (RedirectException $r) {
+                // RedirectExceptions are used to allow exception handling that becomes a redirect
+                Context::response()->redirect($r->url(), $r->permanent(), $r->preserveMethod());
+            } catch (HttpError $error) {
+                // generate exception-handling page
+                static::buildErrorContent($error->status(), $error->getMessage());
+                Templates::wrapResponse(Context::response());
+            } catch (Throwable $th) {
+                // generate a fallback exception handling error page
+                if (!Dispatcher::firstValue('onException_' . basename(get_class($th)), [$th])) {
+                    if (!Dispatcher::firstValue('onException', [$th])) {
+                        static::buildErrorContent(500.1);
+                    }
+                }
+                Templates::wrapResponse(Context::response());
             }
-            Context::response()->template('error.php');
-            Templates::wrapResponse(Context::response());
         }
         ob_end_clean();
         // return

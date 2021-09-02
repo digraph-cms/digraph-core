@@ -2,6 +2,16 @@
 
 namespace DigraphCMS\UI;
 
+use DigraphCMS\Config;
+use DigraphCMS\Media\CSS;
+use DigraphCMS\Media\DeferredFile;
+use DigraphCMS\Media\File;
+use DigraphCMS\Media\Media;
+use DigraphCMS\URL\URL;
+
+Theme::resetTheme();
+Theme::resetPage();
+
 /**
  * Manages which CSS/JS/Media are included in the final output after output
  * is templated into a final HTML page. Also responsible for bundling media
@@ -10,6 +20,233 @@ namespace DigraphCMS\UI;
  */
 class Theme
 {
+    protected static $core = [
+        'blocking_css' => [
+            '/core/blocking.css'
+        ],
+        'internal_css' => [
+            'all' => ['/core/core.css']
+        ],
+        'css_vars' => [
+            'body-bg' => '#fafafa',
+            'body-fg' => '#333',
+            'dark-body-bg' => '#111',
+            'dark-body-fg' => '#eee',
+            'grid-unit' => '1rem',
+            'border-radius' => '1rem',
+            'color-neutral' => '#BDC3C7',
+            'color-accent' => '#34495E',
+            'color-highlight' => '#1ABC9C',
+            'color-link' => '#2980B9',
+            'color-link-visited' => '#8E44AD',
+            'color-link-focus' => '#D35400',
+            'color-link-hover' => '#D35400',
+            'color-link-active' => '#C0392B',
+            'color-info' => '#2980B9',
+            'color-confirmation' => '#27AE60',
+            'color-warning' => '#D35400',
+            'color-error' => '#C0392B',
+            'color-brand-facebook' => '#1877F2',
+            'color-brand-twitter' => '#1DA1F2',
+            'color-brand-linkedin' => '#0A66C2',
+            'color-brand-skype' => '#00AFF0',
+            'color-brand-dropbox' => '#0061FF',
+            'color-brand-vimeo' => '#1AB7EA',
+            'color-brand-tumblr' => '#34465D',
+            'color-brand-pinterest' => '#BD081C',
+            'color-brand-youtube' => '#CD201F',
+            'color-brand-reddit' => '#FF5700',
+            'color-brand-quora' => '#B92B27',
+            'color-brand-yelp' => '#AF0606',
+            'color-brand-weibo' => '#DF2029',
+            'color-brand-hackernews' => '#FF6600',
+            'color-brand-soundcloud' => '#FF3300',
+            'color-brand-blogger' => '#F57D00',
+            'color-brand-snapchat' => '#FFFC00',
+            'color-brand-whatsapp' => '#25D366',
+            'color-brand-wechat' => '#09B83E',
+            'color-brand-medium' => '#02B875',
+            'color-brand-vine' => '#00B489',
+            'color-brand-slack' => '#3AAF85',
+            'color-brand-dribbble' => '#E4405F',
+            'color-brand-flickr' => '#FF0084',
+            'color-brand-foursquare' => '#F94877',
+            'color-brand-tiktok' => '#EE1D51',
+            'color-brand-behance' => '#131418'
+        ]
+    ];
+    protected static $cssVars = [];
+    protected static $blockingThemeCss = [];
+    protected static $blockingPageCss = [];
+    protected static $internalThemeCss = [
+        'all' => [],
+        'screen' => [],
+        'dark' => [],
+        'light' => [],
+        'print' => [],
+        'speech' => [],
+    ];
+    protected static $internalPageCss = [
+        'all' => [],
+        'screen' => [],
+        'dark' => [],
+        'light' => [],
+        'print' => [],
+        'speech' => [],
+    ];
+
+    public static function addBundle(string $name, $activeThemes = null)
+    {
+        if ($activeThemes === null) {
+            $activeThemes = 'theme.active_themes';
+        }
+        if (!is_array($activeThemes)) {
+            $activeThemes = [$activeThemes];
+        }
+        static::$cssVars = array_merge(static::$cssVars, static::themeConfig($activeThemes, "bundles.$name.css_vars") ?? []);
+        static::$blockingPageCss = array_merge(static::$cssVars, static::themeConfig($activeThemes, "bundles.$name.blocking_css") ?? []);
+        static::$internalPageCss = array_merge(static::$cssVars, static::themeConfig($activeThemes, "bundles.$name.internal_css") ?? []);
+    }
+
+    public static function cssVars(): array
+    {
+        return static::$cssVars;
+    }
+
+    public static function cssVars_css(): string
+    {
+        if (static::$cssVars) {
+            $out = ':root {' . PHP_EOL;
+            foreach (static::$cssVars as $k => $v) {
+                $out .= "--$k: $v";
+            }
+            $out .= '}' . PHP_EOL;
+            return $out;
+        } else {
+            return '';
+        }
+    }
+
+    public static function cssVar(string $name, $value = null)
+    {
+        if ($value !== null) {
+            static::$cssVars[$name] = $value;
+        }
+        return @static::$cssVars[$name];
+    }
+
+    /**
+     * Reset all theme (but not page) assets to the default theme.
+     *
+     * @param array|string|null $activeThemes
+     * @return void
+     */
+    public static function resetTheme($activeThemes = null)
+    {
+        if ($activeThemes === null) {
+            $activeThemes = 'theme.active_themes';
+        }
+        if (!is_array($activeThemes)) {
+            $activeThemes = [$activeThemes];
+        }
+        static::$cssVars = static::themeConfig($activeThemes, 'css_vars');
+        static::$blockingThemeCss = static::themeConfig($activeThemes, 'blocking_css');
+        static::$internalThemeCss = static::themeConfig($activeThemes, 'internal_css');
+    }
+
+    /**
+     * Reset all page assets to their default (probably nothing)
+     *
+     * @return void
+     */
+    public static function resetPage()
+    {
+        static::$blockingPageCss = [];
+        static::$internalPageCss = [];
+    }
+
+    protected static function themeConfig(array $activeThemes, $section): array
+    {
+        $value = static::$core[$section] ?? [];
+        $value = array_replace_recursive($value, Config::get("themes.core.$section") ?? []);
+        foreach ($activeThemes as $theme) {
+            $value = array_replace_recursive($value, Config::get("themes.$theme.$section") ?? []);
+        }
+        $value = array_replace_recursive($value, Config::get("themes.override.$section") ?? []);
+        return $value;
+    }
+
+    public static function addBlockingThemeCss($url)
+    {
+        static::$blockingThemeCss[] = $url;
+    }
+
+    public static function addBlockingPageCss($url)
+    {
+        static::$blockingPageCss[] = $url;
+    }
+
+    public static function addInternalThemeCss($url, $media = 'all')
+    {
+        static::$internalThemeCss[$media][] = $url;
+    }
+
+    public static function addInternalPageCss($url, $media = 'all')
+    {
+        static::$internalPageCss[$media][] = $url;
+    }
+
+    protected static function renderBlockingCSS()
+    {
+        $files = array_map(
+            function (string $url): File {
+                $url = new URL($url);
+                return Media::get($url->path());
+            },
+            array_merge(static::$blockingThemeCss, static::$blockingPageCss)
+        );
+        foreach ($files as $file) {
+            echo "<style>" . $file->content() . "</style>" . PHP_EOL;
+        }
+    }
+
+    protected static function renderInternalCSS()
+    {
+        foreach (array_replace_recursive(static::$internalThemeCss, static::$internalPageCss) as $media => $urls) {
+            $htmlMedia = $media;
+            if ($media == 'dark') {
+                $htmlMedia = 'screen and (prefers-color-scheme: dark)';
+            }
+            if ($media == 'light') {
+                $htmlMedia = 'screen and (prefers-color-scheme: light)';
+            }
+            if (!Config::get('theme.bundle_css')) {
+                /** @var File[] */
+                $files = array_map(
+                    function (string $url): File {
+                        $url = new URL($url);
+                        return Media::get($url->path());
+                    },
+                    $urls
+                );
+                foreach ($files as $file) {
+                    echo "<link rel='stylesheet' media='$htmlMedia' href='" . $file->url() . "'>" . PHP_EOL;
+                }
+            } else {
+                $scss = '';
+                foreach ($urls as $url) {
+                    $url = preg_replace('@\.css$@', '.scss', $url);
+                    $scss .= "@import \"" . $url . "\";";
+                }
+                $file = new DeferredFile('bundle_' . $media . '.css', function (DeferredFile $file) use ($scss) {
+                    file_put_contents($file->path(), CSS::scss($scss));
+                }, [$urls]);
+                $file->write();
+                echo "<link rel='stylesheet' media='$htmlMedia' href='" . $file->url() . "'>" . PHP_EOL;
+            }
+        }
+    }
+
     /**
      * Generates the markup to embed all linked media in the HEAD tag
      *
@@ -17,7 +254,10 @@ class Theme
      */
     public static function head(): string
     {
-        return '';
+        ob_start();
+        static::renderBlockingCSS();
+        static::renderInternalCSS();
+        return ob_get_clean();
     }
 
     /**
