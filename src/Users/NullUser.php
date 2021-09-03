@@ -12,7 +12,7 @@ class NullUser extends User
         } else {
             $name = "<em>$name</em>";
         }
-        return "<a class='user-link null-user-link'>$name<a>";
+        return "<a class='user-link null-user-link'>$name</a>";
     }
 
     public function insert()

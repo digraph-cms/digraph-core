@@ -1,6 +1,7 @@
 <?php
 
 use DigraphCMS\Context;
+use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\Session\Cookies;
 use DigraphCMS\URL\URL;
 
@@ -31,7 +32,6 @@ Context::response()->private(true);
 
 $form = Cookies::form();
 if ($form->handle()) {
-    Context::response()->redirect(Context::url());
-} else {
-    echo $form;
+    throw new RefreshException();
 }
+echo $form;

@@ -26,14 +26,22 @@ class Cookies
 
     public static function listTypes(): array
     {
-        $types = ['system', 'auth', 'csrf', 'analytics'];
+        $types = ['system', 'auth', 'csrf'];
         Dispatcher::dispatchEvent('onListCookieTypes', [&$types]);
         return $types;
     }
 
-    public static function form(array $types = null, $required = false): Form
+    public static function form(array $types = null, bool $required = false, bool $skipAllowed = false): Form
     {
         $types = $types ?? static::listTypes();
+        if ($skipAllowed) {
+            $types = array_filter(
+                $types,
+                function ($type) {
+                    return !Cookies::isAllowed($type);
+                }
+            );
+        }
         $form = new Form("Cookie authorization");
         foreach ($types as $type) {
             $form[$type] = new Checkbox(static::name($type));
@@ -78,9 +86,7 @@ class Cookies
             case 'auth':
                 return 'User authorization cookies';
             case 'csrf':
-                return 'CSRF tokens';
-            case 'analytics':
-                return 'Analytics cookies';
+                return 'CSRF protection cookies';
         }
         return null;
     }
@@ -96,11 +102,6 @@ class Cookies
                         "They store one-time tokens that are used in security checks that prevent attackers from executing actions on your behalf, such as to verify that a form is actually being submitted by you, or to prevent forms from being submitted more than once." .
                         "<br>Please note that for security and performance reasons these cookies will be scoped to only the URL paths where they are needed. " .
                         "This will prevent most CSRF cookies from appearing on the <a href='$url'>current cookies page</a>, because your browser has not been requested to send them there.";
-                case 'analytics':
-                    $url = new URL('/~privacy/current_cookies.html');
-                    return
-                        "These cookies allow the site to collect aggregate information about how visitors use the site so that administrators understand how visitors interact with the site. " .
-                        "Information gathered through analytics cookies may be shared with or collected through third party analytics providers such as Google Analytics.";
             }
         } else {
             switch ($type) {
@@ -108,6 +109,7 @@ class Cookies
                     return "CSRF cookies store one-time tokens that are used to prevent attackers from executing actions on your behalf, such as verifying that a form is being submitted by you.";
             }
         }
+        return null;
     }
 
     public static function onCookieDescribe_system_flashnotifications()
@@ -144,7 +146,8 @@ class Cookies
 
     public static function onCookieDescribe_auth_session()
     {
-        return "Stores an authorization token used to verify that you are signed in as " . Users::current();
+        return "Stores an authorization token used to verify that you are signed in as " . Users::current() . '. ' .
+            "<strong>Never</strong> share the value of this cookie with anyone. The secret token contained in it should be kept secret as if it were a password, as it could used to hijack your account.";
     }
 
     public static function onCookieExpiration_PHPSESSID()
@@ -207,12 +210,13 @@ class Cookies
     public static function disallow(string $type)
     {
         $current = static::get('system', 'cookierules') ?? [];
-        $current = array_filter(
+        $current = array_values(array_filter(
             $current,
             function ($e) use ($type) {
                 return $type != $e;
             }
-        );
+        ));
+        sort($current);
         static::set('system', 'cookierules', $current, true);
     }
 

@@ -13,7 +13,7 @@ class PageTable extends QueryTable
             $select,
             [$this, 'callback'],
             [
-                new QueryColumnHeader('Name', 'page_name', $select),
+                new QueryColumnHeader('Name', 'name', $select),
                 new QueryColumnHeader('Created', 'created', $select),
                 new QueryColumnHeader('Modified', 'updated', $select),
                 new ColumnHeader('Created by'),

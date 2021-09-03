@@ -52,7 +52,7 @@ final class Session
 
     /**
      * Set a new auth for the current session and then check it for anything
-     * suspicious that might lead to deauthentication
+     * suspicious that requires deauthentication.
      *
      * @param Authentication $auth
      * @return void
@@ -60,10 +60,10 @@ final class Session
     protected static function setAuth(Authentication $auth)
     {
         static::$auth = $auth;
-        if (Config::get('session.strict_ip_check') && $auth->ip() != $_SERVER['REMOTE_ADDR']) {
-            static::deauthenticate("IP changed");
-        } elseif ($auth->ip() != $_SERVER['REMOTE_ADDR'] && $auth->ua() != $_SERVER['HTTP_USER_AGENT']) {
-            static::deauthenticate("IP and user agent changed");
+        if ($auth->ip() != $_SERVER['REMOTE_ADDR']) {
+            static::deauthenticate("Access attempted from a different IP address (" . $_SERVER['REMOTE_ADDR'] . ")");
+        } elseif ($auth->ua() != $_SERVER['HTTP_USER_AGENT']) {
+            static::deauthenticate("Access attempted from a different browser (" . $_SERVER['HTTP_USER_AGENT'] . ")");
         }
     }
 

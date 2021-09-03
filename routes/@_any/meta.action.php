@@ -10,28 +10,28 @@ $page = Context::page();
 <h1>Page metadata</h1>
 <table>
     <tr>
-        <td>Created</td>
+        <th>Created</th>
         <td>
             <?php echo $page->created()->format('Y-m-d H:i:s') ?>
             by <?php echo $page->createdBy(); ?>
         </td>
     </tr>
     <tr>
-        <td>Last modified</td>
+        <th>Last modified</th>
         <td>
             <?php echo $page->updated()->format('Y-m-d H:i:s') ?>
             by <?php echo $page->updatedBy(); ?>
         </td>
     </tr>
     <tr>
-        <td>Type</td>
+        <th>Type</th>
         <td>
             <?php echo $page->class(); ?>
             (<?php echo get_class($page); ?>)
         </td>
     </tr>
     <tr>
-        <td>UUID</td>
+        <th>UUID</th>
         <td>
             <a href="<?php echo $page->url('', [], true); ?>">
                 <?php echo $page->uuid(); ?>
@@ -39,7 +39,7 @@ $page = Context::page();
         </td>
     </tr>
     <tr>
-        <td>URLs</td>
+        <th>URLs</th>
         <td>
             <ul>
                 <li><strong>

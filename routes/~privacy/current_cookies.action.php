@@ -13,6 +13,7 @@ Context::response()->private(true);
 <?php
 
 use DigraphCMS\Session\Cookies;
+use DigraphCMS\UI\ButtonMenus\SingleButton;
 use DigraphCMS\UI\DataTables\ArrayTable;
 use DigraphCMS\UI\DataTables\ColumnHeader;
 use DigraphCMS\UI\Notifications;
@@ -22,33 +23,44 @@ if (!$_COOKIE) {
     return;
 }
 
-if (($post = Context::request()->post()) && @$post['delete']) {
-    foreach ($post['delete'] as $key) {
-        Cookies::unsetRaw($key);
-    }
-    Context::response()->redirect(Context::url());
-    return;
-}
-
 $table = new ArrayTable(
     $_COOKIE,
     function (string $key, string $item) {
+        if ($value = json_decode($_COOKIE[$key], true)) {
+            $value = json_encode($value, JSON_PRETTY_PRINT);
+        } else {
+            $value = $_COOKIE[$key];
+        }
+        $value = htmlspecialchars($value);
+        $value = preg_replace("/&quot;(secret)&quot;: &quot;(.+)&quot;/", '"$1": "<a class="spoiler">$2</a>"', $value);
+        $button = new SingleButton(
+            'Delete',
+            function () use ($key) {
+                Cookies::unsetRaw($key);
+                Context::response()->redirect(Context::url());
+            },
+            ['warning']
+        );
         return [
-            "<input type='checkbox' name='delete[]' value='$key' id='" . md5($key) . "'>" .
-                "<label for='" . md5($key) . "'>$key</label>",
+            htmlspecialchars($key),
             Cookies::describe($key),
-            Cookies::expiration($key) ? 'After ' . Cookies::expiration($key) : 'When browser is closed'
+            "<pre><code class='hljs language-json'>$value</code></pre>",
+            Cookies::expiration($key) ? 'After ' . Cookies::expiration($key) : 'When browser is closed',
+            $button
         ];
     },
     [
         new ColumnHeader('Name'),
         new ColumnHeader('Description'),
+        new ColumnHeader('Value'),
         new ColumnHeader('Automatic expiration'),
+        new ColumnHeader('')
     ]
 );
 
-echo "<form method='post'>";
 echo $table;
-echo "<input type='submit' value='Delete selected cookies'>";
-Notifications::printNotice("Please note: Some cookies may not be able to be deleted through this tool due to the way their path scopes are defined. You can always clear them using your browser's tools though.");
+
+Notifications::printNotice(
+    "Please note: Some cookies may not be able to be viewed or deleted through this tool due to the way their scopes are defined. For example if they are set to only be sent to specific pages (such as CSRF tokens that are only available on the page where a form is used). You can always clear them using your browser's tools though."
+);
 echo "</form>";

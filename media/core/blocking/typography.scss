@@ -1,0 +1,147 @@
+@import '/mixins/core.scss';
+
+h1 {
+    font-size: 2em;
+}
+
+h2 {
+    font-size: 1.5em;
+}
+
+h3 {
+    font-size: 1.25em;
+}
+
+h4 {
+    font-size: 1.125em;
+}
+
+h5 {
+    font-size: 1em;
+}
+
+h6 {
+    font-size: 1em;
+}
+
+section,
+nav,
+aside,
+figure,
+article {
+    h1 {
+        font-size: 1.5em;
+    }
+
+    h2 {
+        font-size: 1.25em;
+    }
+
+    h3 {
+        font-size: 1.125em;
+    }
+
+    h4 {
+        font-size: 1em;
+    }
+
+    h5 {
+        font-size: 1em;
+    }
+
+    h6 {
+        font-size: 1em;
+    }
+}
+
+table,
+section,
+nav,
+aside,
+figure,
+article,
+p,
+ul,
+ol,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.notification,
+.paginator,
+.data-table {
+    margin: 1rem 0;
+}
+
+.spoiler {
+    color: $body-fg;
+    background: $body-fg;
+
+    &:hover,
+    &.revealed {
+        color: inherit;
+        background: transparent;
+    }
+}
+
+pre>code {
+    display: block;
+    overflow: auto;
+}
+
+table {
+    width: 100%;
+    font-size: inherit;
+    text-align: left;
+    margin: 0;
+    border-collapse: collapse;
+
+    pre>code {
+        max-width: 25vw;
+    }
+}
+
+tbody {
+    border-top: 1px dotted;
+}
+
+tr {
+    border-bottom: 1px dotted;
+}
+
+tr:nth-child(odd) {
+    background: rgba($color-neutral, 0.1);
+}
+
+td,
+th {
+    padding: 0.5rem;
+    vertical-align: middle;
+
+    :first-child {
+        margin-top: 0;
+    }
+
+    :last-child {
+        margin-bottom: 0;
+    }
+}
+
+th,
+td.header {
+    text-align: left;
+    background-color: $color-accent;
+    color: contrast-color($color-accent);
+    break-inside: avoid;
+}
+
+th.sortable {
+    white-space: nowrap;
+}
+
+
+time {
+    white-space: nowrap;
+}

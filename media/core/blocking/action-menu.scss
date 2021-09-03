@@ -1,0 +1,123 @@
+@import "/mixins/core.scss";
+
+.action-menu {
+    background: rgba($color-neutral, 0.1);
+    font-size: smaller;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: flex-end;
+
+    h1 {
+        display: none;
+    }
+
+    h2 {
+        font-size: 1em;
+        margin: 0;
+    }
+
+    nav {
+        margin: 0;
+    }
+
+    .user-actions,
+    .static-actions,
+    .page-actions {
+        margin: 0.25em;
+    }
+
+    .user-actions {
+        order: -1;
+        text-align: right;
+    }
+
+    .static-actions,
+    .page-actions {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    a {
+        display: inline-block;
+        white-space: nowrap;
+        color: inherit;
+        padding: 0.5em 0.25em;
+
+        &[href] {
+            padding: 0.5em;
+        }
+
+        &[href]:hover,
+        &.current-page {
+            background: rgba(255, 255, 255, 0.8);
+            color: #000;
+        }
+    }
+
+    ul,
+    li {
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+    }
+
+    nav {
+        margin: 0;
+    }
+
+    ul {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0;
+    }
+}
+
+.user-menu {
+    flex-direction: row-reverse;
+}
+
+.user-actions-guest {
+
+    h2,
+    nav,
+    ul {
+        display: inline-block;
+    }
+
+    h2 {
+        &:before {
+            content: "Welcome, "
+        }
+    }
+}
+
+.user-actions-signedin {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+
+    h2 {
+        display: inline-block;
+    }
+
+    h2 {
+        a {
+            text-decoration: none;
+        }
+
+        &:before {
+            content: "Welcome, "
+        }
+    }
+
+    .profile-link {
+        display: none;
+    }
+
+    ul {
+        justify-content: flex-end;
+    }
+}

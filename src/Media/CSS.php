@@ -4,14 +4,15 @@ namespace DigraphCMS\Media;
 
 use DigraphCMS\Config;
 use DigraphCMS\FS;
+use DigraphCMS\HTTP\HttpError;
+use DigraphCMS\UI\Theme;
+use DigraphCMS\URL\URL;
 use DigraphCMS\URL\URLs;
-use ScssPhp\ScssPhp\Compiler;
 use ScssPhp\ScssPhp\OutputStyle;
 use tubalmartin\CssMin\Minifier;
 
 class CSS
 {
-
     public static function scss(string $css, string $path = '/_source.scss'): string
     {
         // parse SCSS
@@ -22,10 +23,14 @@ class CSS
         return $css;
     }
 
-    public static function css(string $css): string
+    public static function css(string $css, string $path = '/_source.css'): string
     {
         // resolve URLs
         $css = static::resolveURLs($css);
+        // prefix theme variables as native CSS
+        if (strpos($css, 'var(') !== false) {
+            $css = Theme::cssVars_css() . $css;
+        }
         // minify if configured
         if (Config::get('files.css.minify')) {
             $css = static::minify($css);
@@ -44,7 +49,9 @@ class CSS
 
     protected static function parseSCSS(string $scss, string $path): string
     {
-        $compiler = new Compiler();
+        $compiler = new ScssCompiler();
+        // add theme variables
+        $compiler->addVariables(Theme::cssVars());
         // source mapping
         $smFile = null;
         if (Config::get('files.css.sourcemap')) {
@@ -56,7 +63,7 @@ class CSS
             FS::mkdir(dirname(dirname($smFile->path()) . '/' . $path));
             file_put_contents(dirname($smFile->path()) . '/' . $path, $scss);
             // pass options into compiler
-            $compiler->setSourceMap(Compiler::SOURCE_MAP_FILE);
+            $compiler->setSourceMap(ScssCompiler::SOURCE_MAP_FILE);
             $basePath = realpath(dirname($smFile->path()));
             $basePath = str_replace('\\', '/', $basePath);
             $compiler->setSourceMapOptions([
@@ -67,24 +74,27 @@ class CSS
         }
         // set up import handler
         $compiler->setImportPaths([]);
-        $compiler->addImportPath(function ($path) use ($smFile) {
-            if ($source = Media::locate(preg_replace('/\.s?css$/', '.{scss,css}', $path))) {
+        $compiler->addImportPath(function ($importPath) use ($smFile, $path) {
+            // try to locate a matching file
+            if ($source = Media::locate(preg_replace('/\.s?css$/', '.{scss,css}', $importPath))) {
                 if ($smFile) {
-                    $dest = pathinfo($smFile->path(), PATHINFO_DIRNAME) . '/' . $path;
+                    $dest = dirname($smFile->path()) . '/' . $importPath;
                     FS::mkdir(dirname($dest));
                     copy($source, $dest);
-                    file_put_contents($dest, PHP_EOL . '/* SOURCE OF ' . $path . ' */', FILE_APPEND);
                     return $dest;
                 }
                 return $source;
             }
-            return null;
+            throw new HttpError(500, "Failed to import the file $importPath in SCSS file $path");
         });
         // minification
         if (Config::get('files.css.minify')) {
             $compiler->setOutputStyle(OutputStyle::COMPRESSED);
+        } else {
+            $compiler->setOutputStyle(OutputStyle::EXPANDED);
         }
         // compile
+        URLs::beginContext(new URL($path));
         $result = $compiler->compileString(
             $scss,
             $smFile ? dirname($smFile->path()) . '/' . $path : null
@@ -93,8 +103,10 @@ class CSS
         if ($smFile) {
             file_put_contents($smFile->path(), $result->getSourceMap());
         }
-        // compile and return
-        return $result->getCss();
+        // compile, resolve URLs, and return
+        $css = static::resolveURLs($result->getCss());
+        URLs::endContext();
+        return $css;
     }
 
     protected static function resolveURLs(string $css): string

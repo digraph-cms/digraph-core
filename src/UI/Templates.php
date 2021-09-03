@@ -69,8 +69,8 @@ class Templates
         if (!$fields['page.name']) {
             // try to infer page name from response content
             $content = $response->content();
-            if (preg_match("@<h1[^>]*>(.+)</h1>@i", $content, $matches)) {
-                $fields['page.name'] = strip_tags($matches[1]);
+            if (preg_match("@<h1[^>]*>(.+?)</h1>@i", $content, $matches)) {
+                $fields['page.name'] = trim(strip_tags($matches[1]));
             } else {
                 $fields['page.name'] = strip_tags(Context::url()->name());
             }

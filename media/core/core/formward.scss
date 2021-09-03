@@ -1,0 +1,99 @@
+@import '/mixins/core.scss';
+
+.Form {
+    padding: $grid-unit/2;
+    border: 1px solid rgba($color-accent, 0.25);
+
+    >label {
+        display: block;
+        margin-bottom: $grid-unit;
+        font-size: larger;
+        font-weight: bold;
+    }
+
+    >:first-child {
+        margin-top: 0;
+    }
+
+    >:last-child {
+        margin-bottom: 0;
+    }
+
+    .FieldWrapper {
+        margin: $grid-unit 0;
+
+        label {
+            font-size: large;
+            font-weight: bold;
+        }
+
+        &.FieldWrapper-Submit {
+            margin-bottom: 0;
+        }
+    }
+
+    .tips {
+        margin: $grid-unit/2 0;
+    }
+
+    .tip {
+        font-size: smaller;
+        margin: $grid-unit/2;
+    }
+
+    input[type=checkbox],
+    input[type=radio] {
+        display: none;
+
+        +label {
+            background: $color-neutral;
+            color: contrast-color($color-neutral);
+            cursor: pointer;
+            display: block;
+            padding: $grid-unit/2;
+
+            &:before {
+                @include icon;
+                content: 'check_box_outline_blank';
+                display: inline-block;
+                font-size: larger;
+                vertical-align: text-bottom;
+                line-height: 1;
+                margin-right: $grid-unit/2;
+            }
+        }
+
+        &:checked {
+            +label {
+                background: $color-confirmation;
+                color: contrast-color($color-confirmation);
+
+                &:before {
+                    @include icon;
+                    content: 'check_box';
+                }
+            }
+        }
+    }
+
+    input[type=radio] {
+
+        +label {
+            &:before {
+                content: 'radio_button_unchecked';
+            }
+        }
+
+        &:checked {
+            +label {
+                &:before {
+                    content: 'radio_button_checked';
+                }
+            }
+        }
+    }
+
+    button.Submit {
+        @include button-confirmation;
+    }
+}

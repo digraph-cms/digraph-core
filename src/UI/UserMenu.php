@@ -4,12 +4,14 @@ namespace DigraphCMS\UI;
 
 use DigraphCMS\Cache\UserCacheNamespace;
 use DigraphCMS\Context;
+use DigraphCMS\Session\Session;
+use DigraphCMS\URL\URL;
 
 class UserMenu extends ActionMenu
 {
-    public function __construct()
+    public function __construct(URL $url)
     {
-        // does nothing
+        $this->url = $url;
         $this->user = true;
         $this->cache = new UserCacheNamespace('user-menu');
     }
@@ -20,7 +22,8 @@ class UserMenu extends ActionMenu
             md5(serialize([Context::url(), $this->user])),
             function () {
                 ob_start();
-                echo "<nav class='action-menu user-menu'><h1>User menu</h1>";
+                $class = Session::user() ? 'signed-in' : 'guest';
+                echo "<nav class='action-menu user-menu $class'><h1>User menu</h1>";
                 // output buffer contents separately
                 ob_start();
                 $this->printUserActions();
