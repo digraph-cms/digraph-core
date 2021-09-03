@@ -31,13 +31,9 @@ use DigraphCMS\UI\UserMenu;
     <section id="skip-to-content">
         <a href="#content">Skip to content</a>
     </section>
-    <section id="header">
-        <?php echo Templates::render('sections/header.php'); ?>
-    </section>
-    <nav id="navbar">
-        <?php echo Templates::render('sections/navbar.php'); ?>
-    </nav>
     <?php
+    echo Templates::render('sections/header.php');
+    echo Templates::render('sections/navbar.php');
     Breadcrumb::print();
     Notifications::printSection();
     ?>
@@ -47,12 +43,7 @@ use DigraphCMS\UI\UserMenu;
     <?php
     echo new UserMenu(Context::url());
     echo new ActionMenu(Context::url(), false);
-    ?>
-    <section id="footer">
-        <?php echo Templates::render('sections/footer.php'); ?>
-    </section>
-    <?php
-    echo Theme::body();
+    echo Templates::render('sections/footer.php');
     ?>
 </body>
 

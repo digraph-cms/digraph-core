@@ -68,11 +68,28 @@ class Media
         return $file;
     }
 
+    public static function onGetMedia_js(string $path): ?File
+    {
+        if ($source = static::locate($path)) {
+            return new DeferredFile(
+                basename($path),
+                function (DeferredFile $file) use ($source, $path) {
+                    file_put_contents(
+                        $file->path(),
+                        JS::js(file_get_contents($source), $path)
+                    );
+                },
+                md5_file($source)
+            );
+        }
+        return null;
+    }
+
     public static function onGetMedia_css(string $path): ?File
     {
         if ($source = static::locate(substr($path, 0, strlen($path) - 3) . '{css,scss}')) {
             return new DeferredFile(
-                pathinfo($path, PATHINFO_BASENAME),
+                basename($path),
                 function (DeferredFile $file) use ($source, $path) {
                     switch (strtolower(pathinfo($source, PATHINFO_EXTENSION))) {
                         case 'scss':
@@ -95,23 +112,6 @@ class Media
         return null;
     }
 
-    public static function onGetMedia_scss(string $path): ?File
-    {
-        if ($source = static::locate($path)) {
-            return new DeferredFile(
-                pathinfo($path, PATHINFO_BASENAME),
-                function (DeferredFile $file) use ($source, $path) {
-                    file_put_contents(
-                        $file->path(),
-                        CSS::scss(file_get_contents($source), $path)
-                    );
-                },
-                [$path, md5_file($source)]
-            );
-        }
-        return null;
-    }
-
     protected static function prefixContext(string $path)
     {
         if (substr($path, 0, 1) != '/') {
@@ -124,7 +124,7 @@ class Media
     {
         if ($source = static::locate($path)) {
             return new DeferredFile(
-                pathinfo($path, PATHINFO_BASENAME),
+                basename($path),
                 function (DeferredFile $file) use ($source) {
                     copy($source, $file->path());
                 },

@@ -5,7 +5,10 @@ get so many resources allocated.
 */
 
 use DigraphCMS\Context;
+use DigraphCMS\UI\Breadcrumb;
+use DigraphCMS\UI\Templates;
 use DigraphCMS\UI\Theme;
+use DigraphCMS\UI\UserMenu;
 
 ?>
 <!DOCTYPE html>
@@ -23,10 +26,16 @@ use DigraphCMS\UI\Theme;
 </head>
 
 <body class='template-minimal'>
+    <?php
+    Breadcrumb::print();
+    ?>
     <main id="content">
         <?php echo Context::response()->content(); ?>
     </main>
-    <?php echo Theme::body(); ?>
+    <?php
+    echo new UserMenu(Context::url());
+    echo Templates::render('sections/footer.php');
+    ?>
 </body>
 
 </html>

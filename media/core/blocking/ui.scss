@@ -16,11 +16,11 @@ body {
     }
 
     >#header {
-        order: 10;
+        order: 20;
     }
 
     >#navbar {
-        order: 20;
+        order: 10;
     }
 
     >.action-menu {
@@ -51,9 +51,10 @@ body {
 
 #header {
     padding: $grid-unit/2;
-    font-size: larger;
+    margin-bottom: $grid-unit*3;
 
     h1 {
+        font-size: xx-large;
         margin: 0;
     }
 
@@ -65,13 +66,12 @@ body {
 
 #navbar {
     padding: $grid-unit/2;
-    margin-bottom: 2*$grid-unit;
 }
 
 .breadcrumb {
     font-size: smaller;
     padding: $grid-unit/2;
-    background-color: rgba($color-neutral, 0.25);
+    background-color: rgba($color-neutral, 0.2);
 
     h1 {
         display: none;

@@ -132,8 +132,8 @@ th {
 th,
 td.header {
     text-align: left;
-    background-color: $color-highlight;
-    color: contrast-color($color-highlight);
+    background-color: $color-accent;
+    color: contrast-color($color-accent);
     break-inside: avoid;
 }
 

@@ -1,7 +1,7 @@
 @import "/mixins/core.scss";
 
 .action-menu {
-    background: rgba($color-neutral, 0.15);
+    background: rgba($color-neutral, 0.1);
     font-size: smaller;
     display: flex;
     justify-content: space-between;
@@ -50,7 +50,7 @@
 
         &[href]:hover,
         &.current-page {
-            background: rgba(255,255,255,0.8);
+            background: rgba(255, 255, 255, 0.8);
             color: #000;
         }
     }

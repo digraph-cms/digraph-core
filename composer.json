@@ -18,7 +18,8 @@
         "tubalmartin/cssmin": "^4.1",
         "scssphp/scssphp": "^1.6",
         "brick/varexporter": "^0.3.5",
-        "donatj/phpuseragentparser": "^1.4"
+        "donatj/phpuseragentparser": "^1.4",
+        "tedivm/jshrink": "^1.4"
     },
     "suggest": {
         "league/oauth2-github": "Needed to support OAuth sign-ins using GitHub",

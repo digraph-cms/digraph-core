@@ -23,7 +23,7 @@ class CSS
         return $css;
     }
 
-    public static function css(string $css): string
+    public static function css(string $css, string $path = '/_source.css'): string
     {
         // resolve URLs
         $css = static::resolveURLs($css);
