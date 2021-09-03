@@ -8,7 +8,7 @@ use DigraphCMS\URL\URL;
 class Paginator
 {
     protected static $id = 0;
-    protected $myID, $count, $perPage, $groupPages;
+    protected $myID, $count, $perPage, $groupPages, $breadcrumbUpdated;
 
     public function __construct(int $itemCount, int $perPage = 25, int $groupPages = 10)
     {
@@ -16,7 +16,6 @@ class Paginator
         $this->count = $itemCount;
         $this->perPage = $perPage;
         $this->groupPages = $groupPages;
-        $this->updateBreadcrumb();
     }
 
     public function __toString()
@@ -24,12 +23,14 @@ class Paginator
         if ($this->pages() == 1) {
             return '';
         }
+        $this->updateBreadcrumb();
         return "<div class='paginator'>" . implode(' ', $this->links()) . "</div>";
     }
 
     protected function updateBreadcrumb()
     {
-        if (($page = $this->page()) > 1) {
+        if (!$this->breadcrumbUpdated && ($page = $this->page()) > 1) {
+            $this->breadcrumbUpdated = true;
             $top = clone Breadcrumb::top();
             $top->setName("Page " . number_format($page) . ' of ' . number_format($this->pages()));
             Breadcrumb::pushParent(clone Breadcrumb::top());

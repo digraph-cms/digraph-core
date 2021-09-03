@@ -1,0 +1,23 @@
+@media screen,
+print {
+    #skip-to-content {
+        display: none;
+    }
+}
+
+body {
+    background-color: $body-bg;
+    color: $body-fg;
+}
+
+@media screen and (prefers-color-scheme: dark) {
+    body {
+        background-color: $dark-body-bg;
+        color: $dark-body-fg;
+    }
+}
+
+@import 'blocking/typography.scss';
+@import 'blocking/ui.scss';
+@import 'blocking/action-menu.scss';
+@import 'blocking/data-tables.scss';

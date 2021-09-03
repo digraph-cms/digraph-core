@@ -5,6 +5,7 @@ use DigraphCMS\DB\DB;
 use DigraphCMS\UI\DataTables\ColumnHeader;
 use DigraphCMS\UI\DataTables\QueryColumnHeader;
 use DigraphCMS\UI\DataTables\QueryTable;
+use DigraphCMS\UI\Format;
 use donatj\UserAgent\UserAgentParser;
 
 $query = DB::query()
@@ -19,12 +20,12 @@ $table = new QueryTable(
     function (array $row) use ($parser) {
         $ua = $parser->parse($row['ua']);
         return [
-            $row['created'],
+            Format::date($row['created']),
             $row['comment'],
             $row['ip'],
             $ua->browser() . ' on ' . $ua->platform() . '<br><small>' . $row['ua'] . '</small>',
-            $row['expires'],
-            @$row['date'] ?? "<em>N/A</em>",
+            Format::date($row['expires']),
+            @$row['date'] ? Format::date($row['date']) : "<em>N/A</em>",
             @$row['reason'] ?? "<em>N/A</em>"
         ];
     },

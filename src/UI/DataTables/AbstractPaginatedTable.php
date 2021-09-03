@@ -10,6 +10,7 @@ abstract class AbstractPaginatedTable
     protected static $id = 0;
     protected $paginator;
     protected $headers = [];
+    protected $caption;
 
     abstract public function body(): array;
 
@@ -17,6 +18,14 @@ abstract class AbstractPaginatedTable
     {
         $this->myID = self::$id++;
         $this->paginator = new Paginator($count);
+    }
+
+    public function caption(string $caption = null): ?string
+    {
+        if ($caption !== null) {
+            $this->caption = $caption;
+        }
+        return $this->caption;
     }
 
     public function __toString()
@@ -28,6 +37,9 @@ abstract class AbstractPaginatedTable
         } else {
             echo $this->paginator();
             echo "<table>";
+            if ($this->caption) {
+                echo "<caption>" . $this->caption() . "</caption>";
+            }
             $this->printHeaders();
             $this->printBody();
             echo "</table>";
@@ -52,6 +64,11 @@ abstract class AbstractPaginatedTable
         if (!$this->headers) {
             return;
         }
+        echo "<colgroup>";
+        foreach ($this->headers as $header) {
+            echo $header->colString();
+        }
+        echo "</colgroup>";
         echo "<tr>";
         foreach ($this->headers as $header) {
             echo $header;
@@ -66,7 +83,6 @@ abstract class AbstractPaginatedTable
 
     public function printBody()
     {
-        echo "<tbody>";
         foreach ($this->body() as $row) {
             echo '<tr>';
             foreach ($row as $cell) {
@@ -74,7 +90,6 @@ abstract class AbstractPaginatedTable
             }
             echo '</tr>';
         }
-        echo "</tbody>";
     }
 
     public function class(): string

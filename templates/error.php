@@ -21,9 +21,7 @@ use DigraphCMS\Media\Media;
         <?php echo Context::fields()['page.name'] ?? 'Untitled'; ?>
         :: <?php echo Context::fields()['site.name']; ?>
     </title>
-    <style>
-        <?php echo Media::get('/digraph/error.css')->content(); ?>
-    </style>
+    <style><?php echo Media::get('/core/error_blocking.css')->content(); ?></style>
 </head>
 
 <body class='template-error'>

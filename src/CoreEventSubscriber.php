@@ -36,6 +36,11 @@ class CoreEventSubscriber
         return null;
     }
 
+    public static function onStaticUrlName_signin(): ?string
+    {
+        return "Sign in or sign up";
+    }
+
     /**
      * Remove all static actions from signin path
      *

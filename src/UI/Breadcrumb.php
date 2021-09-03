@@ -21,14 +21,14 @@ class Breadcrumb
                 ob_start();
                 $breadcrumb = static::breadcrumb();
                 if (count($breadcrumb) >= Config::get('ui.breadcrumb.min_length')) {
-                    echo "<nav class='breadcrumb'><h1>Breadcrumb</h1><ul>";
+                    echo "<section class='breadcrumb'><h1>Breadcrumb</h1><ul>";
                     foreach ($breadcrumb as $url) {
                         echo "<li>" . $url->html() . "</li>";
                     }
                     if (Config::get('ui.breadcrumb.include_current')) {
-                        echo "<li>" . static::top()->html(['breadcrumb-current']) . "</li>";
+                        echo "<li class='breadcrumb-current'>" . static::top()->html(['breadcrumb-current']) . "</li>";
                     }
-                    echo "</ul></nav>";
+                    echo "</ul></section>";
                 }
                 return ob_get_clean();
             }

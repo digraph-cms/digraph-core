@@ -12,12 +12,14 @@ echo new ButtonMenu(null, [
         'Trust this computer',
         function () {
             Context::response()->redirect(Context::fields()['yes_url']);
-        }
+        },
+        ['confirmation']
     ),
     new ButtonMenuButton(
         'Sign out when I close my browser',
         function () {
             Context::response()->redirect(Context::fields()['no_url']);
-        }
+        },
+        ['info']
     )
 ]);

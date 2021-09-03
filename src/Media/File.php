@@ -23,22 +23,6 @@ class File
         $this->identifier = $identifier ? md5(serialize($identifier)) : md5($content);
     }
 
-    public function __toString()
-    {
-        return $this->embed();
-    }
-
-    public function embed(): string
-    {
-        switch ($this->extension()) {
-            case 'css':
-                return '<link rel="stylesheet" href="' . $this->url() . '" />';
-            case 'js':
-                return '<script src="' . $this->url() . '"></script>';
-        }
-        throw new \Exception("Don't know how to embed a " . $this->extension() . " file");
-    }
-
     public function filename(): string
     {
         return $this->filename;
