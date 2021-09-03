@@ -1,6 +1,7 @@
 # demo storage/cache
 /demo/storage/*
 /demo/files/*
+!/demo/files/.htaccess
 /demo/phinx/*
 
 # odds and ends
