@@ -7,6 +7,7 @@ use DateTime;
 use DigraphCMS\Digraph;
 use DigraphCMS\Session\Session;
 use DigraphCMS\URL\URL;
+use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
 use Flatrr\FlatArrayTrait;
@@ -55,6 +56,11 @@ class Page implements ArrayAccess
      */
     public function permissions(URL $url, User $user = null): ?bool
     {
+        if ($url->action() == 'index') {
+            return true;
+        } else {
+            return Permissions::inGroup('admins', Users::current());
+        }
         return null;
     }
 

@@ -20,7 +20,7 @@ $users = new UserSelect(
         ->from('user_group_membership')
         ->select('user.*')
         ->leftJoin('user on user_uuid = user.uuid')
-        ->where('group_uuid = ?', [$group])
+        ->where('group_uuid = ?', [$group->uuid()])
 );
 
 echo "<h1>" . ucfirst($group->name()) . "</h1>";

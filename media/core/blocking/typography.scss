@@ -111,16 +111,14 @@ table {
     }
 }
 
-tbody {
-    border-top: 1px dotted;
-}
-
-tr {
-    border-bottom: 1px dotted;
-}
-
 tr:nth-child(odd) {
-    background: rgba($color-neutral, 0.1);
+    background: rgba($color-neutral, 0.2);
+}
+
+tr:nth-child(even) {
+    th, td.header {
+    background-color: rgba($color-accent,0.8);
+    }
 }
 
 td,

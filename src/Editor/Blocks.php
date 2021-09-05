@@ -20,6 +20,9 @@ class Blocks
      */
     public function __construct($data = [])
     {
+        if ($data === null) {
+            $data = [];
+        }
         if (is_string($data)) {
             $data = json_decode($data, true);
         }

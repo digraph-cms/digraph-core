@@ -38,8 +38,8 @@ class Permissions
         // TODO: figure out how config works, it should take priority
         // try route-specific events, then generic events
         return
-            Dispatcher::firstValue("onStaticUrlPermissions", [$url, $user]) ??
             Dispatcher::firstValue("onStaticUrlPermissions_" . $url->route(), [$url, $user]) ??
+            Dispatcher::firstValue("onStaticUrlPermissions", [$url, $user]) ??
             true;
     }
 
@@ -47,11 +47,12 @@ class Permissions
      * Determine whether the user is a member of the given group.
      *
      * @param string $group
-     * @param User $user
+     * @param User|null $user
      * @return boolean
      */
-    public static function inGroup(string $group, User $user): bool
+    public static function inGroup(string $group, User $user = null): bool
     {
+        $user = $user ?? Users::current() ?? Users::guest();
         foreach ($user->groups() as $g) {
             if ($g->uuid() == $group) {
                 return true;

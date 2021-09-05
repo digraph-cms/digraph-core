@@ -7,20 +7,23 @@ use DigraphCMS\UI\Theme;
 
 class Editor
 {
-    protected static $loaded;
-
     public static function load()
     {
-        if (static::$loaded) {
+        static $loaded = false;
+        if ($loaded) {
             return;
         }
-        static::$loaded = true;
+        $loaded = true;
+        // load all the types
+        foreach (Blocks::types() as $name => $class) {
+            $class::load();
+        }
+        // set up editor config script
         $script = new DeferredFile(
             'editor-config.js',
             function (DeferredFile $file) {
                 $script = 'Digraph.editorTools = {};' . PHP_EOL;
                 foreach (Blocks::types() as $name => $class) {
-                    $class::load();
                     if ($class = $class::jsClass()) {
                         $script .= "Digraph.editorTools.$name = $class;" . PHP_EOL;
                     }
@@ -33,6 +36,6 @@ class Editor
         Theme::addBlockingPageJs($script);
         Theme::addInternalPageCss('/editor/editor.css');
         Theme::addBlockingPageJs('/editor/editor.js');
-        Theme::addPageJs('/editor/digraph-editor.js');
+        Theme::addBlockingPageJs('/editor/digraph-editor.js');
     }
 }

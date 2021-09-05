@@ -22,6 +22,21 @@ class CoreEventSubscriber
     }
 
     /**
+     * Make the name of group URLs the group's name
+     *
+     * @param URL $url
+     * @param boolean $inPageContext
+     * @return string|null
+     */
+    public static function onStaticUrlName_groups(URL $url, bool $inPageContext): ?string
+    {
+        if ($group = Users::group($url->action())) {
+            return $group->name();
+        }
+        return null;
+    }
+
+    /**
      * Make the name of user profile URLs the user's name
      *
      * @param URL $url
