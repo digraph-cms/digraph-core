@@ -31,7 +31,7 @@ class Editor
         );
         $script->write();
         Theme::addBlockingPageJs($script);
-        Theme::addInternalPageCss('/editor/editor.css', 'screen');
+        Theme::addInternalPageCss('/editor/editor.css');
         Theme::addBlockingPageJs('/editor/editor.js');
         Theme::addPageJs('/editor/digraph-editor.js');
     }

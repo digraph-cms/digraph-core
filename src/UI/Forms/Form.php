@@ -2,12 +2,28 @@
 
 namespace DigraphCMS\UI\Forms;
 
-use Formward\Form as FormwardForm;
+use DigraphCMS\UI\Theme;
+use Formward\FieldInterface;
 use Formward\SystemFields\TokenNoCSRF;
 
-class Form extends FormwardForm
+class Form extends \Formward\Form
 {
     protected $callbacks = [];
+
+    public function __construct(string $label, string $name = null, FieldInterface $parent = null)
+    {
+        parent::__construct($label, $name, $parent);
+        static::load();
+    }
+
+    public static function load()
+    {
+        static $loaded = false;
+        if (!$loaded) {
+            $loaded = true;
+            Theme::addBlockingPageCss('/core/formward.css');
+        }
+    }
 
     public function addCallback(callable $callback)
     {

@@ -261,9 +261,9 @@ class Theme
         }
     }
 
-    protected static function renderInternalCss()
+    protected static function renderInternalCss(string $name, array $css)
     {
-        foreach (array_replace_recursive(static::$internalThemeCss, static::$internalPageCss) as $media => $urls) {
+        foreach ($css as $media => $urls) {
             $htmlMedia = $media;
             if ($media == 'dark') {
                 $htmlMedia = 'screen and (prefers-color-scheme: dark)';
@@ -289,7 +289,7 @@ class Theme
                     $url = preg_replace('@\.css$@', '.scss', $url);
                     $scss .= "@import \"" . $url . "\";";
                 }
-                $file = new DeferredFile('bundle_' . $media . '.css', function (DeferredFile $file) use ($scss) {
+                $file = new DeferredFile($name.'_' . $media . '.css', function (DeferredFile $file) use ($scss) {
                     file_put_contents($file->path(), CSS::scss($scss));
                 }, [$urls]);
                 $file->write();
@@ -333,7 +333,8 @@ class Theme
         ob_start();
         // render css
         static::renderBlockingCss();
-        static::renderInternalCss();
+        static::renderInternalCss('theme',static::$internalThemeCss);
+        static::renderInternalCss('page',static::$internalPageCss);
         // render core js
         if (static::$blockingThemeJs || static::$blockingPageJs || static::$asyncThemeJs || static::$asyncPageJs) {
             static::renderCoreJs();

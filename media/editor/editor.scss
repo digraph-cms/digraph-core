@@ -1,7 +1,6 @@
 @import '/mixins/core.scss';
 
 .codex-editor {
-    @include emphasized-block;
     background: $body-bg;
     color: $body-fg;
     max-width: 725px;
@@ -18,11 +17,12 @@
 }
 
 .codex-editor__redactor {
-    padding-bottom: 100px !important;
+    padding-bottom: 0 !important;
+    min-height: 20rem;
 }
 
 .ce-block {
-    &:nth-child(even) {
+    &:nth-child(odd) {
         background: rgba($color-neutral, 0.1);
     }
 }
@@ -43,10 +43,10 @@
     background-color: $color-error !important;
 }
 
-// .cdx-block,
-// .ce-block__content>.cdx-nested-list {
-//     padding: $grid-unit/2 0;
-// }
+.cdx-block,
+.ce-block__content>.cdx-nested-list {
+    padding: $grid-unit/2 0;
+}
 
 .ce-block--selected .ce-block__content {
     background: transparent;
@@ -54,7 +54,7 @@
 
 .ce-block.ce-block--focused {
     @include focused;
-    background: rgba($color-info, 0.025);
+    background: rgba($color-info, 0.1);
 }
 
 textarea.editorjs {
