@@ -17,7 +17,15 @@
       "keepimportantcomments": true
     },
     "js": {
-      "minify": true
+      "minify": false
+    }
+  },
+  "editor": {
+    "blocks": {
+      "paragraph": "\\DigraphCMS\\Editor\\Blocks\\ParagraphBlock",
+      "header": "\\DigraphCMS\\Editor\\Blocks\\HeaderBlock",
+      "list": "\\DigraphCMS\\Editor\\Blocks\\ListBlock",
+      "table": "\\DigraphCMS\\Editor\\Blocks\\TableBlock"
     }
   },
   "cookies": {

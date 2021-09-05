@@ -207,6 +207,11 @@ class Page implements ArrayAccess
         return Pages::insert($this);
     }
 
+    public function update()
+    {
+        return Pages::update($this);
+    }
+
     public function uuid(): string
     {
         return $this->uuid;

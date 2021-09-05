@@ -2,6 +2,7 @@
 
 use DigraphCMS\Content\Pages;
 use DigraphCMS\Context;
+use DigraphCMS\UI\Format;
 use DigraphCMS\URL\URL;
 
 $page = Context::page();
@@ -12,14 +13,14 @@ $page = Context::page();
     <tr>
         <th>Created</th>
         <td>
-            <?php echo $page->created()->format('Y-m-d H:i:s') ?>
+            <?php echo Format::datetime($page->created()->format('Y-m-d H:i:s')); ?>
             by <?php echo $page->createdBy(); ?>
         </td>
     </tr>
     <tr>
         <th>Last modified</th>
         <td>
-            <?php echo $page->updated()->format('Y-m-d H:i:s') ?>
+            <?php echo Format::datetime($page->updated()->format('Y-m-d H:i:s')); ?>
             by <?php echo $page->updatedBy(); ?>
         </td>
     </tr>

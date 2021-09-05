@@ -1,14 +1,17 @@
 @import '/mixins/core.scss';
 
 .Form {
-    padding: $grid-unit/2;
-    border: 1px solid rgba($color-accent, 0.25);
+    margin: $grid-unit 0;
+    max-width: 725px;
 
     >label {
         display: block;
-        margin-bottom: $grid-unit;
+        margin-bottom: $grid-unit*2;
         font-size: larger;
         font-weight: bold;
+        padding: $grid-unit/2;
+        background: $color-accent;
+        color: contrast-color($color-accent);
     }
 
     >:first-child {
@@ -20,15 +23,34 @@
     }
 
     .FieldWrapper {
-        margin: $grid-unit 0;
+        margin: $grid-unit*2 0;
 
-        label {
-            font-size: large;
+        >label {
+            display: block;
             font-weight: bold;
+            margin-bottom: $grid-unit/2;
+            padding: $grid-unit/2;
+            background: $color-neutral;
+            color: contrast-color($color-neutral);
         }
 
         &.FieldWrapper-Submit {
             margin-bottom: 0;
+        }
+    }
+
+    .FieldWrapper-required {
+        >label {
+            &:after {
+                @include icon;
+                content: "star";
+                display: inline-block;
+                line-height: 1;
+                vertical-align: top;
+                color: inherit;
+                margin-left: $grid-unit/2;
+                font-size: smaller;
+            }
         }
     }
 
@@ -37,8 +59,24 @@
     }
 
     .tip {
+        font-style: italic;
         font-size: smaller;
         margin: $grid-unit/2;
+    }
+
+    input {
+        box-sizing: border-box;
+        display: block;
+        width: 100%;
+        background: $body-bg;
+        color: $body-fg;
+        border: 1px solid rgba($color-neutral, 0.5);
+        padding: $grid-unit;
+
+        @media (prefers-color-scheme: dark) {
+            background: $dark-body-bg;
+            color: $dark-body-fg;
+        }
     }
 
     input[type=checkbox],
@@ -60,6 +98,7 @@
                 vertical-align: text-bottom;
                 line-height: 1;
                 margin-right: $grid-unit/2;
+                color: inherit;
             }
         }
 

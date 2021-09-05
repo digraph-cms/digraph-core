@@ -3,12 +3,14 @@
 namespace DigraphCMS\UI;
 
 use DigraphCMS\Config;
+use DigraphCMS\Context;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\Media\CSS;
 use DigraphCMS\Media\DeferredFile;
 use DigraphCMS\Media\File;
 use DigraphCMS\Media\Media;
 use DigraphCMS\URL\URL;
+use DigraphCMS\URL\URLs;
 
 Theme::resetTheme();
 Theme::resetPage();
@@ -100,19 +102,6 @@ class Theme
     protected static $asyncThemeJs = [];
     protected static $asyncPageJs = [];
 
-    public static function addBundle(string $name, $activeThemes = null)
-    {
-        if ($activeThemes === null) {
-            $activeThemes = 'theme.active_themes';
-        }
-        if (!is_array($activeThemes)) {
-            $activeThemes = [$activeThemes];
-        }
-        static::$cssVars = array_merge(static::$cssVars, static::themeConfig($activeThemes, "bundles.$name.css_vars") ?? []);
-        static::$blockingPageCss = array_merge(static::$cssVars, static::themeConfig($activeThemes, "bundles.$name.blocking_css") ?? []);
-        static::$internalPageCss = array_merge(static::$cssVars, static::themeConfig($activeThemes, "bundles.$name.internal_css") ?? []);
-    }
-
     public static function cssVars(): array
     {
         return static::$cssVars;
@@ -148,12 +137,6 @@ class Theme
      */
     public static function resetTheme($activeThemes = null)
     {
-        if ($activeThemes === null) {
-            $activeThemes = 'theme.active_themes';
-        }
-        if (!is_array($activeThemes)) {
-            $activeThemes = [$activeThemes];
-        }
         static::$cssVars = static::themeConfig($activeThemes, 'css_vars');
         static::$blockingThemeCss = static::themeConfig($activeThemes, 'blocking_css');
         static::$internalThemeCss = static::themeConfig($activeThemes, 'internal_css');
@@ -174,9 +157,15 @@ class Theme
         static::$asyncPageJs = [];
     }
 
-    protected static function themeConfig(array $activeThemes, $section): array
+    protected static function themeConfig($activeThemes, $section): array
     {
-        $value = static::$core[$section] ?? [];
+        if ($activeThemes === null) {
+            $activeThemes = Config::get('theme.active_themes') ?? [];
+        }
+        if (is_string($activeThemes)) {
+            $activeThemes = [$activeThemes];
+        }
+        $value = @static::$core[$section] ?? [];
         $value = array_replace_recursive($value, Config::get("themes.core.$section") ?? []);
         foreach ($activeThemes as $theme) {
             $value = array_replace_recursive($value, Config::get("themes.$theme.$section") ?? []);
@@ -215,12 +204,12 @@ class Theme
         static::$blockingPageJs[] = $url_or_file;
     }
 
-    public static function addAsyncThemeJs($url_or_file)
+    public static function addThemeJs($url_or_file)
     {
         static::$asyncThemeJs[] = $url_or_file;
     }
 
-    public static function addAsyncPageJs($url_or_file)
+    public static function addPageJs($url_or_file)
     {
         static::$asyncPageJs[] = $url_or_file;
     }
@@ -233,12 +222,14 @@ class Theme
     protected static function renderJs(array $urls_or_files, bool $async)
     {
         foreach ($urls_or_files as $url_or_file) {
-            if (preg_match('@^(https?)?//@', $url_or_file)) {
-                $url = $url_or_file;
-            } else {
-                $url_or_file = Media::get($url_or_file);
-                if (!$url_or_file) {
-                    throw new HttpError(500, 'JS file not found');
+            if (is_string($url_or_file)) {
+                if (preg_match('@^(https?)?//@', $url_or_file)) {
+                    $url = $url_or_file;
+                } else {
+                    $url_or_file = Media::get($url_or_file);
+                    if (!$url_or_file) {
+                        throw new HttpError(500, 'JS file not found');
+                    }
                 }
             }
             if ($url_or_file instanceof File) {
@@ -257,7 +248,11 @@ class Theme
         $files = array_map(
             function (string $url): File {
                 $url = new URL($url);
-                return Media::get($url->path());
+                $file = Media::get($url->path());
+                if (!$file) {
+                    throw new HttpError(500, 'Couldn\'t find blocking CSS file');
+                }
+                return $file;
             },
             array_merge(static::$blockingThemeCss, static::$blockingPageCss)
         );
@@ -303,6 +298,31 @@ class Theme
         }
     }
 
+    protected static function coreConfig(): array
+    {
+        $config = [];
+        return $config;
+    }
+
+    protected static function renderCoreJs()
+    {
+        $script = Media::get('/core/core.js')->content();
+        $file = new DeferredFile(
+            'core.js',
+            function (DeferredFile $file) use ($script) {
+                $script .= PHP_EOL;
+                $script .= 'Digraph.config = ' . json_encode(static::coreConfig()) . PHP_EOL;
+                file_put_contents($file->path(), $script);
+            },
+            [
+                static::coreConfig(),
+                $script
+            ]
+        );
+        $file->write();
+        echo "<script src=\"" . $file->url() . "\"></script>" . PHP_EOL;
+    }
+
     /**
      * Generates the markup to embed all linked media in the HEAD tag
      *
@@ -314,6 +334,10 @@ class Theme
         // render css
         static::renderBlockingCss();
         static::renderInternalCss();
+        // render core js
+        if (static::$blockingThemeJs || static::$blockingPageJs || static::$asyncThemeJs || static::$asyncPageJs) {
+            static::renderCoreJs();
+        }
         // render js
         static::renderJs(static::$blockingThemeJs, false);
         static::renderJs(static::$blockingPageJs, false);

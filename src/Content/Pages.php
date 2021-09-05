@@ -305,6 +305,7 @@ class Pages
                 'name' => $page->name(),
                 'data' => json_encode($page->get()),
                 'class' => $page->class(),
+                'updated' => date("Y-m-d H:i:s"),
                 'updated_by' => Session::user()
             ])
             ->execute();
@@ -324,7 +325,7 @@ class Pages
                     'data' => json_encode($page->get()),
                     'class' => $page->class(),
                     'created_by' => $page->createdByUUID(),
-                    'updated_by' => $page->updatedByUUID(),
+                    'updated_by' => $page->updatedByUUID() ?? PDO::nul,
                 ]
             )
             ->execute();

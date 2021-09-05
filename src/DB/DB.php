@@ -125,6 +125,7 @@ class DB
     {
         if (!self::$query) {
             self::$query = new Query(self::pdo());
+            self::$query->convertWriteTypes(true);
         }
         return self::$query;
     }

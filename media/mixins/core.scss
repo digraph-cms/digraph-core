@@ -21,6 +21,17 @@
     }
 }
 
+@mixin focused {
+    outline: 2px solid $color-info;
+    position: relative;
+}
+
+@mixin emphasized-block {
+    margin: $grid-unit 0;
+    padding: $grid-unit/2;
+    border: 1px dotted rgba($color-accent, 0.5);
+}
+
 @mixin button {
     background: $color-highlight;
     color: contrast-color($color-highlight);

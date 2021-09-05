@@ -246,6 +246,7 @@ class Users
             ->set([
                 'name' => $user->name(),
                 'data' => json_encode($user->get()),
+                'updated' => date("Y-m-d H:i:s"),
                 'updated_by' => Session::user()
             ])
             ->execute();

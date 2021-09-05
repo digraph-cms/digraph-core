@@ -39,7 +39,7 @@ body {
     >#content {
         order: 60;
 
-        :first-child {
+        >:first-child {
             margin-top: 0;
         }
     }
