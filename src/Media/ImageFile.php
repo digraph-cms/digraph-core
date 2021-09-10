@@ -2,6 +2,7 @@
 
 namespace DigraphCMS\Media;
 
+use DigraphCMS\Config;
 use DigraphCMS\FS;
 use Mimey\MimeTypes;
 use Spatie\Image\Image;
@@ -83,7 +84,7 @@ class ImageFile extends DeferredFile
     {
         return in_array(
             strtolower($extension),
-            ['jpg', 'jpeg', 'png', 'gif', 'webp']
+            ['jpg', 'jpeg', 'jfif', 'png', 'gif', 'webp']
         );
     }
 
@@ -101,6 +102,11 @@ class ImageFile extends DeferredFile
                 ->save($this->path());
         };
         $this->filename = $filename;
+    }
+
+    public function ttl(): int
+    {
+        return Config::get('images.ttl') ?? 3600;
     }
 
     public function image(): ?ImageFile

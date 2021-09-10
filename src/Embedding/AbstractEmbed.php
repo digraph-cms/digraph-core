@@ -66,22 +66,27 @@ abstract class AbstractEmbed
 
     public function __toString()
     {
-        $classes = ['media-container'];
-        $classes = array_merge($classes, $this->classes());
+        $embed = new GenericTag();
+        $embed->tag = 'div';
+        $embed->addClass('media-embed');
         $container = new GenericTag();
         $container->tag = 'div';
+        $container->addClass('media-container');
         $wrapper = new GenericTag();
         $wrapper->tag = 'div';
         $wrapper->addClass('media-wrapper');
-        $css = ['container' => [], 'wrapper' => []];
-        foreach ($classes as $class) {
-            $container->addClass($class);
+        $css = ['embed' => [], 'container' => [], 'wrapper' => []];
+        foreach ($this->classes() as $class) {
+            $embed->addClass($class);
         }
         foreach ($this->additionalClasses as $class) {
-            $container->addClass($class);
+            $embed->addClass($class);
+            if ($class == 'withBackground') {
+                $css['embed']['background-color'] = $this->color();
+            }
         }
         if ($this->id) {
-            $container->attr('id', $this->id);
+            $embed->attr('id', $this->id);
         }
         if ($this->width()) {
             $css['wrapper']['max-width'] = $this->width() . 'px';
@@ -90,13 +95,14 @@ abstract class AbstractEmbed
             $css['wrapper']['padding-bottom'] = $this->aspectRatio() * 100 . '%';
             $css['container']['max-width'] = (Config::get('embedding.max-height') / $this->aspectRatio()) . 'vh';
         } else {
-            $container->addClass('fluid-height');
+            $embed->addClass('fluid-height');
         }
         foreach ($css as $e => $r) {
             foreach ($r as $k => $v) {
                 $css[$e][$k] = "$k:$v";
             }
         }
+        $embed->attr('style', implode(';', $css['embed']));
         $container->attr('style', implode(';', $css['container']));
         $wrapper->attr('style', implode(';', $css['wrapper']));
         $content = new GenericTag();
@@ -120,6 +126,7 @@ abstract class AbstractEmbed
         } else {
             $container->content = $wrapper;
         }
-        return '<!-- theme_package:library/media-embedding -->' . $container->__toString();
+        $embed->content = $container;
+        return $embed->__toString();
     }
 }

@@ -7,9 +7,7 @@ use HtmlObjectStrings\GenericTag;
 
 class ImageEmbed extends AbstractEmbed
 {
-    protected $image;
-    protected $color;
-    protected $hash;
+    protected $image, $color, $hash, $height, $width, $aspectRatio;
 
     public function __construct(ImageFile $image)
     {
@@ -23,10 +21,10 @@ class ImageEmbed extends AbstractEmbed
 
     public function color(): ?string
     {
-        return null;
         if (!$this->color) {
-            $image = $this->image->clone()->crop(ImageFile::FIT_FILL, 1, 1);
-            $im = imagecreatefromstring($image->content());
+            $image = $this->image->clone()->crop(ImageFile::CROP_CENTER, 1, 1);
+            $image->write();
+            $im = imagecreatefromstring(file_get_contents($image->path()));
             $rgb = imagecolorat($im, 0, 0);
             $r = ($rgb >> 16) & 0xFF;
             $g = ($rgb >> 8) & 0xFF;
@@ -38,17 +36,20 @@ class ImageEmbed extends AbstractEmbed
 
     public function height(): ?int
     {
-        return $this->image->getHeight();
+        $this->height = $this->height ?? $this->image->getHeight();
+        return $this->height;
     }
 
     public function width(): ?int
     {
-        return $this->image->getWidth();
+        $this->width = $this->width ?? $this->image->getWidth();
+        return $this->width;
     }
 
     public function aspectRatio(): float
     {
-        return $this->height() / $this->width();
+        $this->aspectRatio = $this->aspectRatio ?? $this->height() / $this->width();
+        return $this->aspectRatio;
     }
 
     protected function html(): string

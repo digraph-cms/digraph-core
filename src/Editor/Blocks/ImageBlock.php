@@ -46,7 +46,7 @@ class ImageBlock extends AbstractBlock
         foreach ($classes as $class) {
             $figure->addClass($class);
         }
-        return $figure;
+        return $figure->__toString();
     }
 
     public function caption(): ?string

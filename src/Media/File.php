@@ -54,6 +54,11 @@ class File
         return Media::fileUrl($this);
     }
 
+    public function ttl(): int
+    {
+        return Config::get('files.ttl') ?? 0;
+    }
+
     public function write()
     {
         if ($this->written) {
@@ -62,8 +67,8 @@ class File
         $this->written = true;
         // if output file already exists and files.ttl config exists, don't
         // write file again if its age is less than files.ttl
-        if (is_file($this->path()) && Config::get('files.ttl')) {
-            if (time() < (filemtime($this->path()) + Config::get('files.ttl'))) {
+        if (is_file($this->path()) && $this->ttl()) {
+            if (time() < (filemtime($this->path()) + $this->ttl())) {
                 return;
             }
         }

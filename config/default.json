@@ -20,6 +20,9 @@
       "minify": false
     }
   },
+  "images": {
+    "ttl": 2592000
+  },
   "filestore": {
     "path": "${paths.storage}/filestore",
     "symlink": false
