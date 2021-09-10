@@ -28,6 +28,7 @@ class TableBlock extends AbstractBlock
             }
             $out .= '</tr>' . PHP_EOL;
         }
+        $out .= $this->anchorLink() . PHP_EOL;
         $out .= "</table>" . PHP_EOL;
         return $out;
     }

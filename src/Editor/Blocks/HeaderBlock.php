@@ -21,6 +21,8 @@ class HeaderBlock extends AbstractBlock
         $level = $this->data()['level'];
         $text = $this->data()['text'];
         $id = $this->id();
-        return "<h$level class='referenceable-block' id='$id'>$text</h$level>";
+        return "<h$level class='referenceable-block' id='$id'>$text" . PHP_EOL .
+            $this->anchorLink() . PHP_EOL .
+            "</h$level>";
     }
 }

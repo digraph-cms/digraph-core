@@ -60,7 +60,7 @@ class ImageEmbed extends AbstractEmbed
         while ($width >= 200) {
             $image = $this->image->clone()->width($width);
             $srcset[] = $image->url() . ' ' . $width . 'w';
-            $width -= 200;
+            $width -= 100;
         }
         //build img tag
         $img = new GenericTag();

@@ -56,9 +56,43 @@ input[type=submit] {
     }
 }
 
-.referenceable-block:target {
-    @include focused;
-    background: rgba($color-info, 0.1);
+.referenceable-block {
+    position: relative;
+
+    &:target {
+        @include focused;
+        outline-offset: $grid-unit/2;
+    }
+
+    .referenceable-block-link {
+        @include icon;
+        display: none;
+        position: absolute;
+        top: -0.25rem;
+        right: -0.25rem;
+        font-size: 1rem;
+        line-height: 1rem;
+        width: 1rem;
+        text-align: center;
+        background: $color-info;
+        color: contrast-color($color-info);
+        padding: 0.25em;
+        text-decoration: none;
+        opacity: 0.25;
+        border-radius: 1rem;
+
+        &:hover {
+            transform: scale(1.05);
+            opacity: 1;
+        }
+    }
+
+    &:hover {
+
+        .referenceable-block-link {
+            display: block;
+        }
+    }
 }
 
 @import "core/material-icons.scss";

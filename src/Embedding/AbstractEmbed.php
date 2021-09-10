@@ -3,6 +3,7 @@
 namespace DigraphCMS\Embedding;
 
 use DigraphCMS\Config;
+use DigraphCMS\Context;
 use HtmlObjectStrings\GenericTag;
 
 abstract class AbstractEmbed
@@ -127,6 +128,9 @@ abstract class AbstractEmbed
             $container->content = $wrapper;
         }
         $embed->content = $container;
+        if ($this->id && in_array('referenceable-block', $this->additionalClasses)) {
+            $embed->content .= PHP_EOL . "<a href='" . Context::url() . "#" . $this->id . "' class='referenceable-block-link' title='link to this block'>anchor</a>";
+        }
         return $embed->__toString();
     }
 }

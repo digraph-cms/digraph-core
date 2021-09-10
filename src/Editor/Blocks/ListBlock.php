@@ -22,6 +22,7 @@ class ListBlock extends AbstractBlock
         $tag = $this->data()['style'] == 'ordered' ? 'ol' : 'ul';
         $out = "<$tag class='referenceable-block' id='$id'>" . PHP_EOL;
         $out .= $this->renderItems($this->data()['items']);
+        $out .= $this->anchorLink();
         $out .= "</$tag>" . PHP_EOL;
         return $out;
     }

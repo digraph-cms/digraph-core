@@ -2,6 +2,8 @@
 
 namespace DigraphCMS\Editor\Blocks;
 
+use DigraphCMS\Context;
+
 abstract class AbstractBlock
 {
     protected $data;
@@ -18,6 +20,11 @@ abstract class AbstractBlock
     public function toArray(): array
     {
         return $this->data;
+    }
+
+    protected function anchorLink(): string
+    {
+        return "<a href='" . Context::url() . "#" . $this->id() . "' class='referenceable-block-link' title='link to this block'>anchor</a>";
     }
 
     public function __toString()

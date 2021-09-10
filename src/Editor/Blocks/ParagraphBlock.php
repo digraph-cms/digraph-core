@@ -20,6 +20,9 @@ class ParagraphBlock extends AbstractBlock
     {
         $text = $this->data()['text'];
         $id = $this->id();
-        return "<p class='referenceable-block' id='$id'>$text</p>";
+        return "<p class='referenceable-block' id='$id'>" . PHP_EOL .
+            $text . PHP_EOL .
+            $this->anchorLink() . PHP_EOL .
+            "</p>";
     }
 }
