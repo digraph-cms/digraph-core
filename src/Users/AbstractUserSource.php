@@ -60,7 +60,8 @@ abstract class AbstractUserSource
                 'user_uuid' => $user_uuid,
                 'source' => $this->name,
                 'provider' => $provider,
-                'provider_id' => $provider_id
+                'provider_id' => $provider_id,
+                'created' => time(),
             ]
         )->execute();
     }

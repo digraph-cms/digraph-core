@@ -24,6 +24,13 @@ class Cookies
         return true;
     }
 
+    public static function csrfToken($name): string
+    {
+        return
+            static::get('csrf', $name) ??
+            static::set('csrf', $name, bin2hex(random_bytes(16)));
+    }
+
     public static function listTypes(): array
     {
         $types = ['system', 'auth', 'csrf'];

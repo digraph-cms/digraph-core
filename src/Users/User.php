@@ -19,7 +19,6 @@ class User implements ArrayAccess
     protected $uuid, $name;
     protected $created, $created_by;
     protected $updated, $updated_by;
-    protected $slugCollisions;
     protected $groups;
 
     public function __construct(array $data = [], array $metadata = [])

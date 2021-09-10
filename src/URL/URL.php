@@ -113,7 +113,7 @@ class URL
         return null;
     }
 
-    public function html(array $class = [], bool $omitPageName = false, string $target = null): string
+    public function html(array $class = [], bool $inPageContext = false, string $target = null): string
     {
         $normalized = clone ($this);
         $normalized->normalize();
@@ -128,7 +128,7 @@ class URL
         if ($target) {
             $target = ' target="' . $target . '"';
         }
-        return "<a href=\"$normalized\"$class$target>" . $normalized->name($omitPageName) . "</a>";
+        return "<a href=\"$normalized\"$class$target>" . $normalized->name($inPageContext) . "</a>";
     }
 
     public function page(): ?Page

@@ -159,11 +159,7 @@ class Users
     }
 
     /**
-     * Get the top result for a given slug/UUID. Will be fastest for UUID and
-     * slug matches, but will run an additional query and search aliases if
-     * UUID or slug matches are not found. A UUID match will take precedence,
-     * followed by the oldest creation date slug match, followed by the oldest
-     * alias match.
+     * Get the top result for a given UUID
      *
      * @param string $uuid
      * @return User|null
@@ -224,7 +220,9 @@ class Users
                     'uuid' => $user->uuid(),
                     'name' => $user->name(),
                     'data' => json_encode($user->get()),
+                    'created' => time(),
                     'created_by' => $user->createdByUUID(),
+                    'updated' => time(),
                     'updated_by' => $user->updatedByUUID()
                 ]
             )
@@ -240,13 +238,13 @@ class Users
                 'uuid = ? AND updated = ?',
                 [
                     $user->uuid(),
-                    $user->updatedLast()->format("Y-m-d H:i:s")
+                    $user->updatedLast()->getTimestamp()
                 ]
             )
             ->set([
                 'name' => $user->name(),
                 'data' => json_encode($user->get()),
-                'updated' => date("Y-m-d H:i:s"),
+                'updated' => time(),
                 'updated_by' => Session::user()
             ])
             ->execute();
@@ -280,9 +278,9 @@ class Users
             [
                 'uuid' => $result['uuid'],
                 'name' => $result['name'],
-                'created' => new DateTime($result['created']),
+                'created' => (new DateTime)->setTimestamp($result['created']),
                 'created_by' => $result['created_by'],
-                'updated' => new DateTime($result['updated']),
+                'updated' => (new DateTime)->setTimestamp($result['updated']),
                 'updated_by' => $result['updated_by'],
             ]
         );

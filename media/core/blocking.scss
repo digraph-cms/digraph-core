@@ -10,6 +10,12 @@ body {
     color: $body-fg;
 }
 
+img {
+    max-width: 100%;
+    height: auto;
+    box-sizing: border-box;
+}
+
 @media screen and (prefers-color-scheme: dark) {
     body {
         background-color: $dark-body-bg;
@@ -21,3 +27,4 @@ body {
 @import 'blocking/ui.scss';
 @import 'blocking/action-menu.scss';
 @import 'blocking/data-tables.scss';
+@import 'blocking/media-containers.scss';

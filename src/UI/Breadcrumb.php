@@ -4,6 +4,7 @@ namespace DigraphCMS\UI;
 
 use DigraphCMS\Cache\UserCacheNamespace;
 use DigraphCMS\Config;
+use DigraphCMS\Content\Pages;
 use DigraphCMS\Context;
 use DigraphCMS\URL\URL;
 
@@ -23,10 +24,10 @@ class Breadcrumb
                 if (count($breadcrumb) >= Config::get('ui.breadcrumb.min_length')) {
                     echo "<section class='breadcrumb'><h1>Breadcrumb</h1><ul>";
                     foreach ($breadcrumb as $url) {
-                        echo "<li>" . $url->html() . "</li>";
+                        echo "<li>" . $url->html([], true) . "</li>";
                     }
                     if (Config::get('ui.breadcrumb.include_current')) {
-                        echo "<li class='breadcrumb-current'>" . static::top()->html(['breadcrumb-current']) . "</li>";
+                        echo "<li class='breadcrumb-current'>" . static::top()->html(['breadcrumb-current'], true) . "</li>";
                     }
                     echo "</ul></section>";
                 }
@@ -102,6 +103,14 @@ class Breadcrumb
     {
         $breadcrumb = static::parents();
         static::helper($breadcrumb);
+        // check if [0] and [1] are home and the home page's UUID url
+        if (@$breadcrumb[0] && @$breadcrumb[1] && Pages::get('home')) {
+            if ($breadcrumb[0] . '' == new URL('/') . '') {
+                if ($breadcrumb[1] . '' == Pages::get('home')->url(null, null, true) . '') {
+                    unset($breadcrumb[1]);
+                }
+            }
+        }
         return array_filter(
             $breadcrumb,
             function (URL $url) {

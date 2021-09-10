@@ -13,12 +13,12 @@ class Pages
     protected static $cache = [];
 
     /**
-     * Retrieve all the alternate slugs for a given page UUID
+     * Retrieve all the slugs for a given page UUID
      *
      * @param string $uuid
      * @return array
      */
-    public static function alternateSlugs(string $uuid): array
+    public static function slugs(string $uuid): array
     {
         return array_map(
             function ($e) {
@@ -145,17 +145,19 @@ class Pages
     }
 
     /**
-     * Determine whether a slug already exists (also searches UUIDs, because
-     * they are implicitly slugs)
+     * Determine whether a slug already exists, also searches by UUID because
+     * those are kind of implicitly slugs
      *
      * @param string $uuid_or_slug
      * @return boolean
      */
     public static function slugExists(string $uuid_or_slug): bool
     {
-        $query = DB::query()->from('page')
-            ->where('page_uuid = :q OR page_slug = :q', [':q' => $uuid_or_slug]);
-        return !!$query->count();
+        $uuids = DB::query()->from('page')
+            ->where('uuid = ?', [$uuid_or_slug]);
+        $slugs = DB::query()->from('page_slug')
+            ->where('url = ?', [$uuid_or_slug]);
+        return !!$uuids->count() && !!$slugs->count();
     }
 
     /**
@@ -171,8 +173,7 @@ class Pages
     {
         // get best-case scenarios by uuid or primary slug
         $main = static::select()
-            ->where('uuid = :q OR slug = :q', [':q' => $uuid_or_slug])
-            ->order('CASE WHEN :q = uuid THEN 0 ELSE 1 END ASC, created ASC')
+            ->where('uuid = ?', [$uuid_or_slug])
             ->fetchAll();
         // search in alternate slugs as well
         $alts = DB::query()->from('page_slug')
@@ -198,8 +199,7 @@ class Pages
     {
         // get best-case scenarios by uuid or primary slug
         $main = static::select()
-            ->where('uuid = :q OR slug = :q', [':q' => $uuid_or_slug])
-            ->order('CASE WHEN uuid = :q THEN 0 ELSE 1 END ASC, created ASC')
+            ->where('uuid = ?', [$uuid_or_slug])
             ->count();
         // search in alternate slugs as well
         $alts = DB::query()->from('page_slug')
@@ -232,8 +232,8 @@ class Pages
     protected static function doGet(string $uuid_or_slug): ?Page
     {
         $result = DB::query()->from('page')
-            ->where('uuid = :q OR slug = :q', [':q' => $uuid_or_slug])
-            ->order('CASE WHEN uuid = :q THEN 0 ELSE 1 END ASC, created ASC')
+            ->where('uuid = ?', [$uuid_or_slug])
+            ->order('created ASC')
             ->limit(1)
             ->execute();
         if ($result && $result = $result->fetch()) {
@@ -286,10 +286,6 @@ class Pages
     public static function update(Page $page)
     {
         DB::beginTransaction();
-        // insert old slug into slugs if slug is updated
-        if ($page->previousSlug()) {
-            static::insertSlug($page->uuid(), $page->previousSlug());
-        }
         // update values
         DB::query()
             ->update('page')
@@ -297,15 +293,14 @@ class Pages
                 'uuid = ? AND updated = ?',
                 [
                     $page->uuid(),
-                    $page->updatedLast()->format("Y-m-d H:i:s")
+                    $page->updatedLast()->getTimestamp()
                 ]
             )
             ->set([
-                'slug' => $page->slug(),
                 'name' => $page->name(),
                 'data' => json_encode($page->get()),
                 'class' => $page->class(),
-                'updated' => date("Y-m-d H:i:s"),
+                'updated' => time(),
                 'updated_by' => Session::user()
             ])
             ->execute();
@@ -320,12 +315,13 @@ class Pages
                 'page',
                 [
                     'uuid' => $page->uuid(),
-                    'slug' => $page->slug(),
                     'name' => $page->name(),
                     'data' => json_encode($page->get()),
                     'class' => $page->class(),
-                    'created_by' => $page->createdByUUID(),
-                    'updated_by' => $page->updatedByUUID() ?? PDO::nul,
+                    'created' => time(),
+                    'created_by' => $page->createdByUUID() ?? Session::user(),
+                    'updated' => time(),
+                    'updated_by' => $page->updatedByUUID() ?? Session::user(),
                 ]
             )
             ->execute();
@@ -339,7 +335,7 @@ class Pages
             ->delete('page_link')
             ->where('start_page = :uuid OR end_page = :uuid', ['uuid' => $page->uuid()])
             ->execute();
-        // delete alternate slugs
+        // delete slugs
         DB::query()
             ->delete('page_slug')
             ->where('page_uuid = ?', [$page->uuid()])
@@ -399,11 +395,10 @@ class Pages
             $data,
             [
                 'uuid' => $result['uuid'],
-                'slug' => $result['slug'],
                 'name' => $result['name'],
-                'created' => new DateTime($result['created']),
+                'created' => (new DateTime)->setTimestamp($result['created']),
                 'created_by' => $result['created_by'],
-                'updated' => new DateTime($result['updated']),
+                'updated' => (new DateTime)->setTimestamp($result['updated']),
                 'updated_by' => $result['updated_by'],
             ]
         );

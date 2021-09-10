@@ -1,0 +1,88 @@
+@import '/mixins/core.scss';
+
+.media-container {
+    margin: $grid-unit 0;
+    position: relative;
+    max-width: 100%;
+
+    &.stretched {
+        max-width: 100% !important;
+        width: 100% !important;
+
+        .media-wrapper,
+        .media-wrapper-maxwidth {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        img {
+            width: auto !important;
+            max-width: 100%;
+        }
+    }
+
+    &.withBackground {
+        background-color: $color-accent;
+        color: contrast-color($color-accent);
+        padding: $grid-unit;
+
+        .media-credit,
+        .media-caption,
+        .media-extra {
+            background: transparent;
+        }
+    }
+
+    &.withBorder {
+        border: $grid-unit/2 solid $color-accent;
+    }
+
+    .media-wrapper {
+        position: relative;
+
+        .media-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+    }
+
+    .media-credit,
+    .media-caption,
+    .media-extra {
+        background: rgba($color-neutral, 0.15);
+        padding: $grid-unit/2;
+    }
+
+    .media-credit {
+        padding-top: 0;
+        text-align: right;
+        font-size: x-small;
+    }
+
+    .media-credit+.media-caption {
+        padding-top: 0;
+    }
+
+    &.fluid-height {
+        >.media-wrapper {
+            >.media-content {
+                position: relative;
+            }
+        }
+    }
+
+    &.media-error {
+        .media-wrapper {
+            .media-content {
+                padding: $grid-unit;
+            }
+        }
+    }
+
+    .media-container {
+        margin: 0;
+    }
+}

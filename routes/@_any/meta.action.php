@@ -13,14 +13,14 @@ $page = Context::page();
     <tr>
         <th>Created</th>
         <td>
-            <?php echo Format::datetime($page->created()->format('Y-m-d H:i:s')); ?>
+            <?php echo Format::datetime($page->created()); ?>
             by <?php echo $page->createdBy(); ?>
         </td>
     </tr>
     <tr>
         <th>Last modified</th>
         <td>
-            <?php echo Format::datetime($page->updated()->format('Y-m-d H:i:s')); ?>
+            <?php echo Format::datetime($page->updated()); ?>
             by <?php echo $page->updatedBy(); ?>
         </td>
     </tr>
@@ -43,14 +43,8 @@ $page = Context::page();
         <th>URLs</th>
         <td>
             <ul>
-                <li><strong>
-                        <a href="<?php echo $page->url('', [], false); ?>">
-                            <?php echo $page->slug(); ?>
-                        </a>
-                        (primary)
-                    </strong></li>
                 <?php
-                foreach (Pages::alternateSlugs($page->uuid()) as $slug) {
+                foreach (Pages::slugs($page->uuid()) as $slug) {
                     $url = new URL("/$slug/");
                     echo "<li><a href='$url'>$slug</a></li>";
                 }

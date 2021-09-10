@@ -18,6 +18,7 @@ use DigraphCMS\UI\Theme;
 use DigraphCMS\URL\URL;
 use DigraphCMS\URL\URLs;
 use DigraphCMS\Users\Permissions;
+use Mimey\MimeTypes;
 use Throwable;
 
 // register core event subscriber
@@ -35,7 +36,28 @@ class Digraph
     public static function renderActualRequest(): void
     {
         static::makeResponse(static::actualRequest());
-        Context::response()->render();
+        Context::response()->renderHeaders();
+        header('Content-Type: ' . static::inferMime());
+        header('Content-Disposition: filename="' . static::inferFilename() . '"');
+        Context::response()->renderContent();
+    }
+
+    protected static function inferMime(): string
+    {
+        if (Context::response()->mime()) {
+            return Context::response()->mime();
+        }
+        return (new MimeTypes())->getMimeType(
+            strtolower(pathinfo(static::inferFilename(), PATHINFO_EXTENSION))
+        ) ?? 'text/html';
+    }
+
+    protected static function inferFilename(): string
+    {
+        if (Context::response()->filename()) {
+            return Context::response()->filename();
+        }
+        return Context::url()->file() ?? 'index.html';
     }
 
     /**
@@ -159,7 +181,7 @@ class Digraph
                 static::buildResponseContent();
             }
             // wrap with template (HTML only)
-            if (Context::response()->mime() == 'text/html') {
+            if (static::inferMime() == 'text/html') {
                 Templates::wrapResponse(Context::response());
             }
         } catch (Throwable $th) {
@@ -263,6 +285,7 @@ class Digraph
     {
         Context::data('error_message', $message);
         Context::response()->status(floor($status));
+        Context::response()->filename(floor($status) . '.html');
         $built =
             static::doStaticRoute('error', $status) ??
             static::doStaticRoute('error', round($status)) ??

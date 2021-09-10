@@ -17,8 +17,8 @@ final class Authentication
         $this->user = Users::user($row['user_uuid']);
         $this->comment = $row['comment'];
         $this->secret = $row['secret'];
-        $this->created = new DateTime($row['created']);
-        $this->expires = new DateTime($row['created']);
+        $this->created = (new DateTime)->setTimestamp((int)$row['created']);
+        $this->expires = (new DateTime)->setTimestamp((int)$row['expires']);
         $this->ip = $row['ip'];
         $this->ua = $row['ua'];
     }

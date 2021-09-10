@@ -3,14 +3,12 @@
 namespace DigraphCMS\UI;
 
 use DigraphCMS\Config;
-use DigraphCMS\Context;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\Media\CSS;
 use DigraphCMS\Media\DeferredFile;
 use DigraphCMS\Media\File;
 use DigraphCMS\Media\Media;
 use DigraphCMS\URL\URL;
-use DigraphCMS\URL\URLs;
 
 Theme::resetTheme();
 Theme::resetPage();
@@ -101,6 +99,7 @@ class Theme
     protected static $blockingPageJs = [];
     protected static $asyncThemeJs = [];
     protected static $asyncPageJs = [];
+    protected static $inlinePageJs = [];
 
     public static function cssVars(): array
     {
@@ -214,6 +213,11 @@ class Theme
         static::$asyncPageJs[] = $url_or_file;
     }
 
+    public static function addInlinePageJs($string_or_file)
+    {
+        static::$inlinePageJs[] = $string_or_file;
+    }
+
     /**
      * @param File[]|string[] $urls_or_files
      * @param boolean $async
@@ -240,6 +244,22 @@ class Theme
                 echo " async";
             }
             echo "></script>" . PHP_EOL;
+        }
+    }
+
+    /**
+     * @param File[]|string[] $strings_or_files
+     * @return void
+     */
+    protected static function renderInlineJs(array $strings_or_files)
+    {
+        foreach ($strings_or_files as $string_or_file) {
+            if ($string_or_file instanceof File) {
+                $string_or_file = $string_or_file->content();
+            }
+            echo "<script>";
+            echo $string_or_file;
+            echo "</script>" . PHP_EOL;
         }
     }
 
@@ -289,7 +309,7 @@ class Theme
                     $url = preg_replace('@\.css$@', '.scss', $url);
                     $scss .= "@import \"" . $url . "\";";
                 }
-                $file = new DeferredFile($name.'_' . $media . '.css', function (DeferredFile $file) use ($scss) {
+                $file = new DeferredFile($name . '_' . $media . '.css', function (DeferredFile $file) use ($scss) {
                     file_put_contents($file->path(), CSS::scss($scss));
                 }, [$urls]);
                 $file->write();
@@ -333,8 +353,8 @@ class Theme
         ob_start();
         // render css
         static::renderBlockingCss();
-        static::renderInternalCss('theme',static::$internalThemeCss);
-        static::renderInternalCss('page',static::$internalPageCss);
+        static::renderInternalCss('theme', static::$internalThemeCss);
+        static::renderInternalCss('page', static::$internalPageCss);
         // render core js
         if (static::$blockingThemeJs || static::$blockingPageJs || static::$asyncThemeJs || static::$asyncPageJs) {
             static::renderCoreJs();
@@ -344,6 +364,7 @@ class Theme
         static::renderJs(static::$blockingPageJs, false);
         static::renderJs(static::$asyncThemeJs, true);
         static::renderJs(static::$asyncPageJs, true);
+        static::renderInlineJs(static::$inlinePageJs);
         return ob_get_clean();
     }
 }

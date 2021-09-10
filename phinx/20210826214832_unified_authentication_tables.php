@@ -14,7 +14,7 @@ final class UnifiedAuthenticationTables extends AbstractMigration
             ->addColumn('source', 'string', ['length' => 100])
             ->addColumn('provider', 'string', ['length' => 100])
             ->addColumn('provider_id', 'string', ['length' => 250])
-            ->addColumn('created', 'timestamp', ['default' => 'CURRENT_TIMESTAMP', 'timezone' => true])
+            ->addColumn('created', 'integer')
             ->addIndex(['user_uuid'])
             ->addIndex(['source'])
             ->addIndex(['provider'])

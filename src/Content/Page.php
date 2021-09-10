@@ -4,8 +4,8 @@ namespace DigraphCMS\Content;
 
 use ArrayAccess;
 use DateTime;
+use DigraphCMS\DB\DB;
 use DigraphCMS\Digraph;
-use DigraphCMS\Session\Session;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\User;
@@ -19,7 +19,8 @@ class Page implements ArrayAccess
         unset as protected rawUnset;
     }
 
-    protected $uuid, $slug, $previousSlug, $name;
+    protected $uuid, $name;
+    protected $slug = false;
     protected $created, $created_by;
     protected $updated, $updated_by;
     protected $slugCollisions;
@@ -34,15 +35,11 @@ class Page implements ArrayAccess
         $this->uuid = @$metadata['uuid'] ?? Digraph::uuid();
         $this->name = @$metadata['name'] ?? 'Untitled';
         $this->created = @$metadata['created'] ?? new DateTime();
-        $this->created_by = @$metadata['created_by'] ?? Session::user();
+        $this->created_by = @$metadata['created_by'];
         $this->updated = @$metadata['updated'] ?? new DateTime();
         $this->updated_last = clone $this->updated;
-        $this->updated_by = @$metadata['updated_by'] ?? Session::user();
+        $this->updated_by = @$metadata['updated_by'];
         $this->rawSet(null, $data);
-        $this->slug = @$metadata['slug'] ?? substr($this->uuid(), 0, 8);
-        if (!Pages::validateSlug($this->slug)) {
-            throw new \Exception("Slug " . $this->slug . " is not valid");
-        }
         $this->changed = false;
     }
 
@@ -105,13 +102,13 @@ class Page implements ArrayAccess
                     $this->slug = $slug .= '-' . bin2hex(random_bytes(4));
                 }
             }
+            // insert slug into database
+            Pages::insertSlug($this->uuid, $this->slug);
         }
-        return $this->slug;
-    }
-
-    public function previousSlug(): ?string
-    {
-        return $this->previousSlug;
+        if ($this->slug === false) {
+            $this->slug = @DB::query()->from('page_slug')->where('page_uuid = ?', [$this->uuid()])->fetch()['url'];
+        }
+        return $this->slug ?? $this->uuid;
     }
 
     public function name(string $name = null, bool $unfiltered = false): string

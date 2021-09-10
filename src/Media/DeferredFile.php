@@ -25,6 +25,10 @@ class DeferredFile extends File
 
     public function write()
     {
+        if ($this->written) {
+            return;
+        }
+        $this->written = true;
         // if output file already exists and files.ttl config exists, don't
         // write file again if its age is less than files.ttl
         if (is_file($this->path()) && Config::get('files.ttl')) {
@@ -34,7 +38,7 @@ class DeferredFile extends File
         }
         // create directory and call callback
         FS::mkdir(dirname($this->path()));
-        call_user_func($this->content,$this);
+        call_user_func($this->content, $this);
     }
 
     public function content(): string

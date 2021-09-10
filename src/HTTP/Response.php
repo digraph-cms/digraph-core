@@ -7,7 +7,6 @@ use DigraphCMS\Content\Page;
 use DigraphCMS\Context;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\Session\Session;
-use DigraphCMS\URL\URL;
 
 class Response
 {
@@ -19,7 +18,8 @@ class Response
     protected $cacheTTL = null;
     protected $private = null;
     protected $template = null;
-    protected $mime = 'text/html';
+    protected $filename = null;
+    protected $mime = null;
 
     public function __construct(int $status = null)
     {
@@ -27,12 +27,20 @@ class Response
         $this->headers = new ResponseHeaders();
     }
 
-    public function mime(string $mime = null): string
+    public function mime(string $mime = null): ?string
     {
         if ($mime !== null) {
             $this->mime = $mime;
         }
         return $this->mime;
+    }
+
+    public function filename(string $filename = null): ?string
+    {
+        if ($filename !== null) {
+            $this->filename = $filename;
+        }
+        return $this->filename;
     }
 
     public function template(string $template = null): string
@@ -156,19 +164,12 @@ class Response
         return $this->content;
     }
 
-    public function render()
-    {
-        $this->renderHeaders();
-        $this->renderContent();
-    }
-
     public function renderHeaders()
     {
         // render normal header
         foreach ($this->headers()->toArray() as $key => $value) {
             header("$key: $value");
         }
-        header('Content-Type: ' . $this->mime());
         header('Cache-Control: ' . $this->cacheControlHeader());
         if ($this->private()) {
             header('Pragma: no-cache');

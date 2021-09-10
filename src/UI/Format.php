@@ -46,7 +46,10 @@ class Format
 
     public static function parseDate($date): DateTime
     {
-        if (is_int($date) || preg_match('/^[0-9]+$/', $date)) {
+        if ($date instanceof DateTime) {
+            $date->setTimezone(static::timezone());
+            return $date;
+        } elseif (is_int($date) || preg_match('/^[0-9]+$/', $date)) {
             $dt = new DateTime('now', static::timezone());
             $dt->setTimestamp(intval($date));
             return $dt;

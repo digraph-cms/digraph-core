@@ -7,7 +7,7 @@ use DigraphCMS\FS;
 
 class File
 {
-    protected $filename, $extension, $content, $identifier;
+    protected $filename, $extension, $content, $identifier, $written, $src;
 
     public function __construct(string $filename, string $content, $identifier = null)
     {
@@ -21,6 +21,11 @@ class File
         // take in content/identifier
         $this->content = $content;
         $this->identifier = $identifier ? md5(serialize($identifier)) : md5($content);
+    }
+
+    public function image(): ?ImageFile
+    {
+        return null;
     }
 
     public function filename(): string
@@ -45,11 +50,16 @@ class File
 
     public function url(): string
     {
+        $this->write();
         return Media::fileUrl($this);
     }
 
     public function write()
     {
+        if ($this->written) {
+            return;
+        }
+        $this->written = true;
         // if output file already exists and files.ttl config exists, don't
         // write file again if its age is less than files.ttl
         if (is_file($this->path()) && Config::get('files.ttl')) {
