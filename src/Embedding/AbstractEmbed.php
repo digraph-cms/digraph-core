@@ -82,7 +82,7 @@ abstract class AbstractEmbed
         }
         foreach ($this->additionalClasses as $class) {
             $embed->addClass($class);
-            if ($class == 'withBackground') {
+            if ($class == 'withBackground' || $class == 'stretched') {
                 $css['embed']['background-color'] = $this->color();
             }
         }

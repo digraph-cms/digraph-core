@@ -35,8 +35,7 @@
             width: 100% !important;
         }
 
-        .media-wrapper,
-        .media-wrapper-maxwidth {
+        .media-wrapper {
             margin-left: auto;
             margin-right: auto;
         }
@@ -69,6 +68,11 @@
     .media-container {
         position: relative;
         max-width: 100%;
+
+        .media-wrapper-maxwidth {
+            margin-left: auto;
+            margin-right: auto;
+        }
 
         .media-wrapper {
             position: relative;

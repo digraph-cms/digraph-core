@@ -3,17 +3,18 @@
 namespace DigraphCMS\Embedding;
 
 use ColorThief\ColorThief;
-use DigraphCMS\Cache\Cache;
+use DigraphCMS\Cache\CacheNamespace;
 use DigraphCMS\Media\ImageFile;
 use HtmlObjectStrings\GenericTag;
 
 class ImageEmbed extends AbstractEmbed
 {
-    protected $image, $hash, $height, $width, $aspectRatio;
+    protected $image, $hash, $height, $width, $aspectRatio, $cache;
 
     public function __construct(ImageFile $image)
     {
         $this->image = $image;
+        $this->cache = new CacheNamespace('image-embed');
     }
 
     public function srcHash(): string
@@ -23,7 +24,7 @@ class ImageEmbed extends AbstractEmbed
 
     public function color(): ?string
     {
-        return Cache::get(
+        return $this->cache->get(
             md5('colorthief.' . $this->image->src()),
             function () {
                 $color = ColorThief::getColor($this->image->src());
@@ -53,7 +54,7 @@ class ImageEmbed extends AbstractEmbed
 
     protected function html(): string
     {
-        return Cache::get(
+        return $this->cache->get(
             md5(serialize([
                 $this->image->src(),
                 $this->additionalClasses
