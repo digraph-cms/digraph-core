@@ -109,7 +109,7 @@ class OpCache extends AbstractCacheDriver
         // save into external cache if ttl is > 0
         // this means TTLs of 0 can be safely used like a fast ephemeral cache
         if ($ttl > 0) {
-            $value = VarExporter::export($value);
+            $value = VarExporter::export($value, VarExporter::CLOSURE_SNAPSHOT_USES);
             // save into file and compile opcache
             $filename = $this->filename($name);
             FS::mkdir(dirname($filename));

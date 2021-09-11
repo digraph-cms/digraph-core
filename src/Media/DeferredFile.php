@@ -43,6 +43,7 @@ class DeferredFile extends File
 
     public function content(): string
     {
+        $this->write();
         return file_get_contents($this->path());
     }
 }

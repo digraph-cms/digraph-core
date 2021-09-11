@@ -2,6 +2,7 @@
 
 namespace DigraphCMS\Media;
 
+use DigraphCMS\Cache\Cache;
 use DigraphCMS\Config;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\URL\URL;
@@ -53,19 +54,24 @@ class Media
 
     public static function get(string $path): ?File
     {
-        $path = static::prefixContext($path);
-        $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
-        URLs::beginContext(new URL($path));
-        $file = Dispatcher::firstValue("onGetMedia_$extension", [$path]) ??
-            Dispatcher::firstValue("onGetMedia", [$path]) ??
-            static::doGet($path);
-        if ($file) {
-            Dispatcher::dispatchEvent("onFileReady_" . $file->extension(), [$file]);
-            Dispatcher::dispatchEvent("onFileReady", [$file]);
-            $file->write();
-        }
-        URLs::endContext();
-        return $file;
+        return Cache::get(
+            'media/' . md5($path),
+            function () use ($path) {
+                $path = static::prefixContext($path);
+                $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+                URLs::beginContext(new URL($path));
+                $file = Dispatcher::firstValue("onGetMedia_$extension", [$path]) ??
+                    Dispatcher::firstValue("onGetMedia", [$path]) ??
+                    static::doGet($path);
+                if ($file) {
+                    Dispatcher::dispatchEvent("onFileReady_" . $file->extension(), [$file]);
+                    Dispatcher::dispatchEvent("onFileReady", [$file]);
+                }
+                URLs::endContext();
+                return $file;
+            },
+            Config::get('files.ttl')
+        );
     }
 
     public static function onGetMedia_js(string $path): ?File

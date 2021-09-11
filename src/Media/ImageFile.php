@@ -2,6 +2,7 @@
 
 namespace DigraphCMS\Media;
 
+use DigraphCMS\Cache\CacheNamespace;
 use DigraphCMS\Config;
 use DigraphCMS\FS;
 use Mimey\MimeTypes;
@@ -10,7 +11,7 @@ use Spatie\Image\Manipulations;
 
 class ImageFile extends DeferredFile
 {
-    protected $src, $image, $manipulations;
+    protected $src, $image, $manipulations, $cache;
 
     /**
      * This is the default fitting method. The image will be resized to be 
@@ -102,6 +103,7 @@ class ImageFile extends DeferredFile
                 ->save($this->path());
         };
         $this->filename = $filename;
+        $this->cache = new CacheNamespace('image-file');
     }
 
     public function src(): string
@@ -189,16 +191,28 @@ class ImageFile extends DeferredFile
 
     public function getWidth(): int
     {
-        return $this->image
-            ->manipulate($this->manipulations)
-            ->getWidth();
+        return $this->cache->get(
+            'width/' . $this->identifier(),
+            function () {
+                return $this->image
+                    ->manipulate($this->manipulations)
+                    ->getWidth();
+            },
+            $this->ttl()
+        );
     }
 
     public function getHeight(): int
     {
-        return $this->image
-            ->manipulate($this->manipulations)
-            ->getHeight();
+        return $this->cache->get(
+            'height/' . $this->identifier(),
+            function () {
+                return $this->image
+                    ->manipulate($this->manipulations)
+                    ->getHeight();
+            },
+            $this->ttl()
+        );
     }
 
     /**
