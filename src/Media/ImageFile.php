@@ -104,6 +104,11 @@ class ImageFile extends DeferredFile
         $this->filename = $filename;
     }
 
+    public function src(): string
+    {
+        return $this->src;
+    }
+
     public function ttl(): int
     {
         return Config::get('images.ttl') ?? 3600;

@@ -2,12 +2,14 @@
 
 namespace DigraphCMS\Embedding;
 
+use ColorThief\ColorThief;
+use DigraphCMS\Cache\Cache;
 use DigraphCMS\Media\ImageFile;
 use HtmlObjectStrings\GenericTag;
 
 class ImageEmbed extends AbstractEmbed
 {
-    protected $image, $color, $hash, $height, $width, $aspectRatio;
+    protected $image, $hash, $height, $width, $aspectRatio;
 
     public function __construct(ImageFile $image)
     {
@@ -21,17 +23,14 @@ class ImageEmbed extends AbstractEmbed
 
     public function color(): ?string
     {
-        if (!$this->color) {
-            $image = $this->image->clone()->crop(ImageFile::CROP_CENTER, 1, 1);
-            $image->write();
-            $im = imagecreatefromstring(file_get_contents($image->path()));
-            $rgb = imagecolorat($im, 0, 0);
-            $r = ($rgb >> 16) & 0xFF;
-            $g = ($rgb >> 8) & 0xFF;
-            $b = $rgb & 0xFF;
-            $this->color = "rgb($r,$g,$b)";
-        }
-        return $this->color;
+        return Cache::get(
+            md5('colorthief.' . $this->image->src()),
+            function () {
+                $color = ColorThief::getColor($this->image->src());
+                return "rgb(" . implode(',', $color) . ")";
+            },
+            $this->image->ttl()
+        );
     }
 
     public function height(): ?int
@@ -54,26 +53,35 @@ class ImageEmbed extends AbstractEmbed
 
     protected function html(): string
     {
-        //generate srcset
-        $width = $this->width();
-        $srcset = [];
-        while ($width >= 200) {
-            $image = $this->image->clone()->width($width);
-            $srcset[] = $image->url() . ' ' . $width . 'w';
-            $width -= 100;
-        }
-        //build img tag
-        $img = new GenericTag();
-        $img->tag = 'img';
-        $img->selfClosing = true;
-        $img->attr('src', $this->image->url());
-        $img->attr('style', 'width:100%;height:auto;');
-        $img->attr('srcset', implode(',', $srcset));
-        $img->attr('loading', 'lazy');
-        if ($this->alt) {
-            $img->attr('alt', $this->alt);
-        }
-        return $img->string();
+        return Cache::get(
+            md5(serialize([
+                $this->image->src(),
+                $this->additionalClasses
+            ])),
+            function () {
+                //generate srcset
+                $width = $this->width();
+                $srcset = [];
+                while ($width >= 200) {
+                    $image = $this->image->clone()->width($width);
+                    $srcset[] = $image->url() . ' ' . $width . 'w';
+                    $width -= 100;
+                }
+                //build img tag
+                $img = new GenericTag();
+                $img->tag = 'img';
+                $img->selfClosing = true;
+                $img->attr('src', $this->image->url());
+                $img->attr('style', 'width:100%;height:auto;');
+                $img->attr('srcset', implode(',', $srcset));
+                $img->attr('loading', 'lazy');
+                if ($this->alt) {
+                    $img->attr('alt', $this->alt);
+                }
+                return $img->string();
+            },
+            $this->image->ttl()
+        );
     }
 
     public function classes(): array

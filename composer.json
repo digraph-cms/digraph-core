@@ -21,7 +21,8 @@
         "donatj/phpuseragentparser": "^1.4",
         "tedivm/jshrink": "^1.4",
         "ralouphie/mimey": "^1.0",
-        "spatie/image": "^2.1"
+        "spatie/image": "^2.1",
+        "ksubileau/color-thief-php": "^1.4"
     },
     "suggest": {
         "league/oauth2-github": "Needed to support OAuth sign-ins using GitHub",
