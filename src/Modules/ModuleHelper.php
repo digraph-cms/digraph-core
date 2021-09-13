@@ -51,7 +51,7 @@ class ModuleHelper extends AbstractHelper
     public function loadModule($module, array $config = [], bool $noAutoloader = false)
     {
         $this->cms->log('ModuleManager: loading ' . $module);
-        $config = new Config();
+        $config = new Config($config);
         $config->readFile($module);
         $config->merge([
             'module.name' => basename(dirname($module)),
