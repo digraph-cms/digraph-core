@@ -64,11 +64,11 @@ class Filestore
     /**
      * Generate a FileSelect object for building queries to the file table
      *
-     * @return FileSelect
+     * @return FilestoreSelect
      */
-    public static function select(): FileSelect
+    public static function select(): FilestoreSelect
     {
-        return new FileSelect(
+        return new FilestoreSelect(
             DB::query()->from('filestore')
         );
     }

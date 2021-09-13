@@ -4,9 +4,9 @@ namespace DigraphCMS\Content;
 
 use DigraphCMS\DB\AbstractMappedSelect;
 
-class FileSelect extends AbstractMappedSelect
+class FilestoreSelect extends AbstractMappedSelect
 {
-    protected function doRowToObject(array $row): object
+    protected function doRowToObject(array $row)
     {
         return Filestore::resultToFile($row);
     }

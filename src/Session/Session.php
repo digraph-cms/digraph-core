@@ -27,7 +27,7 @@ final class Session
                     [$cookie['id'], $cookie['secret'], static::$now]
                 )
                 ->where(
-                    'NOT EXISTS (SELECT 1 FROM session_expiration WHERE session_expiration.session_id = session.id)',
+                    'NOT EXISTS (SELECT 1 FROM session_expiration WHERE session_expiration.session_id = session.id)'
                 )
                 ->fetch();
             if ($row) {

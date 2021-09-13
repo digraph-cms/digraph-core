@@ -71,6 +71,8 @@ class Users
             ->where('uuid = ?', [$uuid]);
         if ($group = $query->fetch()) {
             return new Group($group['uuid'], $group['name']);
+        }else {
+            return null;
         }
     }
 

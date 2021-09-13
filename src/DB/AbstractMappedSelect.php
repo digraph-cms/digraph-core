@@ -15,9 +15,9 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
     protected $query, $iterator;
     protected $returnDataObjects = true;
 
-    abstract protected function doRowToObject(array $row): Object;
+    abstract protected function doRowToObject(array $row);
 
-    protected function rowToObject($row): ?Object
+    protected function rowToObject($row)
     {
         return is_array($row) ? $this->doRowToObject($row) : null;
     }
