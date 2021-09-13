@@ -1,5 +1,6 @@
 <?php
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
+
 namespace Digraph\Modules;
 
 use Destructr\DriverFactory;
@@ -40,17 +41,17 @@ class ModuleHelper extends AbstractHelper
         $this->loadModule($module->getYAMLPath(), $module->getConfig());
     }
 
-    public function loadModuleDirectory($path, bool $noAutoloader=false)
+    public function loadModuleDirectory($path, bool $noAutoloader = false)
     {
-        foreach (glob($path.'/*/module.yaml') as $module) {
+        foreach (glob($path . '/*/module.{yaml,json}', GLOB_BRACE) as $module) {
             $this->loadModule($module, [], $noAutoloader);
         }
     }
 
-    public function loadModule($module, array $config=[], bool $noAutoloader=false)
+    public function loadModule($module, array $config = [], bool $noAutoloader = false)
     {
-        $this->cms->log('ModuleManager: loading '.$module);
-        $config = new Config($config);
+        $this->cms->log('ModuleManager: loading ' . $module);
+        $config = new Config();
         $config->readFile($module);
         $config->merge([
             'module.name' => basename(dirname($module)),
@@ -65,25 +66,25 @@ class ModuleHelper extends AbstractHelper
         // in config, this is done by loading a module directory with
         // the prefix "composer-dir" instead of "dir"
         if (!$noAutoloader) {
-            if (is_dir($config['module.path'].'/src')) {
-                $this->cms->log('autoloader: '.$config['module.namespace'].': '.$config['module.path'].'/src');
+            if (is_dir($config['module.path'] . '/src')) {
+                $this->cms->log('autoloader: ' . $config['module.namespace'] . ': ' . $config['module.path'] . '/src');
                 $this->autoloader->addNamespace(
                     $config['module.namespace'],
-                    $config['module.path'].'/src'
+                    $config['module.path'] . '/src'
                 );
             }
         }
         // routes: add to routes config
-        if (is_dir($config['module.path'].'/routes')) {
-            $config['routing.paths.'.$config['module.name']] = $config['module.path'].'/routes';
+        if (is_dir($config['module.path'] . '/routes')) {
+            $config['routing.paths.' . $config['module.name']] = $config['module.path'] . '/routes';
         }
         // templates: add to templates config
-        if (is_dir($config['module.path'].'/templates')) {
-            $config['templates.paths.'.$config['module.name']] = $config['module.path'].'/templates';
+        if (is_dir($config['module.path'] . '/templates')) {
+            $config['templates.paths.' . $config['module.name']] = $config['module.path'] . '/templates';
         }
         // media: add to media config
-        if (is_dir($config['module.path'].'/media')) {
-            $config['media.paths.'.$config['module.name']] = $config['module.path'].'/media';
+        if (is_dir($config['module.path'] . '/media')) {
+            $config['media.paths.' . $config['module.name']] = $config['module.path'] . '/media';
         }
         /*
         Set up sqlite factories using options in module.sqlite
@@ -98,8 +99,8 @@ class ModuleHelper extends AbstractHelper
                         continue;
                     }
                     //instantiate this driver
-                    $path = $this->cms->config['paths.storage'].'/'.$name.'.sqlite';
-                    $driver = DriverFactory::factory('sqlite:'.$path);
+                    $path = $this->cms->config['paths.storage'] . '/' . $name . '.sqlite';
+                    $driver = DriverFactory::factory('sqlite:' . $path);
                     $this->cms->driver($name, $driver);
                 }
             }
@@ -112,7 +113,7 @@ class ModuleHelper extends AbstractHelper
                         continue;
                     }
                     //instantiate this factory
-                    $class = $class?$class:DigraphFactory::class;
+                    $class = $class ? $class : DigraphFactory::class;
                     $factory = new $class(
                         $this->cms->driver($driver),
                         $table
