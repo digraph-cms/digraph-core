@@ -79,7 +79,9 @@ class ImageEmbed extends AbstractEmbed
                 if ($this->alt) {
                     $img->attr('alt', $this->alt);
                 }
-                return $img->string();
+                $img = $img->string();
+                $full = $this->image->url();
+                return "<a target='_lightbox' href='$full'>$img</a>";
             },
             $this->image->ttl()
         );

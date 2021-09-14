@@ -4,9 +4,9 @@ namespace DigraphCMS\Session;
 
 use DateInterval;
 use DateTime;
-use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
 use DigraphCMS\URL\URLs;
+use donatj\UserAgent\UserAgentParser;
 
 Session::_init();
 
@@ -60,10 +60,16 @@ final class Session
     protected static function setAuth(Authentication $auth)
     {
         static::$auth = $auth;
+        // check for different IP address
         if ($auth->ip() != $_SERVER['REMOTE_ADDR']) {
-            static::deauthenticate("Access attempted from a different IP address (" . $_SERVER['REMOTE_ADDR'] . ")");
-        } elseif ($auth->ua() != $_SERVER['HTTP_USER_AGENT']) {
-            static::deauthenticate("Access attempted from a different browser (" . $_SERVER['HTTP_USER_AGENT'] . ")");
+            static::deauthenticate("IP address changed (" . $_SERVER['REMOTE_ADDR'] . ")");
+            return;
+        }
+        // check for different user agent
+        $parser = new UserAgentParser();
+        if ($parser->parse($auth->ua()) != $parser->parse($_SERVER['HTTP_USER_AGENT'])) {
+            static::deauthenticate("Browser/OS changed (" . $parser->parse($_SERVER['HTTP_USER_AGENT']) . ")");
+            return;
         }
     }
 

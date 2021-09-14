@@ -74,7 +74,7 @@
     }
   },
   "theme": {
-    "bundle_css": true
+    "bundle_css": false
   },
   "fields": {
     "site": {

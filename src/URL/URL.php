@@ -225,7 +225,7 @@ class URL
         if (substr($route, 0, 1) == '~') {
             $route = substr($route, 1);
         }
-        if ($route == '') {
+        if ($route == '' || $route == '/' || $route == '\\') {
             $route = 'home';
         }
         return $route;

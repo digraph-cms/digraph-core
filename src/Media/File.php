@@ -7,7 +7,7 @@ use DigraphCMS\FS;
 
 class File
 {
-    protected $filename, $extension, $content, $identifier, $written, $src;
+    protected $filename, $extension, $content, $identifier, $written, $src, $url;
 
     public function __construct(string $filename, string $content, $identifier = null)
     {
@@ -51,7 +51,7 @@ class File
     public function url(): string
     {
         $this->write();
-        return Media::fileUrl($this);
+        return $this->url ?? $this->url = Media::fileUrl($this) . '?' . substr(md5(filemtime($this->path())), 0, 4);
     }
 
     public function ttl(): int

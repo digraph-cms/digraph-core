@@ -85,6 +85,29 @@
                 left: 0;
                 right: 0;
                 bottom: 0;
+
+                >a {
+                    &:after {
+                        position: absolute;
+                        top: 0;
+                        right: 0;
+                        background: $color-info;
+                        color: contrast-color($color-info);
+                        line-height: 1.5em;
+                        font-size: 1rem;
+                        width: 1.5em;
+                        opacity: 0;
+                        text-align: center;
+                    }
+
+                    &:hover {
+                        position: inherit;
+
+                        &:after {
+                            opacity: 1;
+                        }
+                    }
+                }
             }
         }
 

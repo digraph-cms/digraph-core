@@ -157,9 +157,9 @@ class Media
     protected static function idPath(File $file): string
     {
         return implode('/', [
-            substr($file->identifier(), 0, 2),
-            substr($file->identifier(), 2, 2),
-            substr($file->identifier(), 4)
+            substr($file->identifier(), 0, 1),
+            substr($file->identifier(), 1, 2),
+            substr($file->identifier(), 3)
         ]);
     }
 }

@@ -10,7 +10,8 @@ use DigraphCMS\Users\Users;
 class CoreEventSubscriber
 {
     /**
-     * Limits access to ~user route to signed-in users only
+     * Limits access to ~user route to signed-in users only, unless user is 
+     * specified in an arg, in which case it limits to that user or admins
      *
      * @param URL $url
      * @param User $user
@@ -18,6 +19,11 @@ class CoreEventSubscriber
      */
     public static function onStaticUrlPermissions_user(URL $url, User $user): ?bool
     {
+        if ($url->arg('user')) {
+            return
+                $url->arg('user') == $user->uuid()
+                || Permissions::inGroup('admins', $user);
+        }
         return Permissions::inGroup('users', $user);
     }
 

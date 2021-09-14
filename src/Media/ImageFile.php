@@ -94,6 +94,7 @@ class ImageFile extends DeferredFile
         $this->src = $src;
         $this->filename = $filename;
         $this->image = new Image($this->src);
+        $this->image->useImageDriver(extension_loaded('imagick') ? 'imagick' : 'gd');
         $this->manipulations = new Manipulations();
         $this->extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
         $this->content = function () {

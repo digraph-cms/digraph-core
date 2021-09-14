@@ -6,6 +6,7 @@
 
 use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
+use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\Session\Session;
 use DigraphCMS\UI\ButtonMenus\SingleButton;
 use DigraphCMS\UI\DataTables\ColumnHeader;
@@ -14,6 +15,11 @@ use DigraphCMS\UI\DataTables\QueryTable;
 use DigraphCMS\UI\Format;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\Users\Users;
+
+$user = Users::get(Context::arg('user') ?? Session::user());
+if (!$user) {
+    throw new HttpError(404, "User not found");
+}
 
 $query = DB::query()
     ->from('user_source')
@@ -64,10 +70,14 @@ $table = new QueryTable(
 echo $table;
 
 echo "<h2>Add sign-in method</h2>";
-echo "<ul class='signin-options'>";
-foreach (Users::allSigninURLs(Context::url()) as $k => $url) {
-    echo "<li class='signin-source type-" . preg_replace('/_.+$/', '', $k) . " $k'>";
-    echo $url->html();
-    echo "</li>";
+if ($user->uuid() == Session::user()) {
+    echo "<ul class='signin-options'>";
+    foreach (Users::allSigninURLs(Context::url()) as $k => $url) {
+        echo "<li class='signin-source type-" . preg_replace('/_.+$/', '', $k) . " $k'>";
+        echo $url->html();
+        echo "</li>";
+    }
+    echo "</ul>";
+} else {
+    Notifications::printNotice('You cannot add new sign-in methods for other users.');
 }
-echo "</ul>";
