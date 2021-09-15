@@ -356,9 +356,7 @@ class Theme
         static::renderInternalCss('theme', static::$internalThemeCss);
         static::renderInternalCss('page', static::$internalPageCss);
         // render core js
-        if (static::$blockingThemeJs || static::$blockingPageJs || static::$asyncThemeJs || static::$asyncPageJs) {
-            static::renderCoreJs();
-        }
+        static::renderCoreJs();
         // render js
         static::renderJs(static::$blockingThemeJs, false);
         static::renderJs(static::$blockingPageJs, false);

@@ -31,7 +31,7 @@ abstract class AbstractPaginatedTable
     public function __toString()
     {
         ob_start();
-        echo "<section class='" . $this->class() . "' id='" . $this->id() . "'>";
+        echo "<div class='navigation-frame " . $this->class() . "' id='" . $this->id() . "'>";
         if ($this->paginator()->count() == 0) {
             Notifications::printNotice('Nothing to display');
         } else {
@@ -55,7 +55,7 @@ abstract class AbstractPaginatedTable
                 echo "<small class='paginator-status'>Displaying $start to $end of $count</small>";
             }
         }
-        echo "</section>";
+        echo "</div>";
         return ob_get_clean();
     }
 

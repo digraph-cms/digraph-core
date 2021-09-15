@@ -205,7 +205,7 @@ class Response
     {
         $staleTTL = $this->staleTTL();
         $output = [
-            $this->private() ? 'no-store' : 'public',
+            $this->private() ? 'private' : 'public',
             'max-age=' . $this->browserTTL(),
             'max-stale=' . $staleTTL,
             'stale-if-error=' . $staleTTL,
