@@ -42,7 +42,7 @@
     .FieldWrapper-required {
         >label {
             &:after {
-                @include icon;
+                @include material-icon;
                 content: "star";
                 display: inline-block;
                 line-height: 1;
@@ -95,7 +95,7 @@
             padding: $grid-unit/2;
 
             &:before {
-                @include icon;
+                @include material-icon;
                 content: 'check_box_outline_blank';
                 display: inline-block;
                 font-size: larger;
@@ -112,7 +112,7 @@
                 color: contrast-color($color-confirmation);
 
                 &:before {
-                    @include icon;
+                    @include material-icon;
                     content: 'check_box';
                 }
             }

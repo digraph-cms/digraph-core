@@ -28,4 +28,9 @@ DigraphEditor = function (textarea) {
             });
         }
     });
+    document.addEventListener('submit', (e) => {
+        this.editor.save().then(output => {
+            this.textarea.value = JSON.stringify(output);
+        });
+    })
 }

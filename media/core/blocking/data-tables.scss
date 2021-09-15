@@ -29,7 +29,7 @@
             }
 
             &:after {
-                @include icon;
+                @include material-icon;
                 font-size: $grid-unit;
                 content: '\ead0';
                 vertical-align: baseline;

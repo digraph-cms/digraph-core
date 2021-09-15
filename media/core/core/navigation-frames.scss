@@ -18,7 +18,7 @@
     }
 
     &:after {
-        @include icon;
+        @include material-icon;
         z-index: 2;
         color: $color-info;
         font-size: 3em;

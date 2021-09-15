@@ -36,7 +36,8 @@
       "header": "\\DigraphCMS\\Editor\\Blocks\\HeaderBlock",
       "list": "\\DigraphCMS\\Editor\\Blocks\\ListBlock",
       "table": "\\DigraphCMS\\Editor\\Blocks\\TableBlock",
-      "image": "\\DigraphCMS\\Editor\\Blocks\\ImageBlock"
+      "image": "\\DigraphCMS\\Editor\\Blocks\\ImageBlock",
+      "attachment": "\\DigraphCMS\\Editor\\Blocks\\AttachmentBlock"
     }
   },
   "cookies": {

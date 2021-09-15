@@ -1,0 +1,78 @@
+@import "/mixins/core.scss";
+
+$extension-colors: ("xlsx": #10783F,
+    "doc": #3e74da,
+    "docx": #3e74da,
+    "odt": #3e74da,
+    "pdf": #B20E0F,
+    "rtf": #656ecd,
+    "pptx": #e07066,
+    "ppt": #e07066,
+    "mp3": #eab456,
+    "mp4": #f676a6,
+    "xls": #3f9e64,
+    "html": #2988f0,
+    "htm": #2988f0,
+    "png": #f676a6,
+    "jpg": #f67676,
+    "jpeg": #f67676,
+    "exe": #e26f6f,
+    "svg": #bf5252,
+    "key": #e07066,
+    "sketch": #df821c,
+    "ai": #df821c,
+    "psd": #388ae5,
+    "dmg": #e26f6f,
+    "json": #2988f0,
+    "csv": #3f9e64);
+
+@each $extension,
+$color in $extension-colors {
+    .attachment-block-#{$extension} {
+        background: $color;
+        color: contrast-color($color);
+    }
+}
+
+.attachment-block {
+    .attachment-link {
+        &:hover {
+            filter: saturate(1.5);
+
+            &:before {
+                content: "\ef08";
+            }
+        }
+
+        &:before {
+            @include icofont;
+            content: "\eb12";
+        }
+    }
+}
+
+$mime-icons: ("text": "\eb2a",
+    "image": "\eb16"
+);
+
+@each $mime,
+$icon in $mime-icons {
+    .attachment-block-mime-#{$mime} .attachment-link:before {
+        content: $icon;
+    }
+}
+
+$extension-icons: ("xls": "\eb27",
+    "xlsx": "\eb27",
+    "csv": "\eb27",
+    "doc": "\eb0e",
+    "docx": "\eb0e",
+    "pdf": "\eb1e"
+);
+
+@each $extension,
+$icon in $extension-icons {
+    .attachment-block-#{$extension} .attachment-link:before {
+        content: $icon;
+    }
+}

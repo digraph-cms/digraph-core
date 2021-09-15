@@ -40,6 +40,15 @@
         url(/core/material-icons/MaterialIconsTwoTone-Regular.woff2) format('woff2'), url(/core/material-icons/MaterialIconsTwoTone-Regular.otf) format('opentype');
 }
 
+@font-face {
+
+    font-family: "IcoFont";
+    font-weight: normal;
+    font-style: "Regular";
+    src: url("/core/icofont/fonts/icofont.woff2") format("woff2"),
+        url("/core/icofont/fonts/icofont.woff") format("woff");
+}
+
 a:link {
     color: $color-link;
 }
@@ -61,7 +70,7 @@ a:active {
 }
 
 a:after {
-    @include icon;
+    @include material-icon;
     font-size: smaller;
     text-decoration: none;
     vertical-align: top;
@@ -122,7 +131,7 @@ input[type=submit] {
     }
 
     .referenceable-block-link {
-        @include icon;
+        @include material-icon;
         display: none;
         position: absolute;
         top: 0;
@@ -151,3 +160,4 @@ input[type=submit] {
 
 @import "core/navbar.scss";
 @import "core/navigation-frames.scss";
+@import "core/attachment-blocks.scss";
