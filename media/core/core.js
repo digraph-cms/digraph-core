@@ -68,6 +68,9 @@ Digraph.state = {
             if (document.getElementById('breadcrumb') && doc.getElementById('breadcrumb')) {
                 document.getElementById('breadcrumb').innerHTML = doc.getElementById('breadcrumb').innerHTML;
             }
+            if (document.getElementById('notifications') && doc.getElementById('notifications')) {
+                document.getElementById('notifications').innerHTML = doc.getElementById('notifications').innerHTML;
+            }
             if (document.getElementsByTagName('title') && doc.getElementsByTagName('title')) {
                 document.getElementsByTagName('title')[0].innerHTML = doc.getElementsByTagName('title')[0].innerHTML;
             }

@@ -24,13 +24,11 @@ class Notifications
             Cookies::unset('system', 'flashnotifications');
         }
         // display notifications
-        if (static::$notifications) {
-            echo "<section id='notifications'><h1>Notifications</h1>";
-            foreach (static::$notifications as list($message, $type, $class)) {
-                static::print($message, $type, $class);
-            }
-            echo "</section>";
+        echo "<section id='notifications'><h1>Notifications</h1>";
+        foreach (static::$notifications as list($message, $type, $class)) {
+            static::print($message, $type, $class);
         }
+        echo "</section>";
     }
 
     public static function notice(string $message, string $class = '')

@@ -97,12 +97,7 @@ class ImageFile extends DeferredFile
         $this->image->useImageDriver(extension_loaded('imagick') ? 'imagick' : 'gd');
         $this->manipulations = new Manipulations();
         $this->extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-        $this->content = function () {
-            FS::mkdir(dirname($this->path()));
-            $this->image
-                ->manipulate($this->manipulations)
-                ->save($this->path());
-        };
+        $this->content = [$this, 'contentCallback'];
         $this->filename = $filename;
         $this->cache = new CacheNamespace('image-file');
     }
@@ -132,17 +127,23 @@ class ImageFile extends DeferredFile
         return (new MimeTypes())->getMimeType($this->extension());
     }
 
+    protected function contentCallback()
+    {
+        ini_set('memory_limit', '1G');
+        FS::mkdir(dirname($this->path()));
+        $this->image
+            ->manipulate($this->manipulations)
+            ->save($this->path());
+        // try to free up some memory
+        $this->image = new Image($this->src);
+    }
+
     public function __clone()
     {
         $this->image = new Image($this->src);
         $this->manipulations = unserialize(serialize($this->manipulations));
         $this->written = false;
-        $this->content = function () {
-            FS::mkdir(dirname($this->path()));
-            $this->image
-                ->manipulate($this->manipulations)
-                ->save($this->path());
-        };
+        $this->content = [$this, 'contentCallback'];
     }
 
     public function filename(): string
