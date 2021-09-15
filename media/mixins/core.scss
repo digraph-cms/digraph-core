@@ -30,6 +30,14 @@
     margin: $grid-unit 0;
     padding-left: $grid-unit;
     border-left: $grid-unit solid $color-highlight;
+
+    &.loading {
+        border-color: $color-info;
+    }
+
+    &.error {
+        border-color: $color-error;
+    }
 }
 
 @mixin highlight-block-header {
@@ -47,6 +55,14 @@
     margin: $grid-unit 0;
     padding-left: $grid-unit/2;
     border-left: $grid-unit/2 solid $color-accent;
+
+    &.loading {
+        border-color: $color-info;
+    }
+
+    &.error {
+        border-color: $color-error;
+    }
 }
 
 @mixin accent-block-header {
@@ -64,6 +80,14 @@
     margin: $grid-unit 0;
     padding-left: $grid-unit/2;
     border-left: 2px solid $color-neutral;
+
+    &.loading {
+        border-color: $color-info;
+    }
+
+    &.error {
+        border-color: $color-error;
+    }
 }
 
 @mixin neutral-block-header {

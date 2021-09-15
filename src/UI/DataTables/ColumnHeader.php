@@ -118,9 +118,9 @@ class ColumnHeader
         }
         if (Context::url()->arg('_sortorder') == $order && Context::url()->arg('_sortcolumn') == $this->id()) {
             // this is a link to the current sorting, return a link that isn't href-ed
-            return "<a title='$tip' aria-label='$tip' class='" . implode(' ', $classes) . " column-sort-active'>$text</a>";
+            return "<a title='$tip' aria-label='$tip' data-target='_frame' class='" . implode(' ', $classes) . " column-sort-active'>$text</a>";
         }
-        return "<a href='$url' title='$tip' aria-label='$tip' class='" . implode(' ', $classes) . "'>$text</a>";
+        return "<a href='$url' title='$tip' aria-label='$tip' data-target='_frame' class='" . implode(' ', $classes) . "'>$text</a>";
     }
 
     public function id(): string

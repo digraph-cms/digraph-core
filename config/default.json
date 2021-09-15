@@ -59,7 +59,7 @@
   },
   "ui": {
     "breadcrumb": {
-      "min_length": 2,
+      "min_length": 1,
       "include_current": true
     },
     "action-menu": {

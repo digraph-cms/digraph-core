@@ -10,7 +10,7 @@
     &:before {
         content: '';
         z-index: 1;
-        background: rgba($color-neutral, 0.9);
+        background: rgba($body-bg, 0.9);
         top: 0;
         left: 0;
         right: 0;
@@ -20,8 +20,13 @@
     &:after {
         @include icon;
         z-index: 2;
-        color: contrast-color($color-neutral);
-        font-size: 1rem;
+        color: $color-info;
+        font-size: 3em;
+        content: 'refresh';
+        position: absolute;
+        top: 50%;
+        right: 50%;
+        transform: translate(-50%, -50%);
     }
 
     &.loading {
@@ -30,5 +35,30 @@
         &:after {
             display: block;
         }
+
+        &:after {
+            animation-name: spin-loading-overlay;
+            animation-duration: 1000ms;
+            animation-iteration-count: infinite;
+            animation-timing-function: linear;
+        }
+    }
+
+    &.error {
+        &:after {
+            color: $color-error;
+            content: 'error';
+            animation: none;
+        }
+    }
+}
+
+@keyframes spin-loading-overlay {
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
     }
 }

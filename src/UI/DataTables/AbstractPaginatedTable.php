@@ -31,7 +31,7 @@ abstract class AbstractPaginatedTable
     public function __toString()
     {
         ob_start();
-        echo "<div class='navigation-frame " . $this->class() . "' id='" . $this->id() . "'>";
+        echo "<div class='navigation-frame " . $this->class() . "' data-target='_top' id='" . $this->id() . "'>";
         if ($this->paginator()->count() == 0) {
             Notifications::printNotice('Nothing to display');
         } else {

@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 document.addEventListener('click', (event) => {
     if (event.target.tagName == 'A') {
         // first see if target has a data-target attribute, use that
-        var parent = event.target.getAttribute('data-target');
+        var parent = event.target.dataset.target;
         if (!parent || !(parent = document.getElementById(parent))) {
             // otherwise try to find a parent navigation-frame
             parent = event.target.parentElement;
@@ -28,9 +28,16 @@ document.addEventListener('click', (event) => {
                 parent = parent.parentElement;
             }
         }
-        // parent found
-        Digraph.state.pushState(event.target.getAttribute('href'), parent);
-        event.preventDefault();
+        // determine target
+        var target = event.target.dataset.target ?? parent.dataset.target ?? parent.getAttribute('id');
+        if (target == '_frame') {
+            target = parent.getAttribute('id');
+        }
+        // parent and target found
+        if (parent && target && target != '_top') {
+            Digraph.state.pushState(event.target.getAttribute('href'), parent);
+            event.preventDefault();
+        }
     }
 });
 
@@ -64,6 +71,12 @@ Digraph.state = {
             if (document.getElementsByTagName('title') && doc.getElementsByTagName('title')) {
                 document.getElementsByTagName('title')[0].innerHTML = doc.getElementsByTagName('title')[0].innerHTML;
             }
+            frame.classList.remove('loading');
+        });
+        frame.stateUpdateRequest.addEventListener('error', (e) => {
+            frame.classList.add('error');
+        });
+        frame.stateUpdateRequest.addEventListener('abort', (e) => {
             frame.classList.remove('loading');
         });
         frame.stateUpdateRequest.open('GET', url);
