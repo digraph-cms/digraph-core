@@ -175,7 +175,6 @@ body {
     margin: $grid-unit 0;
     background: $color-highlight;
     color: contrast-color($color-highlight);
-    border-radius: $border-radius;
 
     .attachment-link {
         display: block;
@@ -183,6 +182,11 @@ body {
         background: inherit;
         text-decoration: none;
         padding: $grid-unit $grid-unit/2;
+
+        .file-label {
+            display: block;
+            font-size: larger;
+        }
 
         &:hover {
             text-decoration: underline !important;
@@ -192,15 +196,15 @@ body {
             @include material-icon;
             display: inline-block;
             content: '\e24d';
-            vertical-align: middle;
+            vertical-align: top;
             font-size: 4em;
             padding-right: $grid-unit/2;
-            line-height: 1 !important;
+            line-height: 1em !important;
         }
 
         .file-info {
             display: inline-block;
-            vertical-align: middle;
+            vertical-align: top;
         }
     }
 }

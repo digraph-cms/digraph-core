@@ -5,6 +5,7 @@ namespace DigraphCMS\Editor\Blocks;
 use DigraphCMS\Content\Filestore;
 use DigraphCMS\Context;
 use DigraphCMS\Session\Cookies;
+use DigraphCMS\UI\Format;
 use DigraphCMS\UI\Theme;
 use DigraphCMS\URL\URL;
 
@@ -33,8 +34,9 @@ class AttachmentBlock extends AbstractBlock
         }
         $text = "<a class='attachment-link' href='" . $file->url() . "'>";
         $text .= "<div class='file-info'>";
-        $text .= "<strong>" . $this->data()['title'] . "</strong>";
-        $text .= "<br>MD5 Hash: " . $file->hash();
+        $text .= "<strong class='file-label'>" . $this->data()['title'] . "</strong>";
+        $text .= "Size: " . Format::filesize($file->bytes());
+        $text .= "<br>Uploaded: " . Format::date($file->created());
         $text .= "</div>";
         $text .= "</a>";
         $id = $this->id();

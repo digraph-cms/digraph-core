@@ -52,7 +52,9 @@ $color in $extension-colors {
 }
 
 $mime-icons: ("text": "\eb2a",
-    "image": "\eb16"
+    "image": "\eb16",
+    "audio": "\eb09",
+    "video": "\eb2c"
 );
 
 @each $mime,
@@ -67,7 +69,10 @@ $extension-icons: ("xls": "\eb27",
     "csv": "\eb27",
     "doc": "\eb0e",
     "docx": "\eb0e",
-    "pdf": "\eb1e"
+    "pdf": "\eb1e",
+    "html": "\eb0c",
+    "js": "\eb0c",
+    "php": "\eb1f",
 );
 
 @each $extension,
