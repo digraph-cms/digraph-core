@@ -16,14 +16,21 @@ class AttachmentBlock extends AbstractBlock
         Theme::addBlockingPageJs('/editor/blocks/attachment.js');
     }
 
-    public static function jsClass(): ?string
+    protected static function jsClass(): string
+    {
+        return 'AttachesTool';
+    }
+
+    protected static function jsConfig(): array
     {
         $endpoint = new URL('/~api/v1/editor/attachment.php');
         $endpoint->arg('csrf', Cookies::csrfToken('editor'));
         if (Context::page()) {
             $endpoint->arg('from', Context::page()->uuid());
         }
-        return '{ class: AttachesTool, config: { toolboxTitle: "Attached File", endpoint: "' . $endpoint . '" } }';
+        return [
+            'endpoint' => $endpoint->__toString()
+        ];
     }
 
     public function render(): string
@@ -35,8 +42,11 @@ class AttachmentBlock extends AbstractBlock
         $text = "<a class='attachment-link' href='" . $file->url() . "'>";
         $text .= "<div class='file-info'>";
         $text .= "<strong class='file-label'>" . $this->data()['title'] . "</strong>";
-        $text .= "Size: " . Format::filesize($file->bytes());
-        $text .= "<br>Uploaded: " . Format::date($file->created());
+        if ($this->data()['title'] != $file->filename()) {
+            $text .= $file->filename() . '<br>';
+        }
+        $text .= Format::filesize($file->bytes());
+        $text .= ", uploaded " . Format::date($file->created());
         $text .= "</div>";
         $text .= "</a>";
         $id = $this->id();

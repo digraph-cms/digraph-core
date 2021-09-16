@@ -186,6 +186,7 @@ body {
         .file-label {
             display: block;
             font-size: larger;
+            margin-bottom: $grid-unit/2;
         }
 
         &:hover {
@@ -196,15 +197,16 @@ body {
             @include material-icon;
             display: inline-block;
             content: '\e24d';
-            vertical-align: top;
-            font-size: 4em;
-            padding-right: $grid-unit/2;
+            vertical-align: middle;
+            font-size: 5em;
+            padding: $grid-unit/2;
             line-height: 1em !important;
         }
 
         .file-info {
             display: inline-block;
-            vertical-align: top;
+            vertical-align: middle;
+            padding: $grid-unit/2 $grid-unit;
         }
     }
 }

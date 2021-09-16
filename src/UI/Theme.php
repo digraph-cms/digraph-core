@@ -331,8 +331,9 @@ class Theme
         $file = new DeferredFile(
             'core.js',
             function (DeferredFile $file) use ($script) {
-                $script .= PHP_EOL;
-                $script .= 'Digraph.config = ' . json_encode(static::coreConfig()) . PHP_EOL;
+                $script = 'const Digraph = {};'
+                    . PHP_EOL . 'Digraph.config = ' . Format::js_encode_object(static::coreConfig())
+                    . PHP_EOL . PHP_EOL . $script;
                 file_put_contents($file->path(), $script);
             },
             [

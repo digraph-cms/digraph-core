@@ -69,4 +69,33 @@ class Format
     {
         return static::$timezone;
     }
+
+    public static function js_encode_object($input): string
+    {
+        if (is_array($input)) {
+            $arr = [];
+            foreach ($input as $k => $v) {
+                $v = static::js_encode_object($v);
+                $arr[] = "$k:$v";
+            }
+            return "{" . implode(',', $arr) . "}";
+        } elseif (is_string($input)) {
+            $input = preg_replace("/[\\\"]/", "\\$0", $input);
+            return "\"$input\"";
+        } elseif (is_numeric($input)) {
+            return $input;
+        } elseif (is_object($input)) {
+            if (method_exists($input, '__toString')) {
+                return static::js_encode_object($input->__toString());
+            } else {
+                throw new \Exception("Can only object encode objects with __toString method");
+            }
+        } elseif (is_null($input)) {
+            return 'null';
+        } elseif (!$input) {
+            return 'false';
+        } else {
+            return 'true';
+        }
+    }
 }

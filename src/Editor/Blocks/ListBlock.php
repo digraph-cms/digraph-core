@@ -11,9 +11,15 @@ class ListBlock extends AbstractBlock
         Theme::addBlockingPageJs('/editor/blocks/nested-list.js');
     }
 
-    public static function jsClass(): ?string
+    protected static function jsClass(): string
     {
-        return '{ class: NestedList, inlineToolbar: true, shortcut: \'CMD+L\' }';
+        return 'NestedList';
+        // return '{ class: NestedList, inlineToolbar: true, shortcut: \'CMD+L\' }';
+    }
+
+    protected static function shortcut(): ?string
+    {
+        return 'CMD+L';
     }
 
     public function render(): string

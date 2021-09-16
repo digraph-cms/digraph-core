@@ -11,9 +11,14 @@ class TableBlock extends AbstractBlock
         Theme::addBlockingPageJs('/editor/blocks/table.js');
     }
 
-    public static function jsClass(): ?string
+    protected static function jsClass(): string
     {
-        return '{ class: Table, shortcut: \'CMD+T\' }';
+        return 'Table';
+    }
+
+    protected static function shortcut(): ?string
+    {
+        return 'CMD+T';
     }
 
     public function render(): string

@@ -17,8 +17,12 @@ class ImageBlock extends AbstractBlock
         Theme::addBlockingPageJs('/editor/blocks/image.js');
     }
 
-    public static function jsClass(): ?string
+    protected static function jsClass(): string
     {
+        return 'ImageTool';
+    }
+
+    protected static function jsConfig(): array {
         $fileUrl = new URL('/~api/v1/editor/image_file.php');
         $fileUrl->arg('csrf', Cookies::csrfToken('editor'));
         $urlUrl = new URL('/~api/v1/editor/image_url.php');
@@ -27,7 +31,12 @@ class ImageBlock extends AbstractBlock
             $fileUrl->arg('from', Context::page()->uuid());
             $urlUrl->arg('from', Context::page()->uuid());
         }
-        return '{ class: ImageTool, config: {endpoints: {byFile: "' . $fileUrl . '", byUrl: "' . $urlUrl . '"}} }';
+        return [
+            'endpoints' => [
+                'byFile' => $fileUrl,
+                'byUrl' => $urlUrl
+            ]
+        ];
     }
 
     public function render(): string

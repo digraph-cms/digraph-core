@@ -11,7 +11,12 @@ class ParagraphBlock extends AbstractBlock
         Theme::addBlockingPageJs('/editor/blocks/header.js');
     }
 
-    public static function jsClass(): ?string
+    public static function jsClass(): string
+    {
+        return 'Paragraph';
+    }
+
+    public static function jsConfigString(): ?string
     {
         return null;
     }

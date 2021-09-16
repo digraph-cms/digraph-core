@@ -11,9 +11,21 @@ class HeaderBlock extends AbstractBlock
         Theme::addBlockingPageJs('/editor/blocks/header.js');
     }
 
-    public static function jsClass(): ?string
+    protected static function jsClass(): string
     {
-        return '{ class: Header, config: {defaultLevel: 1}, shortcut: \'CMD+H\' }';
+        return 'Header';
+    }
+
+    protected static function jsConfig(): array
+    {
+        return [
+            'defaultLevel' => 1
+        ];
+    }
+
+    protected static function shortcut(): ?string
+    {
+        return 'CMD+H';
     }
 
     public function render(): string
