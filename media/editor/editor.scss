@@ -57,6 +57,34 @@
     display: none;
 }
 
+.cdx-attaches--with-file {
+    padding: 15px;
+    padding-left: 10px;
+    background: $color-accent;
+    color: contrast-color($color-accent);
+
+    .cdx-attaches__file-icon {
+        vertical-align: middle;
+        display: inline-block;
+        margin-right: 15px;
+        &:before {
+            @include icofont;
+            content: "\eb12";
+            font-size: 3em;
+            line-height: 1em;
+        }
+        svg {
+            display: none;
+        }
+    }
+
+    .cdx-attaches__file-info {
+        vertical-align: middle;
+        display: inline-block;
+        font-weight: bold;
+    }
+}
+
 textarea.editorjs {
     display: none;
 }
