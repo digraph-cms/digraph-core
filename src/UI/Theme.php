@@ -26,13 +26,14 @@ class Theme
             '/core/blocking.css'
         ],
         'internal_css' => [
-            'all' => ['/core/core.css']
+            'all' => ['/core/core.css'],
+            'dark' => ['/core/dark.css']
         ],
         'css_vars' => [
             'body-bg' => '#fafafa',
             'body-fg' => '#333',
             'dark-body-bg' => '#111',
-            'dark-body-fg' => '#eee',
+            'dark-body-fg' => '#fff',
             'grid-unit' => '1rem',
             'border-radius' => '1rem',
             'color-neutral' => '#BDC3C7',

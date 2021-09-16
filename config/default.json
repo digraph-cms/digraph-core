@@ -10,7 +10,7 @@
   "files": {
     "path": "${paths.web}/files",
     "url": "/files",
-    "ttl": 86400,
+    "ttl": 3600,
     "css": {
       "minify": true,
       "sourcemap": true,
@@ -21,7 +21,7 @@
     }
   },
   "images": {
-    "ttl": 2592000
+    "ttl": 31536000
   },
   "filestore": {
     "path": "${paths.storage}/filestore",
@@ -50,8 +50,8 @@
   "cache": {
     "path": "${paths.storage}/cache",
     "driver": "\\DigraphCMS\\Cache\\OpCache",
-    "ttl": 60,
-    "fuzz": 15
+    "ttl": 300,
+    "fuzz": 150
   },
   "content_cache": {
     "enabled": true,
