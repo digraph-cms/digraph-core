@@ -1,6 +1,7 @@
 @import "/mixins/core.scss";
 
-$extension-colors: ("xlsx": #10783F,
+$extension-colors: (
+    "xlsx": #10783F,
     "doc": #3e74da,
     "docx": #3e74da,
     "odt": #3e74da,
@@ -24,10 +25,10 @@ $extension-colors: ("xlsx": #10783F,
     "psd": #388ae5,
     "dmg": #e26f6f,
     "json": #2988f0,
-    "csv": #3f9e64);
+    "csv": #3f9e64
+);
 
-@each $extension,
-$color in $extension-colors {
+@each $extension, $color in $extension-colors {
     .attachment-block-#{$extension} {
         background: $color;
         color: contrast-color($color);
@@ -51,20 +52,21 @@ $color in $extension-colors {
     }
 }
 
-$mime-icons: ("text": "\eb2a",
+$mime-icons: (
+    "text": "\eb2a",
     "image": "\eb16",
     "audio": "\eb09",
     "video": "\eb2c"
 );
 
-@each $mime,
-$icon in $mime-icons {
+@each $mime, $icon in $mime-icons {
     .attachment-block-mime-#{$mime} .attachment-link:before {
         content: $icon;
     }
 }
 
-$extension-icons: ("xls": "\eb27",
+$extension-icons: (
+    "xls": "\eb27",
     "xlsx": "\eb27",
     "csv": "\eb27",
     "doc": "\eb0e",
@@ -75,8 +77,7 @@ $extension-icons: ("xls": "\eb27",
     "php": "\eb1f",
 );
 
-@each $extension,
-$icon in $extension-icons {
+@each $extension, $icon in $extension-icons {
     .attachment-block-#{$extension} .attachment-link:before {
         content: $icon;
     }
