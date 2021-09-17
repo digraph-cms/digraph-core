@@ -1,11 +1,12 @@
 @import '/mixins/core.scss';
 
 .Form {
-    @include accent-block;
+    @include highlight-block;
     max-width: 725px;
 
     >label {
-        @include accent-block-header;
+        font-size: larger;
+        font-weight: bold;
     }
 
     >:first-child {
@@ -17,15 +18,12 @@
     }
 
     .FieldWrapper {
-        margin: $grid-unit*2 0;
+        margin: $grid-unit 0;
 
         >label {
             display: block;
             font-weight: bold;
             margin-bottom: $grid-unit/2;
-            padding: $grid-unit/2;
-            background: $color-neutral;
-            color: contrast-color($color-neutral);
         }
 
         &.FieldWrapper-Submit {
@@ -37,19 +35,26 @@
                 width: 100%;
             }
         }
+
+        &[data-validation=invalid] {
+            outline: 2px solid $color-error;
+            outline-offset: 2px;
+
+            &:target {
+                outline-width: 4px;
+            }
+        }
     }
 
     .FieldWrapper-required {
         >label {
             &:after {
-                @include material-icon;
-                content: "star";
-                display: inline-block;
-                line-height: 1;
-                vertical-align: top;
-                color: inherit;
-                margin-left: $grid-unit/2;
+                content: "(required)";
+                display: block;
+                line-height: top;
                 font-size: smaller;
+                opacity: 0.5;
+                float: right;
             }
         }
     }
@@ -64,6 +69,22 @@
         margin: $grid-unit/2;
     }
 
+    .validation-messages {
+        margin: $grid-unit/2 0;
+    }
+
+    .validation-message {
+        padding: $grid-unit/2;
+        margin: $grid-unit/2 0;
+        background: $color-error;
+        color: contrast-color($color-error);
+
+        a {
+            color: inherit !important;
+            text-decoration: none !important;
+        }
+    }
+
     input {
         box-sizing: border-box;
         display: block;
@@ -76,10 +97,6 @@
         @media (prefers-color-scheme: dark) {
             background: $dark-body-bg;
             color: $dark-body-fg;
-        }
-
-        &:focus {
-            background: rgba($color-info, 0.2);
         }
     }
 
@@ -140,3 +157,30 @@
         @include button-confirmation;
     }
 }
+
+.Form.compact {
+    font-size: smaller;
+
+    .FieldWrapper {
+        margin: $grid-unit/2 0;
+    }
+
+    input {
+        padding: $grid-unit/2;
+    }
+
+    button.Submit {
+        padding: $grid-unit/2;
+    }
+}
+
+// @media screen and (prefers-color-scheme: dark) {
+//     .Form {
+//         .FieldWrapper {
+//             >label {
+//                 background: rgba($color-neutral, 0.05);
+//                 color: inherit;
+//             }
+//         }
+//     }
+// }

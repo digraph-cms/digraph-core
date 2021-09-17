@@ -2,7 +2,9 @@
 
 namespace DigraphCMS\UI\Forms;
 
+use DigraphCMS\Context;
 use DigraphCMS\UI\Theme;
+use Formward\AbstractContainer;
 use Formward\FieldInterface;
 use Formward\SystemFields\TokenNoCSRF;
 
@@ -14,6 +16,7 @@ class Form extends \Formward\Form
     {
         parent::__construct($label, $name, $parent);
         static::load();
+        $this->action(Context::url());
     }
 
     public static function load()
@@ -39,6 +42,40 @@ class Form extends \Formward\Form
             }
         }
         return $result;
+    }
+
+    public function wrapperContentOrder(): array
+    {
+        return [
+            '{tips}',
+            '{field}'
+        ];
+    }
+
+    /**
+     * Add system fields to html tag content
+     */
+    protected function htmlContent(): ?string
+    {
+        //basic output
+        $out = [
+            '<label>' . $this->label() . '</label>',
+            $this->validationMessagesHTML(),
+            preg_replace('/<label>.*?<\/label>/', '', AbstractContainer::htmlContent())
+        ];
+        //add system fields if necessary
+        if ($this->systemFields) {
+            $out[] = implode(
+                PHP_EOL,
+                array_map(
+                    function ($i) {
+                        return $this->containerItemHtml($i);
+                    },
+                    $this->systemFields
+                )
+            );
+        }
+        return implode(PHP_EOL, $out);
     }
 
     protected function setupToken()

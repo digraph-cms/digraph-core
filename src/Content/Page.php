@@ -43,6 +43,20 @@ class Page implements ArrayAccess
         $this->changed = false;
     }
 
+    public function parent(URL $url): ?URL
+    {
+        if ($url->action() == 'index') {
+            $parents = Graph::parents($this->uuid(), 'normal')->limit(1);
+            if ($parent = $parents->fetch()) {
+                return $parent->url();
+            } else {
+                return null;
+            }
+        } else {
+            return $this->url();
+        }
+    }
+
     /**
      * Pages may override all other permissions for their own URLs. By default
      * they return null, which allows other permissions checks to be run.

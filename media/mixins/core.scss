@@ -44,8 +44,8 @@
 
 @mixin highlight-block {
     margin: $grid-unit 0;
-    padding-left: $grid-unit;
-    border-left: $grid-unit solid $color-highlight;
+    padding: $grid-unit/2;
+    background-image: linear-gradient(to right, rgba($color-highlight, 0.15), rgba($color-highlight, 0));
 
     &.loading {
         border-color: $color-info;
@@ -54,23 +54,12 @@
     &.error {
         border-color: $color-error;
     }
-}
-
-@mixin highlight-block-header {
-    font-weight: bold;
-    display: block;
-    margin: 0;
-    margin-left: -$grid-unit;
-    padding: $grid-unit/2;
-    font-size: large;
-    background: $color-highlight;
-    color: contrast-color($color-highlight);
 }
 
 @mixin accent-block {
     margin: $grid-unit 0;
-    padding-left: $grid-unit/2;
-    border-left: $grid-unit/2 solid $color-accent;
+    padding: $grid-unit/2;
+    background-image: linear-gradient(to right, rgba($color-accent, 0.15), rgba($color-accent, 0));
 
     &.loading {
         border-color: $color-info;
@@ -79,23 +68,12 @@
     &.error {
         border-color: $color-error;
     }
-}
-
-@mixin accent-block-header {
-    font-weight: bold;
-    display: block;
-    margin: 0;
-    margin-left: -$grid-unit/2;
-    padding: $grid-unit/2;
-    font-size: larger;
-    background: $color-accent;
-    color: contrast-color($color-accent);
 }
 
 @mixin neutral-block {
     margin: $grid-unit 0;
-    padding-left: $grid-unit/2;
-    border-left: 2px solid $color-neutral;
+    padding: $grid-unit/2;
+    background-image: linear-gradient(to right, rgba($color-neutral, 0.15), rgba($color-neutral, 0));
 
     &.loading {
         border-color: $color-info;
@@ -104,17 +82,6 @@
     &.error {
         border-color: $color-error;
     }
-}
-
-@mixin neutral-block-header {
-    font-weight: bold;
-    display: block;
-    margin: 0;
-    margin-left: -$grid-unit/2;
-    padding: $grid-unit/2;
-    font-size: medium;
-    background: $color-neutral;
-    color: contrast-color($color-neutral);
 }
 
 @mixin button {

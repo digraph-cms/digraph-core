@@ -129,7 +129,7 @@ class Breadcrumb
     {
         if ($breadcrumb) {
             $parent = reset($breadcrumb)->parent();
-            if ($parent !== null && $parent->path() != '/home/' && !in_array($parent, $breadcrumb)) {
+            if ($parent !== null && !in_array($parent, $breadcrumb)) {
                 array_unshift($breadcrumb, $parent);
                 static::Helper($breadcrumb);
             }

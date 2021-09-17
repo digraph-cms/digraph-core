@@ -9,6 +9,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 document.addEventListener('click', (event) => {
     if (event.target.tagName == 'A') {
+        // determine if we should even use this link
+        if (!event.target.getAttribute('href')) {
+            return;
+        }
+        if (event.target.getAttribute('href').substring(0, 1) == '#') {
+            return;
+        }
         // first see if target has a data-target attribute, use that
         var parent = event.target.dataset.target;
         if (!parent || !(parent = document.getElementById(parent))) {

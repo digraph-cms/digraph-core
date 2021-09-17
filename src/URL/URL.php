@@ -88,7 +88,9 @@ class URL
 
     public function parent(): ?URL
     {
-        $parent = $this->doParent();
+        $parent =
+            ($this->page() ? $this->page()->parent($this) : null) ??
+            $this->hackUrlForParent();
         if ($parent->__toString() == $this->__toString()) {
             return null;
         } else {
@@ -96,7 +98,7 @@ class URL
         }
     }
 
-    protected function doParent(): ?URL
+    protected function hackUrlForParent(): ?URL
     {
         $parent = $this->pathString();
         while ($parent != 'home') {

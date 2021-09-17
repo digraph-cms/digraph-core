@@ -62,3 +62,16 @@
         transform: translate(-50%, -50%) rotate(360deg);
     }
 }
+
+@media screen and (prefers-color-scheme: dark) {
+    .navigation-frame {
+
+        &:before {
+            background: rgba($dark-body-bg, 0.9);
+        }
+
+        &:after {
+            color: $color-info;
+        }
+    }
+}
