@@ -49,7 +49,7 @@
     .FieldWrapper-required {
         >label {
             &:after {
-                content: "(required)";
+                content: "required";
                 display: block;
                 line-height: top;
                 font-size: smaller;

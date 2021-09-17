@@ -12,6 +12,7 @@ class ButtonMenu
     protected $csrf = false;
     /** @var ButtonMenuButton[] */
     protected $buttons = [];
+    protected $target = '_frame';
 
     public function __construct(string $label = null, array $buttons = [])
     {
@@ -73,6 +74,7 @@ class ButtonMenu
                 }
             }
             Cookies::unset('csrf', $this->id(), true);
+            Context::response()->redirect(Context::url());
         }
     }
 
@@ -80,7 +82,7 @@ class ButtonMenu
     {
         ob_start();
         $this->execute();
-        echo "<nav class='button-menu'><form method='POST' id='" . $this->id() . "'>";
+        echo "<nav class='button-menu'><form method='POST' action='" . Context::url() . "' data-target='" . $this->target . "' id='" . $this->id() . "'>";
         echo "<div class='buttons'>";
         foreach ($this->buttons as $button) {
             echo $button;

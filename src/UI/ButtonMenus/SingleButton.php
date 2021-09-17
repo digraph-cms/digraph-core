@@ -2,8 +2,6 @@
 
 namespace DigraphCMS\UI\ButtonMenus;
 
-use DigraphCMS\Session\Cookies;
-
 class SingleButton extends ButtonMenuButton
 {
     protected $menu;

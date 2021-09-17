@@ -3,7 +3,9 @@
 use DigraphCMS\Content\Graph;
 use DigraphCMS\Content\Pages;
 use DigraphCMS\Context;
+use DigraphCMS\DB\DB;
 use DigraphCMS\HTTP\RefreshException;
+use DigraphCMS\UI\ButtonMenus\SingleButton;
 use DigraphCMS\UI\DataTables\ColumnHeader;
 use DigraphCMS\UI\DataTables\QueryColumnHeader;
 use DigraphCMS\UI\DataTables\QueryTable;
@@ -19,7 +21,16 @@ $table = new QueryTable(
     $query,
     function (array $row) {
         $page = Pages::get($row['end_page']);
-        $button = 'TODO: delete button';
+        $button = new SingleButton(
+            'Remove',
+            function () use ($row) {
+                DB::query()
+                    ->delete('page_link')
+                    ->where('id = ?', [$row['id']])
+                    ->execute();
+            },
+            ['warning']
+        );
         return [
             $page->url()->html(),
             $row['type'],
@@ -29,7 +40,7 @@ $table = new QueryTable(
     [
         new ColumnHeader('Child'),
         new QueryColumnHeader('Type', 'page_link.type', $query),
-        new ColumnHeader('Delete')
+        new ColumnHeader('Remove link')
     ]
 );
 echo $table;
