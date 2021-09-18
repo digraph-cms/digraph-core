@@ -16,6 +16,10 @@ img {
     box-sizing: border-box;
 }
 
+base64 {
+    display: none;
+}
+
 @media screen and (prefers-color-scheme: dark) {
     body {
         background-color: $dark-body-bg;

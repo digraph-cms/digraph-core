@@ -19,6 +19,13 @@ class Format
         static::$datetimeFormat = Config::get('theme.format.datetime') ?? 'F j, Y, g:i a';
     }
 
+    public static function base64obfuscate(string $string, string $message = 'javascript required to view')
+    {
+        return
+            '<base64>' . base64_encode($string) . '</base64>'
+            . '<noscript><span class="notification error">' . $message . '</span></noscript>';
+    }
+
     public static function filesize(int $bytes, int $decimals = 1): string
     {
         static $size = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];

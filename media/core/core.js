@@ -1,4 +1,23 @@
-const Digraph = {};
+const Digraph = {
+    debounce: (fn, timeout = 400) => {
+        let timer;
+        return (...args) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => { fn.apply(this, args); }, timeout);
+        };
+    },
+    getCookie: (type, name) => {
+        const fullName = type + '/' + name;
+        const allCookies = decodeURIComponent(document.cookie).split(';');
+        for (let i = 0; i < allCookies.length; i++) {
+            const el = allCookies[i].trim();
+            if (el.indexOf(fullName + '=') == 0) {
+                return JSON.parse(el.substring(fullName.length + 1, el.length));
+            }
+        }
+        return null;
+    }
+};
 
 document.addEventListener('DOMContentLoaded', (e) => {
     document.body.dispatchEvent(
@@ -7,6 +26,21 @@ document.addEventListener('DOMContentLoaded', (e) => {
             cancelable: false
         })
     );
+});
+
+document.addEventListener('DigraphDOMReady', (e) => {
+    const es = e.target.getElementsByTagName('base64');
+    for (let i = 0; i < es.length; i++) {
+        const element = es[i];
+        element.innerHTML = atob(element.innerHTML);
+        element.style.display = 'contents';
+        element.dispatchEvent(
+            new Event('DigraphDOMReady', {
+                bubbles: true,
+                cancelable: false
+            })
+        );
+    }
 });
 
 document.addEventListener('click', (e) => {
@@ -79,7 +113,12 @@ Digraph.state = {
         frame.stateUpdateRequest.addEventListener('load', (e) => {
             if (e.target.status == 200) {
                 const doc = new DOMParser().parseFromString(e.target.response, 'text/html');
-                frame.innerHTML = doc.getElementById(frame.getAttribute('id')).innerHTML;
+                const newHTML = doc.getElementById(frame.getAttribute('id')).innerHTML;
+                if (newHTML) {
+                    frame.innerHTML = newHTML;
+                } else {
+                    frame.classList.add('error');
+                }
                 if (document.getElementById('breadcrumb') && doc.getElementById('breadcrumb')) {
                     document.getElementById('breadcrumb').innerHTML = doc.getElementById('breadcrumb').innerHTML;
                 }
@@ -89,6 +128,12 @@ Digraph.state = {
                 if (document.getElementsByTagName('title') && doc.getElementsByTagName('title')) {
                     document.getElementsByTagName('title')[0].innerHTML = doc.getElementsByTagName('title')[0].innerHTML;
                 }
+                frame.dispatchEvent(
+                    new Event('DigraphDOMReady', {
+                        bubbles: true,
+                        cancelable: false
+                    })
+                );
                 frame.classList.remove('loading');
             } else {
                 console.error(e);

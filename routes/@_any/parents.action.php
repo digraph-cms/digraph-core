@@ -53,7 +53,7 @@ $form['type'] = new Input('Link type');
 
 if ($form->handle()) {
     Pages::insertLink(
-        $form['parent']->value()->uuid(),
+        $form['parent']->value(),
         Context::page()->uuid(),
         $form['type']->value() ? $form['type']->value() : null
     );
