@@ -83,6 +83,18 @@ class DigraphAutocomplete {
         // enter initial no result state
         this.enterNoResultsState();
         this.resultFocused = false;
+        // pull existing value if it exists
+        if (this.input.dataset.value) {
+            const value = JSON.parse(atob(this.input.dataset.value));
+            this.selectedCard.innerHTML = '<div class="result-html"><div class="after-icon">' + value.html.html + "</div></div>"
+            if (value.html.class) {
+                this.selectedCard.firstChild.classList.add(value.html.class);
+            }
+            this.value.value = value.value;
+            this.input.value = '';
+            this.selected.style.display = null;
+            this.input.style.display = 'none';
+        }
     }
     /**
      * @param {Event} e 
@@ -160,17 +172,21 @@ class DigraphAutocomplete {
         this.xhr.addEventListener('load', (e) => {
             this.results.innerHTML = '';
             const data = JSON.parse(e.target.response);
-            data.forEach((result) => {
-                const li = document.createElement('div');
-                li.tabIndex = 0;
-                li.innerHTML = '<div class="result-html">' + result.html + "</div>";
-                li.dataset.value = result.value;
-                if (result.class) {
-                    li.classList.add(result.class);
-                }
-                this.results.append(li);
-            });
-            this.enterNormalState();
+            if (data.length == 0) {
+                this.enterNoResultsState();
+            } else {
+                data.forEach((result) => {
+                    const li = document.createElement('div');
+                    li.tabIndex = 0;
+                    li.innerHTML = '<div class="result-html"><div class="after-icon">' + result.html + "</div></div>";
+                    li.dataset.value = result.value;
+                    if (result.class) {
+                        li.classList.add(result.class);
+                    }
+                    this.results.append(li);
+                });
+                this.enterNormalState();
+            }
         });
         // send query
         const query = new URLSearchParams();

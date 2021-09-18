@@ -18,9 +18,7 @@ Context::response()->filename('response.json');
 $pages = Pages::getAll(Context::arg('query'));
 // get stricter name matches
 if (count($pages) < 100) {
-    $query = Pages::select()
-        ->order('updated desc')
-        ->limit(100);
+    $query = Pages::select()->limit(100);
     foreach (preg_split('/ +/', Context::arg('query')) as $word) {
         $query->where('name like ?', ['%' . $word . '%']);
     }
@@ -31,9 +29,7 @@ if (count($pages) < 100) {
 }
 // get looser name matches
 if (count($pages) < 100) {
-    $query = Pages::select()
-        ->order('updated desc')
-        ->limit(100);
+    $query = Pages::select()->limit(100);
     foreach (preg_split('/ +/', Context::arg('query')) as $word) {
         $query->where('name like ?', ['%' . $word . '%'], 'OR');
     }
@@ -49,7 +45,6 @@ $pages = array_map(
         return [
             $page,
             Dispatcher::firstValue('onScorePageResult', [$page, Context::arg('query')])
-                ?? basicScorer($page, Context::arg('query'))
         ];
     },
     $pages
@@ -74,24 +69,8 @@ $pages = array_unique($pages, SORT_REGULAR);
 echo json_encode(
     array_map(
         function (Page $page) {
-            return [
-                'html' => '<strong>' . $page->name() . '</strong><br><small>' . $page->url() . '</small>',
-                'value' => $page->uuid(),
-                'class' => 'page'
-            ];
+            return Dispatcher::firstValue('onPageAutocompleteCard', [$page, Context::arg('query')]);
         },
         array_slice($pages, 0, 50)
     )
 );
-
-// basic scoring function
-function basicScorer(Page $page, string $query)
-{
-    $query = strtolower($query);
-    $score = 0;
-    if ($page->uuid() == $query || $page->slug() == $query) {
-        $score += 100;
-    }
-    $score += similar_text(metaphone($query), metaphone($page->name()));
-    return $score;
-}

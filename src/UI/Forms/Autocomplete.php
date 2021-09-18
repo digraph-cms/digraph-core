@@ -2,6 +2,8 @@
 
 namespace DigraphCMS\UI\Forms;
 
+use DigraphCMS\Content\Pages;
+use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\Session\Cookies;
 use DigraphCMS\UI\Format;
 use DigraphCMS\UI\Theme;
@@ -62,6 +64,12 @@ class Autocomplete extends Input
         static::load();
         $this->attributes['autocomplete'] = 'off';
         $this->attributes['data-autocomplete-source'] = $this->ajaxSource();
+        if ($this->value() && $page = Pages::get($this->value())) {
+            $this->attributes['data-value'] = base64_encode(json_encode([
+                'html' => Dispatcher::firstValue('onPageAutocompleteCard', [$page, null]),
+                'value' => $this->value()
+            ]));
+        }
         return Format::base64obfuscate(parent::__toString(), 'Javascript is required to use autocomplete fields');
     }
 }

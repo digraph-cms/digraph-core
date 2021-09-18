@@ -2,6 +2,7 @@
 
 namespace DigraphCMS;
 
+use DigraphCMS\Content\Page;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\User;
@@ -9,6 +10,35 @@ use DigraphCMS\Users\Users;
 
 class CoreEventSubscriber
 {
+    public static function onPageAutocompleteCard(Page $page, string $query = null): array
+    {
+        $name = $page->name();
+        $url = $page->url();
+        if ($query) {
+            $words = preg_split('/ +/', trim($query));
+            foreach ($words as $word) {
+                $word = preg_quote($word);
+                $name = preg_replace('/' . $word . '/i', '<strong>$0</strong>', $name);
+            }
+        }
+        return [
+            'html' => '<div class="title">' . $name . '</div><div class="url">' . $url . '</div>',
+            'value' => $page->uuid(),
+            'class' => 'page'
+        ];
+    }
+
+    public static function onScorePageResult(Page $page, string $query)
+    {
+        $query = strtolower($query);
+        $score = 0;
+        if ($page->uuid() == $query || $page->slug() == $query) {
+            $score += 100;
+        }
+        $score += similar_text(metaphone($query), metaphone($page->name()));
+        return $score;
+    }
+
     /**
      * Limits access to ~user route to signed-in users only, unless user is 
      * specified in an arg, in which case it limits to that user or admins
