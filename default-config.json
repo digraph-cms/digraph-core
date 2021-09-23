@@ -44,9 +44,6 @@
             "logging": {
                 "dsn": "sqlite:${paths.storage}/logging.sqlite"
             },
-            "downtime": {
-                "dsn": "sqlite:${paths.storage}/downtime.sqlite"
-            },
             "mail": {
                 "dsn": "sqlite:${paths.storage}/mail.sqlite"
             }
@@ -59,10 +56,6 @@
             "logging": {
                 "class": "default",
                 "pdo": "logging"
-            },
-            "downtime": {
-                "class": "default",
-                "pdo": "downtime"
             }
         },
         "factories": {
@@ -80,11 +73,6 @@
                 "class": "\\Digraph\\Logging\\LogFactory",
                 "driver": "logging",
                 "table": "digraph_log"
-            },
-            "downtime": {
-                "class": "\\Digraph\\Downtime\\DowntimeFactory",
-                "driver": "downtime",
-                "table": "digraph_downtime"
             }
         }
     },
@@ -101,8 +89,7 @@
                 "sitemap": "_controlpanel/sitemap",
                 "trash": "_trash/display",
                 "urls": "_controlpanel/slugs",
-                "database": "_destructr/display",
-                "downtime": "_downtime/display"
+                "database": "_destructr/display"
             }
         },
         "proper": {
@@ -550,10 +537,6 @@
                 "deny all",
                 "allow group admin"
             ],
-            "_downtime/*": [
-                "deny all",
-                "allow group admin"
-            ],
             "hero/*": [
                 "deny all",
                 "allow group admin"
@@ -631,7 +614,6 @@
                 "_controlpanel/mail_sent": "_controlpanel/mail",
                 "_cron/display": "_controlpanel/display",
                 "_destructr/display": "_controlpanel/display",
-                "_downtime/display": "_controlpanel/display",
                 "_logging/display": "_controlpanel/display",
                 "_trash/display": "_controlpanel/display",
                 "_trash/item": "_trash/factory?factory=!arg_factory",
@@ -654,9 +636,6 @@
         },
         "logging": {
             "default": "\\Digraph\\Logging\\LogEntry"
-        },
-        "downtime": {
-            "default": "\\Digraph\\Downtime\\Downtime"
         }
     },
     "url": {
@@ -825,10 +804,6 @@
                 "weight": 200,
                 "class": "Digraph\\Mungers\\Setup\\Initialize"
             },
-            "downtime": {
-                "weight": 250,
-                "class": "Digraph\\Downtime\\DowntimeMunger"
-            },
             "parseurl": {
                 "weight": 300,
                 "class": "Digraph\\Mungers\\Setup\\ParseUrl"
@@ -911,7 +886,6 @@
             "actions": "Digraph\\Helpers\\Actions",
             "cache": "Digraph\\Helpers\\CacheHelper",
             "datastore": "Digraph\\Data\\DatastoreHelper",
-            "downtime": "Digraph\\Downtime\\DowntimeHelper",
             "edges": "Digraph\\Graph\\EdgeHelper",
             "filestore": "Digraph\\FileStore\\FileStoreHelper",
             "filesystem": "Digraph\\Helpers\\FilesystemHelper",

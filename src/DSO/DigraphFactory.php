@@ -41,40 +41,8 @@ class DigraphFactory extends Factory
 
     public function updateEnvironment(): bool
     {
-        //create downtime
-        $downtime = $this->cms->factory('downtime')->create([
-            'downtime.start' => time(),
-            'digraph' => [
-                'body' => [
-                    'filter' => 'default',
-                    'text' => 'A database schema update is in progress. This operation should be over shortly.',
-                ],
-                'name' => 'Factory ' . $this->name() . ' updateEnvironment',
-            ],
-        ]);
-        if (!$downtime->insert()) {
-            return false;
-        }
         //execute
         $result = parent::updateEnvironment();
-        //end downtime
-        if ($result) {
-            $this->cms->package()->saveLog(
-                'schema update successful: ' . $this->name(),
-                LogHelper::INFO,
-                'updateEnvironmentSuccess.' . $this->name()
-            );
-            $downtime['downtime.end'] = time();
-            $downtime->update();
-            return true;
-        } else {
-            $this->cms->package()->saveLog(
-                'schema update failed: ' . $this->name(),
-                LogHelper::EMERGENCY,
-                'updateEnvironmentFail.' . $this->name()
-            );
-            return false;
-        }
     }
 
     public function name($set = null): string
