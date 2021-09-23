@@ -1,4 +1,9 @@
 <?php
+// allow pre-execution hooks to block signin using SIGN_IN_BLOCK hook
+if (defined('SIGN_IN_BLOCKED')) {
+    return;
+}
+
 include $this->helper('routing')->hookFile('_user', 'core_init.php')['file'];
 $package->cache_noStore();
 
