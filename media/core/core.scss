@@ -5,7 +5,8 @@
     font-style: normal;
     font-weight: 400;
     src:
-        url(/core/material-icons/MaterialIcons-Regular.woff2) format('woff2'), url(/core/material-icons/MaterialIcons-Regular.otf) format('truetype');
+        url(/core/material-icons/MaterialIcons-Regular.woff2) format('woff2'),
+        url(/core/material-icons/MaterialIcons-Regular.otf) format('truetype');
 }
 
 @font-face {
@@ -13,7 +14,8 @@
     font-style: normal;
     font-weight: 400;
     src:
-        url(/core/material-icons/MaterialIconsOutlined-Regular.woff2) format('woff2'), url(/core/material-icons/MaterialIconsOutlined-Regular.otf) format('opentype');
+        url(/core/material-icons/MaterialIconsOutlined-Regular.woff2) format('woff2'),
+        url(/core/material-icons/MaterialIconsOutlined-Regular.otf) format('opentype');
 }
 
 @font-face {
@@ -21,7 +23,8 @@
     font-style: normal;
     font-weight: 400;
     src:
-        url(/core/material-icons/MaterialIconsRound-Regular.woff2) format('woff2'), url(/core/material-icons/MaterialIconsRound-Regular.otf) format('opentype');
+        url(/core/material-icons/MaterialIconsRound-Regular.woff2) format('woff2'),
+        url(/core/material-icons/MaterialIconsRound-Regular.otf) format('opentype');
 }
 
 @font-face {
@@ -29,7 +32,8 @@
     font-style: normal;
     font-weight: 400;
     src:
-        url(/core/material-icons/MaterialIconsSharp-Regular.woff2) format('woff2'), url(/core/material-icons/MaterialIconsSharp-Regular.otf) format('opentype');
+        url(/core/material-icons/MaterialIconsSharp-Regular.woff2) format('woff2'),
+        url(/core/material-icons/MaterialIconsSharp-Regular.otf) format('opentype');
 }
 
 @font-face {
@@ -37,15 +41,16 @@
     font-style: normal;
     font-weight: 400;
     src:
-        url(/core/material-icons/MaterialIconsTwoTone-Regular.woff2) format('woff2'), url(/core/material-icons/MaterialIconsTwoTone-Regular.otf) format('opentype');
+        url(/core/material-icons/MaterialIconsTwoTone-Regular.woff2) format('woff2'),
+        url(/core/material-icons/MaterialIconsTwoTone-Regular.otf) format('opentype');
 }
 
 @font-face {
-
     font-family: "IcoFont";
     font-weight: normal;
     font-style: "Regular";
-    src: url("/core/icofont/fonts/icofont.woff2") format("woff2"),
+    src:
+        url("/core/icofont/fonts/icofont.woff2") format("woff2"),
         url("/core/icofont/fonts/icofont.woff") format("woff");
 }
 
@@ -158,6 +163,20 @@ input[type=submit] {
     }
 }
 
+.navigation-frame,
+.autocomplete-results {
+    @include loading-overlay;
+}
+
+@keyframes spin-loading-overlay {
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
 @import "core/navbar.scss";
-@import "core/navigation-frames.scss";
 @import "core/attachment-blocks.scss";

@@ -1,6 +1,7 @@
 <?php
 
 use DigraphCMS\Content\Pages;
+use DigraphCMS\Content\Slugs;
 use DigraphCMS\Context;
 use DigraphCMS\UI\Format;
 use DigraphCMS\URL\URL;
@@ -44,7 +45,7 @@ $page = Context::page();
         <td>
             <ul>
                 <?php
-                foreach (Pages::slugs($page->uuid()) as $slug) {
+                foreach (Slugs::list($page->uuid()) as $slug) {
                     $url = new URL("/$slug/");
                     echo "<li><a href='$url'>$slug</a></li>";
                 }

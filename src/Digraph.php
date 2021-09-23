@@ -208,7 +208,7 @@ class Digraph
                 Templates::wrapResponse(Context::response());
             } catch (Throwable $th) {
                 // generate a fallback exception handling error page
-                if (!Dispatcher::firstValue('onException_' . basename(get_class($th)), [$th])) {
+                if (!Dispatcher::firstValue('onException_' . substr(get_class($th), (strrpos(get_class($th), '\\') ?: -1) + 1), [$th])) {
                     if (!Dispatcher::firstValue('onException', [$th])) {
                         static::buildErrorContent(500.1);
                     }

@@ -2,40 +2,22 @@
 
 namespace DigraphCMS\UI\Forms;
 
-use DigraphCMS\Content\Page;
 use DigraphCMS\Content\Pages;
-use Formward\Fields\AbstractTransformedInput;
+use DigraphCMS\URL\URL;
 
-class PageField extends AbstractTransformedInput
+class PageField extends Autocomplete
 {
     function construct()
     {
-        $this->addValidatorFunction(
-            'page-exists',
-            function (AbstractTransformedInput $field) {
-                if (!Pages::get($field->submittedValue())) {
-                    return "Value must be a valid page UUID or URL";
+        $this->addClass('pages');
+        $this->ajaxSource(new URL('/~api/v1/autocomplete/page.php'));
+        $this->cardCallback(
+            function (string $value): ?string {
+                if ($page = Pages::get($value)) {
+                    return $page->url()->html();
                 }
-                return true;
+                return null;
             }
         );
-    }
-
-    protected function transformValue($value)
-    {
-        if ($value) {
-            return Pages::get($value);
-        } else {
-            return null;
-        }
-    }
-
-    protected function unTransformValue($value)
-    {
-        if ($value instanceof Page) {
-            return $value->uuid();
-        } else {
-            return null;
-        }
     }
 }

@@ -4,46 +4,13 @@ namespace DigraphCMS\Content;
 
 use DateTime;
 use DigraphCMS\DB\DB;
+use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\Session\Session;
 use Envms\FluentPDO\Queries\Select;
 
 class Pages
 {
-    const SLUG_CHARS = 'a-zA-Z0-9\\-_';
     protected static $cache = [];
-
-    /**
-     * Retrieve all the slugs for a given page UUID
-     *
-     * @param string $uuid
-     * @return array
-     */
-    public static function slugs(string $uuid): array
-    {
-        return array_map(
-            function ($e) {
-                return $e['url'];
-            },
-            DB::query()
-                ->from('page_slug')
-                ->where('page_uuid = ?', [$uuid])
-                ->orderBy('id DESC')
-                ->fetchAll()
-        );
-    }
-
-    /**
-     * Determine whether a given string is a valid slug. Needs to be a valid
-     * directory without leading or trailing slashes, with no crazy characters
-     * in it.
-     *
-     * @param string $slug
-     * @return boolean
-     */
-    public static function validateSlug(string $slug): bool
-    {
-        return preg_match("@^[" . static::SLUG_CHARS . "]*(/[" . static::SLUG_CHARS . "]+)*$@", $slug);
-    }
 
     /**
      * Quickly determine whether a given UUID exists. Does not check slugs,
@@ -145,22 +112,6 @@ class Pages
     }
 
     /**
-     * Determine whether a slug already exists, also searches by UUID because
-     * those are kind of implicitly slugs
-     *
-     * @param string $uuid_or_slug
-     * @return boolean
-     */
-    public static function slugExists(string $uuid_or_slug): bool
-    {
-        $uuids = DB::query()->from('page')
-            ->where('uuid = ?', [$uuid_or_slug]);
-        $slugs = DB::query()->from('page_slug')
-            ->where('url = ?', [$uuid_or_slug]);
-        return !!$uuids->count() && !!$slugs->count();
-    }
-
-    /**
      * Get all pages that match the given slug/UUID, including those indicated
      * by a slug. Significantly slower than get(). A UUID match will be first,
      * followed by primary slug matches, followed by alternate slug matches.
@@ -223,13 +174,13 @@ class Pages
     {
         if (!isset(static::$cache[$uuid_or_slug])) {
             static::$cache[$uuid_or_slug] =
-                self::doGet($uuid_or_slug) ??
-                self::doGetByAlternateSlug($uuid_or_slug);
+                self::doGetByUUID($uuid_or_slug) ??
+                self::doGetBySlug($uuid_or_slug);
         }
         return static::$cache[$uuid_or_slug];
     }
 
-    protected static function doGet(string $uuid_or_slug): ?Page
+    protected static function doGetByUUID(string $uuid_or_slug): ?Page
     {
         $result = DB::query()->from('page')
             ->where('uuid = ?', [$uuid_or_slug])
@@ -243,7 +194,7 @@ class Pages
         }
     }
 
-    protected static function doGetByAlternateSlug(string $slug): ?Page
+    protected static function doGetBySlug(string $slug): ?Page
     {
         $result = DB::query()->from('page_slug')
             ->select('page.*')
@@ -262,25 +213,6 @@ class Pages
     public static function objectClass(array $result): string
     {
         return Page::class;
-    }
-
-    public static function insertSlug(string $page_uuid, string $slug)
-    {
-        if (!static::validateSlug($slug)) {
-            throw new \Exception("Invalid slug");
-        }
-        $check = DB::query()
-            ->from('page_slug')
-            ->where('url = ? AND uuid = ?', [$slug, $page_uuid]);
-        if (!$check->count()) {
-            DB::query()->insertInto(
-                'page_slug',
-                [
-                    'url' => $slug,
-                    'page_uuid' => $page_uuid
-                ]
-            );
-        }
     }
 
     public static function update(Page $page)

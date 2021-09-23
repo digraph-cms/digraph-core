@@ -41,13 +41,32 @@ class Page implements ArrayAccess
         $this->updated_by = @$metadata['updated_by'];
         $this->rawSet(null, $data);
         $this->changed = false;
+        $this->slugPattern = @$metadata['slug_pattern'] ?? '[name]';
     }
 
-    public function parent(URL $url): ?URL
+    public function slugVariable(string $name): ?string
     {
-        if ($url->action() == 'index') {
-            $parents = Graph::parents($this->uuid(), 'normal')->limit(1);
-            if ($parent = $parents->fetch()) {
+        switch ($name) {
+            case 'uuid':
+                return substr($this->uuid(), 0, 8);
+            case 'name':
+                return $this->name();
+            default:
+                return null;
+        }
+    }
+
+    public function parentPage(): ?Page
+    {
+        return Graph::parents($this->uuid(), 'normal')
+            ->limit(1)
+            ->fetch();
+    }
+
+    public function parent(URL $url = null): ?URL
+    {
+        if (!$url || $url->action() == 'index') {
+            if ($parent = $this->parentPage()) {
                 return $parent->url();
             } else {
                 return null;
@@ -55,6 +74,24 @@ class Page implements ArrayAccess
         } else {
             return $this->url();
         }
+    }
+
+    public function slugPattern(string $slugPattern = null): ?string
+    {
+        $this->slugPattern = $slugPattern ?? $this->slugPattern;
+        return $this->slugPattern;
+    }
+
+    public function slug(): ?string
+    {
+        if ($this->slug === false) {
+            $this->slug = @DB::query()->from('page_slug')
+                ->where('page_uuid = ?', [$this->uuid()])
+                ->order('id desc')
+                ->limit(1)
+                ->fetch()['url'];
+        }
+        return $this->slug ?? $this->uuid;
     }
 
     /**
@@ -78,9 +115,7 @@ class Page implements ArrayAccess
     public function slugCollisions(): bool
     {
         if ($this->slugCollisions === null) {
-            $this->slugCollisions =
-                Router::staticRouteExists($this->slug(), 'index') ||
-                Pages::countAll($this->slug()) > 1;
+            $this->slugCollisions = Slugs::collisions($this->slug());
         }
         return $this->slugCollisions;
     }
@@ -93,36 +128,6 @@ class Page implements ArrayAccess
     public function class(): string
     {
         return 'page';
-    }
-
-    public function slug(string $slug = null, $unique = false): string
-    {
-        if ($slug !== null) {
-            $this->previousSlug = $this->previousSlug ?? $this->slug;
-            $this->slug = $slug;
-            if (!Pages::validateSlug($this->slug)) {
-                throw new \Exception("Slug $slug is not valid");
-            }
-            if ($unique) {
-                // if $unique is requested slug will be renamed if it collides
-                // with an existing slug or UUID
-                while (Pages::exists($this->slug) || Pages::slugExists($this->slug)) {
-                    $this->slug = $slug .= '-' . bin2hex(random_bytes(4));
-                }
-            } else {
-                // otherwise slug must still *never* collide with a UUID
-                // UUIDs *must* be usable for unique/canonical URLs
-                while (Pages::exists($this->slug)) {
-                    $this->slug = $slug .= '-' . bin2hex(random_bytes(4));
-                }
-            }
-            // insert slug into database
-            Pages::insertSlug($this->uuid, $this->slug);
-        }
-        if ($this->slug === false) {
-            $this->slug = @DB::query()->from('page_slug')->where('page_uuid = ?', [$this->uuid()])->fetch()['url'];
-        }
-        return $this->slug ?? $this->uuid;
     }
 
     public function name(string $name = null, bool $unfiltered = false): string
@@ -200,6 +205,9 @@ class Page implements ArrayAccess
     {
         if ($action && !preg_match('/\.[a-z0-9]+$/', $action)) {
             $action .= '.html';
+        }
+        if ($action == 'urls.html') {
+            $uuid = true;
         }
         if ($uuid === true) {
             $slug = $this->uuid();

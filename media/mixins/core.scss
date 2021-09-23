@@ -149,3 +149,77 @@
     background: $color-error;
     color: contrast-color($color-error);
 }
+
+@mixin loading-overlay {
+    position: relative;
+
+    &:before,
+    &:after {
+        display: none;
+        position: absolute;
+    }
+
+    &:before {
+        content: '';
+        z-index: 100;
+        background: rgba($body-bg, 0.9);
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+
+    &:after {
+        @include material-icon;
+        z-index: 101;
+        color: $color-info;
+        font-size: 3em;
+        content: 'refresh';
+        position: absolute;
+        top: 50%;
+        right: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    &.loading {
+
+        &:before,
+        &:after {
+            display: block;
+        }
+
+        &:after {
+            animation-name: spin-loading-overlay;
+            animation-duration: 1000ms;
+            animation-iteration-count: infinite;
+            animation-timing-function: linear;
+        }
+    }
+
+    &.error {
+        &:after {
+            color: $color-error;
+            content: 'error';
+            animation: none;
+        }
+    }
+
+    &.noresults {
+        &:after {
+            color: $color-info;
+            content: 'keyboard';
+            animation: none;
+        }
+    }
+
+    @media screen and (prefers-color-scheme: dark) {
+
+        &:before {
+            background: rgba($dark-body-bg, 0.9);
+        }
+
+        &:after {
+            color: $color-info;
+        }
+    }
+}

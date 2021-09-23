@@ -1,0 +1,83 @@
+@import "/mixins/core.scss";
+
+.autocomplete-results {
+    margin: 0;
+    padding: 0;
+    min-height: 3rem+$grid-unit;
+    max-height: 20vh;
+    overflow: auto;
+}
+
+.autocomplete-selected-card .selected-card>div,
+.autocomplete-results>div {
+    font-family: Arial, Helvetica, sans-serif;
+    list-style-type: none;
+    margin: 0;
+    padding: $grid-unit/2;
+    cursor: pointer;
+    background: rgba($color-accent, 0.2);
+    display: flex;
+    align-items: center;
+
+    &:before {
+        @include icofont;
+        display: none;
+        font-size: 3em;
+        padding-right: $grid-unit/2;
+    }
+
+    &.page {
+        &:before {
+            display: block;
+            content: '\efb2';
+        }
+    }
+}
+
+.autocomplete-selected-card {
+    width: 100%;
+    display: flex;
+
+    .selected-card {
+        flex-grow: 20;
+
+        >div {
+            background: $color-confirmation;
+            color: contrast-color($color-confirmation);
+        }
+    }
+
+    .clear-selection {
+        @include button-warning;
+        padding: $grid-unit/2;
+        flex-grow: 1;
+        flex-basis: 3em;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:before {
+            @include material-icon;
+            display: block;
+            font-size: 2em;
+            content: 'backspace';
+        }
+    }
+}
+
+.autocomplete-results>div {
+    @media screen and (prefers-color-scheme: dark) {
+        background: rgba($color-accent, 0.1);
+    }
+
+    &:nth-child(even) {
+        background: transparent;
+    }
+
+    &:focus {
+        background: $color-info;
+        color: contrast-color($color-info);
+    }
+}
