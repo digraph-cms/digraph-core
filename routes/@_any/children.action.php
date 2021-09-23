@@ -1,3 +1,4 @@
+<h1>Child pages</h1>
 <?php
 
 use DigraphCMS\Content\Graph;
@@ -11,7 +12,6 @@ use DigraphCMS\UI\DataTables\QueryColumnHeader;
 use DigraphCMS\UI\DataTables\QueryTable;
 use DigraphCMS\UI\Forms\Form;
 use DigraphCMS\UI\Forms\PageField;
-use DigraphCMS\UI\Notifications;
 use Formward\Fields\Input;
 
 echo '<div class="navigation-frame" id="children-form">';
@@ -29,8 +29,7 @@ if ($form->handle()) {
         $form['child']->value(),
         $form['type']->value() ? $form['type']->value() : null
     );
-    Notifications::confirmation('Link added');
-    $form['child']->value('');
+    throw new RefreshException();
 }
 
 // display table

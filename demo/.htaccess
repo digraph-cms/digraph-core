@@ -9,4 +9,4 @@
 </IfModule>
 
 # disable session auto start so that it isn't used if not needed
-php_value session.auto_start 0
+# php_value session.auto_start 0

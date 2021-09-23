@@ -142,6 +142,9 @@ class DigraphAutocomplete {
     _doBlurEvent(e) {
         if (!this.resultFocused && !this.input.matches(':focus')) {
             this.results.style.display = 'none';
+            if (this.selected.style.display != 'none') {
+                this.input.style.display = 'none';
+            }
         }
     }
     /**

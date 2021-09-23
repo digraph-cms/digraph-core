@@ -39,6 +39,7 @@ final class CreateCoreTables extends AbstractMigration
             ->addColumn('uuid', 'uuid')
             ->addColumn('name', 'string', ['length' => 100])
             ->addColumn('class', 'string', ['length' => 50])
+            ->addColumn('slug_pattern', 'string', ['length' => 100])
             ->addColumn('data', 'json')
             ->addColumn('created', 'integer')
             ->addColumn('created_by', 'uuid', ['null' => true])

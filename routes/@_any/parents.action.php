@@ -1,3 +1,4 @@
+<h1>Parent pages</h1>
 <?php
 
 use DigraphCMS\Content\Graph;
@@ -11,11 +12,27 @@ use DigraphCMS\UI\DataTables\QueryColumnHeader;
 use DigraphCMS\UI\DataTables\QueryTable;
 use DigraphCMS\UI\Forms\Form;
 use DigraphCMS\UI\Forms\PageField;
-use DigraphCMS\UI\Notifications;
 use Formward\Fields\Input;
 
 echo '<div class="navigation-frame" id="parents-form">';
 
+// set up and handle form first, so that its changes appear in table immediately
+$form = new Form('Add parent');
+$form->addClass('compact');
+$form['parent'] = new PageField('Page');
+$form['parent']->required(true);
+$form['type'] = new Input('Link type');
+
+if ($form->handle()) {
+    Pages::insertLink(
+        $form['parent']->value(),
+        Context::page()->uuid(),
+        $form['type']->value() ? $form['type']->value() : null
+    );
+    throw new RefreshException();
+}
+
+// display table
 $query = Graph::parentIDs(Context::page()->uuid())->order('page_link.id desc');
 $table = new QueryTable(
     $query,
@@ -32,7 +49,7 @@ $table = new QueryTable(
             ['warning']
         );
         return [
-            $page->url()->html(),
+            $page ? $page->url()->html() : $page,
             $row['type'],
             $button
         ];
@@ -45,22 +62,7 @@ $table = new QueryTable(
 );
 echo $table;
 
-$form = new Form('Add parent');
-$form->addClass('compact');
-$form['parent'] = new PageField('Page');
-$form['parent']->required(true);
-$form['type'] = new Input('Link type');
-
-if ($form->handle()) {
-    Pages::insertLink(
-        $form['parent']->value(),
-        Context::page()->uuid(),
-        $form['type']->value() ? $form['type']->value() : null
-    );
-    Notifications::flashConfirmation('Link added');
-    throw new RefreshException();
-} else {
-    echo $form;
-}
+// display form below table
+echo $form;
 
 echo '</div>';
