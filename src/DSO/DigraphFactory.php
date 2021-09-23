@@ -39,12 +39,6 @@ class DigraphFactory extends Factory
         ],
     ];
 
-    public function updateEnvironment(): bool
-    {
-        //execute
-        $result = parent::updateEnvironment();
-    }
-
     public function name($set = null): string
     {
         if ($set) {
