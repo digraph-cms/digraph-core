@@ -8,7 +8,7 @@ use DigraphCMS\UI\Forms\Form;
 use DigraphCMS\UI\Notifications;
 use Formward\Fields\Input;
 
-Cookies::require(['system', 'csrf']);
+Cookies::required(['system', 'csrf']);
 
 $page = Context::page();
 

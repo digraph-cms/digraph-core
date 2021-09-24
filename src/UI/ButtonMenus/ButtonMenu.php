@@ -48,7 +48,7 @@ class ButtonMenu
         if ($csrf !== null) {
             $this->csrf = $csrf;
             if ($this->csrf) {
-                Cookies::require('csrf');
+                Cookies::required('csrf');
             }
         }
         return $this->csrf;

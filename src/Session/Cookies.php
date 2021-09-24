@@ -265,7 +265,7 @@ class Cookies
      * @param string $message
      * @return void
      */
-    public static function require($types, string $message = '')
+    public static function required($types, string $message = '')
     {
         if (!is_array($types)) {
             $types = [$types];
@@ -324,13 +324,13 @@ class Cookies
         if ($localScope) {
             return URLs::sitePath() . Context::url()->pathString();
         } else {
-            return URLs::sitePath();
+            return URLs::sitePath() ? URLs::sitePath() : '/';
         }
     }
 
     protected static function cookieDomain(): ?string
     {
-        return URLs::$siteHost;
+        return preg_replace('/:.*$/', '', URLs::siteHost());
     }
 
     protected static function cookieSecure(): ?bool

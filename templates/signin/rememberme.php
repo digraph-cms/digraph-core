@@ -4,22 +4,29 @@
 <?php
 
 use DigraphCMS\Context;
+use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\UI\ButtonMenus\ButtonMenu;
 use DigraphCMS\UI\ButtonMenus\ButtonMenuButton;
+
+$redirect = null;
 
 echo new ButtonMenu(null, [
     new ButtonMenuButton(
         'Trust this computer',
-        function () {
-            Context::response()->redirect(Context::fields()['yes_url']);
+        function () use (&$redirect) {
+            $redirect = Context::fields()['yes_url'];
         },
         ['confirmation']
     ),
     new ButtonMenuButton(
         'Sign out when I close my browser',
-        function () {
-            Context::response()->redirect(Context::fields()['no_url']);
+        function () use (&$redirect) {
+            $redirect = Context::fields()['no_url'];
         },
         ['info']
     )
 ]);
+
+if ($redirect) {
+    throw new RedirectException($redirect);
+}

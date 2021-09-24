@@ -88,7 +88,8 @@
     "umask_dir": 2
   },
   "db": {
-    "adapter": "mysql",
+    "adapter": "sqlite",
+    "name": "${paths.storage}/database",
     "charset": "utf8",
     "pdo_options": [],
     "sqlite": {

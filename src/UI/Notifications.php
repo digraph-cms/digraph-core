@@ -78,7 +78,7 @@ class Notifications
 
     public static function flash(string $message, string $type = 'unspecified', string $class = '')
     {
-        Cookies::require('system');
+        Cookies::required('system');
         static::$flashes[] = [$message, $type, $class];
     }
 

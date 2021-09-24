@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Phinx\Migration\AbstractMigration;
 
-final class CreateCoreTables extends AbstractMigration
+final class CoreTables extends AbstractMigration
 {
     public function change(): void
     {

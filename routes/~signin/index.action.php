@@ -6,7 +6,7 @@ use DigraphCMS\Session\Cookies;
 use DigraphCMS\UI\Templates;
 use DigraphCMS\Users\Users;
 
-Cookies::require(['system', 'auth', 'csrf']);
+Cookies::required(['system', 'auth', 'csrf']);
 
 // handle single signin option by bouncing directly to it
 $urls = Users::allSigninURLs(Context::arg('_bounce'));
