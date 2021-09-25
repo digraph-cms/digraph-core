@@ -13,6 +13,7 @@
         "php": ">=7.1",
         "ext-gd": "*",
         "ext-xml": "*",
+        "ext-mbstring": "*",
         "byjoby/flatrr": "^1.3",
         "fpdo/fluentpdo": "^2.2",
         "robmorgan/phinx": "^0.12.7||^0.11.7",
