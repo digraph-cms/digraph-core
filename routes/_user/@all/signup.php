@@ -1,6 +1,6 @@
 <?php
-include $this->helper('routing')->hookFile('_user', 'core_init.php')['file'];
 $package->cache_noStore();
+$users = $cms->helper('users');
 
 //end if user is already signed in
 if ($users->id()) {
@@ -9,8 +9,9 @@ if ($users->id()) {
 }
 
 //check that signup is allowed with this manager
-if (!$this->helper("users")->signupAllowed($managerName)) {
-    $package->error(404);
+$managerName = $package['url.args.manager']?$package['url.args.manager']:$cms->config['users.defaultmanager'];
+if (!($manager = $users->manager($managerName)) || !$users->signupAllowed($managerName)) {
+    $package->error(500, 'UserManager '.$managerName.' not found or not allowed');
     return;
 }
 

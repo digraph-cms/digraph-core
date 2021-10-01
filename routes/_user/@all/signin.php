@@ -4,8 +4,8 @@ if (defined('SIGN_IN_BLOCKED')) {
     return;
 }
 
-include $this->helper('routing')->hookFile('_user', 'core_init.php')['file'];
 $package->cache_noStore();
+$users = $cms->helper('users');
 
 // determine post-signin bounce destination
 /** @var \Digraph\Urls\UrlHelper */
@@ -22,8 +22,9 @@ if ($users->user()) {
 }
 
 //check that signin is allowed with this manager
-if (!$this->helper("users")->signinAllowed($managerName)) {
-    $package->error(404);
+$managerName = $package['url.args.manager']?$package['url.args.manager']:$cms->config['users.defaultmanager'];
+if (!($manager = $users->manager($managerName)) || !$users->signinAllowed($managerName)) {
+    $package->error(500, 'UserManager '.$managerName.' not found or not allowed');
     return;
 }
 
