@@ -1,5 +1,6 @@
 <?php
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
+
 namespace Digraph\Users\Managers\Simple;
 
 use Destructr\DSO;
@@ -14,7 +15,7 @@ class SimpleUser extends DSO implements UserInterface
         return $this->name();
     }
 
-    public function managerName(string $set = null) : string
+    public function managerName(string $set = null): string
     {
         if ($set) {
             $this->managerName = $set;
@@ -22,17 +23,17 @@ class SimpleUser extends DSO implements UserInterface
         return $this->managerName;
     }
 
-    public function id() : string
+    public function id(): string
     {
-        return $this->identifier().'@'.$this->managerName;
+        return $this->identifier() . '@' . $this->managerName;
     }
 
-    public function identifier() : string
+    public function identifier(): string
     {
         return $this->get('dso.id');
     }
 
-    public function name(string $set = null) : string
+    public function name(string $set = null): string
     {
         if ($set) {
             $this['name'] = $set;
@@ -40,10 +41,10 @@ class SimpleUser extends DSO implements UserInterface
         if ($this['name']) {
             return $this->factory->cms()->helper('filters')->sanitize($this['name']);
         }
-        return "Unnamed user ".$this['dso.id'];
+        return "Unnamed user " . $this['dso.id'];
     }
 
-    public function email() : ?string
+    public function email(): ?string
     {
         return $this['email.primary'];
     }
@@ -86,12 +87,12 @@ class SimpleUser extends DSO implements UserInterface
         }
     }
 
-    public function getEmailToken() : ?string
+    public function getEmailToken(): ?string
     {
         return $this['email.pending.token'];
     }
 
-    public function checkEmailToken(string $token) : bool
+    public function checkEmailToken(string $token): bool
     {
         if (!$this['email.pending.token']) {
             return false;
@@ -107,12 +108,12 @@ class SimpleUser extends DSO implements UserInterface
         unset($this['email.pending']);
     }
 
-    public function pendingEmail() : ?string
+    public function pendingEmail(): ?string
     {
         return $this['email.pending.address'];
     }
 
-    public function pendingEmailTime() : ?int
+    public function pendingEmailTime(): ?int
     {
         return $this['email.pending.time'];
     }
@@ -125,8 +126,16 @@ class SimpleUser extends DSO implements UserInterface
         ];
     }
 
-    public function checkPassword(string $password) : bool
+    public function checkPassword(string $password): bool
     {
-        return password_verify($password, $this['password.hash']);
+        // check
+        $matches = password_verify($password, $this['password.hash']);
+        // re-set password if it needs rehashing
+        if ($matches && password_needs_rehash($this['password.hash'], PASSWORD_DEFAULT)) {
+            $this->setPassword($password);
+            $this->update();
+        }
+        // return check value
+        return $matches;
     }
 }
