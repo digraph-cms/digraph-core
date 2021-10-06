@@ -1,5 +1,6 @@
 <?php
 /* Digraph Core | https://github.com/digraph-cms/digraph-core | MIT License */
+
 namespace Digraph\Users;
 
 use Digraph\Helpers\AbstractHelper;
@@ -55,7 +56,9 @@ class UserHelper extends AbstractHelper
     {
         $m = [];
         foreach ($this->cms->config['users.managers'] as $name => $settings) {
-            $m[$name] = $this->manager($name);
+            if ($settings['signin'] || $settings['signup']) {
+                $m[$name] = $this->manager($name);
+            }
         }
         return $m;
     }
@@ -78,15 +81,14 @@ class UserHelper extends AbstractHelper
         return $out;
     }
 
-    public function getByEmail(string $email)
+    public function getByEmail(string $email): ?UserInterface
     {
-        $out = [];
         foreach ($this->managers() as $manager) {
             if ($user = $manager->getByEmail($email)) {
-                $out[$user->identifier()] = $user;
+                return $user;
             }
         }
-        return $out;
+        return null;
     }
 
     public function signout()

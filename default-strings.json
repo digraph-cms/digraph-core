@@ -40,7 +40,8 @@
         "add": {
             "confirmation": "Successfully added !name",
             "error": "An error occurred while saving"
-        }
+        },
+        "account_recovery": "If you would like to reset your password visit !link"
     },
     "forms": {
         "digraph_body_label": "Content",
@@ -48,6 +49,9 @@
         "digraph_title_label": "Title",
         "slug_label": "",
         "confirm_button": "Confirm",
+        "signup": {
+            "email_taken": "That email address is already registered"
+        },
         "slug": {
             "error": {
                 "taken": "The URL <code>!slug</code> is already in use by !by. Choosing a different URL is recommended.",
@@ -188,7 +192,8 @@
             "_user/display": "User",
             "_user/signin": "Sign in",
             "_user/signout": "Sign out",
-            "_user/signup": "Sign up"
+            "_user/signup": "Sign up",
+            "_user/recover": "Password reset"
         }
     }
 }

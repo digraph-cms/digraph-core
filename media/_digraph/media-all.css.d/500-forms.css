@@ -117,8 +117,14 @@
 }
 
 .Form .validation-message a {
+  display: block;
   text-decoration: none;
   color: #fff !important;
+
+  a {
+    text-decoration: underline;
+    font-weight: bold;
+  }
 }
 
 .FieldWrapper-Button {

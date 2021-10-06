@@ -22,9 +22,9 @@ if ($users->user()) {
 }
 
 //check that signin is allowed with this manager
-$managerName = $package['url.args.manager']?$package['url.args.manager']:$cms->config['users.defaultmanager'];
+$managerName = $package['url.args.manager'] ? $package['url.args.manager'] : $cms->config['users.defaultmanager'];
 if (!($manager = $users->manager($managerName)) || !$users->signinAllowed($managerName)) {
-    $package->error(500, 'UserManager '.$managerName.' not found or not allowed');
+    $package->error(500, 'UserManager ' . $managerName . ' not found or not allowed');
     return;
 }
 
@@ -70,21 +70,24 @@ if ($form && $form->handle()) {
     }
     //do default signin with password if none of the above completed a signin
     if (!$users->id() && $form) {
-        $matches = $users->getByEmail($form['email']->value());
+        $u = $users->getByEmail($form['email']->value());
         $done = false;
-        foreach ($matches as $u) {
-            if ($u->checkPassword($form['password']->value())) {
-                //sign in was successful
-                $users->id($u->id());
-                $done = true;
-                $package->redirect(
-                    $this->helper('urls')->parse('_user')
-                );
-                break;
-            }
+        if ($u && $u->checkPassword($form['password']->value())) {
+            //sign in was successful
+            $users->id($u->id());
+            $done = true;
+            $package->redirect(
+                $this->helper('urls')->parse('_user')
+            );
         }
         //sign in failed
         if (!$done) {
+            $this->helper('notifications')->notice(
+                $this->helper('strings')->string(
+                    'notifications.account_recovery',
+                    ['link' => $this->helper('urls')->parse('_user/recover?email=' . $form['email']->value())->html()]
+                )
+            );
             $this->helper('notifications')->error(
                 $this->helper('strings')->string('user.signin_failed')
             );
