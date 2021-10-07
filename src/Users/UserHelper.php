@@ -10,6 +10,32 @@ class UserHelper extends AbstractHelper
     protected $managers = [];
     protected $groupSources = [];
 
+    public function sendVerificationEmail(UserInterface $user)
+    {
+        // update token
+        $user['email.pending.token'] = bin2hex(random_bytes(16));
+        $user['email.pending.time'] = time();
+        $user['email.pending.ip'] = $_SERVER['REMOTE_ADDR'];
+        $user->update();
+        /** @var \Digraph\Mail\MailHelper */
+        $mail = $this->cms->helper('mail');
+        $message = $mail->message();
+        $message->addTo($user->email());
+        $message->setSubject('Account password reset');
+        /** @var \Digraph\Urls\Url */
+        $tokenURL = $this->cms->helper('urls')->parse('_user/verify');
+        $tokenURL['args.token'] = $user->getEmailToken();
+        $body = '<p>Please verify your email address for your account on ' . $this->cms->config['url.domain'] . '<p>';
+        $body .= "<p><a href=\"$tokenURL\">Click here to verify your email address</a></p>";
+        $body .= '<p>If you did not initiate a signup, simply ignore this email and the account will not be activated.</p>';
+        $message->setBody($body);
+        $mail->send($message);
+        // notify of success
+        $this->cms
+            ->helper('notifications')
+            ->printConfirmation('A verification email has been sent to your account, you must verify your email to use all features of this site. Please note that delivery may take up to 30 minutes.');
+    }
+
     public function signinUrl($package = null)
     {
         /** @var \Digraph\Urls\UrlHelper */

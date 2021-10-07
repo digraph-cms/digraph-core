@@ -193,7 +193,8 @@
             "_user/signin": "Sign in",
             "_user/signout": "Sign out",
             "_user/signup": "Sign up",
-            "_user/recover": "Password reset"
+            "_user/recover": "Password reset",
+            "_user/verify": "Email verification"
         }
     }
 }

@@ -115,6 +115,8 @@ if ($form && $form->handle()) {
     if (!$user->insert()) {
         $package->error(500, 'Failed to insert user');
     }
+    //send verification email
+    $users->sendVerificationEmail($user);
     //sign in as user
     $users->id($user->id());
     $cms->helper('notifications')->flashConfirmation('You are now signed up');

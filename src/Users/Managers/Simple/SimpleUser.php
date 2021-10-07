@@ -72,7 +72,8 @@ class SimpleUser extends DSO implements UserInterface
         $this['email.pending'] = [
             'address' => $email,
             'token' => bin2hex(random_bytes(16)),
-            'time' => time()
+            'time' => time(),
+            'ip' => $_SERVER['REMOTE_ADDR']
         ];
     }
 
@@ -94,9 +95,15 @@ class SimpleUser extends DSO implements UserInterface
 
     public function checkEmailToken(string $token): bool
     {
-        if (!$this['email.pending.token']) {
+        // no pending email, return false
+        if (!$this['email.pending']) {
             return false;
         }
+        // pending token has expired (1 week), return false
+        if (time() > $this['email.pending.time'] + (86400 * 7)) {
+            return false;
+        }
+        // return whether they match
         return $token == $this['email.pending.token'];
     }
 
