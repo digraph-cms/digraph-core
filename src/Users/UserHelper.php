@@ -21,7 +21,7 @@ class UserHelper extends AbstractHelper
         $mail = $this->cms->helper('mail');
         $message = $mail->message();
         $message->addTo($user->email());
-        $message->setSubject('Account password reset');
+        $message->setSubject('Account email verification');
         /** @var \Digraph\Urls\Url */
         $tokenURL = $this->cms->helper('urls')->parse('_user/verify');
         $tokenURL['args.token'] = $user->getEmailToken();
