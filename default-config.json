@@ -475,6 +475,10 @@
             "_user/*": [
                 "allow all"
             ],
+            "_user/verify": [
+                "deny all",
+                "allow group user"
+            ],
             "_logging/*": [
                 "deny all",
                 "allow group admin"
