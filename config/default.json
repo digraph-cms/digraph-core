@@ -7,6 +7,9 @@
     "protocol": null,
     "home_name": "Home"
   },
+  "page_types": {
+    "page": "\\DigraphCMS\\Content\\Page"
+  },
   "files": {
     "path": "${paths.web}/files",
     "url": "/files",

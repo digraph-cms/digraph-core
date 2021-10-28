@@ -4,6 +4,7 @@ namespace DigraphCMS\Content;
 
 use ArrayAccess;
 use DateTime;
+use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Digraph;
 use DigraphCMS\URL\URL;
@@ -42,6 +43,26 @@ class Page implements ArrayAccess
         $this->rawSet(null, $data);
         $this->changed = false;
         $this->slugPattern = @$metadata['slug_pattern'] ?? '[name]';
+    }
+
+    public function addableTypes(): array
+    {
+        return array_filter(
+            array_keys(Config::get('page_types')),
+            function (string $type) {
+                return true;
+            }
+        );
+    }
+
+    public function url_add(string $type): URL
+    {
+        return $this->url('_add_' . $type);
+    }
+
+    public function url_edit(): URL
+    {
+        return $this->url('edit');
     }
 
     public function slugVariable(string $name): ?string
@@ -149,19 +170,15 @@ class Page implements ArrayAccess
      *
      * @param URL $url
      * @param boolean $inPageContext whether page name is obvious from context and should be omitted
-     * @return string
+     * @return ?string
      */
-    public function title(URL $url = null, bool $inPageContext = false): string
+    public function title(URL $url = null, bool $inPageContext = false): ?string
     {
-        $name = $this->name();
-        if ($url && $url->action() != 'index') {
-            if ($inPageContext) {
-                return $url->action();
-            } else {
-                return $name . ': ' . $url->action();
-            }
+        if ($url && $url->action() == 'index') {
+            return $this->name();
+        }else {
+            return null;
         }
-        return $name;
     }
 
     /**

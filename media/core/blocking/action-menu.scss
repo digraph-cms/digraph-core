@@ -1,12 +1,13 @@
 @import "/mixins/core.scss";
 
 .action-menu {
-    background: rgba($color-neutral, 0.1);
+    background: $color-neutral;
     font-size: smaller;
     display: flex;
     justify-content: space-between;
     flex-direction: row;
     align-items: flex-end;
+    color: contrast-color($color-neutral);
 
     h1 {
         display: none;
@@ -43,6 +44,7 @@
         white-space: nowrap;
         color: inherit;
         padding: 0.5em 0.25em;
+        color: inherit !important;
 
         &[href] {
             padding: 0.5em;
@@ -70,6 +72,47 @@
         display: flex;
         flex-wrap: wrap;
         margin: 0;
+    }
+
+    li.dropdown {
+        position: relative;
+
+        >a {
+            cursor: pointer;
+
+            &:before {
+                @include icofont;
+                content: '\ea7d';
+            }
+        }
+
+        >ul {
+            display: none;
+            position: absolute;
+            min-width: 100%;
+            padding: $grid-unit/4;
+            box-sizing: border-box;
+            top: 100%;
+            left: 0;
+            background: $color-neutral;
+
+            a {
+                display: block;
+            }
+        }
+
+        &:focus-within,
+        &.open {
+            >ul {
+                display: block;
+            }
+
+            >a {
+                &:before {
+                    content: '\ea6f';
+                }
+            }
+        }
     }
 }
 

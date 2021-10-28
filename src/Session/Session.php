@@ -66,10 +66,53 @@ final class Session
             return;
         }
         // check for different user agent
-        $parser = new UserAgentParser();
-        if ($parser->parse($auth->ua()) != $parser->parse($_SERVER['HTTP_USER_AGENT'])) {
-            static::deauthenticate("Browser/OS changed (" . $parser->parse($_SERVER['HTTP_USER_AGENT']) . ")");
+        if (static::browserPlatform($auth->ua()) != static::browserPlatform()) {
+            static::deauthenticate("Browser/OS changed (" . static::fullBrowser() . ")");
             return;
+        }
+    }
+
+    public static function browserPlatform(string $ua = null): string
+    {
+        $parser = new UserAgentParser();
+        $ua = $parser->parse($ua);
+        if ($ua) {
+            return $ua->browser() . ' on ' . $ua->platform();
+        } else {
+            return 'unknown';
+        }
+    }
+
+    public static function browser(string $ua = null): string
+    {
+        $parser = new UserAgentParser();
+        $ua = $parser->parse($ua);
+        if ($ua) {
+            return $ua->browser();
+        } else {
+            return 'unknown';
+        }
+    }
+
+    public static function platform(string $ua = null): string
+    {
+        $parser = new UserAgentParser();
+        $ua = $parser->parse($ua);
+        if ($ua) {
+            return $ua->platform();
+        } else {
+            return 'unknown';
+        }
+    }
+
+    public static function fullBrowser(string $ua = null): string
+    {
+        $parser = new UserAgentParser();
+        $ua = $parser->parse($ua);
+        if ($ua) {
+            return $ua->browser() . ' ' . $ua->browserVersion() . ' on ' . $ua->platform();
+        } else {
+            return 'unknown';
         }
     }
 

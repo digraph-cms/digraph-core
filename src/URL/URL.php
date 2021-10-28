@@ -165,7 +165,7 @@ class URL
             return
                 Dispatcher::firstValue('onPageUrlName', [$this, $inPageContext]) ??
                 $this->page()->title($this, $inPageContext) ??
-                URLs::pathToName($this->path(), $inPageContext);
+                ($this->action() == 'index' ? URLs::pathToName($this->path()) : URLs::pathtoName($this->action()));
         } else {
             // look for static route names by route-specific events, then generic, then fall back to path
             return

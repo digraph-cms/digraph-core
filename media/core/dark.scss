@@ -27,10 +27,6 @@ a:after {
     vertical-align: top;
 }
 
-.action-menu {
-    background: rgba($color-neutral, 0.05);
-}
-
 .breadcrumb {
     background: rgba($color-neutral, 0.025);
 }
@@ -47,15 +43,4 @@ td.header {
 tr:nth-child(2n) th,
 tr:nth-child(2n) td.header {
     background: rgba($color-accent, 0.8);
-}
-
-.action-menu {
-    a {
-
-        &[href]:hover,
-        &.current-page {
-            background: rgba(0, 0, 0, 0.8);
-            color: #fff;
-        }
-    }
 }

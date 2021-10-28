@@ -3,6 +3,7 @@
 namespace DigraphCMS;
 
 use DigraphCMS\Content\Page;
+use DigraphCMS\Content\Slugs;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\User;
@@ -10,6 +11,16 @@ use DigraphCMS\Users\Users;
 
 class CoreEventSubscriber
 {
+    public static function onAfterPageInsert(Page $page)
+    {
+        Slugs::setFromPattern($page, $page->slugPattern(), true);
+    }
+
+    public static function onAfterPageUpdate(Page $page)
+    {
+        Slugs::setFromPattern($page, $page->slugPattern(), true);
+    }
+
     public static function onPageAutocompleteCard(Page $page, string $query = null): array
     {
         $name = $page->name();

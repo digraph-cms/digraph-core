@@ -7,6 +7,16 @@ use DigraphCMS\UI\Theme;
 
 class Editor
 {
+    protected static $contextUUID;
+
+    public static function contextUUID(string $contextUUID = null): ?string
+    {
+        if ($contextUUID !== null) {
+            static::$contextUUID = $contextUUID;
+        }
+        return static::$contextUUID;
+    }
+
     public static function load()
     {
         static $loaded = false;
@@ -27,7 +37,7 @@ class Editor
                 $script .= "$name: $class," . PHP_EOL;
             }
         }
-        $script .= "};".PHP_EOL;
+        $script .= "};" . PHP_EOL;
         Theme::addInlinePageJs($script);
         Theme::addInternalPageCss('/editor/editor.css');
         Theme::addBlockingPageJs('/editor/editor.js');

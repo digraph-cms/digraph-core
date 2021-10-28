@@ -4,6 +4,7 @@ namespace DigraphCMS\Editor\Blocks;
 
 use DigraphCMS\Content\Filestore;
 use DigraphCMS\Context;
+use DigraphCMS\Editor\Editor;
 use DigraphCMS\Embedding\ErrorEmbed;
 use DigraphCMS\Embedding\ImageEmbed;
 use DigraphCMS\Session\Cookies;
@@ -22,14 +23,15 @@ class ImageBlock extends AbstractBlock
         return 'ImageTool';
     }
 
-    protected static function jsConfig(): array {
+    protected static function jsConfig(): array
+    {
         $fileUrl = new URL('/~api/v1/editor/image_file.php');
         $fileUrl->arg('csrf', Cookies::csrfToken('editor'));
         $urlUrl = new URL('/~api/v1/editor/image_url.php');
         $urlUrl->arg('csrf', Cookies::csrfToken('editor'));
         if (Context::page()) {
-            $fileUrl->arg('from', Context::page()->uuid());
-            $urlUrl->arg('from', Context::page()->uuid());
+            $fileUrl->arg('from', Editor::contextUUID() ?? Context::page()->uuid());
+            $urlUrl->arg('from', Editor::contextUUID() ?? Context::page()->uuid());
         }
         return [
             'endpoints' => [

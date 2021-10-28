@@ -1,4 +1,5 @@
 <?php
+
 namespace DigraphCMS\UI\Forms;
 
 use DigraphCMS\Editor\Editor;

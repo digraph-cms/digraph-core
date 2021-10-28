@@ -218,6 +218,7 @@ class Pages
     public static function update(Page $page)
     {
         DB::beginTransaction();
+        Dispatcher::dispatchEvent('onBeforePageUpdate', [$page]);
         // update values
         DB::query()
             ->update('page')
@@ -231,17 +232,20 @@ class Pages
             ->set([
                 'name' => $page->name(),
                 'data' => json_encode($page->get()),
+                'slug_pattern' => $page->slugPattern(),
                 'class' => $page->class(),
                 'updated' => time(),
                 'updated_by' => Session::user()
             ])
             ->execute();
+        Dispatcher::dispatchEvent('onAfterPageUpdate', [$page]);
         DB::commit();
     }
 
     public static function insert(Page $page)
     {
         // insert value
+        Dispatcher::dispatchEvent('onBeforePageInsert', [$page]);
         DB::query()
             ->insertInto(
                 'page',
@@ -249,6 +253,7 @@ class Pages
                     'uuid' => $page->uuid(),
                     'name' => $page->name(),
                     'data' => json_encode($page->get()),
+                    'slug_pattern' => $page->slugPattern(),
                     'class' => $page->class(),
                     'created' => time(),
                     'created_by' => $page->createdByUUID() ?? Session::user(),
@@ -257,11 +262,14 @@ class Pages
                 ]
             )
             ->execute();
+        Dispatcher::dispatchEvent('onAfterPageInsert', [$page]);
     }
 
     public static function delete(Page $page)
     {
         DB::beginTransaction();
+        // events
+        Dispatcher::dispatchEvent('onBeforePageDelete', [$page]);
         // delete links
         DB::query()
             ->delete('page_link')
@@ -285,6 +293,8 @@ class Pages
             ->execute();
         // filter cache
         static::filterCache($page);
+        // events
+        Dispatcher::dispatchEvent('onAfterPageDelete', [$page]);
         DB::commit();
     }
 

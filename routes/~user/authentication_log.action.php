@@ -28,12 +28,11 @@ $parser = new UserAgentParser();
 $table = new QueryTable(
     $query,
     function (array $row) use ($parser) {
-        $ua = $parser->parse($row['ua']);
         return [
             Format::date($row['created']),
             $row['comment'],
             $row['ip'],
-            $ua->browser() . ' on ' . $ua->platform() . '<br><small>' . $row['ua'] . '</small>',
+            Session::fullBrowser($row['ua']) . '<br><small>' . $row['ua'] . '</small>',
             Format::date($row['expires']),
             @$row['date'] ? Format::date($row['date']) : "<em>N/A</em>",
             @$row['reason'] ?? "<em>N/A</em>"
