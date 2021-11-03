@@ -1,56 +1,50 @@
 @import "/mixins/core.scss";
 
 @font-face {
-    font-family: 'Material Icons';
+    font-family: "Material Icons";
     font-style: normal;
     font-weight: 400;
-    src:
-        url(/core/material-icons/MaterialIcons-Regular.woff2) format('woff2'),
-        url(/core/material-icons/MaterialIcons-Regular.otf) format('truetype');
+    src: url(/core/material-icons/MaterialIcons-Regular.woff2) format("woff2"),
+        url(/core/material-icons/MaterialIcons-Regular.otf) format("truetype");
 }
 
 @font-face {
-    font-family: 'Material Icons Outlined';
+    font-family: "Material Icons Outlined";
     font-style: normal;
     font-weight: 400;
-    src:
-        url(/core/material-icons/MaterialIconsOutlined-Regular.woff2) format('woff2'),
-        url(/core/material-icons/MaterialIconsOutlined-Regular.otf) format('opentype');
+    src: url(/core/material-icons/MaterialIconsOutlined-Regular.woff2) format("woff2"),
+        url(/core/material-icons/MaterialIconsOutlined-Regular.otf) format("opentype");
 }
 
 @font-face {
-    font-family: 'Material Icons Round';
+    font-family: "Material Icons Round";
     font-style: normal;
     font-weight: 400;
-    src:
-        url(/core/material-icons/MaterialIconsRound-Regular.woff2) format('woff2'),
-        url(/core/material-icons/MaterialIconsRound-Regular.otf) format('opentype');
+    src: url(/core/material-icons/MaterialIconsRound-Regular.woff2) format("woff2"),
+        url(/core/material-icons/MaterialIconsRound-Regular.otf) format("opentype");
 }
 
 @font-face {
-    font-family: 'Material Icons Sharp';
+    font-family: "Material Icons Sharp";
     font-style: normal;
     font-weight: 400;
-    src:
-        url(/core/material-icons/MaterialIconsSharp-Regular.woff2) format('woff2'),
-        url(/core/material-icons/MaterialIconsSharp-Regular.otf) format('opentype');
+    src: url(/core/material-icons/MaterialIconsSharp-Regular.woff2) format("woff2"),
+        url(/core/material-icons/MaterialIconsSharp-Regular.otf) format("opentype");
 }
 
 @font-face {
-    font-family: 'Material Icons Two Tone';
+    font-family: "Material Icons Two Tone";
     font-style: normal;
     font-weight: 400;
-    src:
-        url(/core/material-icons/MaterialIconsTwoTone-Regular.woff2) format('woff2'),
-        url(/core/material-icons/MaterialIconsTwoTone-Regular.otf) format('opentype');
+    src: url(/core/material-icons/MaterialIconsTwoTone-Regular.woff2) format("woff2"),
+        url(/core/material-icons/MaterialIconsTwoTone-Regular.otf) format("opentype");
 }
 
 @font-face {
     font-family: "IcoFont";
     font-weight: normal;
     font-style: "Regular";
-    src:
-        url("/core/icofont/fonts/icofont.woff2") format("woff2"),
+    src: url("/core/icofont/fonts/icofont.woff2") format("woff2"),
         url("/core/icofont/fonts/icofont.woff") format("woff");
 }
 
@@ -81,12 +75,12 @@ a:after {
     vertical-align: top;
 }
 
-a[target=_lightbox]:after {
+a[target="_lightbox"]:after {
     content: "open_in_full";
     display: inline-block;
 }
 
-a[target=_blank]:after {
+a[target="_blank"]:after {
     content: "open_in_new";
     display: inline-block;
 }
@@ -103,11 +97,11 @@ a[target=_blank]:after {
 
 button,
 .button,
-input[type=submit] {
+input[type="submit"] {
     @include button;
 }
 
-input[type=submit] {
+input[type="submit"] {
     @include button-confirmation;
 }
 
@@ -129,11 +123,7 @@ input[type=submit] {
 
 .referenceable-block {
     position: relative;
-
-    &:target {
-        @include focused;
-        outline-offset: $grid-unit/2;
-    }
+    margin: $grid-unit 0;
 
     .referenceable-block-link {
         @include material-icon;

@@ -41,9 +41,8 @@ class ImageBlock extends AbstractBlock
         ];
     }
 
-    public function render(): string
+    public function doRender(): string
     {
-        $id = $this->id();
         $caption = $this->caption();
         $classes = $this->classes();
         $file = Filestore::get($this->data()['file']['uuid']);
@@ -53,7 +52,6 @@ class ImageBlock extends AbstractBlock
         } else {
             $figure = new ErrorEmbed('Error loading image');
         }
-        $figure->setID($id);
         foreach ($classes as $class) {
             $figure->addClass($class);
         }
@@ -72,9 +70,7 @@ class ImageBlock extends AbstractBlock
 
     public function classes(): array
     {
-        $classes = [
-            'referenceable-block'
-        ];
+        $classes = [];
         if (@$this->data()['withBorder']) {
             $classes[] = 'withBorder';
         }

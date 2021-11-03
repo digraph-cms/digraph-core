@@ -11,11 +11,19 @@ abstract class AbstractBlock
 
     abstract public static function load();
     abstract protected static function jsClass(): string;
-    abstract public function render(): string;
+    abstract public function doRender(): string;
 
     public function __construct(array $data)
     {
         $this->data = $data;
+    }
+
+    public function render(): string
+    {
+        return "<div class='referenceable-block' id='" . $this->id() . "'>" . PHP_EOL .
+            $this->anchorLink() . PHP_EOL .
+            $this->doRender() . PHP_EOL .
+            "</div>";
     }
 
     protected static function trim(string $string): string

@@ -33,7 +33,7 @@ class AttachmentBlock extends AbstractBlock
         ];
     }
 
-    public function render(): string
+    public function doRender(): string
     {
         $file = Filestore::get($this->data()['file']['uuid']);
         if (!$file) {
@@ -49,10 +49,7 @@ class AttachmentBlock extends AbstractBlock
         $text .= ", uploaded " . Format::date($file->created());
         $text .= "</div>";
         $text .= "</a>";
-        $id = $this->id();
         $mime = strtolower(preg_replace('/\/.+$/', '', $file->mime()));
-        return "<div class='attachment-block attachment-block-mime-$mime attachment-block-" . $this->data()['file']['extension'] . " referenceable-block' id='$id'>$text" . PHP_EOL .
-            $this->anchorLink() . PHP_EOL .
-            "</div>";
+        return "<div class='attachment-block attachment-block-mime-$mime attachment-block-" . $this->data()['file']['extension'] . "'>$text</div>";
     }
 }

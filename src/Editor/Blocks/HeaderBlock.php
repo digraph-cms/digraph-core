@@ -28,13 +28,11 @@ class HeaderBlock extends AbstractBlock
         return 'CMD+H';
     }
 
-    public function render(): string
+    public function doRender(): string
     {
         $level = $this->data()['level'];
         $text = $this->data()['text'];
         $id = $this->id();
-        return "<h$level class='referenceable-block' id='$id'>$text" . PHP_EOL .
-            $this->anchorLink() . PHP_EOL .
-            "</h$level>";
+        return "<h$level>$text</h$level>";
     }
 }

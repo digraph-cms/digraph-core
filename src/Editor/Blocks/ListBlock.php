@@ -22,13 +22,11 @@ class ListBlock extends AbstractBlock
         return 'CMD+L';
     }
 
-    public function render(): string
+    public function doRender(): string
     {
-        $id = $this->id();
         $tag = $this->data()['style'] == 'ordered' ? 'ol' : 'ul';
-        $out = "<$tag class='referenceable-block' id='$id'>" . PHP_EOL;
+        $out = "<$tag>" . PHP_EOL;
         $out .= $this->renderItems($this->data()['items']);
-        $out .= $this->anchorLink();
         $out .= "</$tag>" . PHP_EOL;
         return $out;
     }

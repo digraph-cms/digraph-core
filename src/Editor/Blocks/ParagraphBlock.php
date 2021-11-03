@@ -21,13 +21,11 @@ class ParagraphBlock extends AbstractBlock
         return null;
     }
 
-    public function render(): string
+    public function doRender(): string
     {
-        $text = $this->data()['text'];
-        $id = $this->id();
-        return "<p class='referenceable-block' id='$id'>" . PHP_EOL .
-            $text . PHP_EOL .
+        return "<p>" . PHP_EOL .
+            $this->data()['text'] . PHP_EOL .
             $this->anchorLink() . PHP_EOL .
-            "</p>";
+            "<p>";
     }
 }

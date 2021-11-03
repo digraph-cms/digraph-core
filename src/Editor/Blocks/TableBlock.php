@@ -21,10 +21,9 @@ class TableBlock extends AbstractBlock
         return 'CMD+T';
     }
 
-    public function render(): string
+    public function doRender(): string
     {
-        $id = $this->id();
-        $out = "<table class='referenceable-block' id='$id'>" . PHP_EOL;
+        $out = "<table class='referenceable-block'>" . PHP_EOL;
         foreach ($this->data()['content'] as $i => $row) {
             $ct = $i == 0 && $this->data()['withHeadings'] ? 'th' : 'td';
             $out .= '<tr>' . PHP_EOL;
@@ -33,7 +32,6 @@ class TableBlock extends AbstractBlock
             }
             $out .= '</tr>' . PHP_EOL;
         }
-        $out .= $this->anchorLink() . PHP_EOL;
         $out .= "</table>" . PHP_EOL;
         return $out;
     }
