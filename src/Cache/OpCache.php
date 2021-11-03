@@ -95,7 +95,9 @@ class OpCache extends AbstractCacheDriver
             $this->cache[$name] = null;
             $this->unlock($filename);
             unlink($filename);
-            opcache_invalidate($filename);
+            if (function_exists('opcache_invalidate')) {
+                opcache_invalidate($filename);
+            }
         }
     }
 
