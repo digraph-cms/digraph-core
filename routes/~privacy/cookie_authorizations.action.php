@@ -10,7 +10,7 @@ Context::response()->private(true);
 ?>
 <h1>Current cookie authorizations</h1>
 <p>
-    The current browser session has authorized the following cookies to be stored on this computer.
+    The current browser session has authorized the following cookies to be stored or updated on this computer.
     <?php
     if (Cookies::get('system', 'cookierules')) {
         if ($expiration = Cookies::expiration('system', 'cookierules')) {

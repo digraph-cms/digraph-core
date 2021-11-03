@@ -85,18 +85,26 @@ class ActionMenu
                 return substr($url->action(), 0, 1) != '_';
             }
         );
-        $addableTypes = $this->url->page()->addableTypes();
-        if ($actions || $addableTypes) {
+        $addable = array_filter(
+            array_map(
+                function (string $type) {
+                    $url = $this->url->page()->url_add($type);
+                    return $url->permissions() ? "<a href='$url'>$type</a>" : false;
+                },
+                $this->url->page()->addableTypes()
+            )
+        );
+        if ($actions || $addable) {
             echo "<div class='page-actions'><h2>" . $this->url->page()->url()->html() . "</h2><nav><ul>";
             foreach ($actions as $url) {
                 echo "<li>" . $url->html([], true) . "</li>";
             }
-            if ($addableTypes) {
+            if ($addable) {
                 echo "<li class='dropdown'>";
                 echo "<a class='adder' tabindex='0'>Add child</a>";
                 echo "<ul>";
-                foreach ($addableTypes as $type) {
-                    echo "<li><a href='" . $this->url->page()->url_add($type) . "'>$type</a></li>";
+                foreach ($addable as $link) {
+                    echo "<li>$link</li>";
                 }
                 echo "</ul>";
                 echo "</li>";

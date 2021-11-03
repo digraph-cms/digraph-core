@@ -13,7 +13,7 @@ use DigraphCMS\UI\Forms\Form;
 use DigraphCMS\UI\Notifications;
 use Formward\Fields\Input;
 
-Cookies::required(['system']);
+Cookies::required(['system', 'csrf']);
 
 // ensure we have a UUID in the parameters
 if (!Context::arg('uuid')) {
