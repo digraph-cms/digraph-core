@@ -2,17 +2,22 @@
 
 namespace DigraphCMS\Users;
 
+use DigraphCMS\URL\URL;
+
 class NullUser extends User
 {
     public function __toString()
     {
-        $name = $this->name();
-        if ($this->uuid() != 'guest') {
-            $name = "<s>$name</s>";
+        if ($this->uuid() == 'guest') {
+            return "<a href='" . $this->profile() . "' class='user-link null-user-link'><em>" . $this->name() . "</em></a>";
         } else {
-            $name = "<em>$name</em>";
+            return "<a class='user-link null-user-link'><em>" . $this->name() . "</em></a>";
         }
-        return "<a class='user-link null-user-link'>$name</a>";
+    }
+
+    public function profile(): URL
+    {
+        return new URL('/~users/_' . $this->uuid() . '.html');
     }
 
     public function insert()
