@@ -33,8 +33,8 @@ class Editor
         // set up editor config script
         $script = 'Digraph.editorTools = {' . PHP_EOL;
         foreach (Blocks::types() as $name => $class) {
-            if ($class = $class::jsConfigString()) {
-                $script .= "$name: $class," . PHP_EOL;
+            if ($config = $class::jsConfigString()) {
+                $script .= "$name: $config," . PHP_EOL;
             }
         }
         $script .= "};" . PHP_EOL;
