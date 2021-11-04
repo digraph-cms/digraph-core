@@ -11,7 +11,7 @@ use DigraphCMS\Users\Users;
 
 class CoreEventSubscriber
 {
-    public static function onAfterPageInsert(Page $page)
+    public static function onPageCreated(Page $page)
     {
         Slugs::setFromPattern($page, $page->slugPattern(), true);
     }

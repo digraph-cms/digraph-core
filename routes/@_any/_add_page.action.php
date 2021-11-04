@@ -6,6 +6,7 @@ use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Digraph;
 use DigraphCMS\Editor\Editor;
+use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\Session\Cookies;
 use DigraphCMS\UI\Forms\EditorField;
@@ -59,6 +60,9 @@ if ($form->handle()) {
     $page->insert();
     // create edge to parent
     Pages::insertLink(Context::page()->uuid(), $page->uuid());
+    // dispatch pagecreated event, this is where we set slug from pattern, we
+    // do this manually here so that duplicate non-parent slugs don't get made
+    Dispatcher::dispatchEvent('onPageCreated', [$page]);
     // notify and redirect
     DB::commit();
     Notifications::flashConfirmation('Added ' . $page->url()->html());

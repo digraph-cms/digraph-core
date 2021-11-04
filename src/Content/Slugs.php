@@ -53,13 +53,20 @@ class Slugs
      * those are kind of implicitly slugs
      *
      * @param string $slug
+     * @param string|null $not a UUID to skip
      * @return boolean
      */
-    public static function exists(string $slug): bool
+    public static function exists(string $slug, string $not = null): bool
     {
-        return !!DB::query()->from('page_slug')
-            ->where('url = ?', [$slug])
-            ->count();
+        if ($not) {
+            return !!DB::query()->from('page_slug')
+                ->where('url = ? AND page_uuid <> ?', [$slug, $not])
+                ->count();
+        } else {
+            return !!DB::query()->from('page_slug')
+                ->where('url = ?', [$slug])
+                ->count();
+        }
     }
 
     public static function delete(string $page_uuid, string $slug)
@@ -105,30 +112,28 @@ class Slugs
         if ($unique) {
             // if $unique is requested slug will be renamed if it collides
             // with an existing slug or UUID
-            $newSlug = $slug;
-            while (static::exists($newSlug) || Pages::exists($newSlug)) {
-                if ($existing = Pages::get($newSlug)) {
-                    if ($existing->uuid() != $page->uuid()) {
-                        $newSlug = $slug .= '-' . bin2hex(random_bytes(4));
-                    } else {
-                        break;
-                    }
-                } else {
-                    $newSlug = $slug .= '-' . bin2hex(random_bytes(4));
-                }
+            if (static::exists($slug, $page->uuid()) || Pages::exists($slug)) {
+                $slug = static::uniqueSlug($slug, $page);
             }
-            $slug = $newSlug;
         } else {
             // otherwise slug must still *never* collide with a UUID
             // UUIDs *must* be usable for unique/canonical URLs
-            $newSlug = $slug;
-            while (Pages::exists($newSlug)) {
-                $newSlug = $slug .= '-' . bin2hex(random_bytes(4));
+            if (Pages::exists($slug)) {
+                $slug = static::uniqueSlug($slug, $page);
             }
-            $slug = $newSlug;
         }
         // insert slug into database
         static::insert($page->uuid(), $slug);
+    }
+
+    protected static function uniqueSlug(string $slug, Page $page): string
+    {
+        $uuid = str_split(str_replace('/[^a-z0-9]/', '', substr($page->uuid(), 4)));
+        $slug .= '_' . substr($page->uuid(), 0, 4);
+        while (static::exists($slug, $page->uuid()) || Pages::exists($slug)) {
+            $slug .= array_shift($uuid);
+        }
+        return $slug;
     }
 
     protected static function insert(string $page_uuid, string $slug)
