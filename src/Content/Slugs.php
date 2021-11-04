@@ -128,7 +128,7 @@ class Slugs
 
     protected static function uniqueSlug(string $slug, Page $page): string
     {
-        $uuid = str_split(str_replace('/[^a-z0-9]/', '', substr($page->uuid(), 4)));
+        $uuid = str_split(str_replace('/[^a-z0-9]/', '', substr($page->uuid(), 4)), 4);
         $slug .= '_' . substr($page->uuid(), 0, 4);
         while (static::exists($slug, $page->uuid()) || Pages::exists($slug)) {
             $slug .= array_shift($uuid);

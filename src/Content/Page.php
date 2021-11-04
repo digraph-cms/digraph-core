@@ -176,7 +176,7 @@ class Page implements ArrayAccess
     {
         if ($url && $url->action() == 'index') {
             return $this->name();
-        }else {
+        } else {
             return null;
         }
     }
@@ -252,6 +252,11 @@ class Page implements ArrayAccess
     public function update()
     {
         return Pages::update($this);
+    }
+
+    public function delete()
+    {
+        return Pages::delete($this);
     }
 
     public function uuid(): string

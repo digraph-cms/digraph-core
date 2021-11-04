@@ -219,6 +219,7 @@ class Pages
     {
         DB::beginTransaction();
         Dispatcher::dispatchEvent('onBeforePageUpdate', [$page]);
+        Dispatcher::dispatchEvent('onBeforePageUpdate_' . $page->class(), [$page]);
         // update values
         DB::query()
             ->update('page')
@@ -238,6 +239,7 @@ class Pages
                 'updated_by' => Session::user()
             ])
             ->execute();
+        Dispatcher::dispatchEvent('onAfterPageUpdate_' . $page->class(), [$page]);
         Dispatcher::dispatchEvent('onAfterPageUpdate', [$page]);
         DB::commit();
     }
@@ -246,6 +248,7 @@ class Pages
     {
         // insert value
         Dispatcher::dispatchEvent('onBeforePageInsert', [$page]);
+        Dispatcher::dispatchEvent('onBeforePageInsert_' . $page->class(), [$page]);
         DB::query()
             ->insertInto(
                 'page',
@@ -262,6 +265,7 @@ class Pages
                 ]
             )
             ->execute();
+        Dispatcher::dispatchEvent('onAfterPageInsert_' . $page->class(), [$page]);
         Dispatcher::dispatchEvent('onAfterPageInsert', [$page]);
     }
 
@@ -270,6 +274,7 @@ class Pages
         DB::beginTransaction();
         // events
         Dispatcher::dispatchEvent('onBeforePageDelete', [$page]);
+        Dispatcher::dispatchEvent('onBeforePageDelete_' . $page->class(), [$page]);
         // delete links
         DB::query()
             ->delete('page_link')
@@ -294,6 +299,7 @@ class Pages
         // filter cache
         static::filterCache($page);
         // events
+        Dispatcher::dispatchEvent('onAfterPageDelete_' . $page->class(), [$page]);
         Dispatcher::dispatchEvent('onAfterPageDelete', [$page]);
         DB::commit();
     }

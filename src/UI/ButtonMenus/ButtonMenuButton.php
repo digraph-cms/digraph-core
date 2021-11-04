@@ -6,6 +6,7 @@ class ButtonMenuButton
 {
     protected static $id = 1;
     protected $label, $callback, $classes;
+
     public function __construct(string $label, callable $callback, array $classes = [])
     {
         $this->label = $label;

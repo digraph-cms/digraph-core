@@ -27,7 +27,9 @@ use DigraphCMS\UI\UserMenu;
 
 <body class='template-minimal'>
     <?php
-    Breadcrumb::print();
+    if (Context::response()->status() == 200) {
+        Breadcrumb::print();
+    }
     ?>
     <main id="content">
         <?php echo Context::response()->content(); ?>
