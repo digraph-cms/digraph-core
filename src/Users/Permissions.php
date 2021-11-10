@@ -37,8 +37,16 @@ class Permissions
     {
         // TODO: figure out how config works, it should take priority
         // try route-specific events, then generic events
+        $route = explode('/',$url->route());
+        $event = "onStaticUrlPermissions";
+        while ($dir = array_shift($route)) {
+            $event .= '_'.$dir;
+            $result = Dispatcher::firstValue($event,[$url,$user]);
+            if ($result !== null) {
+                return $result;
+            }
+        }
         return
-            Dispatcher::firstValue("onStaticUrlPermissions_" . $url->route(), [$url, $user]) ??
             Dispatcher::firstValue("onStaticUrlPermissions", [$url, $user]) ??
             true;
     }

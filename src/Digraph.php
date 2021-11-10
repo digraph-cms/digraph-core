@@ -26,6 +26,8 @@ Dispatcher::addSubscriber(CoreEventSubscriber::class);
 
 class Digraph
 {
+    const UUIDCHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+
     /**
      * Generate a response from an automatically-loaded request and render it.
      * In many cases once your config and database are configured calling this
@@ -65,6 +67,11 @@ class Digraph
      * generating the result. This isn't something you should rely on as a
      * secure hash, but can be useful if for some reason you need to generate
      * UUIDs in a deterministic way.
+     * 
+     * Note that Digraph's UUIDs are not compatible with the GUID spec, as they
+     * use characters a-z and A-Z, and not just a-f. This gives us more entropy, 
+     * and has no performance implications as they are saved in the database as
+     * strings anyway, and no binary/numeric operations are ever needed.
      *
      * @param string $seed
      * @return string
@@ -87,14 +94,32 @@ class Digraph
             return implode(
                 '-',
                 array_map(
-                    'bin2hex',
-                    array_map(
-                        'random_bytes',
-                        [4, 2, 2, 2, 6]
-                    )
+                    function (int $chars): string {
+                        $string = '';
+                        for ($i = 0; $i < $chars; $i++) {
+                            $string .= substr(static::UUIDCHARS, random_int(0, strlen(static::UUIDCHARS) - 1), 1);
+                        }
+                        return $string;
+                    },
+                    [8, 4, 4, 4, 12]
                 )
             );
         }
+    }
+
+    /**
+     * Determine whether a string is a valid UUID, in terms of length and basic
+     * composition (character types, placement of dashes, etc).
+     *
+     * @param string $uuid
+     * @return boolean
+     */
+    public static function validateUUID(string $uuid): bool
+    {
+        return preg_match(
+            '/^[' . static::UUIDCHARS . ']{8}\-([' . static::UUIDCHARS . ']{4}\-){3}[' . static::UUIDCHARS . ']{12}$/',
+            $uuid
+        );
     }
 
     /**

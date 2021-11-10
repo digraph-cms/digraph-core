@@ -51,6 +51,18 @@ class CoreEventSubscriber
     }
 
     /**
+     * Limits access to ~admin routes to admin users
+     *
+     * @param URL $url
+     * @param User $user
+     * @return boolean|null
+     */
+    public static function onStaticUrlPermissions_admin(URL $url, User $user): ?bool
+    {
+        return Permissions::inGroup('admins', $user);
+    }
+
+    /**
      * Limits access to ~user route to signed-in users only, unless user is 
      * specified in an arg, in which case it limits to that user or admins
      *
