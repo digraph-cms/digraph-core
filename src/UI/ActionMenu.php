@@ -82,7 +82,9 @@ class ActionMenu
         $actions = array_filter(
             Router::pageActions($this->url->page()),
             function (URL $url) {
-                return substr($url->action(), 0, 1) != '_';
+                return
+                    substr($url->action(), 0, 1) != '_'
+                    && $url->route() == $this->url->route();
             }
         );
         $addable = array_filter(
@@ -118,7 +120,9 @@ class ActionMenu
         $actions = array_filter(
             Router::staticActions($this->url->route()),
             function (URL $url) {
-                return substr($url->action(), 0, 1) != '_';
+                return
+                    substr($url->action(), 0, 1) != '_'
+                    && $url->route() == $this->url->route();
             }
         );
         if ($actions) {

@@ -165,13 +165,13 @@ class URL
             return
                 Dispatcher::firstValue('onPageUrlName', [$this, $inPageContext]) ??
                 $this->page()->title($this, $inPageContext) ??
-                ($this->action() == 'index' ? URLs::pathToName($this->path()) : URLs::pathtoName($this->action()));
+                ($this->action() == 'index' ? URLs::pathToName($this->path(), $inPageContext) : URLs::pathtoName($this->action(), $inPageContext));
         } else {
             // look for static route names by route-specific events, then generic, then fall back to path
             return
                 Dispatcher::firstValue('onStaticUrlName_' . $this->route(), [$this, $inPageContext]) ??
                 Dispatcher::firstValue('onStaticUrlName', [$this, $inPageContext]) ??
-                ($this->action() == 'index' ? URLs::pathToName($this->path()) : URLs::pathtoName($this->action()));
+                ($this->action() == 'index' ? URLs::pathToName($this->path(), $inPageContext) : URLs::pathtoName($this->action(), $inPageContext));
         }
     }
 

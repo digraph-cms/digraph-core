@@ -1,4 +1,4 @@
-<h1>Admin tools</h1>
+<h1>Maintenance tools</h1>
 
 <?php
 

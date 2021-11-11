@@ -12,6 +12,26 @@ class FS
         self::$umask_dir = Config::get('fs.umask_dir');
     }
 
+    public static function delete(string $file, string $deleteEmptyDirsUntil = null)
+    {
+        if ($file = realpath($file)) {
+            unlink($file);
+        }
+        if ($deleteEmptyDirsUntil) {
+            static::deleteEmptyDirsUntil(dirname($file), $deleteEmptyDirsUntil);
+        }
+    }
+
+    public static function deleteEmptyDirsUntil(string $dir, string $until)
+    {
+        if (($dir = realpath($dir)) && ($until = realpath($until))) {
+            if ($dir != $until && strpos($dir, $until) === 0) {
+                @rmdir($dir);
+                static::deleteEmptyDirsUntil(dirname($dir), $until);
+            }
+        }
+    }
+
     public static function mirror(string $src, string $dest, $link = false)
     {
         if (!is_dir($src)) {

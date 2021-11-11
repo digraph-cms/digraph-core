@@ -1,7 +1,7 @@
 <h1>Clean up filestore</h1>
 <p>
     This tool allows you to clean up unused files from the filestore system.
-    Generally these are the result of abandoned page-creation sessions, so this tool will only display/delete files older than 24 hours.
+    Generally these are the result of abandoned page-creation sessions, so to avoid deleting work in progress by users, this tool will only display or delete abandoned files older than 24 hours.
 </p>
 <p>
     Filestore files are deduplicated, so storing an identical file multiple times does not use additional disk space.
@@ -25,27 +25,23 @@ $query = DB::query()->from('filestore')
     ->leftJoin('page ON page_uuid = page.uuid')
     ->where('page_uuid is not null')
     ->where('page.uuid is null')
-    ->where('filestore.created < ?', [time() - 86400])
+    // ->where('filestore.created < ?', [time() - 86400])
     ->order('filestore.created ASC');
 
-if ($query->count() == 0) {
-    Notifications::printNotice('There are no unlinked files from pages in the filestore.');
-    return;
+if ($query->count()) {
+    // count total size of unlinked files and display notice of count and size
+    $byteQuery = DB::query()->from('filestore')
+        ->select('sum(filestore.bytes) as totalBytes')
+        ->leftJoin('page ON page_uuid = page.uuid')
+        ->where('page_uuid is not null')
+        ->where('page.uuid is null')
+        ->where('filestore.created < ?', [time() - 86400]);
+    Notifications::notice(sprintf(
+        "There are currently %d files linked to nonexistent pages with a total potential filesize of %s",
+        $query->count(),
+        Format::filesize($byteQuery->fetch()['totalBytes'] ?? 0)
+    ));
 }
-
-// count total size of unlinked files and display notice of count and size
-$byteQuery = DB::query()->from('filestore')
-    ->select('sum(filestore.bytes) as totalBytes')
-    ->leftJoin('page ON page_uuid = page.uuid')
-    ->where('page_uuid is not null')
-    ->where('page.uuid is null')
-    ->where('filestore.created < ?', [time() - 86400]);
-
-Notifications::printNotice(sprintf(
-    "There are currently %d files linked to nonexistent pages with a total potential filesize of %s",
-    $query->count(),
-    Format::filesize($byteQuery->fetch()['totalBytes'])
-));
 
 // display files in table
 $table = new QueryTable(
@@ -59,7 +55,12 @@ $table = new QueryTable(
             Users::user($row['created_by']),
             new SingleButton(
                 'Delete',
-                function () {
+                function () use ($file) {
+                    if ($file->delete()) {
+                        Notifications::flashConfirmation('Deleted file ' . $file->filename());
+                    } else {
+                        Notifications::flashError('Error deleting file ' . $file->filename());
+                    }
                     throw new RefreshException();
                 },
                 ['error']

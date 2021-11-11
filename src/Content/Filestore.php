@@ -12,6 +12,27 @@ class Filestore
 {
     protected static $cache = [];
 
+    public static function delete(FilestoreFile $file): bool
+    {
+        // delete file
+        if (!DB::query()
+            ->delete('filestore')
+            ->where('uuid = ?', [$file->uuid()])
+            ->execute()) {
+            return false;
+        }
+        // determine if any with this hash remain
+        $unique = !DB::query()
+            ->from('filestore')
+            ->where('hash = ?', [$file->hash()])
+            ->count();
+        // delete file if was unique
+        if ($unique) {
+            FS::delete($file->src(), Config::get('filestore.path'));
+        }
+        return true;
+    }
+
     public static function upload(string $src, string $filename, string $page, array $meta)
     {
         $hash = md5_file($src);

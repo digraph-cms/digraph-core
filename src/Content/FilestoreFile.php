@@ -31,6 +31,11 @@ class FilestoreFile extends DeferredFile
         };
     }
 
+    public function delete(): bool
+    {
+        return Filestore::delete($this);
+    }
+
     public function src(): string
     {
         return Filestore::path($this->hash);
