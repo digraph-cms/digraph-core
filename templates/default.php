@@ -32,17 +32,17 @@ use DigraphCMS\UI\UserMenu;
         <a href="#content">Skip to content</a>
     </section>
     <?php
+    echo new UserMenu(Context::url());
     echo Templates::render('sections/header.php');
     echo Templates::render('sections/navbar.php');
     Breadcrumb::print();
+    echo new ActionMenu(Context::url(), false);
     Notifications::printSection();
     ?>
     <main id="content">
         <?php echo Context::response()->content(); ?>
     </main>
     <?php
-    echo new UserMenu(Context::url());
-    echo new ActionMenu(Context::url(), false);
     echo Templates::render('sections/footer.php');
     ?>
 </body>

@@ -27,6 +27,7 @@ use DigraphCMS\UI\UserMenu;
 
 <body class='template-minimal'>
     <?php
+    echo new UserMenu(Context::url());
     if (Context::response()->status() == 200) {
         Breadcrumb::print();
     }
@@ -35,7 +36,6 @@ use DigraphCMS\UI\UserMenu;
         <?php echo Context::response()->content(); ?>
     </main>
     <?php
-    echo new UserMenu(Context::url());
     echo Templates::render('sections/footer.php');
     ?>
 </body>

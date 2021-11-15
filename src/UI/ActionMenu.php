@@ -84,8 +84,7 @@ class ActionMenu
             function (URL $url) {
                 return
                     substr($url->action(), 0, 1) != '_'
-                    && ($url->route() == $this->url->route()
-                        || $this->url->route() == 'home');
+                    && $url->page() == $this->url->page();
             }
         );
         $addable = array_filter(
