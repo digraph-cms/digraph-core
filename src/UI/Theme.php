@@ -27,7 +27,8 @@ class Theme
         ],
         'internal_css' => [
             'all' => ['/core/core.css'],
-            'dark' => ['/core/dark.css']
+            'dark' => ['/core/dark.css'],
+            'print' => ['/core/print.css']
         ],
         'css_vars' => [
             'body-bg' => '#fafafa',

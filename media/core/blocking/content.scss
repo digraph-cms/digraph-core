@@ -1,9 +1,12 @@
-#content {
-    p,
-    li,
-    blockquote,
-    dd,
-    dt {
-        max-width: 35em;
+@media screen {
+    #content {
+
+        p,
+        li,
+        blockquote,
+        dd,
+        dt {
+            max-width: 35em;
+        }
     }
 }

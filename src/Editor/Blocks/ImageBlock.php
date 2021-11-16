@@ -8,6 +8,7 @@ use DigraphCMS\Editor\Editor;
 use DigraphCMS\Embedding\ErrorEmbed;
 use DigraphCMS\Embedding\ImageEmbed;
 use DigraphCMS\Session\Cookies;
+use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\Theme;
 use DigraphCMS\URL\URL;
 
@@ -43,9 +44,15 @@ class ImageBlock extends AbstractBlock
 
     public function doRender(): string
     {
+        if (!$this->data()['file']['uuid']) {
+            return '[file not configured]';
+        }
         $caption = $this->caption();
         $classes = $this->classes();
         $file = Filestore::get($this->data()['file']['uuid']);
+        if (!$file) {
+            return '[file not found]';
+        }
         if ($image = $file->image()) {
             $figure = new ImageEmbed($image);
             $figure->caption($caption);

@@ -1,0 +1,45 @@
+body {
+    font-size: 14pt;
+    color: #000;
+
+    * {
+        background: transparent !important;
+        color: #000 !important;
+    }
+
+    >.action-menu {
+        display: none;
+    }
+}
+
+#header,
+#navbar,
+#breadcrumb,
+#notifications,
+#footer {
+    display: none;
+}
+
+#content {
+    padding: 0;
+    columns: 2;
+
+    .media-embed,
+    .attachment-block {
+        font-size: 12pt;
+        border: 1px dashed #000;
+        padding: 0.5em !important;
+        break-inside: avoid;
+    }
+
+    .media-embed {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    .attachment-block {
+        .attachment-link {
+            padding: 0;
+        }
+    }
+}
