@@ -7,6 +7,7 @@ use DateTime;
 use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Digraph;
+use DigraphCMS\RichContent\RichContent;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\User;
@@ -26,11 +27,6 @@ class Page implements ArrayAccess
     protected $updated, $updated_by;
     protected $slugCollisions;
 
-    public function body(): string
-    {
-        return "<h1>" . $this->title() . "</h1>";
-    }
-
     public function __construct(array $data = [], array $metadata = [])
     {
         $this->uuid = @$metadata['uuid'] ?? Digraph::uuid();
@@ -43,6 +39,18 @@ class Page implements ArrayAccess
         $this->rawSet(null, $data);
         $this->changed = false;
         $this->slugPattern = @$metadata['slug_pattern'] ?? '[name]';
+    }
+
+    public function richContent(string $index, RichContent $content = null): ?RichContent
+    {
+        if ($content) {
+            $this["content.$index"] = serialize($content);
+        }
+        if ($this["content.$index"]) {
+            return unserialize($this["content.$index"]);
+        } else {
+            return null;
+        }
     }
 
     public function addableTypes(): array

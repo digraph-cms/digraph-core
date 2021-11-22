@@ -1,0 +1,19 @@
+@import '/mixins/core.scss';
+
+.embedded-file {
+    font-family: $font-ui;
+    padding: $grid-unit;
+    background: $color-accent;
+    color: contrast-color($color-accent);
+    position: relative;
+
+    h1 {
+        font-family: $font-ui;
+        font-size: inherit;
+        margin: 0;
+    }
+
+    a {
+        color: inherit;
+    }
+}

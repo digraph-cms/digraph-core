@@ -2,6 +2,8 @@
 
 namespace DigraphCMS;
 
+use DigraphCMS\Content\Blocks\Blocks;
+use DigraphCMS\Content\Filestore;
 use DigraphCMS\Content\Page;
 use DigraphCMS\Content\Slugs;
 use DigraphCMS\URL\URL;
@@ -11,6 +13,13 @@ use DigraphCMS\Users\Users;
 
 class CoreEventSubscriber
 {
+
+    public static function onPageDeleted(Page $page) {
+        // delete all filestore files and page blocks
+        Filestore::deleteByPage($page->uuid());
+        Blocks::deleteByPage($page->uuid());
+    }
+
     public static function onPageCreated(Page $page)
     {
         Slugs::setFromPattern($page, $page->slugPattern(), true);

@@ -7,6 +7,8 @@ use DigraphCMS\Config;
 use DigraphCMS\FS;
 use DigraphCMS\Media\DeferredFile;
 use DigraphCMS\Media\ImageFile;
+use DigraphCMS\UI\Templates;
+use DigraphCMS\URL\URL;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
 use Mimey\MimeTypes;
@@ -29,6 +31,11 @@ class FilestoreFile extends DeferredFile
             FS::mkdir(dirname($this->path()));
             FS::copy(Filestore::path($this->hash), $this->path(), Config::get('filestore.symlink'));
         };
+    }
+
+    public function embed(): string
+    {
+        return Templates::render('content/embed-file.php',['file'=>$this]);
     }
 
     public function delete(): bool

@@ -1,27 +1,30 @@
-@import '/mixins/core.scss';
+@import "/mixins/core.scss";
 
 body {
     margin: 0;
 
-    >* {
-        margin: 0;
-        padding: $grid-unit;
-    }
-
-    >.action-menu {
+    > .action-menu {
         padding: 0;
     }
 
-    >#content {
-        >:first-child {
+    > #content {
+        > :first-child {
             margin-top: 0;
         }
     }
 }
 
+body > .action-menu,
+#header,
+#navbar,
+#breadcrumb,
+#notifications {
+    margin: 0;
+}
+
 #header {
     padding: $grid-unit/2;
-    margin-bottom: $grid-unit*3;
+    margin-bottom: $grid-unit * 3;
 
     h1 {
         font-size: xx-large;
@@ -42,6 +45,7 @@ body {
     font-size: smaller;
     padding: $grid-unit/2;
     background-color: rgba($color-neutral, 0.2);
+    font-family: $font-ui;
 
     h1 {
         display: none;
@@ -75,7 +79,6 @@ body {
         }
 
         &.breadcrumb-current {
-
             &:after {
                 display: none;
             }
@@ -95,11 +98,11 @@ body {
 #notifications {
     padding: $grid-unit/2 $grid-unit;
 
-    >h1 {
+    > h1 {
         display: none;
     }
 
-    >.notification {
+    > .notification {
         margin: $grid-unit/2 0;
     }
 }
@@ -139,9 +142,14 @@ span.notification {
     padding: 0;
 }
 
+#content {
+    margin: 0;
+    padding: $grid-unit;
+}
+
 #footer {
     font-size: smaller;
-    padding: 3*$grid-unit $grid-unit;
+    padding: 3 * $grid-unit $grid-unit;
 }
 
 .attachment-block {
@@ -169,7 +177,7 @@ span.notification {
         &:before {
             @include material-icon;
             display: inline-block;
-            content: '\e24d';
+            content: "\e24d";
             vertical-align: middle;
             font-size: 5em;
             padding: $grid-unit/2;

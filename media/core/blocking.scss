@@ -1,5 +1,4 @@
-@media screen,
-print {
+@media screen, print {
     #skip-to-content {
         display: none;
     }
@@ -20,6 +19,25 @@ base64 {
     display: none;
 }
 
+body.iframe-embedded {
+    background: transparent !important;
+
+    > .action-menu,
+    #header,
+    #navbar,
+    #breadcrumb,
+    #footer {
+        display: none;
+    }
+    #content {
+        padding: 2px;
+    }
+}
+
+.embedded-iframe {
+    display: none;
+}
+
 @media screen and (prefers-color-scheme: dark) {
     body {
         background-color: $dark-body-bg;
@@ -27,9 +45,10 @@ base64 {
     }
 }
 
-@import 'blocking/typography.scss';
-@import 'blocking/ui.scss';
-@import 'blocking/action-menu.scss';
-@import 'blocking/data-tables.scss';
-@import 'blocking/media-containers.scss';
-@import 'blocking/content.scss';
+@import "blocking/typography.scss";
+@import "blocking/ui.scss";
+@import "blocking/action-menu.scss";
+@import "blocking/tab-interface.scss";
+@import "blocking/data-tables.scss";
+@import "blocking/data-lists.scss";
+@import "blocking/content.scss";

@@ -5,6 +5,7 @@ namespace DigraphCMS\Media;
 use DigraphCMS\Cache\CacheNamespace;
 use DigraphCMS\Config;
 use DigraphCMS\FS;
+use DigraphCMS\URL\URL;
 use Mimey\MimeTypes;
 use Spatie\Image\Image;
 use Spatie\Image\Manipulations;
@@ -100,6 +101,15 @@ class ImageFile extends DeferredFile
         $this->content = [$this, 'contentCallback'];
         $this->filename = $filename;
         $this->cache = new CacheNamespace('image-file');
+    }
+
+    public function embed(): string
+    {
+        $url = new URL('/~image_embed/'.$this->identifier().'.html');
+        return sprintf(
+            '<div class="file-embed image-embed"><iframe src="%s"></iframe></div>',
+            $url
+        );
     }
 
     public function src(): string

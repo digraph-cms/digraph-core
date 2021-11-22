@@ -27,8 +27,14 @@ class Theme
         ],
         'internal_css' => [
             'all' => ['/core/core.css'],
+            'screen' => ['/core/screen.scss'],
             'dark' => ['/core/dark.css'],
             'print' => ['/core/print.css']
+        ],
+        'blocking_js' => [
+            '/core/iframe-resizer/iframeResizer.contentWindow.min.js',
+            '/core/iframe-resizer/iframeResizer.min.js',
+            '/core/iframe-resizer/iframeResizer-integration.js'
         ],
         'css_vars' => [
             'body-bg' => '#fafafa',
@@ -36,7 +42,12 @@ class Theme
             'dark-body-bg' => '#111',
             'dark-body-fg' => '#fff',
             'grid-unit' => '1rem',
-            'border-radius' => '1rem',
+            'font-content' => 'serif',
+            'font-header' => 'sans-serif',
+            'font-ui' => 'sans-serif',
+            'font-code' => 'monospace',
+            'border-unit' => '2px',
+            'border-radius' => '4px',
             'color-neutral' => '#BDC3C7',
             'color-accent' => '#34495E',
             'color-highlight' => '#1ABC9C',
@@ -322,7 +333,9 @@ class Theme
 
     protected static function coreConfig(): array
     {
-        $config = [];
+        $config = [
+            'url' => (new URL('/'))->__toString()
+        ];
         return $config;
     }
 

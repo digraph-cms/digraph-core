@@ -50,7 +50,7 @@ class User implements ArrayAccess
 
     public function __toString()
     {
-        return "<a href='" . $this->profile() . "' class='user-link'>" . $this->name() . "</a>";
+        return "<a href='" . $this->profile() . "' class='user-link' target='_top'>" . $this->name() . "</a>";
     }
 
     public function addEmail(string $email, string $comment = '')

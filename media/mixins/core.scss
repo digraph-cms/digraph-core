@@ -1,5 +1,5 @@
 @mixin material-icon {
-    font-family: 'Material Icons';
+    font-family: "Material Icons" !important;
     font-weight: normal;
     font-style: normal;
     letter-spacing: normal;
@@ -7,12 +7,12 @@
     white-space: nowrap;
     word-wrap: normal;
     direction: ltr;
-    -moz-font-feature-settings: 'liga';
+    -moz-font-feature-settings: "liga";
     -moz-osx-font-smoothing: grayscale;
 }
 
 @mixin icofont {
-    font-family: 'IcoFont' !important;
+    font-family: "IcoFont" !important;
     speak: none;
     font-style: normal;
     font-weight: normal;
@@ -27,12 +27,10 @@
     -webkit-font-smoothing: antialiased;
 }
 
-@function contrast-color ($color) {
+@function contrast-color($color) {
     @if (lightness($color) > 50) {
         @return #000;
-    }
-
-    @else {
+    } @else {
         @return #fff;
     }
 }
@@ -94,6 +92,7 @@
     z-index: 1;
     border-radius: $border-radius;
     font-weight: bold;
+    font-family: $font-ui;
 
     &:hover {
         filter: saturate(1.5);
@@ -155,37 +154,38 @@
 
     &:before,
     &:after {
-        display: none;
+        display: block;
+        visibility: hidden;
         position: absolute;
+        z-index: -1;
     }
 
     &:before {
-        content: '';
+        content: "";
         z-index: 100;
         background: rgba($body-bg, 0.9);
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        display: block;
     }
 
     &:after {
-        @include material-icon;
+        @include icofont;
         z-index: 101;
         color: $color-info;
         font-size: 3em;
-        content: 'refresh';
-        position: absolute;
+        content: "\effa";
         top: 50%;
-        right: 50%;
+        left: 50%;
         transform: translate(-50%, -50%);
     }
 
     &.loading {
-
         &:before,
         &:after {
-            display: block;
+            visibility: visible;
         }
 
         &:after {
@@ -199,7 +199,7 @@
     &.error {
         &:after {
             color: $color-error;
-            content: 'error';
+            content: "\ef16";
             animation: none;
         }
     }
@@ -207,13 +207,12 @@
     &.noresults {
         &:after {
             color: $color-info;
-            content: 'keyboard';
+            content: "\ea54";
             animation: none;
         }
     }
 
     @media screen and (prefers-color-scheme: dark) {
-
         &:before {
             background: rgba($dark-body-bg, 0.9);
         }

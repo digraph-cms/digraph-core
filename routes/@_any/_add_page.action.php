@@ -5,11 +5,9 @@ use DigraphCMS\Content\Pages;
 use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Digraph;
-use DigraphCMS\Editor\Editor;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\Session\Cookies;
-use DigraphCMS\UI\Forms\EditorField;
 use DigraphCMS\UI\Forms\Form;
 use DigraphCMS\UI\Notifications;
 use Formward\Fields\Input;
@@ -43,8 +41,7 @@ $form['name'] = new Input('Page name');
 $form['name']->required(true);
 $form['name']->addTip('The name to be used when referring or linking to this page from elsewhere on the site.');
 
-Editor::contextUUID(Context::arg('uuid'));
-$form['content'] = new EditorField('Page content');
+// TODO: generic rich text editor field
 
 if ($form->handle()) {
     DB::beginTransaction();

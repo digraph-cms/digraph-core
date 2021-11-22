@@ -121,38 +121,6 @@ input[type="submit"] {
     }
 }
 
-.referenceable-block {
-    position: relative;
-    margin: $grid-unit 0;
-
-    .referenceable-block-link {
-        @include material-icon;
-        display: none;
-        position: absolute;
-        top: 0;
-        right: 0;
-        font-size: 1rem;
-        line-height: 1.5em;
-        width: 1.5em;
-        text-align: center;
-        background: $color-info;
-        color: contrast-color($color-info);
-        text-decoration: none;
-        opacity: 0.1;
-
-        &:hover {
-            transform: scale(1.05);
-            opacity: 1;
-        }
-    }
-
-    &:hover {
-        .referenceable-block-link {
-            display: block;
-        }
-    }
-}
-
 .navigation-frame,
 .autocomplete-results {
     @include loading-overlay;
@@ -170,3 +138,4 @@ input[type="submit"] {
 
 @import "core/navbar.scss";
 @import "core/attachment-blocks.scss";
+@import "core/embedding.scss";

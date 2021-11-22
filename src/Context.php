@@ -22,7 +22,7 @@ class Context
         if ($url) {
             static::$url = $url;
         }
-        return static::$url;
+        return clone static::$url;
     }
 
     /**
@@ -104,6 +104,11 @@ class Context
     public static function page(Page $page = null): ?Page
     {
         return static::data('page', $page);
+    }
+
+    public static function pageUUID(): ?string
+    {
+        return static::page() ? static::page()->uuid() : null;
     }
 
     public static function thrown(Throwable $thrown = null): ?Throwable

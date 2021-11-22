@@ -1,0 +1,28 @@
+.embedded-iframe-wrapper {
+    display: block;
+    position: relative;
+    min-height: 5em;
+
+    iframe {
+        display: block;
+        border: 0;
+        width: 100%;
+    }
+
+    &:after {
+        content: "";
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: #f00;
+        z-index: 1;
+        background: $color-neutral;
+    }
+
+    &.loading:after {
+        display: block;
+    }
+}

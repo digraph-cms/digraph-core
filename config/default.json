@@ -33,16 +33,6 @@
   "embedding": {
     "max-height": 75
   },
-  "editor": {
-    "blocks": {
-      "paragraph": "\\DigraphCMS\\Editor\\Blocks\\ParagraphBlock",
-      "header": "\\DigraphCMS\\Editor\\Blocks\\HeaderBlock",
-      "list": "\\DigraphCMS\\Editor\\Blocks\\ListBlock",
-      "table": "\\DigraphCMS\\Editor\\Blocks\\TableBlock",
-      "image": "\\DigraphCMS\\Editor\\Blocks\\ImageBlock",
-      "attachment": "\\DigraphCMS\\Editor\\Blocks\\AttachmentBlock"
-    }
-  },
   "cookies": {
     "secure": false,
     "duration": "3 months"

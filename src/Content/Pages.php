@@ -301,7 +301,12 @@ class Pages
         // events
         Dispatcher::dispatchEvent('onAfterPageDelete_' . $page->class(), [$page]);
         Dispatcher::dispatchEvent('onAfterPageDelete', [$page]);
+        // commit DB changes
         DB::commit();
+        // onPageDeleted runs after DB commit, so that it can do destructive
+        // operations only once everything else has completed successfully
+        Dispatcher::dispatchEvent('onPageDeleted_' . $page->class(), [$page]);
+        Dispatcher::dispatchEvent('onPageDeleted', [$page]);
     }
 
     /**

@@ -1,0 +1,31 @@
+@import '/mixins/core.scss';
+
+.file-list {
+    ul {
+        gap: $grid-unit;
+
+        li {
+            padding: $grid-unit/2;
+            background-color: rgba($color-neutral, 0.2);
+
+            .attachment-options {
+                margin-top: $grid-unit/2;
+            }
+
+            .attachment-insert-button {
+                cursor: pointer;
+                display: block;
+                margin-top: $grid-unit/4;
+
+                &:before {
+                    @include material-icon;
+                    content: '\e0df';
+                    display: inline-block;
+                    vertical-align: middle;
+                    padding-right: 0.5em;
+                    padding-bottom: 0.2em;
+                }
+            }
+        }
+    }
+}

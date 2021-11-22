@@ -24,7 +24,7 @@ class Form extends \Formward\Form
         static $loaded = false;
         if (!$loaded) {
             $loaded = true;
-            Theme::addBlockingPageCss('/core/formward.css');
+            Theme::addBlockingPageCss('/core/forms.css');
         }
     }
 

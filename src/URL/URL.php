@@ -128,7 +128,7 @@ class URL
             $class = '';
         }
         if ($target) {
-            $target = ' target="' . $target . '"';
+            $target = ' data-target="' . $target . '"';
         }
         return "<a href=\"$normalized\"$class$target>" . $normalized->name($inPageContext) . "</a>";
     }
