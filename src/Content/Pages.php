@@ -3,6 +3,7 @@
 namespace DigraphCMS\Content;
 
 use DateTime;
+use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\Session\Session;
@@ -212,7 +213,7 @@ class Pages
 
     public static function objectClass(array $result): string
     {
-        return Page::class;
+        return Config::get('page_types.' . $result['class']) ?? Config::get('page_types.default');
     }
 
     public static function update(Page $page)

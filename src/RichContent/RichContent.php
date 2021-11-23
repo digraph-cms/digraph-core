@@ -31,4 +31,10 @@ class RichContent
     {
         return $this->value;
     }
+
+    function __toString()
+    {
+        static::load();
+        return '<div class="trix-content">' . $this->value . '</div>';
+    }
 }

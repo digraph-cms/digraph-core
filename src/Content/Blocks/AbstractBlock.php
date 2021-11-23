@@ -6,7 +6,9 @@ use ArrayAccess;
 use DateTime;
 use DigraphCMS\Content\Page;
 use DigraphCMS\Content\Pages;
+use DigraphCMS\Context;
 use DigraphCMS\Digraph;
+use DigraphCMS\URL\URL;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
 use Flatrr\FlatArrayTrait;
@@ -18,11 +20,13 @@ abstract class AbstractBlock implements ArrayAccess
         unset as protected rawUnset;
     }
 
-    protected $uuid, $pageUUID;
+    protected $uuid, $pageUUID, $name;
     protected $created, $created_by;
     protected $updated, $updated_by;
 
-    abstract public function class(): string;
+    abstract public static function class(): string;
+    abstract public static function className(): string;
+    abstract public function icon(): string;
 
     public function __construct(array $data = [], array $metadata = [])
     {
@@ -33,8 +37,50 @@ abstract class AbstractBlock implements ArrayAccess
         $this->updated = @$metadata['updated'] ?? new DateTime();
         $this->updated_last = clone $this->updated;
         $this->updated_by = @$metadata['updated_by'];
+        $this->name = @$metadata['name'] ?? 'Unnamed block';
         $this->rawSet(null, $data);
         $this->changed = false;
+    }
+
+    public function array(): array
+    {
+        return [
+            'content' => $this->editorView(),
+            'uuid' => $this->uuid(),
+            'editorID' => Context::arg('editor')
+        ];
+    }
+
+    protected function editorView(): string
+    {
+        return '<div>Editor view of ' . $this->uuid().'</div>';
+    }
+
+    public function thumbnail(): string
+    {
+        $out = '<div class="block-thumbnail block-thumbnail-' . $this->class() . '">';
+        $out .= '<div class="block-thumbnail-icon">' . $this->icon() . '</div>';
+        $out .= '<div class="block-thumbnail-name">' . htmlspecialchars($this->name()) . '</div>';
+        $out .= '</div>';
+        return $out;
+    }
+
+    public static function url_add(): URL
+    {
+        return new URL('/~blocks/add/' . static::class() . '.php');
+    }
+
+    public function url_edit(): URL
+    {
+        return new URL('/~blocks/edit/' . static::class() . '.php?block=' . $this->uuid());
+    }
+
+    public function name(string $set = null): string
+    {
+        if ($set) {
+            $this->name = $set;
+        }
+        return $this->name;
     }
 
     public function page(): ?Page

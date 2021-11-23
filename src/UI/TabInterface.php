@@ -70,7 +70,7 @@ class TabInterface
             return ob_get_clean();
         };
         echo '<div class="tab-interface navigation-frame" data-target="_top" id="tab-interface-' . $this->id . '">' . PHP_EOL;
-        if (true || count($this->tabs) > 1) {
+        if (count($this->tabs) > 1) {
             echo '<nav class="tab-interface-tabs">' . PHP_EOL;
             foreach ($this->tabs as $id => $tab) {
                 echo $this->link($id) . PHP_EOL;

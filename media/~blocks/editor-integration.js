@@ -4,8 +4,12 @@
         for (let i = 0; i < buttons.length; i++) {
             const button = buttons[i];
             button.addEventListener('click', () => {
-                window.parent.postMessage(
-                    '[trix-attachment]'+button.dataset.attachment,
+                var top = window;
+                while (top.parent != top) {
+                    top = top.parent;
+                }
+                top.postMessage(
+                    '[trix-attachment]' + button.dataset.attachment,
                     '*'
                 );
             });

@@ -10,7 +10,7 @@ final class PageBlocks extends AbstractMigration
     {
         // rich media attachments content, so that this content can be edited
         // and permissioned separately from actual page content
-        $this->table('page_blocks')
+        $this->table('page_block')
             ->addColumn('uuid', 'uuid')
             ->addColumn('class', 'string', ['length' => 50])
             ->addColumn('name', 'string', ['length' => 50])

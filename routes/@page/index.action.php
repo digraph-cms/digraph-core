@@ -1,1 +1,5 @@
-TODO: render using rich rich content classes
+<?php
+
+use DigraphCMS\Context;
+
+echo Context::page()->richContent('body');

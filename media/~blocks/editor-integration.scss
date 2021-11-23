@@ -1,0 +1,44 @@
+@import "/mixins/core.scss";
+
+.flex-list ul {
+    gap: $grid-unit;
+    font-family: $font-ui;
+}
+
+.block-thumbnail {
+    text-align: center;
+    display: flex;
+    gap: $grid-unit/2;
+    flex-direction: column;
+    background-color: $color-accent;
+    color: contrast-color($color-accent);
+    padding: $grid-unit;
+    border-top-left-radius: $border-radius !important;
+    border-top-right-radius: $border-radius !important;
+}
+
+.block-thumbnail-icon {
+    @include icofont;
+    font-size: 2em;
+}
+
+.attachment-action-buttons {
+    a {
+        @include button-info;
+        padding: $grid-unit/2;
+        font-size: smaller;
+        display: block;
+        text-decoration: none;
+        border-radius: 0 !important;
+        &:last-child {
+            border-bottom-left-radius: $border-radius !important;
+            border-bottom-right-radius: $border-radius !important;
+        }
+    }
+    a.attachment-insert-button {
+        @include button-confirmation;
+        padding: $grid-unit/2;
+        font-size: smaller;
+        display: block;
+    }
+}

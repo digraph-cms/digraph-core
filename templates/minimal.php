@@ -6,6 +6,7 @@ get so many resources allocated.
 
 use DigraphCMS\Context;
 use DigraphCMS\UI\Breadcrumb;
+use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\Templates;
 use DigraphCMS\UI\Theme;
 use DigraphCMS\UI\UserMenu;
@@ -28,6 +29,7 @@ use DigraphCMS\UI\UserMenu;
 <body class='template-minimal'>
     <?php
     echo new UserMenu(Context::url());
+    Notifications::printSection();
     if (Context::response()->status() == 200) {
         Breadcrumb::print();
     }

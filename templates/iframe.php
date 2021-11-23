@@ -5,6 +5,7 @@ Minimal template page for use in embedded iframes
 
 use DigraphCMS\Context;
 use DigraphCMS\UI\Breadcrumb;
+use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\Templates;
 use DigraphCMS\UI\Theme;
 use DigraphCMS\UI\UserMenu;
@@ -25,6 +26,7 @@ use DigraphCMS\UI\UserMenu;
 </head>
 
 <body class='template-iframe'>
+    <?php Notifications::printSection(); ?>
     <main id="content">
         <?php echo Context::response()->content(); ?>
     </main>

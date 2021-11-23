@@ -84,7 +84,7 @@
 
 @mixin button {
     background: $color-highlight;
-    color: contrast-color($color-highlight);
+    color: contrast-color($color-highlight) !important;
     border: 0;
     display: inline-block;
     padding: $grid-unit;
@@ -93,6 +93,7 @@
     border-radius: $border-radius;
     font-weight: bold;
     font-family: $font-ui;
+    text-decoration: none;
 
     &:hover {
         filter: saturate(1.5);
@@ -106,22 +107,22 @@
 
     &.confirmation {
         background: $color-confirmation;
-        color: contrast-color($color-confirmation);
+        color: contrast-color($color-confirmation) !important;
     }
 
     &.info {
         background: $color-info;
-        color: contrast-color($color-info);
+        color: contrast-color($color-info) !important;
     }
 
     &.warning {
         background: $color-warning;
-        color: contrast-color($color-warning);
+        color: contrast-color($color-warning) !important;
     }
 
     &.error {
         background: $color-error;
-        color: contrast-color($color-error);
+        color: contrast-color($color-error) !important;
     }
 }
 
@@ -163,11 +164,11 @@
     &:before {
         content: "";
         z-index: 100;
-        background: rgba($body-bg, 0.9);
-        top: -2px;
-        left: -2px;
-        right: -2px;
-        bottom: -2px;
+        background: rgba($body-bg, 0.95);
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
         display: block;
     }
 

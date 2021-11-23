@@ -6,7 +6,7 @@ use DigraphCMS\Context;
 use DigraphCMS\URL\URL;
 use Formward\Fields\DisplayOnly;
 
-class RichContentAttachmentField extends DisplayOnly
+class RichContentBlocksField extends DisplayOnly
 {
     protected $editorID;
 
@@ -22,7 +22,7 @@ class RichContentAttachmentField extends DisplayOnly
     {
         return sprintf(
             '<iframe src="%s" class="embedded-iframe"></iframe>',
-            new URL('/~api/v1/iframes/editor_attachments.php?editor=' . $this->editorID . '&page=' . Context::pageUUID()),
+            new URL('/~blocks/page.php?editor=' . $this->editorID . '&page=' . Context::pageUUID()),
         );
     }
 }

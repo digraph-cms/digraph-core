@@ -46,7 +46,7 @@ class RichContentField extends Container
     {
         $this['value'] = new Hidden('');
         $this['trix'] = new DisplayOnly('');
-        $this['attachments'] = new RichContentAttachmentField("");
+        $this['attachments'] = new RichContentBlocksField("");
     }
 
     public function __toString()

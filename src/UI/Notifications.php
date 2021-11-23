@@ -23,6 +23,10 @@ class Notifications
             }
             Cookies::unset('system', 'flashnotifications');
         }
+        // short circuit if empty
+        if (!static::$notifications) {
+            return;
+        }
         // display notifications
         echo "<section id='notifications'><h1>Notifications</h1>";
         foreach (static::$notifications as list($message, $type, $class)) {

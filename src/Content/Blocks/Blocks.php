@@ -3,6 +3,7 @@
 namespace DigraphCMS\Content\Blocks;
 
 use DateTime;
+use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\Session\Session;
@@ -39,7 +40,7 @@ class Blocks
     {
         $query = DB::query()->from('page_block');
         if ($page_uuid) {
-            $query->where('page_uuid = ?',[$page_uuid]);
+            $query->where('page_uuid = ?', [$page_uuid]);
         }
         return new BlockSelect($query);
     }
@@ -69,7 +70,7 @@ class Blocks
 
     public static function objectClass(array $result): string
     {
-        return AbstractBlock::class;
+        return Config::get('block_types.' . $result['class']) ?? Config::get('block_types.default');
     }
 
     public static function update(AbstractBlock $block)
@@ -90,6 +91,8 @@ class Blocks
             ->set([
                 'data' => json_encode($block->get()),
                 'class' => $block->class(),
+                'name' => $block->name(),
+                'page_uuid' => $block->pageUUID(),
                 'updated' => time(),
                 'updated_by' => Session::user()
             ])
@@ -111,6 +114,8 @@ class Blocks
                     'uuid' => $block->uuid(),
                     'data' => json_encode($block->get()),
                     'class' => $block->class(),
+                    'name' => $block->name(),
+                    'page_uuid' => $block->pageUUID(),
                     'created' => time(),
                     'created_by' => $block->createdByUUID() ?? Session::user(),
                     'updated' => time(),
@@ -186,7 +191,10 @@ class Blocks
         static::$cache[$result['uuid']] = new $class(
             $data,
             [
+                'class' => $result['class'],
+                'name' => $result['name'],
                 'uuid' => $result['uuid'],
+                'page_uuid' => $result['page_uuid'],
                 'created' => (new DateTime)->setTimestamp($result['created']),
                 'created_by' => $result['created_by'],
                 'updated' => (new DateTime)->setTimestamp($result['updated']),
