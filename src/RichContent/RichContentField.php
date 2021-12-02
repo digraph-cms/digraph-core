@@ -24,7 +24,7 @@ class RichContentField extends Container
     public function default($content = null): RichContent
     {
         if ($content) {
-            $this['value']->default($content->value());
+            $this['value']->default($content->editorValue());
         }
         return new RichContent($this['value']->default());
     }
@@ -32,7 +32,7 @@ class RichContentField extends Container
     public function value($content = null): RichContent
     {
         if ($content) {
-            $this['value']->value($content->value());
+            $this['value']->value($content->editorValue());
         }
         return new RichContent($this['value']->value());
     }
@@ -58,7 +58,7 @@ class RichContentField extends Container
             $this->name()
         ));
         $this['attachments']->editorID($this->name());
-        $this['value']->default($this->value()->value());
+        $this['value']->default($this->value()->editorValue());
         return parent::__toString();
     }
 }

@@ -9,6 +9,7 @@ use DigraphCMS\Media\DeferredFile;
 use DigraphCMS\Media\File;
 use DigraphCMS\Media\Media;
 use DigraphCMS\URL\URL;
+use DigraphCMS\URL\URLs;
 
 Theme::resetTheme();
 Theme::resetPage();
@@ -333,8 +334,16 @@ class Theme
 
     protected static function coreConfig(): array
     {
+        $origin = parse_url(URLs::site());
+        $origin = implode('', [
+            @$origin['scheme'] ?? 'http',
+            '://',
+            @$origin['host'],
+            @$origin['port'] ? ':' . $origin['port'] : ''
+        ]);
         $config = [
-            'url' => (new URL('/'))->__toString()
+            'url' => URLs::site(),
+            'origin' => $origin
         ];
         return $config;
     }

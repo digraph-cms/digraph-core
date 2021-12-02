@@ -18,4 +18,14 @@ class ImageBlock extends AbstractBlock
     {
         return '&#xef4b;';
     }
+
+    public function html_editor(): string
+    {
+        return '<div>Block ' . $this->uuid().'</div>';
+    }
+
+    public function html_public(): string
+    {
+        return '<div>Public view of ' . $this->uuid().'</div>';
+    }
 }

@@ -27,6 +27,8 @@ abstract class AbstractBlock implements ArrayAccess
     abstract public static function class(): string;
     abstract public static function className(): string;
     abstract public function icon(): string;
+    abstract public function html_editor(): string;
+    abstract public function html_public(): string;
 
     public function __construct(array $data = [], array $metadata = [])
     {
@@ -45,15 +47,10 @@ abstract class AbstractBlock implements ArrayAccess
     public function array(): array
     {
         return [
-            'content' => $this->editorView(),
             'uuid' => $this->uuid(),
-            'editorID' => Context::arg('editor')
+            'editorID' => Context::arg('editor'),
+            'content' => $this->html_editor()
         ];
-    }
-
-    protected function editorView(): string
-    {
-        return '<div>Editor view of ' . $this->uuid().'</div>';
     }
 
     public function thumbnail(): string

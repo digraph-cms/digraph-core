@@ -43,6 +43,42 @@ document.addEventListener('DigraphDOMReady', (e) => {
     }
 });
 
+/**
+ * Tools for managing messaging back up to the topmost frame
+ */
+
+Digraph.message = (name, data) => {
+    var top = window;
+    data = JSON.stringify(data);
+    while (top.parent != top) {
+        top = top.parent;
+        top.postMessage(
+            '[digraph-message]' + name + ':' + data,
+            Digraph.config.origin
+        );
+    }
+};
+
+window.addEventListener('message', function (event) {
+    if (event.data.startsWith('[digraph-message]')) {
+        if (event.origin == Digraph.config.origin) {
+            var data = event.data.substr(17).split(':', 2);
+            var messageEvent = new Event('DigraphMessage-' + data[0], {
+                bubbles: true,
+                cancelable: false
+            });
+            messageEvent.data = JSON.parse(data[1]);
+            window.dispatchEvent(messageEvent);
+        } else {
+            console.warn('invalid message, origin is ' + event.origin + ', expected ' + Digraph.config.origin);
+        }
+    }
+});
+
+/**
+ * Tools for managing state in navigation frames
+ */
+
 document.addEventListener('click', (e) => {
     if (e.target.tagName == 'A') {
         // determine if we should even use this link

@@ -23,7 +23,7 @@ if (!$query->count()) {
             $out = $block->thumbnail();
             $out .= '<div class="attachment-action-buttons">';
             $out .= sprintf(
-                '<a class="attachment-insert-button" data-attachment="%s">Insert</a>',
+                '<a class="block-insert-button" data-block="%s">Insert</a>',
                 base64_encode(json_encode($block->array()))
             );
             $url = $block->url_edit();
