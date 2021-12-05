@@ -11,8 +11,7 @@
     "page": "\\DigraphCMS\\Content\\Page"
   },
   "block_types": {
-    "file": "\\DigraphCMS\\Content\\Blocks\\FileBlock",
-    "image": "\\DigraphCMS\\Content\\Blocks\\ImageBlock"
+    "file": "\\DigraphCMS\\Content\\Blocks\\FileBlock"
   },
   "files": {
     "path": "${paths.web}/files",

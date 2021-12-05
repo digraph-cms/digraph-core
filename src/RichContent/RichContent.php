@@ -45,7 +45,7 @@ class RichContent
                         $matches[1],
                         htmlspecialchars(json_encode($block->array())),
                         $matches[3],
-                        $block ? $block->html_editor() : "<div class='notification error'>Block not found</div>"
+                        $block ? $block->html_editor() : "<div class='notification notification--error'>Block not found</div>"
                     );
                 },
                 $this->editorValue
@@ -59,13 +59,13 @@ class RichContent
         if ($this->publicValue === null) {
             $this->publicValue = $this->value;
             $this->publicValue = preg_replace_callback(
-                '/<figure(.+?)data-trix-attachment="(.+?)"(.*?)>(.*?)<\/figure>/im',
+                '/<figure(.+?)data-trix-attachment="(.+?)"(.*?)>(.*?)<\/figure>/ims',
                 function (array $matches): string {
                     $json = json_decode(htmlspecialchars_decode($matches[2]), true);
                     $block = Blocks::get($json['uuid']);
                     return sprintf(
                         '<figure class="attachment attachment--content">%s</figure>',
-                        $block ? $block->html_public() : "<div class='notification error'>Block not found</div>"
+                        $block ? $block->html_public() : "<div class='notification notification--error'>Block not found</div>"
                     );
                 },
                 $this->publicValue

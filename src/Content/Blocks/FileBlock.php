@@ -25,21 +25,21 @@ class FileBlock extends AbstractBlock
     public function html_editor(): string
     {
         return sprintf(
-            '<div class="attachment-block attachment-block-%s block-file">%s %s</div>',
+            '<div class="file-block file-block--extension-%s"><span class="file-block__icon">%s</span>' . PHP_EOL . '<span class="file-block__label">%s</span></div>',
             $this->file()->extension(),
             $this->icon(),
-            $this->file()->filename()
+            $this->name()
         );
     }
 
     public function html_public(): string
     {
         return sprintf(
-            '<div class="attachment-block attachment-block-%s block-file"><a href="%s">%s %s</a></div>',
+            '<div class="file-block file-block--extension-%s"><a href="%s"><span class="file-block__icon">%s</span>' . PHP_EOL . '<span class="file-block__label">%s</span></a></div>',
             $this->file()->extension(),
             $this->file()->url(),
             $this->icon(),
-            $this->file()->filename()
+            $this->name()
         );
     }
 

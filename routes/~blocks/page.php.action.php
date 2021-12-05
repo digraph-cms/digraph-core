@@ -1,12 +1,9 @@
 <?php
 
 use DigraphCMS\Config;
-use DigraphCMS\Content\Blocks\Blocks;
 use DigraphCMS\Context;
 use DigraphCMS\Digraph;
 use DigraphCMS\HTTP\HttpError;
-use DigraphCMS\UI\DataLists\BlockList;
-use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\TabInterface;
 use DigraphCMS\UI\Theme;
 use DigraphCMS\URL\URL;

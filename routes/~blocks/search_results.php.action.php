@@ -27,9 +27,8 @@ if (!$query->count()) {
                 base64_encode(json_encode($block->array()))
             );
             $url = $block->url_edit();
-            $url->query([
-                'editor' => Context::arg('editor')
-            ]);
+            $url->arg('editor',Context::arg('editor'));
+            $url->arg('page',Context::arg('page'));
             $out .= '<a href="'.$url.'">Edit</a>';
             $out .= '</div>';
             return $out;
