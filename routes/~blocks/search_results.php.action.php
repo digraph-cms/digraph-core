@@ -3,6 +3,7 @@
 use DigraphCMS\Content\Blocks\AbstractBlock;
 use DigraphCMS\Content\Blocks\Blocks;
 use DigraphCMS\Context;
+use DigraphCMS\HTML\DIV;
 use DigraphCMS\UI\DataLists\QueryList;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\Theme;
@@ -22,10 +23,6 @@ if (!$query->count()) {
         function (AbstractBlock $block): string {
             $out = $block->thumbnail();
             $out .= '<div class="attachment-action-buttons">';
-            $out .= sprintf(
-                '<a class="block-insert-button" data-block="%s">Insert</a>',
-                base64_encode(json_encode($block->array()))
-            );
             $url = $block->url_edit();
             $url->arg('editor',Context::arg('editor'));
             $url->arg('page',Context::arg('page'));

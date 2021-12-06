@@ -1,0 +1,83 @@
+<?php
+
+namespace DigraphCMS\HTML\Forms;
+
+use DigraphCMS\Session\Cookies;
+
+class Token extends INPUT
+{
+    protected $tag = 'input';
+    protected $block = false;
+    protected $void = true;
+    protected $CSRF = true;
+    protected $uniqueCSRF = false;
+
+    public function __construct(FORM $form)
+    {
+        $this->setForm($form);
+        $this->setDefault($this->token());
+        $this->setID('token');
+    }
+
+    public function CSRF(): bool
+    {
+        return $this->CSRF;
+    }
+
+    public function uniqueCSRF(): bool
+    {
+        return $this->uniqueCSRF;
+    }
+
+    /**
+     * Set whether to use proper CSRF tokens, if set to false a simple submitted
+     * value of 1 will be used to determine whether the form has been submitted.
+     *
+     * @param boolean $useCSRF
+     * @return $this
+     */
+    public function setCSRF(bool $useCSRF)
+    {
+        $this->CSRF = $useCSRF;
+        return $this;
+    }
+
+    /**
+     * Set whether to use unique one-time CSRF tokens that are discarded after
+     * validation. Use this to create forms that cannot be double-submitted.
+     *
+     * @param boolean $oneTimeTokens
+     * @return $this
+     */
+    public function setUniqueCSRF(bool $oneTimeTokens)
+    {
+        $this->uniqueCSRF = $oneTimeTokens;
+        return $this;
+    }
+
+    public function token(): string
+    {
+        if ($this->CSRF()) {
+            if ($this->uniqueCSRF()) {
+                return Cookies::csrfToken(
+                    'form_' . crc32(serialize([
+                        $this->form()->id(),
+                        $this->form()->action(),
+                        $this->form()->method()
+                    ]))
+                );
+            } else {
+                return Cookies::csrfToken('forms');
+            }
+        } else {
+            return '1';
+        }
+    }
+
+    public function attributes(): array
+    {
+        $attributes = parent::attributes();
+        $attributes['type'] = 'hidden';
+        return $attributes;
+    }
+}

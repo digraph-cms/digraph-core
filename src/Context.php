@@ -72,6 +72,21 @@ class Context
         }
     }
 
+    /**
+     * Retrieve an arg from the request POST
+     *
+     * @param string $key
+     * @return mixed
+     */
+    public static function post(string $key)
+    {
+        if (static::$request) {
+            return @static::$request->post()[$key];
+        } else {
+            return null;
+        }
+    }
+
     public static function fields(): SelfReferencingFlatArray
     {
         if (!static::data('fields')) {
