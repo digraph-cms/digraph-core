@@ -1,4 +1,8 @@
 $(() => {
+    if (document.body.classList.contains('fully-static-page')) {
+        return;
+    }
+
     var $userBars = $('.digraph-actionbar-user');
     var $actionBars = $('.digraph-actionbar-noun');
     var notifications = document.getElementById('digraph-notifications-container');

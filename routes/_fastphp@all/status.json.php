@@ -4,6 +4,11 @@ $cms = $package->cms();
 /** @var Digraph\Users\SessionHelper */
 $session = $cms->helper('session');
 $cacheID = 'status.json/' . md5($session->userID() . serialize($package['request.url']));
+if (!$session->userID()) {
+    header('Cache-Control: private, max-age=10');
+    header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', time() + 10));
+    header_remove('Pragma');
+}
 
 // status is empty by default
 $status = [];

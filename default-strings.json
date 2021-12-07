@@ -181,6 +181,7 @@
             "_controlpanel/mail": "Mail management",
             "_controlpanel/sitemap": "Site map",
             "_controlpanel/slugs": "Manage all URLs",
+            "_controlpanel/static": "Static page manager",
             "_destructr/display": "Database management",
             "_json/*": "!verb",
             "_json/display": "JSON API",

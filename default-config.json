@@ -89,7 +89,8 @@
                 "sitemap": "_controlpanel/sitemap",
                 "trash": "_trash/display",
                 "urls": "_controlpanel/slugs",
-                "database": "_destructr/display"
+                "database": "_destructr/display",
+                "static": "_controlpanel/static"
             }
         },
         "proper": {
@@ -910,6 +911,7 @@
             "routing": "Digraph\\Helpers\\Routing",
             "session": "Digraph\\Users\\SessionHelper",
             "slugs": "Digraph\\Helpers\\SlugHelper",
+            "static": "Digraph\\Helpers\\StaticHelper",
             "strings": "Digraph\\Helpers\\Strings",
             "templates": "Digraph\\Templates\\TemplateHelper",
             "urls": "Digraph\\Urls\\UrlHelper",
