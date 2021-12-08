@@ -241,8 +241,8 @@ class Package extends SelfReferencingFlatArray implements PackageInterface, \Ser
      */
     public function normalizeUrl()
     {
-        $url = $this->url()->string();
-        $actual = $this['request.actualurl'];
+        $url = rtrim($this->url()->string(),"/");
+        $actual = rtrim($this['request.actualurl'],"/");
         if ("$url" != "$actual") {
             $this->log('"' . $url . '" expected URL');
             $this->log('"' . $actual . '" actual URL');
