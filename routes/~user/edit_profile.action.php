@@ -1,8 +1,8 @@
 <?php
 
 use DigraphCMS\Context;
+use DigraphCMS\HTML\Forms\Field;
 use DigraphCMS\HTML\Forms\FORM;
-use DigraphCMS\HTML\Forms\INPUT;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\Session\Session;
@@ -17,19 +17,14 @@ if (!$user) {
 echo "<h1>Edit profile: " . $user->name() . "</h1>";
 
 $form = new FORM();
-$name = new INPUT();
+$name = (new Field('Display name'))
+    ->setDefault($user->name())
+    ->setRequired(true);
 $form->addChild($name);
+if ($form->handle()) {
+    $user->name($name->value());
+    $user->update();
+    Notifications::flashConfirmation('Profile changes saved');
+    throw new RefreshException();
+}
 echo $form;
-
-// $form = new Form('Edit profile');
-// $form['name'] = new Input('Display name');
-// $form['name']->default($user->name());
-
-// if ($form->handle()) {
-//     $user->name($form['name']->value());
-//     $user->update();
-//     Notifications::flashConfirmation('Profile changes saved');
-//     throw new RefreshException();
-// } else {
-//     echo $form;
-// }

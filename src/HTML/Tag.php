@@ -2,6 +2,8 @@
 
 namespace DigraphCMS\HTML;
 
+use Exception;
+
 abstract class Tag extends Node
 {
     protected $tag, $id;
@@ -126,6 +128,9 @@ abstract class Tag extends Node
      */
     public function addChild($child)
     {
+        if ($this->void()) {
+            throw new Exception('Void tags cannot have children');
+        }
         $this->children[] = $child;
         return $this;
     }
