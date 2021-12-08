@@ -5,16 +5,16 @@ namespace DigraphCMS\HTML\Forms;
 use DigraphCMS\Context;
 use DigraphCMS\HTML\Tag;
 
-class INPUT extends Tag
+class INPUT extends Tag implements InputInterface
 {
     protected $tag = 'input';
-    protected $block = false;
     protected $void = true;
 
     protected $form;
     protected $default;
     protected $value;
     protected $required = false;
+    protected $requiredMessage = 'This field is required';
 
     protected static $counter = 0;
 
@@ -23,12 +23,22 @@ class INPUT extends Tag
         $this->setID($id ?? 'input-' . self::$counter++);
     }
 
+    public function validationError(): ?string
+    {
+        if ($this->required() && !$this->value()) {
+            return $this->requiredMessage;
+        } else {
+            return null;
+        }
+    }
+
     public function attributes(): array
     {
-        return array_merge_recursive(
+        return array_merge(
             parent::attributes(),
             [
-                'value' => $this->value()
+                'value' => $this->value(true),
+                'name' => $this->id()
             ]
         );
     }
@@ -38,6 +48,13 @@ class INPUT extends Tag
         return $this->required;
     }
 
+    public function setRequired(bool $required, string $message = null)
+    {
+        $this->required = $required;
+        $this->requiredMessage = $message ?? $this->requiredMessage;
+        return $this;
+    }
+
     /**
      * Set the default value of this input, to be used if no value is
      * submitted in the get/post values.
@@ -45,7 +62,7 @@ class INPUT extends Tag
      * @param string $value
      * @return $this
      */
-    public function setDefault(string $value)
+    public function setDefault($value)
     {
         $this->default = $value;
         return $this;
@@ -58,7 +75,7 @@ class INPUT extends Tag
      * @param string $value
      * @return $this
      */
-    public function setValue(string $value)
+    public function setValue($value)
     {
         $this->value = $value;
     }
@@ -87,18 +104,27 @@ class INPUT extends Tag
         return $this->default;
     }
 
-    public function value(): ?string
+    protected function submittedValue(): ?string
     {
-        if ($this->value !== null) {
-            return $this->value;
-        } elseif ($this->form()) {
-            if ($this->form()->method() == FORM::METHOD_GET) {
-                return Context::arg($this->id()) ?? $this->default();
-            } elseif ($this->form()->method() == FORM::METHOD_POST) {
-                return Context::post($this->id()) ?? $this->default();
-            }
+        if ($this->form()->method() == FORM::METHOD_GET) {
+            return Context::arg($this->id());
+        } elseif ($this->form()->method() == FORM::METHOD_POST) {
+            return Context::post($this->id());
         } else {
+            return null;
+        }
+    }
+
+    public function value($useDefault = false): ?string
+    {
+        if ($this->value) {
+            return $this->value;
+        } elseif ($value = trim($this->submittedValue())) {
+            return $value ? $value : null;
+        } elseif ($useDefault) {
             return $this->default();
+        } else {
+            return null;
         }
     }
 }

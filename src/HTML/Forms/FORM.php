@@ -9,11 +9,11 @@ use DigraphCMS\URL\URL;
 class FORM extends Tag
 {
     protected $tag = 'form';
-    protected $block = true;
 
     protected $method = 'post';
     protected $action;
     protected $token;
+    protected $button;
 
     const METHOD_POST = 'post';
     const METHOD_GET = 'get';
@@ -23,21 +23,58 @@ class FORM extends Tag
     public function __construct(string $id = null)
     {
         $this->setID($id ?? 'form-' . self::$counter++);
+        $this->addClass('form');
+    }
+
+    public function handle(): bool
+    {
+        return $this->submitted() && $this->validate();
+    }
+
+    public function submitted(): bool
+    {
+        return $this->token()->submitted();
+    }
+
+    public function validate(): bool
+    {
+        $valid = true;
+        foreach ($this->children() as $child) {
+            if ($child instanceof InputInterface) {
+                if ($child->validationError()) {
+                    $valid = false;
+                }
+            }
+        }
+        return $valid;
     }
 
     public function children(): array
     {
-        $children = parent::children();
-        $children[] = $this->token();
-        return $children;
+        return array_merge(
+            parent::children(),
+            [
+                $this->token(),
+                $this->button()
+            ]
+        );
     }
 
     public function token(): Token
     {
         if (!$this->token) {
             $this->token = new Token($this);
+            $this->token->setID('TOKEN');
         }
         return $this->token;
+    }
+
+    public function button(): SubmitButton
+    {
+        if (!$this->button) {
+            $this->button = new SubmitButton();
+        }
+        return $this->button;
     }
 
     public function attributes(): array
@@ -53,6 +90,19 @@ class FORM extends Tag
         return $this->method;
     }
 
+    /**
+     * Set the method of this form. Should use class constants
+     * FORM::METHOD_GET and FORM::METHOD_POST
+     *
+     * @param string $method
+     * @return $this
+     */
+    public function setMethod(string $method)
+    {
+        $this->method = $method;
+        return $this;
+    }
+
     public function action(): URL
     {
         return $this->action ?? Context::url();
@@ -60,7 +110,7 @@ class FORM extends Tag
 
     public function addChild($child)
     {
-        if (method_exists($child, 'setForm')) {
+        if ($child instanceof InputInterface) {
             $child->setForm($this);
         }
         return parent::addChild($child);

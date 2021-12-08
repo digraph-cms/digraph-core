@@ -6,9 +6,6 @@ use DigraphCMS\Session\Cookies;
 
 class Token extends INPUT
 {
-    protected $tag = 'input';
-    protected $block = false;
-    protected $void = true;
     protected $CSRF = true;
     protected $uniqueCSRF = false;
 
@@ -19,6 +16,11 @@ class Token extends INPUT
         $this->setID('token');
     }
 
+    public function validationError(): ?string
+    {
+        return null;
+    }
+
     public function CSRF(): bool
     {
         return $this->CSRF;
@@ -27,6 +29,11 @@ class Token extends INPUT
     public function uniqueCSRF(): bool
     {
         return $this->uniqueCSRF;
+    }
+
+    public function submitted(): bool
+    {
+        return $this->token() == $this->submittedValue();
     }
 
     /**
@@ -78,6 +85,7 @@ class Token extends INPUT
     {
         $attributes = parent::attributes();
         $attributes['type'] = 'hidden';
+        $attributes['value'] = $this->token();
         return $attributes;
     }
 }

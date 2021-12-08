@@ -106,14 +106,14 @@ class Cookies
                     $url = new URL('/~privacy/current_cookies.html');
                     return
                         "These cookies are necessary for the security of some site features. " .
-                        "They store one-time tokens that are used in security checks that prevent attackers from executing actions on your behalf, such as to verify that a form is actually being submitted by you, or to prevent forms from being submitted more than once." .
+                        "They store temporary tokens that are used in security checks that prevent attackers from executing actions on your behalf or tricking you into performing unintended actions, or to prevent forms from being submitted more than once." .
                         "<br>Please note that for security and performance reasons some CSRF protection cookies will be scoped to only the URL paths where they are needed. " .
                         "This will prevent some CSRF cookies from appearing on the <a href='$url'>current cookies page</a>, because your browser has not been requested to send them there.";
             }
         } else {
             switch ($type) {
                 case 'csrf':
-                    return "CSRF cookies store one-time tokens that are used to prevent attackers from executing actions on your behalf, such as verifying that a form is being submitted by you.";
+                    return "CSRF cookies store temporary tokens that are used to prevent attackers from executing actions on your behalf, or tricking you into performing actions you did not intend.";
             }
         }
         return null;
