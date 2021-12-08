@@ -20,11 +20,10 @@ if ($delete = $url->getData()['delete']) {
 $form = $cms->helper('forms')->form('Make page static');
 $form['url'] = new Input('URL to make static or refresh static copy of (relative to site root)');
 $form['url']->required(true);
-$form['full'] = new Checkbox('Make page fully static, including disabling user-specific interface. This will lower server load even more, but may break the admin interface on the page being made static.');
 
 if ($form->handle()) {
     $url = $cms->helper('urls')->parse($form['url']->value());
-    $helper->create($url, $form['full']->value());
+    $helper->create($url);
     $package->redirect($cms->helper('urls')->parse('_controlpanel/static'));
     return;
 }

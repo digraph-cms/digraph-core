@@ -23,6 +23,30 @@ EOT;
         'CREATE UNIQUE INDEX IF NOT EXISTS digraph_static_pages_url_IDX ON digraph_static_pages (static_url);'
     ];
 
+    public function hook_cron():array
+    {
+        $updated = [];
+        $list = [];
+        foreach ($this->list() as $url) {
+            $url = $this->cms->helper('urls')->parse($url);
+            $path = $this->path($url);
+            if ($path) {
+                $time = file_exists($path) ? filemtime($path):0;
+                $list[$time] = $url;
+            }
+        }
+        ksort($list);
+        $startTime = time();
+        while ($list && (time() - $startTime) < 15) {
+            $todo = array_shift($list);
+            $this->create($todo);
+        }
+        return [
+            'result' => count($updated),
+            'names' => $updated
+        ];
+    }
+
     public function construct()
     {
         $this->pdo = $this->cms->pdo();
@@ -33,7 +57,7 @@ EOT;
         }
     }
 
-    public function create(Url $url, bool $fullStatic = false): bool
+    public function create(Url $url): bool
     {
         // can't staticify control panel pages
         if (strpos($url->pathString(), '_controlpanel/') === 0) {
@@ -132,21 +156,13 @@ EOT;
     }
 
     /**
-     * Modify output to optionally remove things that might trigger non-static requests
+     * Modify output
      *
      * @param string $content
-     * @param bool $fullStatic
      * @return string
      */
-    protected function modifyOutput(string $content, bool $fullStatic): string
+    protected function modifyOutput(string $content): string
     {
-        if ($fullStatic) {
-            $content = preg_replace(
-                "/<body class=\"/",
-                "<body class=\"fully-static-page ",
-                $content
-            );
-        }
         return $content;
     }
 
