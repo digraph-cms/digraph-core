@@ -92,7 +92,7 @@ class FilesystemHelper extends AbstractHelper
                 throw new \Exception("Couldn't mkdir <code>" . \htmlentities($path) . "</code> because parent isn't writeable.");
             }
             \umask($this->umask_dir);
-            mkdir($path);
+            @mkdir($path);
             \umask($this->umask_prev);
         }
         return is_dir($path);

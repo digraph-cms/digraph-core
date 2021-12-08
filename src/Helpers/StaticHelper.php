@@ -129,7 +129,7 @@ EOT;
 
     public function delete(Url $url)
     {
-        unlink($this->path($url));
+        @unlink($this->path($url));
         $s = $this->pdo->prepare(
             'DELETE FROM digraph_static_pages WHERE static_url = :url'
         );
