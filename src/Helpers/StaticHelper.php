@@ -23,15 +23,16 @@ EOT;
         'CREATE UNIQUE INDEX IF NOT EXISTS digraph_static_pages_url_IDX ON digraph_static_pages (static_url);'
     ];
 
-    public function hook_cron():array
+    public function hook_cron(): array
     {
         $updated = [];
         $list = [];
+        $i = 0;
         foreach ($this->list() as $url) {
             $url = $this->cms->helper('urls')->parse($url);
             $path = $this->path($url);
             if ($path) {
-                $time = file_exists($path) ? filemtime($path):0;
+                $time = file_exists($path) ? filemtime($path) : $i++;
                 $list[$time] = $url;
             }
         }
@@ -89,9 +90,7 @@ EOT;
             return false;
         }
         // if this url is already static, clear it before continuing
-        if ($this->exists($url)) {
-            $this->delete($url);
-        }
+        @unlink($this->path($url));
         // make request and verify that it succeeds
         // we do this over HTTP just to ensure we get the guest version with
         // no weird side effects
