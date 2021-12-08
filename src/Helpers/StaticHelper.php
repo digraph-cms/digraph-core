@@ -111,9 +111,7 @@ EOT;
         $s = $this->pdo->prepare(
             'INSERT INTO digraph_static_pages (static_url) VALUES (:url)'
         );
-        if (!$s->execute([':url' => $url->pathString()])) {
-            return false;
-        }
+        $s->execute([':url' => $url->pathString()]);
         $this->cms->helper('filesystem')->mkdir_for($path);
         $this->cms->helper('filesystem')->put($content, $path, false);
         return true;
