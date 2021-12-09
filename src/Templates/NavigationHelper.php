@@ -1,5 +1,6 @@
 <?php
 /* Digraph Core | https://gitlab.com/byjoby/digraph-core | MIT License */
+
 namespace Digraph\Templates;
 
 use Digraph\Helpers\AbstractHelper;
@@ -8,7 +9,7 @@ class NavigationHelper extends AbstractHelper
 {
     protected $parentOfCache = [];
 
-    public function breadcrumb($url,$overrideParent = null): array
+    public function breadcrumb($url, $overrideParent = null): array
     {
         $bc = [];
         $bc[] = $url;
@@ -79,7 +80,7 @@ class NavigationHelper extends AbstractHelper
             $nouns[] = $object['dso.id'];
             $nouns[] = $object['dso.type'];
             if ($parent = $object->parent()) {
-                $vars['parent'] = $parent->url()->pathString();
+                $vars['parent'] = trim($parent->url()->pathString(), '/');
             }
         }
         $nouns[] = '*';
