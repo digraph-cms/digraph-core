@@ -79,7 +79,7 @@ class NavigationHelper extends AbstractHelper
             $nouns[] = $object['dso.id'];
             $nouns[] = $object['dso.type'];
             if ($parent = $object->parent()) {
-                $vars['parent'] = $parent['dso.id'];
+                $vars['parent'] = $parent->url()->pathString();
             }
         }
         $nouns[] = '*';
