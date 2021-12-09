@@ -94,14 +94,18 @@ EOT;
         // make request and verify that it succeeds
         // we do this over HTTP just to ensure we get the guest version with
         // no weird side effects
+        $curlURL = $url->__toString();
+        if (substr($curlURL, -1) != '/') {
+            $curlURL .= '/';
+        }
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url->__toString());
+        curl_setopt($ch, CURLOPT_URL, $curlURL);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         $content = curl_exec($ch);
         $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
-        if ($code != 200) {
+        if ($code != 200 && $code != 404) {
             return false;
         }
         // we have a good response
