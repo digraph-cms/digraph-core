@@ -229,16 +229,26 @@ class Digraph
                 Context::response()->redirect($r->url(), $r->permanent(), $r->preserveMethod());
             } catch (HttpError $error) {
                 // generate exception-handling page
-                static::buildErrorContent($error->status(), $error->getMessage());
-                Templates::wrapResponse(Context::response());
-            } catch (Throwable $th) {
-                // generate a fallback exception handling error page
-                if (!Dispatcher::firstValue('onException_' . substr(get_class($th), (strrpos(get_class($th), '\\') ?: -1) + 1), [$th])) {
-                    if (!Dispatcher::firstValue('onException', [$th])) {
-                        static::buildErrorContent(500.1);
-                    }
+                try {
+                    static::buildErrorContent($error->status(), $error->getMessage());
+                    Templates::wrapResponse(Context::response());
+                } catch (RedirectException $r) {
+                    // RedirectExceptions are used to allow exception handling that becomes a redirect
+                    Context::response()->redirect($r->url(), $r->permanent(), $r->preserveMethod());
                 }
-                Templates::wrapResponse(Context::response());
+            } catch (Throwable $th) {
+                try {
+                    // generate a fallback exception handling error page
+                    if (!Dispatcher::firstValue('onException_' . substr(get_class($th), (strrpos(get_class($th), '\\') ?: -1) + 1), [$th])) {
+                        if (!Dispatcher::firstValue('onException', [$th])) {
+                            static::buildErrorContent(500.1);
+                        }
+                    }
+                    Templates::wrapResponse(Context::response());
+                } catch (RedirectException $r) {
+                    // RedirectExceptions are used to allow exception handling that becomes a redirect
+                    Context::response()->redirect($r->url(), $r->permanent(), $r->preserveMethod());
+                }
             }
         }
         ob_end_clean();

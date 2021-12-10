@@ -1,0 +1,114 @@
+form {
+    display: block;
+    font-family: $font-ui;
+
+    > * {
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        &:first-child {
+            margin-top: 0;
+        }
+    }
+}
+
+button,
+input,
+select,
+textarea {
+    font-family: $font-ui;
+    font-size: inherit;
+    padding: $grid-unit/2;
+    box-sizing: border-box;
+    display: block;
+    &:disabled,
+    &:indeterminate {
+        background-color: $color-neutral;
+        color: rgba(contrast-color($color-neutral), 0.75);
+    }
+}
+
+input {
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+input,
+select,
+textarea {
+    border: $border-unit solid $color-neutral;
+    background-color: $body-bg;
+    color: $body-fg;
+
+    @media (prefers-color-scheme: dark) {
+        background-color: $dark-body-bg;
+        color: $dark-body-fg;
+    }
+}
+
+button,
+input[type="button"] {
+    @include button;
+}
+
+input[type="submit"] {
+    @include button-confirmation;
+}
+
+input[type="checkbox"] {
+    display: inline-flex;
+    vertical-align: baseline;
+    justify-items: center;
+    padding: $grid-unit/8;
+    margin: 0;
+    color: inherit;
+    text-align: center;
+    &:before {
+        @include material-icon;
+        display: inline-block;
+        content: "\00a0";
+        height: 1em;
+        width: 1em;
+    }
+    &:checked {
+        background-color: $color-confirmation;
+        color: contrast-color($color-confirmation);
+        &:before {
+            content: "check";
+        }
+    }
+    &:indeterminate:before {
+        content: "indeterminate_check_box";
+    }
+}
+
+label {
+    font-weight: bold;
+}
+
+.form-field {
+    margin: $grid-unit 0;
+}
+
+.form-field--error {
+    background: rgba($color-error, 0.1);
+    padding: $grid-unit/2;
+}
+
+.form-field__tips__tip {
+    display: block;
+    margin: $grid-unit/2 0;
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+.form-field__error-message {
+    margin: $grid-unit/2 0;
+    font-weight: bold;
+    color: $color-error;
+    &:last-child {
+        margin-bottom: 0;
+    }
+}

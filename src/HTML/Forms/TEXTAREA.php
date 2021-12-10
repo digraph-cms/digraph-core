@@ -4,11 +4,12 @@ namespace DigraphCMS\HTML\Forms;
 
 use DigraphCMS\Context;
 use DigraphCMS\HTML\Tag;
+use DigraphCMS\HTML\Text;
 
-class INPUT extends Tag implements InputInterface
+class TEXTAREA extends Tag implements InputInterface
 {
-    protected $tag = 'input';
-    protected $void = true;
+    protected $tag = 'textarea';
+    protected $void = false;
 
     protected $form;
     protected $default;
@@ -20,7 +21,7 @@ class INPUT extends Tag implements InputInterface
 
     public function __construct(string $id = null)
     {
-        $this->setID($id ?? 'input-' . self::$counter++);
+        $this->setID($id ?? 'textarea-' . self::$counter++);
     }
 
     public function validationError(): ?string
@@ -37,7 +38,6 @@ class INPUT extends Tag implements InputInterface
         return array_merge(
             parent::attributes(),
             [
-                'value' => $this->value(true),
                 'name' => $this->id()
             ]
         );
@@ -59,7 +59,7 @@ class INPUT extends Tag implements InputInterface
      * Set the default value of this input, to be used if no value is
      * submitted in the get/post values.
      *
-     * @param $value
+     * @param string $value
      * @return $this
      */
     public function setDefault($value)
@@ -72,7 +72,7 @@ class INPUT extends Tag implements InputInterface
      * Set the value of this input explicitly. It will not respond to
      * different submitted values from this point onward.
      *
-     * @param $value
+     * @param string $value
      * @return $this
      */
     public function setValue($value)
@@ -128,12 +128,24 @@ class INPUT extends Tag implements InputInterface
     {
         if ($this->value) {
             return $this->value;
-        } elseif (($value = trim($this->submittedValue())) || $this->submitted()) {
+        } elseif (($value = $this->submittedValue()) || $this->submitted()) {
             return $value ? $value : null;
         } elseif ($useDefault) {
             return $this->default();
         } else {
             return null;
         }
+    }
+
+    public function addChild($child)
+    {
+        throw new \Exception("Can't add children to a TEXTAREA");
+    }
+
+    public function children(): array
+    {
+        return [
+            new Text(htmlspecialchars($this->value(true)))
+        ];
     }
 }

@@ -1,7 +1,6 @@
 .data-table {
     @include accent-block;
     max-width: 100%;
-    overflow: auto;
 
     .notification {
         &:first-child {

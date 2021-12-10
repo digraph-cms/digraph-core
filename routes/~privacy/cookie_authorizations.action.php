@@ -30,8 +30,7 @@ Context::response()->private(true);
 
 <?php
 
-$form = Cookies::form();
-if ($form->handle()) {
+echo $form = Cookies::form();
+if ($form->ready()) {
     throw new RefreshException();
 }
-echo $form;

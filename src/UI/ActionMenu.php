@@ -19,7 +19,7 @@ class ActionMenu
     public function __toString()
     {
         return $this->cache->get(
-            md5(serialize([$this->url, $this->user])),
+            md5(serialize($this->url)),
             function () {
                 ob_start();
                 echo "<nav class='action-menu'><h1>Action menu</h1>";

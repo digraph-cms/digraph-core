@@ -8,11 +8,11 @@ use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\Digraph;
 use DigraphCMS\Events\Dispatcher;
-use DigraphCMS\UI\Forms\Form;
+use DigraphCMS\HTML\Forms\Fields\CheckboxField;
+use DigraphCMS\HTML\Forms\FORM;
 use DigraphCMS\URL\URL;
 use DigraphCMS\URL\URLs;
 use DigraphCMS\Users\Users;
-use Formward\Fields\Checkbox;
 
 Dispatcher::addSubscriber(Cookies::class);
 
@@ -38,7 +38,7 @@ class Cookies
         return $types;
     }
 
-    public static function form(array $types = null, bool $required = false, bool $skipAllowed = false): Form
+    public static function form(array $types = null, bool $required = false, bool $skipAllowed = false): FORM
     {
         $types = $types ?? static::listTypes();
         if ($skipAllowed) {
@@ -49,26 +49,28 @@ class Cookies
                 }
             );
         }
-        $form = new Form("Cookie authorization");
+        $form = new FORM('cookie-authorization');
+        $form->button()->setText('Accept the selected cookies');
+        $form->token()->setCSRF(false);
+        $checkboxes = [];
         foreach ($types as $type) {
-            $form[$type] = new Checkbox(static::name($type));
-            $form[$type]->addTip(static::describe($type), 'description');
-            if ($expiration = static::expiration($type)) {
-                $form[$type]->addTip("These cookies automatically expire on your computer after $expiration.", 'expiration');
-            } else {
-                $form[$type]->addTip('These cookies automatically expire on your computer when you close your browser.', 'expiration');
-            }
+            $checkboxes[$type] = $checkbox = new CheckboxField(static::name($type));
+            $form->addChild($checkbox);
+            $checkbox->setDefault(static::isAllowed($type));
             if ($required) {
-                $form[$type]->default(true);
-                $form[$type]->required(true);
+                $checkbox
+                    ->setDefault(true)
+                    ->setRequired(true, "These cookies must be allowed to use this page");
+            }
+            $checkbox->addTip(static::describe($type));
+            if ($expiration = static::expiration($type)) {
+                $checkbox->addTip("These cookies automatically expire on your computer after $expiration.");
             } else {
-                $form[$type]->default(static::isAllowed($type));
+                $checkbox->addTip('These cookies automatically expire on your computer when you close your browser.');
             }
         }
-        $form->submitButton()->label('Accept the selected cookies');
-        $form->csrf(false);
-        $form->addCallback(function () use ($form) {
-            foreach ($form as $type => $field) {
+        $form->addCallback(function () use ($checkboxes) {
+            foreach ($checkboxes as $type => $field) {
                 if ($field->value()) {
                     static::allow($type);
                 } else {
@@ -106,9 +108,7 @@ class Cookies
                     $url = new URL('/~privacy/current_cookies.html');
                     return
                         "These cookies are necessary for the security of some site features. " .
-                        "They store temporary tokens that are used in security checks that prevent attackers from executing actions on your behalf or tricking you into performing unintended actions, or to prevent forms from being submitted more than once." .
-                        "<br>Please note that for security and performance reasons some CSRF protection cookies will be scoped to only the URL paths where they are needed. " .
-                        "This will prevent some CSRF cookies from appearing on the <a href='$url'>current cookies page</a>, because your browser has not been requested to send them there.";
+                        "They store temporary tokens that are used in security checks that prevent attackers from executing actions on your behalf or tricking you into performing unintended actions, or to prevent forms from being submitted more than once.";
             }
         } else {
             switch ($type) {

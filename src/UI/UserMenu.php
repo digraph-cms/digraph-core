@@ -35,7 +35,7 @@ class UserMenu extends ActionMenu
             echo "</ul></nav></div>";
         } elseif (Config::get('ui.action-menu.guestui')) {
             $user = Users::guest();
-            echo "<div class='user-actions user-actions-guest'><h2>$user</h2><nav><ul>";
+            echo "<div class='action-menu__user-actions action-menu__user-actions--guest'><h2>$user</h2><nav><ul>";
             if ($this->url->route() != 'signin') {
                 echo "<li class='signin-link'>" . Users::signinUrl()->html(['signin-link']) . "</li>";
             }

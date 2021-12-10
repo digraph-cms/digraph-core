@@ -4,12 +4,14 @@ namespace DigraphCMS\HTML\Forms;
 
 use DigraphCMS\HTML\ConditionalContainer;
 use DigraphCMS\HTML\DIV;
+use DigraphCMS\HTML\SMALL;
 use DigraphCMS\HTML\Text;
 
 class Field extends DIV implements InputInterface
 {
     protected $input;
     protected $label;
+    protected $tips;
     protected $validationMessage;
     protected $validationMessageText;
 
@@ -54,6 +56,7 @@ class Field extends DIV implements InputInterface
         if ($this->submitted()) {
             $children[] = $this->validationMessage();
         }
+        $children[] = $this->tips();
         return $children;
     }
 
@@ -91,6 +94,24 @@ class Field extends DIV implements InputInterface
     public function label(): LABEL
     {
         return $this->label;
+    }
+
+    public function tips(): ConditionalContainer
+    {
+        if (!$this->tips) {
+            $this->tips = new ConditionalContainer();
+            $this->tips->addClass('form-field__tips');
+        }
+        return $this->tips;
+    }
+
+    public function addTip(string $tip)
+    {
+        $this->tips()->addChild(
+            (new SMALL())
+                ->addChild(new Text($tip))
+                ->addClass('form-field__tips__tip')
+        );
     }
 
     public function form(): ?FORM
