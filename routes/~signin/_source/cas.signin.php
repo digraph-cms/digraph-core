@@ -2,16 +2,9 @@
 
 use DigraphCMS\Config;
 use DigraphCMS\Context;
-use DigraphCMS\DB\DB;
+use DigraphCMS\HTML\Forms\Field;
+use DigraphCMS\HTML\Forms\FORM;
 use DigraphCMS\HTTP\RedirectException;
-use DigraphCMS\Session\Cookies;
-use DigraphCMS\Session\Session;
-use DigraphCMS\UI\Forms\Form;
-use DigraphCMS\UI\Templates;
-use DigraphCMS\URL\URL;
-use DigraphCMS\Users\User;
-use DigraphCMS\Users\Users;
-use Formward\Fields\Input;
 
 // display individual provider
 $provider = Context::arg('_provider');
@@ -60,14 +53,15 @@ if (!@$config['mock_cas_user']) {
 } else {
     // USE MOCK CAS USER
     if (!Context::arg('_mockcasuser')) {
-        $form = new Form('Debug tool: Enter your mock CAS username');
-        $form['username'] = new Input('Username');
-        $form['username']->required(true);
-        if ($form->handle()) {
+        $form = new FORM('mock-cas-user');
+        $username = new Field('Username');
+        $username->setRequired(true);
+        $form->addChild($username);
+        $form->addCallback(function()use($username){
             $url = clone Context::url();
-            $url->arg('_mockcasuser', $form['username']->value());
+            $url->arg('_mockcasuser', $username->value());
             throw new RedirectException($url);
-        }
+        });
         echo $form;
     } else {
         Context::data('signin_provider_id', Context::arg('_mockcasuser'));

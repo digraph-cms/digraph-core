@@ -5,7 +5,7 @@ namespace DigraphCMS\HTML\Forms;
 use DigraphCMS\Context;
 use DigraphCMS\HTML\Tag;
 
-class INPUT extends Tag implements InputInterface
+class Checkbox extends Tag implements InputInterface
 {
     protected $tag = 'input';
     protected $void = true;
@@ -34,13 +34,17 @@ class INPUT extends Tag implements InputInterface
 
     public function attributes(): array
     {
-        return array_merge(
+        $attributes = array_merge(
             parent::attributes(),
             [
-                'value' => $this->value(true),
-                'name' => $this->id()
+                'name' => $this->id(),
+                'type' => 'checkbox'
             ]
         );
+        if ($this->value(true)) {
+            $attributes['checked'] = null;
+        }
+        return $attributes;
     }
 
     public function required(): bool
@@ -108,28 +112,28 @@ class INPUT extends Tag implements InputInterface
         }
     }
 
-    public function default(): ?string
+    public function default(): ?bool
     {
         return $this->default;
     }
 
-    protected function submittedValue(): ?string
+    protected function submittedValue(): ?bool
     {
-        if ($this->form()->method() == FORM::METHOD_GET) {
-            return Context::arg($this->id());
-        } elseif ($this->form()->method() == FORM::METHOD_POST) {
-            return Context::post($this->id());
+        if ($this->submitted() && $this->form()->method() == FORM::METHOD_GET) {
+            return Context::arg($this->id()) == 'on';
+        } elseif ($this->submitted() && $this->form()->method() == FORM::METHOD_POST) {
+            return Context::post($this->id()) == 'on';
         } else {
             return null;
         }
     }
 
-    public function value($useDefault = false): ?string
+    public function value($useDefault = false): ?bool
     {
-        if ($this->value) {
+        if ($this->value !== null) {
             return $this->value;
-        } elseif (($value = trim($this->submittedValue())) || $this->submitted()) {
-            return $value ? $value : null;
+        } elseif ($this->submittedValue() !== null || $this->submitted()) {
+            return $this->submittedValue();
         } elseif ($useDefault) {
             return $this->default();
         } else {

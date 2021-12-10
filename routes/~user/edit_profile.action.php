@@ -21,7 +21,7 @@ $name = (new Field('Display name'))
     ->setDefault($user->name())
     ->setRequired(true);
 $form->addChild($name);
-if ($form->handle()) {
+if ($form->ready()) {
     $user->name($name->value());
     $user->update();
     Notifications::flashConfirmation('Profile changes saved');

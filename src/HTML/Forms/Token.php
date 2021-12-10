@@ -12,7 +12,6 @@ class Token extends INPUT
     public function __construct(FORM $form)
     {
         $this->setForm($form);
-        $this->setDefault($this->token());
         $this->setID('token');
     }
 
@@ -38,7 +37,7 @@ class Token extends INPUT
 
     /**
      * Set whether to use proper CSRF tokens, if set to false a simple submitted
-     * value of 1 will be used to determine whether the form has been submitted.
+     * value will be generated from some basic user fingerprint information.
      *
      * @param boolean $useCSRF
      * @return $this
@@ -77,8 +76,15 @@ class Token extends INPUT
                 return Cookies::csrfToken('forms');
             }
         } else {
-            return '1';
+            return md5(serialize([
+                $_SERVER['HTTP_USER_AGENT'],
+                $_SERVER['REMOTE_ADDR']
+            ]));
         }
+    }
+
+    public function default(): string {
+        return $this->token();
     }
 
     public function attributes(): array

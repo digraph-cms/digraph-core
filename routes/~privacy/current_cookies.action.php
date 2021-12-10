@@ -18,11 +18,6 @@ use DigraphCMS\UI\DataTables\ArrayTable;
 use DigraphCMS\UI\DataTables\ColumnHeader;
 use DigraphCMS\UI\Notifications;
 
-if (!$_COOKIE) {
-    Notifications::printConfirmation('No cookies set.');
-    return;
-}
-
 $table = new ArrayTable(
     $_COOKIE,
     function (string $key, string $item) {
@@ -59,7 +54,4 @@ $table = new ArrayTable(
 );
 
 echo $table;
-Notifications::printNotice(
-    "Please note: Some cookies may not be able to be viewed or deleted through this tool due to the way their scopes are defined. For example if they are set to only be sent to specific pages (such as CSRF tokens that are only available on the page where a form is used). You can always clear them using your browser's tools though."
-);
 echo "</form>";

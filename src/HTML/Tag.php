@@ -171,7 +171,7 @@ abstract class Tag extends Node
         }
         // set class attribute
         if ($classes = $this->classes()) {
-            $attributes["class"] = implode($classes);
+            $attributes["class"] = implode(' ', $classes);
         }
         // set ID attribute
         if ($id = $this->id()) {

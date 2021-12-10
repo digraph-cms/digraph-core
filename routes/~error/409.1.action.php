@@ -7,13 +7,12 @@
 
 use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
+use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\Session\Cookies;
 
-$form = Cookies::form(Context::thrown()->cookieTypes(), true, true);
-if ($form->handle()) {
-    Context::response()->redirect(Context::url());
-} else {
-    echo $form;
+echo $form = Cookies::form(Context::thrown()->cookieTypes(), true, true);
+if ($form->ready()) {
+    throw new RefreshException();
 }
 
 Router::include('/~error/trace.php');

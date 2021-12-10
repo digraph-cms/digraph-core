@@ -14,6 +14,7 @@ class FORM extends Tag
     protected $action;
     protected $token;
     protected $button;
+    protected $callbacks = [];
 
     const METHOD_POST = 'post';
     const METHOD_GET = 'get';
@@ -26,7 +27,20 @@ class FORM extends Tag
         $this->addClass('form');
     }
 
-    public function handle(): bool
+    /**
+     * Add a callback to be executed when a form is submitted and valid, happens
+     * when the form is printed by default.
+     * 
+     * @param callable $callback
+     * @return $this
+     */
+    public function addCallback(callable $callback)
+    {
+        $this->callbacks[] = $callback;
+        return $this;
+    }
+
+    public function ready(): bool
     {
         return $this->submitted() && $this->validate();
     }
@@ -114,5 +128,17 @@ class FORM extends Tag
             $child->setForm($this);
         }
         return parent::addChild($child);
+    }
+
+    public function toString(): string
+    {
+        // call callbacks when printed
+        if ($this->ready()) {
+            while ($this->callbacks) {
+                call_user_func(array_shift($this->callbacks), $this);
+            }
+        }
+        // return normal printing
+        return parent::toString();
     }
 }
