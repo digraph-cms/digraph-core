@@ -24,10 +24,11 @@ class Field extends DIV implements InputInterface
     {
         if ($message = $this->input()->validationError()) {
             $this->validationMessageText()->setContent($message);
-            $this->validationMessage()->addChild($this->validationMessageText());
+            $this->validationMessage()->setHidden(false);
             return $message;
         } else {
-            $this->validationMessage()->removeChild($this->validationMessageText());
+            $this->validationMessageText()->setContent('');
+            $this->validationMessage()->setHidden(true);
             return null;
         }
     }
@@ -36,6 +37,7 @@ class Field extends DIV implements InputInterface
     {
         if (!$this->validationMessageText) {
             $this->validationMessageText = new Text('');
+            $this->validationMessage()->addChild($this->validationMessageText);
         }
         return $this->validationMessageText;
     }
@@ -49,7 +51,7 @@ class Field extends DIV implements InputInterface
             ],
             parent::children()
         );
-        if (!$this->form() ?? $this->form()->submitted()) {
+        if ($this->submitted()) {
             $children[] = $this->validationMessage();
         }
         return $children;
@@ -58,7 +60,7 @@ class Field extends DIV implements InputInterface
     public function classes(): array
     {
         $classes = parent::classes();
-        if (!$this->form() ?? $this->form()->submitted()) {
+        if ($this->submitted()) {
             if ($this->validationError()) {
                 $classes[] = 'form-field--error';
             }
@@ -66,10 +68,10 @@ class Field extends DIV implements InputInterface
         return $classes;
     }
 
-    public function validationMessage(): ConditionalContainer
+    public function validationMessage(): DIV
     {
         if (!$this->validationMessage) {
-            $this->validationMessage = (new ConditionalContainer())
+            $this->validationMessage = (new DIV())
                 ->addClass('form-field__error-message');
         }
         return $this->validationMessage;
@@ -94,6 +96,11 @@ class Field extends DIV implements InputInterface
     public function form(): ?FORM
     {
         return $this->input()->form();
+    }
+
+    public function submitted(): bool
+    {
+        return $this->input()->submitted();
     }
 
     public function setForm(FORM $form)

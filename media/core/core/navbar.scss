@@ -1,9 +1,0 @@
-@import '/mixins/core.scss';
-
-#navbar {
-    background: $color-highlight;
-    color: contrast-color($color-highlight);
-    font-weight: bold;
-    font-size: large;
-    font-family: $font-ui;
-}

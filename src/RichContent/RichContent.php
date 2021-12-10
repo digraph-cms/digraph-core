@@ -20,7 +20,6 @@ class RichContent
     {
         static $loaded = false;
         if (!$loaded) {
-            Theme::addBlockingPageCss('/core/trix/trix-content.css');
             $loaded = true;
         }
     }

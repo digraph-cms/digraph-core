@@ -1,0 +1,97 @@
+@media screen {
+    #content {
+
+        p,
+        li,
+        blockquote,
+        dd,
+        dt {
+            max-width: 35em;
+        }
+    }
+}
+
+@media screen,
+print {
+    #skip-to-content {
+        display: none;
+    }
+}
+
+body {
+    background-color: $body-bg;
+    color: $body-fg;
+
+    @media (prefers-color-scheme: dark) {
+        background-color: $dark-body-bg;
+        color: $dark-body-fg;
+    }
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    box-sizing: border-box;
+}
+
+base64 {
+    display: none;
+}
+
+/*
+Form resets
+*/
+
+form {
+    padding: $grid-unit;
+    background: rgba($color-neutral, 0.1);
+
+    >* {
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        &:first-child {
+            margin-top: 0;
+        }
+    }
+}
+
+button,
+input,
+select,
+textarea {
+    font-family: $font-ui;
+    font-size: inherit;
+    padding: $grid-unit/2;
+    margin: $grid-unit/2 0;
+    box-sizing: border-box;
+    display: block;
+}
+
+input {
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+input,
+select,
+textarea {
+    border: 1px solid $color-neutral;
+    background-color: $body-bg;
+    color: $body-fg;
+
+    @media (prefers-color-scheme: dark) {
+        background-color: $dark-body-bg;
+        color: $dark-body-fg;
+    }
+}
+
+button,
+input[type="button"] {
+    @include button;
+}
+
+input[type="submit"] {
+    @include button-confirmation;
+}

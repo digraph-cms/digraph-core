@@ -10,6 +10,7 @@ interface InputInterface
      */
     public function setForm(FORM $form);
     public function form(): ?FORM;
+    public function submitted(): bool;
     public function id(): ?string;
 
     public function validationError(): ?string;

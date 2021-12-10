@@ -1,32 +1,3 @@
-@mixin material-icon {
-    font-family: "Material Icons" !important;
-    font-weight: normal;
-    font-style: normal;
-    letter-spacing: normal;
-    text-transform: none;
-    white-space: nowrap;
-    word-wrap: normal;
-    direction: ltr;
-    -moz-font-feature-settings: "liga";
-    -moz-osx-font-smoothing: grayscale;
-}
-
-@mixin icofont {
-    font-family: "IcoFont" !important;
-    speak: none;
-    font-style: normal;
-    font-weight: normal;
-    font-variant: normal;
-    text-transform: none;
-    white-space: nowrap;
-    word-wrap: normal;
-    direction: ltr;
-    line-height: 1;
-    /* Better Font Rendering =========== */
-    -webkit-font-feature-settings: "liga";
-    -webkit-font-smoothing: antialiased;
-}
-
 @function contrast-color($color) {
     @if (lightness($color) > 50) {
         @return #000;
@@ -87,7 +58,7 @@
     color: contrast-color($color-highlight) !important;
     border: 0;
     display: inline-block;
-    padding: $grid-unit;
+    padding: $grid-unit/2;
     cursor: pointer;
     z-index: 1;
     border-radius: $border-radius;

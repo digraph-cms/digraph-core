@@ -6,6 +6,7 @@ use DigraphCMS\UI\Theme;
 use Formward\Fields\Container;
 use Formward\Fields\DisplayOnly;
 use Formward\Fields\Hidden;
+use Formward\Fields\Textarea;
 
 class RichContentField extends Container
 {
@@ -14,9 +15,6 @@ class RichContentField extends Container
         static $loaded = false;
         if (!$loaded) {
             RichContent::load();
-            Theme::addBlockingPageJs('/core/trix/trix.js');
-            Theme::addBlockingPageJs('/core/trix/trix-integration.js');
-            Theme::addInternalPageCss('/core/trix/trix.css');
             $loaded = true;
         }
     }
@@ -44,20 +42,12 @@ class RichContentField extends Container
 
     public function construct()
     {
-        $this['value'] = new Hidden('');
-        $this['trix'] = new DisplayOnly('');
-        $this['attachments'] = new RichContentBlocksField("");
+        $this['value'] = new Textarea('');
     }
 
     public function __toString()
     {
         static::load();
-        $this['trix']->content(sprintf(
-            '<trix-editor input="%s" class="trix-content" id="%s-editor"></trix-editor>',
-            $this['value']->name(),
-            $this->name()
-        ));
-        $this['attachments']->editorID($this->name());
         $this['value']->default($this->value()->editorValue());
         return parent::__toString();
     }
