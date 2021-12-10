@@ -22,7 +22,7 @@ use DigraphCMS\Media\Media;
         :: <?php echo Context::fields()['site.name']; ?>
     </title>
     <style>
-        <?php echo Media::get('/core/error_blocking.css')->content(); ?>
+        <?php echo Media::get('/styles_fallback/error_blocking.css')->content(); ?>
     </style>
 </head>
 

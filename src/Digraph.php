@@ -219,7 +219,7 @@ class Digraph
                 // set up template and add error CSS
                 Theme::resetPage();
                 Theme::resetTheme();
-                Theme::addBlockingPageCss('/core/error_blocking.css');
+                Theme::addBlockingPageCss('/styles_fallback/*.css');
                 Context::response()->resetTemplate();
                 Context::thrown($th);
                 // rethrow error

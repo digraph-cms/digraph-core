@@ -74,6 +74,43 @@ class Media
         );
     }
 
+    public static function glob(string $glob): array
+    {
+        $glob = static::prefixContext($glob);
+        URLs::beginContext(new URL($glob));
+        $files = array_map(
+            function (string $path): string {
+                return URLs::context()->directory() . basename($path);
+            },
+            static::search($glob)
+        );
+        $files = array_unique($files);
+        asort($files);
+        $files = array_map(
+            function (string $path): File {
+                return static::get($path);
+            },
+            $files
+        );
+        URLs::endContext();
+        return $files;
+    }
+
+    public static function globToPaths(string $glob): array {
+        $glob = static::prefixContext($glob);
+        URLs::beginContext(new URL($glob));
+        $files = array_map(
+            function (string $path): string {
+                return URLs::context()->directory() . basename($path);
+            },
+            static::search($glob)
+        );
+        $files = array_unique($files);
+        asort($files);
+        URLs::endContext();
+        return $files;
+    }
+
     public static function onGetMedia_js(string $path): ?File
     {
         if ($source = static::locate($path)) {
@@ -89,6 +126,11 @@ class Media
             );
         }
         return null;
+    }
+
+    public static function onGetMedia_scss(string $path): ?File
+    {
+        return static::onGetMedia_css($path);
     }
 
     public static function onGetMedia_css(string $path): ?File

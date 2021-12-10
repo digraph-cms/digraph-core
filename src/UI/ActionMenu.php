@@ -3,20 +3,16 @@
 namespace DigraphCMS\UI;
 
 use DigraphCMS\Cache\UserCacheNamespace;
-use DigraphCMS\Config;
 use DigraphCMS\Content\Router;
 use DigraphCMS\URL\URL;
-use DigraphCMS\URL\URLs;
-use DigraphCMS\Users\Users;
 
 class ActionMenu
 {
-    protected $url, $user, $cache;
+    protected $url, $cache;
 
-    public function __construct(URL $url, $user = false)
+    public function __construct(URL $url)
     {
         $this->url = clone $url;
-        $this->user = $user;
         $this->cache = new UserCacheNamespace('action-menu');
     }
 
@@ -29,7 +25,6 @@ class ActionMenu
                 echo "<nav class='action-menu'><h1>Action menu</h1>";
                 // output buffer contents separately
                 ob_start();
-                $this->printUserActions();
                 $this->printPageActions();
                 $this->printStaticActions();
                 // return empty if no contents
@@ -45,33 +40,6 @@ class ActionMenu
                 return ob_get_clean();
             }
         ) ?? '';
-    }
-
-    protected function printUserActions()
-    {
-        if (!$this->user) {
-            return;
-        }
-        $user = Users::current();
-        if ($user) {
-            echo "<div class='user-actions user-actions-signedin'><h2>$user</h2><nav><ul>";
-            echo "<li class='profile-link'><a href='" . $user->profile() . "'>My profile</a></li>";
-            foreach (Router::staticActions('user') as $url) {
-                echo "<li>" . $url->html([], true) . "</li>";
-            }
-            echo "<li class='signout-link'>" . Users::signoutUrl()->html(['signout-link']) . "</li>";
-            echo "</ul></nav></div>";
-        } elseif (Config::get('ui.action-menu.guestui')) {
-            $user = Users::guest();
-            echo "<div class='user-actions user-actions-guest'><h2>$user</h2><nav><ul>";
-            if ($this->url->route() != 'signin') {
-                echo "<li class='signin-link'>" . Users::signinUrl()->html(['signin-link']) . "</li>";
-            }
-            foreach (Router::staticActions('guest') as $url) {
-                echo "<li>" . $url->html([], true) . "</li>";
-            }
-            echo "</ul></nav></div>";
-        }
     }
 
     protected function printPageActions()
@@ -97,7 +65,7 @@ class ActionMenu
             )
         );
         if ($actions || $addable) {
-            echo "<div class='page-actions'><h2>" . $this->url->page()->url()->html() . "</h2><nav><ul>";
+            echo "<div class='action-menu__page-actions'><h2>" . $this->url->page()->url()->html() . "</h2><nav><ul>";
             foreach ($actions as $url) {
                 echo "<li>" . $url->html([], true) . "</li>";
             }
@@ -126,7 +94,7 @@ class ActionMenu
             }
         );
         if ($actions) {
-            echo "<div class='static-actions'>";
+            echo "<div class='action-menu__static-actions'>";
             if (Router::staticRouteExists($this->url->route(), 'index')) {
                 $title = (new URL('/~' . $this->url->route()))->html();
                 echo "<h2>$title</h2>";

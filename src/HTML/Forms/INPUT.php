@@ -85,6 +85,15 @@ class INPUT extends Tag implements InputInterface
         return $this->form;
     }
 
+    public function submitted(): bool
+    {
+        if ($this->form()) {
+            return $this->form()->submitted();
+        } else {
+            return !!$this->submittedValue();
+        }
+    }
+
     public function setForm(FORM $form)
     {
         $this->form = $form;
@@ -119,7 +128,7 @@ class INPUT extends Tag implements InputInterface
     {
         if ($this->value) {
             return $this->value;
-        } elseif ($value = trim($this->submittedValue())) {
+        } elseif (($value = trim($this->submittedValue())) || $this->submitted()) {
             return $value ? $value : null;
         } elseif ($useDefault) {
             return $this->default();

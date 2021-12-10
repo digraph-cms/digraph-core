@@ -18,8 +18,8 @@ class Autocomplete extends Input
         static $loaded = false;
         if (!$loaded) {
             Cookies::csrfToken('autocomplete');
-            Theme::addBlockingPageJs('/autocomplete/autocomplete.js');
-            Theme::addInternalPageCss('/autocomplete/autocomplete.css');
+            Theme::addBlockingPageJs('/forms/autocomplete/autocomplete.js');
+            Theme::addInternalPageCss('/forms/autocomplete/autocomplete.css');
             $loaded = true;
         }
     }

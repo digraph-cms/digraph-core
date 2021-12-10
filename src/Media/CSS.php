@@ -50,11 +50,12 @@ class CSS
     protected static function parseSCSS(string $scss, string $path): string
     {
         $compiler = new ScssCompiler();
+        $compiler->setCharset(false);
         // add theme variables
         $compiler->addVariables(Theme::cssVars());
-        // source mapping
+        // source mapping (only used when sourcemap is true and bundle_css is false)
         $smFile = null;
-        if (Config::get('files.css.sourcemap')) {
+        if (Config::get('files.css.sourcemap') && !Config::get('theme.bundle_css')) {
             // pass info into temporary File to create file and get URL
             $smFile = new File('sourcemap.json', '', $scss);
             $smFile->write();
@@ -92,6 +93,19 @@ class CSS
             $compiler->setOutputStyle(OutputStyle::COMPRESSED);
         } else {
             $compiler->setOutputStyle(OutputStyle::EXPANDED);
+        }
+        // automatically import everything in /mixins/
+        if (substr($path, 0, 8) != '/mixins/') {
+            $mixins = implode(
+                '',
+                array_map(
+                    function (string $path): string {
+                        return "@import \"$path\";";
+                    },
+                    Media::globToPaths('/mixins/*.scss')
+                )
+            );
+            $scss = $mixins . $scss;
         }
         // compile
         URLs::beginContext(new URL($path));

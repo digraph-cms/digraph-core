@@ -24,18 +24,16 @@ class Theme
 {
     protected static $core = [
         'blocking_css' => [
-            '/core/blocking.css'
+            '/styles_blocking/*.css'
         ],
         'internal_css' => [
-            'all' => ['/core/core.css'],
-            'screen' => ['/core/screen.scss'],
-            'dark' => ['/core/dark.css'],
-            'print' => ['/core/print.css']
+            '/styles/*.css'
         ],
         'blocking_js' => [
-            '/core/iframe-resizer/iframeResizer.contentWindow.min.js',
-            '/core/iframe-resizer/iframeResizer.min.js',
-            '/core/iframe-resizer/iframeResizer-integration.js'
+            '/scripts_blocking/*.js'
+        ],
+        'async_js' => [
+            '/scripts/*.js'
         ],
         'css_vars' => [
             'body-bg' => '#fafafa',
@@ -93,22 +91,8 @@ class Theme
     protected static $cssVars = [];
     protected static $blockingThemeCss = [];
     protected static $blockingPageCss = [];
-    protected static $internalThemeCss = [
-        'all' => [],
-        'screen' => [],
-        'dark' => [],
-        'light' => [],
-        'print' => [],
-        'speech' => [],
-    ];
-    protected static $internalPageCss = [
-        'all' => [],
-        'screen' => [],
-        'dark' => [],
-        'light' => [],
-        'print' => [],
-        'speech' => [],
-    ];
+    protected static $internalThemeCss = [];
+    protected static $internalPageCss = [];
     protected static $blockingThemeJs = [];
     protected static $blockingPageJs = [];
     protected static $asyncThemeJs = [];
@@ -197,14 +181,14 @@ class Theme
         static::$blockingPageCss[] = $url;
     }
 
-    public static function addInternalThemeCss($url, $media = 'all')
+    public static function addInternalThemeCss($url)
     {
-        static::$internalThemeCss[$media][] = $url;
+        static::$internalThemeCss[] = $url;
     }
 
-    public static function addInternalPageCss($url, $media = 'all')
+    public static function addInternalPageCss($url)
     {
-        static::$internalPageCss[$media][] = $url;
+        static::$internalPageCss[] = $url;
     }
 
     public static function addBlockingThemeJs($url_or_file)
@@ -240,24 +224,31 @@ class Theme
     protected static function renderJs(array $urls_or_files, bool $async)
     {
         foreach ($urls_or_files as $url_or_file) {
-            if (is_string($url_or_file)) {
-                if (preg_match('@^(https?)?//@', $url_or_file)) {
-                    $url = $url_or_file;
-                } else {
-                    $url_or_file = Media::get($url_or_file);
-                    if (!$url_or_file) {
-                        throw new HttpError(500, 'JS file not found');
+            if (basename($url_or_file) == '*.js') {
+                // search and recurse if the filename is *.js
+                static::renderJs(Media::globToPaths($url_or_file), $async);
+            } else {
+                // otherwise render script tag
+                if (is_string($url_or_file)) {
+                    if (preg_match('@^(https?)?//@', $url_or_file)) {
+                        $url = $url_or_file;
+                    } else {
+                        $r = $url_or_file;
+                        $url_or_file = Media::get($url_or_file);
+                        if (!$url_or_file) {
+                            throw new HttpError(500, 'JS file ' . $r . ' not found');
+                        }
                     }
                 }
+                if ($url_or_file instanceof File) {
+                    $url = $url_or_file->url();
+                }
+                echo "<script src='$url'";
+                if ($async) {
+                    echo " async";
+                }
+                echo "></script>" . PHP_EOL;
             }
-            if ($url_or_file instanceof File) {
-                $url = $url_or_file->url();
-            }
-            echo "<script src='$url'";
-            if ($async) {
-                echo " async";
-            }
-            echo "></script>" . PHP_EOL;
         }
     }
 
@@ -268,67 +259,102 @@ class Theme
     protected static function renderInlineJs(array $strings_or_files)
     {
         foreach ($strings_or_files as $string_or_file) {
-            if ($string_or_file instanceof File) {
-                $string_or_file = $string_or_file->content();
+            if (basename($string_or_file) == '*.js') {
+                // recurse if filename is *.js
+                static::renderInlineJs(Media::globToPaths($string_or_file));
+            } else {
+                // print script inline
+                if ($string_or_file instanceof File) {
+                    $string_or_file = $string_or_file->content();
+                }
+                echo "<script>";
+                echo $string_or_file;
+                echo "</script>" . PHP_EOL;
             }
-            echo "<script>";
-            echo $string_or_file;
-            echo "</script>" . PHP_EOL;
         }
     }
 
     protected static function renderBlockingCss()
     {
-        $files = array_map(
-            function (string $url): File {
-                $url = new URL($url);
-                $file = Media::get($url->path());
-                if (!$file) {
-                    throw new HttpError(500, 'Couldn\'t find blocking CSS file');
-                }
-                return $file;
-            },
-            array_merge(static::$blockingThemeCss, static::$blockingPageCss)
-        );
-        foreach ($files as $file) {
-            echo "<style>" . $file->content() . "</style>" . PHP_EOL;
-        }
-    }
-
-    protected static function renderInternalCss(string $name, array $css)
-    {
-        foreach ($css as $media => $urls) {
-            $htmlMedia = $media;
-            if ($media == 'dark') {
-                $htmlMedia = 'screen and (prefers-color-scheme: dark)';
-            }
-            if ($media == 'light') {
-                $htmlMedia = 'screen and (prefers-color-scheme: light)';
-            }
-            if (!Config::get('theme.bundle_css')) {
-                /** @var File[] */
-                $files = array_map(
-                    function (string $url): File {
-                        $url = new URL($url);
-                        return Media::get($url->path());
-                    },
-                    $urls
-                );
-                foreach ($files as $file) {
-                    echo "<link rel='stylesheet' media='$htmlMedia' href='" . $file->url() . "'>" . PHP_EOL;
+        $sourceMapping = Config::get('files.css.sourcemap');
+        Config::set('files.css.sourcemap', false);
+        $files = [];
+        foreach (array_merge(static::$blockingThemeCss, static::$blockingPageCss) as $url) {
+            if (preg_match('/\/\*\.css$/', $url)) {
+                //wildcard search
+                foreach (Media::glob(preg_replace('/\.css$/', '.{scss,css}', $url)) as $file) {
+                    $files[] = $file;
                 }
             } else {
-                $scss = '';
-                foreach ($urls as $url) {
-                    $url = preg_replace('@\.css$@', '.scss', $url);
-                    $scss .= "@import \"" . $url . "\";";
-                }
-                $file = new DeferredFile($name . '_' . $media . '.css', function (DeferredFile $file) use ($scss) {
-                    file_put_contents($file->path(), CSS::scss($scss));
-                }, [$urls]);
-                $file->write();
-                echo "<link rel='stylesheet' media='$htmlMedia' href='" . $file->url() . "'>" . PHP_EOL;
+                //normal single file
+                $url = new URL($url);
+                $files[] = Media::get($url->path());
             }
+        }
+        $files = array_filter($files);
+        if ($files) {
+            echo "<style>" . PHP_EOL;
+            foreach ($files as $file) {
+                echo $file->content() . PHP_EOL;
+            }
+            echo "</style>" . PHP_EOL;
+        }
+        Config::set('files.css.sourcemap', $sourceMapping);
+    }
+
+    protected static function renderInternalCss(string $name, array $urls)
+    {
+        if (!Config::get('theme.bundle_css')) {
+            $files = [];
+            foreach ($urls as $url) {
+                if (preg_match('/\/\*\.css$/', $url)) {
+                    //wildcard search
+                    foreach (Media::glob(preg_replace('/\.css$/', '.{scss,css}', $url)) as $file) {
+                        $files[] = $file;
+                    }
+                } else {
+                    //normal single file
+                    $url = new URL($url);
+                    $files[] = Media::get($url->path());
+                }
+            }
+            $files = array_filter($files);
+            foreach ($files as $file) {
+                echo "<link rel='stylesheet' href='" . $file->url() . "'>" . PHP_EOL;
+            }
+        } else {
+            $files = [];
+            foreach ($urls as $url) {
+                if (preg_match('/\/\*\.css$/', $url)) {
+                    //wildcard search
+                    $url = new URL($url);
+                    foreach (Media::search(preg_replace('/\.css$/', '.{scss,css}', $url->path())) as $file) {
+                        $files[] = $url->directory() . basename($file);
+                    }
+                } else {
+                    //normal single file
+                    $files[] = $url;
+                }
+            }
+            $files = array_filter($files);
+            $file = new DeferredFile($name . '.css', function (DeferredFile $file) use ($files) {
+                file_put_contents(
+                    $file->path(),
+                    CSS::scss(
+                        implode(
+                            PHP_EOL,
+                            array_map(
+                                function (string $path): string {
+                                    return "@import \"$path\";";
+                                },
+                                $files
+                            )
+                        )
+                    )
+                );
+            }, [$urls]);
+            $file->write();
+            echo "<link rel='stylesheet' href='" . $file->url() . "'>" . PHP_EOL;
         }
     }
 
@@ -350,7 +376,7 @@ class Theme
 
     protected static function renderCoreJs()
     {
-        $script = Media::get('/core/core.js')->content();
+        $script = Media::get('/scripts_blocking/core/core.js')->content();
         $file = new DeferredFile(
             'core.js',
             function (DeferredFile $file) use ($script) {

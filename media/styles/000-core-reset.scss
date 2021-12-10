@@ -1,0 +1,61 @@
+a:link {
+    color: $color-link;
+}
+
+a:visited {
+    color: $color-link-visited;
+}
+
+a:focus {
+    color: $color-link-focus;
+}
+
+a:hover {
+    color: $color-link-hover;
+}
+
+a:active {
+    color: $color-link-active;
+}
+
+a:after {
+    @include material-icon;
+    font-size: smaller;
+    text-decoration: none;
+    vertical-align: top;
+}
+
+a[target="_lightbox"]:after {
+    content: "open_in_full";
+    display: inline-block;
+}
+
+a[target="_blank"]:after {
+    content: "open_in_new";
+    display: inline-block;
+}
+
+::selection,
+::-moz-selection {
+    background: $color-highlight;
+    color: contrast-color($color-highlight);
+}
+
+:focus {
+    @include focused;
+}
+
+.navigation-frame,
+.autocomplete-results {
+    @include loading-overlay;
+}
+
+@keyframes spin-loading-overlay {
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}

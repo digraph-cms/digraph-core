@@ -3,9 +3,12 @@
 namespace DigraphCMS\UI;
 
 use DigraphCMS\Cache\UserCacheNamespace;
+use DigraphCMS\Config;
+use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
 use DigraphCMS\Session\Session;
 use DigraphCMS\URL\URL;
+use DigraphCMS\Users\Users;
 
 class UserMenu extends ActionMenu
 {
@@ -16,6 +19,33 @@ class UserMenu extends ActionMenu
         $this->cache = new UserCacheNamespace('user-menu');
     }
 
+    protected function printUserActions()
+    {
+        if (!$this->user) {
+            return;
+        }
+        $user = Users::current();
+        if ($user) {
+            echo "<div class='action-menu__user-actions action-menu__user-actions--signedin'><h2>$user</h2><nav><ul>";
+            echo "<li class='profile-link'><a href='" . $user->profile() . "'>My profile</a></li>";
+            foreach (Router::staticActions('user') as $url) {
+                echo "<li>" . $url->html([], true) . "</li>";
+            }
+            echo "<li class='signout-link'>" . Users::signoutUrl()->html(['signout-link']) . "</li>";
+            echo "</ul></nav></div>";
+        } elseif (Config::get('ui.action-menu.guestui')) {
+            $user = Users::guest();
+            echo "<div class='user-actions user-actions-guest'><h2>$user</h2><nav><ul>";
+            if ($this->url->route() != 'signin') {
+                echo "<li class='signin-link'>" . Users::signinUrl()->html(['signin-link']) . "</li>";
+            }
+            foreach (Router::staticActions('guest') as $url) {
+                echo "<li>" . $url->html([], true) . "</li>";
+            }
+            echo "</ul></nav></div>";
+        }
+    }
+
     public function __toString()
     {
         return $this->cache->get(
@@ -23,7 +53,7 @@ class UserMenu extends ActionMenu
             function () {
                 ob_start();
                 $class = Session::user() ? 'signed-in' : 'guest';
-                echo "<nav class='action-menu user-menu $class'><h1>User menu</h1>";
+                echo "<nav class='action-menu action-menu--user-menu action-menu--$class'><h1>User menu</h1>";
                 // output buffer contents separately
                 ob_start();
                 $this->printUserActions();
