@@ -37,8 +37,6 @@
         "ext-sqlite3": "Required to use a SQLite database",
         "ext-mysql": "Required to use a MySQL database"
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "autoload": {
         "psr-4": {
             "DigraphCMS\\": "src/"
