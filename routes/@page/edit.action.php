@@ -1,31 +1,34 @@
 <?php
 
 use DigraphCMS\Context;
+use DigraphCMS\HTML\Forms\Field;
+use DigraphCMS\HTML\Forms\FORM;
 use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\RichContent\RichContentField;
 use DigraphCMS\Session\Cookies;
-use DigraphCMS\UI\Forms\Form;
 use DigraphCMS\UI\Notifications;
-use Formward\Fields\Input;
 
 Cookies::required(['system', 'csrf']);
 
 $page = Context::page();
 
-$form = new Form('Edit page');
+$form = new FORM('edit-'.$page->uuid());
 
-$form['name'] = new Input('Page name');
-$form['name']->default($page->name());
-$form['name']->required(true);
-$form['name']->addTip('The name to be used when referring or linking to this page from elsewhere on the site.');
+$name = new Field('Page name');
+$name->setDefault($page->name())
+    ->setRequired(true)
+    ->addTip('The name to be used when referring or linking to this page from elsewhere on the site.');
 
-$form['content'] = new RichContentField('Body content');
-$form['content']->default($page->richContent('body'));
-$form['content']->required(true);
+$content = new RichContentField('Body content');
+$content->setDefault($page->richContent('body'))
+    ->setRequired(true);
 
-if ($form->handle()) {
-    $page->name($form['name']->value());
-    $page->richContent('body', $form['content']->value());
+$form->addChild($name);
+$form->addChild($content);
+
+if ($form->ready()) {
+    $page->name($name->value());
+    $page->richContent('body', $content->value());
     $page->update();
     Notifications::flashConfirmation('Changes saved to ' . $page->url()->html());
     throw new RefreshException();

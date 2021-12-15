@@ -24,7 +24,9 @@
         "tedivm/jshrink": "^1.4",
         "ralouphie/mimey": "^1.0",
         "spatie/image": "^2.1||^1.7.6",
-        "ksubileau/color-thief-php": "^1.4"
+        "ksubileau/color-thief-php": "^1.4",
+        "erusev/parsedown-extra": "^0.8.1",
+        "thunderer/shortcode": "^0.7.4"
     },
     "suggest": {
         "league/oauth2-github": "Needed to support OAuth sign-ins using GitHub",

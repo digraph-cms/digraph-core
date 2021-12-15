@@ -17,7 +17,7 @@ interface InputInterface
 
     public function required(): bool;
     public function default();
-    public function value();
+    public function value($useDefault = false);
 
     /**
      * @param bool $required

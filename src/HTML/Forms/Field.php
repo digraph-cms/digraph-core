@@ -139,9 +139,9 @@ class Field extends DIV implements InputInterface
         return $this->input()->default();
     }
 
-    public function value()
+    public function value($useDefault = false)
     {
-        return $this->input()->value();
+        return $this->input()->value($useDefault);
     }
 
     public function setRequired(bool $required, string $message = null)
