@@ -2,53 +2,32 @@
 
 namespace DigraphCMS\RichContent;
 
-use DigraphCMS\UI\Theme;
-use Formward\Fields\Container;
-use Formward\Fields\DisplayOnly;
-use Formward\Fields\Hidden;
-use Formward\Fields\Textarea;
+use DigraphCMS\HTML\Forms\Field;
+use DigraphCMS\HTML\Forms\TEXTAREA;
 
-class RichContentField extends Container
+class RichContentField extends Field
 {
-    public static function load()
+    public function setDefault($default)
     {
-        static $loaded = false;
-        if (!$loaded) {
-            RichContent::load();
-            $loaded = true;
+        if ($default instanceof RichContent) {
+            $default = $default->value();
         }
+        parent::setDefault($default);
+        return $this;
     }
 
-    public function default($content = null): RichContent
+    public function value($useDefault = false): ?RichContent
     {
-        if ($content) {
-            $this['value']->default($content->editorValue());
-        }
-        return new RichContent($this['value']->default());
+        return new RichContent($this->input()->value($useDefault));
     }
 
-    public function value($content = null): RichContent
+    public function default(): ?RichContent
     {
-        if ($content) {
-            $this['value']->value($content->editorValue());
-        }
-        return new RichContent($this['value']->value());
+        return new RichContent($this->input()->default());
     }
 
-    public function required($set = null, $clientSide = true)
+    public function __construct(string $label)
     {
-        return $this['value']->required($set, false);
-    }
-
-    public function construct()
-    {
-        $this['value'] = new Textarea('');
-    }
-
-    public function __toString()
-    {
-        static::load();
-        $this['value']->default($this->value()->editorValue());
-        return parent::__toString();
+        parent::__construct($label, new TEXTAREA());
     }
 }

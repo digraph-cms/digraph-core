@@ -4,78 +4,80 @@ namespace DigraphCMS\RichContent;
 
 use DigraphCMS\Content\Blocks\Blocks;
 use DigraphCMS\UI\Theme;
+use ParsedownExtra;
 
 class RichContent
 {
     protected $value;
-    protected $editorValue;
-    protected $publicValue;
+    protected $html;
 
-    public function __construct(string $value = null)
+    public function __construct(string $value)
     {
-        $this->setValue($value ?? '');
+        $this->setValue($value);
     }
 
-    public static function load()
+    /**
+     * Set the editor-side value of this content
+     *
+     * @param string $value
+     * @return $this
+     */
+    public function setValue(string $value)
     {
-        static $loaded = false;
-        if (!$loaded) {
-            $loaded = true;
-        }
-    }
-
-    function setValue(string $value)
-    {
-        $this->editorValue = null;
         $this->value = $value;
+        $this->html = null;
+        return $this;
     }
 
-    function editorValue(): string
+    /**
+     * Get the editor-side value of this content
+     *
+     * @return string
+     */
+    public function value(): string
     {
-        if ($this->editorValue === null) {
-            $this->editorValue = $this->value;
-            $this->editorValue = preg_replace_callback(
-                '/<figure(.+?)data-trix-attachment="(.+?)"(.*?)>(.*?)<\/figure>/im',
-                function (array $matches): string {
-                    $json = json_decode(htmlspecialchars_decode($matches[2]), true);
-                    $block = Blocks::get($json['uuid']);
-                    return sprintf(
-                        '<figure%sdata-trix-attachment="%s"%s>%s</figure>',
-                        $matches[1],
-                        htmlspecialchars(json_encode($block->array())),
-                        $matches[3],
-                        $block ? $block->html_editor() : "<div class='notification notification--error'>Block not found</div>"
-                    );
-                },
-                $this->editorValue
-            );
+        return $this->value;
+    }
+
+    /**
+     * Get the processed HTML value of this content, which can be
+     * used as public content.
+     *
+     * @return string
+     */
+    public function html(): string
+    {
+        if ($this->html === null) {
+            $this->html = $this->buildHTML($this->value);
         }
-        return $this->editorValue;
+        return $this->html;
     }
 
-    function publicValue(): string
+    /**
+     * Do the heavy lifting of converting source value to final
+     * HTML values.
+     *
+     * @param string $source
+     * @return string
+     */
+    protected function buildHTML(string $source): string
     {
-        if ($this->publicValue === null) {
-            $this->publicValue = $this->value;
-            $this->publicValue = preg_replace_callback(
-                '/<figure(.+?)data-trix-attachment="(.+?)"(.*?)>(.*?)<\/figure>/ims',
-                function (array $matches): string {
-                    $json = json_decode(htmlspecialchars_decode($matches[2]), true);
-                    $block = Blocks::get($json['uuid']);
-                    return sprintf(
-                        '<figure class="attachment attachment--content">%s</figure>',
-                        $block ? $block->html_public() : "<div class='notification notification--error'>Block not found</div>"
-                    );
-                },
-                $this->publicValue
-            );
+        $html = ShortCodes::parse($source);
+        $html = static::parsedown()->text($html);
+        return $html;
+    }
+
+    protected static function parsedown(): ParsedownExtra
+    {
+        static $parsedown;
+        if (!$parsedown) {
+            $parsedown = new ParsedownExtra();
         }
-        return $this->publicValue;
+        return $parsedown;
     }
 
-    function __toString()
+    public function __toString()
     {
-        static::load();
-        return '<div class="trix-content">' . $this->publicValue() . '</div>';
+        return $this->html();
     }
 }

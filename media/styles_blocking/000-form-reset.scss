@@ -2,7 +2,7 @@ form {
     display: block;
     font-family: $font-ui;
 
-    > * {
+    >* {
         &:last-child {
             margin-bottom: 0;
         }
@@ -22,6 +22,8 @@ textarea {
     padding: $grid-unit/2;
     box-sizing: border-box;
     display: block;
+    border-radius: $border-radius;
+
     &:disabled,
     &:indeterminate {
         background-color: $color-neutral;
@@ -64,20 +66,25 @@ input[type="checkbox"] {
     margin: 0;
     color: inherit;
     text-align: center;
+
     &:before {
         @include material-icon;
         display: inline-block;
         content: "\00a0";
         height: 1em;
         width: 1em;
+        line-height: 1em;
     }
+
     &:checked {
         background-color: $color-confirmation;
         color: contrast-color($color-confirmation);
+
         &:before {
             content: "check";
         }
     }
+
     &:indeterminate:before {
         content: "indeterminate_check_box";
     }
@@ -99,6 +106,7 @@ label {
 .form-field__tips__tip {
     display: block;
     margin: $grid-unit/2 0;
+
     &:last-child {
         margin-bottom: 0;
     }
@@ -108,6 +116,7 @@ label {
     margin: $grid-unit/2 0;
     font-weight: bold;
     color: $color-error;
+
     &:last-child {
         margin-bottom: 0;
     }
