@@ -42,11 +42,16 @@ textarea {
     border: $border-unit solid $color-neutral;
     background-color: $body-bg;
     color: $body-fg;
+    width: 100%;
 
     @media (prefers-color-scheme: dark) {
         background-color: $dark-body-bg;
         color: $dark-body-fg;
     }
+}
+
+textarea {
+    height: 30vh;
 }
 
 button,
