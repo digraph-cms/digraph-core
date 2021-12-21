@@ -2,7 +2,7 @@ form {
     display: block;
     font-family: $font-ui;
 
-    >* {
+    > * {
         &:last-child {
             margin-bottom: 0;
         }
@@ -16,7 +16,8 @@ form {
 button,
 input,
 select,
-textarea {
+textarea,
+fieldset {
     font-family: $font-ui;
     font-size: inherit;
     padding: $grid-unit/2;
@@ -38,7 +39,8 @@ input {
 
 input,
 select,
-textarea {
+textarea,
+fieldset {
     border: $border-unit solid $color-neutral;
     background-color: $body-bg;
     color: $body-fg;
@@ -63,7 +65,8 @@ input[type="submit"] {
     @include button-confirmation;
 }
 
-input[type="checkbox"] {
+input[type="checkbox"],
+input[type="radio"] {
     display: inline-flex;
     vertical-align: baseline;
     justify-items: center;
@@ -71,6 +74,8 @@ input[type="checkbox"] {
     margin: 0;
     color: inherit;
     text-align: center;
+    width: auto;
+    font-size: 1rem;
 
     &:before {
         @include material-icon;
@@ -82,16 +87,41 @@ input[type="checkbox"] {
     }
 
     &:checked {
-        background-color: $color-confirmation;
-        color: contrast-color($color-confirmation);
-
         &:before {
-            content: "check";
+            content: "\e5ca";
         }
     }
 
-    &:indeterminate:before {
-        content: "indeterminate_check_box";
+    &:indeterminate {
+        &:before {
+            content: "question_mark";
+        }
+    }
+}
+
+input[type="radio"] {
+    border-radius: 100%;
+
+    &:checked {
+        &:before {
+            content: "circle";
+            transform: scale(0.9);
+        }
+    }
+
+    &:indeterminate {
+        &:before {
+            content: "circle";
+            transform: scale(0.9);
+            opacity: 0.25;
+        }
+        background-color: $body-bg;
+        color: $body-fg;
+
+        @media (prefers-color-scheme: dark) {
+            background-color: $dark-body-bg;
+            color: $dark-body-fg;
+        }
     }
 }
 
@@ -124,5 +154,41 @@ label {
 
     &:last-child {
         margin-bottom: 0;
+    }
+}
+
+.form-field {
+    .checkbox-list,
+    .radio-list {
+        margin: $grid-unit/2 0;
+        &:last-child {
+            margin-bottom: 0;
+        }
+        &:first-child {
+            margin-top: 0;
+        }
+    }
+}
+
+.checkbox-list,
+.radio-list {
+    margin: $grid-unit 0;
+
+    > .form-field {
+        margin: $grid-unit/2 0;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+        &:first-child {
+            margin-top: 0;
+        }
+    }
+}
+
+.checkbox-list-field,
+.radio-list-field {
+    > label {
+        font-size: smaller;
     }
 }

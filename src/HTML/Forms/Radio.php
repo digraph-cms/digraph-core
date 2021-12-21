@@ -5,7 +5,7 @@ namespace DigraphCMS\HTML\Forms;
 use DigraphCMS\Context;
 use DigraphCMS\HTML\Tag;
 
-class Checkbox extends Tag implements InputInterface
+class Radio extends Tag implements InputInterface
 {
     protected $tag = 'input';
     protected $void = true;
@@ -16,11 +16,12 @@ class Checkbox extends Tag implements InputInterface
     protected $required = false;
     protected $requiredMessage = 'This field is required';
 
-    protected static $counter = 0;
+    protected $key;
 
-    public function __construct(string $id = null)
+    public function __construct(string $id, string $key)
     {
-        $this->setID($id ?? 'input-' . self::$counter++);
+        $this->key = $key;
+        $this->setID($id);
     }
 
     public function validationError(): ?string
@@ -37,8 +38,10 @@ class Checkbox extends Tag implements InputInterface
         $attributes = array_merge(
             parent::attributes(),
             [
-                'name' => $this->id(),
-                'type' => 'checkbox'
+                'name' => $this->id(true),
+                'id' => $this->id(),
+                'value' => $this->key,
+                'type' => 'radio'
             ]
         );
         if ($this->value(true)) {
@@ -103,13 +106,17 @@ class Checkbox extends Tag implements InputInterface
         $this->form = $form;
     }
 
-    public function id(): ?string
+    public function id(bool $omitKey = false): ?string
     {
         if ($this->form()) {
-            return $this->form()->id() . '--' . parent::id();
+            $id = $this->form()->id() . '--' . parent::id();
         } else {
-            return parent::id();
+            $id = parent::id();
         }
+        if (!$omitKey) {
+            $id .= '--' . $this->key;
+        }
+        return $id;
     }
 
     public function default(): ?bool
@@ -120,9 +127,9 @@ class Checkbox extends Tag implements InputInterface
     protected function submittedValue(): ?bool
     {
         if ($this->submitted() && $this->form()->method() == FORM::METHOD_GET) {
-            return Context::arg($this->id()) == 'on';
+            return Context::arg($this->id(true)) == $this->key;
         } elseif ($this->submitted() && $this->form()->method() == FORM::METHOD_POST) {
-            return Context::post($this->id()) == 'on';
+            return Context::post($this->id(true)) == $this->key;
         } else {
             return null;
         }
