@@ -71,10 +71,10 @@ class Field extends DIV implements InputInterface
         return $classes;
     }
 
-    public function validationMessage(): DIV
+    public function validationMessage(): ConditionalContainer
     {
         if (!$this->validationMessage) {
-            $this->validationMessage = (new DIV())
+            $this->validationMessage = (new ConditionalContainer())
                 ->addClass('form-field__error-message');
         }
         return $this->validationMessage;
