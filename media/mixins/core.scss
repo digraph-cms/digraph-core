@@ -7,7 +7,7 @@
 }
 
 @mixin focused {
-    outline: 2px solid $color-info;
+    outline: $border-unit solid $color-info;
     position: relative;
 }
 
@@ -54,17 +54,21 @@
 }
 
 @mixin button {
+    display: block;
+    box-sizing: border-box;
     background: $color-highlight;
     color: contrast-color($color-highlight) !important;
-    border: 0;
     display: inline-block;
     padding: $grid-unit/2;
+    margin: $border-unit;
+    border: 0;
     cursor: pointer;
     z-index: 1;
     border-radius: $border-radius;
     font-weight: bold;
     font-family: $font-ui;
     text-decoration: none;
+    width: auto;
 
     &:hover {
         filter: saturate(1.5);
@@ -148,7 +152,7 @@
         z-index: 101;
         color: $color-info;
         font-size: 3em;
-        content: "\effa";
+        content: "\eff7";
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);

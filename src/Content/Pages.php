@@ -350,6 +350,7 @@ class Pages
             [
                 'uuid' => $result['uuid'],
                 'name' => $result['name'],
+                'slug_pattern' => $result['slug_pattern'],
                 'created' => (new DateTime)->setTimestamp($result['created']),
                 'created_by' => $result['created_by'],
                 'updated' => (new DateTime)->setTimestamp($result['updated']),

@@ -136,7 +136,7 @@ class Page implements ArrayAccess
         if ($url->action() == 'index') {
             return true;
         } else {
-            return Permissions::inGroup('admins', Users::current());
+            return Permissions::inGroup('admins', $user);
         }
         return null;
     }
