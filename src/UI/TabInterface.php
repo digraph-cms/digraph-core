@@ -8,6 +8,7 @@ use DigraphCMS\URL\URL;
 class TabInterface
 {
     protected $tabs = [];
+    protected $defaultTab;
 
     public function __construct(string $id = null)
     {
@@ -50,9 +51,12 @@ class TabInterface
         return $this->defaultTab();
     }
 
-    public function defaultTab(): string
+    public function defaultTab(string $set = null): string
     {
-        return @array_shift(array_keys($this->tabs));
+        if ($set) {
+            $this->defaultTab = $set;
+        }
+        return $this->defaultTab ?? @array_shift(array_keys($this->tabs));
     }
 
     public function url(string $id): URL

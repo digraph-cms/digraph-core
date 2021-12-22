@@ -105,6 +105,10 @@ class Field extends DIV implements InputInterface
         return $this->tips;
     }
 
+    /**
+     * @param string $tip
+     * @return $this
+     */
     public function addTip(string $tip)
     {
         $this->tips()->addChild(
@@ -112,6 +116,7 @@ class Field extends DIV implements InputInterface
                 ->addChild(new Text($tip))
                 ->addClass('form-field__tips__tip')
         );
+        return $this;
     }
 
     public function form(): ?FORM

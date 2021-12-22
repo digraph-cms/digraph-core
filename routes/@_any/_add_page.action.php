@@ -6,11 +6,13 @@ use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Digraph;
 use DigraphCMS\Events\Dispatcher;
+use DigraphCMS\HTML\Forms\Field;
+use DigraphCMS\HTML\Forms\FORM;
 use DigraphCMS\HTTP\RedirectException;
+use DigraphCMS\HTTP\RefreshException;
+use DigraphCMS\RichContent\RichContentField;
 use DigraphCMS\Session\Cookies;
-use DigraphCMS\UI\Forms\Form;
 use DigraphCMS\UI\Notifications;
-use Formward\Fields\Input;
 
 Cookies::required(['system', 'csrf']);
 
@@ -35,34 +37,42 @@ if (Pages::exists(Context::arg('uuid'))) {
     throw new RedirectException($url);
 }
 
-$form = new Form('Add page');
+Cookies::required(['system', 'csrf']);
 
-$form['name'] = new Input('Page name');
-$form['name']->required(true);
-$form['name']->addTip('The name to be used when referring or linking to this page from elsewhere on the site.');
+$page = Context::page();
 
-// TODO: generic rich text editor field
+$name = (new Field('Page name'))
+    ->setRequired(true)
+    ->addTip('The name to be used when referring or linking to this page from elsewhere on the site.');
 
-if ($form->handle()) {
-    DB::beginTransaction();
-    // insert page
-    $page = new Page(
-        [],
-        [
-            'uuid' => Context::arg('uuid')
-        ]
-    );
-    $page->name($form['name']->value());
-    $page['content'] = json_decode($form['content']->value());
-    $page->insert();
-    // create edge to parent
-    Pages::insertLink(Context::page()->uuid(), $page->uuid());
-    // dispatch pagecreated event, this is where we set slug from pattern, we
-    // do this manually here so that duplicate non-parent slugs don't get made
-    Dispatcher::dispatchEvent('onPageCreated', [$page]);
-    // notify and redirect
-    DB::commit();
-    Notifications::flashConfirmation('Added ' . $page->url()->html());
-    throw new RedirectException($page->url_edit());
-}
+$content = (new RichContentField('Body content'))
+    ->setRequired(true);
+
+$form = (new FORM('add-' . Context::arg('uuid')))
+    ->addChild($name)
+    ->addChild($content)
+    ->addCallback(function () use ($name, $content) {
+        DB::beginTransaction();
+        // insert page
+        $page = new Page(
+            [],
+            [
+                'uuid' => Context::arg('uuid')
+            ]
+        );
+        $page->name($name->value());
+        $page['content'] = json_decode($content->value());
+        $page->insert();
+        // create edge to parent
+        Pages::insertLink(Context::page()->uuid(), $page->uuid());
+        // dispatch pagecreated event, this is where we set slug from pattern, we
+        // do this manually here so that duplicate non-parent slugs don't get made
+        Dispatcher::dispatchEvent('onPageCreated', [$page]);
+        // commit and redirect
+        DB::commit();
+        Notifications::flashConfirmation('Page created: ' . $page->url()->html());
+        throw new RefreshException();
+    });
+$form->button()->setText('Create page');
+
 echo $form;

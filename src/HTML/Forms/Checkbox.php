@@ -20,7 +20,7 @@ class Checkbox extends Tag implements InputInterface
 
     public function __construct(string $id = null)
     {
-        $this->setID($id ?? 'input-' . self::$counter++);
+        $this->setID($id ?? 'checkbox-' . self::$counter++);
     }
 
     public function validationError(): ?string

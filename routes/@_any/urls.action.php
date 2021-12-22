@@ -3,39 +3,16 @@
 
 use DigraphCMS\Content\Slugs;
 use DigraphCMS\Context;
+use DigraphCMS\HTML\Forms\Field;
+use DigraphCMS\HTML\Forms\Fields\CheckboxField;
+use DigraphCMS\HTML\Forms\FORM;
 use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\UI\ButtonMenus\SingleButton;
 use DigraphCMS\UI\DataTables\ArrayTable;
 use DigraphCMS\UI\DataTables\ColumnHeader;
-use DigraphCMS\UI\Forms\Form;
-use Formward\Fields\Checkbox;
-use Formward\Fields\Input;
+use DigraphCMS\UI\Notifications;
 
 echo '<div class="navigation-frame" id="page-urls-form">';
-
-// set up and handle form first, so that its changes appear in table immediately
-$form = new Form('Update URL');
-$form->addClass('compact');
-$form['pattern'] = new Input('Pattern');
-$form['pattern']->required(true);
-$form['pattern']->default(Context::page()->slugPattern());
-$form['save'] = new Checkbox('Update saved pattern');
-$form['save']->addTip('Check this box to update the URL pattern saved in the page, so that the URL will update to match it with future edits.');
-$form['save']->addTip('Leave unchecked if you\'re all right with the page\'s primary URL being reverted to the saved pattern next time it is updated.');
-$form['save']->default(true);
-$form['unique'] = new Checkbox('Make unique');
-$form['unique']->addTip('Check this box to force the generated URL to be unique. If it collides with an existing URL it will have a random ID appended to it.');
-$form['unique']->addTip('Leave unchecked to allow it to collide with existing URLs. Disambiguation pages are served at any colliding URLs automatically if necessary.');
-$form['unique']->default(true);
-
-if ($form->handle()) {
-    Slugs::setFromPattern(
-        Context::page(),
-        $form['pattern']->value(),
-        $form['unique']->value()
-    );
-    throw new RefreshException();
-}
 
 // display table
 $table = new ArrayTable(
@@ -61,6 +38,34 @@ $table = new ArrayTable(
 echo $table;
 
 // display form below table
-echo $form;
+$pattern = (new Field('Set new URL pattern'))
+    ->setDefault(Context::page()->slugPattern())
+    ->setRequired(true)
+    ->addTip('Add a trailing slash to make pattern relative to site root, otherwise it will be relative to the page\'s parent URL.');
+
+$unique = (new CheckboxField('Force URL to be unique'))
+    ->setDefault(true)
+    ->addTip('Check this box to force the generated URL to be unique. If it collides with an existing URL it will have a random ID appended to it.')
+    ->addTip('Leave unchecked to allow it to collide with existing URLs. Disambiguation pages are served at any colliding URLs automatically if necessary.');
+
+
+echo (new FORM(Context::pageUUID() . '_urls'))
+    ->addChild($pattern)
+    ->addChild($unique)
+    ->addCallback(function () use ($pattern, $unique) {
+        // set new slug from pattern
+        Slugs::setFromPattern(
+            Context::page(),
+            $pattern->value(),
+            $unique->value()
+        );
+        // save pattern into page
+        $page = Context::page();
+        $page->slugPattern($pattern->value());
+        $page->update();
+        // refresh page
+        // Notifications::flashConfirmation('Updated URL pattern');
+        // throw new RefreshException();
+    });
 
 echo '</div>';
