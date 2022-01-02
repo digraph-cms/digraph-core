@@ -1,7 +1,9 @@
 @function contrast-color($color) {
     @if (lightness($color) > 50) {
         @return #000;
-    } @else {
+    }
+
+    @else {
         @return #fff;
     }
 }
@@ -9,48 +11,6 @@
 @mixin focused {
     outline: $border-unit solid $color-info;
     position: relative;
-}
-
-@mixin highlight-block {
-    margin: $grid-unit 0;
-    padding: $grid-unit/2;
-    background-image: linear-gradient(to right, rgba($color-highlight, 0.15), rgba($color-highlight, 0));
-
-    &.loading {
-        border-color: $color-info;
-    }
-
-    &.error {
-        border-color: $color-error;
-    }
-}
-
-@mixin accent-block {
-    margin: $grid-unit 0;
-    padding: $grid-unit/2;
-    background-image: linear-gradient(to right, rgba($color-accent, 0.15), rgba($color-accent, 0));
-
-    &.loading {
-        border-color: $color-info;
-    }
-
-    &.error {
-        border-color: $color-error;
-    }
-}
-
-@mixin neutral-block {
-    margin: $grid-unit 0;
-    padding: $grid-unit/2;
-    background-image: linear-gradient(to right, rgba($color-neutral, 0.15), rgba($color-neutral, 0));
-
-    &.loading {
-        border-color: $color-info;
-    }
-
-    &.error {
-        border-color: $color-error;
-    }
 }
 
 @mixin button {
@@ -159,6 +119,7 @@
     }
 
     &.loading {
+
         &:before,
         &:after {
             visibility: visible;
@@ -166,7 +127,7 @@
 
         &:after {
             animation-name: spin-loading-overlay;
-            animation-duration: 1000ms;
+            animation-duration: 2000ms;
             animation-iteration-count: infinite;
             animation-timing-function: linear;
         }
@@ -185,16 +146,6 @@
             color: $color-info;
             content: "\ea54";
             animation: none;
-        }
-    }
-
-    @media screen and (prefers-color-scheme: dark) {
-        &:before {
-            background: rgba($dark-body-bg, 0.9);
-        }
-
-        &:after {
-            color: $color-info;
         }
     }
 }

@@ -55,7 +55,8 @@ class RichContent
 
     /**
      * Do the heavy lifting of converting source value to final
-     * HTML values.
+     * HTML values. Shortcodes are parsed before Markdown, so that
+     * Markdown can see them as HTML and not mess them up.
      *
      * @param string $source
      * @return string

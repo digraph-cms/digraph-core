@@ -1,5 +1,6 @@
 .tab-interface {
     margin: $grid-unit 0;
+
     .tab-interface-tabs {
         margin: 0;
         padding: 0;
@@ -9,6 +10,7 @@
         position: relative;
         z-index: 2;
         margin-bottom: -$border-unit * 2;
+
         a {
             display: inline-block;
             padding: $grid-unit/2;
@@ -19,12 +21,14 @@
             margin: $border-unit;
             margin-bottom: $border-unit * 2;
             position: relative;
+
             &:hover,
             &:focus,
             &:focus-within {
                 background-color: $color-accent;
                 color: contrast-color($color-accent);
             }
+
             &.current-tab {
                 margin-bottom: 0;
                 background-color: $body-bg;
@@ -33,15 +37,18 @@
                 border-top-left-radius: $border-radius;
                 border-top-right-radius: $border-radius;
                 border-bottom: 0;
+
                 &:first-child {
                     margin-left: 0;
                 }
+
                 &:last-child {
                     margin-right: 0;
                 }
             }
         }
     }
+
     .tab-interface-content {
         z-index: 1;
         background-color: $body-bg;

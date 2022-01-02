@@ -1,5 +1,6 @@
 @media screen {
     #content {
+
         p,
         li,
         blockquote,
@@ -10,7 +11,8 @@
     }
 }
 
-@media screen, print {
+@media screen,
+print {
     #skip-to-content {
         display: none;
     }
@@ -19,11 +21,6 @@
 body {
     background-color: $body-bg;
     color: $body-fg;
-
-    @media (prefers-color-scheme: dark) {
-        background-color: $dark-body-bg;
-        color: $dark-body-fg;
-    }
 }
 
 img {

@@ -2,7 +2,7 @@ form {
     display: block;
     font-family: $font-ui;
 
-    > * {
+    >* {
         &:last-child {
             margin-bottom: 0;
         }
@@ -45,11 +45,6 @@ fieldset {
     background-color: $body-bg;
     color: $body-fg;
     width: 100%;
-
-    @media (prefers-color-scheme: dark) {
-        background-color: $dark-body-bg;
-        color: $dark-body-fg;
-    }
 }
 
 textarea {
@@ -115,13 +110,9 @@ input[type="radio"] {
             transform: scale(0.9);
             opacity: 0.25;
         }
+
         background-color: $body-bg;
         color: $body-fg;
-
-        @media (prefers-color-scheme: dark) {
-            background-color: $dark-body-bg;
-            color: $dark-body-fg;
-        }
     }
 }
 
@@ -158,12 +149,15 @@ label {
 }
 
 .form-field {
+
     .checkbox-list,
     .radio-list {
         margin: $grid-unit/2 0;
+
         &:last-child {
             margin-bottom: 0;
         }
+
         &:first-child {
             margin-top: 0;
         }
@@ -174,12 +168,13 @@ label {
 .radio-list {
     margin: $grid-unit 0;
 
-    > .form-field {
+    >.form-field {
         margin: $grid-unit/2 0;
 
         &:last-child {
             margin-bottom: 0;
         }
+
         &:first-child {
             margin-top: 0;
         }
@@ -188,7 +183,7 @@ label {
 
 .checkbox-list-field,
 .radio-list-field {
-    > label {
+    >label {
         font-size: smaller;
     }
 }
