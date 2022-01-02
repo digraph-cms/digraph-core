@@ -8,6 +8,9 @@ use Thunder\Shortcode\Parser\RegularParser;
 use Thunder\Shortcode\Processor\Processor;
 use Thunder\Shortcode\Shortcode\ShortcodeInterface;
 
+// Whenever this class is loaded, also set up the built-in shortcodes event listener class
+Dispatcher::addSubscriber(ShortCodesListener::class);
+
 class ShortCodes
 {
     public static function parse(string $string): string

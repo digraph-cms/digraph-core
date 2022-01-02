@@ -66,10 +66,6 @@
 }
 
 .autocomplete-results>div {
-    @media screen and (prefers-color-scheme: dark) {
-        background: rgba($color-accent, 0.1);
-    }
-
     &:nth-child(even) {
         background: transparent;
     }

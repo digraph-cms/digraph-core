@@ -38,7 +38,7 @@ class Theme
         'css_vars' => [
             'body-bg' => '#fafafa',
             'body-fg' => '#333',
-            'dark-body-bg' => '#111',
+            'dark-body-bg' => '#222',
             'dark-body-fg' => '#fff',
             'grid-unit' => '1rem',
             'font-content' => 'serif',
