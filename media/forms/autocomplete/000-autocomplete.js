@@ -45,7 +45,6 @@ class DigraphAutocomplete {
         this.results = document.createElement('div');
         this.results.style.display = 'none';
         this.results.classList.add('autocomplete-results');
-        this.results.classList.add('awaiting-input');
         this.wrapper.appendChild(this.results);
         // insert actual value field with same name/id as original input
         this.value = document.createElement('input');
@@ -62,6 +61,7 @@ class DigraphAutocomplete {
             500
         );
         // set up event listeners
+        this.wrapper.addEventListener('keydown', (e) => { this.globalKeyDownHandler(e); });
         this.input.addEventListener('focus', (e) => { this.focusEvent(e); });
         this.input.addEventListener('blur', (e) => { this.blurEvent(e); });
         this.input.addEventListener('blur', (e) => { this.wrapper.classList.remove('focused'); });
@@ -84,9 +84,7 @@ class DigraphAutocomplete {
             this.input.focus();
         });
         // enter initial awaiting input state
-        this.enterNoResultsState();
-        this.results.classList.remove('no-results');
-        this.results.classList.add('awaiting-input');
+        this.setState('awaiting-input');
         this.resultFocused = false;
         // pull existing value if it exists
         if (this.input.dataset.value) {
@@ -110,14 +108,101 @@ class DigraphAutocomplete {
             el = el.parentNode;
         }
         if (el) {
-            this.value.value = el.dataset.value;
-            this.selectedCard.innerHTML = el.outerHTML;
-            this.selected.style.display = null;
-            this.input.style.display = 'none';
-            this.results.style.display = 'none';
-            this.wrapper.classList.remove('ui-focused');
-            this.wrapper.classList.remove('focused');
+            this.selectElement(el);
         }
+    }
+    selectElement(el) {
+        this.value.value = el.dataset.value;
+        this.selectedCard.innerHTML = el.outerHTML;
+        this.selected.style.display = null;
+        this.input.style.display = 'none';
+        this.results.style.display = 'none';
+        this.wrapper.classList.remove('ui-focused');
+        this.wrapper.classList.remove('focused');
+    }
+    /**
+     * @param {Event} e 
+     */
+    globalKeyDownHandler(e) {
+        // do nothing if state isn't normal or any modifiers are pressed
+        if (this.state != 'normal' || e.shiftKey || e.altKey || e.ctrlKey) {
+            return;
+        }
+        // down arrow
+        else if (e.keyCode == 40) {
+            var next;
+            if (next = this.focusedResult_next()) {
+                next.focus();
+            } else if (this.input == document.activeElement && this.results.childNodes.length) {
+                this.results.childNodes[0].focus();
+            } else {
+                this.input.focus();
+            }
+            e.preventDefault();
+        }
+        // up arrow
+        else if (e.keyCode == 38) {
+            var previous;
+            if (previous = this.focusedResult_previous()) {
+                previous.focus();
+            } else {
+                this.input.focus();
+            }
+            e.preventDefault();
+        }
+        // tab key
+        // else if (e.keyCode == 9) {
+        //     // input is currently focused
+        //     if (this.input == document.activeElement) {
+        //         // there are results, select the first one
+        //         if (this.results.childNodes.length) {
+        //             this.selectElement(this.results.childNodes[0]);
+        //         }
+        //     }
+        // }
+        // enter key
+        else if (e.keyCode == 13) {
+            var result;
+            // input is currently focused
+            if (this.input == document.activeElement) {
+                // there are results, select the first one
+                if (this.results.childNodes.length) {
+                    this.selectElement(this.results.childNodes[0]);
+                }
+            }
+            // input is not focused, we have a result
+            else if (result = this.focusedResult()) {
+                this.selectElement(result);
+            }
+            e.preventDefault();
+        }
+    }
+    focusedResult() {
+        for (let i = 0; i < this.results.childNodes.length; i++) {
+            const result = this.results.childNodes[i];
+            if (result == document.activeElement) {
+                return result;
+            }
+        }
+        return null;
+    }
+    focusedResult_next() {
+        for (let i = 0; i < this.results.childNodes.length - 1; i++) {
+            const result = this.results.childNodes[i];
+            if (result == document.activeElement) {
+                return this.results.childNodes[i + 1];
+            }
+        }
+        return null;
+    }
+    focusedResult_previous() {
+        for (let i = 1; i < this.results.childNodes.length; i++) {
+            const result = this.results.childNodes[i];
+            if (result == document.activeElement) {
+                return this.results.childNodes[i - 1];
+            }
+        }
+        return null;
     }
     /**
      * @param {Event} e 
@@ -188,23 +273,22 @@ class DigraphAutocomplete {
         this.input.previousValue = this.input.value;
         if (this.xhr) {
             this.xhr.abort();
-            this.enterNormalState();
+            this.setState('normal');
         }
         // if input is empty enter awaiting input state
         if (this.input.value.trim() == '') {
-            this.results.classList.add('awaiting-input');
+            this.setState('awaiting-input');
+            this.results.innerHTML = '';
             return;
-        }else {
-            this.results.classList.remove('awaiting-input');
         }
         // set up XHR and event listeners
-        this.enterLoadingState();
+        this.setState('loading');
         this.xhr = new XMLHttpRequest();
         this.xhr.addEventListener('load', (e) => {
             this.results.innerHTML = '';
             const data = JSON.parse(e.target.response);
             if (data.length == 0) {
-                this.enterNoResultsState();
+                this.setState('no-results');
             } else {
                 data.forEach((result) => {
                     const li = document.createElement('div');
@@ -216,7 +300,7 @@ class DigraphAutocomplete {
                     }
                     this.results.append(li);
                 });
-                this.enterNormalState();
+                this.setState('normal');
             }
         });
         // send query
@@ -226,31 +310,14 @@ class DigraphAutocomplete {
         this.xhr.open('GET', this.input.dataset.autocompleteSource + '?' + query.toString());
         this.xhr.send();
     }
-    enterLoadingState() {
-        this.state = "loading";
-        this.enterNormalState();
-        this.wrapper.classList.add('loading');
-        this.results.classList.add('loading');
-    }
-    enterErrorState() {
-        this.state = "error";
-        this.enterLoadingState();
-        this.wrapper.classList.add('error');
-        this.results.classList.add('error');
-    }
-    enterNormalState() {
-        this.state = "normal";
-        this.wrapper.classList.remove('loading');
-        this.wrapper.classList.remove('error');
-        this.wrapper.classList.remove('no-results');
-        this.results.classList.remove('loading');
-        this.results.classList.remove('error');
-        this.results.classList.remove('no-results');
-    }
-    enterNoResultsState() {
-        this.state = "noresults";
-        this.enterLoadingState();
-        this.wrapper.classList.add('no-results');
-        this.results.classList.add('no-results');
+    setState(state) {
+        this.state = state;
+        this.wrapper.dataset.autocompleteState = state;
+        this.results.dataset.autocompleteState = state;
+        if (state == 'loading') {
+            this.results.classList.add('loading');
+        } else {
+            this.results.classList.remove('loading');
+        }
     }
 }

@@ -1,3 +1,11 @@
+.autocomplete-selected-card .selected-card>div,
+.autocomplete-results>div {
+    &.page:before {
+        display: block;
+        content: '\efb2';
+    }
+}
+
 .autocomplete-input-wrapper {
     position: relative;
     width: 100%;
@@ -27,11 +35,81 @@
     border-top: 0;
     background-color: $body-bg;
     color: $body-fg;
+
+    >div {
+        &:nth-child(even) {
+            background: transparent;
+        }
+
+        &:focus {
+            background: rgba($color-info, 0.25);
+            outline: 0;
+        }
+    }
+
+    &[data-autocomplete-state="error"] {
+
+        &:before,
+        &:after {
+            visibility: visible;
+        }
+
+        &:after {
+            font-size: 3em;
+            color: $color-error;
+            content: "\ef16";
+            animation: none;
+        }
+
+        >div {
+            display: none;
+        }
+    }
+
+    &[data-autocomplete-state="no-results"] {
+
+        &:before,
+        &:after {
+            visibility: visible;
+        }
+
+        &:after {
+            color: $color-warning;
+            content: "no results";
+            font-size: inherit;
+            animation: none;
+            font-family: $font-ui !important;
+            font-weight: bold;
+        }
+
+        >div {
+            display: none;
+        }
+    }
+
+    &[data-autocomplete-state="awaiting-input"] {
+
+        &:before,
+        &:after {
+            visibility: visible;
+        }
+
+        &:after {
+            font-size: 3em;
+            color: $color-info;
+            content: "\ea54";
+            animation: none;
+        }
+
+        >div {
+            display: none;
+        }
+    }
 }
 
 .autocomplete-selected-card .selected-card>div,
 .autocomplete-results>div {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: $font-ui;
     list-style-type: none;
     margin: 0;
     padding: $grid-unit/2;
@@ -45,13 +123,6 @@
         display: none;
         font-size: 3em;
         padding-right: $grid-unit/2;
-    }
-
-    &.page {
-        &:before {
-            display: block;
-            content: '\efb2';
-        }
     }
 }
 
@@ -94,16 +165,5 @@
             font-size: 2em;
             content: 'backspace';
         }
-    }
-}
-
-.autocomplete-results>div {
-    &:nth-child(even) {
-        background: transparent;
-    }
-
-    &:focus {
-        background: rgba($color-info, 0.25);
-        outline: 0;
     }
 }

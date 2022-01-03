@@ -143,30 +143,4 @@
             animation: none;
         }
     }
-
-    &.no-results {
-        &:after {
-            color: $color-warning;
-            content: "no results";
-            font-size: inherit;
-            animation: none;
-            font-family: $font-ui !important;
-            font-weight: bold;
-        }
-    }
-
-    &.awaiting-input {
-
-        &:before,
-        &:after {
-            visibility: visible;
-        }
-
-        &:after {
-            font-size: 3em;
-            color: $color-info;
-            content: "\ea54";
-            animation: none;
-        }
-    }
 }
