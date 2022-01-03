@@ -14,6 +14,7 @@ interface InputInterface
     public function id(): ?string;
 
     public function validationError(): ?string;
+    public function addValidator(callable $validator);
 
     public function required(): bool;
     public function default();

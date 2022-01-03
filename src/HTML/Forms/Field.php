@@ -35,6 +35,19 @@ class Field extends DIV implements InputInterface
         }
     }
 
+    /**
+     * Set a validator function for this input. Callable should return a string with an
+     * error message if invalid, or otherwise null.
+     *
+     * @param callable $validator
+     * @return $this
+     */
+    public function addValidator(callable $validator)
+    {
+        $this->input()->addValidator($validator);
+        return $this;
+    }
+
     public function validationMessageText(): Text
     {
         if (!$this->validationMessageText) {
