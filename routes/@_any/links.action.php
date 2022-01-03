@@ -4,6 +4,8 @@ use DigraphCMS\Content\Graph;
 use DigraphCMS\Content\Pages;
 use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
+use DigraphCMS\HTML\Forms\Field;
+use DigraphCMS\HTML\Forms\Fields\Autocomplete\PageField;
 use DigraphCMS\HTML\Forms\FORM;
 use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\UI\ButtonMenus\SingleButton;
@@ -57,7 +59,14 @@ $fn = function () use ($tabs) {
     echo $table;
 
     // display form for adding connections
+    $target = (new PageField('Add new ' . ($mode == 'children' ? 'child' : 'parent')))
+        ->setRequired(true);
+    $type = (new Field('Edge type'))
+        ->setDefault('normal')
+        ->setRequired(true);
     $form = new FORM(Context::pageUUID() . '_' . $mode);
+    $form->addChild($target);
+    $form->addChild($type);
     $form->addCallback(function () {
         Notifications::flashWarning('not implemented');
         throw new RefreshException();

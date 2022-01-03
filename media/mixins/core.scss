@@ -10,6 +10,7 @@
 
 @mixin focused {
     outline: $border-unit solid $color-info;
+    outline-offset: -$border-unit;
     position: relative;
 }
 
@@ -126,6 +127,7 @@
         }
 
         &:after {
+            font-size: 3em;
             animation-name: spin-loading-overlay;
             animation-duration: 2000ms;
             animation-iteration-count: infinite;
@@ -135,14 +137,33 @@
 
     &.error {
         &:after {
+            font-size: 3em;
             color: $color-error;
             content: "\ef16";
             animation: none;
         }
     }
 
-    &.noresults {
+    &.no-results {
         &:after {
+            color: $color-warning;
+            content: "no results";
+            font-size: inherit;
+            animation: none;
+            font-family: $font-ui !important;
+            font-weight: bold;
+        }
+    }
+
+    &.awaiting-input {
+
+        &:before,
+        &:after {
+            visibility: visible;
+        }
+
+        &:after {
+            font-size: 3em;
             color: $color-info;
             content: "\ea54";
             animation: none;

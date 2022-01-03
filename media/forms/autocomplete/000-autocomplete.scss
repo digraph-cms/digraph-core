@@ -1,9 +1,32 @@
+.autocomplete-input-wrapper {
+    position: relative;
+    width: 100%;
+
+    &.ui-focused {
+        .autocomplete-input {
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+    }
+
+    &.focused,
+    &.ui-focused {
+        .autocomplete-selected-card {
+            display: none;
+        }
+    }
+}
+
 .autocomplete-results {
-    margin: 0;
-    padding: 0;
     min-height: 3rem+$grid-unit;
-    max-height: 20vh;
+    max-height: 30vh;
     overflow: auto;
+    border-bottom-left-radius: $border-radius;
+    border-bottom-right-radius: $border-radius;
+    border: $border-unit solid $color-neutral;
+    border-top: 0;
+    background-color: $body-bg;
+    color: $body-fg;
 }
 
 .autocomplete-selected-card .selected-card>div,
@@ -13,7 +36,7 @@
     margin: 0;
     padding: $grid-unit/2;
     cursor: pointer;
-    background: rgba($color-accent, 0.2);
+    background: rgba($color-neutral, 0.2);
     display: flex;
     align-items: center;
 
@@ -35,26 +58,35 @@
 .autocomplete-selected-card {
     width: 100%;
     display: flex;
+    border: $border-unit solid $color-neutral;
+    border-radius: $border-radius;
+    background-color: $body-bg;
+    color: $body-fg;
+    box-sizing: border-box;
 
     .selected-card {
-        flex-grow: 20;
+        flex-grow: 1;
 
         >div {
-            background: $color-confirmation;
-            color: contrast-color($color-confirmation);
+            background: transparent;
         }
     }
 
     .clear-selection {
-        @include button-warning;
-        padding: $grid-unit/2;
-        flex-grow: 1;
-        flex-basis: 3em;
+        cursor: pointer;
+        padding: $grid-unit;
+        flex-basis: 2em;
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
         display: flex;
         align-items: center;
         justify-content: center;
+        opacity: 0.25;
+
+        &:hover,
+        &:focus {
+            opacity: 1;
+        }
 
         &:before {
             @include material-icon;
@@ -71,7 +103,7 @@
     }
 
     &:focus {
-        background: $color-info;
-        color: contrast-color($color-info);
+        background: rgba($color-info, 0.25);
+        outline: 0;
     }
 }
