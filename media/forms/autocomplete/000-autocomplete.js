@@ -3,7 +3,7 @@ document.addEventListener('DigraphDOMReady', (e) => {
     for (const i in inputs) {
         if (Object.hasOwnProperty.call(inputs, i)) {
             const input = inputs[i];
-            if (input.dataset.autocompleteSource && !input.classList.contains('autocomplete-field')) {
+            if (input.dataset.autocompleteSource && !input.classList.contains('autocomplete-input')) {
                 new DigraphAutocomplete(input);
             }
         }
@@ -19,20 +19,20 @@ class DigraphAutocomplete {
     constructor(input) {
         // prepare input
         this.input = input;
-        this.input.classList.add('autocomplete-field');
+        this.input.classList.add('autocomplete-input');
         this.input.style.display = null;
         this.input.autocompleteObject = this;
         this.input.removeAttribute('required');
         // set up wrapper around input
         this.wrapper = document.createElement('div');
-        this.wrapper.classList.add('autocomplete-wrapper');
+        this.wrapper.classList.add('autocomplete-input-wrapper');
         this.input.parentNode.insertBefore(this.wrapper, this.input);
         // set up selected value container
         this.selected = document.createElement('div');
         this.selected.style.display = 'none';
         this.selected.classList.add('autocomplete-selected-card');
-        this.wrapper.appendChild(this.selected);
         this.wrapper.appendChild(this.input);
+        this.wrapper.appendChild(this.selected);
         // set up selected card
         this.selectedCard = document.createElement('div');
         this.selectedCard.classList.add('selected-card');
@@ -45,6 +45,7 @@ class DigraphAutocomplete {
         this.results = document.createElement('div');
         this.results.style.display = 'none';
         this.results.classList.add('autocomplete-results');
+        this.results.classList.add('awaiting-input');
         this.wrapper.appendChild(this.results);
         // insert actual value field with same name/id as original input
         this.value = document.createElement('input');
@@ -58,15 +59,17 @@ class DigraphAutocomplete {
         this.updateResults = Digraph.debounce(() => { this._doUpdateResults(); });
         this.blurEvent = Digraph.debounce(
             (e) => { this._doBlurEvent(e); },
-            1000
+            500
         );
         // set up event listeners
         this.input.addEventListener('focus', (e) => { this.focusEvent(e); });
         this.input.addEventListener('blur', (e) => { this.blurEvent(e); });
+        this.input.addEventListener('blur', (e) => { this.wrapper.classList.remove('focused'); });
         this.input.addEventListener('change', (e) => { this.changeHandler(e); });
-        this.input.addEventListener('keydown', (e) => { this.keyHandler(e); });
+        this.input.addEventListener('keydown', (e) => { this.keyDownHandler(e); });
         this.results.addEventListener('click', (e) => { this.resultSelectEvent(e); });
         this.results.addEventListener('select', (e) => { this.resultSelectEvent(e); });
+        this.results.addEventListener('keypress', (e) => { this.resultKeyPressEvent(e); });
         this.results.addEventListener('mouseover', (e) => { this.resultFocusEvent(e); });
         this.results.addEventListener('focusin', (e) => { this.resultFocusEvent(e); });
         this.results.addEventListener('focusout', (e) => { this.resultBlurEvent(e); });
@@ -80,8 +83,10 @@ class DigraphAutocomplete {
             this.input.style.display = null;
             this.input.focus();
         });
-        // enter initial no result state
+        // enter initial awaiting input state
         this.enterNoResultsState();
+        this.results.classList.remove('no-results');
+        this.results.classList.add('awaiting-input');
         this.resultFocused = false;
         // pull existing value if it exists
         if (this.input.dataset.value) {
@@ -110,6 +115,18 @@ class DigraphAutocomplete {
             this.selected.style.display = null;
             this.input.style.display = 'none';
             this.results.style.display = 'none';
+            this.wrapper.classList.remove('ui-focused');
+            this.wrapper.classList.remove('focused');
+        }
+    }
+    /**
+     * @param {Event} e 
+     */
+    resultKeyPressEvent(e) {
+        // keys that select the current item
+        if ([13, 32].includes(e.keyCode)) {
+            e.preventDefault();
+            return this.resultSelectEvent(e);
         }
     }
     /**
@@ -135,6 +152,8 @@ class DigraphAutocomplete {
      */
     focusEvent(e) {
         this.results.style.display = null;
+        this.wrapper.classList.add('ui-focused');
+        this.wrapper.classList.add('focused');
     }
     /**
      * @param {Event} e 
@@ -142,6 +161,8 @@ class DigraphAutocomplete {
     _doBlurEvent(e) {
         if (!this.resultFocused && !this.input.matches(':focus')) {
             this.results.style.display = 'none';
+            this.wrapper.classList.remove('ui-focused');
+            this.wrapper.classList.remove('focused');
             if (this.selected.style.display != 'none') {
                 this.input.style.display = 'none';
             }
@@ -157,7 +178,7 @@ class DigraphAutocomplete {
     /**
      * @param {Event} e 
      */
-    keyHandler(e) {
+    keyDownHandler(e) {
         this.updateResults()
     }
     _doUpdateResults() {
@@ -169,7 +190,14 @@ class DigraphAutocomplete {
             this.xhr.abort();
             this.enterNormalState();
         }
-        // set up XHR and even listeners
+        // if input is empty enter awaiting input state
+        if (this.input.value.trim() == '') {
+            this.results.classList.add('awaiting-input');
+            return;
+        }else {
+            this.results.classList.remove('awaiting-input');
+        }
+        // set up XHR and event listeners
         this.enterLoadingState();
         this.xhr = new XMLHttpRequest();
         this.xhr.addEventListener('load', (e) => {
@@ -214,15 +242,15 @@ class DigraphAutocomplete {
         this.state = "normal";
         this.wrapper.classList.remove('loading');
         this.wrapper.classList.remove('error');
-        this.wrapper.classList.remove('noresults');
+        this.wrapper.classList.remove('no-results');
         this.results.classList.remove('loading');
         this.results.classList.remove('error');
-        this.results.classList.remove('noresults');
+        this.results.classList.remove('no-results');
     }
     enterNoResultsState() {
         this.state = "noresults";
         this.enterLoadingState();
-        this.wrapper.classList.add('noresults');
-        this.results.classList.add('noresults');
+        this.wrapper.classList.add('no-results');
+        this.results.classList.add('no-results');
     }
 }

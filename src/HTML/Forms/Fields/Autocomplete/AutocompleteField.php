@@ -1,0 +1,22 @@
+<?php
+
+namespace DigraphCMS\HTML\Forms\Fields\Autocomplete;
+
+use DigraphCMS\HTML\Forms\Field;
+
+class AutocompleteField extends Field
+{
+    protected $input;
+
+    public function __construct(string $label, AutocompleteInput $input)
+    {
+        $this->input = $input;
+        parent::__construct($label, $input);
+        $this->addClass('autocomplete-field');
+    }
+
+    public function input(): AutocompleteInput
+    {
+        return $this->input;
+    }
+}
