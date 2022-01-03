@@ -32,8 +32,8 @@ $fn = function () use ($tabs) {
     }
     $table = new QueryTable(
         $query,
-        function (array $row) {
-            $page = Pages::get($row['end_page']);
+        function (array $row) use ($mode) {
+            $page = ($mode == 'children' ? Pages::get($row['end_page']) : Pages::get($row['start_page']));
             $button = new SingleButton(
                 'Remove',
                 function () use ($row) {
@@ -56,6 +56,7 @@ $fn = function () use ($tabs) {
             new ColumnHeader('Remove link')
         ]
     );
+    $table->paginator()->perPage(10);
     echo $table;
 
     // display form for adding connections
@@ -67,8 +68,16 @@ $fn = function () use ($tabs) {
     $form = new FORM(Context::pageUUID() . '_' . $mode);
     $form->addChild($target);
     $form->addChild($type);
-    $form->addCallback(function () {
-        Notifications::flashWarning('not implemented');
+    $form->addCallback(function () use ($mode, $target, $type) {
+        try {
+            if ($mode == 'children') {
+                Pages::insertLink(Context::pageUUID(), $target->value(), $type->value());
+            } else {
+                Pages::insertLink($target->value(), Context::pageUUID(), $type->value());
+            }
+        } catch (\Throwable $th) {
+            Notifications::flashError($th->getMessage());
+        }
         throw new RefreshException();
     });
     echo $form;

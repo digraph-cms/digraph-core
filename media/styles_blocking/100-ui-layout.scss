@@ -110,6 +110,7 @@ body > .action-menu,
     background-color: $color-accent;
     color: contrast-color($color-accent);
     padding: $grid-unit/2;
+    font-family: $font-ui;
 
     a {
         color: inherit !important;

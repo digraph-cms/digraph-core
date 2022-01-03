@@ -13,6 +13,7 @@ class RadioList extends DIV implements InputInterface
     protected $form;
     protected $required = false;
     protected $requiredMessage = 'You must select an option';
+    protected $validators = [];
 
     public function __construct(array $options = [])
     {
@@ -88,8 +89,26 @@ class RadioList extends DIV implements InputInterface
         if ($this->required() && !$this->value()) {
             return $this->requiredMessage;
         } else {
+            foreach ($this->validators as $validator) {
+                if ($message = call_user_func($validator, $this)) {
+                    return $message;
+                }
+            }
             return null;
         }
+    }
+
+    /**
+     * Set a validator function for this input. Callable should return a string with an
+     * error message if invalid, or otherwise null.
+     *
+     * @param callable $validator
+     * @return $this
+     */
+    public function addValidator(callable $validator)
+    {
+        $this->validators[] = $validator;
+        return $this;
     }
 
     public function required(): bool

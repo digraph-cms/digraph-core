@@ -15,6 +15,7 @@ class INPUT extends Tag implements InputInterface
     protected $value;
     protected $required = false;
     protected $requiredMessage = 'This field is required';
+    protected $validators = [];
 
     protected static $counter = 0;
 
@@ -28,8 +29,26 @@ class INPUT extends Tag implements InputInterface
         if ($this->required() && !$this->value()) {
             return $this->requiredMessage;
         } else {
+            foreach ($this->validators as $validator) {
+                if ($message = call_user_func($validator, $this)) {
+                    return $message;
+                }
+            }
             return null;
         }
+    }
+
+    /**
+     * Set a validator function for this input. Callable should return a string with an
+     * error message if invalid, or otherwise null.
+     *
+     * @param callable $validator
+     * @return $this
+     */
+    public function addValidator(callable $validator)
+    {
+        $this->validators[] = $validator;
+        return $this;
     }
 
     public function attributes(): array
