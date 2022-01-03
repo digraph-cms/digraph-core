@@ -35,6 +35,7 @@ $table = new ArrayTable(
         new ColumnHeader('Remove URL')
     ]
 );
+$table->paginator()->perPage(15);
 echo $table;
 
 // display form below table
@@ -53,19 +54,23 @@ echo (new FORM(Context::pageUUID() . '_urls'))
     ->addChild($pattern)
     ->addChild($unique)
     ->addCallback(function () use ($pattern, $unique) {
-        // set new slug from pattern
-        Slugs::setFromPattern(
-            Context::page(),
-            $pattern->value(),
-            $unique->value()
-        );
-        // save pattern into page
-        $page = Context::page();
-        $page->slugPattern($pattern->value());
-        $page->update();
+        try {
+            // set new slug from pattern
+            Slugs::setFromPattern(
+                Context::page(),
+                $pattern->value(),
+                $unique->value()
+            );
+            // save pattern into page
+            $page = Context::page();
+            $page->slugPattern($pattern->value());
+            $page->update();
+            Notifications::flashConfirmation('URL updated');
+        } catch (\Throwable $th) {
+            Notifications::flashError($th->getMessage());
+        }
         // refresh page
-        // Notifications::flashConfirmation('Updated URL pattern');
-        // throw new RefreshException();
+        throw new RefreshException();
     });
 
 echo '</div>';
