@@ -9,6 +9,8 @@ class TabInterface
 {
     protected $tabs = [];
     protected $defaultTab;
+    protected $id;
+    protected $arg;
 
     public function __construct(string $id = null)
     {
@@ -41,9 +43,16 @@ class TabInterface
         );
     }
 
+    public function arg(string $set = null): string {
+        if ($set !== null) {
+            $this->arg = $set;
+        }
+        return $this->arg ?? '_tab_' . $this->id();
+    }
+
     public function activeTab(): string
     {
-        if ($arg = Context::arg('_tab_' . $this->id)) {
+        if ($arg = Context::arg($this->arg())) {
             if (isset($this->tabs[$arg])) {
                 return $arg;
             }
@@ -62,7 +71,7 @@ class TabInterface
     public function url(string $id): URL
     {
         $url = Context::url();
-        $url->arg('_tab_' . $this->id(), $id);
+        $url->arg($this->arg(), $id);
         return $url;
     }
 

@@ -27,7 +27,7 @@ use DigraphCMS\UI\UserMenu;
     <?php echo Theme::head(); ?>
 </head>
 
-<body class='template-default'>
+<body class='template-default no-js'>
     <section id="skip-to-content">
         <a href="#content">Skip to content</a>
     </section>

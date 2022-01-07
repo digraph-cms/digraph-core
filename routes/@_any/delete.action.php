@@ -17,7 +17,7 @@ $button = new SingleButton(
             Context::page()->parent() ? Context::page()->parent() : new URL('/')
         );
     },
-    ['warning']
+    ['button--warning']
 );
 
 echo $button;

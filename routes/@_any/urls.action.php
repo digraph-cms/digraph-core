@@ -23,7 +23,7 @@ $table = new ArrayTable(
             function () use ($slug) {
                 Slugs::delete(Context::page()->uuid(), $slug);
             },
-            ['warning']
+            ['button--warning']
         );
         return [
             $slug,

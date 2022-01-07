@@ -117,22 +117,22 @@ body > .action-menu,
         text-decoration: underline !important;
     }
 
-    &.notice {
+    &.notification--notice {
         background-color: $color-info;
         color: contrast-color($color-info);
     }
 
-    &.confirmation {
+    &.notification--confirmation {
         background-color: $color-confirmation;
         color: contrast-color($color-confirmation);
     }
 
-    &.warning {
+    &.notification--warning {
         background-color: $color-warning;
         color: contrast-color($color-warning);
     }
 
-    &.error {
+    &.notification--error {
         background-color: $color-error;
         color: contrast-color($color-error);
     }

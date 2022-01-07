@@ -25,7 +25,7 @@ use DigraphCMS\UI\UserMenu;
     <?php echo Theme::head(); ?>
 </head>
 
-<body class='template-iframe'>
+<body class='template-iframe no-js'>
     <?php Notifications::printSection(); ?>
     <main id="content">
         <?php echo Context::response()->content(); ?>

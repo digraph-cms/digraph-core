@@ -98,7 +98,7 @@ class Filestore
      * Get the top result for a given UUID
      *
      * @param string $uuid
-     * @return User|null
+     * @return FilestoreFile|null
      */
     public static function get(string $uuid): ?FilestoreFile
     {

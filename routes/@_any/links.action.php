@@ -42,7 +42,7 @@ $fn = function () use ($tabs) {
                         ->where('id = ?', [$row['id']])
                         ->execute();
                 },
-                ['warning']
+                ['button--warning']
             );
             return [
                 $page ? $page->url()->html() : $page,

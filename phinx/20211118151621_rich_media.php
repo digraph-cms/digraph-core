@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 use Phinx\Migration\AbstractMigration;
 
-final class PageBlocks extends AbstractMigration
+final class RichMedia extends AbstractMigration
 {
     public function change(): void
     {
-        // rich media attachments content, so that this content can be edited
+        // rich media content, so that this content can be edited
         // and permissioned separately from actual page content
-        $this->table('page_block')
+        $this->table('rich_media')
             ->addColumn('uuid', 'uuid')
             ->addColumn('class', 'string', ['length' => 50])
             ->addColumn('name', 'string', ['length' => 50])

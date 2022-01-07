@@ -114,7 +114,7 @@ class Notifications
     public static function print(string $message, string $type = 'unspecified', string $class = '')
     {
         if ($type) {
-            $class .= " $type";
+            $class .= " notification--$type";
         }
         echo "<div class='notification$class'>";
         echo $message;

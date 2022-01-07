@@ -7,23 +7,24 @@ use DigraphCMS\Config;
 use DigraphCMS\FS;
 use DigraphCMS\Media\DeferredFile;
 use DigraphCMS\Media\ImageFile;
+use DigraphCMS\RichMedia\RichMedia;
+use DigraphCMS\RichMedia\Types\AbstractRichMedia;
 use DigraphCMS\UI\Templates;
-use DigraphCMS\URL\URL;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
 use Mimey\MimeTypes;
 
 class FilestoreFile extends DeferredFile
 {
-    protected $uuid, $hash, $filename, $page, $meta, $image;
+    protected $uuid, $hash, $filename, $media, $meta, $image;
 
-    public function __construct(string $uuid, string $hash, string $filename, int $bytes, string $page, array $meta, int $created, ?string $created_by)
+    public function __construct(string $uuid, string $hash, string $filename, int $bytes, string $media, array $meta, int $created, ?string $created_by)
     {
         $this->uuid = $uuid;
         $this->hash = $this->identifier = $hash;
         $this->filename = $filename;
         $this->bytes = $bytes;
-        $this->page = $page;
+        $this->media = $media;
         $this->meta = $meta;
         $this->created = (new DateTime())->setTimestamp($created);
         $this->created_by = $created_by;
@@ -87,14 +88,14 @@ class FilestoreFile extends DeferredFile
         return (new MimeTypes())->getMimeType($this->extension());
     }
 
-    public function page(): Page
+    public function media(): AbstractRichMedia
     {
-        return Pages::get($this->page);
+        return RichMedia::get($this->media);
     }
 
-    public function pageUUID(): string
+    public function mediaUUID(): string
     {
-        return $this->page;
+        return $this->media;
     }
 
     public function meta(): array

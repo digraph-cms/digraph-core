@@ -1,7 +1,7 @@
 <h1>Clean up filestore</h1>
 <p>
     This tool allows you to clean up unused files from the filestore system.
-    Generally these are the result of abandoned page-creation sessions, so to avoid deleting work in progress by users, this tool will only display or delete abandoned files older than 24 hours.
+    Generally these are the result of abandoned media-creation sessions, so to avoid deleting work in progress by users, this tool will only display or delete abandoned files older than 24 hours.
 </p>
 <p>
     Filestore files are deduplicated, so storing an identical file multiple times does not use additional disk space.

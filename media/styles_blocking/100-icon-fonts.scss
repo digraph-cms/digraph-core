@@ -45,3 +45,17 @@
     src: url("/mixins/icofont/fonts/icofont.woff2") format("woff2"),
         url("/mixins/icofont/fonts/icofont.woff") format("woff");
 }
+
+.icon {
+    font-size: 1em;
+    line-height: 1;
+    speak: none;
+}
+
+.icon--material {
+    @include material-icon;
+}
+
+.icon--icofont {
+    @include icofont;
+}

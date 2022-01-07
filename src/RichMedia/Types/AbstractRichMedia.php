@@ -1,6 +1,6 @@
 <?php
 
-namespace DigraphCMS\Content\Blocks;
+namespace DigraphCMS\RichMedia\Types;
 
 use ArrayAccess;
 use DateTime;
@@ -8,12 +8,13 @@ use DigraphCMS\Content\Page;
 use DigraphCMS\Content\Pages;
 use DigraphCMS\Context;
 use DigraphCMS\Digraph;
+use DigraphCMS\RichMedia\RichMedia;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
 use Flatrr\FlatArrayTrait;
 
-abstract class AbstractBlock implements ArrayAccess
+abstract class AbstractRichMedia implements ArrayAccess
 {
     use FlatArrayTrait {
         set as protected rawSet;
@@ -92,17 +93,17 @@ abstract class AbstractBlock implements ArrayAccess
 
     public function insert()
     {
-        return Blocks::insert($this);
+        return RichMedia::insert($this);
     }
 
     public function update()
     {
-        return Blocks::update($this);
+        return RichMedia::update($this);
     }
 
     public function delete()
     {
-        return Blocks::delete($this);
+        return RichMedia::delete($this);
     }
 
     public function uuid(): string

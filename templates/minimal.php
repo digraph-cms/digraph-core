@@ -26,7 +26,7 @@ use DigraphCMS\UI\UserMenu;
     <?php echo Theme::head(); ?>
 </head>
 
-<body class='template-minimal'>
+<body class='template-minimal no-js'>
     <?php
     echo new UserMenu(Context::url());
     Notifications::printSection();

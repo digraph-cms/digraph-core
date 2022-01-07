@@ -14,16 +14,16 @@ final class Filestore extends AbstractMigration
             ->addColumn('hash', 'string', ['length' => 32])
             ->addColumn('filename', 'string', ['length' => 100])
             ->addColumn('bytes', 'integer')
-            ->addColumn('page_uuid', 'uuid', ['null' => true])
+            ->addColumn('rich_media_uuid', 'uuid', ['null' => true])
             ->addColumn('meta', 'json')
             ->addColumn('created', 'integer')
             ->addColumn('created_by', 'uuid', ['null' => true])
             ->addIndex(['uuid'], ['unique' => true])
             ->addIndex(['hash'])
             ->addIndex(['filename'])
-            ->addIndex(['page_uuid'])
+            ->addIndex(['rich_media_uuid'])
             ->addForeignKey(['created_by'], 'user', ['uuid'])
-            ->addForeignKey(['page_uuid'], 'page', ['uuid'])
+            ->addForeignKey(['rich_media_uuid'], 'rich_media', ['uuid'])
             ->create();
     }
 }

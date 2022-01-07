@@ -10,8 +10,8 @@
   "page_types": {
     "page": "\\DigraphCMS\\Content\\Page"
   },
-  "block_types": {
-    "file": "\\DigraphCMS\\Content\\Blocks\\FileBlock"
+  "rich_media_types": {
+    "file": "\\DigraphCMS\\RichMedia\\Types\\FileRichMedia"
   },
   "files": {
     "path": "${paths.web}/files",

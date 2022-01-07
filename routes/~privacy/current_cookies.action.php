@@ -16,7 +16,6 @@ use DigraphCMS\Session\Cookies;
 use DigraphCMS\UI\ButtonMenus\SingleButton;
 use DigraphCMS\UI\DataTables\ArrayTable;
 use DigraphCMS\UI\DataTables\ColumnHeader;
-use DigraphCMS\UI\Notifications;
 
 $table = new ArrayTable(
     $_COOKIE,
@@ -34,7 +33,7 @@ $table = new ArrayTable(
                 Cookies::unsetRaw($key);
                 Context::response()->redirect(Context::url());
             },
-            ['warning']
+            ['button--warning']
         );
         return [
             htmlspecialchars($key),

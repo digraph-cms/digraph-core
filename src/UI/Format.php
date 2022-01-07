@@ -23,7 +23,7 @@ class Format
     {
         return
             '<base64>' . base64_encode($string) . '</base64>'
-            . '<noscript><span class="notification error">' . $message . '</span></noscript>';
+            . '<noscript><span class="notification notification--error">' . $message . '</span></noscript>';
     }
 
     public static function filesize(int $bytes, int $decimals = 1): string

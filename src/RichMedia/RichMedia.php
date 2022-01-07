@@ -1,14 +1,15 @@
 <?php
 
-namespace DigraphCMS\Content\Blocks;
+namespace DigraphCMS\RichMedia;
 
 use DateTime;
 use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Events\Dispatcher;
+use DigraphCMS\RichMedia\Types\AbstractRichMedia;
 use DigraphCMS\Session\Session;
 
-class Blocks
+class RichMedia
 {
     protected static $cache = [];
 
@@ -18,11 +19,11 @@ class Blocks
      *
      * @param string $uuid
      * @param string|null $page_uuid
-     * @return Block|null
+     * @return RichMedia|null
      */
     public static function exists(string $uuid, string $page_uuid = null): bool
     {
-        $query = DB::query()->from('page_block')
+        $query = DB::query()->from('rich_media')
             ->where('uuid = ?', [$uuid]);
         if ($page_uuid) {
             $query->where('page_uuid = ?', [$page_uuid]);
@@ -31,28 +32,28 @@ class Blocks
     }
 
     /**
-     * Generate a BlockSelect object for building queries to the pages table
+     * Generate a RichMediaSelect object for building queries to the pages table
      *
      * @param string|null $page_uuid
-     * @return BlockSelect
+     * @return RichMediaSelect
      */
-    public static function select(string $page_uuid = null): BlockSelect
+    public static function select(string $page_uuid = null): RichMediaSelect
     {
-        $query = DB::query()->from('page_block');
+        $query = DB::query()->from('rich_media');
         if ($page_uuid) {
             $query->where('page_uuid = ?', [$page_uuid]);
         }
-        return new BlockSelect($query);
+        return new RichMediaSelect($query);
     }
 
     /**
-     * Get all blocks that match the given UUID, and optionally page UUID
+     * Get all Media that match the given UUID, and optionally page UUID
      * 
      * @param string $uuid
      * @param string|null $page_uuid
-     * @return AbstractBlock|null
+     * @return AbstractRichMedia|null
      */
-    public static function get(string $uuid, string $page_uuid = null): ?AbstractBlock
+    public static function get(string $uuid, string $page_uuid = null): ?AbstractRichMedia
     {
         if (!isset(static::$cache[$uuid])) {
             $query = static::select()
@@ -70,85 +71,89 @@ class Blocks
 
     public static function objectClass(array $result): string
     {
-        return Config::get('block_types.' . $result['class']) ?? Config::get('block_types.default');
+        if ($type = Config::get('rich_media_types.' . $result['class'])) {
+            return $type;
+        } else {
+            throw new \Exception('Unknown rich media type');
+        }
     }
 
-    public static function update(AbstractBlock $block)
+    public static function update(AbstractRichMedia $media)
     {
         DB::beginTransaction();
-        Dispatcher::dispatchEvent('onBeforeBlockUpdate', [$block]);
-        Dispatcher::dispatchEvent('onBeforeBlockUpdate_' . $block->class(), [$block]);
+        Dispatcher::dispatchEvent('onBeforeRichMediaUpdate', [$media]);
+        Dispatcher::dispatchEvent('onBeforeRichMediaUpdate_' . $media->class(), [$media]);
         // update values
         DB::query()
-            ->update('page_block')
+            ->update('rich_media')
             ->where(
                 'uuid = ? AND updated = ?',
                 [
-                    $block->uuid(),
-                    $block->updatedLast()->getTimestamp()
+                    $media->uuid(),
+                    $media->updatedLast()->getTimestamp()
                 ]
             )
             ->set([
-                'data' => json_encode($block->get()),
-                'class' => $block->class(),
-                'name' => $block->name(),
-                'page_uuid' => $block->pageUUID(),
+                'data' => json_encode($media->get()),
+                'class' => $media->class(),
+                'name' => $media->name(),
+                'page_uuid' => $media->pageUUID(),
                 'updated' => time(),
                 'updated_by' => Session::user()
             ])
             ->execute();
-        Dispatcher::dispatchEvent('onAfterBlockUpdate_' . $block->class(), [$block]);
-        Dispatcher::dispatchEvent('onAfterBlockUpdate', [$block]);
+        Dispatcher::dispatchEvent('onAfterRichMediaUpdate_' . $media->class(), [$media]);
+        Dispatcher::dispatchEvent('onAfterRichMediaUpdate', [$media]);
         DB::commit();
     }
 
-    public static function insert(AbstractBlock $block)
+    public static function insert(AbstractRichMedia $media)
     {
         // insert value
-        Dispatcher::dispatchEvent('onBeforeBlockInsert', [$block]);
-        Dispatcher::dispatchEvent('onBeforeBlockInsert_' . $block->class(), [$block]);
+        Dispatcher::dispatchEvent('onBeforeRichMediaInsert', [$media]);
+        Dispatcher::dispatchEvent('onBeforeRichMediaInsert_' . $media->class(), [$media]);
         DB::query()
             ->insertInto(
-                'page_block',
+                'rich_media',
                 [
-                    'uuid' => $block->uuid(),
-                    'data' => json_encode($block->get()),
-                    'class' => $block->class(),
-                    'name' => $block->name(),
-                    'page_uuid' => $block->pageUUID(),
+                    'uuid' => $media->uuid(),
+                    'data' => json_encode($media->get()),
+                    'class' => $media->class(),
+                    'name' => $media->name(),
+                    'page_uuid' => $media->pageUUID(),
                     'created' => time(),
-                    'created_by' => $block->createdByUUID() ?? Session::user(),
+                    'created_by' => $media->createdByUUID() ?? Session::user(),
                     'updated' => time(),
-                    'updated_by' => $block->updatedByUUID() ?? Session::user(),
+                    'updated_by' => $media->updatedByUUID() ?? Session::user(),
                 ]
             )
             ->execute();
-        Dispatcher::dispatchEvent('onAfterBlockInsert_' . $block->class(), [$block]);
-        Dispatcher::dispatchEvent('onAfterBlockInsert', [$block]);
+        Dispatcher::dispatchEvent('onAfterRichMediaInsert_' . $media->class(), [$media]);
+        Dispatcher::dispatchEvent('onAfterRichMediaInsert', [$media]);
     }
 
-    public static function delete(AbstractBlock $block)
+    public static function delete(AbstractRichMedia $media)
     {
         DB::beginTransaction();
         // events
-        Dispatcher::dispatchEvent('onBeforeBlockDelete', [$block]);
-        Dispatcher::dispatchEvent('onBeforeBlockDelete_' . $block->class(), [$block]);
+        Dispatcher::dispatchEvent('onBeforeRichMediaDelete', [$media]);
+        Dispatcher::dispatchEvent('onBeforeRichMediaDelete_' . $media->class(), [$media]);
         // delete block
         DB::query()
-            ->delete('page_block')
+            ->delete('rich_media')
             ->where(
                 'uuid = ? AND updated = ?',
                 [
-                    $block->uuid(),
-                    $block->updatedLast()->format("Y-m-d H:i:s")
+                    $media->uuid(),
+                    $media->updatedLast()->format("Y-m-d H:i:s")
                 ]
             )
             ->execute();
         // filter cache
-        static::filterCache($block);
+        static::filterCache($media);
         // events
-        Dispatcher::dispatchEvent('onAfterBlockDelete_' . $block->class(), [$block]);
-        Dispatcher::dispatchEvent('onAfterBlockDelete', [$block]);
+        Dispatcher::dispatchEvent('onAfterRichMediaDelete_' . $media->class(), [$media]);
+        Dispatcher::dispatchEvent('onAfterRichMediaDelete', [$media]);
         // commit DB changes
         DB::commit();
     }
@@ -157,13 +162,13 @@ class Blocks
      * Remove a given object from the object cache so that it will be recreated
      * if pulled again
      *
-     * @param AbstractBlock $block
+     * @param AbstractRichMedia $media
      * @return void
      */
-    protected static function filterCache(AbstractBlock $block)
+    protected static function filterCache(AbstractRichMedia $media)
     {
         foreach (static::$cache as $i => $v) {
-            if ($v->uuid() == $block->uuid()) {
+            if ($v->uuid() == $media->uuid()) {
                 unset(static::$cache[$i]);
             }
         }
@@ -174,9 +179,9 @@ class Blocks
      * from the cache if the given uuid has been seen before.
      *
      * @param array $result
-     * @return AbstractBlock|null
+     * @return AbstractRichMedia|null
      */
-    public static function resultToBlock(array $result): ?AbstractBlock
+    public static function resultToMedia(array $result): ?AbstractRichMedia
     {
         if (!is_array($result)) {
             return null;

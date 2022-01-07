@@ -1,11 +1,11 @@
 <?php
 
-namespace DigraphCMS\Content\Blocks;
+namespace DigraphCMS\RichMedia\Types;
 
 use DigraphCMS\Content\Filestore;
 use DigraphCMS\Content\FilestoreFile;
 
-class FileBlock extends AbstractBlock
+class FileRichMedia extends AbstractRichMedia
 {
     public static function class(): string
     {

@@ -20,6 +20,7 @@ const Digraph = {
 };
 
 document.addEventListener('DOMContentLoaded', (e) => {
+    document.body.classList.remove('no-js');
     document.body.dispatchEvent(
         new Event('DigraphDOMReady', {
             bubbles: true,

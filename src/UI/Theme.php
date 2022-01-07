@@ -46,7 +46,7 @@ class Theme
             'font-ui' => 'sans-serif',
             'font-code' => 'monospace',
             'border-unit' => '2px',
-            'border-radius' => '6px',
+            'border-radius' => '4px',
             'color-neutral' => '#BDC3C7',
             'color-accent' => '#34495E',
             'color-highlight' => '#1ABC9C',

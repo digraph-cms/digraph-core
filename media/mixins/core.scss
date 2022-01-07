@@ -41,22 +41,22 @@
         transform: scale(1);
     }
 
-    &.confirmation {
+    &.button--confirmation {
         background: $color-confirmation;
         color: contrast-color($color-confirmation) !important;
     }
 
-    &.info {
+    &.button--info {
         background: $color-info;
         color: contrast-color($color-info) !important;
     }
 
-    &.warning {
+    &.button--warning {
         background: $color-warning;
         color: contrast-color($color-warning) !important;
     }
 
-    &.error {
+    &.button--error {
         background: $color-error;
         color: contrast-color($color-error) !important;
     }

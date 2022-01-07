@@ -2,7 +2,30 @@
  * Tools for managing state in navigation frames
  */
 
- document.addEventListener('click', (e) => {
+// DigraphDOMReady handler for doing initial loading in navigation frames that need it
+document.addEventListener('DigraphDOMReady', (e) => {
+    var divs = e.target.getElementsByTagName('div');
+    for (let i = 0; i < divs.length; i++) {
+        const div = divs[i];
+        if (div.classList.contains('navigation-frame')) {
+            // set this frame as stateless if it has a stateless ancestor
+            var parent = div;
+            while (parent = parent.parentElement) {
+                if (parent.classList.contains('navigation-frame--stateless')) {
+                    div.classList.add('navigation-frame--stateless');
+                }
+            }
+            // load initial source
+            if (div.dataset.initialSource) {
+                Digraph.state.get(div.dataset.initialSource, div);
+                delete div.dataset.initialSource;
+            }
+        }
+    }
+});
+
+// click handler for links in navigation frames
+document.addEventListener('click', (e) => {
     if (e.target.tagName == 'A') {
         // determine if we should even use this link
         if (!e.target.getAttribute('href')) {
@@ -15,12 +38,19 @@
         [parent, target] = Digraph.state.navigationParentAndTarget(e.target);
         // parent and target found
         if (parent && target && target != '_top') {
-            Digraph.state.getAndPush(e.target.getAttribute('href'), parent);
+            if (parent.classList.contains('navigation-frame--stateless')) {
+                // stateless navigation frames don't update the address bar or browser history
+                Digraph.state.get(e.target.getAttribute('href'), parent);
+            } else {
+                // otherwise call the function that pushes to address bar and browser history
+                Digraph.state.getAndPush(e.target.getAttribute('href'), parent);
+            }
             e.preventDefault();
         }
     }
 });
 
+// submit handler for forms in navigation frames
 document.addEventListener('submit', (e) => {
     if (e.target.tagName == 'FORM') {
         var [parent, target] = Digraph.state.navigationParentAndTarget(e.target);
@@ -38,13 +68,16 @@ document.addEventListener('submit', (e) => {
     }
 });
 
+// popstate handler for back button
 window.addEventListener('popstate', (e) => {
     if (e.state.url && e.state.frame) {
         Digraph.state.get(e.state.url, document.getElementById(e.state.frame));
     };
 });
 
+// state handler object in Digraph global
 Digraph.state = {
+    // get requested URL and updated browser history so that forward/back work
     getAndPush: (url, frame) => {
         Digraph.state.get(url, frame);
         history.pushState(
@@ -53,11 +86,13 @@ Digraph.state = {
             url
         );
     },
+    // only get the requested URL and replace frame contents
     get: (url, frame) => {
         Digraph.state.addXHRListeners(frame);
         frame.stateUpdateRequest.open('GET', url);
         frame.stateUpdateRequest.send();
     },
+    // post the given data to the given URL and replace frame contents
     post: (data, url, frame) => {
         Digraph.state.addXHRListeners(frame);
         frame.stateUpdateRequest.open('POST', url, true);
@@ -72,20 +107,29 @@ Digraph.state = {
         frame.stateUpdateRequest.addEventListener('load', (e) => {
             if (e.target.status == 200) {
                 const doc = new DOMParser().parseFromString(e.target.response, 'text/html');
+                if (document.getElementById('notifications') && doc.getElementById('notifications')) {
+                    document.getElementById('notifications').innerHTML += doc.getElementById('notifications').innerHTML;
+                }
                 const newHTML = doc.getElementById(frame.getAttribute('id')).innerHTML;
                 if (newHTML) {
                     frame.innerHTML = newHTML;
                 } else {
+                    if (document.getElementById('notifications')) {
+                        var error = document.createElement('div');
+                        error.classList.add('notification');
+                        error.classList.add('error');
+                        error.innerText = 'Error loading navigation frame: target ID missing';
+                        document.getElementById('notifications').appendChild(error);
+                    }
                     frame.classList.add('error');
                 }
-                if (document.getElementById('breadcrumb') && doc.getElementById('breadcrumb')) {
-                    document.getElementById('breadcrumb').innerHTML = doc.getElementById('breadcrumb').innerHTML;
-                }
-                if (document.getElementById('notifications') && doc.getElementById('notifications')) {
-                    document.getElementById('notifications').innerHTML = doc.getElementById('notifications').innerHTML;
-                }
-                if (document.getElementsByTagName('title') && doc.getElementsByTagName('title')) {
-                    document.getElementsByTagName('title')[0].innerHTML = doc.getElementsByTagName('title')[0].innerHTML;
+                if (!frame.classList.contains('navigation-frame--stateless')) {
+                    if (document.getElementById('breadcrumb') && doc.getElementById('breadcrumb')) {
+                        document.getElementById('breadcrumb').innerHTML = doc.getElementById('breadcrumb').innerHTML;
+                    }
+                    if (document.getElementsByTagName('title') && doc.getElementsByTagName('title')) {
+                        document.getElementsByTagName('title')[0].innerHTML = doc.getElementsByTagName('title')[0].innerHTML;
+                    }
                 }
                 frame.dispatchEvent(
                     new Event('DigraphDOMReady', {
@@ -95,11 +139,28 @@ Digraph.state = {
                 );
                 frame.classList.remove('loading');
             } else {
+                if (document.getElementById('notifications')) {
+                    var error = document.createElement('div');
+                    error.classList.add('notification');
+                    error.classList.add('error');
+                    error.innerText = 'Error loading navigation frame: ' + e.target.status;
+                    document.getElementById('notifications').appendChild(error);
+                }
                 console.error(e);
                 frame.classList.add('error');
             }
         });
         frame.stateUpdateRequest.addEventListener('error', (e) => {
+            if (document.getElementById('notifications') && doc.getElementById('notifications')) {
+                document.getElementById('notifications').innerHTML += doc.getElementById('notifications').innerHTML;
+            }
+            if (document.getElementById('notifications')) {
+                var error = document.createElement('div');
+                error.classList.add('notification');
+                error.classList.add('error');
+                error.innerText = 'Error loading navigation frame: unknown error';
+                document.getElementById('notifications').appendChild(error);
+            }
             console.error(e);
             frame.classList.add('error');
         });
