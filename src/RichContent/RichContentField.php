@@ -2,9 +2,9 @@
 
 namespace DigraphCMS\RichContent;
 
+use DigraphCMS\CodeMirror\CodeMirrorInput;
 use DigraphCMS\HTML\DIV;
 use DigraphCMS\HTML\Forms\Field;
-use DigraphCMS\HTML\Forms\TEXTAREA;
 use DigraphCMS\UI\Theme;
 use DigraphCMS\URL\URL;
 
@@ -14,7 +14,7 @@ class RichContentField extends Field
 
     public function __construct(string $label)
     {
-        parent::__construct($label, new TEXTAREA());
+        parent::__construct($label, new CodeMirrorInput());
         // set up markup to scaffold the JS editor features
         $this->addClass('rich-content-editor');
         $this->wrapper = (new DIV())

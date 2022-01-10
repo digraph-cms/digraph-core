@@ -11,11 +11,10 @@ document.addEventListener('DigraphDOMReady', (e) => {
 class DigraphRichContentEditor {
     constructor(wrapper) {
         this.wrapper = wrapper;
-        this.textarea = this.wrapper.getElementsByTagName('textarea')[0];
+        this.textareaWrapper = this.getDivByClass('codemirror-input-wrapper');
         this.contentWrapper = this.getDivByClass('rich-content-editor__content-editor');
-        this.contentWrapper.appendChild(this.textarea);
+        this.contentWrapper.appendChild(this.textareaWrapper);
         this.mediaWrapper = this.getDivByClass('rich-content-editor__media-editor');
-        console.log(this);
     }
     getDivByClass(c) {
         var divs = this.wrapper.getElementsByTagName('div');
