@@ -35,6 +35,8 @@ div[data-codemirror-mode="markdown"] {
 
     .cm-comment,
     .cm-tag,
+    .cm-attribute,
+    .cm-string,
     .cm-link,
     .cm-url {
         font-family: $font-code;
