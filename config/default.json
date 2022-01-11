@@ -15,8 +15,19 @@
   },
   "codemirror": {
     "dependencies": {
-      "mode/gfm/gfm": ["addon/mode/overlay", "mode/markdown/markdown", "addon/edit/continuelist", "mode/xml/xml"],
-      "mode/php/php": ["mode/xml/xml", "mode/javascript/javascript", "mode/css/css", "mode/htmlmixed/htmlmixed", "mode/clike/clike"]
+      "mode/gfm/gfm": [
+        "addon/mode/overlay",
+        "mode/markdown/markdown",
+        "addon/edit/continuelist",
+        "mode/xml/xml"
+      ],
+      "mode/php/php": [
+        "mode/xml/xml",
+        "mode/javascript/javascript",
+        "mode/css/css",
+        "mode/htmlmixed/htmlmixed",
+        "mode/clike/clike"
+      ]
     },
     "mode": {
       "gfm": {

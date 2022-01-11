@@ -27,7 +27,7 @@ class CodeMirrorInput extends TEXTAREA
     public function config(): array
     {
         return array_merge(
-            Config::get(sprintf('codemirror.mode.%s.config', $this->mode())),
+            Config::get(sprintf('codemirror.mode.%s.config', $this->mode())) ?? [],
             $this->config
         );
     }

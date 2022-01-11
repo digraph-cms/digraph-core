@@ -6,10 +6,10 @@ use DigraphCMS\Config;
 use DigraphCMS\UI\Theme;
 
 // automatically load theme assets
-Theme::addBlockingPageJs('/forms/codemirror/codemirror.min.js');
-Theme::addBlockingPageJs('/forms/codemirror/addon/comment/comment.js');
-Theme::addInternalPageCss('/forms/codemirror/codemirror.css');
-Theme::addPageJs('/forms/codemirror/integration.js');
+Theme::addBlockingPageJs('/node_modules/codemirror/lib/codemirror.js');
+Theme::addBlockingPageJs('/node_modules/codemirror/addon/comment/comment.js');
+Theme::addInternalPageCss('/node_modules/codemirror/lib/codemirror.css');
+Theme::addBlockingPageJs('/forms/codemirror/integration/*.js');
 Theme::addInternalPageCss('/forms/codemirror/theme/*.css');
 
 class CodeMirror
@@ -32,6 +32,6 @@ class CodeMirror
         }
         // load script
         static::$loadedScripts[] = $script;
-        Theme::addBlockingPageJs("/forms/codemirror/$script.js");
+        Theme::addBlockingPageJs("/node_modules/codemirror/$script.js");
     }
 }

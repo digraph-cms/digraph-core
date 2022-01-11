@@ -6,14 +6,20 @@
     gap: $border-unit;
     border: $border-unit solid $color-neutral;
     overflow: hidden;
+    height: 75vh;
 }
 
 .rich-content-editor__content-editor {
     flex-basis: 3;
     flex-grow: 1;
     flex-basis: 35em;
+    overflow: auto;
 
-    >textarea {
+    .CodeMirror {
+        height: auto;
+    }
+
+    > textarea {
         border: 0;
         display: block;
         margin: 0;
@@ -23,15 +29,17 @@
 
 .rich-content-editor__media-editor {
     flex-basis: 25em;
+    overflow: auto;
 }
 
 .rich-content-editor__media-editor-frame {
-    min-height: 5em;
-    overflow: auto;
+    height: 100%;
 
-    >.tab-interface {
+    > .tab-interface {
+        height: 100%;
         margin: 0;
         .tab-interface-content {
+            overflow: auto;
             border-top-right-radius: $border-radius;
             border-bottom-right-radius: $border-radius;
         }
