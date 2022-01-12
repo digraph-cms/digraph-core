@@ -17,7 +17,7 @@ class AutocompleteInput extends INPUT
         parent::__construct($id);
         $this->setEndpoint($endpoint);
         Theme::addBlockingPageJs('/forms/autocomplete/*.js');
-        Theme::addBlockingPageCss('/forms/autocomplete/*.scss');
+        Theme::addBlockingPageCss('/forms/autocomplete/*.css');
         Cookies::csrfToken('autocomplete');
     }
 

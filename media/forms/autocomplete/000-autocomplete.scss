@@ -26,7 +26,7 @@
 }
 
 .autocomplete-results {
-    min-height: 3rem+$grid-unit;
+    min-height: 2rem+$grid-unit;
     max-height: 30vh;
     overflow: auto;
     border-bottom-left-radius: $border-radius;
@@ -55,7 +55,7 @@
         }
 
         &:after {
-            font-size: 3em;
+            font-size: 2rem;
             color: $color-error;
             content: "\ef16";
             animation: none;
@@ -95,7 +95,7 @@
         }
 
         &:after {
-            font-size: 3em;
+            font-size: 2rem;
             color: $color-info;
             content: "\ea54";
             animation: none;
@@ -121,7 +121,7 @@
     &:before {
         @include icofont;
         display: none;
-        font-size: 3em;
+        font-size: 2rem;
         padding-right: $grid-unit/2;
     }
 }
@@ -145,8 +145,8 @@
 
     .clear-selection {
         cursor: pointer;
-        padding: $grid-unit;
-        flex-basis: 2em;
+        padding: 0 $grid-unit/2;
+        flex-basis: 2rem;
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
         display: flex;
@@ -162,7 +162,7 @@
         &:before {
             @include material-icon;
             display: block;
-            font-size: 2em;
+            font-size: 2rem;
             content: 'backspace';
         }
     }
