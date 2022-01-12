@@ -96,7 +96,8 @@ class Media
         return $files;
     }
 
-    public static function globToPaths(string $glob): array {
+    public static function globToPaths(string $glob): array
+    {
         $glob = static::prefixContext($glob);
         URLs::beginContext(new URL($glob));
         $files = array_map(
@@ -137,7 +138,7 @@ class Media
     {
         if ($source = static::locate(substr($path, 0, strlen($path) - 3) . '{css,scss}')) {
             return new DeferredFile(
-                basename($path),
+                preg_replace('/\.scss$/', '.css', basename($path)),
                 function (DeferredFile $file) use ($source, $path) {
                     switch (strtolower(pathinfo($source, PATHINFO_EXTENSION))) {
                         case 'scss':

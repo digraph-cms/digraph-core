@@ -309,18 +309,20 @@ class Theme
             foreach ($urls as $url) {
                 if (preg_match('/\/\*\.css$/', $url)) {
                     //wildcard search
-                    foreach (Media::glob(preg_replace('/\.css$/', '.{scss,css}', $url)) as $file) {
-                        $files[] = $file;
+                    $url = new URL($url);
+                    foreach (Media::search(preg_replace('/\.s?css$/', '.{scss,css}', $url->path())) as $file) {
+                        $files[] = $url->directory() . basename($file);
                     }
                 } else {
                     //normal single file
-                    $url = new URL($url);
-                    $files[] = Media::get($url->path());
+                    $files[] = $url;
                 }
             }
             $files = array_filter($files);
             foreach ($files as $file) {
-                echo "<link rel='stylesheet' href='" . $file->url() . "'>" . PHP_EOL;
+                if ($file = Media::get($file)) {
+                    echo "<link rel='stylesheet' href='" . $file->url() . "'>" . PHP_EOL;
+                }
             }
         } else {
             $files = [];
@@ -328,7 +330,7 @@ class Theme
                 if (preg_match('/\/\*\.css$/', $url)) {
                     //wildcard search
                     $url = new URL($url);
-                    foreach (Media::search(preg_replace('/\.css$/', '.{scss,css}', $url->path())) as $file) {
+                    foreach (Media::search(preg_replace('/\.s?css$/', '.{scss,css}', $url->path())) as $file) {
                         $files[] = $url->directory() . basename($file);
                     }
                 } else {
