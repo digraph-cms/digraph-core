@@ -96,7 +96,8 @@
     }
   },
   "theme": {
-    "bundle_css": false
+    "bundle_css": false,
+    "bundle_js": false
   },
   "fields": {
     "site": {

@@ -221,34 +221,76 @@ class Theme
      * @param boolean $async
      * @return void
      */
-    protected static function renderJs(array $urls_or_files, bool $async)
+    protected static function renderJs(string $name, array $urls_or_files, bool $async)
     {
+        // identify all the files we need to include
+        /** @var File[] */
+        $files = [];
         foreach ($urls_or_files as $url_or_file) {
             if (basename($url_or_file) == '*.js') {
                 // search and recurse if the filename is *.js
-                static::renderJs(Media::globToPaths($url_or_file), $async);
+                $files = array_merge(
+                    $files,
+                    array_map(
+                        Media::class . '::get',
+                        Media::globToPaths($url_or_file, $async)
+                    )
+                );
             } else {
-                // otherwise render script tag
                 if (is_string($url_or_file)) {
                     if (preg_match('@^(https?)?//@', $url_or_file)) {
+                        // embed external stuff immediately
                         $url = $url_or_file;
                     } else {
+                        // get media files for internal stuff so it can be bundled or embedded
                         $r = $url_or_file;
                         $url_or_file = Media::get($url_or_file);
                         if (!$url_or_file) {
                             throw new HttpError(500, 'JS file ' . $r . ' not found');
                         }
+                        $files[] = $url_or_file;
                     }
                 }
-                if ($url_or_file instanceof File) {
-                    $url = $url_or_file->url();
-                }
-                echo "<script src='$url'";
+            }
+        }
+        if (!$files) {
+            return;
+        }
+        if (!Config::get('theme.bundle_js')) {
+            // embed files individually
+            echo "<!-- $name -->";
+            foreach ($files as $file) {
+                // render script tag
+                echo "<script src='" . $file->url() . "'";
                 if ($async) {
                     echo " async";
                 }
                 echo "></script>" . PHP_EOL;
             }
+        } else {
+            // bundle scripts
+            $file = new DeferredFile(
+                "$name.js",
+                function (DeferredFile $file) use ($files, $name) {
+                    $content = "";
+                    foreach ($files as $f) {
+                        $content .= $f->content() . PHP_EOL . ';';
+                    }
+                    file_put_contents($file->path(), $content);
+                },
+                array_map(
+                    function (File $f) {
+                        return $f->identifier();
+                    },
+                    $files
+                )
+            );
+            $file->write();
+            echo "<script src='" . $file->url() . "'";
+            if ($async) {
+                echo " async";
+            }
+            echo "></script>" . PHP_EOL;
         }
     }
 
@@ -409,10 +451,10 @@ class Theme
         // render core js
         static::renderCoreJs();
         // render js
-        static::renderJs(static::$blockingThemeJs, false);
-        static::renderJs(static::$blockingPageJs, false);
-        static::renderJs(static::$asyncThemeJs, true);
-        static::renderJs(static::$asyncPageJs, true);
+        static::renderJs('theme_blocking', static::$blockingThemeJs, false);
+        static::renderJs('page_blocking', static::$blockingPageJs, false);
+        static::renderJs('theme_async', static::$asyncThemeJs, true);
+        static::renderJs('page_async', static::$asyncPageJs, true);
         static::renderInlineJs(static::$inlinePageJs);
         return ob_get_clean();
     }
