@@ -48,8 +48,8 @@ if (RichMedia::select(Context::arg('page'))->count()) {
 }
 
 // media adding tab
-$tabs->addTab('add', 'Add', function () {
-    echo "<p>TODO: add media form</p>";
+$tabs->addTab('add', 'Add media', function () {
+    echo "<p>TODO: add media options</p>";
 });
 
 $tabs->addTab('search', 'Search', function () {

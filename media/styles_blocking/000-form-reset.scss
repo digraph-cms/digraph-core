@@ -40,8 +40,10 @@ input {
 input,
 select,
 textarea,
-fieldset {
+fieldset,
+.CodeMirror {
     border: $border-unit solid $color-neutral;
+    border-radius: $border-radius;
     background-color: $body-bg;
     color: $body-fg;
     width: 100%;
