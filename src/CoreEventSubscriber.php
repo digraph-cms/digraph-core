@@ -2,10 +2,12 @@
 
 namespace DigraphCMS;
 
-use DigraphCMS\Content\Blocks\Blocks;
-use DigraphCMS\Content\Filestore;
 use DigraphCMS\Content\Page;
 use DigraphCMS\Content\Slugs;
+use DigraphCMS\DOM\CodeHighlighter;
+use DigraphCMS\DOM\DOM;
+use DigraphCMS\DOM\DOMEvent;
+use DigraphCMS\HTTP\Response;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\User;
@@ -14,10 +16,16 @@ use DigraphCMS\Users\Users;
 class CoreEventSubscriber
 {
 
-    public static function onPageDeleted(Page $page) {
-        // delete all filestore files and page blocks
-        Filestore::deleteByPage($page->uuid());
-        Blocks::deleteByPage($page->uuid());
+    public static function onTemplateWrapResponse(Response $response)
+    {
+        $response->content(
+            DOM::html($response->content(), true)
+        );
+    }
+
+    public static function onDOMElement_code(DOMEvent $e)
+    {
+        CodeHighlighter::codeEvent($e);
     }
 
     public static function onPageCreated(Page $page)

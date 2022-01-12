@@ -5,6 +5,7 @@ namespace DigraphCMS\HTTP;
 use DigraphCMS\Config;
 use DigraphCMS\Content\Page;
 use DigraphCMS\Context;
+use DigraphCMS\Digraph;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\Session\Session;
 
@@ -215,7 +216,10 @@ class Response
 
     public function renderContent()
     {
-        Dispatcher::dispatchEvent('onBeforeRender', [$this]);
+        Dispatcher::dispatchEvent('onResponseRender', [$this]);
+        if (Digraph::inferMime($this) == 'text/html') {
+            Dispatcher::dispatchEvent('onResponseRender_html', [$this]);
+        }
         echo $this->content();
     }
 }

@@ -65,6 +65,7 @@ class Templates
     public static function wrapResponse(Response $response)
     {
         Context::response($response);
+        Dispatcher::dispatchEvent('onTemplateWrapResponse', [$response]);
         $fields = Context::fields();
         if (!$fields['page.name']) {
             // try to infer page name from response content

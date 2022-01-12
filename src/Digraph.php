@@ -44,20 +44,22 @@ class Digraph
         Context::response()->renderContent();
     }
 
-    protected static function inferMime(): string
+    public static function inferMime(Response $response = null): string
     {
-        if (Context::response()->mime()) {
-            return Context::response()->mime();
+        $response = $response ?? Context::response();
+        if ($response->mime()) {
+            return $response->mime();
         }
         return (new MimeTypes())->getMimeType(
-            strtolower(pathinfo(static::inferFilename(), PATHINFO_EXTENSION))
+            strtolower(pathinfo(static::inferFilename($response), PATHINFO_EXTENSION))
         ) ?? 'text/html';
     }
 
-    protected static function inferFilename(): string
+    public static function inferFilename(Response $response = null): string
     {
-        if (Context::response()->filename()) {
-            return Context::response()->filename();
+        $response = $response ?? Context::response();
+        if ($response->filename()) {
+            return $response->filename();
         }
         return Context::url()->file() ?? 'index.html';
     }
@@ -252,8 +254,12 @@ class Digraph
             }
         }
         ob_end_clean();
-        // return
+        // finalize response and return
         $response = Context::response();
+        Dispatcher::dispatchEvent('onResponseReady', [$response]);
+        if (static::inferMime($response) == 'text/html') {
+            Dispatcher::dispatchEvent('onResponseReady_html', [$response]);
+        }
         Context::end();
         URLs::endContext();
         return $response;
