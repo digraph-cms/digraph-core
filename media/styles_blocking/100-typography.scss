@@ -9,6 +9,7 @@ h4,
 h5,
 h6 {
     font-family: $font-header;
+
     &:first-child {
         margin-top: 0;
     }
@@ -93,10 +94,10 @@ hr,
 }
 
 hr {
-    display: block;
     border: 0;
+    display: block;
     height: $border-unit;
-    background: $color-accent;
+    background: $color-neutral;
 }
 
 .paginator {
@@ -104,6 +105,7 @@ hr {
 }
 
 li {
+
     ul,
     ol {
         margin: 0;
@@ -126,7 +128,7 @@ code {
     font-family: $font-code;
 }
 
-pre > code {
+pre>code {
     display: block;
     overflow: auto;
 }
@@ -138,7 +140,7 @@ table {
     margin: 0;
     border-collapse: collapse;
 
-    pre > code {
+    pre>code {
         max-width: 25vw;
     }
 }
@@ -153,6 +155,7 @@ tr:nth-child(odd) {
 }
 
 tr:nth-child(even) {
+
     th,
     td.header {
         background-color: rgba($color-accent, 0.8);

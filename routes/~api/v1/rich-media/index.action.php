@@ -20,11 +20,11 @@ $wrapper->addChild($tabs);
 // adding tab takes over completely as required
 if (($name = Context::arg('add')) && $class = Config::get("rich_media_types.$name")) {
     $tabs->addTab('add', 'Add ' . $class::className(), function () use ($class,$name) {
+        Router::include($name . '/add.php');
+        echo "<hr>";
         $cancel = Context::url();
         $cancel->unsetArg('add');
         printf('<a href="%s" data-target="%s" class="button button--warning">Cancel adding</a>', $cancel, Context::arg('frame'));
-        echo "<hr>";
-        Router::include($name . '/add.php');
     });
     $tabs->defaultTab('add');
     echo $wrapper;
@@ -34,6 +34,8 @@ if (($name = Context::arg('add')) && $class = Config::get("rich_media_types.$nam
 // editing tab takes over completely as required
 if (Context::arg('edit') && $media = RichMedia::get(Context::arg('edit'))) {
     $tabs->addTab('edit', 'Edit', function () use ($media) {
+        Router::include($media->class() . '/edit.php');
+        echo "<hr>";
         echo "<div class='button-menu'>";
         $cancel = Context::url();
         $cancel->unsetArg('edit');
@@ -43,8 +45,6 @@ if (Context::arg('edit') && $media = RichMedia::get(Context::arg('edit'))) {
         $cancel->unsetArg('edit');
         printf('<a href="%s" data-target="%s" class="button button--error">Delete media</a>', $cancel, Context::arg('frame'));
         echo "</div>";
-        echo "<hr>";
-        Router::include($media->class() . '/edit.php');
     });
     $tabs->defaultTab('edit');
     echo $wrapper;
