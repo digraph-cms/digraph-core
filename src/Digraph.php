@@ -26,7 +26,17 @@ Dispatcher::addSubscriber(CoreEventSubscriber::class);
 
 class Digraph
 {
+    /**
+     * The characters and pattern used to generate UUIDs can be modified in config
+     * under uuid.chars and uuid.pattern, respectively. They should all be URL-safe
+     * characters, slashes are probably ill-advised, and the total length of a
+     * UUID needs to be 36 characters or less. This means it can be configured to
+     * produce valid version 4 UUIDs, if desired. The default is shorter, uses
+     * more characters, and yields less entropy (but still more than enough for
+     * any website this system is capable of scaling up to).
+     */
     const UUIDCHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const UUIDPATTERN = '000000';
 
     /**
      * Generate a response from an automatically-loaded request and render it.
@@ -80,33 +90,29 @@ class Digraph
      */
     public static function uuid(string $seed = null): string
     {
-        if ($seed) {
-            $hash = md5($seed);
-            return implode(
-                '-',
-                [
-                    substr($hash, 0, 8),
-                    substr($hash, 8, 4),
-                    substr($hash, 12, 4),
-                    substr($hash, 16, 4),
-                    substr($hash, 20),
-                ]
-            );
+        if ($seed !== null) {
+            mt_srand(crc32($seed));
+            $fn = 'mt_rand';
         } else {
-            return implode(
-                '-',
-                array_map(
-                    function (int $chars): string {
-                        $string = '';
-                        for ($i = 0; $i < $chars; $i++) {
-                            $string .= substr(static::UUIDCHARS, random_int(0, strlen(static::UUIDCHARS) - 1), 1);
-                        }
-                        return $string;
-                    },
-                    [8, 4, 4, 4, 12]
-                )
-            );
+            $fn = 'random_int';
         }
+        return preg_replace_callback(
+            '/0/',
+            function () use ($fn) {
+                return substr(static::uuidChars(), $fn(0, strlen(static::uuidChars()) - 1), 1);
+            },
+            static::uuidPattern()
+        );
+    }
+
+    public static function uuidChars(): string
+    {
+        return Config::get('uuid.chars') ?? static::UUIDCHARS;
+    }
+
+    public static function uuidPattern(): string
+    {
+        return Config::get('uuid.pattern') ?? static::UUIDPATTERN;
     }
 
     /**
@@ -118,10 +124,8 @@ class Digraph
      */
     public static function validateUUID(string $uuid): bool
     {
-        return preg_match(
-            '/^[' . static::UUIDCHARS . ']{8}\-([' . static::UUIDCHARS . ']{4}\-){3}[' . static::UUIDCHARS . ']{12}$/',
-            $uuid
-        );
+            $pattern = '/^' . str_replace('0', '[' . static::uuidChars() . ']', preg_quote(static::uuidPattern(), '/')) . '$/';
+            return preg_match($pattern, $uuid);
     }
 
     /**
