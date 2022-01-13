@@ -26,7 +26,6 @@ $table = new ArrayTable(
             $value = $_COOKIE[$key];
         }
         $value = htmlspecialchars($value);
-        $value = preg_replace("/&quot;(secret)&quot;: &quot;(.+)&quot;/", '"$1": "<a class="spoiler">$2</a>"', $value);
         $button = new SingleButton(
             'Delete',
             function () use ($key) {
