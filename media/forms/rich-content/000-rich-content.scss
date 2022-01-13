@@ -6,7 +6,7 @@
     gap: $border-unit;
     border: $border-unit solid $color-neutral;
     overflow: hidden;
-    height: 75vh;
+    max-height: 75vh;
 }
 
 .rich-content-editor__content-editor {
@@ -14,11 +14,13 @@
     flex-grow: 1;
     flex-basis: 35em;
     overflow: auto;
+    background: $body-bg;
 
     .CodeMirror {
         height: auto;
         border: 0;
         font-size: inherit;
+        background: $body-bg;
     }
 
     > textarea {
