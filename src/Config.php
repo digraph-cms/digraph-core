@@ -2,7 +2,7 @@
 
 namespace DigraphCMS;
 
-use Flatrr\Config\Config as FlatrrConfig;
+use DigraphCMS\Config\ConfigArray;
 
 class Config
 {
@@ -11,7 +11,7 @@ class Config
 
     public static function _init()
     {
-        self::$config = new FlatrrConfig();
+        self::$config = new ConfigArray();
         self::$config->readDir(__DIR__ . '/../config');
         self::merge([
             'paths.system' => realpath(__DIR__ . '/..'),
