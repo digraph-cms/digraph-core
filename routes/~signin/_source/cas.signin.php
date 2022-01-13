@@ -3,7 +3,7 @@
 use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\HTML\Forms\Field;
-use DigraphCMS\HTML\Forms\FORM;
+use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTTP\RedirectException;
 
 // display individual provider
@@ -53,7 +53,7 @@ if (!@$config['mock_cas_user']) {
 } else {
     // USE MOCK CAS USER
     if (!Context::arg('_mockcasuser')) {
-        $form = new FORM('mock-cas-user');
+        $form = new FormWrapper('mock-cas-user');
         $username = new Field('Username');
         $username->setRequired(true);
         $form->addChild($username);

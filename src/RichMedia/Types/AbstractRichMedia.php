@@ -27,9 +27,6 @@ abstract class AbstractRichMedia implements ArrayAccess
 
     abstract public static function class(): string;
     abstract public static function className(): string;
-    abstract public function icon(): string;
-    abstract public function html_editor(): string;
-    abstract public function html_public(): string;
 
     public function __construct(array $data = [], array $metadata = [])
     {
@@ -40,7 +37,7 @@ abstract class AbstractRichMedia implements ArrayAccess
         $this->updated = @$metadata['updated'] ?? new DateTime();
         $this->updated_last = clone $this->updated;
         $this->updated_by = @$metadata['updated_by'];
-        $this->name = @$metadata['name'] ?? 'Unnamed block';
+        $this->name = @$metadata['name'] ?? 'Unnamed media';
         $this->rawSet(null, $data);
         $this->changed = false;
     }
@@ -81,7 +78,7 @@ abstract class AbstractRichMedia implements ArrayAccess
         return $this->name;
     }
 
-    public function page(): ?Page
+    public function media(): ?Page
     {
         return Pages::get($this->pageUUID);
     }

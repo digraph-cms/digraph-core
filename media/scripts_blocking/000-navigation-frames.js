@@ -52,19 +52,17 @@ document.addEventListener('click', (e) => {
 
 // submit handler for forms in navigation frames
 document.addEventListener('submit', (e) => {
-    if (e.target.tagName == 'FORM') {
-        var [parent, target] = Digraph.state.navigationParentAndTarget(e.target);
-        // parent and target found
-        if (parent && target && target != '_top') {
-            var data = new FormData(e.target);
-            // add clicked button value
-            if (e.submitter.name && e.submitter.value) {
-                data.append(e.submitter.name, e.submitter.value);
-            }
-            // submit
-            Digraph.state.post(data, e.target.getAttribute('action'), parent);
-            e.preventDefault();
+    var [parent, target] = Digraph.state.navigationParentAndTarget(e.target);
+    // parent and target found
+    if (parent && target && target != '_top') {
+        var data = new FormData(e.target);
+        // add clicked button value
+        if (e.submitter.name && e.submitter.value) {
+            data.append(e.submitter.name, e.submitter.value);
         }
+        // submit
+        Digraph.state.post(data, e.target.getAttribute('action'), parent);
+        e.preventDefault();
     }
 });
 

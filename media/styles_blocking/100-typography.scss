@@ -85,10 +85,18 @@ h3,
 h4,
 h5,
 h6,
+hr,
 .notification,
 .paginator,
 .data-table {
     margin: $grid-unit 0;
+}
+
+hr {
+    display: block;
+    border: 0;
+    height: $border-unit;
+    background: $color-accent;
 }
 
 .paginator {

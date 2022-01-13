@@ -54,16 +54,16 @@ class CheckboxList extends DIV implements InputInterface
     }
 
     /**
-     * @param FORM $form
+     * @param FormWrapper $form
      * @return $this
      */
-    public function setForm(FORM $form)
+    public function setForm(FormWrapper $form)
     {
         $this->form = $form;
         return $this;
     }
 
-    public function form(): ?FORM
+    public function form(): ?FormWrapper
     {
         return $this->form;
     }

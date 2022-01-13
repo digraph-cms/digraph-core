@@ -7,9 +7,8 @@ use DigraphCMS\DB\DB;
 use DigraphCMS\Digraph;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTML\Forms\Field;
-use DigraphCMS\HTML\Forms\FORM;
+use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTTP\RedirectException;
-use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\RichContent\RichContentField;
 use DigraphCMS\Session\Cookies;
 use DigraphCMS\UI\Notifications;
@@ -48,7 +47,7 @@ $name = (new Field('Page name'))
 $content = (new RichContentField('Body content'))
     ->setRequired(true);
 
-$form = (new FORM('add-' . Context::arg('uuid')))
+$form = (new FormWrapper('add-' . Context::arg('uuid')))
     ->addChild($name)
     ->addChild($content)
     ->addCallback(function () use ($name, $content) {

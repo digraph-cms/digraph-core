@@ -60,7 +60,8 @@ class Radio extends Tag implements InputInterface
                 'name' => $this->id(true),
                 'id' => $this->id(),
                 'value' => $this->key,
-                'type' => 'radio'
+                'type' => 'radio',
+                'form' => $this->form() ? $this->form()->formID() : null
             ]
         );
         if ($this->value(true)) {
@@ -106,7 +107,7 @@ class Radio extends Tag implements InputInterface
         $this->value = $value;
     }
 
-    public function form(): ?FORM
+    public function form(): ?FormWrapper
     {
         return $this->form;
     }
@@ -120,7 +121,7 @@ class Radio extends Tag implements InputInterface
         }
     }
 
-    public function setForm(FORM $form)
+    public function setForm(FormWrapper $form)
     {
         $this->form = $form;
     }
@@ -145,9 +146,9 @@ class Radio extends Tag implements InputInterface
 
     protected function submittedValue(): ?bool
     {
-        if ($this->submitted() && $this->form()->method() == FORM::METHOD_GET) {
+        if ($this->submitted() && $this->form()->method() == FormWrapper::METHOD_GET) {
             return Context::arg($this->id(true)) == $this->key;
-        } elseif ($this->submitted() && $this->form()->method() == FORM::METHOD_POST) {
+        } elseif ($this->submitted() && $this->form()->method() == FormWrapper::METHOD_POST) {
             return Context::post($this->id(true)) == $this->key;
         } else {
             return null;

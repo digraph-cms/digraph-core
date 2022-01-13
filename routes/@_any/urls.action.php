@@ -5,7 +5,7 @@ use DigraphCMS\Content\Slugs;
 use DigraphCMS\Context;
 use DigraphCMS\HTML\Forms\Field;
 use DigraphCMS\HTML\Forms\Fields\CheckboxField;
-use DigraphCMS\HTML\Forms\FORM;
+use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\UI\ButtonMenus\SingleButton;
 use DigraphCMS\UI\DataTables\ArrayTable;
@@ -50,7 +50,7 @@ $unique = (new CheckboxField('Force URL to be unique'))
     ->addTip('Leave unchecked to allow it to collide with existing URLs. Disambiguation pages are served at any colliding URLs automatically if necessary.');
 
 
-echo (new FORM(Context::pageUUID() . '_urls'))
+echo (new FormWrapper(Context::pageUUID() . '_urls'))
     ->addChild($pattern)
     ->addChild($unique)
     ->addCallback(function () use ($pattern, $unique) {

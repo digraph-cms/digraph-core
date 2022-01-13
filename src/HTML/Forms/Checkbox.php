@@ -57,7 +57,8 @@ class Checkbox extends Tag implements InputInterface
             parent::attributes(),
             [
                 'name' => $this->id(),
-                'type' => 'checkbox'
+                'type' => 'checkbox',
+                'form' => $this->form() ? $this->form()->formID() : null
             ]
         );
         if ($this->value(true)) {
@@ -103,7 +104,7 @@ class Checkbox extends Tag implements InputInterface
         $this->value = $value;
     }
 
-    public function form(): ?FORM
+    public function form(): ?FormWrapper
     {
         return $this->form;
     }
@@ -117,7 +118,7 @@ class Checkbox extends Tag implements InputInterface
         }
     }
 
-    public function setForm(FORM $form)
+    public function setForm(FormWrapper $form)
     {
         $this->form = $form;
     }
@@ -138,9 +139,9 @@ class Checkbox extends Tag implements InputInterface
 
     protected function submittedValue(): ?bool
     {
-        if ($this->submitted() && $this->form()->method() == FORM::METHOD_GET) {
+        if ($this->submitted() && $this->form()->method() == FormWrapper::METHOD_GET) {
             return Context::arg($this->id()) == 'on';
-        } elseif ($this->submitted() && $this->form()->method() == FORM::METHOD_POST) {
+        } elseif ($this->submitted() && $this->form()->method() == FormWrapper::METHOD_POST) {
             return Context::post($this->id()) == 'on';
         } else {
             return null;

@@ -83,7 +83,7 @@ class ButtonMenu
         ob_start();
         $this->execute();
         echo "<nav class='button-menu'><form method='POST' action='" . Context::url() . "' data-target='" . $this->target . "' id='" . $this->id() . "'>";
-        echo "<div class='buttons'>";
+        echo "<div class='button-menu__buttons'>";
         foreach ($this->buttons as $button) {
             echo $button;
         }

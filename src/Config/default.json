@@ -11,7 +11,8 @@
     "page": "\\DigraphCMS\\Content\\Page"
   },
   "rich_media_types": {
-    "file": "\\DigraphCMS\\RichMedia\\Types\\FileRichMedia"
+    "file": "\\DigraphCMS\\RichMedia\\Types\\FileRichMedia",
+    "multifile": "\\DigraphCMS\\RichMedia\\Types\\MultiFileRichMedia"
   },
   "codemirror": {
     "dependencies": {

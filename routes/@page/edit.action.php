@@ -4,7 +4,7 @@ use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTML\Forms\Field;
-use DigraphCMS\HTML\Forms\FORM;
+use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\RichContent\RichContentField;
 use DigraphCMS\Session\Cookies;
@@ -23,7 +23,7 @@ $content = (new RichContentField('Body content'))
     ->setDefault($page->richContent('body'))
     ->setRequired(true);
 
-$form = (new FORM('edit-' . $page->uuid()))
+$form = (new FormWrapper('edit-' . $page->uuid()))
     ->addChild($name)
     ->addChild($content);
 $form->button()

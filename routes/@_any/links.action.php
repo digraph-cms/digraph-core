@@ -6,7 +6,7 @@ use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
 use DigraphCMS\HTML\Forms\Field;
 use DigraphCMS\HTML\Forms\Fields\Autocomplete\PageField;
-use DigraphCMS\HTML\Forms\FORM;
+use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\UI\ButtonMenus\SingleButton;
 use DigraphCMS\UI\DataTables\ColumnHeader;
@@ -65,7 +65,7 @@ $fn = function () use ($tabs) {
     $type = (new Field('Edge type'))
         ->setDefault('normal')
         ->setRequired(true);
-    $form = new FORM(Context::pageUUID() . '_' . $mode);
+    $form = new FormWrapper(Context::pageUUID() . '_' . $mode);
     $form->addChild($target);
     $form->addChild($type);
     $form->addCallback(function () use ($mode, $target, $type) {

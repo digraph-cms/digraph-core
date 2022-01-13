@@ -59,7 +59,8 @@ textarea {
 }
 
 button,
-input[type="button"] {
+input[type="button"],
+.button {
     @include button;
 }
 

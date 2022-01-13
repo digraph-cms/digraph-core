@@ -57,7 +57,7 @@ class Theme
             'color-link-active' => '#C0392B',
             'color-info' => '#2980B9',
             'color-confirmation' => '#27AE60',
-            'color-warning' => '#D35400',
+            'color-warning' => '#FF6D00',
             'color-error' => '#C0392B',
             'color-brand-facebook' => '#1877F2',
             'color-brand-twitter' => '#1DA1F2',

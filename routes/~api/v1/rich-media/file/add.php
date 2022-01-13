@@ -6,30 +6,16 @@ use DigraphCMS\HTML\Forms\Fields\CheckboxListField;
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTML\Forms\UploadSingle;
 use DigraphCMS\HTTP\RedirectException;
-use DigraphCMS\RichMedia\RichMedia;
 use DigraphCMS\RichMedia\Types\FileRichMedia;
-use DigraphCMS\UI\Notifications;
 
-// check media exists, redirect if not
-$media = RichMedia::get(Context::arg('edit'));
-if (!$media) {
-    $url = Context::url();
-    $url->unsetArg('edit');
-    Notifications::printError('Invalid rich media ID');
-    throw new RedirectException($url);
-}
-
-
-$form = new FormWrapper('edit-rich-media-' . Context::arg('file') . '-' . Context::arg('frame'));
+$form = new FormWrapper('add-rich-media-' . Context::arg('file') . '-' . Context::arg('frame'));
 $form->form()->setData('target', Context::arg('frame'));
-$form->button()->setText('Save changes');
+$form->button()->setText('Add media');
 
-$file = (new Field('Upload new file', new UploadSingle()))
-    ->setRequired(false)
-    ->addTip('Use this field to replace the uploaded file');
+$file = (new Field('Upload file', new UploadSingle()))
+    ->setRequired(true);
 
 $name = (new Field('Media name'))
-    ->setDefault($media->name())
     ->addTip('Leave blank to use the uploaded filename')
     ->addTip('If entered, this field will be used as the download link text instead of the filename');
 
@@ -41,17 +27,16 @@ $meta = (new CheckboxListField(
         'md5' => 'MD5 hash'
     ]
 ))
-    ->setDefault($media['meta'] ?? []);
+    ->setDefault(['uploader', 'upload_date']);
 
 $form
     ->addChild($file)
     ->addChild($name)
     ->addChild($meta)
-    ->addCallback(function () use ($media, $file, $name, $meta) {
-        // update file
-        if ($file->value()) {
-            $media['file'] = $file->input()->filestore($media->uuid())->uuid();
-        }
+    ->addCallback(function () use ($file, $name, $meta) {
+        // set up new media and its file
+        $media = new FileRichMedia();
+        $media['file'] = $file->input()->filestore($media->uuid())->uuid();
         // set up name
         if ($name->value()) {
             $media->name($name->value());
@@ -61,9 +46,9 @@ $form
         // metadata
         $media['meta'] = $meta->value();
         // insert and redirect
-        $media->update();
+        $media->insert();
         $url = Context::url();
-        $url->unsetArg('edit');
+        $url->unsetArg('add');
         $url->arg('_tab_tab', 'page');
         throw new RedirectException($url);
     });

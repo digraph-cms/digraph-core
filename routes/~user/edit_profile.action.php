@@ -2,7 +2,7 @@
 
 use DigraphCMS\Context;
 use DigraphCMS\HTML\Forms\Field;
-use DigraphCMS\HTML\Forms\FORM;
+use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\Session\Session;
@@ -16,7 +16,7 @@ if (!$user) {
 
 echo "<h1>Edit profile: " . $user->name() . "</h1>";
 
-$form = new FORM();
+$form = new FormWrapper();
 $name = (new Field('Display name'))
     ->setDefault($user->name())
     ->setRequired(true);

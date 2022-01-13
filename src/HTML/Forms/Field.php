@@ -132,7 +132,7 @@ class Field extends DIV implements InputInterface
         return $this;
     }
 
-    public function form(): ?FORM
+    public function form(): ?FormWrapper
     {
         return $this->input()->form();
     }
@@ -142,7 +142,7 @@ class Field extends DIV implements InputInterface
         return $this->input()->submitted();
     }
 
-    public function setForm(FORM $form)
+    public function setForm(FormWrapper $form)
     {
         $this->input()->setForm($form);
     }

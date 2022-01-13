@@ -8,8 +8,8 @@ interface InputInterface
      * @param FORM $form
      * @return $this
      */
-    public function setForm(FORM $form);
-    public function form(): ?FORM;
+    public function setForm(FormWrapper $form);
+    public function form(): ?FormWrapper;
     public function submitted(): bool;
     public function id(): ?string;
 

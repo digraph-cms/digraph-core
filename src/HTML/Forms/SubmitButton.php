@@ -10,6 +10,7 @@ class SubmitButton extends Tag
     protected $void = true;
 
     protected $text = 'Submit';
+    protected $form;
 
     public function text(): string {
         return $this->text;
@@ -26,13 +27,25 @@ class SubmitButton extends Tag
         return $this;
     }
 
+    public function form(): ?FormWrapper
+    {
+        return $this->form;
+    }
+
+    public function setForm(FormWrapper $form)
+    {
+        $this->form = $form;
+        return $this;
+    }
+
     public function attributes(): array
     {
         return array_merge(
             parent::attributes(),
             [
                 'type' => 'submit',
-                'value' => $this->text()
+                'value' => $this->text(),
+                'form' => $this->form() ? $this->form()->formID() : null
             ]
         );
     }

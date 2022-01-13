@@ -5,16 +5,16 @@ namespace DigraphCMS\RichMedia\Types;
 use DigraphCMS\Content\Filestore;
 use DigraphCMS\Content\FilestoreFile;
 
-class FileRichMedia extends AbstractRichMedia
+class MultiFileRichMedia extends AbstractRichMedia
 {
     public static function class(): string
     {
-        return 'file';
+        return 'multifile';
     }
 
     public static function className(): string
     {
-        return 'File download (single)';
+        return 'File download bundle';
     }
 
     public function name(string $set = null): string

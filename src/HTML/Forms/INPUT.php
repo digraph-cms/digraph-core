@@ -57,7 +57,8 @@ class INPUT extends Tag implements InputInterface
             parent::attributes(),
             [
                 'value' => $this->value(true),
-                'name' => $this->id()
+                'name' => $this->id(),
+                'form' => $this->form() ? $this->form()->formID() : null
             ]
         );
     }
@@ -99,7 +100,7 @@ class INPUT extends Tag implements InputInterface
         $this->value = $value;
     }
 
-    public function form(): ?FORM
+    public function form(): ?FormWrapper
     {
         return $this->form;
     }
@@ -113,9 +114,10 @@ class INPUT extends Tag implements InputInterface
         }
     }
 
-    public function setForm(FORM $form)
+    public function setForm(FormWrapper $form)
     {
         $this->form = $form;
+        return $this;
     }
 
     public function id(): ?string
@@ -127,23 +129,23 @@ class INPUT extends Tag implements InputInterface
         }
     }
 
-    public function default(): ?string
+    public function default()
     {
         return $this->default;
     }
 
-    protected function submittedValue(): ?string
+    protected function submittedValue()
     {
-        if ($this->form()->method() == FORM::METHOD_GET) {
+        if ($this->form()->method() == FormWrapper::METHOD_GET) {
             return Context::arg($this->id());
-        } elseif ($this->form()->method() == FORM::METHOD_POST) {
+        } elseif ($this->form()->method() == FormWrapper::METHOD_POST) {
             return Context::post($this->id());
         } else {
             return null;
         }
     }
 
-    public function value($useDefault = false): ?string
+    public function value($useDefault = false)
     {
         if ($this->value) {
             return $this->value;

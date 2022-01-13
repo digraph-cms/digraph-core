@@ -9,7 +9,7 @@ class Token extends INPUT
     protected $CSRF = true;
     protected $uniqueCSRF = false;
 
-    public function __construct(FORM $form)
+    public function __construct(FormWrapper $form)
     {
         $this->setForm($form);
         $this->setID('token');

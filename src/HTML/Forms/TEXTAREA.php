@@ -57,7 +57,8 @@ class TEXTAREA extends Tag implements InputInterface
         return array_merge(
             parent::attributes(),
             [
-                'name' => $this->id()
+                'name' => $this->id(),
+                'form' => $this->form() ? $this->form()->formID() : null
             ]
         );
     }
@@ -99,7 +100,7 @@ class TEXTAREA extends Tag implements InputInterface
         $this->value = $value;
     }
 
-    public function form(): ?FORM
+    public function form(): ?FormWrapper
     {
         return $this->form;
     }
@@ -113,7 +114,7 @@ class TEXTAREA extends Tag implements InputInterface
         }
     }
 
-    public function setForm(FORM $form)
+    public function setForm(FormWrapper $form)
     {
         $this->form = $form;
     }
@@ -134,9 +135,9 @@ class TEXTAREA extends Tag implements InputInterface
 
     protected function submittedValue(): ?string
     {
-        if ($this->form()->method() == FORM::METHOD_GET) {
+        if ($this->form()->method() == FormWrapper::METHOD_GET) {
             return Context::arg($this->id());
-        } elseif ($this->form()->method() == FORM::METHOD_POST) {
+        } elseif ($this->form()->method() == FormWrapper::METHOD_POST) {
             return Context::post($this->id());
         } else {
             return null;

@@ -9,7 +9,7 @@ use DigraphCMS\Context;
 use DigraphCMS\Digraph;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTML\Forms\Fields\CheckboxField;
-use DigraphCMS\HTML\Forms\FORM;
+use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\URL\URL;
 use DigraphCMS\URL\URLs;
 use DigraphCMS\Users\Users;
@@ -38,7 +38,7 @@ class Cookies
         return $types;
     }
 
-    public static function form(array $types = null, bool $required = false, bool $skipAllowed = false): FORM
+    public static function form(array $types = null, bool $required = false, bool $skipAllowed = false): FormWrapper
     {
         $types = $types ?? static::listTypes();
         if ($skipAllowed) {
@@ -49,7 +49,7 @@ class Cookies
                 }
             );
         }
-        $form = new FORM('cookie-authorization');
+        $form = new FormWrapper('cookie-authorization');
         $form->button()->setText('Accept the selected cookies');
         $form->token()->setCSRF(false);
         $checkboxes = [];
