@@ -61,7 +61,7 @@ $form = (new FORM('add-' . Context::arg('uuid')))
             ]
         );
         $page->name($name->value());
-        $page['content'] = json_decode($content->value());
+        $page->richContent('body', $content->value());
         $page->insert();
         // create edge to parent
         Pages::insertLink(Context::page()->uuid(), $page->uuid());
@@ -71,7 +71,7 @@ $form = (new FORM('add-' . Context::arg('uuid')))
         // commit and redirect
         DB::commit();
         Notifications::flashConfirmation('Page created: ' . $page->url()->html());
-        throw new RefreshException();
+        throw new RedirectException($page->url_edit());
     });
 $form->button()->setText('Create page');
 

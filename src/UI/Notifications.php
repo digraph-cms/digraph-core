@@ -82,7 +82,7 @@ class Notifications
         static::$flashes[] = [$message, $type, $class];
     }
 
-    public static function onBeforeRender()
+    public static function onResponseRender()
     {
         if (static::$flashes) {
             $flashes = Cookies::get('system', 'flashnotifications') ?? [];

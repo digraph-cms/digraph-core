@@ -14,20 +14,20 @@ Cookies::required(['system', 'csrf']);
 
 $page = Context::page();
 
-$form = new FORM('edit-'.$page->uuid());
-$form->button()->setText('Save changes');
-
-$name = new Field('Page name');
-$name->setDefault($page->name())
+$name = (new Field('Page name'))
+    ->setDefault($page->name())
     ->setRequired(true)
     ->addTip('The name to be used when referring or linking to this page from elsewhere on the site.');
 
-$content = new RichContentField('Body content');
-$content->setDefault($page->richContent('body'))
+$content = (new RichContentField('Body content'))
+    ->setDefault($page->richContent('body'))
     ->setRequired(true);
 
-$form->addChild($name);
-$form->addChild($content);
+$form = (new FORM('edit-' . $page->uuid()))
+    ->addChild($name)
+    ->addChild($content);
+$form->button()
+    ->setText('Save changes');
 
 if ($form->ready()) {
     DB::beginTransaction();
