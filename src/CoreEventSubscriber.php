@@ -8,13 +8,27 @@ use DigraphCMS\DOM\CodeHighlighter;
 use DigraphCMS\DOM\DOM;
 use DigraphCMS\DOM\DOMEvent;
 use DigraphCMS\HTTP\Response;
+use DigraphCMS\RichContent\RichContent;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
 
+use function DigraphCMS\Content\require_file;
+
 class CoreEventSubscriber
 {
+
+    public static function onRenderRoute_php(string $file, string $route)
+    {
+        return require_file($file);
+    }
+
+    public static function onRenderRoute_md(string $file, string $route)
+    {
+        return (new RichContent(file_get_contents($file)))
+            ->html();
+    }
 
     public static function onTemplateWrapResponse(Response $response)
     {

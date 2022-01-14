@@ -23,7 +23,7 @@ class Router
     {
         $urls = [];
         foreach ($page->routeClasses() as $c) {
-            foreach (self::search("@$c/*.action.php") as $file) {
+            foreach (self::search("@$c/*.action.*") as $file) {
                 $action = basename($file);
                 $action = substr($action, 0, strlen($action) - 11);
                 if ($action == '@wildcard' || $action == 'index') {
@@ -55,11 +55,11 @@ class Router
     public static function staticActions(string $route): array
     {
         $urls = [];
-        foreach (self::search("~$route/*/index.action.php") as $file) {
+        foreach (self::search("~$route/*/index.action.*") as $file) {
             $action = basename(dirname($file));
             $urls[] = new URL("/~$route/$action/");
         }
-        foreach (self::search("~$route/*.action.php") as $file) {
+        foreach (self::search("~$route/*.action.*") as $file) {
             $action = basename($file);
             $action = substr($action, 0, strlen($action) - 11);
             if ($action == '@wildcard' || $action == 'index') {
@@ -161,14 +161,14 @@ class Router
         foreach (self::$sources as $source) {
             // try specific routes first
             foreach ($page->routeClasses() as $route) {
-                $path = "$source/@$route/$action.action.php";
+                $path = "$source/@$route/$action.action.*";
                 if (is_file($path)) {
                     return true;
                 }
             }
             // try wildcard routes last
             foreach ($page->routeClasses() as $route) {
-                $path = "$source/@$route/$action.action.php";
+                $path = "$source/@$route/$action.action.*";
                 if (is_file($path)) {
                     return true;
                 }
@@ -209,7 +209,7 @@ class Router
         $route = preg_replace('/^~/', '', $route);
         foreach (self::$sources as $source) {
             // check individual/specific route
-            $path = "$source/~$route/$action.action.php";
+            $path = "$source/~$route/$action.action.*";
             if (is_file($path)) {
                 return true;
             }
@@ -220,9 +220,14 @@ class Router
     protected static function tryRoute(string $route)
     {
         foreach (self::$sources as $source) {
-            $path = "$source/$route.action.php";
-            if (is_file($path)) {
-                return require_file($path);
+            $paths = glob("$source/$route.action.*");
+            foreach ($paths as $path) {
+                if (is_file($path)) {
+                    $extension = pathinfo($path, PATHINFO_EXTENSION);
+                    if ($content = Dispatcher::firstValue('onRenderRoute_' . $extension, [$path, $route])) {
+                        return $content;
+                    }
+                }
             }
         }
         return null;

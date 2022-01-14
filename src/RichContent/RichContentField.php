@@ -32,6 +32,12 @@ class RichContentField extends Field
         $this->insertEditor->addChild($this->insertEditorFrame);
         $this->wrapper->addChild($this->insertEditor);
         $this->addChild($this->wrapper);
+        // add basic tips
+        $this->addTip(sprintf(
+            'Content can be formatted with <a href="%s" target="_lightbox">Markdown</a> and <a href="%s" target="_lightbox">ShortCodes</a>',
+            new URL('/~markdown/'),
+            new URL('/~shortcodes/')
+        ));
         // load theme elements
         Theme::addBlockingPageCss('/forms/rich-content/*.css');
         Theme::addBlockingPageJs('/forms/rich-content/*.js');
