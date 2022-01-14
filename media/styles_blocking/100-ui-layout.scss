@@ -111,6 +111,7 @@ body > .action-menu,
     color: contrast-color($color-accent);
     padding: $grid-unit/2;
     font-family: $font-ui;
+    border-radius: $border-radius;
 
     a {
         color: inherit !important;
@@ -133,6 +134,44 @@ body > .action-menu,
     }
 
     &.notification--error {
+        background-color: $color-error;
+        color: contrast-color($color-error);
+    }
+}
+
+.card {
+    background-color: $color-neutral;
+    color: contrast-color($color-neutral);
+    padding: $grid-unit/2;
+    font-family: $font-ui;
+    margin: $grid-unit 0;
+
+    a {
+        color: inherit !important;
+        text-decoration: underline !important;
+    }
+
+    &.card--neutral {
+        background-color: $color-neutral;
+        color: contrast-color($color-neutral);
+    }
+
+    &.card--info {
+        background-color: $color-info;
+        color: contrast-color($color-info);
+    }
+
+    &.card--confirmation {
+        background-color: $color-confirmation;
+        color: contrast-color($color-confirmation);
+    }
+
+    &.card--warning {
+        background-color: $color-warning;
+        color: contrast-color($color-warning);
+    }
+
+    &.card--error {
         background-color: $color-error;
         color: contrast-color($color-error);
     }

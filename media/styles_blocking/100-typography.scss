@@ -123,6 +123,11 @@ li {
     }
 }
 
+code {
+    display: inline-block;
+    vertical-align: middle;
+}
+
 pre,
 code {
     font-family: $font-code;

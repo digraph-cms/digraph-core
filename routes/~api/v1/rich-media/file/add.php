@@ -22,12 +22,13 @@ $name = (new Field('Media name'))
 $meta = (new CheckboxListField(
     'Display metadata',
     [
+        'size' => 'Filesize',
         'uploader' => 'Uploading user',
         'upload_date' => 'Upload date',
         'md5' => 'MD5 hash'
     ]
 ))
-    ->setDefault(['uploader', 'upload_date']);
+    ->setDefault(['size', 'uploader', 'upload_date']);
 
 $form
     ->addChild($file)
