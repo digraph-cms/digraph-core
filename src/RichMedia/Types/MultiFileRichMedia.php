@@ -17,16 +17,16 @@ class MultiFileRichMedia extends AbstractRichMedia
         return 'File download bundle';
     }
 
-    public function name(string $set = null): string
+    /**
+     * Undocumented function
+     *
+     * @return FilestoreFile[]
+     */
+    public function files(): array
     {
-        if ($set) {
-            $this->name = $set;
-        }
-        return $this->name ?? $this->file()->filename();
-    }
-
-    public function file(): FilestoreFile
-    {
-        return Filestore::get($this['file']);
+        return array_map(
+            Filestore::class . '::get',
+            $this['files']
+        );
     }
 }

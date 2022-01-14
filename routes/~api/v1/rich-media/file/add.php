@@ -8,7 +8,7 @@ use DigraphCMS\HTML\Forms\UploadSingle;
 use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\RichMedia\Types\FileRichMedia;
 
-$form = new FormWrapper('add-rich-media-' . Context::arg('file') . '-' . Context::arg('frame'));
+$form = new FormWrapper('add-rich-media-' . Context::arg('add') . '-' . Context::arg('frame'));
 $form->form()->setData('target', Context::arg('frame'));
 $form->button()->setText('Add media');
 

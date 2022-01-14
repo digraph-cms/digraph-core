@@ -50,11 +50,19 @@ a[target="_blank"]:after {
     @include loading-overlay;
 }
 
+.button-menu,
+.button-menu__buttons {
+    display: flex;
+    width: 100%;
+}
+
 .button-menu {
     .button,
     button,
-    input[type="button"] {
+    input[type="button"],
+    input[type="submit"] {
         border-radius: 0;
+        white-space:normal;
         &:first-child {
             border-top-left-radius: $border-radius;
             border-bottom-left-radius: $border-radius;
