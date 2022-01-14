@@ -4,8 +4,11 @@ use DigraphCMS\Config;
 use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
 use DigraphCMS\HTML\DIV;
+use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\RichMedia\RichMedia;
 use DigraphCMS\RichMedia\Types\AbstractRichMedia;
+use DigraphCMS\UI\ButtonMenus\ButtonMenu;
+use DigraphCMS\UI\ButtonMenus\ButtonMenuButton;
 use DigraphCMS\UI\DataTables\ArrayTable;
 use DigraphCMS\UI\DataTables\QueryTable;
 use DigraphCMS\UI\TabInterface;
@@ -17,9 +20,41 @@ $wrapper = (new DIV())
 $tabs = new TabInterface('tab');
 $wrapper->addChild($tabs);
 
+// delete tab takes over completely as required
+if (Context::arg('delete') && $media = RichMedia::get(Context::arg('delete'))) {
+    $tabs->addTab('delete', 'Delete', function () use ($media) {
+        printf(
+            '<p>Are you sure you want to delete the rich media content "%s"? This action cannot be undone.</p>',
+            $media->name()
+        );
+        $url = Context::url();
+        $url->unsetArg('delete');
+        $menu = new ButtonMenu();
+        $menu->addButton(new ButtonMenuButton(
+            'Yes, permanently delete',
+            function () use ($url, $media) {
+                $media->delete();
+                throw new RedirectException($url);
+            },
+            ['button--error']
+        ));
+        $menu->addButton(new ButtonMenuButton(
+            'No, cancel',
+            function () use ($url, $media) {
+                throw new RedirectException($url);
+            },
+            ['button--info']
+        ));
+        echo $menu;
+    });
+    $tabs->defaultTab('delete');
+    echo $wrapper;
+    return;
+}
+
 // adding tab takes over completely as required
 if (($name = Context::arg('add')) && $class = Config::get("rich_media_types.$name")) {
-    $tabs->addTab('add', 'Add ' . $class::className(), function () use ($class,$name) {
+    $tabs->addTab('add', 'Add ' . $class::className(), function () use ($class, $name) {
         Router::include($name . '/add.php');
         echo "<hr>";
         $cancel = Context::url();
@@ -42,7 +77,6 @@ if (Context::arg('edit') && $media = RichMedia::get(Context::arg('edit'))) {
         printf('<a href="%s" data-target="%s" class="button button--warning">Cancel editing</a>', $cancel, Context::arg('frame'));
         $cancel = Context::url();
         $cancel->arg('delete', $cancel->arg('edit'));
-        $cancel->unsetArg('edit');
         printf('<a href="%s" data-target="%s" class="button button--error">Delete media</a>', $cancel, Context::arg('frame'));
         echo "</div>";
     });

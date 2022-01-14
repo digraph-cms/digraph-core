@@ -9,9 +9,14 @@ class UploadSingle extends INPUT
 {
     protected $filestore;
 
-    public function __construct()
+    public function attributes(): array
     {
-        $this->setAttribute('type', 'file');
+        return array_merge(
+            parent::attributes(),
+            [
+                'type' => 'file'
+            ]
+        );
     }
 
     public function setForm(FormWrapper $form)

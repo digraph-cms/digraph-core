@@ -8,17 +8,9 @@ use DigraphCMS\HTML\Forms\UploadSingle;
 use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\RichMedia\RichMedia;
 use DigraphCMS\RichMedia\Types\FileRichMedia;
-use DigraphCMS\UI\Notifications;
 
-// check media exists, redirect if not
+/** @var FileRichMedia */
 $media = RichMedia::get(Context::arg('edit'));
-if (!$media) {
-    $url = Context::url();
-    $url->unsetArg('edit');
-    Notifications::printError('Invalid rich media ID');
-    throw new RedirectException($url);
-}
-
 
 $form = new FormWrapper('edit-rich-media-' . Context::arg('file') . '-' . Context::arg('frame'));
 $form->form()->setData('target', Context::arg('frame'));
@@ -60,11 +52,10 @@ $form
         }
         // metadata
         $media['meta'] = $meta->value();
-        // insert and redirect
+        // insert and close editing interface
         $media->update();
         $url = Context::url();
         $url->unsetArg('edit');
-        $url->arg('_tab_tab', 'page');
         throw new RedirectException($url);
     });
 

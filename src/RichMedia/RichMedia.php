@@ -142,10 +142,9 @@ class RichMedia
         DB::query()
             ->delete('rich_media')
             ->where(
-                'uuid = ? AND updated = ?',
+                'uuid = ?',
                 [
-                    $media->uuid(),
-                    $media->updatedLast()->format("Y-m-d H:i:s")
+                    $media->uuid()
                 ]
             )
             ->execute();
