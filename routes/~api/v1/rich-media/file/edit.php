@@ -9,7 +9,6 @@ use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\RichMedia\RichMedia;
 use DigraphCMS\RichMedia\Types\FileRichMedia;
 use DigraphCMS\UI\Format;
-use DigraphCMS\UI\Notifications;
 
 // check media exists, redirect if not
 /** @var FileRichMedia */

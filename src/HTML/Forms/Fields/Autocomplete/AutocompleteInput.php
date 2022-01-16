@@ -5,7 +5,6 @@ namespace DigraphCMS\HTML\Forms\Fields\Autocomplete;
 use DigraphCMS\HTML\Forms\INPUT;
 use DigraphCMS\Session\Cookies;
 use DigraphCMS\UI\Format;
-use DigraphCMS\UI\Theme;
 use DigraphCMS\URL\URL;
 
 class AutocompleteInput extends INPUT
@@ -16,8 +15,6 @@ class AutocompleteInput extends INPUT
     {
         parent::__construct($id);
         $this->setEndpoint($endpoint);
-        Theme::addBlockingPageJs('/forms/autocomplete/*.js');
-        Theme::addBlockingPageCss('/forms/autocomplete/*.css');
         Cookies::csrfToken('autocomplete');
     }
 

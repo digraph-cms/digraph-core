@@ -1,0 +1,53 @@
+.ordering-input__option-list {
+    border: $border-unit solid $color-neutral;
+    border-radius: $border-radius;
+    background: $body-bg;
+    color: $body-fg;
+    font-family: $font-ui;
+    overflow: hidden;
+    cursor: grab;
+
+    .ordering-input__option {
+        &:nth-child(odd) {
+            background: rgba($color-neutral, 0.2);
+        }
+
+        &.ordering-input__option--dragging,
+        &:hover {
+            background: $color-info;
+            color: contrast-color($color-info);
+        }
+    }
+}
+
+.ordering-input__option {
+    display: flex;
+}
+
+.ordering-input__option__label {
+    padding: $grid-unit/2;
+    flex-grow: 1;
+}
+
+.ordering-input__option__delete {
+    padding: $grid-unit/2;
+    cursor: pointer;
+
+    &:before {
+        @include material-icon;
+        content: "delete";
+    }
+}
+
+.ordering-input__option--deleted {
+    background: $color-error !important;
+    color: contrast-color($color-error) !important;
+
+    &:nth-child(even) {
+        background: rgba($color-error, 0.9) !important;
+    }
+
+    .ordering-input__option__delete:before {
+        content: "restore_from_trash";
+    }
+}
