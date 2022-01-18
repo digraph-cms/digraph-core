@@ -6,7 +6,7 @@ Digraph.RichContent = {
     insertEvent: function (withSelection, withoutSelection) {
         const e = new Event('rich-content-insert', { bubbles: true });
         e.insertWithSelection = withSelection;
-        e.insertWithoutSelection = withoutSelection;
+        e.insertWithoutSelection = withoutSelection ?? withSelection;
         return e;
     },
     insertTagEvent: function (tag, parameters = {}) {
@@ -22,7 +22,7 @@ Digraph.RichContent = {
         }
         return Digraph.RichContent.insertEvent(
             '{0}]{content}[/{1}]'.format(t, tag),
-            '{0} /]'.format(t)
+            '{0}/]'.format(t)
         )
     }
 };

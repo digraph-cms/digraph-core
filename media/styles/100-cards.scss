@@ -1,0 +1,119 @@
+.card {
+    box-sizing: border-box;
+    background: $color-neutral;
+    color: contrast-color($color-neutral);
+    padding: $grid-unit/2;
+    font-family: $font-ui;
+    margin: $grid-unit 0;
+
+    &.card--light {
+        background: mix($body-bg, $color-neutral, 90%);
+    }
+
+    a {
+        color: inherit;
+        text-decoration: underline;
+    }
+
+    &.card--neutral {
+        background: $color-neutral;
+        color: contrast-color($color-neutral);
+    }
+
+    &.card--info {
+        background: $color-info;
+        color: contrast-color($color-info);
+    }
+
+    &.card--confirmation {
+        background: $color-confirmation;
+        color: contrast-color($color-confirmation);
+    }
+
+    &.card--warning {
+        background: $color-warning;
+        color: contrast-color($color-warning);
+    }
+
+    &.card--error {
+        background: $color-error;
+        color: contrast-color($color-error);
+    }
+}
+
+.card__title {
+    font-weight: bold;
+    font-size: larger;
+    margin-bottom: $grid-unit/2;
+}
+
+.file-card {
+    background: $color-interactive;
+    color: contrast-color($color-interactive);
+    display: grid;
+    grid-template-columns: 3.5em auto;
+    grid-template-rows: auto auto;
+    padding: $grid-unit;
+
+    &:before {
+        @include icofont;
+        display: block;
+        content: "\eb12";
+        grid-row-end: span 2;
+        font-size: 3em;
+    }
+}
+
+.file-card__meta {
+    font-size: smaller;
+    font-style: italic;
+}
+
+.file-card--extension-xlsx,
+.file-card--extension-csv,
+.file-card--extension-tsv,
+.file-card--extension-xls,
+.file-card--extension-ods,
+.file-card--extension-sxc,
+.file-card--extension-dif,
+.file-card--extension-gnumeric,
+.file-card--extension-dex,
+.file-card--extension-123,
+.file-card--extension-numbers-tef,
+.file-card--extension-sxc,
+.file-card--extension-xltm,
+.file-card--extension-xlsb,
+.file-card--extension-ots,
+.file-card--extension-sdc,
+.file-card--extension-xlshtml,
+.file-card--extension-xltx,
+.file-card--extension-gsheet,
+.file-card--extension-qpw,
+.file-card--extension-wks,
+.file-card--extension-gnm,
+.file-card--extension-ogw,
+.file-card--extension-ess,
+.file-card--extension-xlhtml {
+    background: #49a94d;
+    color: white;
+    &:before {
+        content: "\eb27";
+    }
+}
+
+.file-card--extension-avi,
+.file-card--extension-mp4 {
+    background: #3e93ac;
+    &:before {
+        content: "\eb0a";
+    }
+}
+
+.file-card--extension-bmp,
+.file-card--extension-dib,
+.file-card--extension-wbmp {
+    background: #649fab;
+    &:before {
+        content: "\eb0b";
+    }
+}

@@ -1,11 +1,28 @@
 .toolbar {
-    background: $body-bg;
+    background: mix($body-bg, $color-neutral, 90%);
     color: $body-fg;
     display: flex;
     align-items: center;
+    font-family: $font-ui;
+
+    *:first-child {
+        border-left: 0;
+    }
+    *:last-child {
+        border-right: 0;
+    }
 
     &:after {
         font-size: inherit !important;
+    }
+
+    .autocomplete-selected-card,
+    input,
+    pre,
+    button,
+    .toolbar__button {
+        margin: 0;
+        padding: $grid-unit/2;
     }
 
     .autocomplete-selected-card,
@@ -14,7 +31,6 @@
         border-top: 0;
         border-bottom: 0;
         font-size: inherit;
-        padding: $grid-unit/2;
     }
 
     input {
@@ -32,12 +48,15 @@
 }
 
 .toolbar__button {
-    font-size: small;
-    padding: $grid-unit/2;
+    font-size: inherit;
     line-height: 1;
     position: relative;
     text-decoration: none;
     color: inherit;
+
+    > .icon {
+        font-size: inherit;
+    }
 
     &:hover,
     &:active,
@@ -46,7 +65,8 @@
     }
 
     &[href],
-    &[data-command] {
+    &[data-command],
+    &[onclick] {
         cursor: pointer;
         color: $color-interactive;
 

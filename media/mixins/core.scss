@@ -1,9 +1,7 @@
 @function contrast-color($color) {
     @if (lightness($color) > 50) {
         @return #000;
-    }
-
-    @else {
+    } @else {
         @return #fff;
     }
 }
@@ -59,6 +57,27 @@
     &.button--error {
         background: $color-error;
         color: contrast-color($color-error) !important;
+    }
+
+    &.button--inverted {
+        background: mix($body-bg, $color-neutral, 90%);
+        color: $color-interactive !important;
+
+        &.button--confirmation {
+            color: $color-confirmation !important;
+        }
+
+        &.button--info {
+            color: $color-info !important;
+        }
+
+        &.button--warning {
+            color: $color-warning !important;
+        }
+
+        &.button--error {
+            color: $color-error !important;
+        }
     }
 }
 
@@ -120,7 +139,6 @@
     }
 
     &.loading {
-
         &:before,
         &:after {
             visibility: visible;

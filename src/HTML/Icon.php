@@ -19,7 +19,10 @@ class Icon extends Tag
         'redo' => ['string' => '&#xedfe;'],
         'link' => ['string' => '&#xef71;'],
         'close' => ['string' => '&#xec4f;'],
-        'web' => ['string' => '&#xf028;']
+        'web' => ['string' => '&#xf028;'],
+        'copy' => ['string' => '&#xec51;'],
+        'block-left' => ['string' => '&#xea60;'],
+        'options' => ['string' => '&#xefb0;']
     ];
 
     public function __construct(string $name, string $alt = null)

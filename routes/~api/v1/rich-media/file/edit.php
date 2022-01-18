@@ -70,6 +70,7 @@ $form
             $media->name($media->file()->filename());
         }
         // metadata
+        unset($media['meta']);
         $media['meta'] = $meta->value();
         // insert and close editing interface
         $media->update();

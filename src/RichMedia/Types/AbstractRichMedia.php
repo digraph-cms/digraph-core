@@ -4,11 +4,17 @@ namespace DigraphCMS\RichMedia\Types;
 
 use ArrayAccess;
 use DateTime;
+use DigraphCMS\Content\Filestore;
+use DigraphCMS\Content\FilestoreFile;
 use DigraphCMS\Content\Page;
 use DigraphCMS\Content\Pages;
 use DigraphCMS\Context;
 use DigraphCMS\Digraph;
+use DigraphCMS\HTML\DIV;
+use DigraphCMS\HTML\Text;
 use DigraphCMS\RichMedia\RichMedia;
+use DigraphCMS\UI\Toolbars\ToolbarLink;
+use DigraphCMS\UI\Toolbars\ToolbarSpacer;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
@@ -42,32 +48,58 @@ abstract class AbstractRichMedia implements ArrayAccess
         $this->changed = false;
     }
 
-    public function array(): array
+    public function file(): FilestoreFile
     {
-        return [
-            'uuid' => $this->uuid(),
-            'editorID' => Context::arg('editor'),
-            'content' => $this->html_editor()
-        ];
+        return Filestore::get($this['file']);
     }
 
-    public function thumbnail(): string
+    public function insertInterface(): DIV
     {
-        $out = '<div class="block-thumbnail block-thumbnail-' . $this->class() . '">';
-        $out .= '<div class="block-thumbnail-icon">' . $this->icon() . '</div>';
-        $out .= '<div class="block-thumbnail-name">' . htmlspecialchars($this->name()) . '</div>';
-        $out .= '</div>';
-        return $out;
+        $id = Digraph::uuid();
+        $toolbar = (new DIV())
+            ->addClass('toolbar');
+        $toolbar->addChild(
+            (new ToolbarLink('insert embed code', 'block-left', null, null))
+                ->setAttribute('onclick', sprintf(
+                    'this.dispatchEvent(Digraph.RichContent.insertEvent(document.getElementById("%s").innerHTML))',
+                    $id
+                ))
+        );
+        $toolbar->addChild(new ToolbarSpacer);
+        $toolbar->addChild(new Text(sprintf('<pre id="%s">%s</pre>', $id, $this->defaultTag())));
+        $toolbar->addChild(
+            (new ToolbarLink('copy embed code', 'copy', null, null))
+                ->setAttribute('onclick', sprintf(
+                    'navigator.clipboard.writeText(document.getElementById("%s").innerHTML)',
+                    $id
+                ))
+        );
+        if ($this->provideInsertOptions()) {
+            $toolbar->addChild(
+                (new ToolbarLink('advanced embed options', 'options', null, new URL('&options=' . $this->uuid())))
+                    ->setData('target', Context::arg('frame'))
+            );
+        }
+        return $toolbar;
     }
 
-    public static function url_add(): URL
+    public function provideInsertOptions(): bool
     {
-        return new URL('/~blocks/add/' . static::class() . '.php');
+        return false;
     }
 
-    public function url_edit(): URL
+    public function defaultTag(): string
     {
-        return new URL('/~blocks/edit/' . static::class() . '.php?block=' . $this->uuid());
+        return sprintf(
+            '[%s="%s"/]',
+            $this->tagName(),
+            $this->uuid()
+        );
+    }
+
+    public function tagName(): string
+    {
+        return $this->class();
     }
 
     public function name(string $set = null): string
