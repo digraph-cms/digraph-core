@@ -4,6 +4,7 @@ namespace DigraphCMS;
 
 use DigraphCMS\Content\Filestore;
 use DigraphCMS\Content\Page;
+use DigraphCMS\Content\Pages;
 use DigraphCMS\Content\Slugs;
 use DigraphCMS\DOM\CodeHighlighter;
 use DigraphCMS\DOM\DOM;
@@ -11,6 +12,7 @@ use DigraphCMS\DOM\DOMEvent;
 use DigraphCMS\HTTP\Response;
 use DigraphCMS\RichContent\RichContent;
 use DigraphCMS\RichMedia\Types\AbstractRichMedia;
+use DigraphCMS\UI\Format;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\User;
@@ -20,6 +22,18 @@ use function DigraphCMS\Content\require_file;
 
 class CoreEventSubscriber
 {
+    public static function onRichMediaAutocompleteCard(AbstractRichMedia $media, string $query)
+    {
+        $page = $media->pageUUID() ? Pages::get($media->pageUUID()) : null;
+        return [
+            'html' => '<div class="title">' . $media->name() . '</div><div class="meta">' . ($page ? $page->name() : '') . '</div><div class="meta">' . Format::datetime($media->updated()) . '</div>',
+            'value' => $media->uuid(),
+            'class' => 'rich-media',
+            'extra' => [
+                'tag' => $media->defaultTag()
+            ]
+        ];
+    }
     /**
      * When Rich Media is deleted, delete all Filestore files associated with it
      *

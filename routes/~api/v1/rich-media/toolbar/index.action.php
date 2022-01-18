@@ -23,8 +23,9 @@ if ($action && !preg_match('/[^a-z0-9\-\_]/', $action)) {
 }
 
 $buttons = [
-    new ToolbarLink('Page link', 'link', null, new URL('&action=link')),
-    new ToolbarLink('Web link', 'web', null, new URL('&action=weblink')),
+    new ToolbarLink('Link to a page', 'page', null, new URL('&action=link')),
+    new ToolbarLink('Link to a URL', 'link', null, new URL('&action=weblink')),
+    new ToolbarLink('Quick media insert', 'media', null, new URL('&action=media')),
     new ToolbarSpacer(),
     (new ToolbarLink('Undo', 'undo', 'undo'))
         ->setShortcut('Ctrl-Z'),

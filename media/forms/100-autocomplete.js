@@ -114,6 +114,9 @@ class DigraphAutocomplete {
     selectElement(el) {
         var event = new Event('autocomplete-select', { bubbles: true });
         event.autocompleteValue = el.dataset.value;
+        if (el.dataset.extra) {
+            event.autocompleteExtra = JSON.parse(el.dataset.extra);
+        }
         el.dispatchEvent(event);
         this.value.value = el.dataset.value;
         this.selectedCard.innerHTML = el.outerHTML;
@@ -296,6 +299,7 @@ class DigraphAutocomplete {
                 data.forEach((result) => {
                     const li = document.createElement('div');
                     li.tabIndex = 0;
+                    li.dataset.extra = JSON.stringify(result.extra);
                     li.innerHTML = '<div class="result-html"><div class="after-icon">' + result.html + "</div></div>";
                     li.dataset.value = result.value;
                     if (result.class) {

@@ -47,6 +47,11 @@
         }
     }
 
+    .meta {
+        font-size: smaller;
+        font-style: italic;
+    }
+
     &[data-autocomplete-state="error"] {
 
         &:before,

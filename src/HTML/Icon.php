@@ -22,7 +22,9 @@ class Icon extends Tag
         'web' => ['string' => '&#xf028;'],
         'copy' => ['string' => '&#xec51;'],
         'block-left' => ['string' => '&#xea60;'],
-        'options' => ['string' => '&#xefb0;']
+        'options' => ['string' => '&#xefb0;'],
+        'media' => ['string' => '&#xec9e;'],
+        'page' => ['string' => '&#xefb2;']
     ];
 
     public function __construct(string $name, string $alt = null)
