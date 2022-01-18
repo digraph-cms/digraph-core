@@ -1,6 +1,6 @@
 <?php
 
-namespace DigraphCMS\RichContent;
+namespace DigraphCMS\UI\Toolbars;
 
 use DigraphCMS\HTML\DIV;
 use DigraphCMS\HTML\Icon;
@@ -8,7 +8,7 @@ use DigraphCMS\HTML\Tag;
 use DigraphCMS\HTML\Text;
 use DigraphCMS\URL\URL;
 
-class ToolbarButton extends Tag
+class ToolbarLink extends Tag
 {
     protected $tag = 'a';
     protected $text, $icon, $command, $url, $shortcut, $tooltip, $iconElement;
@@ -97,7 +97,7 @@ class ToolbarButton extends Tag
         return array_merge(
             parent::classes(),
             [
-                'rich-content-editor__toolbar__button'
+                'toolbar__button'
             ]
         );
     }
@@ -114,11 +114,11 @@ class ToolbarButton extends Tag
     {
         if (!$this->toolTip) {
             $this->toolTip = (new DIV())
-                ->addClass('rich-content-editor__toolbar__button__tooltip')
+                ->addClass('toolbar__button__tooltip')
                 ->addChild(new Text($this->text));
             if ($this->shortcut()) {
                 $this->toolTip()
-                    ->addChild("<div class='rich-content-editor__toolbar__button__tooltip__shortcut'>" . $this->shortcut() . "</div>");
+                    ->addChild("<div class='toolbar__button__tooltip__shortcut'>" . $this->shortcut() . "</div>");
             }
         }
         return $this->toolTip;

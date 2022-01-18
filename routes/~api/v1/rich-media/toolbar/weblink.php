@@ -2,19 +2,23 @@
 
 use DigraphCMS\Digraph;
 use DigraphCMS\HTML\DIV;
-use DigraphCMS\HTML\Forms\Fields\Autocomplete\AutocompleteInput;
+use DigraphCMS\HTML\Forms\FORM;
+use DigraphCMS\HTML\Forms\FormWrapper;
+use DigraphCMS\HTML\Forms\INPUT;
 use DigraphCMS\UI\Toolbars\ToolbarLink;
-use DigraphCMS\URL\URL;
 
-echo new ToolbarLink('', 'link', null, null);
-$wrapper = (new DIV())->setID(Digraph::uuid())->setStyle('width', '100%');
-$input = (new AutocompleteInput(Digraph::uuid(), new URL('/~api/v1/autocomplete/page.php')))
+echo new ToolbarLink('', 'web', null, null);
+$wrapper = (new FormWrapper())->setID(Digraph::uuid())
+    ->setStyle('width', '100%')
+    ->setStyle('display', 'contents');
+$wrapper->button()->setText('Insert');
+$input = (new INPUT(Digraph::uuid()))
     ->addClass('navigation-frame__autofocus');
 $wrapper->addChild($input);
 echo $wrapper;
 
 ?>
-<script>
+<!-- <script>
     (() => {
         var ac = document.getElementById('<?php echo $wrapper->id(); ?>');
         // select value and reset toolbar
@@ -27,4 +31,4 @@ echo $wrapper;
             }));
         });
     })();
-</script>
+</script> -->

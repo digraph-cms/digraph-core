@@ -68,7 +68,7 @@ class DigraphRichContentEditor {
     }
     toolbarClick(e) {
         var target = e.target;
-        while (!target.classList.contains('rich-content-editor__toolbar__button')) {
+        while (!target.classList.contains('toolbar__button')) {
             target = target.parentNode;
             if (target == this.toolbar) return;
         }

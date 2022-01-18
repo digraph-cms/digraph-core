@@ -1,6 +1,6 @@
 <?php
 
-namespace DigraphCMS\RichContent;
+namespace DigraphCMS\UI\Toolbars;
 
 use DigraphCMS\HTML\Tag;
 
@@ -13,7 +13,7 @@ class ToolbarSeparator extends Tag
         return array_merge(
             parent::classes(),
             [
-                'rich-content-editor__toolbar__separator'
+                'toolbar__separator'
             ]
         );
     }

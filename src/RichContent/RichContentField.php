@@ -36,6 +36,7 @@ class RichContentField extends Field
         // add toolbar
         $this->toolbarFrame = (new DIV())
             ->addClass('rich-content-editor__toolbar')
+            ->addClass('toolbar')
             ->addClass('navigation-frame')
             ->addClass('navigation-frame--stateless')
             ->setData('target', '_frame');

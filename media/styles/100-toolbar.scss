@@ -1,0 +1,123 @@
+.toolbar {
+    background: $body-bg;
+    color: $body-fg;
+    display: flex;
+    align-items: center;
+
+    &:after {
+        font-size: inherit !important;
+    }
+
+    .autocomplete-selected-card,
+    input {
+        border-radius: 0;
+        border-top: 0;
+        border-bottom: 0;
+        font-size: inherit;
+        padding: $grid-unit/2;
+    }
+
+    input {
+        line-height: 1;
+    }
+
+    .autocomplete-results {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        background: $body-bg;
+    }
+}
+
+.toolbar__button {
+    font-size: small;
+    padding: $grid-unit/2;
+    line-height: 1;
+    position: relative;
+    text-decoration: none;
+    color: inherit;
+
+    &:hover,
+    &:active,
+    &:focus {
+        color: inherit;
+    }
+
+    &[href],
+    &[data-command] {
+        cursor: pointer;
+        color: $color-interactive;
+
+        &:visited,
+        &:active {
+            color: $color-interactive;
+        }
+
+        &:hover,
+        &:focus {
+            background: $color-interactive;
+            color: contrast-color($color-interactive);
+
+            .toolbar__button__tooltip {
+                display: block;
+                z-index: 1000;
+            }
+        }
+
+        &:last-child {
+            .toolbar__button__tooltip {
+                left: auto;
+                right: 0;
+            }
+        }
+
+        &:first-child {
+            .toolbar__button__tooltip {
+                right: auto;
+                left: 0;
+            }
+        }
+    }
+
+    &.toolbar__button--warning {
+        color: $color-warning !important;
+
+        &:hover,
+        &:focus {
+            background: $color-warning !important;
+            color: contrast-color($color-warning) !important;
+        }
+    }
+}
+
+.toolbar__separator {
+    width: $border-unit;
+    background-color: $color-neutral;
+}
+
+.toolbar__spacer {
+    flex-grow: 1;
+}
+
+.toolbar__button__tooltip {
+    box-sizing: border-box;
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 200%;
+    font-family: $font-ui;
+    font-size: xx-small;
+    background: $color-neutral;
+    color: contrast-color($color-neutral);
+    padding: $grid-unit/4;
+    box-shadow: 0 0 $grid-unit rgba(0, 0, 0, 0.2);
+}
+
+.toolbar__button__tooltip__shortcut {
+    display: block;
+    opacity: 0.65;
+    white-space: nowrap;
+}
