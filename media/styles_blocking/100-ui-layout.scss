@@ -1,18 +1,18 @@
 body {
     margin: 0;
 
-    > .action-menu {
+    >.action-menu {
         padding: 0;
     }
 
-    > #content {
+    >#content {
         > :first-child {
             margin-top: 0;
         }
     }
 }
 
-body > .action-menu,
+body>.action-menu,
 #header,
 #navbar,
 #breadcrumb,
@@ -97,11 +97,11 @@ body > .action-menu,
 #notifications {
     padding: 0 $grid-unit;
 
-    > h1 {
+    >h1 {
         display: none;
     }
 
-    > .notification {
+    >.notification {
         margin: $grid-unit/2 0;
     }
 }
@@ -116,6 +116,13 @@ body > .action-menu,
     a {
         color: inherit;
         text-decoration: underline;
+
+        &:hover,
+        &:active,
+        &:focus,
+        &:visited {
+            color: inherit;
+        }
     }
 
     &.notification--notice {

@@ -13,6 +13,7 @@ use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
 use Flatrr\FlatArrayTrait;
+use Throwable;
 
 class Page implements ArrayAccess
 {
@@ -247,7 +248,12 @@ class Page implements ArrayAccess
         if ($slug == 'home' && $action != 'index.html' && $action != '') {
             $slug = $this->uuid();
         }
-        $url = new URL("/$slug/$action");
+        try {
+            $url = new URL("/$slug/$action");
+        } catch (Throwable $th) {
+            $uuid = $this->uuid();
+            $url = new URL("/$uuid/$action");
+        }
         $url->query($args);
         return $url;
     }

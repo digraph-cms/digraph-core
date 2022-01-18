@@ -88,6 +88,10 @@ class Slugs
             },
             $pattern
         );
+        // ensure slug does have a value
+        if (!$slug) {
+            $slug = $page->uuid();
+        }
         // prepend parent slug if necessary
         if (substr($slug, 0, 1) != '/' && $page->parent()) {
             $slug = $page->parent()->route() . '/' . $slug;

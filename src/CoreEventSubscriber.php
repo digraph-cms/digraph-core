@@ -4,10 +4,13 @@ namespace DigraphCMS;
 
 use DigraphCMS\Content\Filestore;
 use DigraphCMS\Content\Page;
+use DigraphCMS\Content\Pages;
 use DigraphCMS\Content\Slugs;
 use DigraphCMS\DOM\CodeHighlighter;
 use DigraphCMS\DOM\DOM;
 use DigraphCMS\DOM\DOMEvent;
+use DigraphCMS\HTML\A;
+use DigraphCMS\HTML\Text;
 use DigraphCMS\HTTP\Response;
 use DigraphCMS\RichContent\RichContent;
 use DigraphCMS\RichMedia\Types\AbstractRichMedia;
@@ -15,11 +18,29 @@ use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
+use Thunder\Shortcode\Shortcode\ShortcodeInterface;
 
 use function DigraphCMS\Content\require_file;
 
 class CoreEventSubscriber
 {
+    /**
+     * Handle page link shortcodes
+     *
+     * @param ShortcodeInterface $s
+     * @return string|null
+     */
+    public static function onShortCode_link(ShortcodeInterface $s): ?string
+    {
+        if ($page = Pages::get($s->getBbCode())) {
+            return (new A())
+                ->setAttribute('href', $page->url())
+                ->setAttribute('title', $page->name())
+                ->addChild(new Text($s->getContent() ? $s->getContent() : $page->name()));
+        } else {
+            return null;
+        }
+    }
 
     /**
      * When Rich Media is deleted, delete all Filestore files associated with it
