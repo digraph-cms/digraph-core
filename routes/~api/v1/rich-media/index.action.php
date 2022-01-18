@@ -42,8 +42,7 @@ if (Context::arg('delete') && $media = RichMedia::get(Context::arg('delete'))) {
             'No, cancel',
             function () use ($url, $media) {
                 throw new RedirectException($url);
-            },
-            ['button--info']
+            }
         ));
         echo $menu;
     });
@@ -55,11 +54,12 @@ if (Context::arg('delete') && $media = RichMedia::get(Context::arg('delete'))) {
 // adding tab takes over completely as required
 if (($name = Context::arg('add')) && $class = Config::get("rich_media_types.$name")) {
     $tabs->addTab('add', 'Add ' . $class::className(), function () use ($class, $name) {
-        Router::include($name . '/add.php');
-        echo "<hr>";
+        echo "<div class='card button-menu'>";
         $cancel = Context::url();
         $cancel->unsetArg('add');
         printf('<a href="%s" data-target="%s" class="button button--warning">Cancel adding</a>', $cancel, Context::arg('frame'));
+        echo "</div>";
+        Router::include($name . '/add.php');
     });
     $tabs->defaultTab('add');
     echo $wrapper;
@@ -69,9 +69,7 @@ if (($name = Context::arg('add')) && $class = Config::get("rich_media_types.$nam
 // editing tab takes over completely as required
 if (Context::arg('edit') && $media = RichMedia::get(Context::arg('edit'))) {
     $tabs->addTab('edit', 'Edit', function () use ($media) {
-        Router::include($media->class() . '/edit.php');
-        echo "<hr>";
-        echo "<div class='button-menu'>";
+        echo "<div class='card button-menu'>";
         $cancel = Context::url();
         $cancel->unsetArg('edit');
         printf('<a href="%s" data-target="%s" class="button button--warning">Cancel editing</a>', $cancel, Context::arg('frame'));
@@ -79,6 +77,7 @@ if (Context::arg('edit') && $media = RichMedia::get(Context::arg('edit'))) {
         $cancel->arg('delete', $cancel->arg('edit'));
         printf('<a href="%s" data-target="%s" class="button button--error">Delete media</a>', $cancel, Context::arg('frame'));
         echo "</div>";
+        Router::include($media->class() . '/edit.php');
     });
     $tabs->defaultTab('edit');
     echo $wrapper;
@@ -86,9 +85,9 @@ if (Context::arg('edit') && $media = RichMedia::get(Context::arg('edit'))) {
 }
 
 // page media list
-if (RichMedia::select(Context::arg('page'))->count()) {
+if (Context::arg('uuid') && RichMedia::select(Context::arg('uuid'))->count()) {
     $tabs->addTab('page', 'Page media', function () {
-        $query = RichMedia::select(Context::arg('page'))
+        $query = RichMedia::select(Context::arg('uuid'))
             ->order('updated DESC');
         $table = new QueryTable(
             $query,
@@ -97,7 +96,7 @@ if (RichMedia::select(Context::arg('page'))->count()) {
                 $edit->arg('edit', $media->uuid());
                 return [
                     $media->name(),
-                    sprintf('<a href="%s" data-target="%s" class="button button--info">edit</a>', $edit, Context::arg('frame'))
+                    sprintf('<a href="%s" data-target="%s" class="button">edit</a>', $edit, Context::arg('frame'))
                 ];
             },
             []

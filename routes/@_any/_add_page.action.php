@@ -45,6 +45,7 @@ $name = (new Field('Page name'))
     ->addTip('The name to be used when referring or linking to this page from elsewhere on the site.');
 
 $content = (new RichContentField('Body content'))
+    ->setPageUuid(Context::arg('uuid'))
     ->setRequired(true);
 
 $form = (new FormWrapper('add-' . Context::arg('uuid')))

@@ -114,8 +114,8 @@ body > .action-menu,
     border-radius: $border-radius;
 
     a {
-        color: inherit !important;
-        text-decoration: underline !important;
+        color: inherit;
+        text-decoration: underline;
     }
 
     &.notification--notice {
@@ -140,6 +140,7 @@ body > .action-menu,
 }
 
 .card {
+    box-sizing: border-box;
     background-color: $color-neutral;
     color: contrast-color($color-neutral);
     padding: $grid-unit/2;
@@ -147,8 +148,8 @@ body > .action-menu,
     margin: $grid-unit 0;
 
     a {
-        color: inherit !important;
-        text-decoration: underline !important;
+        color: inherit;
+        text-decoration: underline;
     }
 
     &.card--neutral {

@@ -36,7 +36,7 @@ $form
     ->addChild($meta)
     ->addCallback(function () use ($file, $name, $meta) {
         // set up new media and its file
-        $media = new FileRichMedia();
+        $media = new FileRichMedia([], ['page_uuid' => Context::arg('uuid')]);
         $media['file'] = $file->input()->filestore($media->uuid())->uuid();
         // set up name
         if ($name->value()) {

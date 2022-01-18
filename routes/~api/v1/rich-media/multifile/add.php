@@ -23,7 +23,7 @@ $form
     ->addChild($name)
     ->addChild($files)
     ->addCallback(function () use ($files, $name) {
-        $media = new MultiFileRichMedia();
+        $media = new MultiFileRichMedia([], ['page_uuid' => Context::arg('uuid')]);
         // set name
         $media->name($name->value());
         // set files

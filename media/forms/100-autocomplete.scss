@@ -42,7 +42,7 @@
         }
 
         &:focus {
-            background: rgba($color-info, 0.25);
+            background: rgba($color-interactive, 0.25);
             outline: 0;
         }
     }
@@ -96,7 +96,7 @@
 
         &:after {
             font-size: 2rem;
-            color: $color-info;
+            color: $color-interactive;
             content: "\ea54";
             animation: none;
         }

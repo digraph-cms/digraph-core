@@ -136,9 +136,9 @@ class INPUT extends Tag implements InputInterface
 
     protected function submittedValue()
     {
-        if ($this->form()->method() == FormWrapper::METHOD_GET) {
+        if ($this->form() && $this->form()->method() == FormWrapper::METHOD_GET) {
             return Context::arg($this->id());
-        } elseif ($this->form()->method() == FormWrapper::METHOD_POST) {
+        } elseif ($this->form() && $this->form()->method() == FormWrapper::METHOD_POST) {
             return Context::post($this->id());
         } else {
             return null;

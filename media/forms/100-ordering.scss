@@ -14,8 +14,8 @@
 
         &.ordering-input__option--dragging,
         &:hover {
-            background: $color-info;
-            color: contrast-color($color-info);
+            background: $color-interactive;
+            color: contrast-color($color-interactive);
         }
     }
 }

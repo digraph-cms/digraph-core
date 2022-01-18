@@ -9,7 +9,7 @@
 }
 
 @mixin focused {
-    outline: $border-unit solid $color-info;
+    outline: $border-unit solid $color-interactive;
     outline-offset: -$border-unit;
     position: relative;
 }
@@ -17,8 +17,8 @@
 @mixin button {
     display: block;
     box-sizing: border-box;
-    background: $color-highlight;
-    color: contrast-color($color-highlight) !important;
+    background: $color-interactive;
+    color: contrast-color($color-interactive) !important;
     display: inline-block;
     padding: $grid-unit/2;
     margin: 0;
@@ -28,7 +28,7 @@
     border-radius: $border-radius;
     font-weight: bold;
     font-family: $font-ui;
-    text-decoration: none;
+    text-decoration: none !important;
     width: auto;
 
     &:hover {
@@ -111,7 +111,7 @@
     &:after {
         @include icofont;
         z-index: 101;
-        color: $color-info;
+        color: $color-interactive;
         font-size: 3em;
         content: "\eff7";
         top: 50%;
@@ -132,6 +132,7 @@
             animation-duration: 2000ms;
             animation-iteration-count: infinite;
             animation-timing-function: linear;
+            z-index: 1000;
         }
     }
 

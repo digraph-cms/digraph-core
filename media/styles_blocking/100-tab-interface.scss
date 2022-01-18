@@ -27,8 +27,8 @@
             &:hover,
             &:focus,
             &:focus-within {
-                background-color: $color-accent;
-                color: contrast-color($color-accent);
+                background-color: $color-interactive;
+                color: contrast-color($color-interactive);
             }
 
             &.current-tab {
@@ -67,6 +67,19 @@
 
         :last-child {
             margin-bottom: 0;
+        }
+
+        .card {
+            margin-left: -$grid-unit/2;
+            margin-right: -$grid-unit/2;
+
+            &:first-child {
+                margin-top: -$grid-unit/2;
+            }
+
+            &:last-child {
+                margin-bottom: -$grid-unit/2;
+            }
         }
     }
 }

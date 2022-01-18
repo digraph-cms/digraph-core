@@ -112,6 +112,9 @@ class DigraphAutocomplete {
         }
     }
     selectElement(el) {
+        var event = new Event('autocomplete-select', { bubbles: true });
+        event.autocompleteValue = el.dataset.value;
+        el.dispatchEvent(event);
         this.value.value = el.dataset.value;
         this.selectedCard.innerHTML = el.outerHTML;
         this.selected.style.display = null;
@@ -129,7 +132,7 @@ class DigraphAutocomplete {
             return;
         }
         // down arrow
-        else if (e.keyCode == 40) {
+        else if (e.key == 'ArrowDown' || e.key == 'Down') {
             var next;
             if (next = this.focusedResult_next()) {
                 next.focus();
@@ -141,7 +144,7 @@ class DigraphAutocomplete {
             e.preventDefault();
         }
         // up arrow
-        else if (e.keyCode == 38) {
+        else if (e.key == 'ArrowUp' || e.key == 'Up') {
             var previous;
             if (previous = this.focusedResult_previous()) {
                 previous.focus();
@@ -161,7 +164,7 @@ class DigraphAutocomplete {
         //     }
         // }
         // enter key
-        else if (e.keyCode == 13) {
+        else if (e.key == 'Enter') {
             var result;
             // input is currently focused
             if (this.input == document.activeElement) {

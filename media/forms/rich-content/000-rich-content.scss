@@ -13,8 +13,20 @@
     flex-basis: 3;
     flex-grow: 1;
     flex-basis: 35em;
-    overflow: auto;
     background: $body-bg;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+
+    .rich-content-editor__toolbar {
+        border-bottom: $border-unit solid $color-neutral;
+    }
+
+    .rich-content-editor__content-editor__editor {
+        overflow: auto;
+        flex-grow: 1;
+        min-height: 10rem;
+    }
 
     .CodeMirror {
         height: auto;
@@ -23,7 +35,7 @@
         background: $body-bg;
     }
 
-    > textarea {
+    >textarea {
         border: 0;
         display: block;
         margin: 0;
@@ -31,17 +43,142 @@
     }
 }
 
+.rich-content-editor__toolbar {
+    background: $body-bg;
+    color: $body-fg;
+    display: flex;
+    align-items: center;
+
+    &:after {
+        font-size: inherit !important;
+    }
+
+    .autocomplete-selected-card,
+    input {
+        border-radius: 0;
+        border-top: 0;
+        border-bottom: 0;
+        font-size: inherit;
+        padding: $grid-unit/2;
+    }
+
+    input {
+        line-height: 1;
+    }
+
+    .autocomplete-results {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        background: $body-bg;
+    }
+}
+
+.rich-content-editor__toolbar__button {
+    font-size: small;
+    padding: $grid-unit/2;
+    line-height: 1;
+    position: relative;
+    text-decoration: none;
+    color: inherit;
+
+    &:hover,
+    &:active,
+    &:focus {
+        color: inherit;
+    }
+
+    &[href],
+    &[data-command] {
+        cursor: pointer;
+        color: $color-interactive;
+
+        &:visited,
+        &:active {
+            color: $color-interactive;
+        }
+
+        &:hover,
+        &:focus {
+            background: $color-interactive;
+            color: contrast-color($color-interactive);
+
+            .rich-content-editor__toolbar__button__tooltip {
+                display: block;
+                z-index: 1000;
+            }
+        }
+
+        &:last-child {
+            .rich-content-editor__toolbar__button__tooltip {
+                left: auto;
+                right: 0;
+            }
+        }
+
+        &:first-child {
+            .rich-content-editor__toolbar__button__tooltip {
+                right: auto;
+                left: 0;
+            }
+        }
+    }
+
+    &.rich-content-editor__toolbar__button--warning {
+        color: $color-warning !important;
+
+        &:hover,
+        &:focus {
+            background: $color-warning !important;
+            color: contrast-color($color-warning) !important;
+        }
+    }
+}
+
+.rich-content-editor__toolbar__separator {
+    width: $border-unit;
+    background-color: $color-neutral;
+}
+
+.rich-content-editor__toolbar__spacer {
+    flex-grow: 1;
+}
+
+.rich-content-editor__toolbar__button__tooltip {
+    box-sizing: border-box;
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 200%;
+    font-family: $font-ui;
+    font-size: xx-small;
+    background: $color-neutral;
+    color: contrast-color($color-neutral);
+    padding: $grid-unit/4;
+    box-shadow: 0 0 $grid-unit rgba(0, 0, 0, 0.2);
+}
+
+.rich-content-editor__toolbar__button__tooltip__shortcut {
+    display: block;
+    opacity: 0.65;
+    white-space: nowrap;
+}
+
 .rich-content-editor__media-editor {
-    flex-basis: 25em;
+    flex-basis: 30em;
     overflow: auto;
 }
 
 .rich-content-editor__media-editor-frame {
     height: 100%;
 
-    > .tab-interface {
+    >.tab-interface {
         height: 100%;
         margin: 0;
+
         .tab-interface-content {
             overflow: auto;
             border-top-right-radius: $border-radius;

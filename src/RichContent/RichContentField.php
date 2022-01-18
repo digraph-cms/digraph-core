@@ -10,11 +10,12 @@ use DigraphCMS\URL\URL;
 
 class RichContentField extends Field
 {
-    protected $wrapper, $contentEditor, $insertEditor, $insertEditorFrame;
+    protected $pageUuid, $wrapper, $contentEditor, $mediaEditor, $mediaEditorFrame, $toolbarFrame;
 
-    public function __construct(string $label)
+    public function __construct(string $label, string $pageUuid = null)
     {
         parent::__construct($label, new CodeMirrorInput());
+        $this->setPageUuid($pageUuid);
         // set up markup to scaffold the JS editor features
         $this->addClass('rich-content-editor');
         $this->wrapper = (new DIV())
@@ -22,16 +23,28 @@ class RichContentField extends Field
         $this->contentEditor = (new DIV())
             ->addClass('rich-content-editor__content-editor');
         $this->wrapper->addChild($this->contentEditor);
-        $this->insertEditor = (new DIV())
+        $this->mediaEditor = (new DIV())
             ->addClass('rich-content-editor__media-editor');
-        $this->insertEditorFrame = (new DIV())
+        $this->mediaEditorFrame = (new DIV())
             ->addClass('rich-content-editor__media-editor-frame')
             ->addClass('navigation-frame')
             ->addClass('navigation-frame--stateless')
             ->setData('target', '_frame');
-        $this->insertEditor->addChild($this->insertEditorFrame);
-        $this->wrapper->addChild($this->insertEditor);
+        $this->mediaEditor->addChild($this->mediaEditorFrame);
+        $this->wrapper->addChild($this->mediaEditor);
         $this->addChild($this->wrapper);
+        // add toolbar
+        $this->toolbarFrame = (new DIV())
+            ->addClass('rich-content-editor__toolbar')
+            ->addClass('navigation-frame')
+            ->addClass('navigation-frame--stateless')
+            ->setData('target', '_frame');
+        $this->contentEditor->addChild($this->toolbarFrame);
+        // add editor wrapper
+        $this->contentEditor->addChild(
+            (new DIV)
+                ->addClass('rich-content-editor__content-editor__editor')
+        );
         // add basic tips
         $this->addTip(sprintf(
             'Content can be formatted with <a href="%s" target="_lightbox">Markdown</a> and <a href="%s" target="_lightbox">ShortCodes</a>',
@@ -41,6 +54,23 @@ class RichContentField extends Field
         // load theme elements
         Theme::addBlockingPageCss('/forms/rich-content/*.css');
         Theme::addBlockingPageJs('/forms/rich-content/*.js');
+    }
+
+    public function pageUuid(): ?string
+    {
+        return $this->pageUuid;
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param string|null $pageUuid
+     * @return $this
+     */
+    public function setPageUuid(?string $pageUuid)
+    {
+        $this->pageUuid = $pageUuid;
+        return $this;
     }
 
     public function setDefault($default)
@@ -65,9 +95,13 @@ class RichContentField extends Field
     public function toString(): string
     {
         $id = md5($this->id());
-        $this->insertEditorFrame
-            ->setID($id)
-            ->setData('initial-source', new URL('/~api/v1/rich-media/?frame=' . $id));
+        $uuid = $this->pageUuid();
+        $this->mediaEditorFrame
+            ->setID("rm_$id")
+            ->setData('initial-source', new URL("/~api/v1/rich-media/?frame=rm_$id&uuid=$uuid"));
+        $this->toolbarFrame
+            ->setID("tb_$id")
+            ->setData('initial-source', new URL("/~api/v1/rich-media/toolbar/?frame=tb_$id&uuid=$uuid"));
         // return normally
         return parent::toString();
     }

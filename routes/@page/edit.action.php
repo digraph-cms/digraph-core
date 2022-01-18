@@ -20,6 +20,7 @@ $name = (new Field('Page name'))
     ->addTip('The name to be used when referring or linking to this page from elsewhere on the site.');
 
 $content = (new RichContentField('Body content'))
+    ->setPageUuid($page->uuid())
     ->setDefault($page->richContent('body'))
     ->setRequired(true);
 

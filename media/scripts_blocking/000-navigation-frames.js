@@ -17,8 +17,12 @@ document.addEventListener('DigraphDOMReady', (e) => {
             }
             // load initial source
             if (div.dataset.initialSource) {
-                Digraph.state.get(div.dataset.initialSource, div);
-                delete div.dataset.initialSource;
+                div.resetFrame = function (e) {
+                    Digraph.state.get(div.dataset.initialSource, div);
+                    e.bubbles = false;
+                }
+                div.addEventListener('navigation-frame-reset', (e) => { div.resetFrame(e); });
+                div.dispatchEvent(new Event('navigation-frame-reset'));
             }
         }
     }
@@ -26,27 +30,32 @@ document.addEventListener('DigraphDOMReady', (e) => {
 
 // click handler for links in navigation frames
 document.addEventListener('click', (e) => {
-    if (e.target.tagName == 'A') {
-        // determine if we should even use this link
-        if (!e.target.getAttribute('href')) {
+    var event_target = e.target;
+    while (event_target.tagName != 'A') {
+        event_target = event_target.parentNode;
+        if (event_target == document.body) {
             return;
         }
-        if (e.target.getAttribute('href').substring(0, 1) == '#') {
-            return;
+    }
+    // determine if we should even use this link
+    if (!event_target.getAttribute('href')) {
+        return;
+    }
+    if (event_target.getAttribute('href').substring(0, 1) == '#') {
+        return;
+    }
+    var parent, target;
+    [parent, target] = Digraph.state.navigationParentAndTarget(event_target);
+    // parent and target found
+    if (parent && event_target && target != '_top') {
+        if (parent.classList.contains('navigation-frame--stateless')) {
+            // stateless navigation frames don't update the address bar or browser history
+            Digraph.state.get(event_target.getAttribute('href'), parent);
+        } else {
+            // otherwise call the function that pushes to address bar and browser history
+            Digraph.state.getAndPush(event_target.getAttribute('href'), parent);
         }
-        var parent, target;
-        [parent, target] = Digraph.state.navigationParentAndTarget(e.target);
-        // parent and target found
-        if (parent && target && target != '_top') {
-            if (parent.classList.contains('navigation-frame--stateless')) {
-                // stateless navigation frames don't update the address bar or browser history
-                Digraph.state.get(e.target.getAttribute('href'), parent);
-            } else {
-                // otherwise call the function that pushes to address bar and browser history
-                Digraph.state.getAndPush(e.target.getAttribute('href'), parent);
-            }
-            e.preventDefault();
-        }
+        e.preventDefault();
     }
 });
 
@@ -129,6 +138,7 @@ Digraph.state = {
                         document.getElementsByTagName('title')[0].innerHTML = doc.getElementsByTagName('title')[0].innerHTML;
                     }
                 }
+                // dispatch dom ready event
                 frame.dispatchEvent(
                     new Event('DigraphDOMReady', {
                         bubbles: true,
@@ -136,6 +146,20 @@ Digraph.state = {
                     })
                 );
                 frame.classList.remove('loading');
+                // execute scripts
+                Array.from(frame.getElementsByTagName('script')).forEach(
+                    oldElement => {
+                        const newScript = document.createElement('script');
+                        Array.from(oldElement.attributes).forEach(
+                            attr => newScript.setAttribute(attr.name, attr.value)
+                        );
+                        newScript.appendChild(document.createTextNode(oldElement.innerHTML));
+                        oldElement.parentNode.replaceChild(newScript, oldElement);
+                    }
+                );
+                // focus autofocus element
+                var af = frame.getElementsByClassName('navigation-frame__autofocus')[0];
+                if (af) af.focus();
             } else {
                 if (document.getElementById('notifications')) {
                     var error = document.createElement('div');

@@ -12,6 +12,29 @@ abstract class Tag extends Node
     protected $data = [];
     protected $children = [];
     protected $void = false;
+    protected $style = [];
+
+    public function style(): array
+    {
+        return $this->style;
+    }
+
+    /**
+     * Set an inline CSS attribute
+     *
+     * @param string $key
+     * @param string|null $value
+     * @return $this
+     */
+    public function setStyle(string $key, ?string $value)
+    {
+        if ($value === null) {
+            unset($this->style[$key]);
+        } else {
+            $this->style[$key] = $value;
+        }
+        return $this;
+    }
 
     public function tag(): string
     {
@@ -176,6 +199,13 @@ abstract class Tag extends Node
         // set ID attribute
         if ($id = $this->id()) {
             $attributes['id'] = $id;
+        }
+        // set inline styles
+        if ($style = $this->style()) {
+            array_walk($style,function(&$v,$k) {
+                $v = "$k:$v";
+            });
+            $attributes['style'] = implode(';',$style);
         }
         return $attributes;
     }
