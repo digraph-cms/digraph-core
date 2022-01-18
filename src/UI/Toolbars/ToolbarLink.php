@@ -11,7 +11,7 @@ use DigraphCMS\URL\URL;
 class ToolbarLink extends Tag
 {
     protected $tag = 'a';
-    protected $text, $icon, $command, $url, $shortcut, $tooltip, $iconElement;
+    protected $text, $icon, $command, $url, $shortcut, $toolTip, $iconElement;
 
     public function __construct(string $text, string $icon, string $command = null, URL $url = null)
     {

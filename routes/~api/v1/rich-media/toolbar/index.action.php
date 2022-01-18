@@ -31,9 +31,9 @@ $buttons = [
     (new ToolbarLink('Redo', 'redo', 'redo'))
         ->setShortcut('Ctrl-Shift-Z')
 ];
-Dispatcher::dispatchEvent('onRichMediaToolbar', [&$buttons, $frame, $page]);
+Dispatcher::dispatchEvent('onRichMediaToolbar', [&$buttons]);
 if ($page) {
-    Dispatcher::dispatchEvent('onRichMediaToolbar_' . $page->class(), [&$buttons, $frame, $page]);
+    Dispatcher::dispatchEvent('onRichMediaToolbar_' . $page->class(), [&$buttons]);
 }
 foreach ($buttons as $button) {
     echo $button;
