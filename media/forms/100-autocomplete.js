@@ -245,6 +245,7 @@ class DigraphAutocomplete {
         this.results.style.display = null;
         this.wrapper.classList.add('ui-focused');
         this.wrapper.classList.add('focused');
+        if (this.input.classList.contains('autocomplete-input--autopopulate')) this.updateResults();
     }
     /**
      * @param {Event} e 
@@ -282,7 +283,7 @@ class DigraphAutocomplete {
             this.setState('normal');
         }
         // if input is empty enter awaiting input state
-        if (this.input.value.trim() == '') {
+        if (this.input.value.trim() == '' && !this.input.classList.contains('autocomplete-input--autopopulate')) {
             this.setState('awaiting-input');
             this.results.innerHTML = '';
             return;

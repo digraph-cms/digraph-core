@@ -1,12 +1,14 @@
 @import "/mixins/core.scss";
 
 .action-menu {
+    @include uncolored-links;
+
     background: $color-neutral;
     font-size: smaller;
     display: flex;
     justify-content: space-between;
     flex-direction: row;
-    align-items: flex-end;
+    align-items: center;
     color: contrast-color($color-neutral);
     font-family: $font-ui;
 
@@ -15,8 +17,9 @@
     }
 
     h2 {
-        font-size: 1em;
+        font-size: inherit;
         margin: 0;
+        padding: 0;
     }
 
     nav {
@@ -42,14 +45,9 @@
 
     a {
         display: inline-block;
+        vertical-align: baseline;
         white-space: nowrap;
-        color: inherit;
-        padding: 0.5em 0.25em;
-        color: inherit !important;
-
-        &[href] {
-            padding: 0.5em;
-        }
+        padding: 0.5em;
 
         &[href]:hover,
         &.current-page {
@@ -73,21 +71,22 @@
         display: flex;
         flex-wrap: wrap;
         margin: 0;
+        align-items: center;
     }
 
     li.dropdown {
         position: relative;
 
-        >a {
+        > a {
             cursor: pointer;
 
             &:before {
                 @include icofont;
-                content: '\ea7d';
+                content: "\ea7d";
             }
         }
 
-        >ul {
+        > ul {
             display: none;
             position: absolute;
             min-width: 100%;
@@ -104,13 +103,13 @@
 
         &:focus-within,
         &.open {
-            >ul {
+            > ul {
                 display: block;
             }
 
-            >a {
+            > a {
                 &:before {
-                    content: '\ea6f';
+                    content: "\ea6f";
                 }
             }
         }
@@ -122,7 +121,6 @@
 }
 
 .action-menu__user-actions--guest {
-
     h2,
     nav,
     ul {
@@ -131,7 +129,7 @@
 
     h2 {
         &:before {
-            content: "Welcome, "
+            content: "Welcome, ";
         }
     }
 }
@@ -139,7 +137,6 @@
 .action-menu__user-actions--signedin {
     display: flex;
     flex-direction: row;
-    align-items: flex-end;
     flex-wrap: wrap;
     justify-content: flex-end;
 
@@ -153,7 +150,7 @@
         }
 
         &:before {
-            content: "Welcome, "
+            content: "Welcome, ";
         }
     }
 

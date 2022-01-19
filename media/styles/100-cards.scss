@@ -1,4 +1,6 @@
 .card {
+    @include uncolored-links;
+
     box-sizing: border-box;
     background: $color-neutral;
     color: contrast-color($color-neutral);
@@ -8,11 +10,6 @@
 
     &.card--light {
         background: mix($body-bg, $color-neutral, 90%);
-    }
-
-    a {
-        color: inherit;
-        text-decoration: underline;
     }
 
     &.card--neutral {

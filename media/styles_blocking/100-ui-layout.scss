@@ -1,18 +1,18 @@
 body {
     margin: 0;
 
-    >.action-menu {
+    > .action-menu {
         padding: 0;
     }
 
-    >#content {
+    > #content {
         > :first-child {
             margin-top: 0;
         }
     }
 }
 
-body>.action-menu,
+body > .action-menu,
 #header,
 #navbar,
 #breadcrumb,
@@ -21,17 +21,14 @@ body>.action-menu,
 }
 
 #header {
+    @include uncolored-links;
+
     padding: $grid-unit/2;
     margin-bottom: $grid-unit * 3;
 
     h1 {
         font-size: xx-large;
         margin: 0;
-    }
-
-    a {
-        color: inherit;
-        text-decoration: none;
     }
 }
 
@@ -40,6 +37,8 @@ body>.action-menu,
 }
 
 .breadcrumb {
+    @include uncolored-links;
+
     font-size: smaller;
     padding: $grid-unit/2;
     background-color: rgba($color-neutral, 0.2);
@@ -68,7 +67,6 @@ body>.action-menu,
         a {
             display: inline-block;
             padding: 0.25em;
-            color: inherit;
         }
 
         &:after {
@@ -83,47 +81,28 @@ body>.action-menu,
             }
         }
     }
-
-    a {
-        color: inherit;
-        text-decoration: none;
-
-        &:hover {
-            text-decoration: underline;
-        }
-    }
 }
 
 #notifications {
     padding: 0 $grid-unit;
 
-    >h1 {
+    > h1 {
         display: none;
     }
 
-    >.notification {
+    > .notification {
         margin: $grid-unit/2 0;
     }
 }
 
 .notification {
+    @include uncolored-links;
+
     background-color: $color-accent;
     color: contrast-color($color-accent);
     padding: $grid-unit/2;
     font-family: $font-ui;
     border-radius: $border-radius;
-
-    a {
-        color: inherit;
-        text-decoration: underline;
-
-        &:hover,
-        &:active,
-        &:focus,
-        &:visited {
-            color: inherit;
-        }
-    }
 
     &.notification--notice {
         background-color: $color-info;

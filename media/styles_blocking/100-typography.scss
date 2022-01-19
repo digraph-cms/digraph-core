@@ -112,17 +112,6 @@ li {
     }
 }
 
-.spoiler {
-    color: $body-fg;
-    background: $body-fg;
-
-    &:hover,
-    &.revealed {
-        color: inherit;
-        background: transparent;
-    }
-}
-
 code {
     display: inline-block;
     vertical-align: middle;

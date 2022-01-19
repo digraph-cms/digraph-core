@@ -163,3 +163,18 @@
         }
     }
 }
+
+@mixin uncolored-links {
+    a,
+    a:link,
+    a:active,
+    a:hover,
+    a:focus,
+    a:visited {
+        color: inherit;
+        text-decoration: none;
+    }
+    a:hover {
+        text-decoration: underline;
+    }
+}

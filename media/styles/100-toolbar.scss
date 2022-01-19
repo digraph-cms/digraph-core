@@ -1,4 +1,6 @@
 .toolbar {
+    @include uncolored-links;
+
     background: mix($body-bg, $color-neutral, 90%);
     color: $body-fg;
     display: flex;
@@ -52,33 +54,22 @@
     line-height: 1;
     position: relative;
     text-decoration: none;
-    color: inherit;
+    text-decoration: none !important;
 
     > .icon {
         font-size: inherit;
-    }
-
-    &:hover,
-    &:active,
-    &:focus {
-        color: inherit;
     }
 
     &[href],
     &[data-command],
     &[onclick] {
         cursor: pointer;
-        color: $color-interactive;
-
-        &:visited,
-        &:active {
-            color: $color-interactive;
-        }
+        color: $color-interactive !important;
 
         &:hover,
         &:focus {
             background: $color-interactive;
-            color: contrast-color($color-interactive);
+            color: contrast-color($color-interactive) !important;
 
             .toolbar__button__tooltip {
                 display: block;
