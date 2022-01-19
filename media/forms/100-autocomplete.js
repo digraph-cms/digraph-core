@@ -299,7 +299,7 @@ class DigraphAutocomplete {
                 data.forEach((result) => {
                     const li = document.createElement('div');
                     li.tabIndex = 0;
-                    li.dataset.extra = JSON.stringify(result.extra);
+                    if (result.extra) li.dataset.extra = JSON.stringify(result.extra);
                     li.innerHTML = '<div class="result-html"><div class="after-icon">' + result.html + "</div></div>";
                     li.dataset.value = result.value;
                     if (result.class) {

@@ -188,7 +188,7 @@ $tabs->addTab('search', 'Search', function () {
             );
             return [
                 $name . PHP_EOL . $media->insertInterface(),
-                $page ? $page->url()->html() : '<em>missing</em>',
+                $page ? $page->url()->html() : '<em>N/A</em>',
                 Format::date($media->updated())
             ];
         },
