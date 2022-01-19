@@ -1,4 +1,8 @@
 .cm-s-digraph {
+    .CodeMirror-lines {
+        margin: $grid-unit/2;
+    }
+
     span {
         &.cm-comment {
             color: #a86;

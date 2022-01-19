@@ -15,6 +15,7 @@ class AutocompleteInput extends INPUT
     {
         parent::__construct($id);
         $this->setEndpoint($endpoint);
+        $this->setAttribute('placeholder','type something to search');
         Cookies::csrfToken('autocomplete');
     }
 

@@ -25,7 +25,15 @@ class Icon extends Tag
         'options' => ['string' => '&#xefb0;'],
         'media' => ['string' => '&#xec9e;'],
         'page' => ['string' => '&#xefb2;'],
-        'eye-blocked' => ['string' => '&#xef22;']
+        'eye-blocked' => ['string' => '&#xef22;'],
+        'heading' => ['string' => '&#xedf0;'],
+        'bold' => ['string' => '&#xede3;'],
+        'italic' => ['string' => '&#xedf2;'],
+        'code' => ['string' => '&#xede6;'],
+        'quote' => ['string' => '&#xefcd;'],
+        'list-bullet' => ['string' => '&#xef75;'],
+        'list-numbered' => ['string' => '&#xef76;'],
+        'user-search' => ['string' => '&#xed1a;']
     ];
 
     public function __construct(string $name, string $alt = null)
@@ -45,9 +53,7 @@ class Icon extends Tag
     public function setIcon($name)
     {
         $icon = Config::get("icons.$name");
-        if (!$icon) {
-            $icon = static::ICONS[$name];
-        }
+        $icon = $icon ?? @static::ICONS[$name];
         if ($icon) {
             $this->name = $name;
             $this->alt = @$icon['alt'] ?? $name;

@@ -7,7 +7,8 @@ use DigraphCMS\UI\Toolbars\ToolbarLink;
 
 echo new ToolbarLink('', 'web', null, null);
 echo $input = (new INPUT(Digraph::uuid()))
-    ->addClass('navigation-frame__autofocus');
+    ->addClass('navigation-frame__autofocus')
+    ->setAttribute('placeholder','https://');
 echo $submit = (new A())
     ->setID(Digraph::uuid())
     ->addClass('button')

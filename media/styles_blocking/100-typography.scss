@@ -105,7 +105,6 @@ hr {
 }
 
 li {
-
     ul,
     ol {
         margin: 0;
@@ -122,7 +121,7 @@ code {
     font-family: $font-code;
 }
 
-pre>code {
+pre > code {
     display: block;
     overflow: auto;
 }
@@ -134,7 +133,7 @@ table {
     margin: 0;
     border-collapse: collapse;
 
-    pre>code {
+    pre > code {
         max-width: 25vw;
     }
 }
@@ -149,7 +148,6 @@ tr:nth-child(odd) {
 }
 
 tr:nth-child(even) {
-
     th,
     td.header {
         background-color: rgba($color-accent, 0.8);
@@ -184,4 +182,16 @@ th.sortable {
 
 time {
     white-space: nowrap;
+}
+
+blockquote {
+    background: rgba($color-neutral, 0.2);
+    padding: $grid-unit;
+    margin: $grid-unit 0;
+    *:first-child {
+        margin-top: 0;
+    }
+    *:last-child {
+        margin-bottom: 0;
+    }
 }

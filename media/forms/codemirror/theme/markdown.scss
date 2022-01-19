@@ -2,6 +2,10 @@ div[data-codemirror-mode="gfm"],
 div[data-codemirror-mode="markdown"] {
     .cm-s-digraph {
         font-family: $font-content;
+
+        .CodeMirror-lines {
+            margin: $grid-unit;
+        }
     }
 
     .cm-header {
