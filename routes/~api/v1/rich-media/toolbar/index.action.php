@@ -5,6 +5,7 @@ use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\UI\Toolbars\ToolbarLink;
+use DigraphCMS\UI\Toolbars\ToolbarSeparator;
 use DigraphCMS\UI\Toolbars\ToolbarSpacer;
 use DigraphCMS\URL\URL;
 
@@ -24,9 +25,14 @@ if ($action && !preg_match('/[^a-z0-9\-\_]/', $action)) {
 
 $buttons = [
     new ToolbarLink('Link to a page', 'page', null, new URL('&action=link')),
-    new ToolbarLink('Link to a URL', 'link', null, new URL('&action=weblink')),
+    new ToolbarLink('Link to any URL', 'link', null, new URL('&action=weblink')),
     new ToolbarLink('Quick media insert', 'media', null, new URL('&action=media')),
+    new ToolbarSeparator(),
+    (new ToolbarLink('Toggle comment', 'eye-blocked', 'toggleComment', null))
+        ->setShortcut('Ctrl-/'),
+    new ToolbarSeparator(),
     new ToolbarSpacer(),
+    new ToolbarSeparator(),
     (new ToolbarLink('Undo', 'undo', 'undo'))
         ->setShortcut('Ctrl-Z'),
     (new ToolbarLink('Redo', 'redo', 'redo'))

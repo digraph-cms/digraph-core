@@ -24,7 +24,8 @@ class Icon extends Tag
         'block-left' => ['string' => '&#xea60;'],
         'options' => ['string' => '&#xefb0;'],
         'media' => ['string' => '&#xec9e;'],
-        'page' => ['string' => '&#xefb2;']
+        'page' => ['string' => '&#xefb2;'],
+        'eye-blocked' => ['string' => '&#xef22;']
     ];
 
     public function __construct(string $name, string $alt = null)

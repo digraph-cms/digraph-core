@@ -113,6 +113,8 @@
 }
 
 .toolbar__separator {
+    display: block;
+    height: 1.5em;
     width: $border-unit;
     background-color: $color-neutral;
 }
