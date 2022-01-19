@@ -47,7 +47,7 @@ class DigraphRichContentEditor {
         // set up event listeners for toolbar
         this.toolbar = this.getDivByClass('rich-content-editor__toolbar');
         this.toolbar.addEventListener('click', (e) => { this.toolbarClick(e); });
-        // reset toolbar on escape key
+        // reset toolbar on escape key (only from inside toolbar itself)
         this.toolbar.addEventListener('keydown', (e) => {
             if (e.key == 'Escape' || e.key == 'Esc') {
                 this.toolbar.dispatchEvent(new Event('navigation-frame-reset', {
@@ -61,8 +61,22 @@ class DigraphRichContentEditor {
             var content = cm.getSelection();
             if (content == '') {
                 cm.replaceSelection(e.insertWithoutSelection);
-            }else {
-                cm.replaceSelection(e.insertWithSelection.replace('{content}',content));
+            } else {
+                cm.replaceSelection(e.insertWithSelection.replace('{content}', content));
+            }
+        });
+        // insert keyboard listeners
+        this.contentWrapper.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.shiftKey) {
+                var pressed = (e.ctrlKey ? 'Ctrl-' : '') + (e.shiftKey ? 'Shift-' : '') + e.key.toUpperCase();
+                var shortcuts = this.toolbar.getElementsByClassName('toolbar__button__tooltip__shortcut');
+                for (let i = 0; i < shortcuts.length; i++) {
+                    const s = shortcuts[i];
+                    if (s.innerText == pressed) {
+                        s.dispatchEvent(new Event('click', { bubbles: true }));
+                        e.preventDefault();
+                    }
+                }
             }
         });
     }

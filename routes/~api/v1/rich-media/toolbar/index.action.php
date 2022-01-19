@@ -24,19 +24,22 @@ if ($action && !preg_match('/[^a-z0-9\-\_]/', $action)) {
 }
 
 $buttons = [
-    new ToolbarLink('Link to a page', 'page', null, new URL('&action=link')),
-    new ToolbarLink('Link to any URL', 'link', null, new URL('&action=weblink')),
-    new ToolbarLink('Quick media insert', 'media', null, new URL('&action=media')),
+    (new ToolbarLink('Link to a page', 'page', null, new URL('&action=link')))
+        ->setShortcut('Ctrl-K'),
+    (new ToolbarLink('Link to any URL', 'link', null, new URL('&action=weblink')))
+        ->setShortcut('Ctrl-Shift-K'),
+    (new ToolbarLink('Quick media insert', 'media', null, new URL('&action=media')))
+        ->setShortcut('Ctrl-M'),
     new ToolbarSeparator(),
     (new ToolbarLink('Toggle comment', 'eye-blocked', 'toggleComment', null))
-        ->setShortcut('Ctrl-/'),
+        ->setShortcut('Ctrl-/ '),
     new ToolbarSeparator(),
     new ToolbarSpacer(),
     new ToolbarSeparator(),
     (new ToolbarLink('Undo', 'undo', 'undo'))
         ->setShortcut('Ctrl-Z'),
     (new ToolbarLink('Redo', 'redo', 'redo'))
-        ->setShortcut('Ctrl-Shift-Z')
+        ->setShortcut('Ctrl-Y')
 ];
 Dispatcher::dispatchEvent('onRichMediaToolbar', [&$buttons]);
 if ($page) {

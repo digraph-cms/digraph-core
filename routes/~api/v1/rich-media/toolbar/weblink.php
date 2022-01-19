@@ -4,8 +4,6 @@ use DigraphCMS\Digraph;
 use DigraphCMS\HTML\A;
 use DigraphCMS\HTML\Forms\INPUT;
 use DigraphCMS\UI\Toolbars\ToolbarLink;
-use DigraphCMS\UI\Toolbars\ToolbarSeparator;
-use DigraphCMS\UI\Toolbars\ToolbarSpacer;
 
 echo new ToolbarLink('', 'web', null, null);
 echo $input = (new INPUT(Digraph::uuid()))
@@ -15,7 +13,6 @@ echo $submit = (new A())
     ->addClass('button')
     ->addClass('button--inverted')
     ->addChild('Insert');
-echo $wrapper;
 
 ?>
 <script>
