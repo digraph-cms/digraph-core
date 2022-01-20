@@ -4,6 +4,7 @@ use DigraphCMS\Content\Filestore;
 use DigraphCMS\Content\FilestoreFile;
 use DigraphCMS\Context;
 use DigraphCMS\HTML\Forms\Field;
+use DigraphCMS\HTML\Forms\Fields\CheckboxListField;
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTML\Forms\OrderingInput;
 use DigraphCMS\HTML\Forms\UploadMulti;
@@ -33,13 +34,38 @@ $name = (new Field('Media name'))
 $files = (new Field('Upload more files', new UploadMulti()))
     ->addTip('You will be given the option to reorder files in the next step.');
 
+$options = (new CheckboxListField(
+    'Options',
+    [
+        'single' => 'List and allow downloading individual files'
+    ]
+))
+    ->setDefault($media['options'] ?? []);
+
+$meta = (new CheckboxListField(
+    'Display metadata',
+    [
+        'uploader' => 'Update user',
+        'upload_date' => 'Update date',
+    ]
+))
+    ->setDefault($media['meta'] ?? []);
+
 $form
     ->addChild($name)
     ->addChild($order)
     ->addChild($files)
-    ->addCallback(function () use ($media, $files, $name, $order) {
+    ->addChild($options)
+    ->addChild($meta)
+    ->addCallback(function () use ($media, $files, $name, $order, $options, $meta) {
         // set name
         $media->name($name->value());
+        // set options
+        unset($media['options']);
+        $media['options'] = $options->value();
+        // set meta
+        unset($media['meta']);
+        $media['meta'] = $meta->value();
         // delete files
         $deleted = array_diff($media['files'], $order->value());
         foreach ($deleted as $f) {

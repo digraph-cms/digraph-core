@@ -71,6 +71,7 @@ class DigraphOrderingInput {
         e.dataTransfer.effectAllowed = "move";
         e.dataTransfer.setData("text/plain", null);
         this.dragging.classList.add('ordering-input__option--dragging');
+        this.optionList.classList.add('ordering-input__option-list--dragging');
     }
     dragOver(e) {
         var target = this.getOptionWrapper(e.target);
@@ -86,6 +87,7 @@ class DigraphOrderingInput {
     dragEnd(e) {
         if (this.dragging !== null) {
             this.dragging.classList.remove('ordering-input__option--dragging');
+            this.optionList.classList.remove('ordering-input__option-list--dragging');
             this.dragging = null;
             this.syncValue();
         }

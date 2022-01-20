@@ -3,6 +3,7 @@
 use DigraphCMS\Content\FilestoreFile;
 use DigraphCMS\Context;
 use DigraphCMS\HTML\Forms\Field;
+use DigraphCMS\HTML\Forms\Fields\CheckboxListField;
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTML\Forms\UploadMulti;
 use DigraphCMS\HTTP\RedirectException;
@@ -19,13 +20,31 @@ $files = (new Field('Upload files', new UploadMulti()))
     ->setRequired(true)
     ->addTip('You will be given the option to reorder files in the next step.');
 
+$options = (new CheckboxListField(
+    'Options',
+    [
+        'single' => 'List and allow downloading individual files'
+    ]
+));
+
+$meta = (new CheckboxListField(
+    'Display metadata',
+    [
+        'uploader' => 'Update user',
+        'upload_date' => 'Update date',
+    ]
+));
+
 $form
     ->addChild($name)
     ->addChild($files)
-    ->addCallback(function () use ($files, $name) {
+    ->addChild($options)
+    ->addCallback(function () use ($files, $name, $options) {
         $media = new MultiFileRichMedia([], ['page_uuid' => Context::arg('uuid')]);
         // set name
         $media->name($name->value());
+        // set options
+        $media['options'] = $options->value();
         // set files
         $media['files'] = array_map(
             function (FilestoreFile $file): string {

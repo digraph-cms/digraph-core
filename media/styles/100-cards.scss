@@ -45,12 +45,14 @@
 }
 
 .file-card {
+    @include drop-shadow;
     background: $color-interactive;
     color: contrast-color($color-interactive);
     display: grid;
     grid-template-columns: 3.5em auto;
     grid-template-rows: auto auto;
-    padding: $grid-unit;
+    padding: $grid-unit/2;
+    border: $border-unit;
 
     &:before {
         @include icofont;
@@ -58,6 +60,7 @@
         content: "\eb12";
         grid-row-end: span 2;
         font-size: 3em;
+        text-align: left;
     }
 }
 
@@ -112,5 +115,32 @@
     background: #649fab;
     &:before {
         content: "\eb0b";
+    }
+}
+
+.file-card--extension-zip {
+    background: #efab01;
+    &:before {
+        content: "\eb30";
+    }
+}
+
+.multifile-card {
+    .multifile-card__list {
+        margin-top: $grid-unit/2;
+        grid-column-start: 2;
+    }
+    .card__title + .multifile-card__list {
+        margin-top: 0;
+    }
+}
+
+.multifile-card__list {
+    font-size: smaller;
+    ul {
+        margin: 0;
+        margin-bottom: $grid-unit/2;
+        list-style-position: inside;
+        padding-left: 0;
     }
 }

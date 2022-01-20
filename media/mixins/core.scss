@@ -158,7 +158,7 @@
         &:after {
             font-size: 3em;
             color: $color-error;
-            content: "\ef16";
+            content: "error";
             animation: none;
         }
     }
@@ -177,4 +177,8 @@
     a:hover {
         text-decoration: underline;
     }
+}
+
+@mixin drop-shadow($height: 1) {
+    box-shadow: rgba($body-fg, 0.5-$height/5) 0 $grid-unit * $height/8 $grid-unit * $height/2;
 }

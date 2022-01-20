@@ -7,13 +7,16 @@
     overflow: hidden;
     cursor: grab;
 
+    &.ordering-input__option-list--dragging {
+        border-color: $color-interactive;
+    }
+
     .ordering-input__option {
         &:nth-child(odd) {
             background: rgba($color-neutral, 0.2);
         }
 
-        &.ordering-input__option--dragging,
-        &:hover {
+        &.ordering-input__option--dragging {
             background: $color-interactive;
             color: contrast-color($color-interactive);
         }
