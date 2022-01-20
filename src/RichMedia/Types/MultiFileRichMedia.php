@@ -72,6 +72,7 @@ class MultiFileRichMedia extends AbstractRichMedia
                 // display link to show all files
                 $wrapper->addChild((new A)
                     ->setAttribute('href', new URL("&$id=open"))
+                    ->setAttribute('rel', 'nofollow')
                     ->addChild('-- display contents --'));
             } else {
                 // list all files

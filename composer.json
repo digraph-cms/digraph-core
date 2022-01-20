@@ -14,6 +14,7 @@
         "ext-gd": "*",
         "ext-xml": "*",
         "ext-mbstring": "*",
+        "ext-zip": "*",
         "byjoby/flatrr": "^1.3",
         "fpdo/fluentpdo": "2.2.0 - 2.2.2||^2.2.4",
         "robmorgan/phinx": "^0.12.7||^0.11.7",
