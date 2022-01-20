@@ -12,11 +12,11 @@
 .rich-content-editor__content-editor {
     flex-basis: 3;
     flex-grow: 1;
-    flex-basis: 35em;
     background: $body-bg;
     display: flex;
     flex-direction: column;
     overflow: auto;
+    min-width: 15em;
 
     .rich-content-editor__toolbar {
         border: 0;
@@ -47,6 +47,52 @@
 .rich-content-editor__media-editor {
     flex-basis: 30em;
     overflow: auto;
+    padding-left: $grid-unit;
+    position: relative;
+
+    .rich-content-editor__media-editor__size-toggle {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: $grid-unit;
+        bottom: 0;
+        font-size: $grid-unit;
+        background: mix($body-bg, $color-neutral, 50%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+
+        &:hover {
+            background: mix($body-bg, $color-interactive, 50%);
+        }
+
+        &:before {
+            @include icofont;
+            content: '\ea68';
+        }
+    }
+}
+
+.rich-content-editor__media-editor--wide,
+.rich-content-editor__media-editor--wide-forced {
+    flex-basis: 60em;
+
+    .rich-content-editor__media-editor__size-toggle:before {
+        content: '\ea69';
+    }
+}
+
+.rich-content-editor__media-editor--wide {
+    .rich-content-editor__media-editor__size-toggle:before {
+        content: '\ea69';
+    }
+}
+
+.rich-content-editor__media-editor--wide-forced {
+    .rich-content-editor__media-editor__size-toggle {
+        display: none;
+    }
 }
 
 .rich-content-editor__media-editor-frame {

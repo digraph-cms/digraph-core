@@ -40,7 +40,7 @@ body > .action-menu,
     @include uncolored-links;
 
     font-size: smaller;
-    padding: $grid-unit/2;
+    padding: $border-unit;
     background-color: rgba($color-neutral, 0.2);
     font-family: $font-ui;
 
