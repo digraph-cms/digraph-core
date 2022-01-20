@@ -124,7 +124,7 @@
     align-items: center;
 
     &:before {
-        @include icofont;
+        @include material-icon;
         display: none;
         font-size: 2rem;
         padding-right: $grid-unit/2;

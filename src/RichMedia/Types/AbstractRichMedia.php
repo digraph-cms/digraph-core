@@ -59,7 +59,7 @@ abstract class AbstractRichMedia implements ArrayAccess
         $toolbar = (new DIV())
             ->addClass('toolbar');
         $toolbar->addChild(
-            (new ToolbarLink('insert embed code', 'block-left', null, null))
+            (new ToolbarLink('insert embed code', 'post-add', null, null))
                 ->setAttribute('onclick', sprintf(
                     'this.dispatchEvent(Digraph.RichContent.insertEvent(document.getElementById("%s").innerHTML))',
                     $id
@@ -76,7 +76,7 @@ abstract class AbstractRichMedia implements ArrayAccess
         );
         if ($this->provideInsertOptions()) {
             $toolbar->addChild(
-                (new ToolbarLink('advanced embed options', 'options', null, new URL('&options=' . $this->uuid())))
+                (new ToolbarLink('advanced embed options', 'settings-applications', null, new URL('&options=' . $this->uuid())))
                     ->setData('target', Context::arg('frame'))
             );
         }

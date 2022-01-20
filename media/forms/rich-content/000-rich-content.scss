@@ -17,6 +17,7 @@
     flex-direction: column;
     overflow: auto;
     min-width: 15em;
+    flex-basis: 30em;
 
     .rich-content-editor__toolbar {
         border: 0;
@@ -68,8 +69,8 @@
         }
 
         &:before {
-            @include icofont;
-            content: '\ea68';
+            @include material-icon;
+            content: 'chevron_left';
         }
     }
 }
@@ -79,13 +80,13 @@
     flex-basis: 60em;
 
     .rich-content-editor__media-editor__size-toggle:before {
-        content: '\ea69';
+        content: 'chevron_right';
     }
 }
 
 .rich-content-editor__media-editor--wide {
     .rich-content-editor__media-editor__size-toggle:before {
-        content: '\ea69';
+        content: 'chevron_right';
     }
 }
 

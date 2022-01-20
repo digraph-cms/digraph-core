@@ -10,30 +10,34 @@ class Icon extends Tag
     protected $classes = ['icon'];
     protected $name = 'unspecified';
     protected $alt = 'unspecified icon';
-    protected $type = 'icofont';
+    protected $type = 'material';
     protected $string = '&#xefcc;';
     protected $valid = false;
 
     const ICONS = [
-        'undo' => ['string' => '&#xee0b;'],
-        'redo' => ['string' => '&#xedfe;'],
-        'link' => ['string' => '&#xef71;'],
-        'close' => ['string' => '&#xec4f;'],
-        'web' => ['string' => '&#xf028;'],
-        'copy' => ['string' => '&#xec51;'],
-        'block-left' => ['string' => '&#xea60;'],
-        'options' => ['string' => '&#xefb0;'],
-        'media' => ['string' => '&#xec9e;'],
-        'page' => ['string' => '&#xefb2;'],
-        'eye-blocked' => ['string' => '&#xef22;'],
-        'heading' => ['string' => '&#xedf0;'],
-        'bold' => ['string' => '&#xede3;'],
-        'italic' => ['string' => '&#xedf2;'],
-        'code' => ['string' => '&#xede6;'],
-        'quote' => ['string' => '&#xefcd;'],
-        'list-bullet' => ['string' => '&#xef75;'],
-        'list-numbered' => ['string' => '&#xef76;'],
-        'user-search' => ['string' => '&#xed1a;']
+        'undo' => ['string' => 'undo'],
+        'redo' => ['string' => 'redo'],
+        'link' => ['string' => 'link'],
+        'close' => ['string' => 'close'],
+        'copy' => ['string' => 'content_copy'],
+        'options' => ['string' => 'settings'],
+        'media' => ['string' => 'perm_media'],
+        'article' => ['string' => 'article'],
+        'hide' => ['string' => 'hide_source'],
+        'heading' => ['string' => 'title'],
+        'bold' => ['string' => 'format_bold'],
+        'italic' => ['string' => 'format_italic'],
+        'code' => ['string' => 'code'],
+        'quote' => ['string' => 'format_quote'],
+        'list-bullet' => ['string' => 'format_list_bulleted'],
+        'list-numbered' => ['string' => 'format_list_numbered'],
+        'user-search' => ['string' => 'person_search'],
+        'insert-chart' => ['string' => 'insert_chart'],
+        'post-add' => ['string' => 'post_add'],
+        'settings-applications' => ['string' => 'settings_applications'],
+        'pages' => ['string' => 'pages'],
+        'person' => ['string' => 'person'],
+        'strikethrough' => ['string' => 'strikethrough_s']
     ];
 
     public function __construct(string $name, string $alt = null)

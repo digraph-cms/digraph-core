@@ -33,6 +33,8 @@ $buttons = [
         ->setShortcut('Ctrl-B'),
     (new ToolbarLink('Italic', 'italic', 'markdownToggleItalic'))
         ->setShortcut('Ctrl-I'),
+    (new ToolbarLink('Strikethrough', 'strikethrough', 'markdownToggleStrikethrough'))
+        ->setShortcut('Ctrl-Shift-S'),
     new ToolbarSeparator,
     (new ToolbarLink('Bullet list', 'list-bullet', 'markdownToggleBulletList'))
         ->setShortcut('Ctrl-L'),
@@ -45,14 +47,14 @@ $buttons = [
     new ToolbarSeparator,
     (new ToolbarLink('Link to any URL', 'link', null, new URL('&action=weblink')))
         ->setShortcut('Ctrl-Shift-K'),
-    (new ToolbarLink('Link to a page', 'page', null, new URL('&action=link')))
+    (new ToolbarLink('Link to a page', 'pages', null, new URL('&action=link')))
         ->setShortcut('Ctrl-K'),
     (new ToolbarLink('Quick media insert', 'media', null, new URL('&action=media')))
         ->setShortcut('Ctrl-M'),
-    (new ToolbarLink('Link to a user', 'user-search', null, new URL('&action=user')))
+    (new ToolbarLink('Link to a user', 'person', null, new URL('&action=user')))
         ->setShortcut('Ctrl-U'),
     new ToolbarSeparator,
-    (new ToolbarLink('Toggle comment', 'eye-blocked', 'toggleComment', null))
+    (new ToolbarLink('Toggle comment', 'hide', 'toggleComment', null))
         ->setShortcut('Ctrl-/ '),
     new ToolbarSeparator,
     new ToolbarSpacer,
