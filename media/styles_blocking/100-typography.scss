@@ -212,3 +212,20 @@ mark {
         background: rgba($color-warning, 0.2);
     }
 }
+
+ul,
+ol {
+    padding-left: $grid-unit*2;
+}
+
+#content {
+
+    ul,
+    ol {
+
+        ul,
+        ol {
+            border-left: $border-unit dotted rgba($color-neutral, 0.8);
+        }
+    }
+}

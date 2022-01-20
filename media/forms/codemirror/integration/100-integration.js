@@ -2,6 +2,8 @@ Digraph.CodeMirror = {
     config: {
         theme: 'digraph',
         lineWrapping: true,
+        indentWithTabs: true,
+        indentUnit: 4,
         extraKeys: {
             'Enter': 'newlineAndIndentContinueMarkdownList',
             'Ctrl-/': 'toggleComment'
