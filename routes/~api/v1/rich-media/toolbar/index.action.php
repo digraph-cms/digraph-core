@@ -35,6 +35,9 @@ $buttons = [
         ->setShortcut('Ctrl-I'),
     (new ToolbarLink('Strikethrough', 'strikethrough', 'markdownToggleStrikethrough'))
         ->setShortcut('Ctrl-Shift-S'),
+    (new ToolbarLink('Highlight', 'highlight'))
+        ->setShortcut('Ctrl-Shift-M')
+        ->setAttribute('onclick', 'this.dispatchEvent(Digraph.RichContent.insertTagEvent("m"));'),
     new ToolbarSeparator,
     (new ToolbarLink('Bullet list', 'list-bullet', 'markdownToggleBulletList'))
         ->setShortcut('Ctrl-L'),
@@ -56,7 +59,6 @@ $buttons = [
     new ToolbarSeparator,
     (new ToolbarLink('Toggle comment', 'hide', 'toggleComment', null))
         ->setShortcut('Ctrl-/ '),
-    new ToolbarSeparator,
     new ToolbarSpacer,
     new ToolbarSeparator,
     (new ToolbarLink('Undo', 'undo', 'undo'))

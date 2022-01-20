@@ -55,8 +55,10 @@
     position: relative;
     text-decoration: none;
     text-decoration: none !important;
+    display: flex;
 
     > .icon {
+        display: block;
         font-size: inherit;
     }
 

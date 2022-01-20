@@ -37,7 +37,9 @@ class Icon extends Tag
         'settings-applications' => ['string' => 'settings_applications'],
         'pages' => ['string' => 'pages'],
         'person' => ['string' => 'person'],
-        'strikethrough' => ['string' => 'strikethrough_s']
+        'strikethrough' => ['string' => 'strikethrough_s'],
+        'highlight' => ['string' => 'highlight_alt'],
+        'clear-format' => ['string' => 'format_clear']
     ];
 
     public function __construct(string $name, string $alt = null)
