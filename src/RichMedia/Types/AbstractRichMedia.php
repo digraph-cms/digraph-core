@@ -13,7 +13,9 @@ use DigraphCMS\Digraph;
 use DigraphCMS\HTML\DIV;
 use DigraphCMS\HTML\Text;
 use DigraphCMS\RichMedia\RichMedia;
+use DigraphCMS\UI\Format;
 use DigraphCMS\UI\Toolbars\ToolbarLink;
+use DigraphCMS\UI\Toolbars\ToolbarSeparator;
 use DigraphCMS\UI\Toolbars\ToolbarSpacer;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\User;
@@ -61,11 +63,19 @@ abstract class AbstractRichMedia implements ArrayAccess
         $toolbar->addChild(
             (new ToolbarLink('insert embed code', 'post-add', null, null))
                 ->setAttribute('onclick', sprintf(
-                    'this.dispatchEvent(Digraph.RichContent.insertEvent(document.getElementById("%s").innerHTML))',
-                    $id
+                    'this.dispatchEvent(Digraph.RichContent.insertTagEvent("%s", %s))',
+                    $this->insertTagName(),
+                    Format::js_encode_object($this->insertTagOptions())
                 ))
         );
+        if ($this->provideInsertOptions()) {
+            $toolbar->addChild(
+                (new ToolbarLink('customize embed options', 'settings-applications', null, new URL('&options=' . $this->uuid())))
+                    ->setData('target', Context::arg('frame'))
+            );
+        }
         $toolbar->addChild(new ToolbarSpacer);
+        $toolbar->addChild(new ToolbarSeparator);
         $toolbar->addChild(new Text(sprintf('<pre id="%s">%s</pre>', $id, $this->defaultTag())));
         $toolbar->addChild(
             (new ToolbarLink('copy embed code', 'copy', null, null))
@@ -74,13 +84,19 @@ abstract class AbstractRichMedia implements ArrayAccess
                     $id
                 ))
         );
-        if ($this->provideInsertOptions()) {
-            $toolbar->addChild(
-                (new ToolbarLink('advanced embed options', 'settings-applications', null, new URL('&options=' . $this->uuid())))
-                    ->setData('target', Context::arg('frame'))
-            );
-        }
         return $toolbar;
+    }
+
+    public function insertTagOptions(): array
+    {
+        return [
+            '_' => $this->uuid()
+        ];
+    }
+
+    public function insertTagName(): string
+    {
+        return $this->tagName();
     }
 
     public function provideInsertOptions(): bool

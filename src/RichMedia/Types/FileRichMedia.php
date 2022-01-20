@@ -22,6 +22,7 @@ class FileRichMedia extends AbstractRichMedia
             ->addClass('card__title')
             ->addChild((new A)
                 ->addChild($this->name())
+                ->setAttribute('title', $file->filename() . ' (' . Format::filesize($file->bytes()) . ')')
                 ->setAttribute('href', $file->url())));
         // add requested
         $meta = [];
@@ -32,7 +33,7 @@ class FileRichMedia extends AbstractRichMedia
             $meta[] = 'uploaded ' . Format::date($file->created()) . ' by ' . $file->createdBy();
         } else {
             if (in_array('upload_date', $this['meta'])) {
-                $meta[] = 'uploaded '.Format::date($file->created());
+                $meta[] = 'uploaded ' . Format::date($file->created());
             }
             if (in_array('uploader', $this['meta'])) {
                 $meta[] = 'uploaded by ' . $file->createdBy();
