@@ -44,6 +44,9 @@
     margin-bottom: $grid-unit/2;
 }
 
+/*
+file cards include an icon
+*/
 .file-card {
     @include drop-shadow;
     background: $color-interactive;
@@ -58,9 +61,13 @@
         @include icofont;
         display: block;
         content: "\eb12";
-        grid-row-end: span 2;
+        grid-row-start: 1;
+        grid-row-end: -1;
         font-size: 3em;
         text-align: left;
+    }
+    * {
+        grid-column-start: 2;
     }
 }
 
@@ -69,6 +76,33 @@
     font-style: italic;
 }
 
+/*
+extra file card styling for multifile cards
+*/
+.multifile-card {
+    .multifile-card__list {
+        margin-top: $grid-unit/2;
+    }
+    .card__title + .multifile-card__list {
+        margin-top: 0;
+    }
+}
+
+.multifile-card__list {
+    font-size: smaller;
+    ul {
+        margin: 0;
+        margin-bottom: $grid-unit/2;
+        list-style-position: inside;
+        padding-left: 0;
+    }
+}
+
+/*
+File card icons for extensions
+*/
+
+/* spreadsheets */
 .file-card--extension-xlsx,
 .file-card--extension-csv,
 .file-card--extension-tsv,
@@ -101,6 +135,7 @@
     }
 }
 
+/* avi/mp4 only */
 .file-card--extension-avi,
 .file-card--extension-mp4 {
     background: #3e93ac;
@@ -109,6 +144,7 @@
     }
 }
 
+/* bitmaps */
 .file-card--extension-bmp,
 .file-card--extension-dib,
 .file-card--extension-wbmp {
@@ -118,29 +154,66 @@
     }
 }
 
-.file-card--extension-zip {
+/* zip/archives */
+.file-card--extension-mint,
+.file-card--extension-ice,
+.file-card--extension-rar,
+.file-card--extension-pup,
+.file-card--extension-b6z,
+.file-card--extension-gzip,
+.file-card--extension-sy_,
+.file-card--extension-xz,
+.file-card--extension-deb,
+.file-card--extension-sit,
+.file-card--extension-tbz,
+.file-card--extension-7z,
+.file-card--extension-dz,
+.file-card--extension-zpi,
+.file-card--extension-bz2,
+.file-card--extension-pkg,
+.file-card--extension-bndl,
+.file-card--extension-dar,
+.file-card--extension-lz4,
+.file-card--extension-zst,
+.file-card--extension-pa,
+.file-card--extension-wa,
+.file-card--extension-uzip,
+.file-card--extension-gza,
+.file-card--extension-uha,
+.file-card--extension-zip,
+.file-card--extension-z03,
+.file-card--extension-rev,
+.file-card--extension-taz,
+.file-card--extension-pak,
+.file-card--extension-kgb,
+.file-card--extension-archiver,
+.file-card--extension-pit,
+.file-card--extension-rpm,
+.file-card--extension-xip,
+.file-card--extension-tbz2,
+.file-card--extension-zl,
+.file-card--extension-lzma,
+.file-card--extension-pack,
+.file-card--extension-ari,
+.file-card--extension-s7z,
+.file-card--extension-gz,
+.file-card--extension-tx_,
+.file-card--extension-czip,
+.file-card--extension-bz,
+.file-card--extension-sfs,
+.file-card--extension-ace,
+.file-card--extension-alz,
+.file-card--extension-pea,
+.file-card--extension-xz,
+.file-card--extension-tgz,
+.file-card--extension-zipx,
+.file-card--extension-rz,
+.file-card--extension-yz,
+.file-card--extension-gzi,
+.file-card--extension-lzh,
+.file-card--extension-zz {
     background: #efab01;
     &:before {
         content: "\eb30";
-    }
-}
-
-.multifile-card {
-    .multifile-card__list {
-        margin-top: $grid-unit/2;
-        grid-column-start: 2;
-    }
-    .card__title + .multifile-card__list {
-        margin-top: 0;
-    }
-}
-
-.multifile-card__list {
-    font-size: smaller;
-    ul {
-        margin: 0;
-        margin-bottom: $grid-unit/2;
-        list-style-position: inside;
-        padding-left: 0;
     }
 }
