@@ -3,6 +3,7 @@
 namespace DigraphCMS\UI;
 
 use DigraphCMS\Config;
+use DigraphCMS\Digraph;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\Media\CSS;
 use DigraphCMS\Media\DeferredFile;
@@ -414,7 +415,9 @@ class Theme
         ]);
         $config = [
             'url' => URLs::site(),
-            'origin' => $origin
+            'origin' => $origin,
+            'uuidChars' => Digraph::uuidChars(),
+            'uuidPattern' => Digraph::uuidPattern()
         ];
         return $config;
     }

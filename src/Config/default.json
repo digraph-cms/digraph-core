@@ -12,7 +12,8 @@
   },
   "rich_media_types": {
     "file": "\\DigraphCMS\\RichMedia\\Types\\FileRichMedia",
-    "multifile": "\\DigraphCMS\\RichMedia\\Types\\MultiFileRichMedia"
+    "multifile": "\\DigraphCMS\\RichMedia\\Types\\MultiFileRichMedia",
+    "table": "\\DigraphCMS\\RichMedia\\Types\\TableRichMedia"
   },
   "codemirror": {
     "dependencies": {

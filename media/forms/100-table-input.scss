@@ -1,0 +1,15 @@
+.table-input__table {
+    box-sizing: border-box;
+    max-width: 100%;
+    overflow-x: auto;
+
+    tbody {
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+
+    td,
+    th {
+        position: relative;
+    }
+}

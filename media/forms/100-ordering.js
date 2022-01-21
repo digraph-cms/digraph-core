@@ -4,6 +4,7 @@ document.addEventListener('DigraphDOMReady', (e) => {
         if (Object.hasOwnProperty.call(inputs, i)) {
             const input = inputs[i];
             if (input.classList.contains('ordering-input')) {
+                input.classList.remove('ordering-input');
                 new DigraphOrderingInput(input);
             }
         }

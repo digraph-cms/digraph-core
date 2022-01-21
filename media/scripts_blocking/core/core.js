@@ -16,6 +16,12 @@ const Digraph = {
             }
         }
         return null;
+    },
+    uuid: () => {
+        return Digraph.config.uuidPattern.replaceAll('0', (matched, index, original) => {
+            const r = parseInt(Math.random() * (Digraph.config.uuidChars.length - 1), 10);
+            return Digraph.config.uuidChars.substring(r, r + 1);
+        });
     }
 };
 
