@@ -138,19 +138,29 @@ table {
     }
 }
 
-th,
-td.header {
-    font-family: $font-ui;
-}
-
 tr:nth-child(odd) {
     background: rgba($color-neutral, 0.2);
 }
 
 tr:nth-child(even) {
+    background: transparent;
     th,
     td.header {
         background-color: rgba($color-accent, 0.8);
+    }
+}
+
+thead + tbody {
+    tr:nth-child(even) {
+        background: rgba($color-neutral, 0.2);
+    }
+
+    tr:nth-child(odd) {
+        background: transparent;
+        th,
+        td.header {
+            background-color: rgba($color-accent, 0.8);
+        }
     }
 }
 
@@ -169,10 +179,12 @@ th {
 }
 
 th,
-td.header {
+td.header,
+thead > tr {
+    font-family: $font-ui;
     text-align: left;
-    background-color: $color-accent;
-    color: contrast-color($color-accent);
+    background-color: $color-accent !important;
+    color: contrast-color($color-accent) !important;
     break-inside: avoid;
 }
 
@@ -215,14 +227,12 @@ mark {
 
 ul,
 ol {
-    padding-left: $grid-unit*2;
+    padding-left: $grid-unit * 2;
 }
 
 #content {
-
     ul,
     ol {
-
         ul,
         ol {
             border-left: $border-unit dotted rgba($color-neutral, 0.8);

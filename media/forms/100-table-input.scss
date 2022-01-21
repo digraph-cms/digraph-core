@@ -1,15 +1,80 @@
-.table-input__table {
+.editable-table {
+    @include drop-shadow;
     box-sizing: border-box;
     max-width: 100%;
     overflow-x: auto;
+    padding: $grid-unit * 2;
+    background: rgba($color-neutral, 0.1);
 
-    tbody {
-        max-height: 60vh;
-        overflow-y: auto;
+    table {
+        background: $body-bg;
+        color: $body-fg;
     }
-
     td,
     th {
+        padding: 0;
+        min-height: 4em;
         position: relative;
+    }
+    textarea {
+        display: block;
+        background: transparent;
+        color: inherit;
+        border-color: transparent;
+        border-radius: 0;
+        resize: none;
+        height: 100%;
+        width: 100%;
+    }
+    .row-focused,
+    .column-focused {
+        background-color: rgba($color-interactive, 0.1);
+    }
+    .focused-cell {
+        transform: scale(1.02);
+        z-index: 99;
+        textarea {
+            @include drop-shadow(2);
+            z-index: 101;
+            border-color: $color-interactive;
+            background-color: $body-bg;
+            color: $body-fg;
+        }
+    }
+}
+
+.editable-table__controls {
+    display: none;
+}
+td,
+th {
+    > .editable-table__controls {
+        display: block;
+    }
+    .editable-table__controls__top,
+    .editable-table__controls__bottom {
+        position: absolute;
+        left: 0;
+        right: 0;
+        z-index: 100;
+    }
+    .editable-table__controls__top {
+        bottom: 100%;
+    }
+    .editable-table__controls__bottom {
+        top: 100%;
+    }
+    .editable-table__controls__left,
+    .editable-table__controls__right {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        z-index: 100;
+    }
+    .editable-table__controls__left {
+        right: 100%;
+    }
+    .editable-table__controls__right {
+        left: 100%;
     }
 }
