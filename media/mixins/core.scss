@@ -131,7 +131,7 @@
         @include material-icon;
         z-index: 101;
         color: $color-interactive;
-        font-size: 3em;
+        font-size: 2*$grid-unit;
         content: "sync";
         top: 50%;
         left: 50%;
@@ -139,6 +139,7 @@
     }
 
     &.loading {
+        min-height: 3*$grid-unit;
         &:before,
         &:after {
             visibility: visible;
