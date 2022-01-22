@@ -1,20 +1,30 @@
 .editable-table {
     box-sizing: border-box;
     max-width: 100%;
-    overflow-x: auto;
-    background: rgba($color-neutral, 0.1);
+    max-height: 60vh;
+    background: $color-neutral;
+    overflow: auto;
 
     >table {
-        @include drop-shadow;
         background: $body-bg;
         color: $body-fg;
-        margin: $grid-unit * 2.5 !important;
         width: auto;
+        border: $grid-unit*2.5 solid $color-neutral;
+    }
+
+    td,
+    th,
+    tr {
+        border: 0;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
     }
 
     td,
     th {
         padding: 0;
+        margin: 0;
         position: relative;
         font-size: small;
         height: 5em;
@@ -26,8 +36,12 @@
         }
 
         &.focused-cell {
-            background-color: $body-bg;
-            color: $body-fg;
+            textarea {
+                background-color: $body-bg;
+                color: $body-fg;
+                outline: 5px solid $body-bg;
+                border-radius: 5px;
+            }
         }
 
         &.add-column-right-hover {
@@ -157,5 +171,35 @@ tr {
         .toolbar__button--delete-row {
             display: none;
         }
+    }
+}
+
+// hide add row controls from header
+thead {
+
+    .toolbar__button--add-row-above,
+    .toolbar__button--add-row-below {
+        display: none;
+    }
+}
+
+// hide add/delete column controls from body
+tbody {
+
+    .toolbar__button--add-column-left,
+    .toolbar__button--add-column-right,
+    .toolbar__button--delete-column {
+        display: none;
+    }
+}
+
+// hide delete row controls from all but last cell
+.toolbar__button--delete-row {
+    display: none;
+}
+
+td:last-child {
+    .toolbar__button--delete-row {
+        display: block;
     }
 }
