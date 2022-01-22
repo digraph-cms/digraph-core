@@ -2,6 +2,8 @@
 
 namespace DigraphCMS\HTML\Forms;
 
+use DigraphCMS\CodeMirror\CodeMirror;
+
 class TableInput extends INPUT
 {
     protected $default = [
@@ -41,6 +43,7 @@ class TableInput extends INPUT
 
     public function toString(): string
     {
+        CodeMirror::loadMode('gfm');
         return parent::toString() .
             '<noscript><div class="notification notification--error">Table editing inputs require Javascript</div></noscript>';
     }

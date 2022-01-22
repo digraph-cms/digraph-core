@@ -10,6 +10,7 @@
     *:first-child {
         border-left: 0;
     }
+
     *:last-child {
         border-right: 0;
     }
@@ -47,6 +48,23 @@
         z-index: 1000;
         background: $body-bg;
     }
+
+    &.toolbar--vertical {
+        flex-direction: column;
+        .toolbar__button {
+            .toolbar__button__tooltip {
+                width: 150%;
+                top: 0 !important;
+                left: 100% !important;
+                right: auto !important;
+                bottom: auto !important;
+                &:last-child {
+                    top: auto !important;
+                    bottom: 0 !important;
+                }
+            }
+        }
+    }
 }
 
 .toolbar__button {
@@ -57,7 +75,7 @@
     text-decoration: none !important;
     display: flex;
 
-    > .icon {
+    >.icon {
         display: block;
         font-size: inherit;
     }
