@@ -224,7 +224,7 @@ class Router
             foreach ($paths as $path) {
                 if (is_file($path)) {
                     $extension = pathinfo($path, PATHINFO_EXTENSION);
-                    if ($content = Dispatcher::firstValue('onRenderRoute_' . $extension, [$path, $route])) {
+                    if (is_string($content = Dispatcher::firstValue('onRenderRoute_' . $extension, [$path, $route]))) {
                         return $content;
                     }
                 }
