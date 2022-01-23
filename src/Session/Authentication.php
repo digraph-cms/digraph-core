@@ -7,14 +7,15 @@ use DigraphCMS\DB\DB;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
 
-final class Authentication
+class Authentication
 {
-    protected $id, $user, $comment, $secret, $created, $expires, $ip, $ua;
+    protected $id, $user, $userUUID, $comment, $secret, $created, $expires, $ip, $ua;
 
     public function __construct(array $row)
     {
         $this->id = $row['id'];
         $this->user = Users::user($row['user_uuid']);
+        $this->userUUID = $row['user_uuid'];
         $this->comment = $row['comment'];
         $this->secret = $row['secret'];
         $this->created = (new DateTime)->setTimestamp((int)$row['created']);
@@ -26,6 +27,10 @@ final class Authentication
     public function id(): string
     {
         return $this->id;
+    }
+
+    public function userUUID(): string {
+        return $this->userUUID;
     }
 
     public function user(): User

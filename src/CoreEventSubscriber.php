@@ -191,11 +191,17 @@ class CoreEventSubscriber
      */
     public static function onStaticUrlPermissions_user(URL $url, User $user): ?bool
     {
+        // disable authentication log if php sessions are being used
+        if (Config::get('php_session.enabled') && $url->path() == '/~user/authentication_log.html') {
+            return false;
+        }
+        // if user is specified limit routes for the user being viewed/edited and admins
         if ($url->arg('user')) {
             return
                 $url->arg('user') == $user->uuid()
                 || Permissions::inMetaGroup('users__admin', $user);
         }
+        // otherwise return whether this is a user
         return Permissions::inGroup('users', $user);
     }
 

@@ -1,4 +1,8 @@
 {
+  "php_session": {
+    "enabled": false,
+    "key": "DigraphAuthentication"
+  },
   "paths": {
     "web": "${paths.base}/web",
     "storage": "${paths.base}/storage"

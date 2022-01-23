@@ -3,10 +3,16 @@
 
 <?php
 
+use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\UI\ButtonMenus\ButtonMenu;
 use DigraphCMS\UI\ButtonMenus\ButtonMenuButton;
+
+// skip form if we're using php session management
+if (Config::get('php_session.enabled')) {
+    throw new RedirectException(Context::fields()['no_url']);
+}
 
 $redirect = null;
 

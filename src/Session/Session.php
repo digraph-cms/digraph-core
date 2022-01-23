@@ -4,8 +4,10 @@ namespace DigraphCMS\Session;
 
 use DateInterval;
 use DateTime;
+use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
 use DigraphCMS\URL\URLs;
+use DigraphCMS\Users\Users;
 use donatj\UserAgent\UserAgentParser;
 
 Session::_init();
@@ -17,21 +19,35 @@ final class Session
     public static function _init()
     {
         static::$now = date("Y-m-d H:i:s");
+        // if PHP sessions are enabled check there for authentication
+        // enabling PHP-managed sessions disables some logging, but is higher performance
+        // in some cases, maybe significantly
+        if (Config::get('php_session.enabled')) {
+            @session_start();
+            if ($s = @$_SESSION[Config::get('php_session.key')]) {
+                if (Users::get($s['user_uuid'])) {
+                    static::setAuth(new PHPAuthentication($s));
+                }
+            }
+        }
+        // otherwise use manual authentication cookies and check them against database
         // user must have an auth and token cookie to get authenticated
-        if ($cookie = static::getAuthCookie()) {
-            $row = DB::query()
-                ->from('session')
-                ->disableSmartJoin()
-                ->where(
-                    'session.id = ? AND session.secret = ? AND session.expires > ?',
-                    [$cookie['id'], $cookie['secret'], static::$now]
-                )
-                ->where(
-                    'NOT EXISTS (SELECT 1 FROM session_expiration WHERE session_expiration.session_id = session.id)'
-                )
-                ->fetch();
-            if ($row) {
-                static::setAuth(new Authentication($row));
+        else {
+            if ($cookie = static::getAuthCookie()) {
+                $row = DB::query()
+                    ->from('session')
+                    ->disableSmartJoin()
+                    ->where(
+                        'session.id = ? AND session.secret = ? AND session.expires > ?',
+                        [$cookie['id'], $cookie['secret'], static::$now]
+                    )
+                    ->where(
+                        'NOT EXISTS (SELECT 1 FROM session_expiration WHERE session_expiration.session_id = session.id)'
+                    )
+                    ->fetch();
+                if ($row) {
+                    static::setAuth(new Authentication($row));
+                }
             }
         }
     }
@@ -39,7 +55,7 @@ final class Session
     public static function user(): ?string
     {
         if (static::$auth) {
-            return static::$auth->user()->uuid();
+            return static::$auth->userUUID();
         } else {
             return null;
         }
@@ -118,29 +134,46 @@ final class Session
 
     public static function authenticate(string $user, string $comment, bool $rememberme): Authentication
     {
+        // deauthenticate current authorization if one is set
         if (static::$auth) {
             static::deauthenticate('signed in as a different user');
         }
+        // decide expiration date
         $expires = new DateTime();
         $expires->add(DateInterval::createFromDateString(Cookies::expiration('auth')));
-        $row = [
-            'user_uuid' => $user,
-            'comment' => $comment,
-            'secret' => static::generateSecret(),
-            'created' => static::$now,
-            'expires' => $expires->format("Y-m-d H:i:s"),
-            'ip' => $_SERVER['REMOTE_ADDR'],
-            'ua' => $_SERVER['HTTP_USER_AGENT']
-        ];
-        $row['id'] = DB::query()
-            ->insertInto('session', $row)
-            ->execute();
-        static::setAuthCookie(
-            $row['id'],
-            $row['secret'],
-            $rememberme
-        );
-        return static::$auth = new Authentication($row);
+        // if php session management is enabled, create a new PHPAuthentication
+        if (Config::get('php_session.enabled')) {
+            return static::$auth = new PHPAuthentication([
+                'user_uuid' => $user,
+                'comment' => $comment,
+                'secret' => static::generateSecret(),
+                'created' => static::$now,
+                'expires' => $expires->format("Y-m-d H:i:s"),
+                'ip' => $_SERVER['REMOTE_ADDR'],
+                'ua' => $_SERVER['HTTP_USER_AGENT']
+            ]);
+        }
+        // otherwise use manual authentication cookies and save them in database
+        else {
+            $row = [
+                'user_uuid' => $user,
+                'comment' => $comment,
+                'secret' => static::generateSecret(),
+                'created' => static::$now,
+                'expires' => $expires->format("Y-m-d H:i:s"),
+                'ip' => $_SERVER['REMOTE_ADDR'],
+                'ua' => $_SERVER['HTTP_USER_AGENT']
+            ];
+            $row['id'] = DB::query()
+                ->insertInto('session', $row)
+                ->execute();
+            static::setAuthCookie(
+                $row['id'],
+                $row['secret'],
+                $rememberme
+            );
+            return static::$auth = new Authentication($row);
+        }
     }
 
     public static function deauthenticate(string $reason)

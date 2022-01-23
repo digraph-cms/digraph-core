@@ -158,8 +158,10 @@ class Cookies
 
     public static function onCookieDescribe_auth_session()
     {
+        $url = new URL('/~user/authentication_log.html');
         return "Stores an authorization token used to verify that you are signed in as " . Users::current() . '. ' .
-            "<strong>Never</strong> share the value of this cookie with anyone. The secret token contained in it should be kept secret as if it were a password, as it could be used to hijack your account.";
+            "This cookie is logged and stored in a way that links your account to your IP address, sign-in time, and browser user agent." .
+            "To view this stored information visit <a href='$url'>your account's authentication log</a>.";
     }
 
     public static function onCookieExpiration_PHPSESSID()
@@ -174,8 +176,12 @@ class Cookies
 
     public static function onCookieDescribe_PHPSESSID()
     {
+        if (Config::get('php_session.enabled')) {
+            return 'Used by the CMS to store and verify your sign-in status. Once you sign in, on the server this cookie is used to link your account to your IP address, sign-in time, and browser user agent.'
+                . ' This cookie and the PHP session store may also be used by third party libraries to manage the UI state of things like forms.';
+        }
         $d = "This cookie can be set automatically by the PHP programming language, or it may have been set by a different piece of software running on this server.";
-        $d .= " This cookie and the PHP session store are not used directly by any core CMS code, but may be necessary for third party libraries to manage UI state of things like forms.";
+        $d .= " This cookie and the PHP session store are not used directly by any core CMS code, but may be necessary for third party libraries to manage the UI state of things like forms.";
         return $d;
     }
 
