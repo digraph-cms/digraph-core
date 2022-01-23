@@ -13,6 +13,9 @@ final class InitializeData extends AbstractMigration
             ->insert([
                 'uuid' => 'admins',
                 'name' => 'Administrators'
+            ])->insert([
+                'uuid' => 'editors',
+                'name' => 'Editors'
             ])
             ->save();
         $this->table('page')

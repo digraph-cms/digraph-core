@@ -159,7 +159,7 @@ class Cookies
     public static function onCookieDescribe_auth_session()
     {
         return "Stores an authorization token used to verify that you are signed in as " . Users::current() . '. ' .
-            "<strong>Never</strong> share the value of this cookie with anyone. The secret token contained in it should be kept secret as if it were a password, as it could used to hijack your account.";
+            "<strong>Never</strong> share the value of this cookie with anyone. The secret token contained in it should be kept secret as if it were a password, as it could be used to hijack your account.";
     }
 
     public static function onCookieExpiration_PHPSESSID()

@@ -210,8 +210,10 @@ class Router
         foreach (self::$sources as $source) {
             // check individual/specific route
             $path = "$source/~$route/$action.action.*";
-            if (is_file($path)) {
-                return true;
+            foreach (glob($path) as $file) {
+                if (is_file($file)) {
+                    return true;
+                }
             }
         }
         return false;

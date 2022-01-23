@@ -26,38 +26,6 @@ class Context
     }
 
     /**
-     * Require that the current user be a member of a given group. Throws 
-     * exception if user is not.
-     *
-     * @param string $group
-     * @return void
-     */
-    public static function requireGroup(string $uuid)
-    {
-        if (!Permissions::inGroup($uuid, Users::current() ?? Users::guest())) {
-            if ($group = Users::group($uuid)) {
-                throw new AccessDeniedError("Must be a member of the group $group");
-            }
-            throw new AccessDeniedError("Must be a member of a nonexistent group");
-        }
-    }
-
-    /**
-     * Require that the current user be a member of one of the groups given.
-     * Throws an exception if the user is not. 
-     *
-     * @param string[] $groups
-     * @param User $user
-     * @return void
-     */
-    public static function requireGroups(array $groups)
-    {
-        foreach ($groups as $group) {
-            static::requireGroup($group);
-        }
-    }
-
-    /**
      * Retrieve an arg from the request URL
      *
      * @param string $key

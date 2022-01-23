@@ -29,7 +29,8 @@ $order->input()->setAllowDeletion(true);
 
 $name = (new Field('Media name'))
     ->setDefault($media->name())
-    ->setRequired(true);
+    ->setRequired(true)
+    ->addTip('Used as the label when embedding, and as the filename of the Zip download');
 
 $files = (new Field('Upload more files', new UploadMulti()))
     ->addTip('You will be given the option to reorder files in the next step.');

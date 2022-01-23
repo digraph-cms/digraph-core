@@ -19,7 +19,9 @@ use DigraphCMS\UI\DataTables\QueryTable;
 use DigraphCMS\UI\Format;
 use DigraphCMS\UI\TabInterface;
 use DigraphCMS\URL\URL;
+use DigraphCMS\Users\Permissions;
 
+Permissions::requireMetaGroup('content__edit');
 Context::response()->template('iframe.php');
 
 $wrapper = (new DIV())

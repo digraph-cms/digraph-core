@@ -29,6 +29,8 @@ use DigraphCMS\UI\UserMenu;
 <body class='template-minimal no-js'>
     <?php
     echo new UserMenu(Context::url());
+    echo Templates::render('sections/header.php');
+    echo Templates::render('sections/navbar.php');
     Notifications::printSection();
     if (Context::response()->status() == 200) {
         Breadcrumb::print();

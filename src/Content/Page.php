@@ -137,7 +137,7 @@ class Page implements ArrayAccess
         if ($url->action() == 'index') {
             return true;
         } else {
-            return Permissions::inGroup('admins', $user);
+            return Permissions::inMetaGroup('content__edit', $user);
         }
         return null;
     }

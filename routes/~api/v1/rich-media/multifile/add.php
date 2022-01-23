@@ -14,7 +14,8 @@ $form->form()->setData('target', Context::arg('frame'));
 $form->button()->setText('Add media');
 
 $name = (new Field('Media name'))
-    ->setRequired(true);
+    ->setRequired(true)
+    ->addTip('Used as the label when embedding, and as the filename of the Zip download');
 
 $files = (new Field('Upload files', new UploadMulti()))
     ->setRequired(true)

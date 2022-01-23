@@ -90,6 +90,8 @@ class URL
     {
         $parent =
             ($this->page() ? $this->page()->parent($this) : null) ??
+            Dispatcher::firstValue('onStaticUrlParent_' . $this->route(), [$this]) ??
+            Dispatcher::firstValue('onStaticUrlParent', [$this]) ??
             $this->hackUrlForParent();
         if ($parent->__toString() == $this->__toString()) {
             return null;

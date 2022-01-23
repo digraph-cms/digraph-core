@@ -12,6 +12,7 @@ use DigraphCMS\DOM\DOMEvent;
 use DigraphCMS\HTTP\Response;
 use DigraphCMS\RichContent\RichContent;
 use DigraphCMS\RichMedia\Types\AbstractRichMedia;
+use DigraphCMS\Session\Session;
 use DigraphCMS\UI\Format;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Permissions;
@@ -193,9 +194,50 @@ class CoreEventSubscriber
         if ($url->arg('user')) {
             return
                 $url->arg('user') == $user->uuid()
-                || Permissions::inGroup('admins', $user);
+                || Permissions::inMetaGroup('users__admin', $user);
         }
         return Permissions::inGroup('users', $user);
+    }
+
+    /**
+     * Assign user profile page as the parent URL of user management pages
+     *
+     * @param URL $url
+     * @return URL|null
+     */
+    public static function onStaticUrlParent_user(URL $url): ?URL
+    {
+        if ($url->arg('user') && $user = Users::get($url->arg('user'))) {
+            return $user->profile();
+        }
+        return Users::get(Session::user())->profile();
+    }
+
+    /**
+     * Limits access to ~groups route to user editors
+     *
+     * @param URL $url
+     * @param User $user
+     * @return boolean|null
+     */
+    public static function onStaticUrlPermissions_groups(URL $url, User $user): ?bool
+    {
+        return Permissions::inMetaGroup('users__edit');
+    }
+
+    /**
+     * Limits access to ~users route to user editors
+     *
+     * @param URL $url
+     * @param User $user
+     * @return boolean|null
+     */
+    public static function onStaticUrlPermissions_users(URL $url, User $user): ?bool
+    {
+        return $url == $user->profile() || Permissions::inMetaGroups([
+            'users__edit',
+            'users__view'
+        ]);
     }
 
     /**
@@ -222,7 +264,7 @@ class CoreEventSubscriber
      */
     public static function onStaticUrlName_users(URL $url, bool $inPageContext): ?string
     {
-        if (strlen($url->action()) == 36 && $user = Users::get($url->action())) {
+        if ($user = Users::get($url->action())) {
             return $user->name();
         }
         return null;

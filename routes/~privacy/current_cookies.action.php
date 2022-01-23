@@ -37,7 +37,7 @@ $table = new ArrayTable(
         return [
             htmlspecialchars($key),
             Cookies::describe($key),
-            "<pre><code class='hljs language-json'>$value</code></pre>",
+            // "<pre><code class='hljs language-json'>$value</code></pre>",
             Cookies::expiration($key) ? 'After ' . Cookies::expiration($key) : 'When browser is closed',
             $button
         ];
@@ -45,7 +45,7 @@ $table = new ArrayTable(
     [
         new ColumnHeader('Name'),
         new ColumnHeader('Description'),
-        new ColumnHeader('Value'),
+        // new ColumnHeader('Value'),
         new ColumnHeader('Automatic expiration'),
         new ColumnHeader('')
     ]

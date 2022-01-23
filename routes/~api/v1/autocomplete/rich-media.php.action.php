@@ -6,7 +6,9 @@ use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\RichMedia\RichMedia;
 use DigraphCMS\RichMedia\Types\AbstractRichMedia;
 use DigraphCMS\Session\Cookies;
+use DigraphCMS\Users\Permissions;
 
+Permissions::requireMetaGroup('content__edit');
 if (Context::arg('csrf') !== Cookies::csrfToken('autocomplete')) {
     throw new HttpError(401);
 }

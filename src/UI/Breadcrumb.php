@@ -131,7 +131,7 @@ class Breadcrumb
             $parent = reset($breadcrumb)->parent();
             if ($parent !== null && !in_array($parent, $breadcrumb)) {
                 array_unshift($breadcrumb, $parent);
-                static::Helper($breadcrumb);
+                static::helper($breadcrumb);
             }
         }
     }

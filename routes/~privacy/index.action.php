@@ -15,7 +15,7 @@ use DigraphCMS\URL\URL;
 
 <h3>Content management system cookies</h3>
 <p>
-    All cookies are strictly opt-in, and you may view and delete the cookies currently set for your browser session at any time on the <a href="<?php echo new URL('current_cookies.html'); ?>">current cookies page</a>.
+    All CMS cookies are opt-in, and you may view and delete the cookies currently set for your browser session at any time on the <a href="<?php echo new URL('current_cookies.html'); ?>">current cookies page</a>.
     You can also adjust your cookie settings at any time on the <a href="<?php echo new URL('cookie_authorizations.html'); ?>">cookie authorizations page</a>.
 </p>
 

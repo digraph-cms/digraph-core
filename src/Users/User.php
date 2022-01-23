@@ -5,6 +5,7 @@ namespace DigraphCMS\Users;
 use ArrayAccess;
 use DateTime;
 use DigraphCMS\Digraph;
+use DigraphCMS\HTML\A;
 use DigraphCMS\Session\Session;
 use DigraphCMS\URL\URL;
 use Flatrr\FlatArrayTrait;
@@ -50,7 +51,16 @@ class User implements ArrayAccess
 
     public function __toString()
     {
-        return "<a href='" . $this->profile() . "' class='user-link' target='_top'>" . $this->name() . "</a>";
+        $a = (new A)
+            ->addClass('user-link')
+            ->addChild($this->name());
+        $url = $this->profile();
+        if (Permissions::url($url)) {
+            $a
+                ->setAttribute('href', $url)
+                ->setAttribute('target', '_top');
+        }
+        return $a->__toString();
     }
 
     public function addEmail(string $email, string $comment = '')

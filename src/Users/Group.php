@@ -2,6 +2,7 @@
 
 namespace DigraphCMS\Users;
 
+use DigraphCMS\HTML\A;
 use DigraphCMS\URL\URL;
 
 class Group
@@ -34,10 +35,20 @@ class Group
 
     public function __toString()
     {
-        if ($this->uuid == 'guests') {
-            return "<a class='user-group-link user-group-null-link'><em>" . $this->name() . "</em></a>";
-        }else {
-            return "<a href='" . $this->url() . "' class='user-group-link'>" . $this->name() . "</a>";
+        $a = (new A)
+            ->addClass('group-link')
+            ->addChild($this->name());
+        if ($this->uuid() == 'guests') {
+            $a->addClass('group-link--null');
+            $a->addClass('group-link--guests');
+        } else {
+            $url = $this->url();
+            if (Permissions::url($url)) {
+                $a
+                    ->setAttribute('href', $url)
+                    ->setAttribute('target', '_top');
+            }
         }
+        return $a->__toString();
     }
 }
