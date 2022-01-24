@@ -42,6 +42,7 @@ class Theme
             'dark-body-bg' => '#222',
             'dark-body-fg' => '#fff',
             'grid-unit' => '1rem',
+            'typography-width' => '35rem',
             'font-content' => 'serif',
             'font-header' => 'sans-serif',
             'font-ui' => 'sans-serif',

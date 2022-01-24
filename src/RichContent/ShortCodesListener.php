@@ -9,11 +9,19 @@ use DigraphCMS\HTML\Text;
 use DigraphCMS\RichMedia\RichMedia;
 use DigraphCMS\RichMedia\Types\FileRichMedia;
 use DigraphCMS\RichMedia\Types\MultiFileRichMedia;
+use DigraphCMS\RichMedia\Types\TableRichMedia;
 use DigraphCMS\UI\Format;
 use Thunder\Shortcode\Shortcode\ShortcodeInterface;
 
 class ShortCodesListener
 {
+    public static function onShortCode_table(ShortcodeInterface $s): ?string {
+        $table = RichMedia::get($s->getBbCode());
+        if ($table instanceof TableRichMedia) {
+            return $table->render();
+        }
+        return null;
+    }
     /**
      * Handle page link shortcodes
      *

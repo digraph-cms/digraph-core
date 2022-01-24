@@ -6,7 +6,12 @@
         blockquote,
         dd,
         dt {
-            max-width: 35em;
+            max-width: $typography-width;
+        }
+
+        table {
+            width: $typography-width;
+            max-width: 100%;
         }
     }
 }

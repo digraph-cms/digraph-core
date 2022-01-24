@@ -7,6 +7,8 @@
     padding: $grid-unit/2;
     font-family: $font-ui;
     margin: $grid-unit 0;
+    width: $typography-width;
+    max-width: 100%;
 
     &.card--light {
         background: mix($body-bg, $color-neutral, 90%);

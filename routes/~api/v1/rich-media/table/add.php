@@ -26,13 +26,15 @@ $toggle = (new RadioListField('How would you like to enter the table\'s content?
     ->setDefault('edit');
 
 $table = (new Field('Table content', new TableInput()))
-    ->setID('add-table-edit-field');
+    ->setID('rich-table-edit-field');
 
 $file = (new Field('Upload file', new UploadSingle()))
-    ->setID('add-table-file-field')
+    ->setID('rich-table-file-field')
     ->addTip('First row will be used as headers');
+// $file->input()
+//     ->allowedExtensions(['csv'])
 
-$form
+echo $form
     ->addChild($name)
     ->addChild($toggle)
     ->addChild($table)
@@ -42,6 +44,15 @@ $form
         $media = new TableRichMedia([], ['page_uuid' => Context::arg('uuid')]);
         // set up name
         $media->name($name->value());
+        // if toggle is set to 'edit' save editor contents
+        if ($toggle->value() == 'edit') {
+            $media['table'] = $table->value();
+        }
+        // otherwise set editor from file
+        else {
+            $f = $file->value();
+            $media->setTableFromFile($f['tmp_name'], pathinfo($f['name'], PATHINFO_EXTENSION));
+        }
         // insert and redirect
         $media->insert();
         $url = Context::url();
@@ -49,8 +60,6 @@ $form
         $url->arg('_tab_tab', 'page');
         throw new RedirectException($url);
     });
-
-echo $form;
 
 ?>
 <script>
