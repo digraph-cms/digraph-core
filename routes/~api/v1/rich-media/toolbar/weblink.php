@@ -21,8 +21,8 @@ echo $submit = (new A())
         var input = document.getElementById('<?php echo $input->id(); ?>');
         var submit = document.getElementById('<?php echo $submit->id(); ?>');
         var insert_fn = () => {
-            ac.dispatchEvent(Digraph.RichContent.insertTagEvent('url', {
-                _: e.autocompleteValue
+            input.dispatchEvent(Digraph.RichContent.insertTagEvent('url', {
+                _: input.value
             }));
             input.dispatchEvent(new Event('navigation-frame-reset', {
                 bubbles: true

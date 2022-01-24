@@ -16,7 +16,7 @@ class PageField extends AutocompleteField
         );
         $this->addClass('autocomplete-field--page');
         $this->addValidator(function (InputInterface $input): ?string {
-            if (!Pages::exists($input->value())) {
+            if ($input->value() && !Pages::exists($input->value())) {
                 return sprintf("%s is not a valid page", $input->value());
             }
             return null;

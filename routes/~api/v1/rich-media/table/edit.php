@@ -9,7 +9,6 @@ use DigraphCMS\HTML\Forms\TableInput;
 use DigraphCMS\HTML\Forms\UploadSingle;
 use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\RichMedia\RichMedia;
-use DigraphCMS\RichMedia\Types\TableRichMedia;
 
 $media = RichMedia::get(Context::arg('edit'));
 
@@ -58,7 +57,7 @@ echo $form
             $f = $file->value();
             $media->setTableFromFile($f['tmp_name'], pathinfo($f['name'], PATHINFO_EXTENSION));
         }
-        // insert and redirect
+        // update and redirect
         $media->update();
         $url = Context::url();
         $url->unsetArg('edit');

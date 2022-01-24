@@ -40,7 +40,7 @@ echo $form
     ->addChild($table)
     ->addChild($file)
     ->addCallback(function () use ($name, $toggle, $table, $file) {
-        // set up new media and its file
+        // set up new table media
         $media = new TableRichMedia([], ['page_uuid' => Context::arg('uuid')]);
         // set up name
         $media->name($name->value());

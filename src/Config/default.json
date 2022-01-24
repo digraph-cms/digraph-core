@@ -15,6 +15,7 @@
     "page": "\\DigraphCMS\\Content\\Page"
   },
   "rich_media_types": {
+    "bookmark": "\\DigraphCMS\\RichMedia\\Types\\BookMarkRichMedia",
     "file": "\\DigraphCMS\\RichMedia\\Types\\FileRichMedia",
     "multifile": "\\DigraphCMS\\RichMedia\\Types\\MultiFileRichMedia",
     "table": "\\DigraphCMS\\RichMedia\\Types\\TableRichMedia"

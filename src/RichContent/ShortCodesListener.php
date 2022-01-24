@@ -7,6 +7,7 @@ use DigraphCMS\Content\Pages;
 use DigraphCMS\HTML\A;
 use DigraphCMS\HTML\Text;
 use DigraphCMS\RichMedia\RichMedia;
+use DigraphCMS\RichMedia\Types\BookmarkRichMedia;
 use DigraphCMS\RichMedia\Types\FileRichMedia;
 use DigraphCMS\RichMedia\Types\MultiFileRichMedia;
 use DigraphCMS\RichMedia\Types\TableRichMedia;
@@ -16,6 +17,31 @@ use Thunder\Shortcode\Shortcode\ShortcodeInterface;
 
 class ShortCodesListener
 {
+
+    public static function onShortCode_bookmark(ShortcodeInterface $s): ?string
+    {
+        $bookmark = RichMedia::get($s->getBbCode());
+        if ($bookmark instanceof BookmarkRichMedia) {
+            $link = new A;
+            $title = $bookmark->name();
+            if ($bookmark['mode'] == 'url') {
+                $link->setAttribute('href', $bookmark['url']);
+                // TODO: verify/wayback link
+            } elseif ($bookmark['mode'] == 'page') {
+                if ($page = Pages::get($bookmark['page'])) {
+                    $link->setAttribute('href', $page->url());
+                } else {
+                    $link->addClass('link--broken');
+                    $title = "$title (NOTE: linked page missing)";
+                }
+            }
+            $link
+                ->setAttribute('title', $title)
+                ->addChild(new Text($s->getContent() ? $s->getContent() : $title));
+            return $link;
+        }
+        return null;
+    }
     /**
      * Shortcode for embedding rich media tables
      *
@@ -41,9 +67,11 @@ class ShortCodesListener
     {
         $url = $s->getBbCode();
         if (filter_var($url, FILTER_VALIDATE_URL)) {
-            return (new A)
+            $link = (new A)
                 ->setAttribute('href', $url)
                 ->addChild($s->getContent() ? $s->getContent() : preg_replace('/^(https?:)?\/\//', '', $url));
+            // TODO: verify/wayback
+            return $link;
         }
         return null;
     }
@@ -77,7 +105,7 @@ class ShortCodesListener
                     ->setAttribute('href', new URL('/' . $s->getBbCode() . '/'))
                     ->setAttribute('title', $title)
                     ->addClass('link--multiple-options')
-                    ->addChild(new Text($s->getContent() ? $s->getContent() : '[' . $title . ']'));
+                    ->addChild(new Text($s->getContent() ? $s->getContent() : $title));
             }
         } else {
             return null;
