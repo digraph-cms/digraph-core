@@ -48,7 +48,7 @@ document.addEventListener('click', (e) => {
     var parent, target;
     [parent, target] = Digraph.state.navigationParentAndTarget(event_target);
     // parent and target found
-    if (parent && event_target && target != '_top') {
+    if (parent && event_target && !event_target.attributes.target && target != '_top') {
         if (parent.classList.contains('navigation-frame--stateless')) {
             // stateless navigation frames don't update the address bar or browser history
             Digraph.state.get(event_target.getAttribute('href'), parent);

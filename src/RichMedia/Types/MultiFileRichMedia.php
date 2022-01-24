@@ -66,7 +66,7 @@ class MultiFileRichMedia extends AbstractRichMedia
             $id = 'multifile__list-' . $this->uuid();
             $wrapper = (new DIV)
                 ->setID($id)
-                ->addClass('navigation-frame')
+                ->addClass('navigation-frame navigation-frame--stateless')
                 ->addClass('multifile-card__list');
             if (!Context::arg($id) == 'open') {
                 // display link to show all files
@@ -79,7 +79,7 @@ class MultiFileRichMedia extends AbstractRichMedia
                 $list = "<ul>";
                 foreach ($this->files() as $f) {
                     $list .= sprintf(
-                        '<li><a href="%s" title="%s %s">%s</a></li>',
+                        '<li><a href="%s" target="_blank" title="%s %s">%s</a></li>',
                         $f->url(),
                         $f->filename(),
                         Format::filesize($f->bytes()),
