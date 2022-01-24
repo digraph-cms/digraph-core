@@ -1,6 +1,10 @@
 .data-table {
     max-width: 100%;
 
+    table {
+        width: 100%;
+    }
+
     .notification {
         &:first-child {
             margin-top: 0;

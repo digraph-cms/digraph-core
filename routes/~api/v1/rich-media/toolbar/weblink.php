@@ -21,13 +21,9 @@ echo $submit = (new A())
         var input = document.getElementById('<?php echo $input->id(); ?>');
         var submit = document.getElementById('<?php echo $submit->id(); ?>');
         var insert_fn = () => {
-            input.dispatchEvent(Digraph.RichContent.insertEvent(
-                '[{content}]({0})'.format(input.value),
-                '[{0}]({1})'.format(
-                    input.value.replace(/^(https?:)?\/\//, ''),
-                    input.value
-                )
-            ));
+            ac.dispatchEvent(Digraph.RichContent.insertTagEvent('url', {
+                _: e.autocompleteValue
+            }));
             input.dispatchEvent(new Event('navigation-frame-reset', {
                 bubbles: true
             }));

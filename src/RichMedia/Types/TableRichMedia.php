@@ -4,6 +4,7 @@ namespace DigraphCMS\RichMedia\Types;
 
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use DigraphCMS\Digraph;
+use DigraphCMS\RichContent\RichContent;
 
 class TableRichMedia extends AbstractRichMedia
 {
@@ -72,7 +73,7 @@ class TableRichMedia extends AbstractRichMedia
                     '<%s data-cell-id="%s">%s</%s>',
                     $cellTag,
                     $cellID,
-                    $cell,
+                    new RichContent($cell),
                     $cellTag
                 );
             }

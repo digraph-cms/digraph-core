@@ -2,7 +2,7 @@
 
 namespace DigraphCMS\RichContent;
 
-use DigraphCMS\Content\Filestore;
+use DigraphCMS\Content\Page;
 use DigraphCMS\Content\Pages;
 use DigraphCMS\HTML\A;
 use DigraphCMS\HTML\Text;
@@ -11,17 +11,43 @@ use DigraphCMS\RichMedia\Types\FileRichMedia;
 use DigraphCMS\RichMedia\Types\MultiFileRichMedia;
 use DigraphCMS\RichMedia\Types\TableRichMedia;
 use DigraphCMS\UI\Format;
+use DigraphCMS\URL\URL;
 use Thunder\Shortcode\Shortcode\ShortcodeInterface;
 
 class ShortCodesListener
 {
-    public static function onShortCode_table(ShortcodeInterface $s): ?string {
+    /**
+     * Shortcode for embedding rich media tables
+     *
+     * @param ShortcodeInterface $s
+     * @return string|null
+     */
+    public static function onShortCode_table(ShortcodeInterface $s): ?string
+    {
         $table = RichMedia::get($s->getBbCode());
         if ($table instanceof TableRichMedia) {
             return $table->render();
         }
         return null;
     }
+
+    /**
+     * URL shortcodes for making links to arbitrary URLs
+     *
+     * @param ShortcodeInterface $s
+     * @return string|null
+     */
+    public static function onShortCode_url(ShortcodeInterface $s): ?string
+    {
+        $url = $s->getBbCode();
+        if (filter_var($url, FILTER_VALIDATE_URL)) {
+            return (new A)
+                ->setAttribute('href', $url)
+                ->addChild($s->getContent() ? $s->getContent() : preg_replace('/^(https?:)?\/\//', '', $url));
+        }
+        return null;
+    }
+
     /**
      * Handle page link shortcodes
      *
@@ -30,11 +56,29 @@ class ShortCodesListener
      */
     public static function onShortCode_link(ShortcodeInterface $s): ?string
     {
-        if ($page = Pages::get($s->getBbCode())) {
-            return (new A)
-                ->setAttribute('href', $page->url())
-                ->setAttribute('title', $page->name())
-                ->addChild(new Text($s->getContent() ? $s->getContent() : $page->name()));
+        if ($pages = Pages::getAll($s->getBbCode())) {
+            if (count($pages) == 1) {
+                // if there is only one page at this slug/uuid, link to it
+                $page = reset($pages);
+                return (new A)
+                    ->setAttribute('href', $page->url())
+                    ->setAttribute('title', $page->name())
+                    ->addChild(new Text($s->getContent() ? $s->getContent() : $page->name()));
+            } else {
+                // if there are multiple pages, give link link--multiple-options class
+                // make default title indicate that there are multiple options
+                $title = "Multiple options: " . implode(', ', array_map(
+                    function (Page $page): string {
+                        return $page->name();
+                    },
+                    $pages
+                ));
+                return (new A)
+                    ->setAttribute('href', new URL('/' . $s->getBbCode() . '/'))
+                    ->setAttribute('title', $title)
+                    ->addClass('link--multiple-options')
+                    ->addChild(new Text($s->getContent() ? $s->getContent() : '[' . $title . ']'));
+            }
         } else {
             return null;
         }

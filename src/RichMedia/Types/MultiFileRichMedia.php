@@ -25,7 +25,7 @@ class MultiFileRichMedia extends AbstractRichMedia
 
     public static function className(): string
     {
-        return 'File download bundle';
+        return 'File bundle';
     }
 
     public function card(): DIV
