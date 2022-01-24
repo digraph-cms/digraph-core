@@ -39,8 +39,8 @@
             textarea {
                 background-color: $body-bg;
                 color: $body-fg;
-                outline: 5px solid $body-bg;
-                border-radius: 5px;
+                outline: 1px solid $body-bg;
+                transform: scale(1.01);
             }
         }
 

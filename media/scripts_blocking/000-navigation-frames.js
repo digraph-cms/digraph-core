@@ -31,6 +31,7 @@ document.addEventListener('DigraphDOMReady', (e) => {
 // click handler for links in navigation frames
 document.addEventListener('click', (e) => {
     var event_target = e.target;
+    if (event_target == null || event_target === undefined) return;
     while (event_target.tagName != 'A') {
         event_target = event_target.parentNode;
         if (event_target == document.body) {

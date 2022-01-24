@@ -3,13 +3,11 @@
 namespace DigraphCMS\HTML\Forms;
 
 use DigraphCMS\CodeMirror\CodeMirror;
+use DigraphCMS\Digraph;
 
 class TableInput extends INPUT
 {
-    protected $default = [
-        'head' => [],
-        'body' => []
-    ];
+    protected $default = null;
 
     public function attributes(): array
     {
@@ -30,6 +28,17 @@ class TableInput extends INPUT
                 'table-input'
             ]
         );
+    }
+
+    public function default()
+    {
+        if ($this->default === null) {
+            $this->default = [
+                'head' => [Digraph::uuid() => [Digraph::uuid() => '']],
+                'body' => [Digraph::uuid() => [Digraph::uuid() => '']]
+            ];
+        }
+        return parent::default();
     }
 
     public function value($useDefault = false)

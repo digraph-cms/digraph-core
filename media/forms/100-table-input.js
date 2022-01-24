@@ -20,11 +20,14 @@ class DigraphTableInput {
         this.input.parentNode.insertBefore(this.wrapper, this.input);
         this.wrapper.appendChild(this.input);
         // set up table
-        this.table = new EditableTable();
+        this.table = new EditableTable(JSON.parse(this.input.value));
         this.wrapper.appendChild(this.table.wrapper);
-        // sync data
-        var data = JSON.parse(this.input.value);
-
+        // listeners for syncing data into input field
+        this.wrapper.addEventListener('editable-table-layout-change', e => this.syncDataToInput());
+        this.wrapper.addEventListener('editable-table-content-change', e => this.syncDataToInput());
+    }
+    syncDataToInput() {
+        this.input.value = JSON.stringify(this.table.data());
     }
 }
 
@@ -47,7 +50,8 @@ class EditableTable {
         this.focused_row_number = null;
         this.focused_cell_number = null;
         if (data) {
-            // TODO: insert data
+            // insert rows and columns specified in data
+            this.setData(data);
         } else {
             // insert one row and column per head and body
             this.colCount = 1;
@@ -55,10 +59,39 @@ class EditableTable {
             this.insertRow(this.body);
         }
     }
-    insertRow(group, position) {
+    setData(data) {
+        this.colCount = 1;
+        this._setData(this.head, data.head);
+        this._setData(this.body, data.body);
+        this.onCellFocus();
+    }
+    _setData(group, data) {
+        group.innerHTML = '';
+        for (const row_id in data) {
+            if (Object.hasOwnProperty.call(data, row_id)) {
+                const cells = data[row_id];
+                this.insertRow(group, null, row_id);
+                // set cell values
+                const row = group.childNodes[group.childNodes.length-1];
+                var col = 0;
+                for (const cell_id in cells) {
+                    if (Object.hasOwnProperty.call(cells, cell_id)) {
+                        const cell_data = cells[cell_id];
+                        if (!row.childNodes[col]) this.insertColumn();
+                        var cell = row.childNodes[col];
+                        cell.id = cell_id;
+                        cell.getElementsByTagName('textarea')[0].value = cell_data;
+                        col++;
+                    }
+                }
+                // group.appendChild(row);
+            }
+        }
+    }
+    insertRow(group, position, uuid) {
         // set up row object
         var row = document.createElement('tr');
-        row.id = Digraph.uuid();
+        row.id = uuid ?? Digraph.uuid();
         // add cells as needed
         for (let i = 0; i < this.colCount; i++) {
             row.appendChild(this._makeCell());
@@ -70,6 +103,7 @@ class EditableTable {
             group.insertBefore(row, group.childNodes[position]);
         }
         this.onCellFocus(this.focused_cell);
+        this.table.dispatchEvent(new Event('editable-table-layout-change', { bubbles: true }));
     }
     insertColumn(position) {
         // insert either at end or given position (0-indexed, conceptually the spaces between columns)
@@ -84,21 +118,38 @@ class EditableTable {
         }
         this.colCount++;
         this.onCellFocus(this.focused_cell);
+        this.table.dispatchEvent(new Event('editable-table-layout-change', { bubbles: true }));
     }
-    _makeCell(uuid) {
+    deleteRow(group, position) {
+        group.removeChild(
+            group.childNodes[position]
+        );
+        this.onCellFocus();
+        this.table.dispatchEvent(new Event('editable-table-layout-change', { bubbles: true }));
+    }
+    deleteColumn(position) {
+        this.columnCells(position).forEach(
+            cell => cell.parentElement.removeChild(cell)
+        );
+        this.colCount--;
+        this.onCellFocus();
+        this.table.dispatchEvent(new Event('editable-table-layout-change', { bubbles: true }));
+    }
+    _makeCell(text, uuid) {
         var cell = document.createElement('td');
         var textarea = document.createElement('textarea');
+        if (text) textarea.value = text;
         cell.appendChild(textarea);
         cell.id = uuid ?? Digraph.uuid();
-        textarea.addEventListener('focus', (e) => { this.onCellFocus(cell); });
-        textarea.addEventListener('blur', (e) => { this.onCellBlur(cell); });
+        textarea.addEventListener('focus', (e) => this.onCellFocus(cell));
+        textarea.addEventListener('blur', (e) => this.onCellBlur(cell));
+        textarea.addEventListener('change', (e) => this.onCellChange(cell));
         return cell;
     }
     onCellFocus(cell) {
         cell = cell ?? this.focused_cell;
-        if (!cell) return;
         /* clear existing focus */
-        if (this.focused_cell) {
+        if (this.focused_cell || !cell || !cell.parentElement || !cell.parentElement.parentElement) {
             // save focused element hierarchy
             this.focused_cell = null;
             this.focused_row = null;
@@ -109,18 +160,21 @@ class EditableTable {
             // detach controls
             this.wrapper.appendChild(this.controls);
         }
+        if (!cell) return;
         /* record new focus */
         // save focused element hierarchy
-        this.focused_cell = cell;
-        this.focused_row = cell.parentElement;
-        this.focused_group = this.focused_row.parentElement;
-        // save focused row/column numbers
-        this.focused_row_number = Array.from(this.focused_group.childNodes).indexOf(this.focused_row);
-        this.focused_column_number = Array.from(this.focused_row.childNodes).indexOf(this.focused_cell);
-        // set focus classes
-        this.setFocusClasses();
-        // attach controls to this cell
-        this.focused_cell.appendChild(this.controls);
+        if (cell.parentElement && cell.parentElement.parentElement) {
+            this.focused_cell = cell;
+            this.focused_row = cell.parentElement;
+            this.focused_group = this.focused_row.parentElement;
+            // save focused row/column numbers
+            this.focused_row_number = Array.from(this.focused_group.childNodes).indexOf(this.focused_row);
+            this.focused_column_number = Array.from(this.focused_row.childNodes).indexOf(this.focused_cell);
+            // set focus classes
+            this.setFocusClasses();
+            // attach controls to this cell
+            this.focused_cell.appendChild(this.controls);
+        }
     }
     setFocusClasses() {
         // unset all the focus classes
@@ -146,7 +200,27 @@ class EditableTable {
         }
     }
     onCellBlur(cell) {
-        // i guess does nothing right now?
+    }
+    onCellChange(cell) {
+        cell.dispatchEvent(new Event('editable-table-content-change', { bubbles: true }));
+    }
+    data() {
+        return {
+            'head': this._groupData(this.head),
+            'body': this._groupData(this.body)
+        }
+    }
+    _groupData(group) {
+        var data = {};
+        Array.from(group.childNodes).forEach(
+            row => {
+                data[row.id] = {};
+                Array.from(row.childNodes).forEach(
+                    cell => data[row.id][cell.id] = cell.getElementsByTagName('textarea')[0].value
+                )
+            }
+        );
+        return data;
     }
     focusedColumnCells() {
         if (!this.focused_cell) return [];
@@ -268,5 +342,11 @@ EditableTable.prototype.commands = {
     },
     addColumnAfter: (table) => {
         if (table.focused_cell) table.insertColumn(table.focused_column_number + 1);
+    },
+    deleteColumn: (table) => {
+        if (table.focused_cell) table.deleteColumn(table.focused_column_number);
+    },
+    deleteRow: (table) => {
+        if (table.focused_cell) table.deleteRow(table.focused_group, table.focused_row_number);
     }
 };

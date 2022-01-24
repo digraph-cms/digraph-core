@@ -3,7 +3,6 @@
 namespace DigraphCMS\HTML\Forms;
 
 use DigraphCMS\HTML\DIV;
-use DigraphCMS\HTML\Forms\Fields\CheckboxField;
 use DigraphCMS\HTML\Forms\Fields\RadioField;
 
 class RadioList extends DIV implements InputInterface
@@ -48,7 +47,7 @@ class RadioList extends DIV implements InputInterface
         ];
     }
 
-    public function field(string $key): ?CheckboxField
+    public function field(string $key): ?RadioField
     {
         return @$this->fields[$key]['field'];
     }
