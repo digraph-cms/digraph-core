@@ -4,7 +4,6 @@ namespace DigraphCMS\RichContent;
 
 use DigraphCMS\Content\Page;
 use DigraphCMS\Content\Pages;
-use DigraphCMS\Context;
 use DigraphCMS\HTML\A;
 use DigraphCMS\HTML\Text;
 use DigraphCMS\RichMedia\RichMedia;
@@ -44,7 +43,7 @@ class ShortCodesListener
                 }
             } elseif ($bookmark['mode'] == 'page') {
                 // link to a page on this site
-                if ($page = Pages::get($bookmark['page'] ?? 'broken')) {
+                if ($bookmark['page'] && $page = Pages::get($bookmark['page'])) {
                     $link->setAttribute('href', $page->url())
                         ->setAttribute('title', $page->name());
                 } else {

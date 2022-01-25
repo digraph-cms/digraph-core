@@ -52,6 +52,7 @@ class DigraphAutocomplete {
         this.input.name = this.input.name + '__input';
         this.value.id = this.input.id;
         this.input.id = this.input.id + '__input';
+        this.value.setAttribute('form', this.input.getAttribute('form'));
         this.value.setAttribute('type', 'hidden');
         this.wrapper.appendChild(this.value);
         // set up debounced events
