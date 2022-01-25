@@ -35,6 +35,7 @@ class EditableTable {
     constructor(data) {
         // set up basic markup
         this.table = document.createElement('table');
+        this.id = this.table.id = 'editable-table--' + Digraph.uuid();
         this.table.innerHTML = '<thead></thead><tbody></tbody>';
         this.head = this.table.getElementsByTagName('thead')[0];
         this.body = this.table.getElementsByTagName('tbody')[0];
@@ -72,7 +73,7 @@ class EditableTable {
                 const cells = data[row_id];
                 this.insertRow(group, null, row_id);
                 // set cell values
-                const row = group.childNodes[group.childNodes.length-1];
+                const row = group.childNodes[group.childNodes.length - 1];
                 var col = 0;
                 for (const cell_id in cells) {
                     if (Object.hasOwnProperty.call(cells, cell_id)) {

@@ -5,11 +5,12 @@
     background: $color-neutral;
     overflow: auto;
 
-    >table {
+    > table {
         background: $body-bg;
         color: $body-fg;
         width: auto;
-        border: $grid-unit*2.5 solid $color-neutral;
+        border: $grid-unit * 2.5 solid $color-neutral;
+        box-shadow: none !important;
     }
 
     td,
@@ -95,7 +96,7 @@
 
 td,
 th {
-    >.editable-table__controls {
+    > .editable-table__controls {
         display: block;
     }
 
@@ -176,7 +177,6 @@ tr {
 
 // hide add row controls from header
 thead {
-
     .toolbar__button--add-row-above,
     .toolbar__button--add-row-below {
         display: none;
@@ -185,7 +185,6 @@ thead {
 
 // hide add/delete column controls from body
 tbody {
-
     .toolbar__button--add-column-left,
     .toolbar__button--add-column-right,
     .toolbar__button--delete-column {
