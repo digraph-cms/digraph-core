@@ -11,6 +11,10 @@ class DOM
 {
     public static function html(string $html, bool $fragment = false): string
     {
+        if (!trim($html)) {
+            return $html;
+        }
+
         // set up DOMDocument
         $dom = new DOMDocument();
         if (!@$dom->loadHTML($html, \LIBXML_NOERROR & \LIBXML_NOWARNING & \LIBXML_NOBLANKS)) {

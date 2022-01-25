@@ -30,10 +30,11 @@ class ShortCodesListener
                 $url = $bookmark['url'];
                 $link->setAttribute('href', $url);
                 if (!WaybackMachine::check($url)) {
-                    if ($url = WaybackMachine::url($url, $bookmark->updated())) {
+                    if ($wb = WaybackMachine::get($url, $bookmark->updated())) {
                         // Wayback Machine says URL is broken and found an archived copy
-                        $link->setAttribute('href', $url)
+                        $link->setAttribute('href', $wb->helperURL())
                             ->addClass('link--wayback')
+                            ->setAttribute('target', '_blank')
                             ->setAttribute('title', 'Wayback Machine: ' . $bookmark->name());
                     } else {
                         // broken URL but no archived copy found
@@ -88,10 +89,11 @@ class ShortCodesListener
                 ->addChild($s->getContent() ? $s->getContent() : preg_replace('/^(https?:)?\/\//', '', $url));
             // check in wayback machine
             if (!WaybackMachine::check($url)) {
-                if ($url = WaybackMachine::url($url)) {
+                if ($wb = WaybackMachine::get($url)) {
                     // Wayback Machine says URL is broken and found an archived copy
-                    $link->setAttribute('href', $url)
+                    $link->setAttribute('href', $wb->helperURL())
                         ->addClass('link--wayback')
+                        ->setAttribute('target', '_blank')
                         ->setAttribute('title', 'Wayback Machine: ' . $url);
                 } else {
                     // broken URL but no archived copy found
