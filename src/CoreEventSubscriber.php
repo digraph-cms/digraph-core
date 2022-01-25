@@ -23,6 +23,13 @@ use function DigraphCMS\Content\require_file;
 
 class CoreEventSubscriber
 {
+    /**
+     * Construct a card for displaying rich media in autocomplete fields
+     *
+     * @param AbstractRichMedia $media
+     * @param string $query
+     * @return void
+     */
     public static function onRichMediaAutocompleteCard(AbstractRichMedia $media, string $query)
     {
         $page = $media->pageUUID() ? Pages::get($media->pageUUID()) : null;
@@ -35,6 +42,7 @@ class CoreEventSubscriber
             ]
         ];
     }
+
     /**
      * When Rich Media is deleted, delete all Filestore files associated with it
      *
@@ -259,6 +267,18 @@ class CoreEventSubscriber
             return $group->name();
         }
         return null;
+    }
+
+    /**
+     * Name wayback machine helper URLs
+     *
+     * @param URL $url
+     * @param boolean $inPageContext
+     * @return string|null
+     */
+    public static function onStaticUrlName_wayback(URL $url, bool $inPageContext): ?string
+    {
+        return 'Wayback Machine';
     }
 
     /**

@@ -4,6 +4,7 @@ namespace DigraphCMS\RichContent;
 
 use DigraphCMS\Content\Page;
 use DigraphCMS\Content\Pages;
+use DigraphCMS\Context;
 use DigraphCMS\HTML\A;
 use DigraphCMS\HTML\Text;
 use DigraphCMS\RichMedia\RichMedia;
@@ -13,6 +14,7 @@ use DigraphCMS\RichMedia\Types\MultiFileRichMedia;
 use DigraphCMS\RichMedia\Types\TableRichMedia;
 use DigraphCMS\UI\Format;
 use DigraphCMS\URL\URL;
+use DigraphCMS\URL\WaybackMachine;
 use Thunder\Shortcode\Shortcode\ShortcodeInterface;
 
 class ShortCodesListener
@@ -22,22 +24,36 @@ class ShortCodesListener
     {
         $bookmark = RichMedia::get($s->getBbCode());
         if ($bookmark instanceof BookmarkRichMedia) {
-            $link = new A;
-            $title = $bookmark->name();
+            $link = (new A)
+                ->setAttribute('title', $bookmark->name());
             if ($bookmark['mode'] == 'url') {
-                $link->setAttribute('href', $bookmark['url']);
-                // TODO: verify/wayback link
+                // arbitrary URL
+                $url = $bookmark['url'];
+                $link->setAttribute('href', $url);
+                if (!WaybackMachine::check($url)) {
+                    if ($url = WaybackMachine::url($url, $bookmark->updated())) {
+                        // Wayback Machine says URL is broken and found an archived copy
+                        $link->setAttribute('href', $url)
+                            ->addClass('link--wayback')
+                            ->setAttribute('title', 'Wayback Machine: ' . $bookmark->name());
+                    } else {
+                        // broken URL but no archived copy found
+                        $link->addClass('link--broken')
+                            ->setAttribute('title', 'Link may be broken');
+                    }
+                }
             } elseif ($bookmark['mode'] == 'page') {
-                if ($page = Pages::get($bookmark['page'])) {
-                    $link->setAttribute('href', $page->url());
+                // link to a page on this site
+                if ($page = Pages::get($bookmark['page'] ?? 'broken')) {
+                    $link->setAttribute('href', $page->url())
+                        ->setAttribute('title', $page->name());
                 } else {
-                    $link->addClass('link--broken');
-                    $title = "$title (NOTE: linked page missing)";
+                    $link->addClass('link--broken')
+                        ->setAttribute('title', 'linked page is missing');
                 }
             }
             $link
-                ->setAttribute('title', $title)
-                ->addChild(new Text($s->getContent() ? $s->getContent() : $title));
+                ->addChild(new Text($s->getContent() ? $s->getContent() : $bookmark->name()));
             return $link;
         }
         return null;
@@ -67,10 +83,24 @@ class ShortCodesListener
     {
         $url = $s->getBbCode();
         if (filter_var($url, FILTER_VALIDATE_URL)) {
+            // set up URL
             $link = (new A)
                 ->setAttribute('href', $url)
                 ->addChild($s->getContent() ? $s->getContent() : preg_replace('/^(https?:)?\/\//', '', $url));
-            // TODO: verify/wayback
+            // check in wayback machine
+            if (!WaybackMachine::check($url)) {
+                if ($url = WaybackMachine::url($url)) {
+                    // Wayback Machine says URL is broken and found an archived copy
+                    $link->setAttribute('href', $url)
+                        ->addClass('link--wayback')
+                        ->setAttribute('title', 'Wayback Machine: ' . $url);
+                } else {
+                    // broken URL but no archived copy found
+                    $link->addClass('link--broken')
+                        ->setAttribute('title', 'Link may be broken');
+                }
+            }
+            // return built link
             return $link;
         }
         return null;

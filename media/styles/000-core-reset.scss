@@ -35,6 +35,26 @@ a[target="_blank"]:after {
     display: inline-block;
 }
 
+a.link--broken {
+    background-color: $color-error;
+    color: contrast-color($color-error);
+
+    &:after {
+        content: "error";
+        display: inline-block;
+    }
+}
+
+a.link--wayback {
+    background-color: $color-warning;
+    color: contrast-color($color-warning);
+
+    &:after {
+        content: "history";
+        display: inline-block;
+    }
+}
+
 ::selection,
 ::-moz-selection {
     background: $color-highlight;
@@ -57,16 +77,19 @@ a[target="_blank"]:after {
 }
 
 .button-menu {
+
     .button,
     button,
     input[type="button"],
     input[type="submit"] {
         border-radius: 0;
-        white-space:normal;
+        white-space: normal;
+
         &:first-child {
             border-top-left-radius: $border-radius;
             border-bottom-left-radius: $border-radius;
         }
+
         &:last-child {
             border-top-right-radius: $border-radius;
             border-bottom-right-radius: $border-radius;

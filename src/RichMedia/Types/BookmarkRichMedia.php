@@ -2,8 +2,6 @@
 
 namespace DigraphCMS\RichMedia\Types;
 
-use DigraphCMS\HTML\A;
-
 class BookmarkRichMedia extends AbstractRichMedia
 {
     public static function class(): string
