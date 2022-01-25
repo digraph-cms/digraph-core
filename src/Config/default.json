@@ -83,7 +83,7 @@
     "strict_ip_check": true
   },
   "cache": {
-    "path": "${paths.storage}/cache",
+    "path": "${paths.base}/cache",
     "driver": "\\DigraphCMS\\Cache\\OpCache",
     "ttl": 300,
     "fuzz": 150
@@ -132,7 +132,7 @@
       "create_functions": true
     }
   },
-  "page": {
+  "page_cache": {
     "cachettl": {
       "_any": null
     },

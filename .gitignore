@@ -1,5 +1,6 @@
 # demo storage/cache
 /demo/storage/*
+/demo/cache/*
 /demo/files/*
 !/demo/files/.htaccess
 /demo/phinx/*

@@ -91,9 +91,9 @@ class Response
             // explicitly set value
             $this->cacheTTL ??
             // config value for any page class
-            Config::get('page.cachettl._any') ??
+            Config::get('page_cache.cachettl._any') ??
             // config value for this page class
-            ($this->page() ? Config::get('page.cachettl.' . $this->page()->class()) : null) ??
+            ($this->page() ? Config::get('page_cache.cachettl.' . $this->page()->class()) : null) ??
             // page object's ttl
             ($this->page() ? $this->page->cacheTTL($this->url()->action()) : null) ??
             // default of 0
@@ -109,9 +109,9 @@ class Response
             // explicitly set value
             $this->staleTTL ??
             // config value for any page class
-            Config::get('page.stalettl._any') ??
+            Config::get('page_cache.stalettl._any') ??
             // config value for this page class
-            ($this->page() ? Config::get('page.stalettl.' . $this->page()->class()) : null) ??
+            ($this->page() ? Config::get('page_cache.stalettl.' . $this->page()->class()) : null) ??
             // page object's ttl
             ($this->page() ? $this->page->staleTTL($this->url()->action()) : null) ??
             // default of 0
@@ -127,9 +127,9 @@ class Response
             // explicitly set value
             $this->browserTTL ??
             // config value for any page class
-            Config::get('page.browserttl._any') ??
+            Config::get('page_cache.browserttl._any') ??
             // config value for this page class
-            ($this->page() ? Config::get('page.browserttl.' . $this->page()->class()) : null) ??
+            ($this->page() ? Config::get('page_cache.browserttl.' . $this->page()->class()) : null) ??
             // page object's ttl
             ($this->page() ? $this->page->browserTTL($this->url()->action()) : null) ??
             // default of 0
