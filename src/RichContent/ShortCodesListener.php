@@ -34,7 +34,6 @@ class ShortCodesListener
                         // Wayback Machine says URL is broken and found an archived copy
                         $link->setAttribute('href', $wb->helperURL())
                             ->addClass('link--wayback')
-                            ->setAttribute('target', '_blank')
                             ->setAttribute('title', 'Wayback Machine: ' . $bookmark->name());
                     } else {
                         // broken URL but no archived copy found
@@ -93,7 +92,6 @@ class ShortCodesListener
                     // Wayback Machine says URL is broken and found an archived copy
                     $link->setAttribute('href', $wb->helperURL())
                         ->addClass('link--wayback')
-                        ->setAttribute('target', '_blank')
                         ->setAttribute('title', 'Wayback Machine: ' . $url);
                 } else {
                     // broken URL but no archived copy found

@@ -13,7 +13,7 @@ $clickableURL = 'http://'.$wb->originalURL();
 
 <p>
     The requested link (<a href="<?php echo $clickableURL; ?>" target="_blank"><?php echo $wb->originalURL(); ?></a>) has been automatically detected as a broken link.
-    A potential match for this link has been found in the <a href="https://web.archive.org/" target="_blank">Wayback Machine</a>, a database of archived internet data founded by the <a href="https://archive.org/" target="_blank">Internet Archive</a>.
+    A potentially relevant snapshot of the contents of this URL has been found in the <a href="https://web.archive.org/" target="_blank">Wayback Machine</a>, a database of archived web pages founded by the <a href="https://archive.org/" target="_blank">Internet Archive</a>.
 </p>
 
 <p>
