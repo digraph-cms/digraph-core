@@ -53,5 +53,19 @@
         "league/oauth2-facebook": "^2.0",
         "league/oauth2-google": "^4.0||^3.0",
         "jasig/phpcas": "^1.4"
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "phinx migrate"
+        ],
+        "post-update-cmd": [
+            "phinx migrate"
+        ],
+        "server": [
+            "php -S localhost:8000 -t demo demo/index.php"
+        ],
+        "migrate": [
+            "phinx migrate"
+        ]
     }
 }

@@ -49,7 +49,10 @@ class UserMenu extends ActionMenu
     public function __toString()
     {
         return $this->cache->get(
-            md5(serialize([Context::url(), $this->user])),
+            md5(serialize([
+                $this->user,
+                dirname(Context::url()->path()) == '/~user' ? Context::url() : null
+            ])),
             function () {
                 ob_start();
                 $class = Session::user() ? 'signed-in' : 'guest';
