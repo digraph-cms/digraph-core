@@ -18,22 +18,5 @@ final class InitializeData extends AbstractMigration
                 'name' => 'Editors'
             ])
             ->save();
-        $this->table('page')
-            ->insert([
-                'uuid' => $uuid = Digraph::uuid(),
-                'name' => 'Home',
-                'data' => '{}',
-                'class' => 'page',
-                'slug_pattern' => '/home',
-                'created' => time(),
-                'updated' => time()
-            ])
-            ->save();
-        $this->table('page_slug')
-            ->insert([
-                'url' => 'home',
-                'page_uuid' => $uuid
-            ])
-            ->save();
     }
 }
