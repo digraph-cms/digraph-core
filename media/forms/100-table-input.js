@@ -137,14 +137,25 @@ class EditableTable {
         this.table.dispatchEvent(new Event('editable-table-layout-change', { bubbles: true }));
     }
     _makeCell(text, uuid) {
+        // set up cell markup
         var cell = document.createElement('td');
         var textarea = document.createElement('textarea');
         if (text) textarea.value = text;
         cell.appendChild(textarea);
         cell.id = uuid ?? Digraph.uuid();
+        // set up cell focus/blur/change listeners
         textarea.addEventListener('focus', (e) => this.onCellFocus(cell));
         textarea.addEventListener('blur', (e) => this.onCellBlur(cell));
         textarea.addEventListener('change', (e) => this.onCellChange(cell));
+        // set up cell insertTagEvent listener
+        cell.addEventListener('rich-content-insert', (e) => {
+            if (textarea.value) {
+                textarea.value = e.insertWithSelection.replaceAll('{content}', textarea.value);
+            } else {
+                textarea.value = e.insertWithoutSelection;
+            }
+            e.stopPropagation();
+        });
         return cell;
     }
     onCellFocus(cell) {
@@ -175,6 +186,10 @@ class EditableTable {
             this.setFocusClasses();
             // attach controls to this cell
             this.focused_cell.appendChild(this.controls);
+            if (!this.controls.dataset.domloaded) {
+                this.focused_cell.dispatchEvent(new Event('DigraphDOMReady', { bubbles: true }));
+                this.controls.dataset.domloaded = true;
+            }
         }
     }
     setFocusClasses() {
@@ -244,6 +259,7 @@ class EditableTable {
         this.controls.innerHTML = [
             // start top controls
             '<div class="toolbar editable-table__controls__top">',
+            '<div class="toolbar navigation-frame navigation-frame--stateless" data-target="_frame" id="tb_' + this.id + '" data-initial-source="' + Digraph.config.url + '/~api/v1/rich-media/toolbar/?frame=tb_' + this.id + '&only=insert">???</div>',
             '<span class="toolbar__spacer"></span>',
             '<a class="toolbar__button toolbar__button--add-row-above" data-command="addRowAbove"><i class="icon icon--material">add</i><div class="toolbar__button__tooltip">add row</div></a>',
             '</div>',
@@ -324,6 +340,28 @@ class EditableTable {
             }
             if (target.dataset.command && this.commands[target.dataset.command]) {
                 (this.commands[target.dataset.command])(this);
+            }
+        });
+        // reset toolbar on escape key (only from inside toolbar itself)
+        this.controls.addEventListener('keydown', (e) => {
+            if (e.key == 'Escape' || e.key == 'Esc') {
+                e.target.dispatchEvent(new Event('navigation-frame-reset', {
+                    bubbles: false
+                }));
+            }
+        });
+        // toolbar keyboard listeners
+        this.table.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.shiftKey) {
+                var pressed = (e.ctrlKey ? 'Ctrl-' : '') + (e.shiftKey ? 'Shift-' : '') + e.key.toUpperCase();
+                var shortcuts = this.controls.getElementsByClassName('toolbar__button__tooltip__shortcut');
+                for (let i = 0; i < shortcuts.length; i++) {
+                    const s = shortcuts[i];
+                    if (s.innerText == pressed) {
+                        s.dispatchEvent(new Event('click', { bubbles: true }));
+                        e.preventDefault();
+                    }
+                }
             }
         });
         // add to wrapper

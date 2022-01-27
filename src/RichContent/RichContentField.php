@@ -52,9 +52,6 @@ class RichContentField extends Field
             new URL('/~markdown/'),
             new URL('/~shortcodes/')
         ));
-        // load theme elements
-        Theme::addBlockingPageCss('/forms/rich-content/*.css');
-        Theme::addBlockingPageJs('/forms/rich-content/*.js');
     }
 
     public function pageUuid(): ?string

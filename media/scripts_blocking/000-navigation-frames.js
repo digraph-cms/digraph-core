@@ -19,9 +19,9 @@ document.addEventListener('DigraphDOMReady', (e) => {
             if (div.dataset.initialSource) {
                 div.resetFrame = function (e) {
                     Digraph.state.get(div.dataset.initialSource, div);
-                    e.bubbles = false;
+                    e.stopPropagation();
                 }
-                div.addEventListener('navigation-frame-reset', (e) => { div.resetFrame(e); });
+                div.addEventListener('navigation-frame-reset', div.resetFrame);
                 div.dispatchEvent(new Event('navigation-frame-reset'));
             }
         }

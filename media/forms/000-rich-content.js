@@ -58,10 +58,10 @@ class DigraphRichContentEditor {
         // watch media wrapper for forced-wide toggle
         // can be toggled by having an element with the class media-editor-force-wide
         // or by including the HTML comment <!-- media-editor-force-wide -->
-        this.mediaWrapper.addEventListener('DigraphDOMReady',(e)=>{
+        this.mediaWrapper.addEventListener('DigraphDOMReady', (e) => {
             if (this.mediaWrapper.getElementsByClassName('media-editor-force-wide').length > 0 || this.mediaWrapper.innerHTML.includes('<!-- media-editor-force-wide -->')) {
                 this.mediaWrapper.classList.add('rich-content-editor__media-editor--wide-forced');
-            }else {
+            } else {
                 this.mediaWrapper.classList.remove('rich-content-editor__media-editor--wide-forced');
             }
         });
@@ -110,6 +110,7 @@ class DigraphRichContentEditor {
         if (target.dataset.command) {
             var cm = this.getDivByClass('CodeMirror').CodeMirror;
             cm.execCommand(target.dataset.command);
+            e.stopPropagation();
         }
     }
     getDivByClass(c) {

@@ -7,6 +7,11 @@
     align-items: center;
     font-family: $font-ui;
 
+    .navigation-frame,
+    &.navigation-frame {
+        min-height: auto;
+    }
+
     *:first-child {
         border-left: 0;
     }

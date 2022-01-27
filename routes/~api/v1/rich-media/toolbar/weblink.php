@@ -5,7 +5,7 @@ use DigraphCMS\HTML\A;
 use DigraphCMS\HTML\Forms\INPUT;
 use DigraphCMS\UI\Toolbars\ToolbarLink;
 
-echo new ToolbarLink('', 'web', null, null);
+echo new ToolbarLink('', 'link', null, null);
 echo $input = (new INPUT(Digraph::uuid()))
     ->addClass('navigation-frame__autofocus')
     ->setAttribute('placeholder','https://');
