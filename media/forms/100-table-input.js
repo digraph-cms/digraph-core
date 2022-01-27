@@ -346,7 +346,7 @@ class EditableTable {
         this.controls.addEventListener('keydown', (e) => {
             if (e.key == 'Escape' || e.key == 'Esc') {
                 e.target.dispatchEvent(new Event('navigation-frame-reset', {
-                    bubbles: false
+                    bubbles: true
                 }));
             }
         });
