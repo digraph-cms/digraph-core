@@ -1,0 +1,39 @@
+/* main variables */
+:root {
+    /*!variables(light)*/
+}
+
+/* dark mode variables */
+.colors--dark {
+    /*!variables(dark)*/
+}
+
+/* colorblind variables */
+.colors--colorblind {
+    /*!variables(colorblind)*/
+}
+
+/* overrides for when media query requests dark colors */
+@media (prefers-color-scheme: dark) {
+    /* dark by default */
+    :root {
+        /*!variables(dark)*/
+    }
+
+    /* light mode variables */
+    .colors--light {
+        /*!variables(light)*/
+    }
+
+    /* colorblind variables */
+    .colors--colorblind {
+        /*!variables(colorblind_dark)*/
+    }
+
+    /* light mode and colorblind variables */
+    .colors--light.colors--colorblind,
+    .colors--light .colors--colorblind {
+        /*!variables(light)*/
+        /*!variables(colorblind)*/
+    }
+}

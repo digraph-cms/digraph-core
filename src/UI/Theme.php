@@ -11,6 +11,8 @@ use DigraphCMS\Media\File;
 use DigraphCMS\Media\Media;
 use DigraphCMS\URL\URL;
 use DigraphCMS\URL\URLs;
+use OzdemirBurak\Iris\Color\Hex;
+use OzdemirBurak\Iris\Color\Rgba;
 
 Theme::resetTheme();
 Theme::resetPage();
@@ -36,11 +38,58 @@ class Theme
         'async_js' => [
             '/scripts/*.js'
         ],
-        'css_vars' => [
-            'body-bg' => '#fafafa',
-            'body-fg' => '#333',
-            'dark-body-bg' => '#222',
-            'dark-body-fg' => '#fff',
+        'variables' => [
+            'light' => [
+                'background' => '#eee',
+                'background-light' => 'rgb(245,245,245)',
+                'background-lighter' => '#fff',
+                'color' => '#333333',
+                'grid' => '1rem',
+                'line-length' => '35em',
+                'shadow' => '0 var(--grid) var(--grid) rgba(0,0,0,0.2)',
+                'border' => '2px',
+                'border-radius' => '4px',
+                'font' => [
+                    'content' => 'serif',
+                    'header' => 'sans-serif',
+                    'ui' => 'sans-serif',
+                    'code' => 'monospace',
+                ],
+                'link' => [
+                    'normal' => '#1976d2',
+                    'visited' => '#512da8',
+                    'focus' => '#f57c00',
+                    'active' => '#d32f2f'
+                ],
+                'cue' => [
+                    'interactive' => '#0091EA',
+                    'information' => '#006064',
+                    'safe' => '#4caf50',
+                    'warning' => '#ff9800',
+                    'danger' => '#f44336'
+                ],
+                'theme' => [
+                    'neutral' => '#9e9e9e',
+                    'highlight' => '#00bfa5'
+                ]
+            ],
+            'dark' => [
+                'background' => '#222222',
+                'color' => '#fff'
+            ],
+            'colorblind' => [
+                'cue' => [
+                    'interactive' => '#0091EA',
+                    'information' => '#006064',
+                    'safe' => '#2196f3',
+                    'warning' => '#ff5722',
+                    'danger' => '#9c27b0'
+                ]
+            ],
+            'colorblind_dark' => []
+        ],
+        // TODO: deprecate colors here in favor of CSS custom properties computed from 'variables'
+        'scss_vars' => [
             'grid-unit' => '1rem',
             'typography-width' => '35rem',
             'font-content' => 'serif',
@@ -49,6 +98,10 @@ class Theme
             'font-code' => 'monospace',
             'border-unit' => '2px',
             'border-radius' => '4px',
+            'body-bg' => '#fafafa',
+            'body-fg' => '#333',
+            'dark-body-bg' => '#222',
+            'dark-body-fg' => '#fff',
             'color-neutral' => '#BDC3C7',
             'color-accent' => '#34495E',
             'color-highlight' => '#1ABC9C',
@@ -61,37 +114,12 @@ class Theme
             'color-info' => '#006064',
             'color-confirmation' => '#27AE60',
             'color-warning' => '#FF6D00',
-            'color-error' => '#C0392B',
-            'color-brand-facebook' => '#1877F2',
-            'color-brand-twitter' => '#1DA1F2',
-            'color-brand-linkedin' => '#0A66C2',
-            'color-brand-skype' => '#00AFF0',
-            'color-brand-dropbox' => '#0061FF',
-            'color-brand-vimeo' => '#1AB7EA',
-            'color-brand-tumblr' => '#34465D',
-            'color-brand-pinterest' => '#BD081C',
-            'color-brand-youtube' => '#CD201F',
-            'color-brand-reddit' => '#FF5700',
-            'color-brand-quora' => '#B92B27',
-            'color-brand-yelp' => '#AF0606',
-            'color-brand-weibo' => '#DF2029',
-            'color-brand-hackernews' => '#FF6600',
-            'color-brand-soundcloud' => '#FF3300',
-            'color-brand-blogger' => '#F57D00',
-            'color-brand-snapchat' => '#FFFC00',
-            'color-brand-whatsapp' => '#25D366',
-            'color-brand-wechat' => '#09B83E',
-            'color-brand-medium' => '#02B875',
-            'color-brand-vine' => '#00B489',
-            'color-brand-slack' => '#3AAF85',
-            'color-brand-dribbble' => '#E4405F',
-            'color-brand-flickr' => '#FF0084',
-            'color-brand-foursquare' => '#F94877',
-            'color-brand-tiktok' => '#EE1D51',
-            'color-brand-behance' => '#131418'
+            'color-error' => '#C0392B'
         ]
     ];
-    protected static $cssVars = [];
+    protected static $scssVars = [];
+    protected static $variables = [];
+    protected static $variables_cache;
     protected static $blockingThemeCss = [];
     protected static $blockingPageCss = [];
     protected static $internalThemeCss = [];
@@ -102,31 +130,112 @@ class Theme
     protected static $asyncPageJs = [];
     protected static $inlinePageJs = [];
 
-    public static function cssVars(): array
+    public static function scssVars(): array
     {
-        return static::$cssVars;
+        return static::$scssVars;
     }
 
-    public static function cssVars_css(): string
+    public static function variables(string $mode = 'light'): array
     {
-        if (static::$cssVars) {
-            $out = ':root {' . PHP_EOL;
-            foreach (static::$cssVars as $k => $v) {
-                $out .= "--$k: $v";
+        if (static::$variables_cache === null) {
+            var_dump('computing variables');
+            static::$variables_cache = static::compileVariables(static::$variables);
+        }
+        return static::$variables_cache[$mode] ?? [];
+    }
+
+    public static function renderVariableCss()
+    {
+        $template = __DIR__ . '/variables.css';
+        $file = new DeferredFile(
+            'variables.css',
+            function (DeferredFile $file) use ($template) {
+                $css = file_get_contents($template);
+                $css = preg_replace_callback(
+                    '@\/\*\!variables\((.+?)\)\*\/@',
+                    function ($m) {
+                        $variables = static::variables($m[1]);
+                        $lines = [];
+                        foreach ($variables as $k => $v) {
+                            $lines[] = "--$k: $v;";
+                        }
+                        return implode(PHP_EOL, $lines);
+                    },
+                    $css
+                );
+                $css = CSS::css($css);
+                file_put_contents($file->path(), $css);
+            },
+            [
+                filemtime($template),
+                static::$variables
+            ]
+        );
+        $file->write();
+        printf(
+            '<link rel="stylesheet" href="%s" />'.PHP_EOL,
+            $file->url()
+        );
+    }
+
+    protected static function compileVariables(array $variables): array
+    {
+        foreach ($variables as $mode => $vs) {
+            $variables[$mode] = static::compileVariableList($vs);
+        }
+        return $variables;
+    }
+
+    protected static function compileVariableList(array $variables, $prefix = ''): array
+    {
+        $output = [];
+        foreach ($variables as $k => $v) {
+            $k = $prefix ? "$prefix-$k" : $k;
+            // recurse into arrays
+            if (is_array($v)) {
+                foreach (static::compileVariableList($v, $k) as $k => $v) {
+                    $output[$k] = $v;
+                }
             }
-            $out .= '}' . PHP_EOL;
-            return $out;
-        } else {
-            return '';
+            // otherwise prepare color variations/complements
+            elseif (preg_match("/#[0-9a-f]{6}/i", $v)) {
+                $output[$k] = $v;
+                $output["$k-inv"] = static::contrastColor(new Hex($v));
+                foreach (static::prepareColorVariations($v) as $t => $v) {
+                    $output["$k-$t"] = $v->__toString();
+                }
+            }
+            // otherwise copy values
+            else {
+                $output[$k] = $v;
+            }
         }
+        return $output;
     }
 
-    public static function cssVar(string $name, $value = null)
+    protected static function prepareColorVariations($color)
     {
-        if ($value !== null) {
-            static::$cssVars[$name] = $value;
+        $colors = [
+            'light' => (new Hex($color))->lighten(10),
+            'dark' => (new Hex($color))->darken(5),
+            'lighter' => (new Hex($color))->lighten(20),
+            'darker' => (new Hex($color))->darken(10),
+            'bright' => (new Hex($color))->brighten(15),
+        ];
+        // add alpha colors
+        $colors['a90'] = (new Hex($color))->toRgba()->alpha(0.9);
+            $colors['a50'] = (new Hex($color))->toRgba()->alpha(0.5);
+            $colors['a20'] = (new Hex($color))->toRgba()->alpha(0.2);
+        return $colors;
+    }
+
+    protected static function contrastColor($color)
+    {
+        if ($color->isLight()) {
+            return new Rgba('rgba(0,0,0,0.95)');
+        } else {
+            return new Rgba('rgba(255,255,255,0.95)');
         }
-        return @static::$cssVars[$name];
     }
 
     /**
@@ -137,7 +246,9 @@ class Theme
      */
     public static function resetTheme($activeThemes = null)
     {
-        static::$cssVars = static::themeConfig($activeThemes, 'css_vars');
+        static::$variables_cache = null;
+        static::$scssVars = static::themeConfig($activeThemes, 'scss_vars');
+        static::$variables = static::themeConfig($activeThemes, 'variables');
         static::$blockingThemeCss = static::themeConfig($activeThemes, 'blocking_css');
         static::$internalThemeCss = static::themeConfig($activeThemes, 'internal_css');
         static::$blockingThemeJs = static::themeConfig($activeThemes, 'blocking_js');
@@ -450,6 +561,7 @@ class Theme
     {
         ob_start();
         // render css
+        static::renderVariableCss();
         static::renderBlockingCss();
         static::renderInternalCss('theme', static::$internalThemeCss);
         static::renderInternalCss('page', static::$internalPageCss);
