@@ -138,7 +138,6 @@ class Theme
     public static function variables(string $mode = 'light'): array
     {
         if (static::$variables_cache === null) {
-            var_dump('computing variables');
             static::$variables_cache = static::compileVariables(static::$variables);
         }
         return static::$variables_cache[$mode] ?? [];
