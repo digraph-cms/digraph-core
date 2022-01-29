@@ -16,7 +16,9 @@
   },
   "urls": {
     "protocol": null,
-    "home_name": "Home"
+    "home_name": "Home",
+    "site_path": "/",
+    "site_host": null
   },
   "page_types": {
     "page": "\\DigraphCMS\\Content\\Page"

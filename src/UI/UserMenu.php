@@ -16,7 +16,7 @@ class UserMenu extends ActionMenu
     {
         $this->url = $url;
         $this->user = true;
-        $this->cache = new UserCacheNamespace('user-menu');
+        $this->cache = new UserCacheNamespace('user-menu/' . (Session::user() ?? 'guest'));
     }
 
     protected function printUserActions()
@@ -49,10 +49,7 @@ class UserMenu extends ActionMenu
     public function __toString()
     {
         return $this->cache->get(
-            md5(serialize([
-                $this->user,
-                dirname(Context::url()->path()) == '/~user' ? Context::url() : null
-            ])),
+            md5(serialize(Context::url())),
             function () {
                 ob_start();
                 $class = Session::user() ? 'signed-in' : 'guest';

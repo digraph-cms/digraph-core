@@ -4,6 +4,8 @@ namespace DigraphCMS\URL;
 
 use DigraphCMS\Config;
 
+URLs::_init($_SERVER);
+
 class URLs
 {
     public static $protocol, $siteHost, $sitePath;
@@ -19,8 +21,10 @@ class URLs
      */
     public static function _init(array $SERVER)
     {
-        static::$siteHost = @$SERVER['HTTP_HOST'];
-        static::$sitePath = preg_replace('/index\.php$/', '', $SERVER['SCRIPT_NAME']);
+        static::$siteHost = Config::get('urls.site_host') ?? @$SERVER['HTTP_HOST'];
+        static::$sitePath =
+            Config::get('urls.site_path') ??
+            static::$sitePath = preg_replace('/index\.php$/', '', $SERVER['SCRIPT_NAME']);
         static::$sitePath = preg_replace('@/$@', '', static::$sitePath);
         static::$protocol = Config::get('urls.protocol') ? Config::get('urls.protocol') . ':' : '';
     }
@@ -146,5 +150,3 @@ class URLs
             || $_SERVER['SERVER_PORT'] == 443;
     }
 }
-
-URLs::_init($_SERVER);
