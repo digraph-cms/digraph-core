@@ -63,10 +63,10 @@ class Theme
                 ],
                 'cue' => [
                     'interactive' => '#0091EA',
-                    'information' => '#006064',
+                    'information' => '#00838F',
                     'safe' => '#4caf50',
-                    'warning' => '#ff9800',
-                    'danger' => '#f44336'
+                    'warning' => '#FFAB00',
+                    'danger' => '#FF3D00'
                 ],
                 'theme' => [
                     'neutral' => '#9e9e9e',
