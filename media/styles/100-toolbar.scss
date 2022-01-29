@@ -1,8 +1,8 @@
 .toolbar {
     @include uncolored-links;
 
-    background: mix($body-bg, $color-neutral, 90%);
-    color: $body-fg;
+    background: var(--background-light);
+    color: var(--color);
     display: flex;
     align-items: center;
     font-family: $font-ui;
@@ -30,7 +30,7 @@
     button,
     .toolbar__button {
         margin: 0;
-        padding: $grid-unit/2;
+        padding: $grid/2;
     }
 
     .autocomplete-selected-card,
@@ -51,11 +51,12 @@
         left: 0;
         right: 0;
         z-index: 1000;
-        background: $body-bg;
+        background: var(--background);
     }
 
     &.toolbar--vertical {
         flex-direction: column;
+
         .toolbar__button {
             .toolbar__button__tooltip {
                 width: 150%;
@@ -63,6 +64,7 @@
                 left: 100% !important;
                 right: auto !important;
                 bottom: auto !important;
+
                 &:last-child {
                     top: auto !important;
                     bottom: 0 !important;
@@ -89,12 +91,12 @@
     &[data-command],
     &[onclick] {
         cursor: pointer;
-        color: $color-interactive !important;
+        color: var(--cue-interactive) !important;
 
         &:hover,
         &:focus {
-            background: $color-interactive;
-            color: contrast-color($color-interactive) !important;
+            background: var(--cue-interactive);
+            color: var(--cue-interactive-inv) !important;
 
             .toolbar__button__tooltip {
                 display: block;
@@ -118,12 +120,12 @@
     }
 
     &.toolbar__button--warning {
-        color: $color-warning !important;
+        color: var(--cue-warning) !important;
 
         &:hover,
         &:focus {
-            background: $color-warning !important;
-            color: contrast-color($color-warning) !important;
+            background: var(--cue-warning) !important;
+            color: var(--cue-warning-inv) !important;
         }
     }
 }
@@ -131,8 +133,8 @@
 .toolbar__separator {
     display: block;
     height: 1.5em;
-    width: $border-unit/2;
-    background-color: $color-neutral;
+    width: $border/2;
+    background-color: var(--theme-neutral);
 }
 
 .toolbar__spacer {
@@ -140,7 +142,6 @@
 }
 
 .toolbar__button__tooltip {
-    @include drop-shadow;
     box-sizing: border-box;
     display: none;
     position: absolute;
@@ -149,9 +150,10 @@
     width: 200%;
     font-family: $font-ui;
     font-size: xx-small;
-    background: $color-neutral;
-    color: contrast-color($color-neutral);
-    padding: $grid-unit/4;
+    background: var(--theme-neutral);
+    color: var(--theme-neutral-inv);
+    padding: $grid/4;
+    box-shadow: var(--shadow);
 }
 
 .toolbar__button__tooltip__shortcut {

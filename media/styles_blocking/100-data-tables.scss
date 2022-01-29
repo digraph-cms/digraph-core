@@ -30,7 +30,7 @@
 
             &:after {
                 @include material-icon;
-                font-size: $grid-unit;
+                font-size: $grid;
                 content: '\ead0';
                 vertical-align: baseline;
             }
@@ -98,14 +98,14 @@
             &.link-last,
             &.link-previous,
             &.link-first {
-                background: rgba($color-neutral, 0.1);
+                background: var(--theme-neutral-a10);
             }
         }
     }
 
     col {
         &.sorted {
-            background: rgba($color-interactive, 0.1);
+            background: var(--cue-interactive-a10);
         }
     }
 }

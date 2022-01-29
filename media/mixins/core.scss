@@ -1,24 +1,16 @@
-@function contrast-color($color) {
-    @if (lightness($color) > 50) {
-        @return #000;
-    } @else {
-        @return #fff;
-    }
-}
-
 @mixin focused {
-    outline: $border-unit solid $color-interactive;
-    outline-offset: -$border-unit;
+    outline: $border solid var(--cue-interactive);
+    outline-offset: -$border;
     position: relative;
 }
 
 @mixin button {
     display: block;
     box-sizing: border-box;
-    background: $color-interactive;
-    color: contrast-color($color-interactive) !important;
+    background: var(--cue-interactive);
+    color: var(--cue-interactive-inv) !important;
     display: inline-block;
-    padding: $grid-unit/2;
+    padding: $grid/2;
     margin: 0;
     border: 0;
     cursor: pointer;
@@ -40,69 +32,69 @@
     }
 
     &.button--confirmation {
-        background: $color-confirmation;
-        color: contrast-color($color-confirmation) !important;
+        background: var(--cue-safe);
+        color: var(--cue-safe-inv) !important;
     }
 
     &.button--info {
-        background: $color-info;
-        color: contrast-color($color-info) !important;
+        background: var(--cue-information);
+        color: var(--cue-information-inv) !important;
     }
 
     &.button--warning {
-        background: $color-warning;
-        color: contrast-color($color-warning) !important;
+        background: var(--cue-warning);
+        color: var(--cue-warning-inv) !important;
     }
 
     &.button--error {
-        background: $color-error;
-        color: contrast-color($color-error) !important;
+        background: var(--cue-danger);
+        color: var(--cue-danger-inv) !important;
     }
 
     &.button--inverted {
-        background: mix($body-bg, $color-neutral, 90%);
-        color: $color-interactive !important;
+        background: var(--theme-neutral-a10);
+        color: var(--cue-interactive) !important;
 
         &.button--confirmation {
-            color: $color-confirmation !important;
+            color: var(--cue-safe) !important;
         }
 
         &.button--info {
-            color: $color-info !important;
+            color: var(--cue-information) !important;
         }
 
         &.button--warning {
-            color: $color-warning !important;
+            color: var(--cue-warning) !important;
         }
 
         &.button--error {
-            color: $color-error !important;
+            color: var(--cue-danger) !important;
         }
     }
 }
 
 @mixin button-confirmation {
     @include button;
-    background: $color-confirmation;
-    color: contrast-color($color-confirmation);
+    background: var(--cue-safe);
+    color: var(--cue-safe-inv);
 }
 
 @mixin button-info {
     @include button;
-    background: $color-info;
-    color: contrast-color($color-info);
+    background: var(--cue-information);
+    color: var(--cue-information-inv);
 }
 
 @mixin button-warning {
     @include button;
-    background: $color-warning;
-    color: contrast-color($color-warning);
+    background: var(--cue-warning);
+    color: var(--cue-warning-inv);
 }
 
 @mixin button-error {
     @include button;
-    background: $color-error;
-    color: contrast-color($color-error);
+    background: var(--cue-danger);
+    color: var(--cue-danger-inv);
 }
 
 @mixin loading-overlay {
@@ -119,7 +111,7 @@
     &:before {
         content: "";
         z-index: 100;
-        background: rgba($body-bg, 0.95);
+        background: var(--background-a90);
         top: 0;
         left: 0;
         right: 0;
@@ -130,8 +122,8 @@
     &:after {
         @include material-icon;
         z-index: 101;
-        color: $color-interactive;
-        font-size: 2 * $grid-unit;
+        color: var(--cue-interactive);
+        font-size: 2 * $grid;
         content: "sync";
         top: 50%;
         left: 50%;
@@ -139,7 +131,8 @@
     }
 
     &.loading {
-        min-height: 3 * $grid-unit;
+        min-height: 3 * $grid;
+
         &:before,
         &:after {
             visibility: visible;
@@ -158,7 +151,7 @@
     &.error {
         &:after {
             font-size: 3em;
-            color: $color-error;
+            color: var(--cue-danger);
             content: "error";
             animation: none;
         }
@@ -166,6 +159,7 @@
 }
 
 @mixin uncolored-links {
+
     a,
     a:link,
     a:active,
@@ -175,11 +169,8 @@
         color: inherit;
         text-decoration: none;
     }
+
     a:hover {
         text-decoration: underline;
     }
-}
-
-@mixin drop-shadow($height: 1) {
-    box-shadow: rgba($body-fg, 0.5-$height/5) 0 $grid-unit * $height/8 $grid-unit * $height/2;
 }

@@ -26,15 +26,15 @@
 }
 
 .autocomplete-results {
-    min-height: 2rem+$grid-unit;
+    min-height: 2rem+$grid;
     max-height: 30vh;
     overflow: auto;
     border-bottom-left-radius: $border-radius;
     border-bottom-right-radius: $border-radius;
-    border: $border-unit solid $color-neutral;
+    border: $border solid var(--theme-neutral);
     border-top: 0;
-    background-color: $body-bg;
-    color: $body-fg;
+    background-color: var(--background);
+    color: var(--color);
 
     >div {
         &:nth-child(even) {
@@ -42,7 +42,7 @@
         }
 
         &:focus {
-            background: rgba($color-interactive, 0.25);
+            background: var(--cue-interactive-a20);
             outline: 0;
         }
     }
@@ -61,7 +61,7 @@
 
         &:after {
             font-size: 2rem;
-            color: $color-error;
+            color: var(--cue-danger);
             content: "\ef16";
             animation: none;
         }
@@ -79,7 +79,7 @@
         }
 
         &:after {
-            color: $color-warning;
+            color: var(--cue-warning);
             content: "no results";
             font-size: inherit;
             animation: none;
@@ -101,7 +101,7 @@
 
         &:after {
             font-size: 2rem;
-            color: $color-interactive;
+            color: var(--cue-interactive);
             content: "keyboard";
             animation: none;
         }
@@ -117,9 +117,9 @@
     font-family: $font-ui;
     list-style-type: none;
     margin: 0;
-    padding: $grid-unit/2;
+    padding: $grid/2;
     cursor: pointer;
-    background: rgba($color-neutral, 0.2);
+    background: rgba(var(--theme-neutral), 0.2);
     display: flex;
     align-items: center;
 
@@ -127,17 +127,17 @@
         @include material-icon;
         display: none;
         font-size: 2rem;
-        padding-right: $grid-unit/2;
+        padding-right: $grid/2;
     }
 }
 
 .autocomplete-selected-card {
     width: 100%;
     display: flex;
-    border: $border-unit solid $color-neutral;
+    border: $border solid var(--theme-neutral);
     border-radius: $border-radius;
-    background-color: $body-bg;
-    color: $body-fg;
+    background-color: var(--background);
+    color: var(--color);
     box-sizing: border-box;
 
     .selected-card {
@@ -150,7 +150,7 @@
 
     .clear-selection {
         cursor: pointer;
-        padding: 0 $grid-unit/2;
+        padding: 0 $grid/2;
         flex-basis: 2rem;
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;

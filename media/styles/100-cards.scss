@@ -2,61 +2,61 @@
     @include uncolored-links;
 
     box-sizing: border-box;
-    background: $color-neutral;
-    color: contrast-color($color-neutral);
-    padding: $grid-unit/2;
+    background: var(--theme-accent);
+    color: var(--theme-accent-inv);
+    padding: $grid/2;
     font-family: $font-ui;
-    margin: $grid-unit 0;
-    max-width: $typography-width;
+    margin: $grid 0;
+    box-shadow: var(--shadow);
 
     &.card--light {
-        background: mix($body-bg, $color-neutral, 90%);
+        background: var(--theme-background-light);
     }
 
     &.card--neutral {
-        background: $color-neutral;
-        color: contrast-color($color-neutral);
+        background: var(--theme-neutral);
+        color: var(--theme-neutral-inv);
     }
 
     &.card--info {
-        background: $color-info;
-        color: contrast-color($color-info);
+        background: var(--cue-information);
+        color: var(--cue-information-inv);
     }
 
     &.card--confirmation {
-        background: $color-confirmation;
-        color: contrast-color($color-confirmation);
+        background: var(--cue-safe);
+        color: var(--cue-safe-inv);
     }
 
     &.card--warning {
-        background: $color-warning;
-        color: contrast-color($color-warning);
+        background: var(--cue-warning);
+        color: var(--cue-warning-inv);
     }
 
     &.card--error {
-        background: $color-error;
-        color: contrast-color($color-error);
+        background: var(--cue-danger);
+        color: var(--cue-danger-inv);
     }
 }
 
 .card__title {
     font-weight: bold;
     font-size: larger;
-    margin-bottom: $grid-unit/2;
+    margin-bottom: $grid/2;
 }
 
 /*
 file cards include an icon
 */
 .file-card {
-    @include drop-shadow;
-    background: $color-interactive;
-    color: contrast-color($color-interactive);
+    background: var(--cue-interactive);
+    color: var(--cue-interactive-inv);
     display: grid;
     grid-template-columns: 3.5em auto;
     grid-template-rows: auto auto;
-    padding: $grid-unit/2;
-    border: $border-unit;
+    padding: $grid/2;
+    border: $border;
+    box-shadow: var(--shadow);
 
     &:before {
         @include icofont;
@@ -67,6 +67,7 @@ file cards include an icon
         font-size: 3em;
         text-align: left;
     }
+
     * {
         grid-column-start: 2;
     }
@@ -82,18 +83,20 @@ extra file card styling for multifile cards
 */
 .multifile-card {
     .multifile-card__list {
-        margin-top: $grid-unit/2;
+        margin-top: $grid/2;
     }
-    .card__title + .multifile-card__list {
+
+    .card__title+.multifile-card__list {
         margin-top: 0;
     }
 }
 
 .multifile-card__list {
     font-size: smaller;
+
     ul {
         margin: 0;
-        margin-bottom: $grid-unit/2;
+        margin-bottom: $grid/2;
         list-style-position: inside;
         padding-left: 0;
     }
@@ -131,6 +134,7 @@ File card icons for extensions
 .file-card--extension-xlhtml {
     background: #49a94d;
     color: white;
+
     &:before {
         content: "\eb27";
     }
@@ -140,6 +144,7 @@ File card icons for extensions
 .file-card--extension-avi,
 .file-card--extension-mp4 {
     background: #3e93ac;
+
     &:before {
         content: "\eb0a";
     }
@@ -150,6 +155,7 @@ File card icons for extensions
 .file-card--extension-dib,
 .file-card--extension-wbmp {
     background: #649fab;
+
     &:before {
         content: "\eb0b";
     }
@@ -214,6 +220,7 @@ File card icons for extensions
 .file-card--extension-lzh,
 .file-card--extension-zz {
     background: #efab01;
+
     &:before {
         content: "\eb30";
     }

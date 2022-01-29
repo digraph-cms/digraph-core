@@ -46,7 +46,7 @@ class Theme
                 'color' => '#333333',
                 'grid' => '1rem',
                 'line-length' => '35em',
-                'shadow' => '0 var(--grid) var(--grid) rgba(0,0,0,0.2)',
+                'shadow' => 'calc(var(--grid)/4) calc(var(--grid)/2) calc(var(--grid)*2) var(--background-dark)',
                 'border' => '2px',
                 'border-radius' => '4px',
                 'font' => [
@@ -70,12 +70,19 @@ class Theme
                 ],
                 'theme' => [
                     'neutral' => '#9e9e9e',
-                    'highlight' => '#00bfa5'
+                    'accent' => '#006064',
+                    'highlight' => '#00b8d4'
                 ]
             ],
             'dark' => [
                 'background' => '#222222',
-                'color' => '#fff'
+                'color' => '#fff',
+                'link' => [
+                    'normal' => '#64b5f6',
+                    'visited' => '#ba68c8',
+                    'focus' => '#ffb74d',
+                    'active' => '#e57373'
+                ]
             ],
             'colorblind' => [
                 'cue' => [
@@ -87,34 +94,6 @@ class Theme
                 ]
             ],
             'colorblind_dark' => []
-        ],
-        // TODO: deprecate colors here in favor of CSS custom properties computed from 'variables'
-        'scss_vars' => [
-            'grid-unit' => '1rem',
-            'typography-width' => '35rem',
-            'font-content' => 'serif',
-            'font-header' => 'sans-serif',
-            'font-ui' => 'sans-serif',
-            'font-code' => 'monospace',
-            'border-unit' => '2px',
-            'border-radius' => '4px',
-            'body-bg' => '#fafafa',
-            'body-fg' => '#333',
-            'dark-body-bg' => '#222',
-            'dark-body-fg' => '#fff',
-            'color-neutral' => '#BDC3C7',
-            'color-accent' => '#34495E',
-            'color-highlight' => '#1ABC9C',
-            'color-link' => '#2980B9',
-            'color-link-visited' => '#8E44AD',
-            'color-link-focus' => '#D35400',
-            'color-link-hover' => '#D35400',
-            'color-link-active' => '#C0392B',
-            'color-interactive' => '#0091EA',
-            'color-info' => '#006064',
-            'color-confirmation' => '#27AE60',
-            'color-warning' => '#FF6D00',
-            'color-error' => '#C0392B'
         ]
     ];
     protected static $scssVars = [];
@@ -129,11 +108,6 @@ class Theme
     protected static $asyncThemeJs = [];
     protected static $asyncPageJs = [];
     protected static $inlinePageJs = [];
-
-    public static function scssVars(): array
-    {
-        return static::$scssVars;
-    }
 
     public static function variables(string $mode = 'light'): array
     {
@@ -225,6 +199,7 @@ class Theme
         ];
         // add alpha colors
         $colors['a90'] = (new Hex($color))->toRgba()->alpha(0.9);
+        $colors['a80'] = (new Hex($color))->toRgba()->alpha(0.8);
         $colors['a50'] = (new Hex($color))->toRgba()->alpha(0.5);
         $colors['a20'] = (new Hex($color))->toRgba()->alpha(0.2);
         $colors['a10'] = (new Hex($color))->toRgba()->alpha(0.1);

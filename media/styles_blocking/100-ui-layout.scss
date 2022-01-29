@@ -1,18 +1,18 @@
 body {
     margin: 0;
 
-    > .action-menu {
+    >.action-menu {
         padding: 0;
     }
 
-    > #content {
+    >#content {
         > :first-child {
             margin-top: 0;
         }
     }
 }
 
-body > .action-menu,
+body>.action-menu,
 #header,
 #navbar,
 #breadcrumb,
@@ -23,8 +23,8 @@ body > .action-menu,
 #header {
     @include uncolored-links;
 
-    padding: $grid-unit/2;
-    margin-bottom: $grid-unit * 3;
+    padding: $grid/2;
+    margin-bottom: $grid * 3;
 
     h1 {
         font-size: xx-large;
@@ -33,15 +33,15 @@ body > .action-menu,
 }
 
 #navbar {
-    padding: $grid-unit/2;
+    padding: $grid/2;
 }
 
 .breadcrumb {
     @include uncolored-links;
 
     font-size: smaller;
-    padding: $border-unit;
-    background-color: rgba($color-neutral, 0.2);
+    padding: $border;
+    background-color: var(--theme-neutral-a20);
     font-family: $font-ui;
 
     h1 {
@@ -84,44 +84,44 @@ body > .action-menu,
 }
 
 #notifications {
-    padding: 0 $grid-unit;
+    padding: 0 $grid;
 
-    > h1 {
+    >h1 {
         display: none;
     }
 
-    > .notification {
-        margin: $grid-unit/2 0;
+    >.notification {
+        margin: $grid/2 0;
     }
 }
 
 .notification {
     @include uncolored-links;
 
-    background-color: $color-accent;
-    color: contrast-color($color-accent);
-    padding: $grid-unit/2;
+    background-color: var(--theme-highlight);
+    color: var(--theme-highlight-inv);
+    padding: $grid/2;
     font-family: $font-ui;
     border-radius: $border-radius;
 
     &.notification--notice {
-        background-color: $color-info;
-        color: contrast-color($color-info);
+        background-color: var(--cue-information);
+        color: var(--cue-information-inv);
     }
 
     &.notification--confirmation {
-        background-color: $color-confirmation;
-        color: contrast-color($color-confirmation);
+        background-color: var(--cue-safe);
+        color: var(--cue-safe-inv);
     }
 
     &.notification--warning {
-        background-color: $color-warning;
-        color: contrast-color($color-warning);
+        background-color: var(--cue-warning);
+        color: var(--cue-warning-inv);
     }
 
     &.notification--error {
-        background-color: $color-error;
-        color: contrast-color($color-error);
+        background-color: var(--cue-danger);
+        color: var(--cue-danger-inv);
     }
 }
 
@@ -131,10 +131,10 @@ span.notification {
 
 #content {
     margin: 0;
-    padding: $grid-unit;
+    padding: $grid;
 }
 
 #footer {
     font-size: smaller;
-    padding: 3 * $grid-unit $grid-unit;
+    padding: 3 * $grid $grid;
 }

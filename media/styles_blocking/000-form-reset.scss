@@ -1,6 +1,6 @@
 .form-wrapper {
     display: block;
-    font-family: $font-ui;
+    font-family: var(--font-ui);
 
     >* {
         &:last-child {
@@ -18,17 +18,17 @@ input,
 select,
 textarea,
 fieldset {
-    font-family: $font-ui;
+    font-family: var(--font-ui);
     font-size: inherit;
-    padding: $grid-unit/2;
+    padding: $grid/2;
     box-sizing: border-box;
     display: block;
-    border-radius: $border-radius;
+    border-radius: var(--border-radius);
 
     &:disabled,
     &:indeterminate {
-        background-color: $color-neutral;
-        color: rgba(contrast-color($color-neutral), 0.75);
+        background-color: var(--theme-neutral);
+        color: var(--theme-neutral-darker);
     }
 }
 
@@ -42,10 +42,10 @@ select,
 textarea,
 fieldset,
 .CodeMirror {
-    border: $border-unit solid $color-neutral;
-    border-radius: $border-radius;
-    background-color: $body-bg;
-    color: $body-fg;
+    border: $border solid var(--theme-neutral);
+    border-radius: var(--border-radius);
+    background-color: var(--background);
+    color: var(--color);
     width: 100%;
 }
 
@@ -73,7 +73,7 @@ input[type="radio"] {
     display: inline-flex;
     vertical-align: baseline;
     justify-items: center;
-    padding: $grid-unit/8;
+    padding: $grid/8;
     margin: 0;
     color: inherit;
     text-align: center;
@@ -119,8 +119,8 @@ input[type="radio"] {
             opacity: 0.25;
         }
 
-        background-color: $body-bg;
-        color: $body-fg;
+        background-color: var(--background);
+        color: var(--color);
     }
 }
 
@@ -129,17 +129,17 @@ label {
 }
 
 .form-field {
-    margin: $grid-unit/2 0;
+    margin: $grid/2 0;
 }
 
 .form-field--error {
-    background: rgba($color-error, 0.1);
-    padding: $grid-unit/2;
+    background: var(--cue-error-a10);
+    padding: $grid/2;
 }
 
 .form-field__tips__tip {
     display: block;
-    margin: $grid-unit/2 0;
+    margin: $grid/2 0;
 
     &:last-child {
         margin-bottom: 0;
@@ -147,9 +147,9 @@ label {
 }
 
 .form-field__error-message {
-    margin: $grid-unit/2 0;
+    margin: $grid/2 0;
     font-weight: bold;
-    color: $color-error;
+    color: var(--cue-danger);
 
     &:last-child {
         margin-bottom: 0;
@@ -160,7 +160,7 @@ label {
 
     .checkbox-list,
     .radio-list {
-        margin: $grid-unit/2 0;
+        margin: $grid/2 0;
 
         &:last-child {
             margin-bottom: 0;
@@ -174,10 +174,10 @@ label {
 
 .checkbox-list,
 .radio-list {
-    margin: $grid-unit 0;
+    margin: $grid 0;
 
     >.form-field {
-        margin: $grid-unit/2 0;
+        margin: $grid/2 0;
 
         &:last-child {
             margin-bottom: 0;

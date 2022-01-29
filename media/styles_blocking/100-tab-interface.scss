@@ -1,5 +1,5 @@
 .tab-interface {
-    margin: $grid-unit 0;
+    margin: $grid 0;
     display: flex;
     flex-direction: column;
 
@@ -13,12 +13,12 @@
         font-family: $font-ui;
         position: relative;
         z-index: 2;
-        gap: $border-unit;
+        gap: $border;
 
         a {
             display: inline-block;
-            padding: $grid-unit/2;
-            background-color: rgba($color-accent, 0.2);
+            padding: $grid/2;
+            background-color: var(--theme-accent-a20);
             text-decoration: none;
             font-weight: bold;
             position: relative;
@@ -26,29 +26,29 @@
             &:hover,
             &:focus,
             &:focus-within {
-                background-color: $color-interactive;
-                color: contrast-color($color-interactive);
+                background-color: var(--cue-interactive);
+                color: var(--cue-interactive-inv);
             }
 
             &.current-tab {
                 margin-bottom: 0;
-                background-color: $body-bg;
-                color: $body-fg;
-                border: $border-unit solid $color-accent;
+                background-color: var(--background);
+                color: var(--color);
+                border: $border solid var(--theme-accent);
                 border-top-left-radius: $border-radius;
                 border-top-right-radius: $border-radius;
                 border-bottom: 0;
                 position: relative;
 
                 &:after {
-                    background-color: $body-bg;
+                    background-color: var(--background);
                     content: "";
                     display: block;
                     position: absolute;
                     top: 100%;
                     left: 0;
                     right: 0;
-                    height: $border-unit;
+                    height: $border;
                 }
 
                 &:first-child {
@@ -64,10 +64,10 @@
 
     .tab-interface-content {
         z-index: 1;
-        background-color: $body-bg;
-        color: $body-fg;
-        padding: $grid-unit/2;
-        border: $border-unit solid $color-accent;
+        background-color: var(--background);
+        color: var(--color);
+        padding: $grid/2;
+        border: $border solid var(--theme-accent);
         font-family: $font-content;
         position: relative;
         flex-grow: 1;
@@ -81,15 +81,15 @@
         }
 
         .card {
-            margin-left: -$grid-unit/2;
-            margin-right: -$grid-unit/2;
+            margin-left: -$grid/2;
+            margin-right: -$grid/2;
 
             &:first-child {
-                margin-top: -$grid-unit/2;
+                margin-top: -$grid/2;
             }
 
             &:last-child {
-                margin-bottom: -$grid-unit/2;
+                margin-bottom: -$grid/2;
             }
         }
     }

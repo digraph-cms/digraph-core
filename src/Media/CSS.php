@@ -48,7 +48,7 @@ class CSS
         $compiler = new ScssCompiler();
         $compiler->setCharset(false);
         // add theme variables
-        $compiler->addVariables(Theme::scssVars());
+        $compiler->addVariables(Theme::variables());
         // source mapping (only used when sourcemap is true and bundle_css is false)
         $smFile = null;
         if (Config::get('files.css.sourcemap') && !Config::get('theme.bundle_css')) {

@@ -1,13 +1,13 @@
 .action-menu {
     @include uncolored-links;
 
-    background: $color-neutral;
+    background: var(--theme-neutral);
     font-size: smaller;
     display: flex;
     justify-content: space-between;
     flex-direction: row;
     align-items: center;
-    color: contrast-color($color-neutral);
+    color: var(--theme-neutral-inv);
     font-family: $font-ui;
 
     h1 {
@@ -27,7 +27,7 @@
     .action-menu__user-actions,
     .action-menu__static-actions,
     .action-menu__page-actions {
-        margin: $border-unit;
+        margin: $border;
     }
 
     .action-menu__user-actions {
@@ -75,7 +75,7 @@
     li.dropdown {
         position: relative;
 
-        > a {
+        >a {
             cursor: pointer;
 
             &:before {
@@ -84,15 +84,15 @@
             }
         }
 
-        > ul {
+        >ul {
             display: none;
             position: absolute;
             min-width: 100%;
-            padding: $grid-unit/4;
+            padding: $grid/4;
             box-sizing: border-box;
             top: 100%;
             left: 0;
-            background: $color-neutral;
+            background: var(--theme-neutral);
 
             a {
                 display: block;
@@ -101,11 +101,11 @@
 
         &:focus-within,
         &.open {
-            > ul {
+            >ul {
                 display: block;
             }
 
-            > a {
+            >a {
                 &:before {
                     content: "\ea6f";
                 }
@@ -119,6 +119,7 @@
 }
 
 .action-menu__user-actions--guest {
+
     h2,
     nav,
     ul {

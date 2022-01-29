@@ -1,24 +1,24 @@
 .ordering-input__option-list {
-    border: $border-unit solid $color-neutral;
+    border: $border solid var(--theme-neutral);
     border-radius: $border-radius;
-    background: $body-bg;
-    color: $body-fg;
+    background: var(--background);
+    color: var(--color);
     font-family: $font-ui;
     overflow: hidden;
     cursor: grab;
 
     &.ordering-input__option-list--dragging {
-        border-color: $color-interactive;
+        border-color: var(--cue-interactive);
     }
 
     .ordering-input__option {
         &:nth-child(odd) {
-            background: rgba($color-neutral, 0.2);
+            background: var(--cue-neutral-a20);
         }
 
         &.ordering-input__option--dragging {
-            background: $color-interactive;
-            color: contrast-color($color-interactive);
+            background: var(--cue-interactive);
+            color: var(--cue-interactive-inv);
         }
     }
 }
@@ -28,12 +28,12 @@
 }
 
 .ordering-input__option__label {
-    padding: $grid-unit/2;
+    padding: $grid/2;
     flex-grow: 1;
 }
 
 .ordering-input__option__delete {
-    padding: $grid-unit/2;
+    padding: $grid/2;
     cursor: pointer;
 
     &:before {
@@ -43,11 +43,11 @@
 }
 
 .ordering-input__option--deleted {
-    background: $color-error !important;
-    color: contrast-color($color-error) !important;
+    background: var(--cue-danger) !important;
+    color: var(--cue-danger-inv) !important;
 
     &:nth-child(even) {
-        background: rgba($color-error, 0.9) !important;
+        background: var(--cue-danger-a90) !important;
     }
 
     .ordering-input__option__delete:before {

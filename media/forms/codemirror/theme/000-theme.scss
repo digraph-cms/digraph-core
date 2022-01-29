@@ -1,59 +1,71 @@
 .cm-s-digraph {
+    background: var(--background-dark);
+    color: var(--color);
+
+    .CodeMirror-scroll {
+        background: var(--background-dark);
+        color: var(--color);
+    }
+
     .CodeMirror-lines {
-        margin: $grid-unit/2;
+        margin: $grid/2;
+    }
+
+    .CodeMirror-cursor {
+        border-left: 2px solid var(--cue-interactive) !important;
+    }
+
+    .CodeMirror-selected {
+        background: var(--theme-highlight-a20);
     }
 
     span {
         &.cm-comment {
-            color: #a86;
+            color: var(--theme-neutral);
         }
 
         &.cm-keyword {
             line-height: 1em;
             font-weight: bold;
-            color: blue;
+            color: var(--cue-interactive);
         }
 
         &.cm-string {
-            color: #a22;
+            color: var(--cue-warning);
         }
 
         &.cm-builtin {
             line-height: 1em;
             font-weight: bold;
-            color: #077;
+            color: var(--theme-accent);
         }
 
         &.cm-special {
             line-height: 1em;
             font-weight: bold;
-            color: #0aa;
+            color: var(--theme-highlight);
         }
 
         &.cm-variable {
-            color: black;
+            color: var(--color);
         }
 
         &.cm-number,
         &.cm-atom {
-            color: #3a3;
+            color: var(--cue-safe);
         }
 
         &.cm-meta {
-            color: #555;
+            color: var(--cue-information);
         }
 
         &.cm-link {
-            color: #3a3;
+            color: var(--cue-safe);
         }
     }
 
-    .CodeMirror-activeline-background {
-        background: #e8f2ff;
-    }
-
     .CodeMirror-matchingbracket {
-        outline: 1px solid grey;
-        color: black !important;
+        outline: 1px solid var(--color);
+        color: var(--color) !important;
     }
 }

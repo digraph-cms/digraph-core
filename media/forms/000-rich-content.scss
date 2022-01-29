@@ -1,10 +1,10 @@
 .rich-content-editor__dynamic-editor {
     display: flex;
     position: relative;
-    background: $color-neutral;
-    border-radius: $border-radius;
-    gap: $border-unit;
-    border: $border-unit solid $color-neutral;
+    background: var(--theme-neutral);
+    border-radius: var(--border-radius);
+    gap: var(--border);
+    border: var(--border) solid var(--theme-neutral);
     overflow: hidden;
     max-height: 75vh;
 }
@@ -12,7 +12,7 @@
 .rich-content-editor__content-editor {
     flex-basis: 3;
     flex-grow: 1;
-    background: $body-bg;
+    background: var(--background);
     display: flex;
     flex-direction: column;
     overflow: auto;
@@ -21,7 +21,7 @@
 
     .rich-content-editor__toolbar {
         border: 0;
-        border-bottom: $border-unit solid $color-neutral;
+        border-bottom: var(--border) solid var(--theme-neutral);
     }
 
     .rich-content-editor__content-editor__editor {
@@ -34,7 +34,7 @@
         height: auto;
         border: 0;
         font-size: inherit;
-        background: $body-bg;
+        background: var(--background);
     }
 
     >textarea {
@@ -48,24 +48,26 @@
 .rich-content-editor__media-editor {
     flex-basis: 30em;
     overflow: auto;
-    padding-left: $grid-unit;
+    padding-left: var(--grid);
     position: relative;
 
     .rich-content-editor__media-editor__size-toggle {
         position: absolute;
         top: 0;
         left: 0;
-        width: $grid-unit;
+        width: var(--grid);
         bottom: 0;
-        font-size: $grid-unit;
-        background: mix($body-bg, $color-neutral, 50%);
+        font-size: var(--grid);
+        background: var(--theme-neutral-dark);
+        color: var(--theme-neutral-inv);
         display: flex;
         justify-content: center;
         align-items: center;
         cursor: pointer;
 
         &:hover {
-            background: mix($body-bg, $color-interactive, 50%);
+            background: var(--cue-interactive);
+            color: var(--cue-interactive-inv);
         }
 
         &:before {
@@ -105,9 +107,9 @@
 
         .tab-interface-content {
             overflow: auto;
-            border-top-right-radius: $border-radius;
-            border-bottom-right-radius: $border-radius;
-            border-bottom-left-radius: $border-radius;
+            border-top-right-radius: var(--border-radius);
+            border-bottom-right-radius: var(--border-radius);
+            border-bottom-left-radius: var(--border-radius);
         }
     }
 }

@@ -2,14 +2,14 @@
     box-sizing: border-box;
     max-width: 100%;
     max-height: 60vh;
-    background: $color-neutral;
+    background: var(--theme-neutral);
     overflow: auto;
 
-    > table {
-        background: $body-bg;
-        color: $body-fg;
+    >table {
+        background: var(--background);
+        color: var(--color);
         width: auto;
-        border: $grid-unit * 2.5 solid $color-neutral;
+        border: $grid * 2.5 solid var(--theme-neutral);
         box-shadow: none !important;
     }
 
@@ -32,33 +32,33 @@
         min-width: 20em;
 
         &.delete-hover {
-            background: $color-warning;
-            color: contrast-color($color-warning);
+            background: var(--cue-warning);
+            color: var(--cue-warning-inv);
         }
 
         &.focused-cell {
             textarea {
-                background-color: $body-bg;
-                color: $body-fg;
-                outline: 1px solid $body-bg;
+                background-color: var(--background);
+                color: var(--color);
+                outline: 1px solid var(--background);
                 transform: scale(1.01);
             }
         }
 
         &.add-column-right-hover {
-            border-right: $border-unit solid $color-interactive;
+            border-right: $border solid var(--cue-interactive);
         }
 
         &.add-column-left-hover {
-            border-left: $border-unit solid $color-interactive;
+            border-left: $border solid var(--cue-interactive);
         }
 
         &.add-row-above-hover {
-            border-top: $border-unit solid $color-interactive;
+            border-top: $border solid var(--cue-interactive);
         }
 
         &.add-row-below-hover {
-            border-bottom: $border-unit solid $color-interactive;
+            border-bottom: $border solid var(--cue-interactive);
         }
     }
 
@@ -75,7 +75,7 @@
 
     .row-focused,
     .column-focused {
-        background-color: rgba($color-interactive, 0.1);
+        background-color: rgba(var(--cue-interactive), 0.1);
     }
 
     .focused-cell {
@@ -84,8 +84,8 @@
 
         textarea {
             z-index: 100;
-            background-color: $body-bg;
-            color: $body-fg;
+            background-color: var(--background);
+            color: var(--color);
         }
     }
 }
@@ -96,7 +96,7 @@
 
 td,
 th {
-    > .editable-table__controls {
+    >.editable-table__controls {
         display: block;
     }
 
@@ -104,9 +104,9 @@ th {
     .editable-table__controls__bottom,
     .editable-table__controls__left,
     .editable-table__controls__right {
-        @include drop-shadow(1);
         z-index: 101;
         position: absolute;
+        box-shadow: var(--shadow);
     }
 
     .editable-table__controls__top,
@@ -177,6 +177,7 @@ tr {
 
 // hide add row controls from header
 thead {
+
     .toolbar__button--add-row-above,
     .toolbar__button--add-row-below {
         display: none;
@@ -185,6 +186,7 @@ thead {
 
 // hide add/delete column controls from body
 tbody {
+
     .toolbar__button--add-column-left,
     .toolbar__button--add-column-right,
     .toolbar__button--delete-column {
