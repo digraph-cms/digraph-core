@@ -7,9 +7,15 @@ use DigraphCMS\URL\URLs;
 require_once __DIR__ . "/../vendor/autoload.php";
 
 // set up config
-Config::readFile(__DIR__ . '/../env.json');
-Config::set('paths.base', __DIR__);
-Config::set('paths.web', __DIR__);
+Digraph::initialize(
+    function () {
+        Config::readFile(__DIR__ . '/../env.json');
+        Config::set('paths.base', __DIR__);
+        Config::set('paths.web', __DIR__);
+    },
+    __DIR__.'/cache',
+    60
+);
 
 // special case for running in PHP's built-in server
 if (php_sapi_name() === 'cli-server') {

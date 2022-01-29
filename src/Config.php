@@ -2,47 +2,55 @@
 
 namespace DigraphCMS;
 
-use DigraphCMS\Config\ConfigArray;
+use Flatrr\SelfReferencingFlatArray;
 
 class Config
 {
-    /** @var FlatrrConfig */
-    protected static $config;
+    /** @var SelfReferencingFlatArray */
+    protected static $data;
 
-    public static function _init()
+    public static function data(SelfReferencingFlatArray $set = null): SelfReferencingFlatArray
     {
-        self::$config = new ConfigArray();
-        self::$config->readDir(__DIR__ . '/../config');
-        self::merge([
-            'paths.system' => realpath(__DIR__ . '/..'),
-            'routes.paths.system' => '${paths.system}/routes'
-        ]);
+        if ($set) {
+            self::$data = $set;
+        }
+        return self::$data;
     }
 
     public static function get(string $key = null)
     {
-        return self::$config->get($key);
+        return self::$data->get($key);
     }
 
     public static function set(?string $key, $value)
     {
-        return self::$config->set($key, $value);
+        return self::$data->set($key, $value);
     }
 
     public static function merge($value, $name = null, $overwrite = true)
     {
-        self::$config->merge($value, $name, $overwrite);
+        self::$data->merge($value, $name, $overwrite);
     }
 
-    public static function readDir($dir, $name = null, $overwrite = true)
+    public static function readFile($file, $overwrite = true)
     {
-        self::$config->readDir($dir, $name, $overwrite);
+        if (!is_file($file)) {
+            return;
+        }
+        $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+        $fn = "readFile_$extension";
+        self::$data->merge(
+            static::$fn($file),
+            null,
+            $overwrite
+        );
     }
 
-    public static function readFile($file, $name = null, $overwrite = true)
+    protected static function readFile_json(string $filename): array
     {
-        self::$config->readFile($file, $name, $overwrite);
+        return json_decode(
+            file_get_contents($filename),
+            true
+        );
     }
 }
-
-Config::_init();

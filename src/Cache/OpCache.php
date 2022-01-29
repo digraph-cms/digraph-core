@@ -61,7 +61,7 @@ class OpCache extends AbstractCacheDriver
     protected function readInternally(string $name, bool $force = false)
     {
         if ($force || !isset($this->cache[$name])) {
-            Cache::checkName($name);
+            static::checkName($name);
             if (!$this->exists($name)) {
                 $this->cache[$name] = null;
             } else {
@@ -69,17 +69,24 @@ class OpCache extends AbstractCacheDriver
                 // wait for a read lock
                 $this->lockRead($filename);
                 // include file
-                include $filename;
+                try {
+                    include $filename;
+                } catch (\Throwable $th) {
+                    // catch exceptions in included file by returning null
+                    // as if the cache item doesn't exist
+                    $this->cache[$name] = null;
+                    $this->unlock($filename);
+                }
                 // unlock
                 $this->unlock($filename);
-                // check expiration
-                if (time() > $exp) {
+                // check expiration (time is fuzzed)
+                if (time() + random_int(-$this->fuzz, $this->fuzz) > $exp) {
                     // expired, expire and internally cache null result
                     $this->invalidate($name);
                     $this->cache[$name] = null;
                 } else {
                     // not expired, save into internal cache
-                    $this->cache[$name] = [$exp + random_int(-$this->fuzz, $this->fuzz), $val];
+                    $this->cache[$name] = [$exp, $val];
                 }
             }
         }
@@ -87,7 +94,7 @@ class OpCache extends AbstractCacheDriver
 
     public function invalidate(string $glob)
     {
-        Cache::checkGlob($glob);
+        static::checkGlob($glob);
         $glob = $this->filename($glob);
         foreach (glob($glob) as $filename) {
             $name = substr($filename, 0, strlen($this->dir) + 1);
@@ -103,7 +110,7 @@ class OpCache extends AbstractCacheDriver
 
     public function set(string $name, $value, int $ttl = null)
     {
-        Cache::checkName($name);
+        static::checkName($name);
         // save into internal cache
         $ttl = $ttl ?? $this->ttl;
         $exp = time() + $ttl;

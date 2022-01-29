@@ -18,4 +18,18 @@ abstract class AbstractCacheDriver
     {
         $this->dir = Config::get('cache.path');
     }
+
+    public static function checkName(string $name)
+    {
+        if (!preg_match('/[a-z0-9\-_]+(\/[a-z0-9\-_]+)*/', $name)) {
+            throw new \Exception("Invalid cache name. Item names must be valid directory paths consisting of only lower-case alphanumerics, dashes, and underscores.");
+        }
+    }
+
+    public static function checkGlob(string $glob)
+    {
+        if (!preg_match('/[a-z0-9\-_\*\?\[\]]+(\/[a-z0-9\-_\*\?\[\]]+)*/', $glob)) {
+            throw new \Exception("Invalid cache glob. Item globs must be valid directory paths consisting of only lower-case alphanumerics, dashes, underscores, and glob characters.");
+        }
+    }
 }
