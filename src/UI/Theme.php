@@ -90,7 +90,7 @@ class Theme
                     'information' => '#006064',
                     'safe' => '#2196f3',
                     'warning' => '#ff5722',
-                    'danger' => '#9c27b0'
+                    'danger' => '#ff5722'
                 ]
             ],
             'colorblind_dark' => []
