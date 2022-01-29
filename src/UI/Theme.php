@@ -40,9 +40,9 @@ class Theme
         ],
         'variables' => [
             'light' => [
-                'background' => '#eee',
-                'background-light' => 'rgb(245,245,245)',
-                'background-lighter' => '#fff',
+                'background' => '#eeeeee',
+                'background-light' => '#fafafa',
+                'background-lighter' => '#ffffff',
                 'color' => '#333333',
                 'grid' => '1rem',
                 'line-length' => '35em',
@@ -172,7 +172,7 @@ class Theme
         );
         $file->write();
         printf(
-            '<link rel="stylesheet" href="%s" />'.PHP_EOL,
+            '<link rel="stylesheet" href="%s" />' . PHP_EOL,
             $file->url()
         );
     }
@@ -200,8 +200,10 @@ class Theme
             elseif (preg_match("/#[0-9a-f]{6}/i", $v)) {
                 $output[$k] = $v;
                 $output["$k-inv"] = static::contrastColor(new Hex($v));
-                foreach (static::prepareColorVariations($v) as $t => $v) {
-                    $output["$k-$t"] = $v->__toString();
+                if (!preg_match('/-((light|dark)(er)?|bright(er)?)$/', $k)) {
+                    foreach (static::prepareColorVariations($v) as $t => $v) {
+                        $output["$k-$t"] = $v->__toString();
+                    }
                 }
             }
             // otherwise copy values
@@ -223,8 +225,9 @@ class Theme
         ];
         // add alpha colors
         $colors['a90'] = (new Hex($color))->toRgba()->alpha(0.9);
-            $colors['a50'] = (new Hex($color))->toRgba()->alpha(0.5);
-            $colors['a20'] = (new Hex($color))->toRgba()->alpha(0.2);
+        $colors['a50'] = (new Hex($color))->toRgba()->alpha(0.5);
+        $colors['a20'] = (new Hex($color))->toRgba()->alpha(0.2);
+        $colors['a10'] = (new Hex($color))->toRgba()->alpha(0.1);
         return $colors;
     }
 
