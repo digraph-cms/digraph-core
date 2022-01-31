@@ -75,7 +75,7 @@
     li.dropdown {
         position: relative;
 
-        >a {
+        > a {
             cursor: pointer;
 
             &:before {
@@ -84,7 +84,7 @@
             }
         }
 
-        >ul {
+        > ul {
             display: none;
             position: absolute;
             min-width: 100%;
@@ -101,11 +101,11 @@
 
         &:focus-within,
         &.open {
-            >ul {
+            > ul {
                 display: block;
             }
 
-            >a {
+            > a {
                 &:before {
                     content: "\ea6f";
                 }
@@ -118,21 +118,7 @@
     flex-direction: row-reverse;
 }
 
-.action-menu__user-actions--guest {
-
-    h2,
-    nav,
-    ul {
-        display: inline-block;
-    }
-
-    h2 {
-        &:before {
-            content: "Welcome, ";
-        }
-    }
-}
-
+.action-menu__user-actions--guest,
 .action-menu__user-actions--signedin {
     display: flex;
     flex-direction: row;
@@ -142,7 +128,20 @@
     h2 {
         display: inline-block;
     }
+    ul {
+        justify-content: flex-end;
+    }
+}
 
+.action-menu__user-actions--guest {
+    h2 {
+        &:before {
+            content: "Welcome, ";
+        }
+    }
+}
+
+.action-menu__user-actions--signedin {
     h2 {
         a {
             text-decoration: none;
@@ -155,9 +154,5 @@
 
     .profile-link {
         display: none;
-    }
-
-    ul {
-        justify-content: flex-end;
     }
 }

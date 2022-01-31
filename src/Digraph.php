@@ -14,6 +14,7 @@ use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\HTTP\Request;
 use DigraphCMS\HTTP\RequestHeaders;
 use DigraphCMS\HTTP\Response;
+use DigraphCMS\Session\Cookies;
 use DigraphCMS\UI\Templates;
 use DigraphCMS\UI\Theme;
 use DigraphCMS\URL\URL;
@@ -87,7 +88,7 @@ class Digraph
         $state = new InitializationState(
             Config::data()
         );
-        Dispatcher::dispatchEvent('onDigraphInitialized_precache',[$state]);
+        Dispatcher::dispatchEvent('onDigraphInitialized_precache', [$state]);
         return $state;
     }
 
@@ -327,7 +328,7 @@ class Digraph
         // check output cache
         if (Config::get('content_cache.enabled')) {
             $cache = new UserCacheNamespace('content_cache');
-            $hash = md5(serialize(Context::request()));
+            $hash = md5(serialize([Context::request(), Cookies::cacheMutatingCookies()]));
             if ($cache->exists($hash) && !$cache->expired($hash)) {
                 Context::response($cache->get($hash));
                 return;

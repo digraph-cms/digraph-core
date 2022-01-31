@@ -9,8 +9,10 @@ use DigraphCMS\Media\CSS;
 use DigraphCMS\Media\DeferredFile;
 use DigraphCMS\Media\File;
 use DigraphCMS\Media\Media;
+use DigraphCMS\Session\Cookies;
 use DigraphCMS\URL\URL;
 use DigraphCMS\URL\URLs;
+use DigraphCMS\Users\Users;
 use OzdemirBurak\Iris\Color\Hex;
 use OzdemirBurak\Iris\Color\Rgba;
 
@@ -46,7 +48,7 @@ class Theme
                 'color' => '#333333',
                 'grid' => '1rem',
                 'line-length' => '35em',
-                'shadow' => 'calc(var(--grid)/4) calc(var(--grid)/2) calc(var(--grid)*2) var(--background-dark)',
+                'shadow' => 'calc(var(--grid)/8) calc(var(--grid)/4) var(--grid) rgba(0,0,0,0.05)',
                 'border' => '2px',
                 'border-radius' => '4px',
                 'font' => [
@@ -77,6 +79,7 @@ class Theme
             'dark' => [
                 'background' => '#222222',
                 'color' => '#fff',
+                'shadow' => 'calc(var(--grid)/4) calc(var(--grid)/2) calc(var(--grid)*2) rgba(0,0,0,0.4)',
                 'link' => [
                     'normal' => '#64b5f6',
                     'visited' => '#ba68c8',
@@ -108,6 +111,38 @@ class Theme
     protected static $asyncThemeJs = [];
     protected static $asyncPageJs = [];
     protected static $inlinePageJs = [];
+
+    public static function colorMode(): ?string
+    {
+        if ($user = Users::current()) {
+            if ($user['ui.colormode']) {
+                return $user['ui.colormode'];
+            }
+        }
+        return @Cookies::get('ui', 'color')['color'];
+    }
+
+    public static function colorblindMode(): ?string
+    {
+        if ($user = Users::current()) {
+            if ($user['ui.colorblindmode'] !== null) {
+                return $user['ui.colorblindmode'];
+            }
+        }
+        return @Cookies::get('ui', 'color')['colorblindmode'];
+    }
+
+    public static function bodyClasses(): array
+    {
+        $classes = [];
+        if ($mode = static::colorMode()) {
+            $classes[] = 'colors--' . $mode;
+        }
+        if (static::colorblindMode()) {
+            $classes[] = 'colors--colorblind';
+        }
+        return $classes;
+    }
 
     public static function variables(string $mode = 'light'): array
     {

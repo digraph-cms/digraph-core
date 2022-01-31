@@ -282,6 +282,18 @@ class CoreEventSubscriber
     }
 
     /**
+     * Name color settings URL
+     *
+     * @param URL $url
+     * @param boolean $inPageContext
+     * @return string|null
+     */
+    public static function onStaticUrlName_color(URL $url, bool $inPageContext): ?string
+    {
+        return 'Color settings';
+    }
+
+    /**
      * Make the name of user profile URLs the user's name
      *
      * @param URL $url
@@ -304,6 +316,16 @@ class CoreEventSubscriber
     public static function onStaticUrlName_signin(): ?string
     {
         return "Sign in or sign up";
+    }
+
+    public static function onStaticActions_user(array &$urls)
+    {
+        $urls[] = new URL('/~color/');
+    }
+
+    public static function onStaticActions_guest(array &$urls)
+    {
+        $urls[] = new URL('/~color/');
     }
 
     /**

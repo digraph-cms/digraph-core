@@ -26,7 +26,7 @@ use DigraphCMS\Media\Media;
     </style>
 </head>
 
-<body class='template-error no-js'>
+<body class='template-error no-js <?php echo implode(' ', Theme::bodyClasses()); ?>'>
     <?php echo Context::response()->content(); ?>
 </body>
 

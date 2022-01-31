@@ -16,12 +16,12 @@ class Notifications
     public static function printSection()
     {
         // pull flash notifications
-        if ($flashes = Cookies::get('system', 'flashnotifications')) {
+        if ($flashes = Cookies::get('ui', 'flashnotifications')) {
             Context::response()->private(true);
             foreach ($flashes as list($message, $type, $class)) {
                 static::add($message, "$type flash-notification", $class);
             }
-            Cookies::unset('system', 'flashnotifications');
+            Cookies::unset('ui', 'flashnotifications');
         }
         // display notifications
         echo "<section id='notifications'>";
@@ -85,9 +85,9 @@ class Notifications
     public static function onResponseRender()
     {
         if (static::$flashes) {
-            $flashes = Cookies::get('system', 'flashnotifications') ?? [];
+            $flashes = Cookies::get('ui', 'flashnotifications') ?? [];
             $flashes = array_merge($flashes, static::$flashes);
-            Cookies::set('system', 'flashnotifications', $flashes);
+            Cookies::set('ui', 'flashnotifications', $flashes);
         }
     }
 

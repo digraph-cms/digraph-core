@@ -18,6 +18,29 @@ Dispatcher::addSubscriber(Cookies::class);
 
 class Cookies
 {
+    /**
+     * Returns an array of all the cookies that should be used to key output
+     * caching. Main reason is to allow separate caching for different UI
+     * states, such as flash notification or color settings.
+     *
+     * @return array
+     */
+    public static function cacheMutatingCookies(): array
+    {
+        return [
+            'ui' => [
+                'color' => static::get('ui', 'color'),
+                'flashnotifications' => static::get('ui', 'flashnotifications')
+            ]
+        ];
+    }
+
+    /**
+     * Handle cookie required exceptions by delivering a 409 error, to indicate
+     * that there is a conflict that must be resolved.
+     *
+     * @return void
+     */
     public static function onException_CookieRequiredError()
     {
         Digraph::buildErrorContent(409.1);
@@ -33,7 +56,7 @@ class Cookies
 
     public static function listTypes(): array
     {
-        $types = ['system', 'auth', 'csrf'];
+        $types = ['system', 'ui', 'auth', 'csrf'];
         Dispatcher::dispatchEvent('onListCookieTypes', [&$types]);
         return $types;
     }
@@ -96,6 +119,8 @@ class Cookies
                 return 'User authorization cookies';
             case 'csrf':
                 return 'CSRF protection cookies';
+            case 'ui':
+                return 'User interface cookies';
         }
         return null;
     }
@@ -119,9 +144,20 @@ class Cookies
         return null;
     }
 
-    public static function onCookieDescribe_system_flashnotifications()
+    public static function onCookieDescribe_ui_flashnotifications()
     {
         return "Temporarily stores notifications that need to be displayed on the next page you visit, such as confirmations when an action is performed.";
+    }
+
+    public static function onCookieDescribe_ui()
+    {
+        return "UI state cookies, used to keep track of the user interface state and your user interface preferences.";
+    }
+
+    public static function onCookieDescribe_ui_color()
+    {
+        return "Stores your preferences for whether the site should appear in light or dark mode, and whether it should attempt to use colorblindness-friendly colors." .
+            "<br>This cookie is only sent to this site when you visit it, and we do not share or retain its data.";
     }
 
     public static function onCookieDescribe_auth()
@@ -136,7 +172,7 @@ class Cookies
     public static function onCookieDescribe_system()
     {
         return
-            "Used by this website only for necessary system functions such as recording consent to other cookies and managing UI state." .
+            "Used by this website only for necessary system functions such as recording consent to other cookies." .
             "<br>These cookies are only sent to this site when you visit it, and we do not share or retain their data.";
     }
 
@@ -146,6 +182,11 @@ class Cookies
     }
 
     public static function onCookieExpiration_system()
+    {
+        return "7 days";
+    }
+
+    public static function onCookieExpiration_ui()
     {
         return "7 days";
     }

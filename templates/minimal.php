@@ -26,7 +26,7 @@ use DigraphCMS\UI\UserMenu;
     <?php echo Theme::head(); ?>
 </head>
 
-<body class='template-minimal no-js'>
+<body class='template-minimal no-js <?php echo implode(' ', Theme::bodyClasses()); ?>'>
     <?php
     echo new UserMenu(Context::url());
     echo Templates::render('sections/header.php');
