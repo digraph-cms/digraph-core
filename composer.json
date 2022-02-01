@@ -56,9 +56,6 @@
         "jasig/phpcas": "^1.4"
     },
     "scripts": {
-        "migrate": [
-            "phinx migrate"
-        ],
         "server": [
             "php -S localhost:8000 -t demo demo/index.php"
         ],
