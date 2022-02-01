@@ -56,10 +56,7 @@
         "jasig/phpcas": "^1.4"
     },
     "scripts": {
-        "post-install-cmd": [
-            "phinx migrate"
-        ],
-        "post-update-cmd": [
+        "migrate": [
             "phinx migrate"
         ],
         "server": [
