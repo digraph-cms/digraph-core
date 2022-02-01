@@ -18,6 +18,30 @@ Dispatcher::addSubscriber(Cookies::class);
 
 class Cookies
 {
+
+    public static function banner(): string
+    {
+        if (!static::isAllowed('system') && static::autoConsent()) {
+            return sprintf(
+                '<div id="cookie-consent-banner" class="navigation-frame navigation-frame--stateless" data-initial-source="%s"></div>',
+                new URL('/~privacy/_cookie_banner.html')
+            );
+        }
+        return '';
+    }
+
+    public static function autoConsent(): array
+    {
+        $config = Config::get('cookies.auto_consent');
+        if (!$config) {
+            return [];
+        } elseif ($config == 'all') {
+            return static::listTypes();
+        } else {
+            return array_keys(array_filter($config));
+        }
+    }
+
     /**
      * Returns an array of all the cookies that should be used to key output
      * caching. Main reason is to allow separate caching for different UI
@@ -91,6 +115,11 @@ class Cookies
             } else {
                 $checkbox->addTip('These cookies automatically expire on your computer when you close your browser.');
             }
+        }
+        if ($checkboxes['system']) {
+            $checkboxes['system']
+                ->setRequired(true, 'System cookies must be allowed to save any other preferences')
+                ->setDefault(true);
         }
         $form->addCallback(function () use ($checkboxes) {
             foreach ($checkboxes as $type => $field) {

@@ -22,7 +22,7 @@ use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Permissions;
 
 Permissions::requireMetaGroup('content__edit');
-Context::response()->template('iframe.php');
+Context::response()->template('framed.php');
 
 $wrapper = (new DIV())
     ->setID(Context::arg('frame'));

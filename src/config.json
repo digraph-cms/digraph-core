@@ -79,7 +79,8 @@
   },
   "cookies": {
     "secure": false,
-    "duration": "3 months"
+    "duration": "3 months",
+    "auto_consent": "all"
   },
   "session": {
     "strict_ip_check": true

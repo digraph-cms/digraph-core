@@ -1,14 +1,10 @@
 <?php
 /*
-Minimal template page for use in embedded iframes
+Minimal template page for use in navigation frames.
 */
 
 use DigraphCMS\Context;
-use DigraphCMS\UI\Breadcrumb;
 use DigraphCMS\UI\Notifications;
-use DigraphCMS\UI\Templates;
-use DigraphCMS\UI\Theme;
-use DigraphCMS\UI\UserMenu;
 
 ?>
 <!DOCTYPE html>
@@ -22,10 +18,9 @@ use DigraphCMS\UI\UserMenu;
         <?php echo Context::fields()['page.name'] ?? 'Untitled'; ?>
         :: <?php echo Context::fields()['site.name']; ?>
     </title>
-    <?php echo Theme::head(); ?>
 </head>
 
-<body class='template-iframe no-js <?php echo implode(' ', Theme::bodyClasses()); ?>'>
+<body class='template-framed'>
     <?php Notifications::printSection(); ?>
     <main id="content">
         <?php echo Context::response()->content(); ?>
