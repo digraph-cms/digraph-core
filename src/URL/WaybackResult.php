@@ -2,7 +2,9 @@
 
 namespace DigraphCMS\URL;
 
+use DateInterval;
 use DateTime;
+use DigraphCMS\Config;
 use DigraphCMS\Context;
 
 class WaybackResult
@@ -54,5 +56,13 @@ class WaybackResult
             $this->originalURL,
             $this->wbTime
         ]));
+    }
+
+    public function expired(): bool
+    {
+        $expiration = $this->created()->add(
+            DateInterval::createFromDateString(Config::get('wayback.api_cache_ttl'))
+        );
+        return time() > $expiration->getTimestamp();
     }
 }

@@ -84,6 +84,7 @@ class WaybackMachine
         if (@$url['query']) {
             $normal .= '?' . $url['query'];
         }
+        $normal = preg_replace('/\/$/', '', $normal);
         return $normal;
     }
 
@@ -132,27 +133,36 @@ class WaybackMachine
             ->order('wb_time desc')
             ->limit(1);
         if ($row = $query->fetch()) {
-            // return/cache null if wb_time is null, this means no result was found
+            // cache null if wb_time is null, this means no result was found
             if (!$row['wb_time']) {
-                return $cache[$url] = null;
+                $cache[$url] = null;
             }
-            // otherwise return/cache a result object
-            return $cache[$url] = new WaybackResult(
-                $row['url'],
-                $row['wb_url'],
-                $row['wb_time']
-            );
+            // otherwise cache a result object
+            else {
+                $cache[$url] = new WaybackResult(
+                    $row['url'],
+                    $row['wb_url'],
+                    $row['wb_time'],
+                    $row['created']
+                );
+            }
         }
 
         // we might have to actually hit the API now
 
-        // return/cache null if max checks per request is exceeded
+        // return immediately if we've made our maximum api calls for this page
         if (static::$checksCount >= Config::get('wayback.max_api_calls')) {
-            return null;
+            return $cache[$url];
         }
-        static::$checksCount++;
 
-        // retrieve from API if not found in DB
+        // return immediately if result is a WaybackResult and not expired
+        // if result is expired, we should make a fresh check to the API
+        if (@$cache[$url] instanceof WaybackResult && !$cache[$url]->expired()) {
+            return $cache[$url];
+        }
+
+        // retrieve from API if not found in DB or expired
+        static::$checksCount++;
         $wb = sprintf(
             'http://archive.org/wayback/available?url=%s',
             urlencode($url)
@@ -182,22 +192,25 @@ class WaybackMachine
                     null
                 );
             }
-            // insert result into database
-            $check = DB::query()->from('wayback_machine')
+            // begin transaction
+            DB::beginTransaction();
+            // delete this result if it already exists in the database
+            DB::query()->deleteFrom('wayback_machine')
                 ->where('uuid = ?', [$result->uuid()])
-                ->limit(1);
-            if (!$check->count()) {
-                DB::query()->insertInto(
-                    'wayback_machine',
-                    [
-                        'uuid' => $result->uuid(),
-                        'url' => $result->originalURL(),
-                        'wb_time' => $result->wbTime()->getTimestamp(),
-                        'wb_url' => $result->wbURL(),
-                        'created' => $result->created()->getTimestamp(),
-                    ]
-                )->execute();
-            }
+                ->execute();
+            // insert fresh result
+            DB::query()->insertInto(
+                'wayback_machine',
+                [
+                    'uuid' => $result->uuid(),
+                    'url' => $result->originalURL(),
+                    'wb_time' => $result->wbTime()->getTimestamp(),
+                    'wb_url' => $result->wbURL(),
+                    'created' => $result->created()->getTimestamp(),
+                ]
+            )->execute();
+            // commit transaction
+            DB::commit();
             // return return value
             return $cache[$url] = $return;
         } else {
