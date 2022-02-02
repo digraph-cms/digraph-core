@@ -64,8 +64,8 @@ if (!$only || in_array('insert', $only)) {
             ->setShortcut('Ctrl-K'),
         (new ToolbarLink('Quick media insert', 'media', null, new URL('&action=media')))
             ->setShortcut('Ctrl-M'),
-        (new ToolbarLink('Link to a user', 'person', null, new URL('&action=user')))
-            ->setShortcut('Ctrl-U'),
+        // (new ToolbarLink('Link to a user', 'person', null, new URL('&action=user')))
+        //     ->setShortcut('Ctrl-U'),
     ];
 }
 if (!$only || in_array('advanced', $only)) {
