@@ -1,13 +1,13 @@
 .action-menu {
     @include uncolored-links;
 
-    background: var(--theme-neutral);
+    background: var(--background-lighter);
+    color: var(--color);
     font-size: smaller;
     display: flex;
     justify-content: space-between;
     flex-direction: row;
     align-items: center;
-    color: var(--theme-neutral-inv);
     font-family: $font-ui;
 
     h1 {
@@ -116,6 +116,8 @@
 
 .action-menu--user-menu {
     flex-direction: row-reverse;
+    background: var(--theme-accent-light);
+    color: var(--theme-accent-inv);
 }
 
 .action-menu__user-actions--guest,

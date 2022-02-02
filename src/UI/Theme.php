@@ -226,10 +226,10 @@ class Theme
     protected static function prepareColorVariations($color)
     {
         $colors = [
-            'light' => (new Hex($color))->lighten(10),
-            'dark' => (new Hex($color))->darken(5),
-            'lighter' => (new Hex($color))->lighten(20),
-            'darker' => (new Hex($color))->darken(10),
+            'light' => (new Hex($color))->lighten(2),
+            'dark' => (new Hex($color))->darken(2),
+            'lighter' => (new Hex($color))->lighten(4),
+            'darker' => (new Hex($color))->darken(4),
             'bright' => (new Hex($color))->brighten(15),
         ];
         // add alpha colors

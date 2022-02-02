@@ -23,8 +23,9 @@ body>.action-menu,
 #header {
     @include uncolored-links;
 
-    padding: $grid;
-    margin-bottom: $grid * 3;
+    padding: $grid*2 $grid;
+    background: var(--theme-accent);
+    color: var(--theme-accent-inv);
 
     h1 {
         font-size: 1.5rem;

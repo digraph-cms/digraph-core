@@ -3,14 +3,15 @@ code {
     display: inline-block;
     padding: $border;
     color: var(--color);
-    background: var(--background-dark);
+    background: var(--background-light);
 }
 
 pre>code {
     display: block;
     overflow-x: auto;
     padding: $grid/2;
-    border: $border solid var(--theme-neutral);
+    box-shadow: var(--shadow);
+    max-height: 75vh;
 }
 
 /*!
@@ -38,7 +39,7 @@ pre>code {
 .hljs-title.class_,
 .hljs-title.class_.inherited__,
 .hljs-title.function_ {
-    color: var(--cue-information)
+    color: var(--cue-interactive)
 }
 
 .hljs-attr,
@@ -57,7 +58,7 @@ pre>code {
 .hljs-meta .hljs-string,
 .hljs-regexp,
 .hljs-string {
-    color: var(--cue-information)
+    color: var(--cue-interactive)
 }
 
 .hljs-built_in,
@@ -83,12 +84,12 @@ pre>code {
 }
 
 .hljs-section {
-    color: var(--cue-information);
+    color: var(--cue-interactive);
     font-weight: 700
 }
 
 .hljs-bullet {
-    color: var(--cue-information)
+    color: var(--cue-interactive)
 }
 
 .hljs-emphasis {
