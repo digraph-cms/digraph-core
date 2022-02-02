@@ -1,5 +1,6 @@
 <?php
 
+use DigraphCMS\Content\Router;
 use DigraphCMS\Session\Cookies;
 use DigraphCMS\URL\URL;
 
@@ -10,7 +11,7 @@ use DigraphCMS\URL\URL;
 <h2>Data collected by the content management system</h2>
 
 <p>
-    This site's content management system respects your privacy, and strives to be transparent regarding its use of cookies and personal data.
+    This site's content management system respects your privacy, and strives to be transparent regarding its use of cookies, personal data, and third-party integrations or analytics.
 </p>
 
 <h3>Content management system cookies</h3>
@@ -40,3 +41,7 @@ use DigraphCMS\URL\URL;
     }
     ?>
 </table>
+
+<?php
+Router::include('info_cms/*.php');
+Router::include('info_general/*.php');

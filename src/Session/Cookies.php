@@ -115,11 +115,15 @@ class Cookies
         return $types;
     }
 
-    public static function exemptTypes(): array
+    public static function necessaryTypes(): array
     {
-        $types = ['system', 'ui', 'csrf'];
-        Dispatcher::dispatchEvent('onListExemptCookieTypes', [&$types]);
+        $types = ['system', 'ui', 'csrf', 'auth'];
+        Dispatcher::dispatchEvent('onListNecessaryCookieTypes', [&$types]);
         return $types;
+    }
+
+    public static function optionalTypes(): array {
+        return array_diff(static::allTypes(),static::necessaryTypes());
     }
 
     public static function form(array $types = null, bool $required = false, bool $skipAllowed = false): FormWrapper
@@ -138,7 +142,7 @@ class Cookies
         $form->button()->setText('Accept the selected cookies');
         $form->token()->setCSRF(false);
         $checkboxes = [];
-        $system = static::exemptTypes();
+        $system = static::necessaryTypes();
         foreach ($types as $type) {
             if (in_array($type, $system)) {
                 continue;
@@ -174,14 +178,14 @@ class Cookies
     public static function isAllowed(string $type): bool
     {
         $allowed = static::get('system', 'cookierules') ?? [];
-        return in_array($type, static::exemptTypes()) || in_array($type, $allowed);
+        return in_array($type, static::necessaryTypes()) || in_array($type, $allowed);
     }
 
     public static function onCookieName(string $name)
     {
         switch ($name) {
             case 'system':
-                return 'Minimum system cookies';
+                return 'System cookies';
             case 'auth':
                 return 'User authorization cookies';
             case 'csrf':
@@ -234,7 +238,7 @@ class Cookies
     {
         $logURL = new URL('/~user/authentication_log.html');
         return
-            "Used by this website for remembering the currently signed in user." .
+            "Used by this website for remembering and verifying the identity of the currently signed in user." .
             "<br>These cookies' contents may be stored and logged for security and troubleshooting purposes. They will be associated with personally identifiable information including the date, time, your public IP address, your browser's user agent string, and your account." .
             " Once you sign in you are able to view these records on <a href='$logURL'>your account's authorization log</a>.";
     }

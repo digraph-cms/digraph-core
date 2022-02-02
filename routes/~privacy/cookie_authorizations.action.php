@@ -3,6 +3,7 @@
 use DigraphCMS\Context;
 use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\Session\Cookies;
+use DigraphCMS\UI\Notifications;
 use DigraphCMS\URL\URL;
 
 Context::response()->private(true);
@@ -30,7 +31,11 @@ Context::response()->private(true);
 
 <?php
 
-echo $form = Cookies::form();
-if ($form->ready()) {
-    throw new RefreshException();
+if (!Cookies::optionalTypes()) {
+    Notifications::printConfirmation('This site does not currently involve any cookies that are not necessary for it to function. If this changes in the future you will be prompted for consent before they are used.');
+} else {
+    echo $form = Cookies::form();
+    if ($form->ready()) {
+        throw new RefreshException();
+    }
 }
