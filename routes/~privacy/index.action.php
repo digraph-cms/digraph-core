@@ -5,7 +5,7 @@ use DigraphCMS\URL\URL;
 
 ?>
 
-<h1>Privacy policy</h1>
+<h1>Your privacy on this site</h1>
 
 <h2>Data collected by the content management system</h2>
 
@@ -14,9 +14,10 @@ use DigraphCMS\URL\URL;
 </p>
 
 <h3>Content management system cookies</h3>
+
 <p>
-    All CMS cookies are opt-in, and you may view and delete the cookies currently set for your browser session at any time on the <a href="<?php echo new URL('current_cookies.html'); ?>">current cookies page</a>.
-    You can also adjust your cookie settings at any time on the <a href="<?php echo new URL('cookie_authorizations.html'); ?>">cookie authorizations page</a>.
+    All potentially personally-identifying cookies are opt-in, and you may view and delete your cookies on the <a href="<?php echo new URL('current_cookies.html'); ?>">current cookies page</a>.
+    You can also adjust your cookie settings on the <a href="<?php echo new URL('cookie_authorizations.html'); ?>">cookie authorizations page</a>.
 </p>
 
 <table>
@@ -26,7 +27,7 @@ use DigraphCMS\URL\URL;
         <th>Automatic expiration</th>
     </tr>
     <?php
-    foreach (Cookies::listTypes() as $type) {
+    foreach (Cookies::allTypes() as $type) {
         echo "<tr>";
         echo "<td>" . Cookies::name($type) . "</td>";
         echo "<td>" . Cookies::describe($type) . "</td>";

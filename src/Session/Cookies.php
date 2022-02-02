@@ -10,6 +10,8 @@ use DigraphCMS\Digraph;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTML\Forms\Fields\CheckboxField;
 use DigraphCMS\HTML\Forms\FormWrapper;
+use DigraphCMS\UI\ButtonMenus\SingleButton;
+use DigraphCMS\UI\Templates;
 use DigraphCMS\URL\URL;
 use DigraphCMS\URL\URLs;
 use DigraphCMS\Users\Users;
@@ -19,26 +21,54 @@ Dispatcher::addSubscriber(Cookies::class);
 class Cookies
 {
 
-    public static function banner(): string
+    public static function printConsentBanner(): string
     {
-        if (!static::isAllowed('system') && static::autoConsent()) {
-            return sprintf(
-                '<div id="cookie-consent-banner" class="navigation-frame navigation-frame--stateless" data-initial-source="%s"></div>',
-                new URL('/~privacy/_cookie_banner.html')
-            );
+        if (!static::get('system', 'consentrejected') && static::consentPromptRequired()) {
+            $accept = new SingleButton('Accept', function () {
+                static::unset('system', 'consentrejected');
+                foreach (static::consentPromptTypes() as $type) {
+                    static::allow($type);
+                }
+                // TODO: record record of affirmative consent, should include what the form looked like
+            }, ['button--safe']);
+            $reject = new SingleButton('Reject', function () {
+                static::set('system', 'consentrejected', true);
+                foreach (static::allTypes() as $type) {
+                    static::disallow($type);
+                }
+            }, ['button--inverted', 'button--neutral']);
+            echo '<div id="cookie-consent-banner" class="navigation-frame navigation-frame--stateless navigation-frame--hide-if-missing">';
+            echo "<div class='cookie-consent-banner__explanation'>";
+            echo Templates::render("content/cookie-consent-banner.php");
+            echo "</div>";
+            echo "<div class='cookie-consent-banner__buttons'>";
+            echo $accept;
+            echo $reject;
+            echo "</div>";
+            echo '</div>';
         }
         return '';
     }
 
-    public static function autoConsent(): array
+    public static function consentPromptRequired(): bool
     {
-        $config = Config::get('cookies.auto_consent');
-        if (!$config) {
+        foreach (static::consentPromptTypes() as $type) {
+            if (!static::isAllowed($type)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static function consentPromptTypes(): array
+    {
+        $config = Config::get('cookies.consent_prompt');
+        if ($config === false) {
             return [];
-        } elseif ($config == 'all') {
-            return static::listTypes();
+        } elseif ($config === true) {
+            return static::allTypes();
         } else {
-            return array_keys(array_filter($config));
+            return $config;
         }
     }
 
@@ -78,16 +108,23 @@ class Cookies
             static::set('csrf', $name, bin2hex(random_bytes(16)));
     }
 
-    public static function listTypes(): array
+    public static function allTypes(): array
     {
-        $types = ['system', 'ui', 'auth', 'csrf'];
+        $types = ['system', 'ui', 'csrf', 'auth'];
         Dispatcher::dispatchEvent('onListCookieTypes', [&$types]);
+        return $types;
+    }
+
+    public static function exemptTypes(): array
+    {
+        $types = ['system', 'ui', 'csrf'];
+        Dispatcher::dispatchEvent('onListExemptCookieTypes', [&$types]);
         return $types;
     }
 
     public static function form(array $types = null, bool $required = false, bool $skipAllowed = false): FormWrapper
     {
-        $types = $types ?? static::listTypes();
+        $types = $types ?? static::allTypes();
         if ($skipAllowed) {
             $types = array_filter(
                 $types,
@@ -97,10 +134,15 @@ class Cookies
             );
         }
         $form = new FormWrapper('cookie-authorization');
+        // $form->addChild("<div class='notification notification--info'>In order to create a GDPR compliant record of affirmative consent, your response to this form will be recorded with the time and your IP address. The record will be associated with your account if you are signed in.</div>");
         $form->button()->setText('Accept the selected cookies');
         $form->token()->setCSRF(false);
         $checkboxes = [];
+        $system = static::exemptTypes();
         foreach ($types as $type) {
+            if (in_array($type, $system)) {
+                continue;
+            }
             $checkboxes[$type] = $checkbox = new CheckboxField(static::name($type));
             $form->addChild($checkbox);
             $checkbox->setDefault(static::isAllowed($type));
@@ -116,11 +158,6 @@ class Cookies
                 $checkbox->addTip('These cookies automatically expire on your computer when you close your browser.');
             }
         }
-        if ($checkboxes['system']) {
-            $checkboxes['system']
-                ->setRequired(true, 'System cookies must be allowed to save any other preferences')
-                ->setDefault(true);
-        }
         $form->addCallback(function () use ($checkboxes) {
             foreach ($checkboxes as $type => $field) {
                 if ($field->value()) {
@@ -129,6 +166,7 @@ class Cookies
                     static::disallow($type);
                 }
             }
+            // TODO: Record affirmative consent, should include what the form looked like
         });
         return $form;
     }
@@ -136,7 +174,7 @@ class Cookies
     public static function isAllowed(string $type): bool
     {
         $allowed = static::get('system', 'cookierules') ?? [];
-        return in_array($type, $allowed);
+        return in_array($type, static::exemptTypes()) || in_array($type, $allowed);
     }
 
     public static function onCookieName(string $name)
@@ -150,6 +188,8 @@ class Cookies
                 return 'CSRF protection cookies';
             case 'ui':
                 return 'User interface cookies';
+            case 'analytics':
+                return 'Analytics cookies';
         }
         return null;
     }
@@ -180,7 +220,8 @@ class Cookies
 
     public static function onCookieDescribe_ui()
     {
-        return "UI state cookies, used to keep track of the user interface state and your user interface preferences.";
+        return "UI state cookies, used to keep track of the user interface state and your user interface preferences." .
+            "<br>These cookies are only sent to this site when you visit it, and we do not share or retain their data.";
     }
 
     public static function onCookieDescribe_ui_color()
@@ -194,8 +235,15 @@ class Cookies
         $logURL = new URL('/~user/authentication_log.html');
         return
             "Used by this website for remembering the currently signed in user." .
-            "<br>These cookies' contents may be stored, logged, and for security and troubleshooting purposes. They will be associated with personally identifiable information including the date, time, your public IP address, your browser's user agent string, and your account." .
+            "<br>These cookies' contents may be stored and logged for security and troubleshooting purposes. They will be associated with personally identifiable information including the date, time, your public IP address, your browser's user agent string, and your account." .
             " Once you sign in you are able to view these records on <a href='$logURL'>your account's authorization log</a>.";
+    }
+
+    public static function onCookieDescribe_analytics()
+    {
+        return
+            "Used by this website for website usage analytics, so that administrators can better understand how visitors interact with the site." .
+            "<br>These cookies' contents may be stored, logged, and shared with third party analytics services. They will not be associated with your personally identifiable information. They may be associated with your IP address and browser information, and will be associated with your site usage patterns.";
     }
 
     public static function onCookieDescribe_system()
@@ -210,6 +258,11 @@ class Cookies
         return "60 days";
     }
 
+    public static function onCookieExpiration_analytics()
+    {
+        return "120 days";
+    }
+
     public static function onCookieExpiration_system()
     {
         return "7 days";
@@ -217,7 +270,7 @@ class Cookies
 
     public static function onCookieExpiration_ui()
     {
-        return "7 days";
+        return "14 days";
     }
 
     public static function onCookieDescribe_system_cookierules()

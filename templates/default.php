@@ -33,7 +33,7 @@ use DigraphCMS\UI\UserMenu;
         <a href="#content">Skip to content</a>
     </section>
     <?php
-    echo Cookies::banner();
+    Cookies::printConsentBanner();
     echo new UserMenu(Context::url());
     echo Templates::render('sections/header.php');
     echo Templates::render('sections/navbar.php');

@@ -118,19 +118,23 @@ Digraph.state = {
                 if (document.getElementById('notifications') && doc.getElementById('notifications')) {
                     document.getElementById('notifications').innerHTML += doc.getElementById('notifications').innerHTML;
                 }
-                const newHTML = doc.getElementById(frame.getAttribute('id')).innerHTML;
-                if (newHTML) {
-                    frame.innerHTML = newHTML;
-                } else {
-                    if (document.getElementById('notifications')) {
-                        var error = document.createElement('div');
-                        error.classList.add('notification');
-                        error.classList.add('error');
-                        error.innerText = 'Error loading navigation frame: target ID missing';
-                        document.getElementById('notifications').appendChild(error);
+                const docElement = doc.getElementById(frame.getAttribute('id'));
+                if (!docElement) {
+                    if (frame.classList.contains('navigation-frame--hide-if-missing')) {
+                        frame.style.display = 'none';
+                    } else {
+                        frame.classList.add('error');
+                        if (document.getElementById('notifications')) {
+                            var error = document.createElement('div');
+                            error.classList.add('notification');
+                            error.classList.add('error');
+                            error.innerText = 'Error loading navigation frame: target ID missing';
+                            document.getElementById('notifications').appendChild(error);
+                        }
                     }
-                    frame.classList.add('error');
+                    return;
                 }
+                frame.innerHTML = docElement.innerHTML;
                 if (!frame.classList.contains('navigation-frame--stateless')) {
                     if (document.getElementById('breadcrumb') && doc.getElementById('breadcrumb')) {
                         document.getElementById('breadcrumb').innerHTML = doc.getElementById('breadcrumb').innerHTML;

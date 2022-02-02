@@ -22,7 +22,7 @@
     width: auto;
 
     &:hover {
-        filter: saturate(1.5);
+        filter: saturate(1.5) brightness(1.1);
         z-index: 2;
     }
 
@@ -51,6 +51,11 @@
         color: var(--cue-danger-inv) !important;
     }
 
+    &.button--neutral {
+        background: var(--theme-neutral);
+        color: var(--theme-neutral-inv) !important;
+    }
+
     &.button--inverted {
         background: var(--theme-neutral-a10);
         color: var(--cue-interactive) !important;
@@ -69,6 +74,10 @@
 
         &.button--error {
             color: var(--cue-danger) !important;
+        }
+
+        &.button--neutral {
+            color: var(--theme-neutral) !important;
         }
     }
 }

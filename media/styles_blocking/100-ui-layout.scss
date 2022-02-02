@@ -23,11 +23,11 @@ body>.action-menu,
 #header {
     @include uncolored-links;
 
-    padding: $grid/2;
+    padding: $grid;
     margin-bottom: $grid * 3;
 
     h1 {
-        font-size: xx-large;
+        font-size: 1.5rem;
         margin: 0;
     }
 }
@@ -132,6 +132,11 @@ span.notification {
 #content {
     margin: 0;
     padding: $grid;
+    > h1 {
+        font-size: 3rem;
+        padding-bottom: $grid;
+        border-bottom: $border solid var(--theme-highlight);
+    }
 }
 
 #footer {
