@@ -13,41 +13,41 @@ cache:
   ttl: 300
   fuzz: 120
 
-// default filesystem settings
+# default filesystem settings
 fs:
   links: false
   umask_file: 0117
   umask_dir: 0002
 
-// default database is a SQLite file in paths.storage
+# default database is a SQLite file in paths.storage
 db:
   adapter: sqlite
   name: "${paths.storage}/database"
   charset: utf8
   pdo_options: []
   sqlite:
-    // whether to manually insert JSON functions into SQLite, default is on
-    // because most servers don't have SQLite compiled with native JSON functions,
-    // but if yours does you should turn this off for performance
+    # whether to manually insert JSON functions into SQLite, default is on
+    # because most servers don't have SQLite compiled with native JSON functions,
+    # but if yours does you should turn this off for performance
     create_functions: true
 
-// settings for automatic wayback machine tools
+# settings for automatic wayback machine tools
 wayback:
-  // maximum number of checks to run per pageview
+  # maximum number of checks to run per pageview
   max_checks: 5
-  // maximum number of API calls to make per pageview
+  # maximum number of API calls to make per pageview
   max_api_calls: 10
-  // how long to cache API call results
+  # how long to cache API call results
   api_cache_ttl: 30 days
-  // how frequently to check if links are down
+  # how frequently to check if links are down
   check_ttl: 86400
-  // how long to wait for checks to time out
+  # how long to wait for checks to time out
   check_ttl: 5
-  // how long to allow connection to time out
+  # how long to allow connection to time out
   check_timeout_connect: 1
 
-// optionally enable using PHP session for holding authentication
-// by default a custom cookie is used
+# optionally enable using PHP session for holding authentication
+# by default a custom cookie is used
 php_session:
   enabled: false
   key: DigraphAuthentication
@@ -57,8 +57,8 @@ users:
     oauth2: "\DigraphCMS\Users\OAuth2UserSource"
     cas: "\DigraphCMS\Users\CASUserSource"
 
-// configuration for user sources, including preset options so that some providers
-// are ready to go just by providing their id and secret parameters
+# configuration for user sources, including preset options so that some providers
+# are ready to go just by providing their id and secret parameters
 user_sources:
   oauth2:
     providers:
