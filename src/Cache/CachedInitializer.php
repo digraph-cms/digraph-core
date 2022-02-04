@@ -24,6 +24,17 @@ class CachedInitializer
         }
     }
 
+    /**
+     * Run two functions sequentially, with a shared state object that is cached
+     * after the first one runs. Will be cached under the given key, using the
+     * settings from configureCache()
+     *
+     * @param string $key
+     * @param callable $preCacheFn
+     * @param callable|null $postCacheFn
+     * @param integer|null $overrideTTL
+     * @return void
+     */
     public static function run(string $key, $preCacheFn, $postCacheFn = null, int $overrideTTL = null)
     {
         static $configUpdated = false;

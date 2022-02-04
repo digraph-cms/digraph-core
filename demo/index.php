@@ -6,7 +6,10 @@ use DigraphCMS\Cache\CachedInitializer;
 use DigraphCMS\Config;
 use DigraphCMS\URL\URLs;
 
+// autoload and CacheInitializer::configureCache must be called absolutely first
+// if you want Config to be able to cache its setup process
 require_once __DIR__ . "/../vendor/autoload.php";
+CachedInitializer::configureCache(__DIR__ . '/cache', 60);
 
 // special case for running in PHP's built-in server
 if (php_sapi_name() === 'cli-server') {
@@ -17,8 +20,7 @@ if (php_sapi_name() === 'cli-server') {
     }
 }
 
-CachedInitializer::configureCache(__DIR__ . '/cache', 60);
-
+// run initial configuration
 CachedInitializer::run(
     'initialization',
     function (CacheableState $state) {

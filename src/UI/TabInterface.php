@@ -32,7 +32,6 @@ class TabInterface
     {
         $activeTab = $id == $this->activeTab() ? 'true' : 'false';
         $currentClass = $id == $this->activeTab() ? ' class="current-tab"' : '';
-        // var_dump($id,$this->activeTab());
         return sprintf(
             '<a href="%s" data-target="%s" data-active-tab="%s"%s>%s</a>',
             $this->url($id),

@@ -61,8 +61,8 @@ class Cache
         if (static::$driver->exists($name) && !static::$driver->expired($name)) {
             return static::$driver->get($name);
         } elseif ($callback) {
-            static::$driver->set($name, call_user_func($callback), $ttl);
-            return static::$driver->get($name);
+            static::$driver->set($name, $value = call_user_func($callback), $ttl);
+            return $value;
         } else {
             return null;
         }

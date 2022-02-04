@@ -45,11 +45,11 @@ class CodeHighlighter
         // do highlighting
         $result = static::highlight($node->textContent, $lang);
         $classes[] = 'hljs';
-        $classes[] = 'lang-' . $result->language;
-        $classes[] = 'language-' . $result->language;
+        $classes[] = 'lang-' . $result['language'];
+        $classes[] = 'language-' . $result['language'];
         $classes = array_unique($classes);
         // replace node with this updated one
-        $event->setReplacement("<code class=\"" . implode(' ', $classes) . "\">" . $result->value . "</code>");
+        $event->setReplacement("<code class=\"" . implode(' ', $classes) . "\">" . $result['value'] . "</code>");
     }
 
     public static function autodetectable(): array
@@ -78,13 +78,13 @@ class CodeHighlighter
      *
      * @param string $code
      * @param string $lang
-     * @return object
+     * @return array
      */
-    public static function highlight(string $code, string $lang = null): object
+    public static function highlight(string $code, string $lang = null): array
     {
         static::loadCSS();
         return Cache::get(
-            'codehighlight/' . md5(serialize([$code, $lang])),
+            'codehighlighter/' . md5(serialize([$code, $lang])),
             function () use ($code, $lang) {
                 $hl = new Highlighter();
                 try {
@@ -99,7 +99,10 @@ class CodeHighlighter
                     $hl->setAutodetectLanguages(static::autodetectable());
                     $result = $hl->highlightAuto($code);
                 }
-                return $result;
+                return [
+                    'language' => $result->language,
+                    'value' => $result->value
+                ];
             }
         );
     }
