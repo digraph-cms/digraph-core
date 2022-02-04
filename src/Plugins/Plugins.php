@@ -39,6 +39,33 @@ class Plugins
         );
     }
 
+    /**
+     * Register an autoloader for the given namespace and directory. Both should
+     * not have trailing slashes.
+     *
+     * @param string $namespace
+     * @param string $directory
+     * @return void
+     */
+    public static function autoloader(string $namespace, string $directory)
+    {
+        $namespace = preg_replace('/\\$/', '', $namespace) . '\\\\';
+        $directory = realpath($directory) . '/';
+        spl_autoload_register(function ($class) use ($namespace, $directory) {
+            // check if class is in this namespace
+            $len = strlen($namespace);
+            if (strncmp($namespace, $class, $len) !== 0) {
+                return;
+            }
+            // turn class into a filename
+            $file = $directory . str_replace('\\', '/', substr($class, $len)) . '.php';
+            // include file exists
+            if (file_exists($file)) {
+                require $file;
+            }
+        });
+    }
+
     public static function load(string $pluginDirectory, $generateAutoloader = false)
     {
         Initializer::run(
@@ -66,13 +93,21 @@ class Plugins
                 }
             },
             function (InitializationState $state) {
-                // generate autoloaders
+                // configure autoloaders
                 foreach ($state['autoloaders'] ?? [] as $al) {
-                    //TODO: generate autoloader for namespace $al[1] in directory $al[0]
+                    static::autoloader($al[1], $al[0]);
                 }
                 // instantiate and register plugins
                 foreach ($state['classes'] as $class) {
-                    static::register(new $class);
+                    $plugin = new $class;
+                    static::register($plugin);
+                    if ($plugin instanceof AbstractInitializedPlugin) {
+                        Initializer::run(
+                            'plugins/initialization/' . md5($class),
+                            [$plugin, 'initialize_preCache'],
+                            [$plugin, 'initialize_postCache']
+                        );
+                    }
                 }
             }
         );
