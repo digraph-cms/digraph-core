@@ -1,11 +1,11 @@
 <?php
 
-namespace DigraphCMS\Initialization;
+namespace DigraphCMS\Cache;
 
 use DigraphCMS\Config;
 use Flatrr\SelfReferencingFlatArray;
 
-class InitializationState extends SelfReferencingFlatArray
+class CacheableState extends SelfReferencingFlatArray
 {
     protected $configData;
     protected $configUpdated = false;

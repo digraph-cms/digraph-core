@@ -6,8 +6,8 @@ use DigraphCMS\Config;
 use DigraphCMS\Content\Router;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Events\Dispatcher;
-use DigraphCMS\Initialization\InitializationState;
-use DigraphCMS\Initialization\Initializer;
+use DigraphCMS\Cache\CacheableState;
+use DigraphCMS\Cache\CachedInitializer;
 use DigraphCMS\Media\Media;
 
 class Plugins
@@ -20,10 +20,10 @@ class Plugins
             return;
         }
         $vendorDirectory = realpath(dirname($composerLockFile) . '/' . $vendorDirectory);
-        Initializer::run(
+        CachedInitializer::run(
             'plugins/composer/' . md5_file($composerLockFile),
-            function (InitializationState $state) use ($composerLockFile, $vendorDirectory) {
-                $data = json_decode(file_get_contents($composerLockFile), true);
+            function (CacheableState $state) use ($composerLockFile, $vendorDirectory) {
+                $data = Config::parseJsonFile($composerLockFile);
                 foreach ($data['packages'] as $package) {
                     if ($package['type'] == 'digraph-plugin') {
                         $directory = $vendorDirectory . '/' . $package['name'];
@@ -31,7 +31,7 @@ class Plugins
                     }
                 }
             },
-            function (InitializationState $state) {
+            function (CacheableState $state) {
                 foreach ($state as $pluginDirectory) {
                     static::load($pluginDirectory);
                 }
@@ -68,9 +68,9 @@ class Plugins
 
     public static function load(string $pluginDirectory, $generateAutoloader = false)
     {
-        Initializer::run(
+        CachedInitializer::run(
             'plugins/load/' . md5($pluginDirectory),
-            function (InitializationState $state) use ($pluginDirectory, $generateAutoloader) {
+            function (CacheableState $state) use ($pluginDirectory, $generateAutoloader) {
                 // merge plugin config
                 if (is_file($pluginDirectory . '/config.yaml')) {
                     $state->mergeConfig(Config::parseYamlFile($pluginDirectory . '/config.yaml'));
@@ -92,7 +92,7 @@ class Plugins
                     ];
                 }
             },
-            function (InitializationState $state) {
+            function (CacheableState $state) {
                 // configure autoloaders
                 foreach ($state['autoloaders'] ?? [] as $al) {
                     static::autoloader($al[1], $al[0]);
@@ -102,7 +102,7 @@ class Plugins
                     $plugin = new $class;
                     static::register($plugin);
                     if ($plugin instanceof AbstractInitializedPlugin) {
-                        Initializer::run(
+                        CachedInitializer::run(
                             'plugins/initialization/' . md5($class),
                             [$plugin, 'initialize_preCache'],
                             [$plugin, 'initialize_postCache']

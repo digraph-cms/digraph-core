@@ -2,10 +2,10 @@
 
 namespace DigraphCMS\Plugins;
 
-use DigraphCMS\Initialization\InitializationState;
+use DigraphCMS\Cache\CacheableState;
 
 abstract class AbstractInitializedPlugin extends AbstractPlugin
 {
-    abstract function initialize_preCache(InitializationState $state);
-    abstract function initialize_postCache(InitializationState $state);
+    abstract function initialize_preCache(CacheableState $state);
+    abstract function initialize_postCache(CacheableState $state);
 }

@@ -2,9 +2,9 @@
 
 namespace DigraphCMS;
 
-use DigraphCMS\Initialization\InitializationState;
-use DigraphCMS\Initialization\InitializedClassInterface;
-use DigraphCMS\Initialization\Initializer;
+use DigraphCMS\Cache\CacheableState;
+use DigraphCMS\Cache\InitializedClassInterface;
+use DigraphCMS\Cache\CachedInitializer;
 use Flatrr\SelfReferencingFlatArray;
 use Spyc;
 
@@ -13,13 +13,13 @@ class Config implements InitializedClassInterface
     /** @var SelfReferencingFlatArray */
     protected static $data;
 
-    public static function initialize_preCache(InitializationState $state)
+    public static function initialize_preCache(CacheableState $state)
     {
-        $state->merge(static::parseJsonFile(__DIR__ . '/config.json'));
-        $state->merge(static::parseYamlFile(__DIR__ . '/config.yaml'));
+        $state->merge(static::parseJsonFile(__DIR__ . '/config.json'), null, true);
+        $state->merge(static::parseYamlFile(__DIR__ . '/config.yaml'), null, true);
     }
 
-    public static function initialize_postCache(InitializationState $state)
+    public static function initialize_postCache(CacheableState $state)
     {
         static::$data = clone $state;
     }
@@ -67,4 +67,4 @@ class Config implements InitializedClassInterface
     }
 }
 
-Initializer::runClass(Config::class);
+CachedInitializer::runClass(Config::class);

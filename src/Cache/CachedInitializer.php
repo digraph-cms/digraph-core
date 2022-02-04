@@ -1,11 +1,11 @@
 <?php
 
-namespace DigraphCMS\Initialization;
+namespace DigraphCMS\Cache;
 
 use DigraphCMS\Cache\StatelessOpCache;
 use DigraphCMS\Config;
 
-class Initializer
+class CachedInitializer
 {
     /** @var StatelessOpCache */
     protected static $cache;
@@ -30,14 +30,14 @@ class Initializer
         if ($configUpdated || !static::$cache) {
             // just call sequentially if there is no cache configured, or if a
             // cache item has updated config prior to this one
-            $state = new InitializationState();
+            $state = new CacheableState();
             call_user_func($preCacheFn, $state);
         } else {
             // otherwise get state from a cached run of $preCacheFn and then run $postCacheFn
             $state = static::$cache->cache(
                 $key,
                 function () use ($preCacheFn, &$configUpdated) {
-                    $state = new InitializationState();
+                    $state = new CacheableState();
                     call_user_func($preCacheFn, $state);
                     if ($state->updatedConfig()) {
                         $configUpdated = true;

@@ -1,25 +1,12 @@
 <?php
 
 use DigraphCMS\Digraph;
-use DigraphCMS\Initialization\InitializationState;
-use DigraphCMS\Initialization\Initializer;
+use DigraphCMS\Cache\CacheableState;
+use DigraphCMS\Cache\CachedInitializer;
+use DigraphCMS\Config;
 use DigraphCMS\URL\URLs;
 
 require_once __DIR__ . "/../vendor/autoload.php";
-
-Initializer::configureCache(__DIR__ . '/cache', 60);
-
-Initializer::run(
-    'initialization',
-    function (InitializationState $state) {
-        $state->mergeConfig(json_decode(
-            file_get_contents(__DIR__ . '/../env.json'),
-            true
-        ));
-        $state->config('paths.base', __DIR__);
-        $state->config('paths.web', __DIR__);
-    }
-);
 
 // special case for running in PHP's built-in server
 if (php_sapi_name() === 'cli-server') {
@@ -29,6 +16,17 @@ if (php_sapi_name() === 'cli-server') {
         return false;
     }
 }
+
+// CachedInitializer::configureCache(__DIR__ . '/cache', 60);
+
+CachedInitializer::run(
+    'initialization',
+    function (CacheableState $state) {
+        $state->mergeConfig(Config::parseJsonFile(__DIR__.'/../env.json'));
+        $state->config('paths.base', __DIR__);
+        $state->config('paths.web', __DIR__);
+    }
+);
 
 // build and render response
 Digraph::renderActualRequest();
