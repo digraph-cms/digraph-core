@@ -1,3 +1,18 @@
+page_types:
+  page: "\DigraphCMS\Content\Page"
+
+rich_media_types:
+  bookmark: "\DigraphCMS\RichMedia\Types\BookmarkRichMedia"
+  file: "\DigraphCMS\RichMedia\Types\FileRichMedia"
+  multifile: "\DigraphCMS\RichMedia\Types\MultiFileRichMedia"
+  table: "\DigraphCMS\RichMedia\Types\TableRichMedia"
+
+cache:
+  path: "${paths.base}/cache"
+  driver: "\DigraphCMS\Cache\OpCache"
+  ttl: 300
+  fuzz: 120
+
 // default filesystem settings
 fs:
   links: false
@@ -37,6 +52,11 @@ php_session:
   enabled: false
   key: DigraphAuthentication
 
+users:
+  sources:
+    oauth2: "\DigraphCMS\Users\OAuth2UserSource"
+    cas: "\DigraphCMS\Users\CASUserSource"
+
 // configuration for user sources, including preset options so that some providers
 // are ready to go just by providing their id and secret parameters
 user_sources:
@@ -44,17 +64,17 @@ user_sources:
     providers:
       github:
         name: GitHub
-        class: "\\League\\OAuth2\\Client\\Provider\\Github"
+        class: "\League\OAuth2\Client\Provider\Github"
         scope:
         - user:email
       google:
         name: Google
-        class: "\\League\\OAuth2\\Client\\Provider\\Google"
+        class: "\League\OAuth2\Client\Provider\Google"
         scope:
         - userinfo.email
       facebook:
         name: Facebook
-        class: "\\League\\OAuth2\\Client\\Provider\\Facebook"
+        class: "\League\OAuth2\Client\Provider\Facebook"
         scope:
         - email
         config:
