@@ -33,30 +33,47 @@ class Plugins
             },
             function (InitializationState $state) {
                 foreach ($state as $pluginDirectory) {
-                    static::load($pluginDirectory, true);
+                    static::load($pluginDirectory);
                 }
             }
         );
     }
 
-    public static function load(string $pluginDirectory, $skipAutoloader = false)
+    public static function load(string $pluginDirectory, $generateAutoloader = false)
     {
         Initializer::run(
             'plugins/load/' . md5($pluginDirectory),
-            function (InitializationState $state) use ($pluginDirectory) {
+            function (InitializationState $state) use ($pluginDirectory, $generateAutoloader) {
                 // merge plugin config
                 if (is_file($pluginDirectory . '/config.yaml')) {
                     $state->mergeConfig(Config::parseYamlFile($pluginDirectory . '/config.yaml'));
                 }
-                // get plugin class
-                $pluginFile = $pluginDirectory.'/src/Plugin.php';
+                // get plugin class and queue it for creation
+                $pluginFile = $pluginDirectory . '/src/Plugin.php';
                 $match = null;
-                if (!preg_match('/namespace (.+);/',file_get_contents($pluginFile),$match)) {
-                    throw new \Exception("Error parsing namespace from Plugin ".$pluginFile);
+                if (!preg_match('/namespace (.+);/', file_get_contents($pluginFile), $match)) {
+                    throw new \Exception("Error parsing namespace from Plugin " . $pluginFile);
                 }
-                var_dump($match);
+                $namespace = $match[1];
+                $class = $namespace . '\\Plugin';
+                $state['classes.' . md5($class)] = $class;
+                // queue autoloader generation if requested
+                if ($generateAutoloader) {
+                    $state['autoloaders.' . md5($class)] = [
+                        $pluginDirectory . '/src',
+                        $namespace
+                    ];
+                }
             },
             function (InitializationState $state) {
+                // generate autoloaders
+                foreach ($state['autoloaders'] ?? [] as $al) {
+                    //TODO: generate autoloader for namespace $al[1] in directory $al[0]
+                }
+                // instantiate and register plugins
+                foreach ($state['classes'] as $class) {
+                    static::register(new $class);
+                }
             }
         );
     }
