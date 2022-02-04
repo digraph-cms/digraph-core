@@ -2,6 +2,7 @@
 
 namespace DigraphCMS\DOM;
 
+use DigraphCMS\Cache\Cache;
 use DigraphCMS\UI\Theme;
 use DomainException;
 use DOMElement;
@@ -23,11 +24,11 @@ class CodeHighlighter
             return;
         }
         // abort if parent node is not a PRE
-        // if ($node->parentNode instanceof DOMElement) {
-        //     if ($node->parentNode->tagName != 'pre') {
-        //         return;
-        //     }
-        // }
+        if ($node->parentNode instanceof DOMElement) {
+            if ($node->parentNode->tagName != 'pre') {
+                return;
+            }
+        }
         // try to find a language specified in the classes
         $lang = null;
         if (in_array('plaintext', $classes)) {
@@ -82,20 +83,25 @@ class CodeHighlighter
     public static function highlight(string $code, string $lang = null): object
     {
         static::loadCSS();
-        $hl = new Highlighter();
-        try {
-            if ($lang) {
-                $result = $hl->highlight($lang, $code);
-            } else {
-                $hl->setAutodetectLanguages(static::autodetectable());
-                $result = $hl->highlightAuto($code);
+        return Cache::get(
+            'codehighlight/' . md5(serialize([$code, $lang])),
+            function () use ($code, $lang) {
+                $hl = new Highlighter();
+                try {
+                    if ($lang) {
+                        $result = $hl->highlight($lang, $code);
+                    } else {
+                        $hl->setAutodetectLanguages(static::autodetectable());
+                        $result = $hl->highlightAuto($code);
+                    }
+                } catch (DomainException $th) {
+                    //thrown if the specified language doesn't exist
+                    $hl->setAutodetectLanguages(static::autodetectable());
+                    $result = $hl->highlightAuto($code);
+                }
+                return $result;
             }
-        } catch (DomainException $th) {
-            //thrown if the specified language doesn't exist
-            $hl->setAutodetectLanguages(static::autodetectable());
-            $result = $hl->highlightAuto($code);
-        }
-        return $result;
+        );
     }
 
     public static function loadCSS()

@@ -17,12 +17,12 @@ if (php_sapi_name() === 'cli-server') {
     }
 }
 
-// CachedInitializer::configureCache(__DIR__ . '/cache', 60);
+CachedInitializer::configureCache(__DIR__ . '/cache', 60);
 
 CachedInitializer::run(
     'initialization',
     function (CacheableState $state) {
-        $state->mergeConfig(Config::parseJsonFile(__DIR__.'/../env.json'));
+        $state->mergeConfig(Config::parseJsonFile(__DIR__ . '/../env.json'), true);
         $state->config('paths.base', __DIR__);
         $state->config('paths.web', __DIR__);
     }
