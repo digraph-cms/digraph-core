@@ -80,7 +80,7 @@ class OpCache extends AbstractCacheDriver
                 // unlock
                 $this->unlock($filename);
                 // check expiration (time is fuzzed)
-                if (time() + random_int(-$this->fuzz, $this->fuzz) > $exp) {
+                if (time() > $exp + random_int(0, $this->fuzz)) {
                     // expired, expire and internally cache null result
                     $this->invalidate($name);
                     $this->cache[$name] = null;

@@ -78,7 +78,7 @@
     "path": "${paths.base}/cache",
     "driver": "\\DigraphCMS\\Cache\\OpCache",
     "ttl": 300,
-    "fuzz": 150
+    "fuzz": 120
   },
   "content_cache": {
     "enabled": true,

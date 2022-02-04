@@ -24,18 +24,28 @@ class Initializer
         }
     }
 
-    public static function run(string $key, $preCacheFn, $postCacheFn = null)
+    public static function run(string $key, $preCacheFn, $postCacheFn = null, int $overrideTTL = null)
     {
-        $state = new InitializationState();
-        if (!static::$cache) {
-            // just call sequentially if there is no cache configured
+        static $configUpdated = false;
+        if ($configUpdated || !static::$cache) {
+            // just call sequentially if there is no cache configured, or if a
+            // cache item has updated config prior to this one
+            $state = new InitializationState();
             call_user_func($preCacheFn, $state);
         } else {
             // otherwise get state from a cached run of $preCacheFn and then run $postCacheFn
-            $state = static::$cache->cache($key, function () use ($preCacheFn, $state) {
-                call_user_func($preCacheFn, $state);
-                return $state;
-            });
+            $state = static::$cache->cache(
+                $key,
+                function () use ($preCacheFn, &$configUpdated) {
+                    $state = new InitializationState();
+                    call_user_func($preCacheFn, $state);
+                    if ($state->updatedConfig()) {
+                        $configUpdated = true;
+                    }
+                    return $state;
+                },
+                $overrideTTL
+            );
         }
         // run postCacheFn
         if ($postCacheFn) {
