@@ -6,11 +6,28 @@ use DigraphCMS\Config;
 use DigraphCMS\Content\Router;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Events\Dispatcher;
+use DigraphCMS\Initialization\InitializationState;
+use DigraphCMS\Initialization\Initializer;
 use DigraphCMS\Media\Media;
 
 class Plugins
 {
     protected $plugins = [];
+
+    public static function loadFromComposer(string $composerLockFile)
+    {
+        if (!is_file($composerLockFile)) {
+            return;
+        }
+        Initializer::run(
+            'plugins/composer/' . md5_file($composerLockFile),
+            function (InitializationState $state) use ($composerLockFile) {
+                var_dump($composerLockFile);
+            },
+            function (InitializationState $state) {
+            }
+        );
+    }
 
     public static function register(AbstractPlugin $plugin)
     {

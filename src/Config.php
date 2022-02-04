@@ -2,17 +2,35 @@
 
 namespace DigraphCMS;
 
+use DigraphCMS\Initialization\InitializationState;
+use DigraphCMS\Initialization\InitializedClassInterface;
+use DigraphCMS\Initialization\Initializer;
 use Flatrr\SelfReferencingFlatArray;
+use Spyc;
 
-class Config
+class Config implements InitializedClassInterface
 {
     /** @var SelfReferencingFlatArray */
     protected static $data;
+
+    public static function initialize_preCache(InitializationState $state)
+    {
+        $state->merge(static::parseJsonFile(__DIR__ . '/config.json'));
+        $state->merge(static::parseYamlFile(__DIR__ . '/config.yaml'));
+    }
+
+    public static function initialize_postCache(InitializationState $state)
+    {
+        static::$data = clone $state;
+    }
 
     public static function data(SelfReferencingFlatArray $set = null): SelfReferencingFlatArray
     {
         if ($set) {
             self::$data = $set;
+        }
+        if (!self::$data) {
+            self::$data = new SelfReferencingFlatArray();
         }
         return self::$data;
     }
@@ -32,25 +50,21 @@ class Config
         self::$data->merge($value, $name, $overwrite);
     }
 
-    public static function readFile($file, $overwrite = true)
+    public static function parseYamlFile(string $file): array
     {
         if (!is_file($file)) {
-            return;
+            return [];
         }
-        $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-        $fn = "readFile_$extension";
-        self::$data->merge(
-            static::$fn($file),
-            null,
-            $overwrite
-        );
+        return Spyc::YAMLLoadString(file_get_contents($file));
     }
 
-    protected static function readFile_json(string $filename): array
+    public static function parseJsonFile(string $file)
     {
-        return json_decode(
-            file_get_contents($filename),
-            true
-        );
+        if (!is_file($file)) {
+            return [];
+        }
+        return json_decode(file_get_contents($file), true);
     }
 }
+
+Initializer::runClass(Config::class);

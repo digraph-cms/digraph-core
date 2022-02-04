@@ -1,16 +1,4 @@
 {
-  "wayback": {
-    "check_ttl": 86400,
-    "check_timeout": 5,
-    "check_timeout_connect": 1,
-    "max_checks": 6,
-    "max_api_calls": 10,
-    "api_cache_ttl": "30 days"
-  },
-  "php_session": {
-    "enabled": false,
-    "key": "DigraphAuthentication"
-  },
   "paths": {
     "web": "${paths.base}/web",
     "storage": "${paths.base}/storage"
@@ -127,15 +115,6 @@
     "umask_file": 79,
     "umask_dir": 2
   },
-  "db": {
-    "adapter": "sqlite",
-    "name": "${paths.storage}/database",
-    "charset": "utf8",
-    "pdo_options": [],
-    "sqlite": {
-      "create_functions": true
-    }
-  },
   "page_cache": {
     "cachettl": {
       "_any": null
@@ -154,36 +133,6 @@
     "sources": {
       "oauth2": "\\DigraphCMS\\Users\\OAuth2UserSource",
       "cas": "\\DigraphCMS\\Users\\CASUserSource"
-    }
-  },
-  "user_sources": {
-    "oauth2": {
-      "providers": {
-        "github": {
-          "name": "GitHub",
-          "class": "\\League\\OAuth2\\Client\\Provider\\Github",
-          "scope": [
-            "user:email"
-          ]
-        },
-        "google": {
-          "name": "Google",
-          "class": "\\League\\OAuth2\\Client\\Provider\\Google",
-          "scope": [
-            "userinfo.email"
-          ]
-        },
-        "facebook": {
-          "name": "Facebook",
-          "class": "\\League\\OAuth2\\Client\\Provider\\Facebook",
-          "scope": [
-            "email"
-          ],
-          "config": {
-            "graphApiVersion": "v2.10"
-          }
-        }
-      }
     }
   }
 }

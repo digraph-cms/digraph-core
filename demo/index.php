@@ -1,20 +1,24 @@
 <?php
 
-use DigraphCMS\Config;
 use DigraphCMS\Digraph;
+use DigraphCMS\Initialization\InitializationState;
+use DigraphCMS\Initialization\Initializer;
 use DigraphCMS\URL\URLs;
 
 require_once __DIR__ . "/../vendor/autoload.php";
 
-// set up config
-Digraph::initialize(
-    function () {
-        Config::readFile(__DIR__ . '/../env.json');
-        Config::set('paths.base', __DIR__);
-        Config::set('paths.web', __DIR__);
-    },
-    __DIR__.'/cache',
-    60
+Initializer::configureCache(__DIR__ . '/cache', 60);
+
+Initializer::run(
+    'initialization',
+    function (InitializationState $state) {
+        $state->mergeConfig(json_decode(
+            file_get_contents(__DIR__ . '/../env.json'),
+            true
+        ));
+        $state->config('paths.base', __DIR__);
+        $state->config('paths.web', __DIR__);
+    }
 );
 
 // special case for running in PHP's built-in server

@@ -2,7 +2,6 @@
 
 namespace DigraphCMS;
 
-use DigraphCMS\Cache\StatelessOpCache;
 use DigraphCMS\Cache\UserCacheNamespace;
 use DigraphCMS\Content\Page;
 use DigraphCMS\Content\Router;
@@ -20,7 +19,6 @@ use DigraphCMS\UI\Theme;
 use DigraphCMS\URL\URL;
 use DigraphCMS\URL\URLs;
 use DigraphCMS\Users\Permissions;
-use Flatrr\SelfReferencingFlatArray;
 use Mimey\MimeTypes;
 use Throwable;
 
@@ -40,57 +38,6 @@ class Digraph
      */
     const UUIDCHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     const UUIDPATTERN = '0000';
-
-    /** @var StatelessOpCache */
-    protected static $opcache;
-
-    /**
-     * Run necessary initialization steps using a callback function.
-     * Allows the use of caching to avoid having to repeat initialization
-     * work on every request.
-     * 
-     * Plugins can use the events onDigraphInitialized_precache and
-     * onDigraphInitialized_postcache to hook into this caching. Anything
-     * slow and cacheable should be done in _precache, and the results
-     * can be saved into the given CacheableInitializationState object,
-     * and retrieved in _postcache.
-     *
-     * @param callable $fn
-     * @param string|null $cacheDir
-     * @param integer $cacheTTL
-     * @return void
-     */
-    public static function initialize(callable $fn, string $cacheDir = null, int $cacheTTL = 60)
-    {
-        if ($cacheDir) {
-            self::$opcache = new StatelessOpCache($cacheDir, $cacheTTL);
-            /** @var InitializationState */
-            $state = self::$opcache->cache(
-                'initialization',
-                function () use ($fn) {
-                    return static::doInitialization($fn);
-                },
-                $cacheTTL
-            );
-            Config::data($state->configData());
-        } else {
-            $state = static::doInitialization($fn);
-        }
-        Dispatcher::dispatchEvent('onDigraphInitialized_postcache', [$state]);
-    }
-
-    protected static function doInitialization(callable $fn): InitializationState
-    {
-        Config::data(new SelfReferencingFlatArray(
-            json_decode(file_get_contents(__DIR__ . '/config.json'), true)
-        ));
-        $fn();
-        $state = new InitializationState(
-            Config::data()
-        );
-        Dispatcher::dispatchEvent('onDigraphInitialized_precache', [$state]);
-        return $state;
-    }
 
     /**
      * Generate a response from an automatically-loaded request and render it.
