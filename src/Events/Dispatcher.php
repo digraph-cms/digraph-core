@@ -49,32 +49,15 @@ class Dispatcher
 
     /**
      * Add a callback to be executed when the specified event is dispatched.
-     * Returns a random ID that can be used to later remove this event listener.
      *
      * @param string $event
      * @param callable $callback
-     * @return string
-     */
-    public static function addEventListener(string $event, callable $callback): string
-    {
-        $id = bin2hex(random_bytes(8));
-        self::$locations[$id] = $event;
-        self::$listeners[$event][$id] = $callback;
-        return $id;
-    }
-
-    /**
-     * Remove an event listener using the id returned by addEventListener()
-     *
-     * @param string $id
      * @return void
      */
-    public static function removeEventListener(string $id)
+    public static function addEventListener(string $event, callable $callback)
     {
-        if ($event = @self::$locations[$id]) {
-            unset(self::$locations[$id]);
-            unset(self::$listeners[$event][$id]);
-        }
+        self::$locations[] = $event;
+        self::$listeners[$event][] = $callback;
     }
 
     /**
@@ -158,34 +141,6 @@ class Dispatcher
     }
 
     /**
-     * Remove a previously-added subscriber
-     *
-     * @param mixed $object_or_class
-     * @return void
-     */
-    public static function removeSubscriber($object_or_class): void
-    {
-        if (is_object($object_or_class)) {
-            // loop throuugh methods in object
-            foreach (self::getMethods($object_or_class) as $method) {
-                // look for array callables using this object and remove them
-                foreach (self::$listeners[$method] as $id => $callable) {
-                    if (is_array($callable) && $callable[0] == $object_or_class) {
-                        self::removeEventListener($id);
-                    }
-                }
-            }
-        } elseif (class_exists($object_or_class)) {
-            // use list of event listener IDs to remove
-            foreach (self::$staticIDs[$object_or_class] ?? [] as $id) {
-                self::removeEventListener($id);
-            }
-            // remove the list
-            unset(self::$staticIDs[$object_or_class]);
-        }
-    }
-
-    /**
      * Return the methods of a given object or class that look like they could
      * be event names.
      *
@@ -197,7 +152,9 @@ class Dispatcher
         return array_filter(
             get_class_methods($object_or_class),
             function ($e) {
-                return preg_match('/^on([A-Z]+[a-z_]*[a-zA-Z0-9]*)+$/', $e);
+                return 
+                    substr($e, 0, 2) == 'on'
+                    && preg_match('/^on([A-Z]+[a-z_]*[a-zA-Z0-9]*)+$/', $e);
             }
         );
     }
