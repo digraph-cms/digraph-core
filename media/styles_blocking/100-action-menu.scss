@@ -1,7 +1,7 @@
 .action-menu {
     @include uncolored-links;
 
-    background: var(--background-lighter);
+    background: var(--background-light);
     color: var(--color);
     font-size: smaller;
     display: flex;
@@ -75,7 +75,7 @@
     li.dropdown {
         position: relative;
 
-        > a {
+        >a {
             cursor: pointer;
 
             &:before {
@@ -84,7 +84,7 @@
             }
         }
 
-        > ul {
+        >ul {
             display: none;
             position: absolute;
             min-width: 100%;
@@ -92,7 +92,8 @@
             box-sizing: border-box;
             top: 100%;
             left: 0;
-            background: var(--theme-neutral);
+            background: var(--background-light);
+            color: var(--color);
 
             a {
                 display: block;
@@ -101,11 +102,11 @@
 
         &:focus-within,
         &.open {
-            > ul {
+            >ul {
                 display: block;
             }
 
-            > a {
+            >a {
                 &:before {
                     content: "\ea6f";
                 }
@@ -130,6 +131,7 @@
     h2 {
         display: inline-block;
     }
+
     ul {
         justify-content: flex-end;
     }

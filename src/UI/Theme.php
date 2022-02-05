@@ -96,7 +96,15 @@ class Theme
                     'danger' => '#ff5722'
                 ]
             ],
-            'colorblind_dark' => []
+            'colorblind_dark' => [
+                'cue' => [
+                    'interactive' => '#0091EA',
+                    'information' => '#006064',
+                    'safe' => '#2196f3',
+                    'warning' => '#ff5722',
+                    'danger' => '#ff5722'
+                ]
+            ]
         ]
     ];
     protected static $scssVars = [];
@@ -147,7 +155,10 @@ class Theme
     public static function variables(string $mode = 'light'): array
     {
         if (static::$variables_cache === null) {
-            static::$variables_cache = static::compileVariables(static::$variables);
+            static::$variables_cache = static::compileVariables(
+                static::$variables,
+                strpos($mode, 'dark') !== false ? true : false
+            );
         }
         return static::$variables_cache[$mode] ?? [];
     }
@@ -186,22 +197,22 @@ class Theme
         );
     }
 
-    protected static function compileVariables(array $variables): array
+    protected static function compileVariables(array $variables, $invertColorVariations): array
     {
         foreach ($variables as $mode => $vs) {
-            $variables[$mode] = static::compileVariableList($vs);
+            $variables[$mode] = static::compileVariableList($vs, '', $invertColorVariations);
         }
         return $variables;
     }
 
-    protected static function compileVariableList(array $variables, $prefix = ''): array
+    protected static function compileVariableList(array $variables, $prefix = '', $invertColorVariations): array
     {
         $output = [];
         foreach ($variables as $k => $v) {
             $k = $prefix ? "$prefix-$k" : $k;
             // recurse into arrays
             if (is_array($v)) {
-                foreach (static::compileVariableList($v, $k) as $k => $v) {
+                foreach (static::compileVariableList($v, $k, $invertColorVariations) as $k => $v) {
                     $output[$k] = $v;
                 }
             }
@@ -210,7 +221,7 @@ class Theme
                 $output[$k] = $v;
                 $output["$k-inv"] = static::contrastColor(new Hex($v));
                 if (!preg_match('/-((light|dark)(er)?|bright(er)?)$/', $k)) {
-                    foreach (static::prepareColorVariations($v) as $t => $v) {
+                    foreach (static::prepareColorVariations($v, $invertColorVariations) as $t => $v) {
                         $output["$k-$t"] = $v->__toString();
                     }
                 }
@@ -223,15 +234,27 @@ class Theme
         return $output;
     }
 
-    protected static function prepareColorVariations($color)
+    protected static function prepareColorVariations($color, $invert)
     {
-        $colors = [
-            'light' => (new Hex($color))->lighten(2),
-            'dark' => (new Hex($color))->darken(2),
-            'lighter' => (new Hex($color))->lighten(4),
-            'darker' => (new Hex($color))->darken(4),
-            'bright' => (new Hex($color))->brighten(15),
-        ];
+        if ($invert) {
+            // normal meaning of light/dark
+            $colors = [
+                'light' => (new Hex($color))->lighten(2),
+                'dark' => (new Hex($color))->darken(2),
+                'lighter' => (new Hex($color))->lighten(4),
+                'darker' => (new Hex($color))->darken(4),
+                'bright' => (new Hex($color))->brighten(15),
+            ];
+        } else {
+            // inverted for dark mode
+            $colors = [
+                'dark' => (new Hex($color))->lighten(2),
+                'light' => (new Hex($color))->darken(2),
+                'darker' => (new Hex($color))->lighten(4),
+                'lighter' => (new Hex($color))->darken(4),
+                'bright' => (new Hex($color))->brighten(15),
+            ];
+        }
         // add alpha colors
         $colors['a90'] = (new Hex($color))->toRgba()->alpha(0.9);
         $colors['a80'] = (new Hex($color))->toRgba()->alpha(0.8);
