@@ -65,6 +65,21 @@ class Config implements InitializedClassInterface
         }
         return json_decode(file_get_contents($file), true);
     }
+
+    public static function dumpJson(array $data, $minify = false): string
+    {
+        return json_encode($data, $minify ? JSON_PRETTY_PRINT : null);
+    }
+
+    public static function dumpYaml(array $data): string
+    {
+        return Spyc::YAMLDump(
+            $data,
+            false,
+            80,
+            true
+        );
+    }
 }
 
 CachedInitializer::runClass(Config::class);
