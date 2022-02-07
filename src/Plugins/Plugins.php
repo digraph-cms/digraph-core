@@ -9,11 +9,40 @@ use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\Cache\CacheableState;
 use DigraphCMS\Cache\CachedInitializer;
 use DigraphCMS\Media\Media;
+use DigraphCMS\UI\Templates;
+use DirectoryIterator;
 
 class Plugins
 {
     protected static $plugins = [];
 
+    public static function loadFromDirectory(string $directory)
+    {
+        if (!is_dir($directory)) {
+            return;
+        }
+        foreach (new DirectoryIterator($directory) as $f) {
+            if (!$f->isDir() || $f->isDot()) {
+                continue;
+            }
+            $path = $f->getRealPath();
+            if (is_dir($path)) {
+                static::load($path, true);
+            }
+        }
+    }
+
+    /**
+     * Parse a composer lock file and load all plugins found in it. Specifically
+     * this looks for any composer packages with the type "digraph-plugin"
+     * 
+     * Defaults to a vendor directory of "vendor" in the same folder as the lock
+     * file, but this can be overridden.
+     *
+     * @param string $composerLockFile
+     * @param string $vendorDirectory path to vendor directory, relative to lock file
+     * @return void
+     */
     public static function loadFromComposer(string $composerLockFile, string $vendorDirectory = 'vendor')
     {
         if (!is_file($composerLockFile)) {
@@ -49,7 +78,7 @@ class Plugins
      */
     public static function autoloader(string $namespace, string $directory)
     {
-        $namespace = preg_replace('/\\$/', '', $namespace) . '\\\\';
+        $namespace = preg_replace('/\\$/', '', $namespace) . '\\';
         $directory = realpath($directory) . '/';
         spl_autoload_register(function ($class) use ($namespace, $directory) {
             // check if class is in this namespace
@@ -130,6 +159,10 @@ class Plugins
         // set up route directories
         foreach ($plugin->routeFolders() as $dir) {
             Router::addSource($dir);
+        }
+        // set up template directories
+        foreach ($plugin->templateFolders() as $dir) {
+            Templates::addSource($dir);
         }
         // set up phinx folders
         foreach ($plugin->phinxFolders() as $dir) {
