@@ -143,4 +143,12 @@ span.notification {
 #footer {
     font-size: smaller;
     padding: 3 * $grid $grid;
+    background: var(--background-dark);
+
+    &.footer--fixed {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
 }
