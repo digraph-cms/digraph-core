@@ -41,7 +41,7 @@ body>.action-menu,
     @include uncolored-links;
 
     font-size: smaller;
-    padding: $border $grid/2;
+    padding: $border $grid;
     background-color: var(--theme-neutral-a20);
     font-family: $font-ui;
 

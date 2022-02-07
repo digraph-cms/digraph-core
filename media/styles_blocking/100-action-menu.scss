@@ -9,6 +9,7 @@
     flex-direction: row;
     align-items: center;
     font-family: $font-ui;
+    padding: $grid/2;
 
     h1 {
         display: none;
@@ -46,7 +47,7 @@
         display: inline-block;
         vertical-align: baseline;
         white-space: nowrap;
-        padding: 0.5em;
+        padding: $grid/2;
 
         &[href]:hover,
         &.current-page {
