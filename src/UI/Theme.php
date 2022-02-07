@@ -31,6 +31,7 @@ class Theme
         'blocking_css' => [
             '/styles_blocking/*.css'
         ],
+        'external_css' => [],
         'internal_css' => [
             '/styles/*.css'
         ],
@@ -112,6 +113,8 @@ class Theme
     protected static $variables_cache;
     protected static $blockingThemeCss = [];
     protected static $blockingPageCss = [];
+    protected static $externalThemeCss = [];
+    protected static $externalPageCss = [];
     protected static $internalThemeCss = [];
     protected static $internalPageCss = [];
     protected static $blockingThemeJs = [];
@@ -285,6 +288,7 @@ class Theme
         static::$scssVars = static::themeConfig($activeThemes, 'scss_vars');
         static::$variables = static::themeConfig($activeThemes, 'variables');
         static::$blockingThemeCss = static::themeConfig($activeThemes, 'blocking_css');
+        static::$externalThemeCss = static::themeConfig($activeThemes, 'external_css');
         static::$internalThemeCss = static::themeConfig($activeThemes, 'internal_css');
         static::$blockingThemeJs = static::themeConfig($activeThemes, 'blocking_js');
         static::$asyncThemeJs = static::themeConfig($activeThemes, 'async_js');
@@ -298,6 +302,7 @@ class Theme
     public static function resetPage()
     {
         static::$blockingPageCss = [];
+        static::$externalPageCss = [];
         static::$internalPageCss = [];
         static::$blockingPageJs = [];
         static::$asyncPageJs = [];
@@ -328,6 +333,16 @@ class Theme
     public static function addBlockingPageCss($url)
     {
         static::$blockingPageCss[] = $url;
+    }
+
+    public static function addExternalThemeCss($url)
+    {
+        static::$externalThemeCss[] = $url;
+    }
+
+    public static function addExternalPageCss($url)
+    {
+        static::$externalPageCss[] = $url;
     }
 
     public static function addInternalThemeCss($url)
@@ -493,6 +508,13 @@ class Theme
         Config::set('files.css.sourcemap', $sourceMapping);
     }
 
+    protected static function renderExternalCss()
+    {
+        foreach (array_merge(static::$externalThemeCss, static::$externalPageCss) as $url) {
+            echo "<link rel='stylesheet' href='" . $url . "'>" . PHP_EOL;
+        }
+    }
+
     protected static function renderInternalCss(string $name, array $urls)
     {
         if (!Config::get('theme.bundle_css')) {
@@ -598,6 +620,7 @@ class Theme
         // render css
         static::renderVariableCss();
         static::renderBlockingCss();
+        static::renderExternalCss();
         static::renderInternalCss('theme', static::$internalThemeCss);
         static::renderInternalCss('page', static::$internalPageCss);
         // render core js
