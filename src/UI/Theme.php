@@ -205,7 +205,7 @@ class Theme
         return $variables;
     }
 
-    protected static function compileVariableList(array $variables, $prefix = '', $invertColorVariations): array
+    protected static function compileVariableList(array $variables, $prefix = '', $invertColorVariations = false): array
     {
         $output = [];
         foreach ($variables as $k => $v) {
