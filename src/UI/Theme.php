@@ -49,6 +49,7 @@ class Theme
                 'color' => '#333333',
                 'grid' => '1rem',
                 'line-length' => '35em',
+                'line-height' => '1.4em',
                 'shadow' => 'calc(var(--grid)/8) calc(var(--grid)/4) var(--grid) rgba(0,0,0,0.05)',
                 'border' => '2px',
                 'border-radius' => '4px',
