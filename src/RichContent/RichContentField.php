@@ -5,14 +5,13 @@ namespace DigraphCMS\RichContent;
 use DigraphCMS\CodeMirror\CodeMirrorInput;
 use DigraphCMS\HTML\DIV;
 use DigraphCMS\HTML\Forms\Field;
-use DigraphCMS\UI\Theme;
 use DigraphCMS\URL\URL;
 
 class RichContentField extends Field
 {
     protected $pageUuid, $wrapper, $contentEditor, $mediaEditor, $mediaEditorFrame, $toolbarFrame;
 
-    public function __construct(string $label, string $pageUuid = null)
+    public function __construct(string $label, string $pageUuid = null, bool $hideMediaEditor = false)
     {
         parent::__construct($label, new CodeMirrorInput());
         $this->setPageUuid($pageUuid);
@@ -20,19 +19,22 @@ class RichContentField extends Field
         $this->addClass('rich-content-editor');
         $this->wrapper = (new DIV())
             ->addClass('rich-content-editor__dynamic-editor');
+        $this->addChild($this->wrapper);
         $this->contentEditor = (new DIV())
             ->addClass('rich-content-editor__content-editor');
         $this->wrapper->addChild($this->contentEditor);
-        $this->mediaEditor = (new DIV())
-            ->addClass('rich-content-editor__media-editor');
-        $this->mediaEditorFrame = (new DIV())
-            ->addClass('rich-content-editor__media-editor-frame')
-            ->addClass('navigation-frame')
-            ->addClass('navigation-frame--stateless')
-            ->setData('target', '_frame');
-        $this->mediaEditor->addChild($this->mediaEditorFrame);
-        $this->wrapper->addChild($this->mediaEditor);
-        $this->addChild($this->wrapper);
+        // only add media editor if $hideMediaEditor is false
+        if (!$hideMediaEditor) {
+            $this->mediaEditor = (new DIV())
+                ->addClass('rich-content-editor__media-editor');
+            $this->mediaEditorFrame = (new DIV())
+                ->addClass('rich-content-editor__media-editor-frame')
+                ->addClass('navigation-frame')
+                ->addClass('navigation-frame--stateless')
+                ->setData('target', '_frame');
+            $this->mediaEditor->addChild($this->mediaEditorFrame);
+            $this->wrapper->addChild($this->mediaEditor);
+        }
         // add toolbar
         $this->toolbarFrame = (new DIV())
             ->addClass('rich-content-editor__toolbar')

@@ -48,16 +48,17 @@
 .rich-content-editor__media-editor {
     flex-basis: 30em;
     overflow: auto;
-    padding-left: var(--grid);
+    padding-left: $grid;
     position: relative;
 
     .rich-content-editor__media-editor__size-toggle {
         position: absolute;
         top: 0;
         left: 0;
-        width: var(--grid);
+        width: $grid;
+        overflow: hidden;
         bottom: 0;
-        font-size: var(--grid);
+        font-size: $grid;
         background: var(--theme-neutral-dark);
         color: var(--theme-neutral-inv);
         display: flex;
@@ -93,6 +94,8 @@
 }
 
 .rich-content-editor__media-editor--wide-forced {
+    padding-left: 0;
+    margin-left: -$border;
     .rich-content-editor__media-editor__size-toggle {
         display: none;
     }
@@ -104,6 +107,7 @@
     >.tab-interface {
         height: 100%;
         margin: 0;
+        margin-left: $border;
 
         .tab-interface-content {
             overflow: auto;
