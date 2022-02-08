@@ -54,6 +54,8 @@ class DigraphRichContentEditor {
             } else {
                 this.mediaWrapper.classList.add('rich-content-editor__media-editor--wide');
             }
+            var cm = this.getDivByClass('CodeMirror').CodeMirror;
+            cm.refresh();
         });
         // watch media wrapper for forced-wide toggle
         // can be toggled by having an element with the class media-editor-force-wide
@@ -64,6 +66,8 @@ class DigraphRichContentEditor {
             } else {
                 this.mediaWrapper.classList.remove('rich-content-editor__media-editor--wide-forced');
             }
+            var cm = this.getDivByClass('CodeMirror').CodeMirror;
+            cm.refresh();
         });
         // set up event listeners for toolbar
         this.toolbar = this.getDivByClass('rich-content-editor__toolbar');
