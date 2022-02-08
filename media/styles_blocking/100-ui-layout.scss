@@ -136,7 +136,9 @@ span.notification {
     > h1 {
         font-size: 3rem;
         padding-bottom: $grid;
-        border-bottom: $grid solid var(--background-darker);
+        border-bottom: $grid/2 solid var(--background-light);
+        margin-top: $grid !important;
+        margin-bottom: $grid*2;
     }
 }
 

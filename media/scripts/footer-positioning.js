@@ -1,3 +1,8 @@
+/*
+Check if footer is above the bottom of the window, and if so fix it to the
+bottom of the window. This way the footer can't have ugly background colors
+peeking out below it.
+*/
 (() => {
     document.addEventListener('DigraphDOMReady', checkFooterPosition);
     window.addEventListener('resize', checkFooterPosition);
