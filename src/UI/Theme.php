@@ -162,7 +162,7 @@ class Theme
         if (static::$variables_cache === null) {
             static::$variables_cache = static::compileVariables(
                 static::$variables,
-                strpos($mode, 'dark') !== false ? true : false
+                strpos($mode, 'dark') !== false
             );
         }
         return static::$variables_cache[$mode] ?? [];
