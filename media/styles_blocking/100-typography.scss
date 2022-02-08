@@ -10,6 +10,7 @@ h4,
 h5,
 h6 {
     font-family: $font-header;
+    line-height: $line-height-tight;
 
     &:first-child {
         margin-top: 0;
