@@ -241,7 +241,7 @@ class Theme
 
     protected static function prepareColorVariations($color, $invert)
     {
-        if ($invert) {
+        if (!$invert) {
             // normal meaning of light/dark
             $colors = [
                 'light' => (new Hex($color))->lighten(2),
