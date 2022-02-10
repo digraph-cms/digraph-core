@@ -28,6 +28,26 @@ document.addEventListener('DigraphDOMReady', (e) => {
     }
 });
 
+document.addEventListener('navigation-frame-navigate', (e) => {
+    var event_target = e.target;
+    var event_url = e.navigateUrl;
+    if (!event_target || !event_url) return;
+    // find parent and target
+    var parent, target;
+    [parent, target] = Digraph.state.navigationParentAndTarget(event_target);
+    // parent and target found
+    if (parent && target) {
+        if (parent.classList.contains('navigation-frame--stateless')) {
+            // stateless navigation frames don't update the address bar or browser history
+            Digraph.state.get(event_url, parent);
+        } else {
+            // otherwise call the function that pushes to address bar and browser history
+            Digraph.state.getAndPush(event_url, parent);
+        }
+        e.stopPropagation();
+    }
+});
+
 // click handler for links in navigation frames
 document.addEventListener('click', (e) => {
     var event_target = e.target;

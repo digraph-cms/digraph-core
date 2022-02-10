@@ -25,7 +25,12 @@ class MultiFileRichMedia extends AbstractRichMedia
 
     public static function className(): string
     {
-        return 'File bundle';
+        return 'Zip file';
+    }
+
+    public static function description(): string
+    {
+        return 'Upload multiple files to post as a Zip file download';
     }
 
     public function card(): DIV

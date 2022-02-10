@@ -47,11 +47,6 @@
         }
     }
 
-    .meta {
-        font-size: smaller;
-        font-style: italic;
-    }
-
     &[data-autocomplete-state="error"] {
 
         &:before,
@@ -128,6 +123,15 @@
         display: none;
         font-size: 2rem;
         padding-right: $grid/2;
+    }
+
+    .title {
+        font-weight: bold;
+    }
+
+    .meta {
+        font-size: smaller;
+        font-style: italic;
     }
 }
 

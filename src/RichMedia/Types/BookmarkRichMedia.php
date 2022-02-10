@@ -13,4 +13,9 @@ class BookmarkRichMedia extends AbstractRichMedia
     {
         return 'Bookmark';
     }
+
+    public static function description(): string
+    {
+        return 'Reusable link to either an internal page or an external URL';
+    }
 }

@@ -18,6 +18,11 @@ class TableRichMedia extends AbstractRichMedia
         return 'Table';
     }
 
+    public static function description(): string
+    {
+        return 'Rich editor for tables, including the option to upload a spreadsheet';
+    }
+
     public function setTableFromFile(string $path, $extension = null)
     {
         switch ($extension) {

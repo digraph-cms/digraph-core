@@ -56,7 +56,12 @@ class FileRichMedia extends AbstractRichMedia
 
     public static function className(): string
     {
-        return 'File download';
+        return 'Download';
+    }
+
+    public static function description(): string
+    {
+        return 'Upload a single file to post as a download';
     }
 
     public function name(string $set = null): string

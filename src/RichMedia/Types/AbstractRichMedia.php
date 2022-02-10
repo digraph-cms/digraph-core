@@ -35,6 +35,7 @@ abstract class AbstractRichMedia implements ArrayAccess
 
     abstract public static function class(): string;
     abstract public static function className(): string;
+    abstract public static function description(): string;
 
     public function __construct(array $data = [], array $metadata = [])
     {
