@@ -3,6 +3,7 @@
 use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
+use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\Session\Cookies;
 use DigraphCMS\Session\Session;
@@ -25,7 +26,7 @@ if (!Context::arg('_provider') || !Context::arg('_source')) {
 $sourceName = Context::arg('_source');
 /** @var \DigraphCMS\Users\AbstractUserSource */
 $source = Users::source(Context::arg('_source'));
-$providerName = Context::arg('_provider');
+/** @var string */
 $provider = Context::arg('_provider');
 if (!$source || !$source->providerActive($provider)) {
     throw new HttpError(404);
@@ -61,14 +62,16 @@ if (!Session::user() && !Context::arg('_rememberme')) {
 }
 
 // handle signin within digraph
+/** @var string */
 $providerID = Context::data('signin_provider_id');
 $fullSourceTitle = $source->providerName($provider) . ' via ' . $source->title();
 if ($user = $source->lookupUser($provider, $providerID)) {
+    // user is signed in as a different user than who this signin is already associated with
     if (Session::user() && Session::user() != $user) {
         throw new HttpError(
             403,
-            "That $fullSourceTitle account is already associated with a different account on this site. " .
-                "To associate the account " . Users::current() . " with this $fullSourceTitle signin, you need to first sign in as " . Users::get($user) . " and remove it from that account."
+            "That $fullSourceTitle signin is already associated with a different account on this site. " .
+                "To associate the account " . Users::current() . " with this $fullSourceTitle signin, you need to first sign in as " . Users::get($user) . " and remove it there."
         );
     }
     // user is signed in, link this pair to their account
@@ -77,21 +80,24 @@ if ($user = $source->lookupUser($provider, $providerID)) {
 } else {
     // this provider/id pair is not tied to a user
     // either link it to the current user or create a new user
-    DB::beginTransaction();
     if ($user = Session::user()) {
         // user is signed in, link this pair to their account
-        $source->authorizeUser($user, $providerName, $providerID);
+        $source->authorizeUser($user, $provider, $providerID);
         Notifications::flashConfirmation("Authorized $fullSourceTitle to sign into account " . Users::current());
     } else {
         // user is not signed in, create a new user and link pair to it
+        DB::beginTransaction();
         $user = new User();
+        Dispatcher::dispatchEvent('onCreateUser', [$user, $source->name(), $provider, $providerID]);
+        Dispatcher::dispatchEvent('onCreateUser_' . $sourceName, [$user, $source->name(), $provider, $providerID]);
+        Dispatcher::dispatchEvent('onCreateUser_' . $sourceName . '_' . $provider, [$user, $source->name(), $provider, $providerID]);
         $user->insert();
         $source->authorizeUser($user->uuid(), $provider, $providerID);
         // sign in as new user
         Session::authenticate($user->uuid(), 'Signed up with ' . $fullSourceTitle, Context::arg('rememberme') == 'y');
         Notifications::flashConfirmation("Authorized $fullSourceTitle to sign into new account " . Users::current());
+        DB::commit();
     }
-    DB::commit();
 }
 
 // include post-signin handler file
