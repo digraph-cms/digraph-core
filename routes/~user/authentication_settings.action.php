@@ -52,11 +52,11 @@ $table = new QueryTable(
                     DB::query()
                         ->deleteFrom('user_source')
                         ->where(
-                            'user_uuid = ? AND source = ? AND provider = ?',
-                            [Session::user(), $source->name(), $row['provider']]
+                            'id = ?',
+                            [$row['id']]
                         )
                         ->execute();
-                    Notifications::flashConfirmation("Removed " . $source->providerName($row['provider']) . ' via ' . $source->title());
+                    Notifications::flashConfirmation("Removed authentication method: " . $source->providerName($row['provider']) . ' via ' . $source->title());
                     Context::response()->redirect(Context::url());
                 },
                 ['warning']
