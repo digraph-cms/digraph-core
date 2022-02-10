@@ -37,7 +37,7 @@ class Digraph
      * any website this system is capable of scaling up to).
      */
     const UUIDCHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    const UUIDPATTERN = '0000';
+    const UUIDPATTERN = '000000';
 
     /**
      * Generate a response from an automatically-loaded request and render it.
