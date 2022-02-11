@@ -36,8 +36,6 @@ if ($form->ready()) {
     $page->name($name->value());
     $page->richContent('body', $content->value());
     $page->update();
-    // dispatch pageedited event
-    Dispatcher::dispatchEvent('onPagEdited', [$page]);
     // commit and redirect
     DB::commit();
     Notifications::flashConfirmation('Changes saved to ' . $page->url()->html());

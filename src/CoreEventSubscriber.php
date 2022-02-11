@@ -113,12 +113,12 @@ class CoreEventSubscriber
     }
 
     /**
-     * Set initial slug pattern after a page is created.
+     * Set initial slug pattern after a page is inserted.
      *
      * @param Page $page
      * @return void
      */
-    public static function onPageCreated(Page $page)
+    public static function onAfterPageInsert(Page $page)
     {
         Slugs::setFromPattern($page, $page->slugPattern(), true);
     }

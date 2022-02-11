@@ -88,9 +88,9 @@ class Slugs
             },
             $pattern
         );
-        // ensure slug does have a value
+        // if slug doesn't have a value, return and UUID or existing slug will continue to be used
         if (!$slug) {
-            $slug = $page->uuid();
+            return;
         }
         // prepend parent slug if necessary
         if (substr($slug, 0, 1) != '/' && $page->parent()) {
@@ -142,6 +142,11 @@ class Slugs
 
     protected static function insert(string $page_uuid, string $slug)
     {
+        // $check = DB::query()->from('page_slug')
+        //     ->where('page_uuid = ? AND url = ?', [$page_uuid, $slug]);
+        // if ($check->count()) {
+        //     return;
+        // }
         if (!static::validate($slug)) {
             throw new \Exception("Invalid slug");
         }

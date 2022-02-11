@@ -45,10 +45,12 @@ class Page implements ArrayAccess
     public function richContent(string $index, RichContent $content = null): ?RichContent
     {
         if ($content) {
-            $this["content.$index"] = serialize($content);
+            $this["content.$index"] = [
+                'value' => $content->value()
+            ];
         }
         if ($this["content.$index"]) {
-            return unserialize($this["content.$index"]);
+            return new RichContent($this["content.$index.value"]);
         } else {
             return null;
         }
@@ -78,7 +80,7 @@ class Page implements ArrayAccess
     {
         switch ($name) {
             case 'uuid':
-                return substr($this->uuid(), 0, 8);
+                return $this->uuid();
             case 'name':
                 return $this->name();
             default:

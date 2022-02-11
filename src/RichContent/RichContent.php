@@ -2,8 +2,6 @@
 
 namespace DigraphCMS\RichContent;
 
-use DigraphCMS\Content\Blocks\Blocks;
-use DigraphCMS\UI\Theme;
 use ParsedownExtra;
 
 class RichContent

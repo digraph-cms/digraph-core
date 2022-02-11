@@ -31,9 +31,7 @@ class UserMenu extends ActionMenu
             $actions = array_filter(
                 Router::staticActions('user'),
                 function (URL $url) {
-                    return
-                        substr($url->action(), 0, 1) != '_'
-                        && $url->page() == $this->url->page();
+                    return substr($url->action(), 0, 1) != '_';
                 }
             );
             foreach ($actions as $url) {
@@ -50,9 +48,7 @@ class UserMenu extends ActionMenu
             $actions = array_filter(
                 Router::staticActions('guest'),
                 function (URL $url) {
-                    return
-                        substr($url->action(), 0, 1) != '_'
-                        && $url->page() == $this->url->page();
+                    return substr($url->action(), 0, 1) != '_';
                 }
             );
             foreach ($actions as $url) {

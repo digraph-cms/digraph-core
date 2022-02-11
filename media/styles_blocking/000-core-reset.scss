@@ -3,6 +3,10 @@ body {
     color: var(--color);
 }
 
+#skip-to-content {
+    display: none;
+}
+
 a,
 a:link {
     color: var(--link-normal);

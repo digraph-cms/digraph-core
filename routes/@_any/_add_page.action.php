@@ -65,9 +65,6 @@ $form = (new FormWrapper('add-' . Context::arg('uuid')))
         $page->insert();
         // create edge to parent
         Pages::insertLink(Context::page()->uuid(), $page->uuid());
-        // dispatch pagecreated event, this is where we set slug from pattern, we
-        // do this manually here so that duplicate non-parent slugs don't get made
-        Dispatcher::dispatchEvent('onPageCreated', [$page]);
         // commit and redirect
         DB::commit();
         Notifications::flashConfirmation('Page created: ' . $page->url()->html());
