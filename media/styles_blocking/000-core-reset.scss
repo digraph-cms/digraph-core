@@ -1,40 +1,110 @@
-@media screen {
-    #content {
-
-        p,
-        li,
-        blockquote,
-        dd,
-        dt {
-            max-width: var(--line-length);
-        }
-
-        table {
-            max-width: 100%;
-            box-shadow: var(--shadow);
-        }
-    }
-}
-
-@media screen,
-print {
-    #skip-to-content {
-        display: none;
-    }
-}
-
 body {
     background-color: var(--background);
     color: var(--color);
 }
 
-img {
-    max-width: 100%;
-    height: auto;
-    box-sizing: border-box;
+a,
+a:link {
+    color: var(--link-normal);
 }
 
-base64,
-.detached-form {
-    display: none;
+a:visited {
+    color: var(--link-visited);
+}
+
+a:focus,
+a:hover {
+    color: var(--link-focus);
+}
+
+a:active {
+    color: var(--link-active);
+}
+
+a:after {
+    @include material-icon;
+    font-size: smaller;
+    text-decoration: none;
+    vertical-align: top;
+}
+
+a[target="_lightbox"]:after {
+    content: "open_in_full";
+    display: inline-block;
+}
+
+a[target="_blank"]:after {
+    content: "open_in_new";
+    display: inline-block;
+}
+
+a.link--broken {
+    background-color: var(--cue-danger);
+    color: var(--cue-danger-inv);
+
+    &:after {
+        content: "error";
+        display: inline-block;
+    }
+}
+
+a.link--wayback {
+    background-color: var(--cue-warning);
+    color: var(--cue-warning-inv);
+
+    &:after {
+        content: "history";
+        display: inline-block;
+    }
+}
+
+::selection,
+::-moz-selection {
+    background: var(--theme-highlight-a20);
+}
+
+:focus {
+    @include focused;
+}
+
+.navigation-frame,
+.autocomplete-results {
+    @include loading-overlay;
+}
+
+.button-menu,
+.button-menu__buttons {
+    display: flex;
+    width: auto;
+}
+
+.button-menu {
+
+    .button,
+    button,
+    input[type="button"],
+    input[type="submit"] {
+        border-radius: 0;
+        white-space: normal;
+
+        &:first-child {
+            border-top-left-radius: $border-radius;
+            border-bottom-left-radius: $border-radius;
+        }
+
+        &:last-child {
+            border-top-right-radius: $border-radius;
+            border-bottom-right-radius: $border-radius;
+        }
+    }
+}
+
+@keyframes spin-loading-overlay {
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    to {
+        transform: translate(-50%, -50%) rotate(-360deg);
+    }
 }
