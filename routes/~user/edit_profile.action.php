@@ -1,6 +1,7 @@
 <?php
 
 use DigraphCMS\Context;
+use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTML\Forms\Field;
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTTP\HttpError;
@@ -21,6 +22,9 @@ $name = (new Field('Display name'))
     ->setDefault($user->name())
     ->setRequired(true);
 $form->addChild($name);
+
+Dispatcher::dispatchEvent('onEditProfileForm', [$form, $user]);
+
 if ($form->ready()) {
     $user->name($name->value());
     $user->update();

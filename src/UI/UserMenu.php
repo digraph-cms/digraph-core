@@ -28,7 +28,15 @@ class UserMenu extends ActionMenu
         if ($user) {
             echo "<div class='action-menu__user-actions action-menu__user-actions--signedin'><h2>$user</h2><nav><ul>";
             echo "<li class='profile-link'><a href='" . $user->profile() . "'>My profile</a></li>";
-            foreach (Router::staticActions('user') as $url) {
+            $actions = array_filter(
+                Router::staticActions('user'),
+                function (URL $url) {
+                    return
+                        substr($url->action(), 0, 1) != '_'
+                        && $url->page() == $this->url->page();
+                }
+            );
+            foreach ($actions as $url) {
                 echo "<li>" . $url->html([], true) . "</li>";
             }
             echo "<li class='signout-link'>" . Users::signoutUrl()->html(['signout-link']) . "</li>";
@@ -39,7 +47,15 @@ class UserMenu extends ActionMenu
             if ($this->url->route() != 'signin') {
                 echo "<li class='signin-link'>" . Users::signinUrl()->html(['signin-link']) . "</li>";
             }
-            foreach (Router::staticActions('guest') as $url) {
+            $actions = array_filter(
+                Router::staticActions('guest'),
+                function (URL $url) {
+                    return
+                        substr($url->action(), 0, 1) != '_'
+                        && $url->page() == $this->url->page();
+                }
+            );
+            foreach ($actions as $url) {
                 echo "<li>" . $url->html([], true) . "</li>";
             }
             echo "</ul></nav></div>";

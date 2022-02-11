@@ -1,6 +1,7 @@
 <?php
 
 use DigraphCMS\Content\Pages;
+use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\UI\DataTables\PageTable;
@@ -18,9 +19,11 @@ if (!$user) {
 echo "<h1>User profile: " . $user->name() . "</h1>";
 
 printf(
-    "<p>Signed up %s</p>",
+    "<p>Registered %s</p>",
     Format::date($user->created())
 );
+
+Router::include('profile_top/*.php');
 
 if ($groups = $user->groups()) {
     echo "<section class='user-groups'>";
@@ -43,3 +46,5 @@ if ($pages->count()) {
     echo new PageTable($pages);
     echo "</section>";
 }
+
+Router::include('profile_bottom/*.php');

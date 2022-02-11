@@ -13,8 +13,8 @@ class UserTable extends QueryTable
             $select,
             [$this, 'callback'],
             [
-                new QueryColumnHeader('Name', 'name', $select),
-                new QueryColumnHeader('Date registered', 'created', $select),
+                new QueryColumnHeader('User', 'name', $select),
+                new QueryColumnHeader('Registered', 'created', $select),
                 new ColumnHeader('Groups')
             ]
         );

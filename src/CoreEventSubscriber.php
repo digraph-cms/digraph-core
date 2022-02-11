@@ -200,7 +200,7 @@ class CoreEventSubscriber
     public static function onStaticUrlPermissions_user(URL $url, User $user): ?bool
     {
         // disable authentication log if php sessions are being used
-        if (Config::get('php_session.enabled') && $url->path() == '/~user/authentication_log.html') {
+        if (Config::get('php_session.enabled') && $url->path() == '/~user/settings/_authentication_log.html') {
             return false;
         }
         // if user is specified limit routes for the user being viewed/edited and admins
@@ -333,9 +333,16 @@ class CoreEventSubscriber
         return "Log out";
     }
 
+    /**
+     * Add extra links to user action menu
+     *
+     * @param array $urls
+     * @return void
+     */
     public static function onStaticActions_user(array &$urls)
     {
         $urls[] = new URL('/~color/');
+        $urls[] = new URL('/~admin/');
     }
 
     public static function onStaticActions_guest(array &$urls)

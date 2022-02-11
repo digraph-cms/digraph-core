@@ -71,7 +71,7 @@ class Users
             ->where('uuid = ?', [$uuid]);
         if ($group = $query->fetch()) {
             return new Group($group['uuid'], $group['name']);
-        }else {
+        } else {
             return null;
         }
     }
@@ -84,7 +84,7 @@ class Users
      */
     public static function groups(string $user_uuid): array
     {
-        return array_map(
+        $groups = array_map(
             function ($group) {
                 return new Group($group['uuid'], $group['name']);
             },
@@ -95,6 +95,8 @@ class Users
                 ->where('user_uuid = ?', [$user_uuid])
                 ->fetchAll()
         );
+        Dispatcher::dispatchEvent('onUserGroups', [$user_uuid, &$groups]);
+        return $groups;
     }
 
     public static function signinUrl(URL $bounce = null): URL

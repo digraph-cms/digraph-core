@@ -8,6 +8,7 @@ abstract class AbstractPlugin
     abstract function routeFolders(): array;
     abstract function templateFolders(): array;
     abstract function phinxFolders(): array;
+    abstract function registered();
 
     function name(): string
     {

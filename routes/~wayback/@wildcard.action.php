@@ -1,7 +1,6 @@
 <?php
 
 use DigraphCMS\Context;
-use DigraphCMS\DB\DB;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\UI\Breadcrumb;
 use DigraphCMS\UI\Templates;

@@ -126,6 +126,14 @@ class Theme
     protected static $asyncThemeJs = [];
     protected static $asyncPageJs = [];
     protected static $inlinePageJs = [];
+    protected static $bodyClasses = [];
+
+    public static function addBodyClass(string $class)
+    {
+        if (!in_array($class, static::$bodyClasses)) {
+            static::$bodyClasses[] = $class;
+        }
+    }
 
     public static function colorMode(): ?string
     {
@@ -149,7 +157,7 @@ class Theme
 
     public static function bodyClasses(): array
     {
-        $classes = [];
+        $classes = static::$bodyClasses;
         if ($mode = static::colorMode()) {
             $classes[] = 'colors--' . $mode;
         }

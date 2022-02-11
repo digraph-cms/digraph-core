@@ -168,5 +168,7 @@ class Plugins
         foreach ($plugin->phinxFolders() as $dir) {
             DB::addMigrationPath($dir);
         }
+        // call post-registration hook
+        $plugin->registered();
     }
 }

@@ -58,13 +58,13 @@ class CachedInitializer
                 $overrideTTL
             );
         }
-        // run postCacheFn
-        if ($postCacheFn) {
-            call_user_func($postCacheFn, $state);
-        }
         // apply config changes
         if ($state->updatedConfig()) {
             Config::data($state->updatedConfig());
+        }
+        // run postCacheFn
+        if ($postCacheFn) {
+            call_user_func($postCacheFn, $state);
         }
     }
 

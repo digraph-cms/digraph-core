@@ -1,5 +1,5 @@
 <h1>Authentication settings</h1>
-<p>Here you can see, add, and remove authentication methods that are configured for your account.</p>
+<p>The following login methods are configured for your account.</p>
 
 <h2>Sign-in methods</h2>
 <?php
@@ -41,7 +41,7 @@ $table = new QueryTable(
     function ($row) use ($count) {
         $source = Users::source($row['source']);
         $tr = [
-            $source->providerName($row['provider']) . ' via ' . $source->title(),
+            $source->providerName($row['provider']) . ' using ' . $source->title(),
             $row['provider_id'],
             Format::date($row['created'])
         ];
@@ -69,7 +69,7 @@ $table = new QueryTable(
 
 echo $table;
 
-echo "<h2>Add sign-in method</h2>";
+echo "<h2>Add login method</h2>";
 if ($user->uuid() == Session::user()) {
     echo "<ul class='signin-options'>";
     foreach (Users::allSigninURLs(Context::url()) as $k => $url) {
@@ -79,5 +79,5 @@ if ($user->uuid() == Session::user()) {
     }
     echo "</ul>";
 } else {
-    Notifications::printNotice('You cannot add new sign-in methods for other users.');
+    Notifications::printNotice('You cannot add new login methods for other users.');
 }

@@ -1,7 +1,8 @@
 <h1>Clean up user sources</h1>
 <p>
     This tool allows you to clean up user authentication sources that are not supported by your current configuration.
-    These can occur when you remove or rename an authentication source in config.
+    These can occur when you remove or rename an authentication source in config, and will cause errors when the users
+    with unconfigured authentication sources try to view their authentication settings.
 </p>
 
 <?php
