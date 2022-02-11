@@ -6,7 +6,7 @@ use DigraphCMS\UI\ButtonMenus\SingleButton;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\URL\URL;
 
-Notifications::printWarning('Are you sure you would like to delete <strong>' . Context::page()->name() . '</strong>? This action cannot be undone.');
+Notifications::printError('Are you sure you would like to delete <strong>' . Context::page()->name() . '</strong>? This action cannot be undone.');
 
 $button = new SingleButton(
     'Confirm deletion',
@@ -17,7 +17,7 @@ $button = new SingleButton(
             Context::page()->parent() ? Context::page()->parent() : new URL('/')
         );
     },
-    ['button--warning']
+    ['button--danger']
 );
 
 echo $button;
