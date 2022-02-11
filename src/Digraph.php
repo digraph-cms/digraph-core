@@ -22,9 +22,6 @@ use DigraphCMS\Users\Permissions;
 use Mimey\MimeTypes;
 use Throwable;
 
-// register core event subscriber
-Dispatcher::addSubscriber(CoreEventSubscriber::class);
-
 class Digraph
 {
     /**

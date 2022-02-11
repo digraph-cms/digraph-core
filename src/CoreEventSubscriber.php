@@ -248,6 +248,11 @@ class CoreEventSubscriber
      */
     public static function onStaticUrlPermissions_users(URL $url, User $user): ?bool
     {
+        // limit guest profile to editors and admins
+        if ($url->action() == '_guest') {
+            return Permissions::inMetaGroup('users__admin');
+        }
+        // limit other users to their own profile, unless given users__edit or users__view
         return $url == $user->profile() || Permissions::inMetaGroups([
             'users__edit',
             'users__view'
@@ -315,7 +320,17 @@ class CoreEventSubscriber
      */
     public static function onStaticUrlName_signin(): ?string
     {
-        return "Sign in or sign up";
+        return "Log in";
+    }
+
+    /**
+     * Name for signout page
+     *
+     * @return string|null
+     */
+    public static function onStaticUrlName_signout(): ?string
+    {
+        return "Log out";
     }
 
     public static function onStaticActions_user(array &$urls)

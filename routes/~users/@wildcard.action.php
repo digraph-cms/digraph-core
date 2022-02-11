@@ -4,6 +4,7 @@ use DigraphCMS\Content\Pages;
 use DigraphCMS\Context;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\UI\DataTables\PageTable;
+use DigraphCMS\UI\Format;
 use DigraphCMS\Users\Group;
 use DigraphCMS\Users\Users;
 
@@ -14,12 +15,16 @@ if (!$user) {
     throw new HttpError(404);
 }
 
-echo "<h1>" . $user->name() . "</h1>";
+echo "<h1>User profile: " . $user->name() . "</h1>";
 
-$groups = $user->groups();
-if (count($groups) > 1) {
+printf(
+    "<p>Signed up %s</p>",
+    Format::date($user->created())
+);
+
+if ($groups = $user->groups()) {
     echo "<section class='user-groups'>";
-    echo "<h2>User groups</h2>";
+    echo "<h2>Member of</h2>";
     echo "<ul>" . implode(PHP_EOL, array_map(
         function (Group $group) {
             return "<li>$group</li>";

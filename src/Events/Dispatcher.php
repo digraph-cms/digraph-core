@@ -2,6 +2,8 @@
 
 namespace DigraphCMS\Events;
 
+use DigraphCMS\CoreEventSubscriber;
+
 class Dispatcher
 {
     protected static $listeners = [];
@@ -152,7 +154,7 @@ class Dispatcher
         return array_filter(
             get_class_methods($object_or_class),
             function ($e) {
-                return 
+                return
                     substr($e, 0, 2) == 'on'
                     && preg_match('/^on([A-Z]+[a-z_]*[a-zA-Z0-9]*)+$/', $e);
             }
@@ -160,4 +162,8 @@ class Dispatcher
     }
 }
 
+// register core event subscriber
+Dispatcher::addSubscriber(CoreEventSubscriber::class);
+
+// register shutdown function so events can hook into it
 register_shutdown_function(Dispatcher::class . '::__shutdown');
