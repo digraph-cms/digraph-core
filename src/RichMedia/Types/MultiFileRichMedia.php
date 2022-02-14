@@ -78,7 +78,7 @@ class MultiFileRichMedia extends AbstractRichMedia
                 $wrapper->addChild((new A)
                     ->setAttribute('href', new URL("&$id=open"))
                     ->setAttribute('rel', 'nofollow')
-                    ->addChild('-- display contents --'));
+                    ->addChild('-- show files --'));
             } else {
                 // list all files
                 $list = "<ul>";
@@ -93,12 +93,6 @@ class MultiFileRichMedia extends AbstractRichMedia
                 }
                 $list .= "</ul>";
                 $wrapper->addChild($list);
-                // display link to hide all files
-                $url = Context::url();
-                $url->unsetArg($id);
-                $wrapper->addChild((new A)
-                    ->setAttribute('href', $url)
-                    ->addChild('-- hide contents --'));
             }
             $card->addChild($wrapper);
         }

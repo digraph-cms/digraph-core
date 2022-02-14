@@ -214,21 +214,17 @@ blockquote {
 }
 
 del {
-    background: var(--cue-danger-a20);
+    background: var(--cue-danger);
+    color: var(--cue-danger-inv);
 }
 
 mark {
-    background: var(--theme-highlight);
-    color: var(--theme-highlight-inv);
+    background: var(--cue-information);
+    color: var(--cue-information-inv);
 
     &.mark--safe {
         background: var(--cue-safe);
         color: var(--cue-safe-inv);
-    }
-
-    &.mark--info {
-        background: var(--cue-information);
-        color: var(--cue-information-inv);
     }
 
     &.mark--warning {
