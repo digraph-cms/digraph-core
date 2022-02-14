@@ -107,7 +107,6 @@ hr {
 }
 
 li {
-
     ul,
     ol {
         margin: 0;
@@ -124,7 +123,7 @@ code {
     font-family: $font-code;
 }
 
-pre>code {
+pre > code {
     display: block;
     overflow: auto;
 }
@@ -135,7 +134,7 @@ table {
     margin: 0;
     border-collapse: collapse;
 
-    pre>code {
+    pre > code {
         max-width: 25vw;
     }
 }
@@ -153,7 +152,7 @@ tr:nth-child(even) {
     }
 }
 
-thead+tbody {
+thead + tbody {
     tr:nth-child(even) {
         background: var(--theme-neutral-a20);
     }
@@ -184,7 +183,7 @@ th {
 
 th,
 td.header,
-thead>tr {
+thead > tr {
     font-family: $font-ui;
     text-align: left;
     background-color: var(--theme-accent) !important;
@@ -219,18 +218,27 @@ del {
 }
 
 mark {
-    background: var(--theme-accent-a20);
+    background: var(--theme-highlight);
+    color: var(--theme-highlight-inv);
 
-    &.mark--confirmation {
-        background: var(--cue-safe-a20);
+    &.mark--safe {
+        background: var(--cue-safe);
+        color: var(--cue-safe-inv);
     }
 
     &.mark--info {
-        background: var(--cue-information-a20);
+        background: var(--cue-information);
+        color: var(--cue-information-inv);
     }
 
     &.mark--warning {
-        background: var(--cue-warning-a20);
+        background: var(--cue-warning);
+        color: var(--cue-warning-inv);
+    }
+
+    &.mark--danger {
+        background: var(--cue-danger);
+        color: var(--cue-danger-inv);
     }
 }
 
@@ -240,10 +248,8 @@ ol {
 }
 
 #content {
-
     ul,
     ol {
-
         ul,
         ol {
             border-left: $border dotted var(--theme-neutral-a80);
