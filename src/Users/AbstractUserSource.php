@@ -36,9 +36,9 @@ abstract class AbstractUserSource
     public function providers(): array
     {
         return array_filter(
-            array_keys(Config::get('user_sources.' . $this->name . '.providers')),
-            function ($name) {
-                return Config::get('user_sources.' . $this->name . '.providers.' . $name . '.active');
+            array_keys(Config::get('user_sources.' . $this->name . '.providers') ?? []),
+            function ($provider) {
+                return Config::get('user_sources.' . $this->name . '.providers.' . $provider . '.active');
             }
         );
     }
