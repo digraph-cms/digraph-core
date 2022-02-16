@@ -44,31 +44,33 @@ class DigraphRichContentEditor {
         this.contentWrapper = this.getDivByClass('rich-content-editor__content-editor__editor');
         this.contentWrapper.appendChild(this.textareaWrapper);
         this.mediaWrapper = this.getDivByClass('rich-content-editor__media-editor');
-        // set up media editor expander and its listeners
-        this.mediaSizeToggle = document.createElement('div');
-        this.mediaSizeToggle.classList.add('rich-content-editor__media-editor__size-toggle');
-        this.mediaWrapper.appendChild(this.mediaSizeToggle);
-        this.mediaSizeToggle.addEventListener('click', (e) => {
-            if (this.mediaWrapper.classList.contains('rich-content-editor__media-editor--wide')) {
-                this.mediaWrapper.classList.remove('rich-content-editor__media-editor--wide');
-            } else {
-                this.mediaWrapper.classList.add('rich-content-editor__media-editor--wide');
-            }
-            var cm = this.getDivByClass('CodeMirror').CodeMirror;
-            cm.refresh();
-        });
-        // watch media wrapper for forced-wide toggle
-        // can be toggled by having an element with the class media-editor-force-wide
-        // or by including the HTML comment <!-- media-editor-force-wide -->
-        this.mediaWrapper.addEventListener('DigraphDOMReady', (e) => {
-            if (this.mediaWrapper.getElementsByClassName('media-editor-force-wide').length > 0 || this.mediaWrapper.innerHTML.includes('<!-- media-editor-force-wide -->')) {
-                this.mediaWrapper.classList.add('rich-content-editor__media-editor--wide-forced');
-            } else {
-                this.mediaWrapper.classList.remove('rich-content-editor__media-editor--wide-forced');
-            }
-            var cm = this.getDivByClass('CodeMirror').CodeMirror;
-            cm.refresh();
-        });
+        if (this.mediaWrapper) {
+            // set up media editor expander and its listeners
+            this.mediaSizeToggle = document.createElement('div');
+            this.mediaSizeToggle.classList.add('rich-content-editor__media-editor__size-toggle');
+            this.mediaWrapper.appendChild(this.mediaSizeToggle);
+            this.mediaSizeToggle.addEventListener('click', (e) => {
+                if (this.mediaWrapper.classList.contains('rich-content-editor__media-editor--wide')) {
+                    this.mediaWrapper.classList.remove('rich-content-editor__media-editor--wide');
+                } else {
+                    this.mediaWrapper.classList.add('rich-content-editor__media-editor--wide');
+                }
+                var cm = this.getDivByClass('CodeMirror').CodeMirror;
+                cm.refresh();
+            });
+            // watch media wrapper for forced-wide toggle
+            // can be toggled by having an element with the class media-editor-force-wide
+            // or by including the HTML comment <!-- media-editor-force-wide -->
+            this.mediaWrapper.addEventListener('DigraphDOMReady', (e) => {
+                if (this.mediaWrapper.getElementsByClassName('media-editor-force-wide').length > 0 || this.mediaWrapper.innerHTML.includes('<!-- media-editor-force-wide -->')) {
+                    this.mediaWrapper.classList.add('rich-content-editor__media-editor--wide-forced');
+                } else {
+                    this.mediaWrapper.classList.remove('rich-content-editor__media-editor--wide-forced');
+                }
+                var cm = this.getDivByClass('CodeMirror').CodeMirror;
+                cm.refresh();
+            });
+        }
         // set up event listeners for toolbar
         this.toolbar = this.getDivByClass('rich-content-editor__toolbar');
         this.toolbar.addEventListener('click', (e) => { this.toolbarClick(e); });
@@ -89,6 +91,7 @@ class DigraphRichContentEditor {
             } else {
                 cm.replaceSelection(e.insertWithSelection.replace('{content}', content));
             }
+            e.stopPropagation();
         });
         // insert keyboard listeners
         this.contentWrapper.addEventListener('keydown', (e) => {
