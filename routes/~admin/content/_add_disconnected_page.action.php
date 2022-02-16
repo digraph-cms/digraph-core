@@ -37,7 +37,8 @@ if (Pages::exists(Context::arg('uuid'))) {
 
 Cookies::required(['system', 'csrf']);
 
-$page = Context::page();
+echo "<h1>Add disconnected page</h1>";
+echo "<p>This form creates a page that does not have a parent. It is meant for creating pages that are disconnected from the main site map.</p>";
 
 $name = (new Field('Page name'))
     ->setRequired(true)
@@ -47,10 +48,16 @@ $content = (new RichContentField('Body content'))
     ->setPageUuid(Context::arg('uuid'))
     ->setRequired(true);
 
+$url = (new Field('Set URL pattern'))
+    ->setRequired(true)
+    ->setDefault('[name]')
+    ->addTip('Add a leading slash to make pattern relative to site root, otherwise it will be relative to the page\'s parent URL (should you create a link that gives this page a parent URL).');
+
 $form = (new FormWrapper('add-' . Context::arg('uuid')))
     ->addChild($name)
     ->addChild($content)
-    ->addCallback(function () use ($name, $content) {
+    ->addChild($url)
+    ->addCallback(function () use ($name, $content, $url) {
         DB::beginTransaction();
         // insert page
         $page = new Page(
@@ -59,11 +66,10 @@ $form = (new FormWrapper('add-' . Context::arg('uuid')))
                 'uuid' => Context::arg('uuid')
             ]
         );
+        $page->slugPattern($url->value());
         $page->name($name->value());
         $page->richContent('body', $content->value());
         $page->insert();
-        // create edge to parent
-        Pages::insertLink(Context::page()->uuid(), $page->uuid());
         // commit and redirect
         DB::commit();
         Notifications::flashConfirmation('Page created: ' . $page->url()->html());
