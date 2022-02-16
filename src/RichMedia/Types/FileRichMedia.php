@@ -6,10 +6,28 @@ use DigraphCMS\Content\Filestore;
 use DigraphCMS\Content\FilestoreFile;
 use DigraphCMS\HTML\A;
 use DigraphCMS\HTML\DIV;
+use DigraphCMS\RichMedia\RichMedia;
 use DigraphCMS\UI\Format;
+use Thunder\Shortcode\Shortcode\ShortcodeInterface;
 
 class FileRichMedia extends AbstractRichMedia
 {
+    public static function shortCode(ShortcodeInterface $s): ?string
+    {
+        $media = RichMedia::get($s->getBbCode());
+        if ($media instanceof FileRichMedia) {
+            if ($s->getParameter('inline') || $s->getContent()) {
+                return (new A)
+                    ->setAttribute('href', $media->file()->url())
+                    ->setAttribute('title', $media->file()->filename() . ' (' . Format::filesize($media->file()->bytes()) . ')')
+                    ->addChild($s->getContent() ?? $media->file()->filename());
+            } else {
+                return $media->card();
+            }
+        }
+        return null;
+    }
+
     public function card(): DIV
     {
         $file = $this->file();
