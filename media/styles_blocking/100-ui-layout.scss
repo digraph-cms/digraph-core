@@ -14,7 +14,7 @@ body {
 
 body>.action-menu,
 #header,
-#navbar,
+#main-nav,
 #breadcrumb,
 #notifications {
     margin: 0;
@@ -31,10 +31,6 @@ body>.action-menu,
         font-size: 1.5rem;
         margin: 0;
     }
-}
-
-#navbar {
-    padding: $grid/2;
 }
 
 .breadcrumb {

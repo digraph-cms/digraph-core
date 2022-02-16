@@ -1,0 +1,61 @@
+.menubar {
+    @include uncolored-links;
+    background-color: var(--theme-neutral);
+    color: var(--theme-neutral-inv);
+    font-family: $font-ui;
+    display: flex;
+
+    >* {
+        padding: $grid/2;
+    }
+}
+
+#main-nav {
+    background-color: var(--theme-highlight);
+    color: var(--theme-highlight-inv);
+}
+
+.menuitem {
+    position: relative;
+    padding: 0;
+
+    .menuitem__link {
+        display: block;
+        padding: $grid/2;
+        text-decoration: none;
+    }
+
+    &:hover,
+    &:focus,
+    &.menuitem--focus {
+        .menuitem__link {
+            background-color: var(--background);
+            color: var(--color);
+        }
+    }
+
+    &:active,
+    &.menuitem--active {
+        .menuitem__link {
+            background-color: var(--background-lighter);
+            color: var(--color);
+        }
+    }
+
+    .menuitem__dropdown {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        min-width: 100%;
+        max-width: 150%;
+        max-height: 40vh;
+        overflow: auto;
+    }
+}
+
+/* TODO: non-js styles for displaying dropdowns */
+
+/* TODO: js styles for displaying dropdowns */
+
+/* TODO: styling for nested dropdowns */

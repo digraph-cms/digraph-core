@@ -42,7 +42,7 @@ echo $table;
 $pattern = (new Field('Set new URL pattern'))
     ->setDefault(Context::page()->slugPattern())
     ->setRequired(true)
-    ->addTip('Add a trailing slash to make pattern relative to site root, otherwise it will be relative to the page\'s parent URL.');
+    ->addTip('Add a leading slash to make pattern relative to site root, otherwise it will be relative to the page\'s parent URL.');
 
 $unique = (new CheckboxField('Force URL to be unique'))
     ->setDefault(true)
