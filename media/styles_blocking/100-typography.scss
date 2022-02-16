@@ -216,11 +216,15 @@ blockquote {
 del {
     background: var(--cue-danger);
     color: var(--cue-danger-inv);
+    padding: $border;
 }
 
 mark {
+    @include uncolored-links;
     background: var(--cue-information);
     color: var(--cue-information-inv);
+    padding: $border;
+    text-decoration: underline;
 
     &.mark--safe {
         background: var(--cue-safe);

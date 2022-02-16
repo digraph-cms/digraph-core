@@ -8,7 +8,6 @@ use DigraphCMS\Content\Filestore;
 use DigraphCMS\Content\FilestoreFile;
 use DigraphCMS\Content\Page;
 use DigraphCMS\Content\Pages;
-use DigraphCMS\Context;
 use DigraphCMS\Digraph;
 use DigraphCMS\HTML\DIV;
 use DigraphCMS\HTML\Text;
@@ -17,10 +16,10 @@ use DigraphCMS\UI\Format;
 use DigraphCMS\UI\Toolbars\ToolbarLink;
 use DigraphCMS\UI\Toolbars\ToolbarSeparator;
 use DigraphCMS\UI\Toolbars\ToolbarSpacer;
-use DigraphCMS\URL\URL;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
 use Flatrr\FlatArrayTrait;
+use Thunder\Shortcode\Shortcode\ShortcodeInterface;
 
 abstract class AbstractRichMedia implements ArrayAccess
 {
@@ -36,6 +35,7 @@ abstract class AbstractRichMedia implements ArrayAccess
     abstract public static function class(): string;
     abstract public static function className(): string;
     abstract public static function description(): string;
+    abstract public static function shortCode(ShortcodeInterface $s): ?string;
 
     public function __construct(array $data = [], array $metadata = [])
     {
@@ -69,12 +69,7 @@ abstract class AbstractRichMedia implements ArrayAccess
                     Format::js_encode_object($this->insertTagOptions())
                 ))
         );
-        if ($this->provideInsertOptions()) {
-            $toolbar->addChild(
-                (new ToolbarLink('customize embed options', 'settings-applications', null, new URL('&options=' . $this->uuid())))
-                    ->setData('target', Context::arg('frame'))
-            );
-        }
+        // TODO: customizeable embedding links
         $toolbar->addChild(new ToolbarSpacer);
         $toolbar->addChild(new ToolbarSeparator);
         $toolbar->addChild(new Text(sprintf('<pre id="%s">%s</pre>', $id, $this->defaultTag())));
@@ -98,11 +93,6 @@ abstract class AbstractRichMedia implements ArrayAccess
     public function insertTagName(): string
     {
         return $this->tagName();
-    }
-
-    public function provideInsertOptions(): bool
-    {
-        return false;
     }
 
     public function defaultTag(): string

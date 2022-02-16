@@ -4,7 +4,7 @@ page_types:
 rich_media_types:
   bookmark: \DigraphCMS\RichMedia\Types\BookmarkRichMedia
   file: \DigraphCMS\RichMedia\Types\FileRichMedia
-  multifile: \DigraphCMS\RichMedia\Types\MultiFileRichMedia
+  zip: \DigraphCMS\RichMedia\Types\MultiFileRichMedia
   table: \DigraphCMS\RichMedia\Types\TableRichMedia
 
 cache:

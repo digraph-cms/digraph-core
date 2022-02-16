@@ -76,7 +76,7 @@ class RichContentField extends Field
     public function setDefault($default)
     {
         if ($default instanceof RichContent) {
-            $default = $default->value();
+            $default = $default->source();
         }
         parent::setDefault($default);
         return $this;
@@ -96,9 +96,11 @@ class RichContentField extends Field
     {
         $id = md5($this->id());
         $uuid = $this->pageUuid();
-        $this->mediaEditorFrame
-            ->setID("rm_$id")
-            ->setData('initial-source', new URL("/~api/v1/rich-media/?frame=rm_$id&uuid=$uuid"));
+        if ($this->mediaEditor) {
+            $this->mediaEditorFrame
+                ->setID("rm_$id")
+                ->setData('initial-source', new URL("/~api/v1/rich-media/?frame=rm_$id&uuid=$uuid"));
+        }
         $this->toolbarFrame
             ->setID("tb_$id")
             ->setData('initial-source', new URL("/~api/v1/rich-media/toolbar/?frame=tb_$id&uuid=$uuid"));

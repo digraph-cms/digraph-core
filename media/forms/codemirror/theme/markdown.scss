@@ -46,4 +46,20 @@ div[data-codemirror-mode="markdown"] {
         font-family: $font-code;
         font-weight: bold;
     }
+
+    .cm-link,
+    .cm-url {
+        color: var(--link-normal);
+    }
+
+    .cm-highlight {
+        background-color: var(--cue-information);
+        color: var(--cue-information-inv);
+        text-decoration: underline;
+    }
+
+    .cm-strikethrough {
+        background-color: var(--cue-danger);
+        color: var(--cue-danger-inv);
+    }
 }

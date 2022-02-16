@@ -68,11 +68,11 @@ class Theme
                     'active' => '#d32f2f'
                 ],
                 'cue' => [
-                    'interactive' => '#0091EA',
-                    'information' => '#00838F',
-                    'safe' => '#4caf50',
+                    'interactive' => '#039BE5',
+                    'information' => '#0097A7',
+                    'safe' => '#00C853',
                     'warning' => '#FFAB00',
-                    'danger' => '#FF3D00'
+                    'danger' => '#DD2C00'
                 ],
                 'theme' => [
                     'neutral' => '#9e9e9e',

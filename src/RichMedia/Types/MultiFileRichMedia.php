@@ -10,13 +10,31 @@ use DigraphCMS\FS;
 use DigraphCMS\HTML\A;
 use DigraphCMS\HTML\DIV;
 use DigraphCMS\Media\DeferredFile;
+use DigraphCMS\RichMedia\RichMedia;
 use DigraphCMS\UI\Format;
 use DigraphCMS\URL\URL;
+use Thunder\Shortcode\Shortcode\ShortcodeInterface;
 use ZipArchive;
 
 class MultiFileRichMedia extends AbstractRichMedia
 {
     protected $zipFile;
+
+    public static function shortCode(ShortcodeInterface $s): ?string
+    {
+        $media = RichMedia::get($s->getBbCode());
+        if ($media instanceof MultiFileRichMedia) {
+            if ($s->getParameter('inline') || $s->getContent()) {
+                return (new A)
+                    ->setAttribute('href', $media->zipFile()->url())
+                    ->setAttribute('title', $media->zipFile()->filename())
+                    ->addChild($s->getContent() ?? $media->zipFile()->filename());
+            } else {
+                return $media->card();
+            }
+        }
+        return null;
+    }
 
     public static function class(): string
     {
