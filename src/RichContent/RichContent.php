@@ -7,7 +7,6 @@ use DigraphCMS\Context;
 use DigraphCMS\Session\Session;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
-use ParsedownExtra;
 
 class RichContent
 {
@@ -168,17 +167,8 @@ class RichContent
     protected function parseSource(string $source): string
     {
         $html = ShortCodes::parse($source);
-        $html = static::parsedown()->text($html);
+        $html = Markdown::parse($html);
         return $html;
-    }
-
-    protected static function parsedown(): ParsedownExtra
-    {
-        static $parsedown;
-        if (!$parsedown) {
-            $parsedown = new ParsedownExtra();
-        }
-        return $parsedown;
     }
 
     public function __toString()

@@ -3,6 +3,7 @@
 namespace DigraphCMS\CodeMirror;
 
 use DigraphCMS\Config;
+use DigraphCMS\Media\Media;
 use DigraphCMS\UI\Theme;
 
 // automatically load theme assets
@@ -32,6 +33,10 @@ class CodeMirror
         }
         // load script
         static::$loadedScripts[] = $script;
-        Theme::addBlockingPageJs("/node_modules/codemirror/$script.js");
+        if (Media::locate("/forms/codemirror/$script.js")) {
+            Theme::addBlockingPageJs("/forms/codemirror/$script.js");
+        } else {
+            Theme::addBlockingPageJs("/node_modules/codemirror/$script.js");
+        }
     }
 }

@@ -37,8 +37,7 @@
         color: var(--cue-safe-inv) !important;
     }
 
-    &.button--info
-    &.button--information {
+    &.button--info &.button--information {
         background: var(--cue-information);
         color: var(--cue-information-inv) !important;
     }
@@ -174,7 +173,6 @@
 }
 
 @mixin uncolored-links {
-
     a,
     a:link,
     a:active,
@@ -182,10 +180,7 @@
     a:focus,
     a:visited {
         color: inherit;
-        text-decoration: none;
-    }
-
-    a:hover {
         text-decoration: underline;
+        font-weight: bold;
     }
 }

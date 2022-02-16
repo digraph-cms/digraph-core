@@ -6,7 +6,9 @@ Digraph.CodeMirror = {
         indentUnit: 4,
         extraKeys: {
             'Enter': 'newlineAndIndentContinueMarkdownList',
-            'Ctrl-/': 'toggleComment'
+            'Ctrl-/': 'toggleComment',
+            'Tab': 'indentMore',
+            'Shift-Tab': 'indentLess'
         }
     },
     fromTextArea: function (textarea, config = {}) {
@@ -80,6 +82,10 @@ document.addEventListener('DigraphDOMReady', (e) => {
 
     CodeMirror.commands.markdownToggleStrikethrough = function (cm) {
         _toggleBlock(cm, "strikethrough", "~~");
+    };
+
+    CodeMirror.commands.markdownToggleHighlight = function (cm) {
+        _toggleBlock(cm, "highlight", "==");
     };
 
     CodeMirror.commands.markdownToggleBulletList = function (cm) {
@@ -508,6 +514,9 @@ document.addEventListener('DigraphDOMReady', (e) => {
             } else if (type == "strikethrough") {
                 start = start.replace(/(\*\*|~~)(?![\s\S]*(\*\*|~~))/, "");
                 end = end.replace(/(\*\*|~~)/, "");
+            } else if (type == "highlight") {
+                start = start.replace(/(\*\*|\=\=|~~)(?![\s\S]*(\*\*|\=\=|~~))/, "");
+                end = end.replace(/(\*\*|\=\=|~~)/, "");
             }
             cm.replaceRange(start + end, {
                 line: startPoint.line,
@@ -517,7 +526,7 @@ document.addEventListener('DigraphDOMReady', (e) => {
                 ch: 99999999999999
             });
 
-            if (type == "bold" || type == "strikethrough") {
+            if (type == "bold" || type == "strikethrough" || type == "highlight") {
                 startPoint.ch -= 2;
                 if (startPoint !== endPoint) {
                     endPoint.ch -= 2;
@@ -538,6 +547,8 @@ document.addEventListener('DigraphDOMReady', (e) => {
                 text = text.split("_").join("");
             } else if (type == "strikethrough") {
                 text = text.split("~~").join("");
+            }else if (type == "highlight") {
+                text = text.split("==").join("");
             }
             cm.replaceSelection(start + text + end);
 
@@ -577,6 +588,8 @@ document.addEventListener('DigraphDOMReady', (e) => {
                 ret.quote = true;
             } else if (data === "strikethrough") {
                 ret.strikethrough = true;
+            } else if (data === "highlight") {
+                ret.highlight = true;
             } else if (data === "comment") {
                 ret.code = true;
             } else if (data === "link") {

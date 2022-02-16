@@ -39,9 +39,8 @@ if (!$only || in_array('format', $only)) {
             ->setShortcut('Ctrl-I'),
         (new ToolbarLink('Strikethrough', 'strikethrough', 'markdownToggleStrikethrough'))
             ->setShortcut('Ctrl-Shift-S'),
-        (new ToolbarLink('Highlight', 'highlight'))
-            ->setShortcut('Ctrl-Shift-M')
-            ->setAttribute('onclick', 'this.dispatchEvent(Digraph.RichContent.insertTagEvent("m"));'),
+        (new ToolbarLink('Highlight', 'highlight','markdownToggleHighlight'))
+            ->setShortcut('Ctrl-Shift-M'),
     ];
 }
 if (!$only || in_array('blocks', $only)) {

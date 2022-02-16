@@ -98,21 +98,4 @@ class ShortCodesListener
             return null;
         }
     }
-
-    /**
-     * Convert m codes to mark tags, optionally adding a class with the bbcode
-     *
-     * @param ShortcodeInterface $s
-     * @return string
-     */
-    public static function onShortCode_m(ShortcodeInterface $s): string
-    {
-        $class = '';
-        if ($c = $s->getBbCode()) {
-            if (preg_match('/^[a-z]+$/', $c)) {
-                $class = ' class="mark--' . $c . '"';
-            }
-        }
-        return sprintf('<mark%s>%s</mark>', $class, $s->getContent());
-    }
 }
