@@ -44,13 +44,14 @@ class Page implements ArrayAccess
 
     public function richContent(string $index, RichContent $content = null): ?RichContent
     {
-        if ($content) {
-            $this["content.$index"] = [
-                'value' => $content->value()
-            ];
+        // update content only if it is different from what exists
+        if ($content && !$content->compare($this["content.$index"])) {
+            unset($this["content.$index"]);
+            $this["content.$index"] = $content->array();
         }
+        // return RichContent object
         if ($this["content.$index"]) {
-            return new RichContent($this["content.$index.value"]);
+            return new RichContent($this["content.$index"]);
         } else {
             return null;
         }

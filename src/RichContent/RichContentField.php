@@ -76,7 +76,7 @@ class RichContentField extends Field
     public function setDefault($default)
     {
         if ($default instanceof RichContent) {
-            $default = $default->value();
+            $default = $default->source();
         }
         parent::setDefault($default);
         return $this;
