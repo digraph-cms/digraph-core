@@ -1,9 +1,21 @@
 aside {
-    background: var(--background-light);
+    background: var(--background-dark);
     padding: $grid;
     box-shadow: var(--shadow);
     box-sizing: border-box;
     max-width: $line-length;
+    border-left: $border solid var(--theme-neutral);
+
+    > h1 {
+        margin-left: -$grid;
+        margin-right: -$grid;
+        background: var(--theme-neutral);
+        color: var(--theme-neutral-inv);
+        padding: $grid;
+        &:first-child {
+            margin-top: -$grid;
+        }
+    }
 
     > * {
         &:first-child {
@@ -15,13 +27,13 @@ aside {
     }
 }
 
-@media (min-width: 1.5*$line-length) {
+@media (min-width: 1.75*$line-length) {
     #content {
         aside {
             float: right;
             margin: 0;
             margin-bottom: $grid;
-            margin-left: $grid*2;
+            margin-left: $grid * 2;
         }
         aside.aside--block {
             float: none;
