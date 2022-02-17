@@ -19,7 +19,7 @@
     position: relative;
     padding: 0;
 
-    .menuitem__link {
+    a.menuitem__link {
         display: block;
         padding: $grid/2;
         text-decoration: none;
@@ -28,9 +28,10 @@
     &:hover,
     &:focus,
     &.menuitem--focus {
-        .menuitem__link {
+        a.menuitem__link {
             background-color: var(--background);
             color: var(--color);
+            text-decoration: underline;
         }
     }
 
