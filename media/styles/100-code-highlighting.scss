@@ -6,12 +6,16 @@ code {
     background: var(--background-light);
 }
 
-pre>code {
+pre > code {
+    box-sizing: border-box;
     display: block;
     overflow-x: auto;
-    padding: $grid/2;
+    padding: $grid*0.75 $grid;
     box-shadow: var(--shadow);
     max-height: 75vh;
+    border-left: $border solid var(--theme-neutral);
+    max-width: $line-length;
+    line-height: 1.5;
 }
 
 /*!
@@ -32,14 +36,14 @@ pre>code {
 .hljs-template-variable,
 .hljs-type,
 .hljs-variable.language_ {
-    color: var(--cue-danger)
+    color: var(--cue-danger);
 }
 
 .hljs-title,
 .hljs-title.class_,
 .hljs-title.class_.inherited__,
 .hljs-title.function_ {
-    color: var(--cue-interactive)
+    color: var(--cue-interactive);
 }
 
 .hljs-attr,
@@ -52,62 +56,62 @@ pre>code {
 .hljs-selector-class,
 .hljs-selector-id,
 .hljs-variable {
-    color: var(--cue-interactive)
+    color: var(--cue-interactive);
 }
 
 .hljs-meta .hljs-string,
 .hljs-regexp,
 .hljs-string {
-    color: var(--cue-interactive)
+    color: var(--cue-interactive);
 }
 
 .hljs-built_in,
 .hljs-symbol {
-    color: var(--cue-warning)
+    color: var(--cue-warning);
 }
 
 .hljs-code,
 .hljs-comment,
 .hljs-formula {
-    color: var(--theme-neutral)
+    color: var(--theme-neutral);
 }
 
 .hljs-name,
 .hljs-quote,
 .hljs-selector-pseudo,
 .hljs-selector-tag {
-    color: var(--cue-safe)
+    color: var(--cue-safe);
 }
 
 .hljs-subst {
-    color: var(--theme-neutral)
+    color: var(--theme-neutral);
 }
 
 .hljs-section {
     color: var(--cue-interactive);
-    font-weight: 700
+    font-weight: 700;
 }
 
 .hljs-bullet {
-    color: var(--cue-interactive)
+    color: var(--cue-interactive);
 }
 
 .hljs-emphasis {
     color: var(--cue-interactive);
-    font-style: italic
+    font-style: italic;
 }
 
 .hljs-strong {
     color: var(--cue-interactive);
-    font-weight: 700
+    font-weight: 700;
 }
 
 .hljs-addition {
     color: var(--cue-safe);
-    background-color: var(--cue-safe-inv)
+    background-color: var(--cue-safe-inv);
 }
 
 .hljs-deletion {
     color: var(--cue-danger);
-    background-color: var(--cue-danger-inv)
+    background-color: var(--cue-danger-inv);
 }

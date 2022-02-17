@@ -11,10 +11,6 @@ h5,
 h6 {
     font-family: $font-header;
     line-height: $line-height-tight;
-
-    &:first-child {
-        margin-top: 0;
-    }
 }
 
 h1 {
@@ -171,14 +167,6 @@ td,
 th {
     padding: 0.5rem;
     vertical-align: middle;
-
-    :first-child {
-        margin-top: 0;
-    }
-
-    :last-child {
-        margin-bottom: 0;
-    }
 }
 
 th,
@@ -200,16 +188,22 @@ time {
 }
 
 blockquote {
-    background: var(--theme-neutral-a20);
+    box-sizing: border-box;
+    background: var(--background-light);
     padding: $grid;
     margin: $grid 0;
+    box-shadow: var(--shadow);
+    max-width: $line-length;
+    font-style: italic;
+    border-left: $border solid var(--theme-neutral);
 
-    *:first-child {
-        margin-top: 0;
-    }
-
-    *:last-child {
-        margin-bottom: 0;
+    > * {
+        &:first-child {
+            margin-top: 0;
+        }
+        &:last-child {
+            margin-bottom: 0;
+        }
     }
 }
 
@@ -256,7 +250,8 @@ ol {
         }
     }
 
-    p,li {
+    p,
+    li {
         max-width: $line-length;
     }
 }
