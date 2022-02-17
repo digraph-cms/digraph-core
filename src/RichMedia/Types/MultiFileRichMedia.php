@@ -20,20 +20,23 @@ class MultiFileRichMedia extends AbstractRichMedia
 {
     protected $zipFile;
 
-    public static function shortCode(ShortcodeInterface $s): ?string
+    /**
+     * Generate a shortcode rendering of this media
+     *
+     * @param ShortcodeInterface $code
+     * @param self $media
+     * @return string|null
+     */
+    public static function shortCode(ShortcodeInterface $code, $media): ?string
     {
-        $media = RichMedia::get($s->getBbCode());
-        if ($media instanceof MultiFileRichMedia) {
-            if ($s->getParameter('inline') || $s->getContent()) {
-                return (new A)
-                    ->setAttribute('href', $media->zipFile()->url())
-                    ->setAttribute('title', $media->zipFile()->filename())
-                    ->addChild($s->getContent() ?? $media->zipFile()->filename());
-            } else {
-                return $media->card();
-            }
+        if ($code->getParameter('inline') || $code->getContent()) {
+            return (new A)
+                ->setAttribute('href', $media->zipFile()->url())
+                ->setAttribute('title', $media->zipFile()->filename())
+                ->addChild($code->getContent() ?? $media->zipFile()->filename());
+        } else {
+            return $media->card();
         }
-        return null;
     }
 
     public static function class(): string

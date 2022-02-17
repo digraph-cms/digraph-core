@@ -255,4 +255,8 @@ ol {
             border-left: $border dotted var(--theme-neutral-a80);
         }
     }
+
+    p,li {
+        max-width: $line-length;
+    }
 }

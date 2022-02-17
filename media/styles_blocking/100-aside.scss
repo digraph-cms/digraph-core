@@ -1,0 +1,31 @@
+aside {
+    background: var(--background-light);
+    padding: $grid;
+    box-shadow: var(--shadow);
+    box-sizing: border-box;
+    max-width: $line-length;
+
+    > * {
+        &:first-child {
+            margin-top: 0;
+        }
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}
+
+@media (min-width: 1.5*$line-length) {
+    #content {
+        aside {
+            float: right;
+            margin: 0;
+            margin-bottom: $grid;
+            margin-left: $grid*2;
+        }
+        aside.aside--block {
+            float: none;
+            margin: $grid 0;
+        }
+    }
+}

@@ -6,6 +6,7 @@ rich_media_types:
   file: \DigraphCMS\RichMedia\Types\FileRichMedia
   zip: \DigraphCMS\RichMedia\Types\MultiFileRichMedia
   table: \DigraphCMS\RichMedia\Types\TableRichMedia
+  aside: \DigraphCMS\RichMedia\Types\AsideRichMedia
 
 cache:
   path: ${paths.base}/cache

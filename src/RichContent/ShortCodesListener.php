@@ -7,6 +7,7 @@ use DigraphCMS\Content\Page;
 use DigraphCMS\Content\Pages;
 use DigraphCMS\HTML\A;
 use DigraphCMS\HTML\Text;
+use DigraphCMS\RichMedia\RichMedia;
 use DigraphCMS\URL\URL;
 use DigraphCMS\URL\WaybackMachine;
 use Thunder\Shortcode\Shortcode\ShortcodeInterface;
@@ -25,7 +26,9 @@ class ShortCodesListener
     public static function onShortCode(ShortcodeInterface $s): ?string
     {
         if ($class = Config::get('rich_media_types.'.$s->getName())) {
-            return $class::shortCode($s);
+            if (($media = RichMedia::get($s->getBbCode())) instanceof $class) {
+                return $class::shortCode($s, $media);
+            }
         }
         return null;
     }

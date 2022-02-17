@@ -6,26 +6,28 @@ use DigraphCMS\Content\Filestore;
 use DigraphCMS\Content\FilestoreFile;
 use DigraphCMS\HTML\A;
 use DigraphCMS\HTML\DIV;
-use DigraphCMS\RichMedia\RichMedia;
 use DigraphCMS\UI\Format;
 use Thunder\Shortcode\Shortcode\ShortcodeInterface;
 
 class FileRichMedia extends AbstractRichMedia
 {
-    public static function shortCode(ShortcodeInterface $s): ?string
+    /**
+     * Generate a shortcode rendering of this media
+     *
+     * @param ShortcodeInterface $code
+     * @param self $media
+     * @return string|null
+     */
+    public static function shortCode(ShortcodeInterface $code, $media): ?string
     {
-        $media = RichMedia::get($s->getBbCode());
-        if ($media instanceof FileRichMedia) {
-            if ($s->getParameter('inline') || $s->getContent()) {
-                return (new A)
-                    ->setAttribute('href', $media->file()->url())
-                    ->setAttribute('title', $media->file()->filename() . ' (' . Format::filesize($media->file()->bytes()) . ')')
-                    ->addChild($s->getContent() ?? $media->file()->filename());
-            } else {
-                return $media->card();
-            }
+        if ($code->getParameter('inline') || $code->getContent()) {
+            return (new A)
+                ->setAttribute('href', $media->file()->url())
+                ->setAttribute('title', $media->file()->filename() . ' (' . Format::filesize($media->file()->bytes()) . ')')
+                ->addChild($code->getContent() ?? $media->file()->filename());
+        } else {
+            return $media->card();
         }
-        return null;
     }
 
     public function card(): DIV

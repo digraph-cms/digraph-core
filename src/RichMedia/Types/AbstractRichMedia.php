@@ -35,7 +35,7 @@ abstract class AbstractRichMedia implements ArrayAccess
     abstract public static function class(): string;
     abstract public static function className(): string;
     abstract public static function description(): string;
-    abstract public static function shortCode(ShortcodeInterface $s): ?string;
+    abstract public static function shortCode(ShortcodeInterface $code, $media): ?string;
 
     public function __construct(array $data = [], array $metadata = [])
     {

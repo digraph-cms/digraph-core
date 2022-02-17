@@ -4,6 +4,15 @@
     position: relative;
 }
 
+@mixin clearfix {
+    &:after {
+        content: "";
+        display: block;
+        clear: both;
+        height: 100%;
+    }
+}
+
 @mixin button {
     display: block;
     box-sizing: border-box;

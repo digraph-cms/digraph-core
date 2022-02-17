@@ -1,18 +1,18 @@
 body {
     margin: 0;
 
-    >.action-menu {
+    > .action-menu {
         padding: 0;
     }
 
-    >#content {
+    > #content {
         > :first-child {
             margin-top: 0;
         }
     }
 }
 
-body>.action-menu,
+body > .action-menu,
 #header,
 #main-nav,
 #breadcrumb,
@@ -23,7 +23,7 @@ body>.action-menu,
 #header {
     @include uncolored-links;
 
-    padding: $grid*2 $grid;
+    padding: $grid * 2 $grid;
     background: var(--theme-accent);
     color: var(--theme-accent-inv);
 
@@ -83,11 +83,11 @@ body>.action-menu,
 #notifications {
     padding: 0 $grid;
 
-    >h1 {
+    > h1 {
         display: none;
     }
 
-    >.notification {
+    > .notification {
         margin: $grid/2 0;
     }
 }
@@ -127,14 +127,15 @@ span.notification {
 }
 
 #content {
+    @include clearfix;
     margin: 0;
-    padding: $grid;
+    padding: $grid $grid * 2;
     > h1 {
         font-size: 3rem;
         padding-bottom: $grid;
         border-bottom: $grid/2 solid var(--background-light);
         margin-top: $grid !important;
-        margin-bottom: $grid*2;
+        margin-bottom: $grid * 2;
     }
 }
 

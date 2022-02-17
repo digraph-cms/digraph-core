@@ -5,19 +5,21 @@ namespace DigraphCMS\RichMedia\Types;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use DigraphCMS\Digraph;
 use DigraphCMS\RichContent\RichContent;
-use DigraphCMS\RichMedia\RichMedia;
 use Thunder\Shortcode\Shortcode\ShortcodeInterface;
 
 class TableRichMedia extends AbstractRichMedia
 {
 
-    public static function shortCode(ShortcodeInterface $s): ?string
+    /**
+     * Generate a shortcode rendering of this media
+     *
+     * @param ShortcodeInterface $code
+     * @param self $media
+     * @return string|null
+     */
+    public static function shortCode(ShortcodeInterface $code, $table): ?string
     {
-        $table = RichMedia::get($s->getBbCode());
-        if ($table instanceof TableRichMedia) {
-            return $table->render();
-        }
-        return null;
+        return $table->render();
     }
 
     public static function class(): string
