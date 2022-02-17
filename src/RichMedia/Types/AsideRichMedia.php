@@ -45,6 +45,9 @@ class AsideRichMedia extends AbstractRichMedia
             ->addChild($media->content()->html())
             ->addClass('aside-media')
             ->setID('aside-' . $media->uuid());
+        if ($code->getParameter('block','false') == 'true') {
+            $aside->addClass('aside--block');
+        }
         return $aside;
     }
 }

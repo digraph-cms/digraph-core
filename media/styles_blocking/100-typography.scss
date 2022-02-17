@@ -9,32 +9,35 @@ h3,
 h4,
 h5,
 h6 {
+    font-size: 1em;
     font-family: $font-header;
     line-height: $line-height-tight;
+    margin: $grid 0;
 }
 
-h1 {
-    font-size: 2em;
-}
-
-h2 {
-    font-size: 1.5em;
-}
-
-h3 {
-    font-size: 1.25em;
+h5 {
+    font-size: 1.06125em;
+    margin-top: $grid * 2;
 }
 
 h4 {
     font-size: 1.125em;
+    margin-top: $grid * 3;
 }
 
-h5 {
-    font-size: 1em;
+h3 {
+    font-size: 1.25em;
+    margin-top: $grid * 4;
 }
 
-h6 {
-    font-size: 1em;
+h2 {
+    font-size: 1.5em;
+    margin-top: $grid * 5;
+}
+
+h1 {
+    font-size: 2em;
+    margin-top: $grid * 6;
 }
 
 section,
@@ -42,6 +45,15 @@ nav,
 aside,
 figure,
 article {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        margin-top: $grid;
+    }
+
     h1 {
         font-size: 1.5em;
     }
@@ -55,7 +67,7 @@ article {
     }
 
     h4 {
-        font-size: 1em;
+        font-size: 1.06125em;
     }
 
     h5 {
@@ -78,12 +90,6 @@ blockquote,
 dl,
 ul,
 ol,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
 hr,
 .notification,
 .paginator,

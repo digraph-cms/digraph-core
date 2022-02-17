@@ -145,6 +145,10 @@ span.notification {
         border-bottom: $grid/2 solid var(--background-light);
         margin-bottom: $grid * 2;
     }
+    .action-menu + h1,
+    > h1:first-child {
+        margin-top: 0;
+    }
     > * {
         &:first-child {
             margin-top: 0;
