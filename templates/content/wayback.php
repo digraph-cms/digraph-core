@@ -17,7 +17,7 @@ $clickableURL = 'http://'.$wb->originalURL();
 </p>
 
 <p>
-    <a href="<?php echo $wb->wbURL(); ?>" class="button">Click here to view archived copy</a><br>
+    <a href="<?php echo $wb->wbURL(); ?>" class="button button--inverted">View archived copy of <code style='color:inherit;background:transparent;'><?php echo $wb->originalURL(); ?></code></a><br>
     <small>
         This snapshot was recorded <?php echo Format::date($wb->wbTime()); ?>.
     </small>
