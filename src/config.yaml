@@ -3,10 +3,11 @@ page_types:
 
 rich_media_types:
   bookmark: \DigraphCMS\RichMedia\Types\BookmarkRichMedia
+  content: \DigraphCMS\RichMedia\Types\ContentRichMedia
+  aside: \DigraphCMS\RichMedia\Types\AsideRichMedia
   file: \DigraphCMS\RichMedia\Types\FileRichMedia
   zip: \DigraphCMS\RichMedia\Types\MultiFileRichMedia
   table: \DigraphCMS\RichMedia\Types\TableRichMedia
-  aside: \DigraphCMS\RichMedia\Types\AsideRichMedia
 
 cache:
   path: ${paths.base}/cache

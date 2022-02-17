@@ -6,7 +6,7 @@
     gap: var(--border);
     border: var(--border) solid var(--theme-neutral);
     overflow: hidden;
-    max-height: 75vh;
+    height: 80vh;
 }
 
 .rich-content-editor__content-editor {
@@ -27,7 +27,6 @@
     .rich-content-editor__content-editor__editor {
         overflow: auto;
         flex-grow: 1;
-        min-height: 10rem;
     }
 
     .CodeMirror {
@@ -37,7 +36,7 @@
         background: var(--background);
     }
 
-    >textarea {
+    > textarea {
         border: 0;
         display: block;
         margin: 0;
@@ -50,6 +49,10 @@
     overflow: auto;
     padding-left: $grid;
     position: relative;
+
+    .rich-content-editor__dynamic-editor {
+        height: 50vh;
+    }
 
     .rich-content-editor__media-editor__size-toggle {
         position: absolute;
@@ -73,7 +76,7 @@
 
         &:before {
             @include material-icon;
-            content: 'chevron_left';
+            content: "chevron_left";
         }
     }
 }
@@ -83,13 +86,13 @@
     flex-basis: 100%;
 
     .rich-content-editor__media-editor__size-toggle:before {
-        content: 'chevron_right';
+        content: "chevron_right";
     }
 }
 
 .rich-content-editor__media-editor--wide {
     .rich-content-editor__media-editor__size-toggle:before {
-        content: 'chevron_right';
+        content: "chevron_right";
     }
 }
 
@@ -104,7 +107,7 @@
 .rich-content-editor__media-editor-frame {
     height: 100%;
 
-    >.tab-interface {
+    > .tab-interface {
         height: 100%;
         margin: 0;
         margin-left: $border;
