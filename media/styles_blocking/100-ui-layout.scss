@@ -38,7 +38,8 @@ body > .action-menu,
 
     font-size: smaller;
     padding: $border $grid;
-    background-color: var(--theme-neutral-a20);
+    background-color: var(--background-darker);
+    color: var(--color);
     font-family: $font-ui;
 
     h1 {
@@ -63,13 +64,21 @@ body > .action-menu,
 
         a {
             display: inline-block;
-            padding: 0.25em;
+            padding: 0.25em 0;
+            opacity: 0.5;
+            text-decoration: none !important;
+            font-weight: normal !important;
+            &:hover {
+                opacity: 1;
+                text-decoration: underline !important;
+            }
         }
 
         &:after {
             display: block;
             content: "/";
-            padding: 0.25em;
+            padding: 0.25em 0.5em;
+            opacity: 0.25;
         }
 
         &.breadcrumb-current {
