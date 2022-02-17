@@ -22,14 +22,14 @@ echo new ButtonMenu(null, [
         function () use (&$redirect) {
             $redirect = Context::fields()['yes_url'];
         },
-        ['button--confirmation']
+        ['button--safe']
     ),
     new ButtonMenuButton(
         'Sign out when I close my browser',
         function () use (&$redirect) {
             $redirect = Context::fields()['no_url'];
         },
-        ['button--info']
+        ['button--neutral']
     )
 ]);
 
