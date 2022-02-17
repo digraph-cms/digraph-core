@@ -136,7 +136,7 @@ span.notification {
         border-bottom: $grid/2 solid var(--background-light);
         margin-bottom: $grid * 2;
     }
-    * {
+    > * {
         &:first-child {
             margin-top: 0;
         }
