@@ -40,8 +40,8 @@ use DigraphCMS\UI\UserMenu;
     ?>
     <main id="content">
         <?php
-        echo new ActionMenu(Context::url(), false);
         Notifications::printSection();
+        echo new ActionMenu(Context::url(), false);
         Breadcrumb::print();
         echo '<div id="main-content">';
         echo Context::response()->content();
