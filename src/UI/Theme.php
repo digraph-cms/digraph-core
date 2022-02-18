@@ -135,6 +135,35 @@ class Theme
         }
     }
 
+    public static function setColorMode(?string $mode)
+    {
+        if ($mode !== 'dark' && $mode != 'light') {
+            $mode = null;
+        }
+        if ($user = Users::current()) {
+            unset($user['ui.colormode']);
+            $user['ui.colormode'] = $mode;
+            $user->update();
+        } else {
+            $cookie = Cookies::get('ui', 'color') ?? ['color' => null, 'colorblindmode' => null];
+            $cookie['color'] = $mode;
+            Cookies::set('ui', 'color', $cookie);
+        }
+    }
+
+    public static function setcolorblindMode(?bool $mode)
+    {
+        if ($user = Users::current()) {
+            unset($user['ui.colorblindmode']);
+            $user['ui.colorblindmode'] = $mode;
+            $user->update();
+        } else {
+            $cookie = Cookies::get('ui', 'color') ?? ['color' => null, 'colorblindmode' => null];
+            $cookie['colorblindmode'] = $mode;
+            Cookies::set('ui', 'color', $cookie);
+        }
+    }
+
     public static function colorMode(): ?string
     {
         if ($user = Users::current()) {
@@ -145,7 +174,7 @@ class Theme
         return @Cookies::get('ui', 'color')['color'];
     }
 
-    public static function colorblindMode(): ?string
+    public static function colorblindMode(): ?bool
     {
         if ($user = Users::current()) {
             if ($user['ui.colorblindmode'] !== null) {

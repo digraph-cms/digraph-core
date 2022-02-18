@@ -2,85 +2,73 @@
 
 namespace DigraphCMS\UI;
 
-use DigraphCMS\Cache\UserCacheNamespace;
-use DigraphCMS\Config;
-use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
+use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\Session\Session;
+use DigraphCMS\UI\MenuBar\MenuBar;
+use DigraphCMS\UI\MenuBar\MenuItem;
+use DigraphCMS\UI\MenuBar\MenuItemFrame;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Users;
 
-class UserMenu extends ActionMenu
+class UserMenu extends MenuBar
 {
-    public function __construct(URL $url)
+    protected $themeItem, $userItem, $loginItem, $logoutItem;
+
+    public function __construct()
     {
-        $this->url = $url;
-        $this->user = true;
-        $this->cache = new UserCacheNamespace('user-menu/' . (Session::user() ?? 'guest'));
+        if ($user = Users::current()) {
+            // actions for authenticated user
+            $this->userItem = $this->addURL($user->profile())
+                ->addClass('menuitem--user');
+            $this->logoutItem = $this->addURL(Users::signoutUrl(Context::url()))
+                ->addClass('menuitem--logout');
+            // dispatch user event
+            Dispatcher::dispatchEvent('onUserMenu_user', [$this]);
+        } else {
+            // actions for non-authenticated user
+            $this->loginItem = $this->addURL(Users::signinUrl(Context::url()))
+                ->addClass('menuitem--login');
+            // dispatch guest event
+            Dispatcher::dispatchEvent('onUserMenu_guest', [$this]);
+        }
+        // add color settings
+        $this->addChild(
+            $this->themeItem = (new MenuItemFrame(null, 'Theme', new URL('/~api/v1/theme-menu.php')))
+                ->addClass('menuitem--theme')
+        );
+        // global events for adding to menu
+        Dispatcher::dispatchEvent('onUserMenu', [$this]);
     }
 
-    protected function printUserActions()
+    public function themeItem(): MenuItemFrame
     {
-        if (!$this->user) {
-            return;
-        }
-        $user = Users::current();
-        if ($user) {
-            echo "<div class='action-menu__user-actions action-menu__user-actions--signedin'><h2>$user</h2><nav><ul>";
-            echo "<li class='profile-link'><a href='" . $user->profile() . "'>My profile</a></li>";
-            $actions = array_filter(
-                Router::staticActions('user'),
-                function (URL $url) {
-                    return substr($url->action(), 0, 1) != '_';
-                }
-            );
-            foreach ($actions as $url) {
-                echo "<li>" . $url->html([], true) . "</li>";
-            }
-            echo "<li class='signout-link'>" . Users::signoutUrl()->html(['signout-link']) . "</li>";
-            echo "</ul></nav></div>";
-        } elseif (Config::get('ui.action-menu.guestui')) {
-            $user = Users::guest();
-            echo "<div class='action-menu__user-actions action-menu__user-actions--guest'><h2>$user</h2><nav><ul>";
-            if ($this->url->route() != 'signin') {
-                echo "<li class='signin-link'>" . Users::signinUrl()->html(['signin-link']) . "</li>";
-            }
-            $actions = array_filter(
-                Router::staticActions('guest'),
-                function (URL $url) {
-                    return substr($url->action(), 0, 1) != '_';
-                }
-            );
-            foreach ($actions as $url) {
-                echo "<li>" . $url->html([], true) . "</li>";
-            }
-            echo "</ul></nav></div>";
-        }
+        return $this->themeItem;
     }
 
-    public function __toString()
+    public function userItem(): ?MenuItem
     {
-        return $this->cache->get(
-            md5(serialize(Context::url())),
-            function () {
-                ob_start();
-                $class = Session::user() ? 'signed-in' : 'guest';
-                echo "<nav class='action-menu action-menu--user-menu action-menu--$class'><h1>User menu</h1>";
-                // output buffer contents separately
-                ob_start();
-                $this->printUserActions();
-                // return empty if no contents
-                if (!ob_get_length()) {
-                    ob_end_clean();
-                    ob_end_clean();
-                    return '';
-                } else {
-                    ob_end_flush();
-                }
-                // close up and return
-                echo "</nav>";
-                return ob_get_clean();
-            }
-        ) ?? '';
+        return $this->userItem;
+    }
+
+    public function loginItem(): ?MenuItem
+    {
+        return $this->loginItem;
+    }
+
+    public function logoutItem(): ?MenuItem
+    {
+        return $this->logoutItem;
+    }
+
+    public function classes(): array
+    {
+        return array_merge(
+            parent::classes(),
+            [
+                'menubar--usermenu',
+                Session::user() ? 'menubar--usermenu--user' : 'menubar--usermenu--guest'
+            ]
+        );
     }
 }

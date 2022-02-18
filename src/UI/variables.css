@@ -4,8 +4,10 @@
 }
 
 /* dark mode variables */
-.colors--dark {
-    /*!variables(dark)*/
+@media screen {
+    .colors--dark {
+        /*!variables(dark)*/
+    }
 }
 
 /* colorblind variables */
@@ -14,7 +16,7 @@
 }
 
 /* overrides for when media query requests dark colors */
-@media (prefers-color-scheme: dark) {
+@media screen and (prefers-color-scheme: dark) {
     /* dark by default */
     :root {
         /*!variables(dark)*/

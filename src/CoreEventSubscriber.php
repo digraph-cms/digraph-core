@@ -341,13 +341,11 @@ class CoreEventSubscriber
      */
     public static function onStaticActions_user(array &$urls)
     {
-        $urls[] = new URL('/~color/');
         $urls[] = new URL('/~admin/');
     }
 
     public static function onStaticActions_guest(array &$urls)
     {
-        $urls[] = new URL('/~color/');
     }
 
     /**

@@ -138,7 +138,7 @@ Digraph.state = {
                 if (document.getElementById('notifications') && doc.getElementById('notifications')) {
                     document.getElementById('notifications').innerHTML += doc.getElementById('notifications').innerHTML;
                 }
-                const docElement = doc.getElementById(frame.getAttribute('id'));
+                const docElement = doc.getElementById(frame.dataset.id ?? frame.getAttribute('id'));
                 if (!docElement) {
                     if (frame.classList.contains('navigation-frame--hide-if-missing')) {
                         frame.style.display = 'none';

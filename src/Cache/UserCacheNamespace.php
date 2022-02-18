@@ -8,6 +8,6 @@ class UserCacheNamespace extends CacheNamespace
 {
     public function __construct(string $name)
     {
-        parent::__construct($name . "/" . Session::user());
+        parent::__construct("user/" . (Session::user() ?? 'guest') . "/" . $name);
     }
 }

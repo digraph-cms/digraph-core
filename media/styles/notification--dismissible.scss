@@ -1,0 +1,32 @@
+.notification--dismissible {
+    display: flex;
+    .notification__content {
+        flex-grow: 1;
+    }
+    .notification__dismiss {
+        cursor: pointer;
+        text-decoration: none;
+        border-radius: $border-radius;
+        &:hover {
+            background: var(--cue-warning);
+            color: var(--cue-warning-inv);
+            text-decoration: none;
+        }
+        &:after {
+            @include material-icon;
+            content: "clear";
+            display: inline-block;
+            font-weight: bold;
+            padding: $grid/4 $grid/2;
+        }
+    }
+    // color variation for warning notifications
+    &.notification--warning {
+        .notification__dismiss {
+            &:hover {
+                background: var(--cue-danger);
+                color: var(--cue-danger-inv);
+            }
+        }
+    }
+}

@@ -24,26 +24,27 @@ class MenuItem extends SPAN
 
     public function children(): array
     {
+        $children = [];
         // set up link tag
         $a = (new A)
             ->addClass('menuitem__link')
-            ->addChild($this->label);
+            ->addChild($this->label)
+            ->setAttribute('tabindex', '0');
         if ($this->url) {
             $a->setAttribute('href', $this->url);
         }
-        $link = [$a];
+        $children[] = $a;
         // set up dropdown content if necessary
-        $dropdown = [];
         if (parent::children()) {
             $d = (new DIV)
                 ->addClass('menuitem__dropdown');
             foreach (parent::children() as $c) {
-                $d->addChild($d);
+                $d->addChild($c);
             }
-            $dropdown[] = $d;
+            $children[] = $d;
         }
         // merge and return
-        return array_merge($link, $dropdown);
+        return $children;
     }
 
     public function classes(): array

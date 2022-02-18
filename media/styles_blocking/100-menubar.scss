@@ -5,7 +5,7 @@
     font-family: $font-ui;
     display: flex;
 
-    >* {
+    > * {
         padding: $grid/2;
     }
 }
@@ -27,11 +27,14 @@
 
     &:hover,
     &:focus,
+    &:focus-within,
     &.menuitem--focus {
         a.menuitem__link {
             background-color: var(--background);
             color: var(--color);
-            text-decoration: underline;
+            &:link {
+                text-decoration: underline;
+            }
         }
     }
 
@@ -49,14 +52,77 @@
         top: 100%;
         left: 0;
         min-width: 100%;
-        max-width: 150%;
-        max-height: 40vh;
-        overflow: auto;
+        padding: $grid/2;
+        box-shadow: var(--shadow);
+        background-color: var(--background-dark);
+        color: var(--color);
+        z-index: 100;
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-size: inherit;
+            margin: 0;
+        }
+        h1 {
+            font-size: larger;
+        }
+        h2 {
+            margin-top: $grid;
+        }
+        .button-menu {
+            margin: 0;
+        }
+        .navigation-frame {
+            > *:last-child {
+                margin-bottom: 0;
+            }
+        }
+    }
+    &:last-child {
+        .menuitem__dropdown {
+            left: auto;
+            right: 0;
+        }
     }
 }
 
-/* TODO: non-js styles for displaying dropdowns */
-
-/* TODO: js styles for displaying dropdowns */
+/* styles for displaying dropdowns */
+.menuitem--dropdown {
+    .menuitem__link {
+        &:after {
+            @include material-icon;
+            display: inline-block;
+            content: "unfold_more";
+            text-decoration: none !important;
+            font-size: larger;
+            margin-left: $grid/4;
+        }
+    }
+    &:hover,
+    &:focus,
+    &:focus-within,
+    &.menuitem--focus {
+        a.menuitem__link {
+            &:after {
+                @include material-icon;
+                content: "unfold_less";
+            }
+        }
+        .menuitem__dropdown {
+            display: block;
+        }
+    }
+    // give actually hovered/focused dropdown a slightly higher z index
+    &:hover,
+    &:focus,
+    &:focus-within {
+        .menuitem__dropdown {
+            z-index: 101;
+        }
+    }
+}
 
 /* TODO: styling for nested dropdowns */

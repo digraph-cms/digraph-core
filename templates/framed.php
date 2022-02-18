@@ -23,7 +23,9 @@ use DigraphCMS\UI\Notifications;
 <body class='template-framed'>
     <?php Notifications::printSection(); ?>
     <main id="content">
-        <?php echo Context::response()->content(); ?>
+        <div id="main-content">
+            <?php echo Context::response()->content(); ?>
+        </div>
     </main>
 </body>
 
