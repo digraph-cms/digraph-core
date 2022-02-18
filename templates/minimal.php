@@ -31,13 +31,17 @@ use DigraphCMS\UI\UserMenu;
     echo new UserMenu(Context::url());
     echo Templates::render('sections/header.php');
     echo Templates::render('sections/navbar.php');
-    Notifications::printSection();
-    if (Context::response()->status() == 200) {
-        Breadcrumb::print();
-    }
     ?>
     <main id="content">
-        <?php echo Context::response()->content(); ?>
+        <?php
+        Notifications::printSection();
+        if (Context::response()->status() == 200) {
+            Breadcrumb::print();
+        }
+        echo '<div id="main-content">';
+        echo Context::response()->content();
+        echo '</div>';
+        ?>
     </main>
     <?php
     echo Templates::render('sections/footer.php');
