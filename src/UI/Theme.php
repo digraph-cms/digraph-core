@@ -170,12 +170,9 @@ class Theme
     public static function variables(string $mode = 'light'): array
     {
         if (static::$variables_cache === null) {
-            static::$variables_cache = static::compileVariables(
-                static::$variables,
-                strpos($mode, 'dark') !== false
-            );
+            static::$variables_cache = static::compileVariables(static::$variables);
         }
-        return static::$variables_cache[$mode] ?? [];
+        return @static::$variables_cache[$mode] ?? [];
     }
 
     public static function renderVariableCss()
@@ -212,10 +209,10 @@ class Theme
         );
     }
 
-    protected static function compileVariables(array $variables, $invertColorVariations): array
+    protected static function compileVariables(array $variables): array
     {
         foreach ($variables as $mode => $vs) {
-            $variables[$mode] = static::compileVariableList($vs, '', $invertColorVariations);
+            $variables[$mode] = static::compileVariableList($vs, '', strpos($mode, 'dark') !== false);
         }
         return $variables;
     }
@@ -255,18 +252,18 @@ class Theme
             // normal meaning of light/dark
             $colors = [
                 'light' => (new Hex($color))->lighten(2),
-                'dark' => (new Hex($color))->darken(2),
-                'lighter' => (new Hex($color))->lighten(4),
-                'darker' => (new Hex($color))->darken(4),
+                'dark' => (new Hex($color))->darken(5),
+                'lighter' => (new Hex($color))->lighten(5),
+                'darker' => (new Hex($color))->darken(10),
                 'bright' => (new Hex($color))->brighten(15),
             ];
         } else {
             // inverted for dark mode
             $colors = [
                 'dark' => (new Hex($color))->lighten(2),
-                'light' => (new Hex($color))->darken(2),
-                'darker' => (new Hex($color))->lighten(4),
-                'lighter' => (new Hex($color))->darken(4),
+                'light' => (new Hex($color))->darken(5),
+                'darker' => (new Hex($color))->lighten(5),
+                'lighter' => (new Hex($color))->darken(10),
                 'bright' => (new Hex($color))->brighten(15),
             ];
         }
