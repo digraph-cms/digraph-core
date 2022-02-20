@@ -1,6 +1,5 @@
 <?php
 
-use DigraphCMS\Content\Pages;
 use DigraphCMS\Content\Slugs;
 use DigraphCMS\Context;
 use DigraphCMS\UI\Format;
@@ -9,7 +8,6 @@ use DigraphCMS\URL\URL;
 $page = Context::page();
 
 ?>
-<h1>Page metadata</h1>
 <table>
     <tr>
         <th>Created</th>

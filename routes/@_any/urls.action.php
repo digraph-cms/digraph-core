@@ -1,4 +1,3 @@
-<h1>Page URLs</h1>
 <?php
 
 use DigraphCMS\Content\Slugs;

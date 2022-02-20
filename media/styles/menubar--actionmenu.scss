@@ -1,0 +1,28 @@
+.menubar--actionmenu {
+    background-color: transparent;
+    color: inherit;
+    border-top: $border solid var(--cue-interactive);
+
+    .menuitem {
+
+        &:hover,
+        &:focus,
+        &:focus-within,
+        &.menuitem--focus {
+            >a.menuitem__link {
+                background-color: var(--background-darker);
+                color: var(--color);
+
+                &:link {
+                    text-decoration: underline;
+                }
+            }
+        }
+
+        &.menuitem--page-display {
+            &.menuitem--current-parent {
+                opacity: 1;
+            }
+        }
+    }
+}

@@ -15,8 +15,6 @@ use DigraphCMS\UI\DataTables\QueryTable;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\TabInterface;
 
-echo "<h1>Page connections</h1>";
-
 $tabs = new TabInterface();
 
 $fn = function () use ($tabs) {

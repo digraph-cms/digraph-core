@@ -51,8 +51,8 @@ class Theme
                 'line-length' => '35rem',
                 'line-height' => '1.4',
                 'line-height-tight' => '1.2',
-                'shadow' => 'calc(var(--grid)/8) calc(var(--grid)/4) var(--grid) rgba(0,0,0,0.05)',
-                'shadow-inset' => 'inset calc(var(--grid)/8) calc(var(--grid)/4) var(--grid) rgba(0,0,0,0.05)',
+                'shadow' => 'calc(var(--grid)/8) calc(var(--grid)/4) var(--grid) rgba(0,0,0,0.15)',
+                'shadow-inset' => 'inset calc(var(--grid)/8) calc(var(--grid)/4) var(--grid) rgba(0,0,0,0.15)',
                 'border' => '2px',
                 'border-radius' => '4px',
                 'font' => [
@@ -83,8 +83,8 @@ class Theme
             'dark' => [
                 'background' => '#222222',
                 'color' => '#fff',
-                'shadow' => 'calc(var(--grid)/8) calc(var(--grid)/4) var(--grid) rgba(0,0,0,0.2)',
-                'shadow-inset' => 'inset calc(var(--grid)/8) calc(var(--grid)/4) var(--grid) rgba(0,0,0,0.2)',
+                'shadow' => 'calc(var(--grid)/8) calc(var(--grid)/4) var(--grid) rgba(0,0,0,0.4)',
+                'shadow-inset' => 'inset calc(var(--grid)/8) calc(var(--grid)/4) var(--grid) rgba(0,0,0,0.4)',
                 'link' => [
                     'normal' => '#64b5f6',
                     'visited' => '#ba68c8',

@@ -99,7 +99,7 @@ class Breadcrumb
      *
      * @return URL[]
      */
-    protected static function breadcrumb(): array
+    public static function breadcrumb(): array
     {
         $breadcrumb = static::parents();
         static::helper($breadcrumb);

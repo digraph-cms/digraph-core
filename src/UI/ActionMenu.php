@@ -2,108 +2,112 @@
 
 namespace DigraphCMS\UI;
 
-use DigraphCMS\Cache\UserCacheNamespace;
 use DigraphCMS\Content\Router;
+use DigraphCMS\Context;
+use DigraphCMS\Events\Dispatcher;
+use DigraphCMS\UI\MenuBar\MenuBar;
+use DigraphCMS\UI\MenuBar\MenuItem;
 use DigraphCMS\URL\URL;
 
-class ActionMenu
+class ActionMenu extends MenuBar
 {
-    protected $url, $cache;
+    protected $url;
+    protected $adderItem, $adderMenu;
 
-    public function __construct(URL $url)
+    public function __construct(URL $url = null)
     {
-        $this->url = clone $url;
-        $this->cache = new UserCacheNamespace('action-menu');
-    }
-
-    public function __toString()
-    {
-        return $this->cache->get(
-            md5(serialize($this->url)),
-            function () {
-                ob_start();
-                echo "<nav class='action-menu'><h1>Action menu</h1>";
-                // output buffer contents separately
-                ob_start();
-                $this->printPageActions();
-                $this->printStaticActions();
-                // return empty if no contents
-                if (!ob_get_length()) {
-                    ob_end_clean();
-                    ob_end_clean();
-                    return '';
-                } else {
-                    ob_end_flush();
+        $this->url = $url ? clone $url : Context::url();
+        // page actions
+        if ($page = $this->url->page()) {
+            // link to display page
+            $this->addURL($page->url(), 'View')
+                ->addClass('menuitem--page-display');
+            // regular action links
+            foreach (Router::pageActions($page) as $url) {
+                if (substr($url->action(), 0, 1) == '_') {
+                    continue;
                 }
-                // close up and return
-                echo "</nav>";
-                return ob_get_clean();
+                $this->addURL($url)
+                    ->addClass('menuitem--page-action')
+                    ->addClass('menuitem--' . $url->action());
             }
-        ) ?? '';
-    }
-
-    protected function printPageActions()
-    {
-        if (!$this->url->page()) {
-            return;
+            // event hooks
+            Dispatcher::dispatchEvent('onActionMenu_page', [$this, $page]);
+            Dispatcher::dispatchEvent('onActionMenu_page_' . $page->class(), [$this, $page]);
         }
-        $actions = array_filter(
-            Router::pageActions($this->url->page()),
-            function (URL $url) {
-                return
-                    substr($url->action(), 0, 1) != '_'
-                    && $url->page() == $this->url->page();
-            }
-        );
-        $addable = array_filter(
-            array_map(
-                function (string $type) {
-                    $url = $this->url->page()->url_add($type);
-                    return $url->permissions() ? "<a href='$url'>$type</a>" : false;
-                },
-                $this->url->page()->addableTypes()
-            )
-        );
-        if ($actions || $addable) {
-            echo "<div class='action-menu__page-actions'><h2>" . $this->url->page()->url()->html() . "</h2><nav><ul>";
-            foreach ($actions as $url) {
-                echo "<li>" . $url->html([], true) . "</li>";
-            }
-            if ($addable) {
-                echo "<li class='dropdown'>";
-                echo "<a class='adder' tabindex='0'>Add child</a>";
-                echo "<ul>";
-                foreach ($addable as $link) {
-                    echo "<li>$link</li>";
-                }
-                echo "</ul>";
-                echo "</li>";
-            }
-            echo "</ul></nav></div>";
-        }
-    }
-
-    protected function printStaticActions()
-    {
+        // static actions
         $actions = array_filter(
             Router::staticActions($this->url->route()),
             function (URL $url) {
                 return
                     substr($url->action(), 0, 1) != '_'
-                    && $url->route() == $this->url->route();
+                    && $url->route() == $url->route();
             }
         );
-        if ($actions) {
-            echo "<div class='action-menu__static-actions'>";
-            if (Router::staticRouteExists($this->url->route(), 'index')) {
-                $title = (new URL('/~' . $this->url->route()))->html();
-                echo "<h2>$title</h2>";
+        foreach ($actions as $url) {
+            $this->addURL($url)
+                ->addClass('menuitem--static-action')
+                ->addClass('menuitem--' . $url->action());
+        }
+        // event hooks
+        Dispatcher::dispatchEvent('onActionMenu', [$this]);
+        Dispatcher::dispatchEvent('onActionMenu_' . $this->url->route(), [$this]);
+        // child-adding dropdown
+        if ($page = $this->url->page()) {
+            $addable = array_filter(
+                $page->addableTypes(),
+                function (string $type) use ($page) {
+                    return $page->url_add($type)->permissions();
+                }
+            );
+            if ($addable) {
+                $this->addChild(
+                    $this->adderItem = (new MenuItem(null, 'Add'))
+                        ->addClass('menuitem--page-action--adder')
+                );
+                $this->adderItem->addChild(
+                    $this->adderMenu = new MenuBar
+                );
+                foreach ($addable as $type) {
+                    $this->adderMenu->addURL(
+                        $page->url_add($type),
+                        $type
+                    );
+                }
             }
-            echo "<nav><ul>";
-            foreach ($actions as $url) {
-                echo "<li>" . $url->html([], true) . "</li>";
-            }
-            echo "</ul></nav></div>";
+        }
+    }
+    public function url(): URL
+    {
+        return clone $this->url;
+    }
+
+    public function adderItem(): MenuItem
+    {
+        return $this->adderItem;
+    }
+
+    public function adderMenu(): MenuBar
+    {
+        return $this->adderMenu;
+    }
+
+    public function classes(): array
+    {
+        return array_merge(
+            parent::classes(),
+            [
+                'menubar--actionmenu'
+            ]
+        );
+    }
+
+    public function toString(): string
+    {
+        if ($this->children()) {
+            return parent::toString();
+        } else {
+            return '';
         }
     }
 }

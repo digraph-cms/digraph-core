@@ -2,9 +2,11 @@
 
 namespace DigraphCMS\UI\MenuBar;
 
+use DigraphCMS\Context;
 use DigraphCMS\HTML\A;
 use DigraphCMS\HTML\DIV;
 use DigraphCMS\HTML\SPAN;
+use DigraphCMS\UI\Breadcrumb;
 
 class MenuItem extends SPAN
 {
@@ -51,8 +53,29 @@ class MenuItem extends SPAN
     {
         $classes = parent::classes();
         $classes[] = 'menuitem';
+        // css class for styling dropdowns that contain children
         if (parent::children()) {
             $classes[] = 'menuitem--dropdown';
+        }
+        // classes for emphasizing current/current-parent links
+        if ($this->url) {
+            // first try a simple string comparison because it's fast
+            if ($this->url->__toString() == Context::url()->__toString()) {
+                $classes[] = 'menuitem--current';
+            } elseif ($this->url->path() != '/' && $this->url->path() != '/home/') {
+                // try doing a substring comparison on URLs because it's almost as fast
+                if (substr(Context::url()->path(), 0, strlen($this->url->path())) == $this->url->path()) {
+                    $classes[] = 'menuitem--current-parent';
+                }
+                // as a last resort generate the breadcrumb and try to find this URL in it
+                else {
+                    foreach (Breadcrumb::breadcrumb() as $parent) {
+                        if ($parent->path() == $this->url->path()) {
+                            $classes[] = 'menuitem--current-parent';
+                        }
+                    }
+                }
+            }
         }
         return $classes;
     }
