@@ -69,7 +69,7 @@ class Page implements ArrayAccess
 
     public function url_add(string $type): URL
     {
-        return $this->url('_add_' . $type);
+        return $this->url('_add_' . $type, ['uuid' => Digraph::uuid()]);
     }
 
     public function url_edit(): URL
