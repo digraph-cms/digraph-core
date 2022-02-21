@@ -4,14 +4,16 @@
     border-top: $border solid var(--cue-interactive);
 
     .menuitem {
+        background-color: transparent;
+        color: inherit;
 
         &:hover,
         &:focus,
         &:focus-within,
         &.menuitem--focus {
-            >a.menuitem__link {
-                background-color: var(--background-darker);
-                color: var(--color);
+            > a.menuitem__link {
+                background-color: var(--cue-interactive-bright);
+                color: var(--cue-interactive-inv);
 
                 &:link {
                     text-decoration: underline;
@@ -19,10 +21,22 @@
             }
         }
 
+        &.menuitem--current,
+        &.menuitem--current-parent {
+            opacity: 1;
+            background-color: var(--cue-interactive);
+                color: var(--cue-interactive-inv);
+        }
+
         &.menuitem--page-display {
             &.menuitem--current-parent {
                 opacity: 1;
             }
         }
+    }
+
+    .menubar {
+        background-color: var(--background-dark);
+        color: var(--color);
     }
 }
