@@ -65,7 +65,7 @@ input[type="button"],
 }
 
 input[type="submit"] {
-    @include button-confirmation;
+    @include button;
 }
 
 input[type="checkbox"],
