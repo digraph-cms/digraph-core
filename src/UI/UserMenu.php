@@ -2,6 +2,7 @@
 
 namespace DigraphCMS\UI;
 
+use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\Session\Session;
@@ -9,12 +10,11 @@ use DigraphCMS\UI\MenuBar\MenuBar;
 use DigraphCMS\UI\MenuBar\MenuItem;
 use DigraphCMS\UI\MenuBar\MenuItemFrame;
 use DigraphCMS\URL\URL;
-use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\Users;
 
 class UserMenu extends MenuBar
 {
-    protected $themeItem, $userItem, $loginItem, $logoutItem;
+    protected $adminItem, $themeItem, $userItem, $loginItem, $logoutItem;
 
     public function __construct()
     {
@@ -28,18 +28,18 @@ class UserMenu extends MenuBar
             Dispatcher::dispatchEvent('onUserMenu_user', [$this]);
         } else {
             // actions for non-authenticated user
-            $this->loginItem = $this->addURL(Users::signinUrl(Context::url()))
-                ->addClass('menuitem--login');
+            if (Config::get('usermenu.guest_signin')) {
+                $this->loginItem = $this->addURL(Users::signinUrl(Context::url()))
+                    ->addClass('menuitem--login');
+            }
             // dispatch guest event
             Dispatcher::dispatchEvent('onUserMenu_guest', [$this]);
         }
         // add admin settings
-        if (Permissions::inGroup('admins')) {
-            $this->addChild(
-                $this->adminItem = (new MenuItem(new URL('/~admin/'), 'Admin tools'))
-                    ->addClass('menuitem--admin')
-            );
-        }
+        $this->addChild(
+            $this->adminItem = (new MenuItem(new URL('/~admin/'), 'Admin tools'))
+                ->addClass('menuitem--admin')
+        );
         // add color settings
         $this->addChild(
             $this->themeItem = (new MenuItemFrame(null, 'Theme', new URL('/~api/v1/theme-menu.php')))
@@ -47,6 +47,11 @@ class UserMenu extends MenuBar
         );
         // global events for adding to menu
         Dispatcher::dispatchEvent('onUserMenu', [$this]);
+    }
+
+    public function adminItem(): MenuItemFrame
+    {
+        return $this->adminItem;
     }
 
     public function themeItem(): MenuItemFrame

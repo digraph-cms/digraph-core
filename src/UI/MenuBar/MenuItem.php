@@ -7,6 +7,7 @@ use DigraphCMS\HTML\A;
 use DigraphCMS\HTML\DIV;
 use DigraphCMS\HTML\SPAN;
 use DigraphCMS\UI\Breadcrumb;
+use DigraphCMS\URL\URL;
 
 class MenuItem extends SPAN
 {
@@ -22,6 +23,16 @@ class MenuItem extends SPAN
     {
         $this->url = $url;
         $this->label = $label;
+    }
+
+    public function label(): string
+    {
+        return $this->label;
+    }
+
+    public function url()
+    {
+        return $this->url instanceof URL ? clone $this->url : $this->url;
     }
 
     public function children(): array

@@ -19,9 +19,6 @@ class ActionMenu extends MenuBar
         $this->url = $url ? clone $url : Context::url();
         // page actions
         if ($page = $this->url->page()) {
-            // link to display page
-            $this->addURL($page->url(), 'View')
-                ->addClass('menuitem--page-display');
             // regular action links
             foreach (Router::pageActions($page) as $url) {
                 if (substr($url->action(), 0, 1) == '_') {
@@ -77,6 +74,7 @@ class ActionMenu extends MenuBar
             }
         }
     }
+
     public function url(): URL
     {
         return clone $this->url;

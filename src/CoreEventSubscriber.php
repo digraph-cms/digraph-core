@@ -5,6 +5,7 @@ namespace DigraphCMS;
 use DigraphCMS\Content\Filestore;
 use DigraphCMS\Content\Page;
 use DigraphCMS\Content\Pages;
+use DigraphCMS\Content\Router;
 use DigraphCMS\Content\Slugs;
 use DigraphCMS\DOM\CodeHighlighter;
 use DigraphCMS\DOM\DOM;
@@ -13,7 +14,9 @@ use DigraphCMS\HTTP\Response;
 use DigraphCMS\RichContent\RichContent;
 use DigraphCMS\RichMedia\Types\AbstractRichMedia;
 use DigraphCMS\Session\Session;
+use DigraphCMS\UI\ActionMenu;
 use DigraphCMS\UI\Format;
+use DigraphCMS\UI\MenuBar\MenuItem;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\User;
@@ -23,6 +26,48 @@ use function DigraphCMS\Content\require_file;
 
 class CoreEventSubscriber
 {
+
+    /**
+     * Add user action menu links to user profiles
+     *
+     * @param ActionMenu $menu
+     * @return void
+     */
+    public static function onActionMenu_users(ActionMenu $menu)
+    {
+        $uuid = Context::url()->action();
+        if (Users::get($uuid)) {
+            $actions = Router::staticActions('user');
+            foreach ($actions as $url) {
+                $url->arg('user', $uuid);
+                $menu->addURL($url, $url->name(true));
+            }
+        }
+    }
+
+    /**
+     * Preserve/enforce "user" argument in actions across the user route
+     *
+     * @param ActionMenu $menu
+     * @return void
+     */
+    public static function onActionMenu_user(ActionMenu $menu)
+    {
+        foreach ($menu->children() as $item) {
+            if ($item instanceof MenuItem) {
+                $url = $item->url();
+                if ($url && $url->route() == 'user') {
+                    $url->arg('user', Context::arg('user') ?? Session::user());
+                    $menu->removeChild($item);
+                    $new = $menu->addURL($url, $item->label());
+                    foreach ($item->classes() as $class) {
+                        $new->addClass($class);
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * Construct a card for displaying rich media in autocomplete fields
      *
@@ -200,7 +245,7 @@ class CoreEventSubscriber
     public static function onStaticUrlPermissions_user(URL $url, User $user): ?bool
     {
         // disable authentication log if php sessions are being used
-        if (Config::get('php_session.enabled') && $url->path() == '/~user/settings/_authentication_log.html') {
+        if (Config::get('php_session.enabled') && $url->path() == '/~user/authentication_log.html') {
             return false;
         }
         // if user is specified limit routes for the user being viewed/edited and admins
@@ -331,21 +376,6 @@ class CoreEventSubscriber
     public static function onStaticUrlName_signout(): ?string
     {
         return "Log out";
-    }
-
-    /**
-     * Add extra links to user action menu
-     *
-     * @param array $urls
-     * @return void
-     */
-    public static function onStaticActions_user(array &$urls)
-    {
-        $urls[] = new URL('/~admin/');
-    }
-
-    public static function onStaticActions_guest(array &$urls)
-    {
     }
 
     /**

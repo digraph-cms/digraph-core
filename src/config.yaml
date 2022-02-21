@@ -59,6 +59,9 @@ users:
     oauth2: \DigraphCMS\Users\OAuth2UserSource
     cas: \DigraphCMS\Users\CASUserSource
 
+usermenu:
+  guest_signin: true
+
 # configuration for user sources, including preset options so that some providers
 # are ready to go just by providing their id and secret parameters
 user_sources:

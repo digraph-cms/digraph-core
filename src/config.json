@@ -74,9 +74,6 @@
     "breadcrumb": {
       "min_length": 1,
       "include_current": true
-    },
-    "action-menu": {
-      "guestui": true
     }
   },
   "templates": {
