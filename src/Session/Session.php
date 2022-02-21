@@ -46,7 +46,11 @@ final class Session
                     )
                     ->fetch();
                 if ($row) {
+                    // valid authentication, set it
                     static::setAuth(new Authentication($row));
+                }else {
+                    // otherwise clear auth cookie to avoid repetitive DB calls
+                    static::clearAuthCookie();
                 }
             }
         }
