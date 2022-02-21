@@ -98,6 +98,7 @@ body>.action-menu,
         margin-bottom: 1px;
 
         &:first-child {
+            margin-top: $grid;
             border-top-left-radius: $border-radius;
             border-top-right-radius: $border-radius;
         }

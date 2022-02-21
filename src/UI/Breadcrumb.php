@@ -27,7 +27,11 @@ class Breadcrumb
                         echo "<li>" . $url->html([], true) . "</li>";
                     }
                     if (Config::get('ui.breadcrumb.include_current')) {
-                        echo "<li class='breadcrumb-current'>" . static::top()->html(['breadcrumb-current'], true) . "</li>";
+                        if (Context::response()->status() >= 400) {
+                            echo "<li class='breadcrumb-current'><a class='breadcrumb-current'>Error</a></li>";
+                        } else {
+                            echo "<li class='breadcrumb-current'>" . static::top()->html(['breadcrumb-current'], true) . "</li>";
+                        }
                     }
                     echo "</ul></section>";
                 }

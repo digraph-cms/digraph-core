@@ -34,15 +34,15 @@ use DigraphCMS\UI\UserMenu;
     </section>
     <?php
     Cookies::printConsentBanner();
-    echo new UserMenu();
+    echo new UserMenu;
     echo Templates::render('sections/header.php');
     echo Templates::render('sections/navbar.php');
     ?>
     <main id="content">
         <?php
         Breadcrumb::print();
+        echo new ActionMenu;
         Notifications::printSection();
-        echo new ActionMenu();
         echo '<div id="main-content">';
         echo Context::response()->content();
         echo '</div>';
