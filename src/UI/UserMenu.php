@@ -9,6 +9,7 @@ use DigraphCMS\UI\MenuBar\MenuBar;
 use DigraphCMS\UI\MenuBar\MenuItem;
 use DigraphCMS\UI\MenuBar\MenuItemFrame;
 use DigraphCMS\URL\URL;
+use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\Users;
 
 class UserMenu extends MenuBar
@@ -31,6 +32,13 @@ class UserMenu extends MenuBar
                 ->addClass('menuitem--login');
             // dispatch guest event
             Dispatcher::dispatchEvent('onUserMenu_guest', [$this]);
+        }
+        // add admin settings
+        if (Permissions::inGroup('admins')) {
+            $this->addChild(
+                $this->adminItem = (new MenuItem(new URL('/~admin/'), 'Admin tools'))
+                    ->addClass('menuitem--admin')
+            );
         }
         // add color settings
         $this->addChild(

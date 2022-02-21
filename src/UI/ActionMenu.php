@@ -27,7 +27,7 @@ class ActionMenu extends MenuBar
                 if (substr($url->action(), 0, 1) == '_') {
                     continue;
                 }
-                $this->addURL($url)
+                $this->addURL($url, $url->name(true))
                     ->addClass('menuitem--page-action')
                     ->addClass('menuitem--' . $url->action());
             }
@@ -45,7 +45,7 @@ class ActionMenu extends MenuBar
             }
         );
         foreach ($actions as $url) {
-            $this->addURL($url)
+            $this->addURL($url, $url->name(true))
                 ->addClass('menuitem--static-action')
                 ->addClass('menuitem--' . $url->action());
         }
