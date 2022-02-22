@@ -225,7 +225,7 @@ Digraph.state = {
             while (parent) {
                 if (parent.tagName == 'BODY') {
                     // no navigation-frame parent found
-                    return;
+                    return [null, null];
                 }
                 if (parent.classList.contains('navigation-frame') && parent.getAttribute('id')) {
                     // nearest navigation-frame found
