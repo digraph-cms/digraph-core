@@ -2,18 +2,58 @@
 Make menu dropdowns work more nicely
 */
 (() => {
+    // update menus to prepare them for automatic overflowed mode
+    document.addEventListener('DigraphDOMReady', updateMenus);
+    window.addEventListener('load', updateMenus);
+    updateMenus();
+    function updateMenus(e) {
+        var target = e ? e.target ?? document : document;
+        Array.from(target.getElementsByClassName('menubar'))
+            .filter(m => !m.classList.contains('menubar--js'))
+            .filter(m => !m.parentElement.classList.contains('menuitem__dropdown'))
+            .forEach(m => {
+                var menu = m;
+                menu.classList.add('menubar--js');
+                var toggle = document.createElement('span');
+                toggle.innerHTML = '<a class="menuitem__link">' + (menu.getAttribute('aria-label') ?? 'Menu') + '</a>';
+                toggle.classList.add('menuitem');
+                toggle.classList.add('menubar--overflowed__toggle');
+                menu.insertBefore(toggle, menu.childNodes[0]);
+                // toggle events
+                toggle.addEventListener('click', (e) => {
+                    if (menu.classList.contains('menubar--overflowed--open')) {
+                        menu.classList.remove('menubar--overflowed--open');
+                    } else {
+                        menu.classList.add('menubar--overflowed--open');
+                    }
+                });
+            });
+    }
+    // check menus to see if they need to go into overflowed mode
     document.addEventListener('DigraphDOMReady', checkMenus);
     window.addEventListener('load', checkMenus);
+    window.addEventListener('resize', checkMenus);
     checkMenus();
-
-    // Look for new dropdown menus
     function checkMenus(e) {
-        if (!e || !e.target) return;
-        var menus = e.target.getElementsByClassName('menuitem--dropdown');
-        for (const i in menus) {
-            if (Object.hasOwnProperty.call(menus, i)) {
-                const m = menus[i];
-                if (m.classList.contains('menuitem--dropdown-js')) continue;
+        Array.from(document.getElementsByClassName('menubar--js'))
+            .forEach(menu => {
+                menu.style.height = menu.offsetHeight + 'px';
+                menu.classList.remove('menubar--overflowed');
+                if (menu.offsetWidth < menu.scrollWidth) {
+                    menu.classList.add('menubar--overflowed');
+                }
+                menu.style.height = 'auto';
+            });
+    }
+    // update dropdown menus
+    document.addEventListener('DigraphDOMReady', updateDropDowns);
+    window.addEventListener('load', updateDropDowns);
+    updateDropDowns();
+    function updateDropDowns(e) {
+        var target = e ? e.target ?? document : document;
+        Array.from(target.getElementsByClassName('menuitem--dropdown'))
+            .filter(m => !m.classList.contains('menuitem--dropdown-js'))
+            .forEach(m => {
                 m.classList.add('menuitem--dropdown--js');
                 m.addEventListener('mouseenter', () => {
                     // add focus class and clear timer if it exists
@@ -35,7 +75,6 @@ Make menu dropdowns work more nicely
                     // set timer to clear focus class
                     m.timer = setTimeout(() => m.classList.remove('menuitem--focus'), 500);
                 });
-            }
-        }
+            });
     }
 })();
