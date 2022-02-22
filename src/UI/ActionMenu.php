@@ -17,6 +17,8 @@ class ActionMenu extends MenuBar
     public function __construct(URL $url = null)
     {
         $this->url = $url ? clone $url : Context::url();
+        // set menu label
+        $this->setAttribute('aria-label','Action menu');
         // page actions
         if ($page = $this->url->page()) {
             // regular action links

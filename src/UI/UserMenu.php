@@ -24,6 +24,8 @@ class UserMenu extends MenuBar
                 ->addClass('menuitem--user');
             $this->logoutItem = $this->addURL(Users::signoutUrl(Context::url()))
                 ->addClass('menuitem--logout');
+            // set menu label
+            $this->setAttribute('aria-label', 'Guest menu');
             // dispatch user event
             Dispatcher::dispatchEvent('onUserMenu_user', [$this]);
         } else {
@@ -32,6 +34,8 @@ class UserMenu extends MenuBar
                 $this->loginItem = $this->addURL(Users::signinUrl(Context::url()))
                     ->addClass('menuitem--login');
             }
+            // set menu label
+            $this->setAttribute('aria-label', 'User menu');
             // dispatch guest event
             Dispatcher::dispatchEvent('onUserMenu_guest', [$this]);
         }
