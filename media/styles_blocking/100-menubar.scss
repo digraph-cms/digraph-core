@@ -201,7 +201,7 @@
             overflow: visible;
         }
         .menubar--overflowed__toggle {
-            border-bottom: $border solid var(--cue-interactive);
+            border-bottom: $border solid var(--cue-interactive) !important;
 
             .menuitem__link {
                 &:after {
