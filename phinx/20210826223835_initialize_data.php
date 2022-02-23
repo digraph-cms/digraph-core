@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use DigraphCMS\Digraph;
 use Phinx\Migration\AbstractMigration;
 
 final class InitializeData extends AbstractMigration
@@ -13,7 +12,10 @@ final class InitializeData extends AbstractMigration
             ->insert([
                 'uuid' => 'admins',
                 'name' => 'Administrators'
-            ])->insert([
+            ])
+            ->save();
+        $this->table('user_group')
+            ->insert([
                 'uuid' => 'editors',
                 'name' => 'Editors'
             ])
