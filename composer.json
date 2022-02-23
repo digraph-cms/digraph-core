@@ -59,6 +59,9 @@
         ],
         "migrate": [
             "phinx migrate"
+        ],
+        "seed": [
+            "phinx seed:run"
         ]
     }
 }

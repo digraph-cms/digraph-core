@@ -166,7 +166,7 @@ class Plugins
         }
         // set up phinx folders
         foreach ($plugin->phinxFolders() as $dir) {
-            DB::addMigrationPath($dir);
+            DB::addPhinxPath($dir);
         }
         // call post-registration hook
         $plugin->registered();

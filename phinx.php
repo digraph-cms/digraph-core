@@ -21,7 +21,7 @@ return
     [
         'paths' => [
             'migrations' => DB::migrationPaths(),
-            'seeds' => [],
+            'seeds' => DB::seedPaths()
         ],
         'environments' => [
             'default_migration_table' => 'phinxlog',

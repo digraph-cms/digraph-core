@@ -10,13 +10,13 @@ use Envms\FluentPDO\Query;
 use PDO;
 use PDOException;
 
-DB::addMigrationPath(__DIR__ . '/../../phinx');
+DB::addPhinxPath(__DIR__ . '/../../phinx');
 Dispatcher::addSubscriber(DB::class);
 
 class DB
 {
     protected static $pdo, $driver, $query;
-    protected static $migrationPaths = [];
+    protected static $phinxPaths = [];
     protected static $transactions = 0;
 
     public static function onException_PDOException(PDOException $exception)
@@ -49,12 +49,27 @@ class DB
 
     public static function migrationPaths(): array
     {
-        return self::$migrationPaths;
+        return array_filter(array_map(
+            function ($e) {
+                return realpath($e . '/migrations');
+            },
+            self::$phinxPaths
+        ));
     }
 
-    public static function addMigrationPath(string $path)
+    public static function seedPaths(): array
     {
-        array_unshift(self::$migrationPaths, $path);
+        return array_filter(array_map(
+            function ($e) {
+                return realpath($e . '/seeds');
+            },
+            self::$phinxPaths
+        ));
+    }
+
+    public static function addPhinxPath(string $path)
+    {
+        array_unshift(self::$phinxPaths, $path);
     }
 
     public static function pdo(): PDO
