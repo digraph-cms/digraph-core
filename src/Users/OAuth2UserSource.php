@@ -3,7 +3,6 @@
 namespace DigraphCMS\Users;
 
 use DigraphCMS\Config;
-use DigraphCMS\DB\DB;
 use DigraphCMS\URL\URL;
 use DigraphCMS\URL\URLs;
 use League\OAuth2\Client\Provider\AbstractProvider;
