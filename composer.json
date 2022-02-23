@@ -3,12 +3,10 @@
     "description": "Source and API version of a CMS that emphasizes flexibility and content permanence. Generally this package is only used for development.",
     "type": "digraph-core",
     "license": "MIT",
-    "authors": [
-        {
-            "name": "Joby Elliott",
-            "email": "joby@byjoby.com"
-        }
-    ],
+    "authors": [{
+        "name": "Joby Elliott",
+        "email": "joby@byjoby.com"
+    }],
     "require": {
         "php": ">=7.1",
         "ext-gd": "*",
@@ -30,7 +28,7 @@
         "thunderer/shortcode": "^0.7.4",
         "scrivo/highlight.php": "v9.18.1.9",
         "box/spout": "^3.1",
-        "ozdemirburak/iris": "^2.4"
+        "ozdemirburak/iris": "^2"
     },
     "suggest": {
         "league/oauth2-github": "Needed to support OAuth sign-ins using GitHub",
