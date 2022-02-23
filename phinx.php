@@ -26,7 +26,10 @@ return
         'environments' => [
             'default_migration_table' => 'phinxlog',
             'default_environment' => 'current',
-            'current' => Config::get('db'),
+            'current' => [
+                'name' => 'Current environment',
+                'connection' => DB::pdo()
+            ]
         ],
         'version_order' => 'creation',
     ];
