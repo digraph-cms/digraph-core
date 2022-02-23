@@ -294,8 +294,10 @@ class Cookies
     public static function onCookieExpiration_PHPSESSID()
     {
         if ($ttl = intval(ini_get('session.cookie_lifetime'))) {
-            $interval = new DateInterval("P{$ttl}s");
-            return $interval->format("%d days");
+            $d1 = new DateTime();
+            $d2 = new DateTime();
+            $d2->add(new DateInterval("PT{$ttl}S"));
+            return $d2->diff($d1)->format("%d days");
         } else {
             return null;
         }
