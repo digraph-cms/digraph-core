@@ -2,6 +2,7 @@
 
 namespace DigraphCMS\UI;
 
+use DigraphCMS\Cache\Cache;
 use DigraphCMS\Config;
 use DigraphCMS\Digraph;
 use DigraphCMS\HTTP\HttpError;
@@ -112,7 +113,6 @@ class Theme
             ]
         ]
     ];
-    protected static $scssVars = [];
     protected static $variables = [];
     protected static $variables_cache;
     protected static $blockingThemeCss = [];
@@ -323,7 +323,6 @@ class Theme
     public static function resetTheme($activeThemes = null)
     {
         static::$variables_cache = null;
-        static::$scssVars = static::themeConfig($activeThemes, 'scss_vars');
         static::$variables = static::themeConfig($activeThemes, 'variables');
         static::$blockingThemeCss = static::themeConfig($activeThemes, 'blocking_css');
         static::$externalThemeCss = static::themeConfig($activeThemes, 'external_css');
@@ -654,21 +653,41 @@ class Theme
      */
     public static function head(): string
     {
-        ob_start();
-        // render css
-        static::renderVariableCss();
-        static::renderBlockingCss();
-        static::renderExternalCss();
-        static::renderInternalCss('theme', static::$internalThemeCss);
-        static::renderInternalCss('page', static::$internalPageCss);
-        // render core js
-        static::renderCoreJs();
-        // render js
-        static::renderJs('theme_blocking', static::$blockingThemeJs, false);
-        static::renderJs('page_blocking', static::$blockingPageJs, false);
-        static::renderJs('theme_async', static::$asyncThemeJs, true);
-        static::renderJs('page_async', static::$asyncPageJs, true);
-        static::renderInlineJs(static::$inlinePageJs);
-        return ob_get_clean();
+        $key = md5(serialize([
+            static::$variables,
+            static::$blockingThemeCss,
+            static::$blockingPageCss,
+            static::$externalThemeCss,
+            static::$externalPageCss,
+            static::$internalThemeCss,
+            static::$internalPageCss,
+            static::$blockingThemeJs,
+            static::$blockingPageJs,
+            static::$asyncThemeJs,
+            static::$asyncPageJs,
+            static::$inlinePageJs,
+        ]));
+        return Cache::get(
+            "theme/head/$key",
+            function () {
+                ob_start();
+                // render css
+                static::renderVariableCss();
+                static::renderBlockingCss();
+                static::renderExternalCss();
+                static::renderInternalCss('theme', static::$internalThemeCss);
+                static::renderInternalCss('page', static::$internalPageCss);
+                // render core js
+                static::renderCoreJs();
+                // render js
+                static::renderJs('theme_blocking', static::$blockingThemeJs, false);
+                static::renderJs('page_blocking', static::$blockingPageJs, false);
+                static::renderJs('theme_async', static::$asyncThemeJs, true);
+                static::renderJs('page_async', static::$asyncPageJs, true);
+                static::renderInlineJs(static::$inlinePageJs);
+                return ob_get_clean();
+            },
+            Config::get('theme.head_cache_ttl')
+        );
     }
 }

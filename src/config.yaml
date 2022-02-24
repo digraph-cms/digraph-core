@@ -15,6 +15,11 @@ cache:
   ttl: 300
   fuzz: 120
 
+theme:
+  bundle_css: true
+  bundle_js: true
+  head_cache_ttl: 86400
+
 # default filesystem settings
 fs:
   links: false

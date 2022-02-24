@@ -1,114 +1,110 @@
 {
-  "paths": {
-    "web": "${paths.base}/web",
-    "storage": "${paths.base}/storage"
-  },
-  "urls": {
-    "protocol": null,
-    "home_name": "Home",
-    "site_path": "/",
-    "site_host": null
-  },
-  "codemirror": {
-    "dependencies": {
-      "mode/gfm/gfm": [
-        "addon/mode/overlay",
-        "mode/markdown/markdown",
-        "addon/edit/continuelist",
-        "mode/xml/xml"
-      ],
-      "mode/php/php": [
-        "mode/xml/xml",
-        "mode/javascript/javascript",
-        "mode/css/css",
-        "mode/htmlmixed/htmlmixed",
-        "mode/clike/clike"
-      ]
+    "paths": {
+        "web": "${paths.base}/web",
+        "storage": "${paths.base}/storage"
     },
-    "mode": {
-      "gfm": {
-        "config": {
-          "gitHubSpice": false,
-          "taskLists": false
+    "urls": {
+        "protocol": null,
+        "home_name": "Home",
+        "site_path": "/",
+        "site_host": null
+    },
+    "codemirror": {
+        "dependencies": {
+            "mode/gfm/gfm": [
+                "addon/mode/overlay",
+                "mode/markdown/markdown",
+                "addon/edit/continuelist",
+                "mode/xml/xml"
+            ],
+            "mode/php/php": [
+                "mode/xml/xml",
+                "mode/javascript/javascript",
+                "mode/css/css",
+                "mode/htmlmixed/htmlmixed",
+                "mode/clike/clike"
+            ]
+        },
+        "mode": {
+            "gfm": {
+                "config": {
+                    "gitHubSpice": false,
+                    "taskLists": false
+                }
+            }
         }
-      }
-    }
-  },
-  "files": {
-    "path": "${paths.web}/files",
-    "url": "/files",
-    "ttl": 3600,
-    "css": {
-      "minify": true,
-      "sourcemap": true,
-      "keepimportantcomments": true
     },
-    "js": {
-      "minify": false
-    }
-  },
-  "images": {
-    "ttl": 31536000
-  },
-  "filestore": {
-    "path": "${paths.storage}/filestore",
-    "symlink": false
-  },
-  "embedding": {
-    "max-height": 75
-  },
-  "cookies": {
-    "secure": false,
-    "duration": "3 months",
-    "consent_prompt": false
-  },
-  "session": {
-    "strict_ip_check": true
-  },
-  "content_cache": {
-    "enabled": true,
-    "min_ms": 100,
-    "default_ttl": 60
-  },
-  "ui": {
-    "breadcrumb": {
-      "min_length": 1,
-      "include_current": true
-    }
-  },
-  "templates": {
-    "default": {
-      "default": "default.php",
-      "error": "minimal.php",
-      "500": "minimal.php"
-    }
-  },
-  "theme": {
-    "bundle_css": false,
-    "bundle_js": false
-  },
-  "fields": {
-    "site": {
-      "name": "Unnamed site"
-    }
-  },
-  "fs": {
-    "links": false,
-    "umask_file": 79,
-    "umask_dir": 2
-  },
-  "page_cache": {
-    "cachettl": {
-      "_any": null
+    "files": {
+        "path": "${paths.web}/files",
+        "url": "/files",
+        "ttl": 3600,
+        "css": {
+            "minify": true,
+            "sourcemap": true,
+            "keepimportantcomments": true
+        },
+        "js": {
+            "minify": false
+        }
     },
-    "browserttl": {
-      "_any": null
+    "images": {
+        "ttl": 31536000
     },
-    "stalettl": {
-      "_any": 600
+    "filestore": {
+        "path": "${paths.storage}/filestore",
+        "symlink": false
+    },
+    "embedding": {
+        "max-height": 75
+    },
+    "cookies": {
+        "secure": false,
+        "duration": "3 months",
+        "consent_prompt": false
+    },
+    "session": {
+        "strict_ip_check": true
+    },
+    "content_cache": {
+        "enabled": true,
+        "min_ms": 100,
+        "default_ttl": 60
+    },
+    "ui": {
+        "breadcrumb": {
+            "min_length": 1,
+            "include_current": true
+        }
+    },
+    "templates": {
+        "default": {
+            "default": "default.php",
+            "error": "minimal.php",
+            "500": "minimal.php"
+        }
+    },
+    "fields": {
+        "site": {
+            "name": "Unnamed site"
+        }
+    },
+    "fs": {
+        "links": false,
+        "umask_file": 79,
+        "umask_dir": 2
+    },
+    "page_cache": {
+        "cachettl": {
+            "_any": null
+        },
+        "browserttl": {
+            "_any": null
+        },
+        "stalettl": {
+            "_any": 600
+        }
+    },
+    "errors": {
+        "display_trace": false
     }
-  },
-  "errors": {
-    "display_trace": false
-  }
 }

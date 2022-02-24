@@ -41,7 +41,7 @@ class Templates
         return $output;
     }
 
-    protected static function doRender(string $template, array $fields = []): string
+    protected static function doRender(string $template): string
     {
         // make sure file exists
         $file = static::locateFile($template);
