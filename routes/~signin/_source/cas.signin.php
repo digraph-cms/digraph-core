@@ -14,7 +14,7 @@ echo "<h1>" . $config['name'] . "</h1>";
 if (!@$config['mock_cas_user']) {
     // BEGIN CONFIGURING CAS
     // load class so constants exist
-    class_exists('\phpCAS');
+    class_exists('phpCAS');
     // fudge $_SERVER values if you're in an environment where CAS can't tell you
     // have HTTPS enabled, such as a proxy server handling SSL
     if (@$config['fixhttpsproblems']) {
@@ -36,7 +36,7 @@ if (!@$config['mock_cas_user']) {
         default:
             $version = CAS_VERSION_2_0;
     }
-    \phpCAS::client(
+    phpCAS::client(
         CAS_VERSION_2_0,
         $config['server'],
         intval($config['port']),
@@ -45,11 +45,14 @@ if (!@$config['mock_cas_user']) {
 
     //set up configured config calls
     if (@$config['setnocasservervalidation']) {
-        \phpCAS::setNoCasServerValidation();
+        phpCAS::setNoCasServerValidation();
     }
 
     // TRY TO SIGN IN
-    Context::data('signin_provider_id', \phpCAS::getUser());
+    if (!phpCAS::isAuthenticated()) {
+        phpCAS::forceAuthentication();
+    }
+    Context::data('signin_provider_id', phpCAS::getUser());
 } else {
     // USE MOCK CAS USER
     if (!Context::arg('_mockcasuser')) {
@@ -57,7 +60,7 @@ if (!@$config['mock_cas_user']) {
         $username = new Field('Username');
         $username->setRequired(true);
         $form->addChild($username);
-        $form->addCallback(function()use($username){
+        $form->addCallback(function () use ($username) {
             $url = clone Context::url();
             $url->arg('_mockcasuser', $username->value());
             throw new RedirectException($url);
