@@ -14,11 +14,10 @@ Session::_init();
 
 final class Session
 {
-    private static $now, $auth;
+    private static $auth;
 
     public static function _init()
     {
-        static::$now = date("Y-m-d H:i:s");
         // if PHP sessions are enabled check there for authentication
         // enabling PHP-managed sessions disables some logging, but is higher performance
         // in some cases, maybe significantly
@@ -39,7 +38,7 @@ final class Session
                     ->disableSmartJoin()
                     ->where(
                         'session.id = ? AND session.secret = ? AND session.expires > ?',
-                        [$cookie['id'], $cookie['secret'], static::$now]
+                        [intval($cookie['id']), $cookie['secret'], time()]
                     )
                     ->where(
                         'NOT EXISTS (SELECT 1 FROM session_expiration WHERE session_expiration.session_id = session.id)'
@@ -86,10 +85,10 @@ final class Session
             return;
         }
         // check for different user agent
-        if (static::browserPlatform($auth->ua()) != static::browserPlatform()) {
-            static::deauthenticate("Browser/OS changed (" . static::fullBrowser() . ")");
-            return;
-        }
+        // if (static::browserPlatform($auth->ua()) != static::browserPlatform()) {
+        //     static::deauthenticate("Browser/OS changed (" . static::fullBrowser() . ")");
+        //     return;
+        // }
     }
 
     public static function browserPlatform(string $ua = null): string
@@ -151,8 +150,8 @@ final class Session
                 'user_uuid' => $user,
                 'comment' => $comment,
                 'secret' => static::generateSecret(),
-                'created' => static::$now,
-                'expires' => $expires->format("Y-m-d H:i:s"),
+                'created' => time(),
+                'expires' => $expires->getTimestamp(),
                 'ip' => $_SERVER['REMOTE_ADDR'],
                 'ua' => $_SERVER['HTTP_USER_AGENT']
             ]);
@@ -163,8 +162,8 @@ final class Session
                 'user_uuid' => $user,
                 'comment' => $comment,
                 'secret' => static::generateSecret(),
-                'created' => static::$now,
-                'expires' => $expires->format("Y-m-d H:i:s"),
+                'created' => time(),
+                'expires' => $expires->getTimestamp(),
                 'ip' => $_SERVER['REMOTE_ADDR'],
                 'ua' => $_SERVER['HTTP_USER_AGENT']
             ];
@@ -184,7 +183,7 @@ final class Session
     {
         if (static::$auth) {
             static::$auth->deauthenticate($reason);
-            Cookies::unset('auth', 'session');
+            static::clearAuthCookie();
         }
     }
 
@@ -205,7 +204,7 @@ final class Session
 
     protected static function clearAuthCookie()
     {
-        Cookies::unset('auth', 'auth');
+        Cookies::unset('auth', 'session');
     }
 
     /**
@@ -216,6 +215,6 @@ final class Session
      */
     protected static function generateSecret(): string
     {
-        return URLs::base64_encode(random_bytes(48));
+        return URLs::base64_encode(random_bytes(24));
     }
 }

@@ -70,7 +70,7 @@ class Authentication
                 'session_expiration',
                 [
                     'session_id' => $this->id,
-                    'date' => date("Y-m-d H:i:s"),
+                    'date' => time(),
                     'reason' => $message
                 ]
             )
