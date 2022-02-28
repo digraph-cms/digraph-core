@@ -257,9 +257,23 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
         $this->getIterator()->next();
     }
 
+    /**
+     * rewinding will work in the full-performance way if everything supports it
+     * otherwise it will call fetchAll and convert the internal iterator into
+     * an ArrayIterator.
+     * 
+     * This kinda gets the best of both worlds, by allowing maximum performance
+     * when rewind isn't needed, but minimum memory usage when it isn't.
+     *
+     * @return void
+     */
     public function rewind()
     {
-        $this->getIterator()->rewind();
+        if (method_exists($this->getIterator(), 'rewind')) {
+            $this->getIterator()->rewind();
+        } else {
+            $this->iterator = new ArrayIterator($this->getIterator()->fetchAll());
+        }
     }
 
     public function valid(): bool
