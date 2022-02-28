@@ -2,9 +2,10 @@
 
 namespace DigraphCMS\Cache;
 
-use Brick\VarExporter\VarExporter;
 use DigraphCMS\Config;
 use DigraphCMS\FS;
+
+use function Opis\Closure\serialize;
 
 class OpCache extends AbstractCacheDriver
 {
@@ -72,10 +73,10 @@ class OpCache extends AbstractCacheDriver
                 try {
                     include $filename;
                 } catch (\Throwable $th) {
-                    // catch exceptions in included file by returning null
-                    // as if the cache item doesn't exist
+                    // unlock file before throwing errors
                     $this->cache[$name] = null;
                     $this->unlock($filename);
+                    throw $th;
                 }
                 // unlock
                 $this->unlock($filename);
@@ -116,27 +117,23 @@ class OpCache extends AbstractCacheDriver
         $exp = time() + $ttl;
         $this->cache[$name] = [$exp, $value];
         // save into external cache if ttl is > 0
+        // still save to internal memory cache even if ttl is 0
         // this means TTLs of 0 can be safely used like a fast ephemeral cache
         if ($ttl > 0) {
-            // Right now this is wrapped in a try/catch and the options to VarExporter
-            // are hardcoded, because that way it fails silently for closures that
-            // include use() statements on older versions of PHP.
-            // This is hacky, but it's the most viable way to do this as long as
-            // we're trying to support PHP 7.1 (and maybe 7.2).
-            try {
-                $value = VarExporter::export($value, 1 << 8);
-                // save into file and compile opcache
-                $filename = $this->filename($name);
-                FS::mkdir(dirname($filename));
-                // write
-                file_put_contents(
-                    $filename,
-                    "<?php \$exp = $exp; \$val = $value;",
-                    LOCK_EX
-                );
-            } catch (\Throwable $th) {
-                //throw $th;
-            }
+            $value = serialize($value);
+            // save into file and compile opcache
+            $filename = $this->filename($name);
+            FS::mkdir(dirname($filename));
+            // write to file
+            file_put_contents(
+                $filename,
+                sprintf(
+                    '<?php $exp = %u; $val = \\Opis\\Closure\\unserialize(\'%s\');',
+                    $exp,
+                    str_replace('\'', '\\\'', $value)
+                ),
+                LOCK_EX
+            );
         }
     }
 

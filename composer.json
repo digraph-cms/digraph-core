@@ -18,7 +18,6 @@
         "robmorgan/phinx": "^0.12.7||^0.11.7",
         "tubalmartin/cssmin": "^4.1",
         "scssphp/scssphp": "^1.6",
-        "brick/varexporter": "^0.3||^0.2",
         "donatj/phpuseragentparser": "^1.4",
         "tedivm/jshrink": "^1.4",
         "ralouphie/mimey": "^1.0",
@@ -28,7 +27,8 @@
         "thunderer/shortcode": "^0.7.4",
         "scrivo/highlight.php": "v9.18.1.9",
         "box/spout": "^3.1",
-        "ozdemirburak/iris": "^2"
+        "ozdemirburak/iris": "^2",
+        "opis/closure": "^3.6"
     },
     "suggest": {
         "league/oauth2-github": "Needed to support OAuth sign-ins using GitHub",
