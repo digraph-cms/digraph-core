@@ -50,7 +50,7 @@ class Plugins
         }
         $vendorDirectory = realpath(dirname($composerLockFile) . '/' . $vendorDirectory);
         CachedInitializer::run(
-            'plugins/composer/' . md5_file($composerLockFile),
+            'plugins/composer/' . filemtime($composerLockFile),
             function (CacheableState $state) use ($composerLockFile, $vendorDirectory) {
                 $data = Config::parseJsonFile($composerLockFile);
                 foreach ($data['packages'] as $package) {
