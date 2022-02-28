@@ -49,8 +49,15 @@ class OpCache extends AbstractCacheDriver
 
     public function expired(string $name): bool
     {
-        $this->readInternally($name);
-        return time() > @$this->cache[$name][0];
+        $filename = $this->filename($name);
+        $content = file_get_contents($filename, false, null, 13, 16);
+        $exp = substr($content, 0, 9);
+        for ($i = 9; $i <= 16; $i++) {
+            $char = substr($content, $i, 1);
+            if ($char === ';') break;
+            $exp .= $char;
+        }
+        return time() > intval($exp);
     }
 
     public function get(string $name)
@@ -63,7 +70,7 @@ class OpCache extends AbstractCacheDriver
     {
         if ($force || !isset($this->cache[$name])) {
             static::checkName($name);
-            if (!$this->exists($name)) {
+            if (!$this->exists($name) || $this->expired($name)) {
                 $this->cache[$name] = null;
             } else {
                 $filename = $this->filename($name);
