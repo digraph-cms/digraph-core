@@ -38,7 +38,7 @@ if ($groups = $user->groups()) {
 }
 
 $pages = Pages::select()
-    ->where('created_by = :uuid OR updated_by = :uuid', ['uuid' => $user->uuid()])
+    ->where('created_by = ? OR updated_by = ?', [$user->uuid(), $user->uuid()])
     ->order('updated DESC');
 if ($pages->count()) {
     echo "<section class='user-pages'>";
