@@ -191,21 +191,21 @@ class URL
 
     /**
      * Get the directory portion of the URL path, without any trailing filename
+     * but with a trailing slash.
      *
      * @return string
      */
     public function directory(): string
     {
-        $url = clone $this;
-        $url->query([]);
-        if (!preg_match('@/$@', $url->path())) {
-            $path = dirname($url->path());
-            if ($path != '/') {
+        $path = $this->path();
+        if (substr($path, -1) !== '/') {
+            $path = dirname($path);
+            if ($path !== '/') {
                 $path .= '/';
             }
             return $path;
         }
-        return $url->path();
+        return $path;
     }
 
     /**
@@ -243,7 +243,7 @@ class URL
      */
     public function explicitlyStaticRoute(): bool
     {
-        return substr($this->directory(), 0, 2) == '/~';
+        return substr($this->directory(), 0, 2) === '/~';
     }
 
     /**
