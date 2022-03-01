@@ -64,7 +64,13 @@ a.link--wayback {
 
 ::selection,
 ::-moz-selection {
-    background: var(--theme-highlight-a20);
+    background: var(--theme-highlight);
+    color: var(--theme-highlight-inv);
+
+    * {
+        background: inherit !important;
+        color: inherit !important;
+    }
 }
 
 :focus {
