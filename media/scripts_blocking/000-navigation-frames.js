@@ -147,8 +147,8 @@ Digraph.state = {
                         if (document.getElementById('notifications')) {
                             var error = document.createElement('div');
                             error.classList.add('notification');
-                            error.classList.add('error');
-                            error.innerText = 'Error loading navigation frame: target ID missing';
+                            error.classList.add('notification--error');
+                            error.innerText = 'Error loading navigation frame: target ID missing (' + (frame.dataset.id ?? frame.getAttribute('id')) + ')';
                             document.getElementById('notifications').appendChild(error);
                         }
                     }
