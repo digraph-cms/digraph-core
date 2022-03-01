@@ -45,8 +45,6 @@ class Theme
         'variables' => [
             'light' => [
                 'background' => '#eeeeee',
-                'background-light' => '#fafafa',
-                'background-lighter' => '#ffffff',
                 'color' => '#333333',
                 'grid' => '1rem',
                 'line-length' => '35rem',
