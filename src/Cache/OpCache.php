@@ -128,10 +128,10 @@ class OpCache extends AbstractCacheDriver
         $ttl = $ttl ?? $this->ttl;
         $exp = time() + $ttl;
         $this->cache[$name] = [$exp, $value];
-        // save into external cache if ttl is > 0
+        // save into external cache if ttl is not zero
         // still save to internal memory cache even if ttl is 0
         // this means TTLs of 0 can be safely used like a fast ephemeral cache
-        if ($ttl > 0) {
+        if ($ttl !== 0) {
             $value = serialize($value);
             // save into file and compile opcache
             $filename = $this->filename($name);
