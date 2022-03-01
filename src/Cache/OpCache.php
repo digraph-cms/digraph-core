@@ -51,6 +51,11 @@ class OpCache extends AbstractCacheDriver
     {
         $filename = $this->filename($name);
         $content = file_get_contents($filename, false, null, 13, 16);
+        // first check for expiration of 'false'
+        if (substr($content, 0, 3) === 'INF') {
+            return false;
+        }
+        // otherwise pull out numbers to form a timestamp
         $exp = substr($content, 0, 9);
         for ($i = 9; $i <= 16; $i++) {
             $char = substr($content, $i, 1);
@@ -87,8 +92,8 @@ class OpCache extends AbstractCacheDriver
                 }
                 // unlock
                 $this->unlock($filename);
-                // check expiration (time is fuzzed)
-                if (time() > $exp + random_int(0, $this->fuzz)) {
+                // check expiration - time is randomly set back up to the fuzz amount
+                if ($exp < time() - random_int(0, $this->fuzz)) {
                     // expired, expire and internally cache null result
                     $this->invalidate($name);
                     $this->cache[$name] = null;
@@ -135,8 +140,8 @@ class OpCache extends AbstractCacheDriver
             file_put_contents(
                 $filename,
                 sprintf(
-                    '<?php $exp = %u; $val = \\Opis\\Closure\\unserialize(\'%s\');',
-                    $exp,
+                    '<?php $exp = %s; $val = \\Opis\\Closure\\unserialize(\'%s\');',
+                    $exp === -1 ? "INF" : $exp,
                     str_replace('\'', '\\\'', $value)
                 ),
                 LOCK_EX
