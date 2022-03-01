@@ -126,7 +126,7 @@ class OpCache extends AbstractCacheDriver
         static::checkName($name);
         // save into internal cache
         $ttl = $ttl ?? $this->ttl;
-        $exp = time() + $ttl;
+        $exp = $ttl === -1 ? INF : time() + $ttl;
         $this->cache[$name] = [$exp, $value];
         // save into external cache if ttl is not zero
         // still save to internal memory cache even if ttl is 0
@@ -141,7 +141,7 @@ class OpCache extends AbstractCacheDriver
                 $filename,
                 sprintf(
                     '<?php $exp = %s; $val = \\Opis\\Closure\\unserialize(\'%s\');',
-                    $exp === -1 ? "INF" : $exp,
+                    is_infinite($exp) ? "INF" : $exp,
                     str_replace('\'', '\\\'', $value)
                 ),
                 LOCK_EX

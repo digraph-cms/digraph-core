@@ -8,7 +8,7 @@ class StatelessOpCache extends OpCache
     {
         $this->dir = $dir;
         $this->ttl = $ttl;
-        $this->fuzz = $ttl;
+        $this->fuzz = max(60, $ttl);
     }
 
     /**
