@@ -16,7 +16,7 @@ final class SessionTables extends AbstractMigration
             ->addColumn('created', 'integer')
             ->addColumn('expires', 'integer')
             ->addColumn('ip', 'string', ['length' => 39])
-            ->addColumn('ua', 'string', ['length' => 39])
+            ->addColumn('ua', 'string', ['length' => 250])
             ->addIndex(['user_uuid'])
             ->addIndex(['secret'])
             ->addIndex(['expires'])
