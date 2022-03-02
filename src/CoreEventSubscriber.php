@@ -17,6 +17,7 @@ use DigraphCMS\Session\Session;
 use DigraphCMS\UI\ActionMenu;
 use DigraphCMS\UI\Format;
 use DigraphCMS\UI\MenuBar\MenuItem;
+use DigraphCMS\UI\UserMenu;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\User;
@@ -256,6 +257,23 @@ class CoreEventSubscriber
         }
         // otherwise return whether this is a user
         return Permissions::inGroup('users', $user);
+    }
+
+    /**
+     * Limits access to ~messages route to signed-in users only
+     *
+     * @param URL $url
+     * @param User $user
+     * @return boolean|null
+     */
+    public static function onStaticUrlPermissions_messages(URL $url, User $user): ?bool
+    {
+        return Permissions::inGroup('users', $user);
+    }
+
+    public static function onUserMenu_user(UserMenu $menu)
+    {
+        $menu->addURL(new URL('/~messages/'), 'Inbox');
     }
 
     /**
