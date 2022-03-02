@@ -42,26 +42,6 @@ a[target="_blank"]:after {
     display: inline-block;
 }
 
-a.link--broken {
-    background-color: var(--cue-danger);
-    color: var(--cue-danger-inv);
-
-    &:after {
-        content: "error";
-        display: inline-block;
-    }
-}
-
-a.link--wayback {
-    background-color: var(--cue-warning);
-    color: var(--cue-warning-inv);
-
-    &:after {
-        content: "history";
-        display: inline-block;
-    }
-}
-
 ::selection,
 ::-moz-selection {
     background: var(--theme-highlight);
@@ -80,33 +60,6 @@ a.link--wayback {
 .navigation-frame,
 .autocomplete-results {
     @include loading-overlay;
-}
-
-.button-menu,
-.button-menu__buttons {
-    display: flex;
-    width: auto;
-}
-
-.button-menu {
-
-    .button,
-    button,
-    input[type="button"],
-    input[type="submit"] {
-        border-radius: 0;
-        white-space: normal;
-
-        &:first-child {
-            border-top-left-radius: $border-radius;
-            border-bottom-left-radius: $border-radius;
-        }
-
-        &:last-child {
-            border-top-right-radius: $border-radius;
-            border-bottom-right-radius: $border-radius;
-        }
-    }
 }
 
 @keyframes spin-loading-overlay {

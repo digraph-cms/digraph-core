@@ -1,5 +1,8 @@
 .menubar--usermenu {
     justify-content: flex-end;
+    &.menubar--checking-overflow {
+        justify-content: flex-start;
+    }
 
     .menuitem {
         font-weight: normal;
