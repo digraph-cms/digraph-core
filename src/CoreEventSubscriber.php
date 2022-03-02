@@ -29,6 +29,29 @@ class CoreEventSubscriber
 {
 
     /**
+     * Limits access to ~messages route to signed-in users only
+     *
+     * @param URL $url
+     * @param User $user
+     * @return boolean|null
+     */
+    public static function onStaticUrlPermissions_messages(URL $url, User $user): ?bool
+    {
+        return Permissions::inGroup('users', $user);
+    }
+
+    /**
+     * Add inbox link to user menu
+     *
+     * @param UserMenu $menu
+     * @return void
+     */
+    public static function onUserMenu_user(UserMenu $menu)
+    {
+        $menu->addURL(new URL('/~messages/'), 'Inbox');
+    }
+
+    /**
      * Add user action menu links to user profiles
      *
      * @param ActionMenu $menu
@@ -257,23 +280,6 @@ class CoreEventSubscriber
         }
         // otherwise return whether this is a user
         return Permissions::inGroup('users', $user);
-    }
-
-    /**
-     * Limits access to ~messages route to signed-in users only
-     *
-     * @param URL $url
-     * @param User $user
-     * @return boolean|null
-     */
-    public static function onStaticUrlPermissions_messages(URL $url, User $user): ?bool
-    {
-        return Permissions::inGroup('users', $user);
-    }
-
-    public static function onUserMenu_user(UserMenu $menu)
-    {
-        $menu->addURL(new URL('/~messages/'), 'Inbox');
     }
 
     /**
