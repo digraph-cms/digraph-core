@@ -17,7 +17,6 @@ use DigraphCMS\Session\Session;
 use DigraphCMS\UI\ActionMenu;
 use DigraphCMS\UI\Format;
 use DigraphCMS\UI\MenuBar\MenuItem;
-use DigraphCMS\UI\UserMenu;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\User;
@@ -27,30 +26,6 @@ use function DigraphCMS\Content\require_file;
 
 class CoreEventSubscriber
 {
-
-    /**
-     * Limits access to ~messages route to signed-in users only
-     *
-     * @param URL $url
-     * @param User $user
-     * @return boolean|null
-     */
-    public static function onStaticUrlPermissions_messages(URL $url, User $user): ?bool
-    {
-        return Permissions::inGroup('users', $user);
-    }
-
-    /**
-     * Add inbox link to user menu
-     *
-     * @param UserMenu $menu
-     * @return void
-     */
-    public static function onUserMenu_user(UserMenu $menu)
-    {
-        $menu->addURL(new URL('/~messages/'), 'Inbox');
-    }
-
     /**
      * Add user action menu links to user profiles
      *
@@ -229,6 +204,30 @@ class CoreEventSubscriber
     }
 
     /**
+     * Build a card for a page in the results of an autocomplete field.
+     *
+     * @param User $user
+     * @param string|null $query
+     * @return array
+     */
+    public static function onUserAutoCompleteCard(User $user, string $query = null): array
+    {
+        $name = $user->name();
+        if ($query) {
+            $words = preg_split('/ +/', trim($query));
+            foreach ($words as $word) {
+                $word = preg_quote($word);
+                $name = preg_replace('/' . $word . '/i', '<strong>$0</strong>', $name);
+            }
+        }
+        return [
+            'html' => '<div class="title">' . $name . '</div>',
+            'value' => $user->uuid(),
+            'class' => 'user'
+        ];
+    }
+
+    /**
      * Score how well a page matches a given query.
      *
      * @param Page $page
@@ -280,6 +279,23 @@ class CoreEventSubscriber
         }
         // otherwise return whether this is a user
         return Permissions::inGroup('users', $user);
+    }
+
+    /**
+     * Special permissions for pages within ~messages route
+     *
+     * @param URL $url
+     * @param User $user
+     * @return boolean|null
+     */
+    public static function onStaticUrlPermissions_messages(URL $url, User $user): ?bool
+    {
+        if ($url->action() === 'email_notifications') {
+            return true;
+        } elseif ($url->action() === 'compose') {
+            return Permissions::inMetaGroup('messages__send');
+        }
+        return Session::user() !== null;
     }
 
     /**

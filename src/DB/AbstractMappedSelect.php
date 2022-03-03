@@ -39,9 +39,9 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
      *
      * @param string $columns
      * @param boolean $overrideDefault
-     * @return AbstractMappedSelect
+     * @return $this
      */
-    public function select($columns, bool $overrideDefault = false): AbstractMappedSelect
+    public function select($columns, bool $overrideDefault = false)
     {
         if ($overrideDefault) {
             $this->returnDataObjects = false;
@@ -62,9 +62,9 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
      * @param string|array $condition
      * @param array $parameters
      * @param string $separator
-     * @return AbstractMappedSelect
+     * @return $this
      */
-    public function where($condition, $parameters = [], $separator = "AND"): AbstractMappedSelect
+    public function where($condition, $parameters = [], $separator = "AND")
     {
         $this->query->where($condition, $parameters, $separator);
         return $this;
@@ -76,9 +76,9 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
      * @param string|array $condition
      * @param array $parameters
      * @param string $separator
-     * @return AbstractMappedSelect
+     * @return $this
      */
-    public function whereOr($condition, $parameters = [], $separator = "AND"): AbstractMappedSelect
+    public function whereOr($condition, $parameters = [], $separator = "AND")
     {
         $this->query->whereOr($condition, $parameters, $separator);
         return $this;
@@ -98,9 +98,9 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
      * Add an ORDER BY clause. Pass null to reset.
      *
      * @param ?string $column
-     * @return AbstractMappedSelect
+     * @return $this
      */
-    public function order(?string $column): AbstractMappedSelect
+    public function order(?string $column)
     {
         $this->query->order($column);
         return $this;
@@ -110,9 +110,9 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
      * Add a HAVING clause
      *
      * @param string $column
-     * @return AbstractMappedSelect
+     * @return $this
      */
-    public function having(string $column): AbstractMappedSelect
+    public function having(string $column)
     {
         $this->query->having($column);
         return $this;
@@ -122,9 +122,9 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
      * Add a LIMIT clause
      *
      * @param integer $column
-     * @return AbstractMappedSelect
+     * @return $this
      */
-    public function limit(int $column): AbstractMappedSelect
+    public function limit(int $column)
     {
         $this->query->limit($column);
         return $this;
@@ -134,9 +134,9 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
      * Add an OFFSET clause
      *
      * @param integer $column
-     * @return AbstractMappedSelect
+     * @return $this
      */
-    public function offset(int $column): AbstractMappedSelect
+    public function offset(int $column)
     {
         $this->query->offset($column);
         return $this;
@@ -146,9 +146,9 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
      * Add a GROUP BY clause
      *
      * @param string $column
-     * @return AbstractMappedSelect
+     * @return $this
      */
-    public function group(string $column): AbstractMappedSelect
+    public function group(string $column)
     {
         $this->returnDataObjects = false;
         $this->query->group($column);

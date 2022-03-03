@@ -110,7 +110,17 @@
             margin: 0;
         }
 
+        > *:first-child {
+            margin-top: 0;
+        }
+        > *:last-child {
+            margin-bottom: 0;
+        }
+
         .navigation-frame {
+            > *:first-child {
+                margin-top: 0;
+            }
             > *:last-child {
                 margin-bottom: 0;
             }
@@ -131,6 +141,7 @@
         &:after {
             display: inline-block;
             content: "expand_more";
+            font-size: 1rem;
         }
     }
 
