@@ -24,21 +24,21 @@
 .message__time {
     &:before {
         display: inline;
-        content: "sent: ";
+        content: "sent ";
     }
 }
 
 .message__sender {
     &:before {
         display: inline;
-        content: "from: ";
+        content: "from ";
     }
 }
 
 .message__recipient {
     &:before {
         display: inline;
-        content: "to: ";
+        content: "to ";
     }
 }
 

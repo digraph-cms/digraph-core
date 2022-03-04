@@ -23,6 +23,7 @@ if (!$message) {
 $url = Context::url();
 $url->setName('Message');
 Breadcrumb::top($url);
+Context::fields()['page.name'] = 'Message';
 
 // if message is sensitive, only allow it to signed in users
 if ($message->sensitive()) {
@@ -44,6 +45,7 @@ if (!$message->read() && Session::user() == $message->recipientUUID()) {
 $url = Context::url();
 $url->setName($message->subject());
 Breadcrumb::top($url);
+Context::fields()['page.name'] = $message->subject();
 
 // set breadcrumb parent to archive if message is archived
 if ($message->archived()) {
