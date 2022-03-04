@@ -32,7 +32,7 @@ if (!$messages->count()) {
     );
     echo new ToolbarSpacer;
     echo new ToolbarLink(
-        'Mark all as read',
+        'All read',
         'done-all',
         function () use ($messages) {
             DB::beginTransaction();
@@ -55,12 +55,14 @@ if (!$messages->count()) {
         );
         echo "<div class='inbox-dropdown__message__controls'>";
         echo new ToolbarLink(
-            'Mark as read',
+            'Mark read',
             'mark-read',
             function () use ($message) {
                 $message->setRead(true);
                 $message->update();
-            }
+            },
+            null,
+            $message->uuid() . 'read'
         );
         echo "</div>";
         echo "</div>";
