@@ -1,4 +1,4 @@
-<h1>Archive</h1>
+<h1>Sent messages</h1>
 <?php
 
 use DigraphCMS\Context;

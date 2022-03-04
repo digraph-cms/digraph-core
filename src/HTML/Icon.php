@@ -39,7 +39,13 @@ class Icon extends Tag
         'person' => ['string' => 'person'],
         'strikethrough' => ['string' => 'strikethrough_s'],
         'highlight' => ['string' => 'highlight_alt'],
-        'clear-format' => ['string' => 'format_clear']
+        'clear-format' => ['string' => 'format_clear'],
+        'important' => ['string' => 'label_important'],
+        'secure' => ['string' => 'lock'],
+        'archive' => ['string' => 'archive'],
+        'move-to-inbox' => ['string' => 'move_to_inbox'],
+        'mark-read' => ['string' => 'mark_email_read'],
+        'mark-unread' => ['string' => 'mark_email_unread'],
     ];
 
     public function __construct(string $name, string $alt = null)
