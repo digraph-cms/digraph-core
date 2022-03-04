@@ -34,7 +34,7 @@ class Message
 
     public function url()
     {
-        return new URL('/~messages/' . $this->uuid() . '.html');
+        return new URL('/~messages/msg_' . $this->uuid() . '.html');
     }
 
     public function send()

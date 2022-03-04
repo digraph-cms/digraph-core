@@ -290,12 +290,14 @@ class CoreEventSubscriber
      */
     public static function onStaticUrlPermissions_messages(URL $url, User $user): ?bool
     {
-        if ($url->action() === 'email_notifications') {
+        if (substr($url->action(), 0, 4) == 'msg_') {
+            return true;
+        } elseif ($url->action() === 'email_notifications') {
             return true;
         } elseif ($url->action() === 'compose') {
-            return Permissions::inMetaGroup('messages__send');
+            return Permissions::inMetaGroup('messages__send', $user);
         }
-        return Session::user() !== null;
+        return Permissions::inGroup('users', $user);
     }
 
     /**
