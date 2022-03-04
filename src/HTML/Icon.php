@@ -46,6 +46,8 @@ class Icon extends Tag
         'move-to-inbox' => ['string' => 'move_to_inbox'],
         'mark-read' => ['string' => 'mark_email_read'],
         'mark-unread' => ['string' => 'mark_email_unread'],
+        'done-all' => ['string' => 'done_all'],
+        'inbox' => ['string' => 'inbox'],
     ];
 
     public function __construct(string $name, string $alt = null)

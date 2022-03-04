@@ -53,14 +53,26 @@
 }
 
 .inbox-dropdown__message {
+    display: flex;
+
     .inbox-dropdown__message__subject {
         white-space: nowrap;
         display: block;
         overflow: hidden;
         text-overflow: ellipsis;
         padding: $grid/2;
+        flex-grow: 1;
+
         &:hover {
             background: var(--cue-interactive-a20);
+        }
+    }
+
+    .inbox-dropdown__message__controls {
+        white-space: nowrap;
+
+        > * {
+            white-space: normal;
         }
     }
 }
