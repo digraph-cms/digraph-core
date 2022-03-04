@@ -82,7 +82,7 @@ class ToolbarLink extends Tag
     public function attributes(): array
     {
         $attributes = parent::attributes();
-        $attributes['tabindex'] = '0';
+        $attributes['tabindex'] = '-1';
         if ($this->command()) {
             $attributes['data-command'] = $this->command();
         }
