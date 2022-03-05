@@ -36,7 +36,7 @@
         background: var(--background);
     }
 
-    > textarea {
+    >textarea {
         border: 0;
         display: block;
         margin: 0;
@@ -99,6 +99,7 @@
 .rich-content-editor__media-editor--wide-forced {
     padding-left: 0;
     margin-left: -$border;
+
     .rich-content-editor__media-editor__size-toggle {
         display: none;
     }
@@ -107,7 +108,7 @@
 .rich-content-editor__media-editor-frame {
     height: 100%;
 
-    > .tab-interface {
+    >.tab-interface {
         height: 100%;
         margin: 0;
         margin-left: $border;
@@ -124,5 +125,11 @@
 body.no-js {
     .rich-content-editor__dynamic-editor {
         display: none;
+    }
+}
+
+.rich-content-editor.rich-content-editor--mini {
+    .rich-content-editor__dynamic-editor {
+        height: 10rem;
     }
 }
