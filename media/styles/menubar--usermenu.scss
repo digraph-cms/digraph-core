@@ -1,5 +1,7 @@
 .menubar--usermenu {
     justify-content: flex-end;
+    font-size: smaller;
+
     &.menubar--checking-overflow {
         justify-content: flex-start;
     }
@@ -8,8 +10,8 @@
         font-weight: normal;
     }
 
-    > .menuitem {
-        > .menuitem__dropdown {
+    >.menuitem {
+        >.menuitem__dropdown {
             left: auto;
             right: 0;
         }
@@ -18,10 +20,12 @@
     .menuitem--logout {
         order: 1000;
         font-weight: bold;
+
         .menuitem__link {
             background: var(--cue-warning);
             color: var(--cue-warning-inv);
         }
+
         &:hover,
         &:focus,
         &:focus-within,
@@ -35,10 +39,12 @@
     .menuitem--login {
         order: 1000;
         font-weight: bold;
+
         .menuitem__link {
             background: var(--cue-interactive);
             color: var(--cue-interactive-inv);
         }
+
         &:hover,
         &:focus,
         &:focus-within,
@@ -56,10 +62,12 @@
 
     .menuitem--inbox {
         order: 998;
+
         &.menuitem--inbox--notify {
-            > .menuitem__link {
+            >.menuitem__link {
                 background: var(--cue-interactive);
                 color: var(--cue-interactive-inv);
+
                 &:after {
                     content: "notifications";
                 }
@@ -69,13 +77,15 @@
 
     .menuitem--theme {
         order: 999;
-        > .menuitem__link {
+
+        >.menuitem__link {
             &:after {
                 content: "dark_mode";
             }
         }
+
         .theme-menu {
-            > *:last-child {
+            >*:last-child {
                 margin-bottom: 0;
             }
         }

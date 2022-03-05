@@ -37,7 +37,7 @@ if (!$only || in_array('format', $only)) {
             ->setShortcut('Ctrl-B'),
         (new ToolbarLink('Italic', 'italic', 'markdownToggleItalic'))
             ->setShortcut('Ctrl-I'),
-        (new ToolbarLink('Strikethrough', 'strikethrough', 'markdownToggleStrikethrough'))
+        (new ToolbarLink('Strike', 'strikethrough', 'markdownToggleStrikethrough'))
             ->setShortcut('Ctrl-Shift-S'),
         (new ToolbarLink('Highlight', 'highlight','markdownToggleHighlight'))
             ->setShortcut('Ctrl-Shift-M'),
