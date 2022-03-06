@@ -104,7 +104,7 @@ class ResponsivePicture extends Tag
                 sprintf(
                     '(min-width: %spx) and (min-height: %spx)',
                     (($width - $this->widthInterval) * $this->expectedWidth) / 100,
-                    ($height * $this->maxHeight) / 100
+                    ($height * $this->maxHeight) / 100 - ($this->widthInterval * $ratio)
                 ),
                 $image->mime(),
                 $this->srcSet($image, $width)
