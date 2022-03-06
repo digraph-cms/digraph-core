@@ -5,6 +5,7 @@ namespace DigraphCMS\Users;
 use DigraphCMS\Config;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTTP\HttpError;
+use DigraphCMS\Session\Session;
 use DigraphCMS\URL\URL;
 
 class Permissions
@@ -15,7 +16,9 @@ class Permissions
      * the group admins and any ending in __edit will always include admins
      * and editors
      */
-    const METAGROUPS = [];
+    const METAGROUPS = [
+        'messages__send' => ['admins']
+    ];
 
     public static function url(URL $url, User $user = null): bool
     {
@@ -96,6 +99,13 @@ class Permissions
         return false;
     }
 
+    public static function requireAuth()
+    {
+        if (Session::user() === null) {
+            throw new HttpError(401);
+        }
+    }
+
     public static function requireGroup(string $group)
     {
         if (!static::inGroup($group)) {
@@ -113,14 +123,24 @@ class Permissions
     public static function metaGroup(string $name): array
     {
         $groups = Config::get("metagroups.$name") ?? @static::METAGROUPS[$name] ?? [];
-        if (substr($name, -7) == '__admin') {
+        $split = explode('__', $name, 2);
+        $activity = $split[0];
+        $level = @$split[1];
+        if ($level === 'admin') {
+            // admins are part of all admin level metagroups
             $groups[] = 'admins';
-        }
-        if (substr($name, -6) == '__edit') {
-            $groups[] = 'admins';
+        } elseif ($level === 'edit') {
+            // editors are part of all edit level metagroups
             $groups[] = 'editors';
+            // matching admin level metagroup is also part of all edit level metagroups
+            $groups = array_merge($groups, static::metaGroup($activity . '__admin'));
+        } elseif ($level) {
+            // matching admin level metagroup is also part of all level-specified metagroups
+            $groups = array_merge($groups, static::metaGroup($activity . '__admin'));
+            // matching editor level metagroup is also part of all level-specified metagroups
+            $groups = array_merge($groups, static::metaGroup($activity . '__admin'));
         }
-        return $groups;
+        return array_unique($groups);
     }
 
     public static function requireMetaGroup(string $name)

@@ -17,10 +17,12 @@ class ActionMenu extends MenuBar
     public function __construct(URL $url = null)
     {
         $this->url = $url ? clone $url : Context::url();
-        // set menu label
-        $this->setAttribute('aria-label','Action menu');
+        // set menu label and class
+        $this->setAttribute('aria-label', 'Action menu');
         // page actions
         if ($page = $this->url->page()) {
+            $this->addClass('menubar--actionmenu--page');
+            $this->addClass('menubar--actionmenu--page--' . $page->class());
             // regular action links
             foreach (Router::pageActions($page) as $url) {
                 if (substr($url->action(), 0, 1) == '_') {
@@ -48,6 +50,10 @@ class ActionMenu extends MenuBar
                 ->addClass('menuitem--static-action')
                 ->addClass('menuitem--' . $url->action());
         }
+        if ($actions) {
+            $this->addClass('menubar--actionmenu--static');
+            $this->addClass('menubar--actionmenu--static--' . $url->route());
+        }
         // event hooks
         Dispatcher::dispatchEvent('onActionMenu', [$this]);
         Dispatcher::dispatchEvent('onActionMenu_' . $this->url->route(), [$this]);
@@ -60,6 +66,7 @@ class ActionMenu extends MenuBar
                 }
             );
             if ($addable) {
+                $this->addClass('menubar--actionmenu--has-adder');
                 $this->addChild(
                     $this->adderItem = (new MenuItem(null, 'Add'))
                         ->addClass('menuitem--page-action--adder')
@@ -94,12 +101,9 @@ class ActionMenu extends MenuBar
 
     public function classes(): array
     {
-        return array_merge(
-            parent::classes(),
-            [
-                'menubar--actionmenu'
-            ]
-        );
+        $classes = parent::classes();
+        $classes[] = 'menubar--actionmenu';
+        return $classes;
     }
 
     public function toString(): string

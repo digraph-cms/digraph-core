@@ -61,6 +61,22 @@ class DigraphAutocomplete {
             (e) => { this._doBlurEvent(e); },
             500
         );
+        // enter initial awaiting input state
+        this.setState('awaiting-input');
+        this.resultFocused = false;
+        // pull existing value if it exists
+        if (this.input.dataset.value) {
+            const value = JSON.parse(this.input.dataset.value);
+            this.selectedCard.tabIndex = 0;
+            this.selectedCard.innerHTML = '<div class="result-html"><div class="after-icon">' + value.html + "</div></div>"
+            if (value.class) {
+                this.selectedCard.firstChild.classList.add(value.class);
+            }
+            this.value.value = value.value;
+            this.input.value = '';
+            this.selected.style.display = null;
+            this.input.style.display = 'none';
+        }
         // set up event listeners
         this.wrapper.addEventListener('keydown', (e) => { this.globalKeyDownHandler(e); });
         this.input.addEventListener('focus', (e) => { this.focusEvent(e); });
@@ -84,21 +100,6 @@ class DigraphAutocomplete {
             this.input.style.display = null;
             this.input.focus();
         });
-        // enter initial awaiting input state
-        this.setState('awaiting-input');
-        this.resultFocused = false;
-        // pull existing value if it exists
-        if (this.input.dataset.value) {
-            const value = JSON.parse(atob(this.input.dataset.value));
-            this.selectedCard.innerHTML = '<div class="result-html"><div class="after-icon">' + value.html.html + "</div></div>"
-            if (value.html.class) {
-                this.selectedCard.firstChild.classList.add(value.html.class);
-            }
-            this.value.value = value.value;
-            this.input.value = '';
-            this.selected.style.display = null;
-            this.input.style.display = 'none';
-        }
     }
     /**
      * @param {Event} e 
@@ -157,16 +158,6 @@ class DigraphAutocomplete {
             }
             e.preventDefault();
         }
-        // tab key
-        // else if (e.keyCode == 9) {
-        //     // input is currently focused
-        //     if (this.input == document.activeElement) {
-        //         // there are results, select the first one
-        //         if (this.results.childNodes.length) {
-        //             this.selectElement(this.results.childNodes[0]);
-        //         }
-        //     }
-        // }
         // enter key
         else if (e.key == 'Enter') {
             var result;

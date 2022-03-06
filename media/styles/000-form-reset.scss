@@ -44,7 +44,7 @@ fieldset,
 .CodeMirror {
     border: $border solid var(--theme-neutral);
     border-radius: var(--border-radius);
-    background-color: var(--background);
+    background-color: var(--background-lighter);
     color: var(--color);
     width: 100%;
 }
@@ -133,7 +133,7 @@ label {
 }
 
 .form-field--error {
-    background: var(--cue-error-a10);
+    background: var(--cue-warning-a10);
     padding: $grid/2;
 }
 

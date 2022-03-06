@@ -33,7 +33,7 @@
     border-bottom-right-radius: $border-radius;
     border: $border solid var(--theme-neutral);
     border-top: 0;
-    background-color: var(--background);
+    background-color: var(--background-light);
     color: var(--color);
 
     >div {
@@ -140,7 +140,7 @@
     display: flex;
     border: $border solid var(--theme-neutral);
     border-radius: $border-radius;
-    background-color: var(--background);
+    background-color: var(--background-lighter);
     color: var(--color);
     box-sizing: border-box;
 
@@ -172,6 +172,7 @@
             @include material-icon;
             display: block;
             font-size: 2rem;
+            line-height: 1;
             content: 'backspace';
         }
     }

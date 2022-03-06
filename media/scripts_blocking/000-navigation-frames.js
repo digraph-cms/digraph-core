@@ -108,8 +108,7 @@ Digraph.state = {
     // get requested URL and updated browser history so that forward/back work
     getAndPush: (url, frame) => {
         Digraph.state.get(url, frame);
-        history.pushState(
-            { url: url, frame: frame.getAttribute('id') },
+        history.pushState({ url: url, frame: frame.getAttribute('id') },
             document.getElementsByTagName('title')[0].innerHTML,
             url
         );
@@ -150,6 +149,7 @@ Digraph.state = {
                             error.classList.add('notification--error');
                             error.innerText = 'Error loading navigation frame: target ID missing (' + (frame.dataset.id ?? frame.getAttribute('id')) + ')';
                             document.getElementById('notifications').appendChild(error);
+                            error.parentElement.dispatchEvent(new Event('DigraphDOMReady', { bubbles: true }));
                         }
                     }
                     return;

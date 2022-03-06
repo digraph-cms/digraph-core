@@ -5,6 +5,7 @@ namespace DigraphCMS\UI;
 use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\Events\Dispatcher;
+use DigraphCMS\Messaging\Messages;
 use DigraphCMS\Session\Session;
 use DigraphCMS\UI\MenuBar\MenuBar;
 use DigraphCMS\UI\MenuBar\MenuItem;
@@ -20,8 +21,27 @@ class UserMenu extends MenuBar
     {
         if ($user = Users::current()) {
             // actions for authenticated user
+            // user profile link
             $this->userItem = $this->addURL($user->profile())
                 ->addClass('menuitem--user');
+            // inbox link, and dropdown if there are unread inbox items
+            $messages = Messages::notify();
+            if ($messages->count()) {
+                $this->addChild(
+                    $this->inboxItem =
+                        (new MenuItemFrame(
+                            new URL('/~messages/'),
+                            'Inbox',
+                            new URL('/~api/v1/usermenu/inbox.php')
+                        ))
+                        ->addClass('menuitem--inbox')
+                        ->addClass('menuitem--inbox--notify')
+                );
+            } else {
+                $this->inboxItem = $this->addURL(new URL('/~messages/'), 'Inbox')
+                    ->addClass('menuitem--inbox');
+            }
+            // logout link
             $this->logoutItem = $this->addURL(Users::signoutUrl(Context::url()))
                 ->addClass('menuitem--logout');
             // set menu label
@@ -40,13 +60,16 @@ class UserMenu extends MenuBar
             Dispatcher::dispatchEvent('onUserMenu_guest', [$this]);
         }
         // add admin settings
+        $this->adminItem = $this->addURL(new URL('/~admin/'), 'Admin')
+            ->addClass('menuitem--admin');
+        // add theme settings
         $this->addChild(
-            $this->adminItem = (new MenuItem(new URL('/~admin/'), 'Admin tools'))
-                ->addClass('menuitem--admin')
-        );
-        // add color settings
-        $this->addChild(
-            $this->themeItem = (new MenuItemFrame(null, 'Theme', new URL('/~api/v1/theme-menu.php')))
+            $this->themeItem =
+                (new MenuItemFrame(
+                    null,
+                    'Theme',
+                    new URL('/~api/v1/usermenu/theme.php')
+                ))
                 ->addClass('menuitem--theme')
         );
         // global events for adding to menu

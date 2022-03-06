@@ -26,7 +26,6 @@ use function DigraphCMS\Content\require_file;
 
 class CoreEventSubscriber
 {
-
     /**
      * Add user action menu links to user profiles
      *
@@ -205,6 +204,30 @@ class CoreEventSubscriber
     }
 
     /**
+     * Build a card for a page in the results of an autocomplete field.
+     *
+     * @param User $user
+     * @param string|null $query
+     * @return array
+     */
+    public static function onUserAutoCompleteCard(User $user, string $query = null): array
+    {
+        $name = $user->name();
+        if ($query) {
+            $words = preg_split('/ +/', trim($query));
+            foreach ($words as $word) {
+                $word = preg_quote($word);
+                $name = preg_replace('/' . $word . '/i', '<strong>$0</strong>', $name);
+            }
+        }
+        return [
+            'html' => '<div class="title">' . $name . '</div>',
+            'value' => $user->uuid(),
+            'class' => 'user'
+        ];
+    }
+
+    /**
      * Score how well a page matches a given query.
      *
      * @param Page $page
@@ -255,6 +278,25 @@ class CoreEventSubscriber
                 || Permissions::inMetaGroup('users__admin', $user);
         }
         // otherwise return whether this is a user
+        return Permissions::inGroup('users', $user);
+    }
+
+    /**
+     * Special permissions for pages within ~messages route
+     *
+     * @param URL $url
+     * @param User $user
+     * @return boolean|null
+     */
+    public static function onStaticUrlPermissions_messages(URL $url, User $user): ?bool
+    {
+        if (substr($url->action(), 0, 4) == 'msg_') {
+            return true;
+        } elseif ($url->action() === 'email_notifications') {
+            return true;
+        } elseif ($url->action() === 'compose') {
+            return Permissions::inMetaGroup('messages__send', $user);
+        }
         return Permissions::inGroup('users', $user);
     }
 

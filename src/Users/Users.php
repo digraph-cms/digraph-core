@@ -177,6 +177,19 @@ class Users
     }
 
     /**
+     * Return whether or not a given user UUID exists in the database
+     *
+     * @param string $uuid
+     * @return boolean
+     */
+    public static function exists(string $uuid): bool
+    {
+        return !!DB::query()->from('user')
+            ->where('uuid = ?', [$uuid])
+            ->count();
+    }
+
+    /**
      * Works fundamentally the same way as get(), but instead of returning null
      * for nonexistent users, will return a NullUser even for nonexistent users
      * which means that it can be used to safely display potentially missing

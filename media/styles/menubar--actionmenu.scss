@@ -2,6 +2,7 @@
     background-color: var(--cue-interactive-a10);
     color: inherit;
     border-top: $border solid var(--cue-interactive);
+    font-size: smaller;
 
     .menuitem {
         background-color: transparent;
@@ -11,7 +12,7 @@
         &:focus,
         &:focus-within,
         &.menuitem--focus {
-            > a.menuitem__link {
+            >a.menuitem__link {
                 background-color: var(--cue-interactive-bright);
                 color: var(--cue-interactive-inv);
 
@@ -25,7 +26,7 @@
         &.menuitem--current-parent {
             opacity: 1;
             background-color: var(--cue-interactive);
-                color: var(--cue-interactive-inv);
+            color: var(--cue-interactive-inv);
         }
 
         &.menuitem--page-display {

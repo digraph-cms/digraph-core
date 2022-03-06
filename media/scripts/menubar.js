@@ -39,10 +39,12 @@ Make menu dropdowns work more nicely
             .forEach(menu => {
                 menu.style.height = menu.offsetHeight + 'px';
                 menu.classList.remove('menubar--overflowed');
+                menu.classList.add('menubar--checking-overflow');
                 if (menu.offsetWidth < menu.scrollWidth) {
                     menu.classList.add('menubar--overflowed');
                 }
                 menu.style.height = 'auto';
+                menu.classList.remove('menubar--checking-overflow');
             });
     }
     // update dropdown menus

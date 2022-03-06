@@ -85,10 +85,10 @@ final class Session
             return;
         }
         // check for different user agent
-        // if (static::browserPlatform($auth->ua()) != static::browserPlatform()) {
-        //     static::deauthenticate("Browser/OS changed (" . static::fullBrowser() . ")");
-        //     return;
-        // }
+        if (static::browserPlatform($auth->ua()) != static::browserPlatform()) {
+            static::deauthenticate("Browser/OS changed (" . static::fullBrowser() . ")");
+            return;
+        }
     }
 
     public static function browserPlatform(string $ua = null): string

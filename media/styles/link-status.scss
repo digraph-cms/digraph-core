@@ -1,0 +1,19 @@
+a.link--broken {
+    background-color: var(--cue-danger);
+    color: var(--cue-danger-inv);
+
+    &:after {
+        content: "error";
+        display: inline-block;
+    }
+}
+
+a.link--wayback {
+    background-color: var(--cue-warning);
+    color: var(--cue-warning-inv);
+
+    &:after {
+        content: "history";
+        display: inline-block;
+    }
+}
