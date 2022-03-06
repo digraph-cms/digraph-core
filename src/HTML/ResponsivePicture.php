@@ -14,7 +14,7 @@ class ResponsivePicture extends Tag
     protected $image;
     protected $alt;
     protected $expectedWidth = 90;
-    protected $maxHeight = 80;
+    protected $maxHeight = 60;
     protected $widthInterval = 200;
     protected $img;
 
