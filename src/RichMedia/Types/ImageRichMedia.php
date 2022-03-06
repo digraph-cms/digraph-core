@@ -4,6 +4,8 @@ namespace DigraphCMS\RichMedia\Types;
 
 use DigraphCMS\Content\Filestore;
 use DigraphCMS\Content\FilestoreFile;
+use DigraphCMS\HTML\ResponsivePicture;
+use DigraphCMS\RichContent\RichContent;
 use Thunder\Shortcode\Shortcode\ShortcodeInterface;
 
 class ImageRichMedia extends AbstractRichMedia
@@ -17,7 +19,27 @@ class ImageRichMedia extends AbstractRichMedia
      */
     public static function shortCode(ShortcodeInterface $code, $media): ?string
     {
-        return "<div>TODO: render image media</div>";
+        $image = new ResponsivePicture(
+            $media->file()->image(),
+            $media['alt']
+        );
+        return $image->toString();
+    }
+
+    public function setCaption(RichContent $caption = null)
+    {
+        unset($this['caption']);
+        if ($caption) {
+        $this['caption'] = $caption->array();
+        }
+    }
+
+    public function caption(): ?RichContent
+    {
+        if ($this['caption']) {
+            return new RichContent($this['caption']);
+        }
+        return null;
     }
 
     public static function class(): string

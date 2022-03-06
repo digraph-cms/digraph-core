@@ -5,7 +5,6 @@ namespace DigraphCMS\Media;
 use DigraphCMS\Cache\CacheNamespace;
 use DigraphCMS\Config;
 use DigraphCMS\FS;
-use DigraphCMS\URL\URL;
 use Mimey\MimeTypes;
 use Spatie\Image\Image;
 use Spatie\Image\Manipulations;
@@ -45,15 +44,6 @@ class ImageFile extends DeferredFile
         $this->content = [$this, 'contentCallback'];
         $this->filename = $filename;
         $this->cache = new CacheNamespace('image-file');
-    }
-
-    public function embed(): string
-    {
-        $url = new URL('/~image_embed/' . $this->identifier() . '.html');
-        return sprintf(
-            '<div class="file-embed image-embed"><iframe src="%s"></iframe></div>',
-            $url
-        );
     }
 
     public function src(): string
@@ -100,6 +90,7 @@ class ImageFile extends DeferredFile
         $this->manipulations = unserialize(serialize($this->manipulations));
         $this->written = false;
         $this->content = [$this, 'contentCallback'];
+        $this->url = null;
     }
 
     public function filename(): string
@@ -168,30 +159,14 @@ class ImageFile extends DeferredFile
         ]));
     }
 
-    public function getWidth(): int
+    public function originalWidth(): int
     {
-        return $this->cache->get(
-            'width/' . $this->identifier(),
-            function () {
-                return $this->image
-                    ->manipulate($this->manipulations)
-                    ->getWidth();
-            },
-            $this->ttl()
-        );
+        return $this->image->getWidth();
     }
 
-    public function getHeight(): int
+    public function originalHeight(): int
     {
-        return $this->cache->get(
-            'height/' . $this->identifier(),
-            function () {
-                return $this->image
-                    ->manipulate($this->manipulations)
-                    ->getHeight();
-            },
-            $this->ttl()
-        );
+        return $this->image->getHeight();
     }
 
     /**

@@ -39,6 +39,8 @@ class DeferredFile extends File
         // create directory and call callback
         FS::mkdir(dirname($this->path()));
         call_user_func($this->content, $this);
+        // reset URL
+        $this->url = null;
     }
 
     public function content(): string
