@@ -4,6 +4,7 @@ namespace DigraphCMS\RichMedia\Types;
 
 use DigraphCMS\Content\Filestore;
 use DigraphCMS\Content\FilestoreFile;
+use DigraphCMS\HTML\FIGURE;
 use DigraphCMS\HTML\ResponsivePicture;
 use DigraphCMS\RichContent\RichContent;
 use Thunder\Shortcode\Shortcode\ShortcodeInterface;
@@ -23,6 +24,12 @@ class ImageRichMedia extends AbstractRichMedia
             $media->file()->image(),
             $media['alt']
         );
+        if ($media->caption()) {
+            $figure = new FIGURE;
+            $figure->addChild($image);
+            $figure->addChild('<figcaption>' . $media->caption() . '</figcaption>');
+            return $figure->toString();
+        }
         return $image->toString();
     }
 
@@ -30,7 +37,7 @@ class ImageRichMedia extends AbstractRichMedia
     {
         unset($this['caption']);
         if ($caption) {
-        $this['caption'] = $caption->array();
+            $this['caption'] = $caption->array();
         }
     }
 

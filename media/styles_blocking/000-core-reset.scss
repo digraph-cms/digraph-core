@@ -114,19 +114,6 @@ img {
     height: auto;
 }
 
-picture.fancyfit {
-    display: inline-block;
-    background: #999;
-    padding-top: 75%;
-    max-width: 100%;
-
-    img {
-        display: block;
-        width: 100%;
-        height: auto;
-    }
-}
-
 @keyframes spin-loading-overlay {
     from {
         transform: translate(-50%, -50%) rotate(0deg);

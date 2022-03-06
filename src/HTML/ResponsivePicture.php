@@ -14,8 +14,8 @@ class ResponsivePicture extends Tag
     protected $image;
     protected $alt;
     protected $expectedWidth = 90;
-    protected $maxHeight = 60;
-    protected $widthInterval = 200;
+    protected $maxHeight = 80;
+    protected $widthInterval = 400;
     protected $img;
 
     public function __construct(ImageFile $image, string $alt)
@@ -24,7 +24,7 @@ class ResponsivePicture extends Tag
         $this->setAlt($alt);
         $this->img = new IMG(
             (clone $this->image())
-                ->fit(1920, 1080)
+                ->fit(640, 480)
                 ->optimize()
                 ->url(),
             $this->alt()
@@ -103,15 +103,30 @@ class ResponsivePicture extends Tag
                 '<source media="%s" type="%s" srcset="%s" />' . PHP_EOL,
                 sprintf(
                     '(min-width: %spx) and (min-height: %spx)',
-                    ($width * $this->expectedWidth) / 100,
+                    (($width - $this->widthInterval) * $this->expectedWidth) / 100,
                     ($height * $this->maxHeight) / 100
                 ),
                 $image->mime(),
-                $image->url()
+                $this->srcSet($image, $width)
             );
             $width -= $this->widthInterval;
-        } while ($width >= $this->widthInterval);
+        } while ($width >= $this->widthInterval * 2);
         return $sources;
+    }
+
+    protected function srcSet(ImageFile $image, float $width)
+    {
+        $set = [$image->url()];
+        $originalWidth = $image->originalWidth();
+        foreach ([1.5, 2, 3] as $x) {
+            $newWidth = $x * $width;
+            if ($originalWidth >= $newWidth) {
+                $resized = (clone $image)
+                    ->width($newWidth);
+                $set[] = $resized->url() . ' ' . $x . 'x';
+            }
+        }
+        return implode(', ', $set);
     }
 
     public function children(): array
