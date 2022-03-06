@@ -2,6 +2,7 @@
 
 namespace DigraphCMS\Media;
 
+use ColorThief\ColorThief;
 use DigraphCMS\Cache\CacheNamespace;
 use DigraphCMS\Config;
 use DigraphCMS\FS;
@@ -44,6 +45,23 @@ class ImageFile extends DeferredFile
         $this->content = [$this, 'contentCallback'];
         $this->filename = $filename;
         $this->cache = new CacheNamespace('image-file');
+    }
+
+    public function color(): string
+    {
+        return $this->cache->get(
+            'color/' . $this->identifier(),
+            function () {
+                $this->write();
+                return 'rgb('
+                    . implode(
+                        ',',
+                        ColorThief::getColor($this->path())
+                    )
+                    . ')';
+            },
+            $this->ttl()
+        );
     }
 
     public function src(): string

@@ -25,9 +25,10 @@ class ImageRichMedia extends AbstractRichMedia
             $media['alt']
         );
         if ($media->caption()) {
-            $figure = new FIGURE;
-            $figure->addChild($image);
-            $figure->addChild('<figcaption>' . $media->caption() . '</figcaption>');
+            $figure = (new FIGURE)
+                ->setAttribute('style', 'background-color:' . $media->file()->image()->color())
+                ->addChild($image)
+                ->addChild('<figcaption>' . $media->caption() . '</figcaption>');
             return $figure->toString();
         }
         return $image->toString();

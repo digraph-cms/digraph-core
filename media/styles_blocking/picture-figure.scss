@@ -12,8 +12,7 @@ picture.fancyfit {
 }
 
 figure {
-    background-color: var(--background-darker);
-    color: var(--color-lighter);
+    background-color: #999;
     font-family: $font-ui;
     box-shadow: var(--shadow);
     display: flex;
@@ -36,6 +35,8 @@ figcaption {
     padding: $grid/2;
     width: 100%;
     box-sizing: border-box;
+    background-color: var(--background-a80);
+    color: var(--color-lighter);
 
     >* {
         margin-left: auto;
