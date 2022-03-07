@@ -15,8 +15,11 @@ class ResponsivePicture extends Tag
     protected $alt;
     protected $expectedWidth = 90;
     protected $maxHeight = 80;
-    protected $widthInterval = 400;
     protected $img;
+    const BREAKPOINTS = [
+        400, 800, 1200, 1600, 2000
+    ];
+    const DEFAULT_WIDTH = 800;
 
     public function __construct(ImageFile $image, string $alt)
     {
@@ -24,7 +27,7 @@ class ResponsivePicture extends Tag
         $this->setAlt($alt);
         $this->img = new IMG(
             (clone $this->image())
-                ->fit(640, 480)
+                ->width(Config::get('images.default_width') ?? static::DEFAULT_WIDTH)
                 ->optimize()
                 ->url(),
             $this->alt()
@@ -89,30 +92,35 @@ class ResponsivePicture extends Tag
     protected function sources($webP = false): array
     {
         $sources = [];
-        $width = $this->image()->originalWidth();
-        $height = $this->image()->originalHeight();
-        $ratio = $height / $width;
-        do {
-            $image = (clone $this->image())
-                ->width($width)
-                ->optimize();
-            if ($webP) {
-                $image->webp();
+        $originalWidth = $this->image()->originalWidth();
+        $originalHeight = $this->image()->originalHeight();
+        $ratio = $originalHeight / $originalWidth;
+        $lastWidth = 0;
+        $lastHeight = 0;
+        $image = (clone $this->image())
+            ->optimize();
+        if ($webP) {
+            $image->webp();
+        }
+        foreach (Config::get('images.breakpoints') ?? static::BREAKPOINTS as $width) {
+            if ($width > $originalWidth) {
+                break;
             }
             $height = round($width * $ratio);
             $sources[] = sprintf(
                 '<source media="%s" type="%s" srcset="%s" />' . PHP_EOL,
                 sprintf(
                     '(min-width: %spx) and (min-height: %spx)',
-                    (($width - $this->widthInterval) * $this->expectedWidth) / 100,
-                    ($height * $this->maxHeight) / 100 - ($this->widthInterval * $ratio)
+                    ($lastWidth * $this->expectedWidth) / 100,
+                    ($lastHeight * $this->maxHeight) / 100
                 ),
                 $image->mime(),
                 $this->srcSet($image, $width)
             );
-            $width -= $this->widthInterval;
-        } while ($width >= $this->widthInterval * 2);
-        return $sources;
+            $lastWidth = $width;
+            $lastHeight = $height;
+        }
+        return array_reverse($sources);
     }
 
     protected function srcSet(ImageFile $image, float $width)
