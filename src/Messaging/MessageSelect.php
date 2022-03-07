@@ -18,7 +18,7 @@ class MessageSelect extends AbstractMappedSelect
      */
     public function archive()
     {
-        return $this->where('archived = 1');
+        return $this->where('`archived` = 1');
     }
 
     /**
@@ -28,7 +28,7 @@ class MessageSelect extends AbstractMappedSelect
      */
     public function inbox()
     {
-        return $this->where('archived = 0');
+        return $this->where('`archived` = 0');
     }
 
     /**
@@ -38,7 +38,7 @@ class MessageSelect extends AbstractMappedSelect
      */
     public function read()
     {
-        return $this->where('read = 1');
+        return $this->where('`read` = 1');
     }
 
     /**
@@ -48,6 +48,6 @@ class MessageSelect extends AbstractMappedSelect
      */
     public function unread()
     {
-        return $this->where('read = 0');
+        return $this->where('`read` = 0');
     }
 }
