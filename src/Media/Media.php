@@ -190,10 +190,12 @@ class Media
 
     public static function fileUrl(File $file): string
     {
+        $filename = urlencode($file->filename());
+        $filename = str_replace('+', '%20', $filename);
         if (Config::get('files.external')) {
-            return Config::get('files.url') . '/' . static::idPath($file) . '/' . $file->filename();
+            return Config::get('files.url') . '/' . static::idPath($file) . '/' . $filename;
         } else {
-            return URLs::site() . Config::get('files.url') . '/' . static::idPath($file) . '/' . $file->filename();
+            return URLs::site() . Config::get('files.url') . '/' . static::idPath($file) . '/' . $filename;
         }
     }
 

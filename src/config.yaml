@@ -5,6 +5,7 @@ rich_media_types:
   bookmark: \DigraphCMS\RichMedia\Types\BookmarkRichMedia
   content: \DigraphCMS\RichMedia\Types\ContentRichMedia
   aside: \DigraphCMS\RichMedia\Types\AsideRichMedia
+  image: \DigraphCMS\RichMedia\Types\ImageRichMedia
   file: \DigraphCMS\RichMedia\Types\FileRichMedia
   zip: \DigraphCMS\RichMedia\Types\MultiFileRichMedia
   table: \DigraphCMS\RichMedia\Types\TableRichMedia

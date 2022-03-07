@@ -1,0 +1,53 @@
+picture.fancyfit {
+    display: inline-block;
+    background: #999;
+    padding-top: 75%;
+    max-width: 100%;
+
+    img {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+}
+
+figure {
+    background-color: #999;
+    font-family: $font-ui;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    margin: $grid 0;
+    align-items: center;
+
+    >picture {
+        display: block;
+
+        >img {
+            display: block;
+        }
+    }
+}
+
+figcaption {
+    display: block;
+    font-size: smaller;
+    padding: $grid/2;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: var(--background-a80);
+    color: var(--color);
+
+    >* {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    >*:first-child {
+        margin-top: 0;
+    }
+
+    >*:last-child {
+        margin-bottom: 0;
+    }
+}
