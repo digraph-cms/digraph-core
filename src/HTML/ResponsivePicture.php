@@ -141,7 +141,7 @@ class ResponsivePicture extends Tag
     public function children(): array
     {
         return array_merge(
-            $this->sources(true),
+            method_exists('imagewebp') ? $this->sources(true) : [],
             $this->sources(),
             [$this->img()]
         );
