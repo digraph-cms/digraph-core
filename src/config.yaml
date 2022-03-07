@@ -49,7 +49,7 @@ wayback:
   # how frequently to check if links are down
   check_ttl: 86400
   # how long to wait for checks to time out
-  check_ttl: 5
+  check_timeout: 5
   # how long to allow connection to time out
   check_timeout_connect: 1
 
