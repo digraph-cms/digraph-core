@@ -23,7 +23,6 @@ final class Filestore extends AbstractMigration
             ->addIndex(['filename'])
             ->addIndex(['rich_media_uuid'])
             ->addForeignKey(['created_by'], 'user', ['uuid'])
-            ->addForeignKey(['rich_media_uuid'], 'rich_media', ['uuid'])
             ->create();
     }
 }
