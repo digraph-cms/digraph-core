@@ -7,7 +7,6 @@ use DateTimeZone;
 use DigraphCMS\Cache\Cache;
 use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
-use DigraphCMS\Digraph;
 use Throwable;
 
 class WaybackMachine
