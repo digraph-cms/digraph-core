@@ -21,6 +21,14 @@ use DigraphCMS\Users\Permissions;
 Permissions::requireMetaGroup('content__edit');
 Context::response()->template('framed.php');
 
+// fancy autocomplete search form
+$acAdder = new AutocompleteInput('rich-media-type-search', new URL('/~api/v1/autocomplete/rich-media-type.php'));
+$acAdder->setAttribute('placeholder', 'search to add media');
+if (RichMedia::select(Context::arg('uuid'))->count()) {
+    $acAdder->addClass('navigation-frame__autofocus');
+}
+
+// wrapper
 $wrapper = (new DIV())
     ->setID(Context::arg('frame'));
 $tabs = new TabInterface('tab');
@@ -93,7 +101,7 @@ if (Context::arg('edit') && $media = RichMedia::get(Context::arg('edit'))) {
 
 // page media list
 if (Context::arg('uuid') && RichMedia::select(Context::arg('uuid'))->count()) {
-    $tabs->addTab('page', 'Existing media', function () {
+    $tabs->addTab('page', 'Existing media', function () use ($acAdder) {
         $query = RichMedia::select(Context::arg('uuid'))
             ->order('updated DESC');
         $table = new QueryTable(
@@ -118,12 +126,13 @@ if (Context::arg('uuid') && RichMedia::select(Context::arg('uuid'))->count()) {
             ]
         );
         $table->paginator()->perPage(10);
+        echo $acAdder;
         echo $table;
     });
 }
 
 // media adding tab
-$tabs->addTab('add', 'Add media', function () {
+$tabs->addTab('add', 'Add media', function () use ($acAdder) {
     $table = new ArrayTable(
         Config::get('rich_media_types'),
         function ($name) {
@@ -143,89 +152,24 @@ $tabs->addTab('add', 'Add media', function () {
         },
         []
     );
-    // fancy autocomplete search form
-    $search = new AutocompleteInput('rich-media-type-search', new URL('/~api/v1/autocomplete/rich-media-type.php'));
-    $search->setAttribute('placeholder', 'search media types');
-    if (RichMedia::select(Context::arg('uuid'))->count()) {
-        $search->addClass('navigation-frame__autofocus');
-    }
-    echo $search;
-?>
-    <script>
-        (() => {
-            const ac = document.getElementById("<?php echo $search->id(); ?>");
-            const url = "<?php echo new URL('&add={type}') ?>";
-            ac.parentElement.addEventListener('autocomplete-select', (e) => {
-                const evt = new Event('navigation-frame-navigate', {
-                    bubbles: true
-                });
-                evt.navigateUrl = url.replace('%7Btype%7D', e.autocompleteValue);
-                ac.dispatchEvent(evt);
-            });
-        })();
-    </script>
-<?php
-    // print table
+    echo $acAdder;
     echo $table;
 });
 
-// global/search tab
-// $tabs->addTab('search', 'Search', function () {
-//     echo "<div class='navigation-frame navigation-frame--stateless' id='search_" . Context::arg('frame') . "'>";
-//     // set up query
-//     $query = RichMedia::select();
-//     $query->order('updated desc');
-//     if ($q = Context::arg('query')) {
-//         foreach (explode(' ', $q) as $word) {
-//             $word = strtolower(trim($word));
-//             if ($word) {
-//                 $query->whereOr('name like ?', "%$word%");
-//                 $query->whereOr('class = ?', $word);
-//                 $query->whereOr('data like ?', "%$word%");
-//             }
-//         }
-//     }
-//     // set up search form, note that it bounces to put the query into a GET arg
-//     // this is necessary to have pagination work
-//     $form = new FormWrapper();
-//     $search = new INPUT();
-//     $search->setDefault(Context::arg('query'));
-//     $form->addChild($search);
-//     $form->setStyle('display', 'flex');
-//     $form->button()->setText('Search');
-//     $form->addCallback(function () use ($query, $search) {
-//         $url = Context::url();
-//         $url->arg('query', $search->value());
-//         throw new RedirectException($url);
-//     });
-//     echo $form;
-//     // table for displaying results
-//     $table = new QueryTable(
-//         $query,
-//         function (AbstractRichMedia $media) {
-//             $page = $media->pageUUID() ? Pages::get($media->pageUUID()) : null;
-//             $name = $media->name();
-//             $url = new URL('&edit=' . $media->uuid());
-//             $name = sprintf(
-//                 '<a href="%s" data-target="%s" class="button button--inverted" style="display:block">%s</a>',
-//                 $url,
-//                 Context::arg('frame'),
-//                 $name
-//             );
-//             return [
-//                 $name . PHP_EOL . $media->insertInterface(),
-//                 $page ? $page->url()->html() : '<em>N/A</em>',
-//                 Format::date($media->updated())
-//             ];
-//         },
-//         [
-//             new QueryColumnHeader('Media', 'name', $query),
-//             new ColumnHeader('Page'),
-//             new QueryColumnHeader('Modified', 'updated', $query)
-//         ]
-//     );
-//     echo $table;
-//     echo "</div>";
-// });
-
 echo $wrapper;
+
+?>
+<script>
+    (() => {
+        const ac = document.getElementById("<?php echo $acAdder->id(); ?>");
+        if (!ac) return;
+        const url = "<?php echo new URL('&add={type}') ?>";
+        ac.parentElement.addEventListener('autocomplete-select', (e) => {
+            const evt = new Event('navigation-frame-navigate', {
+                bubbles: true
+            });
+            evt.navigateUrl = url.replace('%7Btype%7D', e.autocompleteValue);
+            ac.dispatchEvent(evt);
+        });
+    })();
+</script>

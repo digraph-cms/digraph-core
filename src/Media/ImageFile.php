@@ -180,7 +180,7 @@ class ImageFile extends DeferredFile
     public function originalWidth(): int
     {
         $exif = exif_read_data($this->src());
-        if ($exif['Orientation']) {
+        if (@$exif['Orientation']) {
             if (in_array($exif['Orientation'], [6, 8])) {
                 return $this->image->getHeight();
             }
