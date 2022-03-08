@@ -37,14 +37,14 @@ $colorblind = new ButtonMenu('Colorblind mode', [
         function () {
             Theme::setcolorblindMode(true);
         },
-        [!Theme::colorblindMode() ? 'button--neutral' : 'button--interactive']
+        [Theme::colorblindMode() === true ? 'button--interactive' : 'button--neutral']
     ),
     new ButtonMenuButton(
         'Off',
         function () {
             Theme::setcolorblindMode(false);
         },
-        [Theme::colorblindMode() ? 'button--neutral' : 'button--interactive']
+        [Theme::colorblindMode() !== true ? 'button--interactive' : 'button--neutral']
     )
 ]);
 

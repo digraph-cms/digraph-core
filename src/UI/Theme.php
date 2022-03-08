@@ -136,28 +136,26 @@ class Theme
     public static function setColorMode(?string $mode)
     {
         if ($mode !== 'dark' && $mode != 'light') {
-            $mode = null;
+            $mode = 'auto';
         }
         if ($user = Users::current()) {
-            unset($user['ui.colormode']);
             $user['ui.colormode'] = $mode;
             $user->update();
         } else {
-            $cookie = Cookies::get('ui', 'color') ?? ['color' => null, 'colorblindmode' => null];
-            $cookie['color'] = $mode;
+            $cookie = Cookies::get('ui', 'color') ?? ['colormode' => 'auto', 'colorblind' => false];
+            $cookie['colormode'] = $mode;
             Cookies::set('ui', 'color', $cookie);
         }
     }
 
-    public static function setcolorblindMode(?bool $mode)
+    public static function setcolorblindMode(bool $mode)
     {
         if ($user = Users::current()) {
-            unset($user['ui.colorblindmode']);
-            $user['ui.colorblindmode'] = $mode;
+            $user['ui.colorblind'] = $mode;
             $user->update();
         } else {
-            $cookie = Cookies::get('ui', 'color') ?? ['color' => null, 'colorblindmode' => null];
-            $cookie['colorblindmode'] = $mode;
+            $cookie = Cookies::get('ui', 'color') ?? ['colormode' => 'auto', 'colorblind' => false];
+            $cookie['colorblind'] = $mode;
             Cookies::set('ui', 'color', $cookie);
         }
     }
@@ -165,21 +163,19 @@ class Theme
     public static function colorMode(): ?string
     {
         if ($user = Users::current()) {
-            if ($user['ui.colormode']) {
-                return $user['ui.colormode'];
-            }
+            return $user['ui.colormode'] == 'auto'
+                ? null
+                : $user['ui.colormode'];
         }
-        return @Cookies::get('ui', 'color')['color'];
+        return @Cookies::get('ui', 'color')['colormode'];
     }
 
-    public static function colorblindMode(): ?bool
+    public static function colorblindMode(): bool
     {
         if ($user = Users::current()) {
-            if ($user['ui.colorblindmode'] !== null) {
-                return $user['ui.colorblindmode'];
-            }
+            return !!$user['ui.colorblind'];
         }
-        return @Cookies::get('ui', 'color')['colorblindmode'];
+        return @Cookies::get('ui', 'color')['colorblind'];
     }
 
     public static function bodyClasses(): array
