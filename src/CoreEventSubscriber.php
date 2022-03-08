@@ -346,7 +346,9 @@ class CoreEventSubscriber
     public static function onStaticUrlParent_messages(URL $url): ?URL
     {
         if ($url->action() == 'index') {
-            return Users::current()->profile();
+            return Users::current()
+                ? Users::current()->profile()
+                : null;
         }
         return null;
     }
