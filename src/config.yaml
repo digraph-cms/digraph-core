@@ -23,6 +23,9 @@ email:
     service:
       name: Service emails
       description: Necessary emails regarding your account or the services provided by the website.
+    dm:
+      name: Direct messages
+      description: Notifications when you receive a direct message through the internal site messaging system.
 
 theme:
   bundle_css: true

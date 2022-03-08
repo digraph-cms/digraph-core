@@ -101,7 +101,8 @@ class User implements ArrayAccess
 
     public function email()
     {
-        return end($this->emails());
+        $emails = $this->emails();
+        return end($emails);
     }
 
     public function name(string $name = null): string
