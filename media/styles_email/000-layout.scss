@@ -1,0 +1,82 @@
+#bodyTable {
+    background-color: $background-darker;
+    color: $color;
+}
+
+#emailTable {
+    background-color: $background;
+    color: $color;
+    border: $border solid $theme-neutral;
+    width: 600px;
+    margin: 20px 0;
+}
+
+#headerTable {
+    background: $theme-accent;
+    color: $theme-accent-inv;
+    font-family: $font-ui;
+
+    a {
+        color: inherit;
+    }
+
+    > tr > td > * {
+        &:first-child {
+            margin-top: 0;
+        }
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}
+
+#contentTable {
+    font-family: $font-content;
+    padding: 20px;
+
+    a {
+        color: $link-normal;
+    }
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: $font-header;
+    }
+    > tr > td > * {
+        &:first-child {
+            margin-top: 0;
+        }
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}
+
+#footerTable {
+    background: $theme-neutral;
+    color: $theme-neutral-inv;
+    font-family: $font-ui;
+    font-size: 0.75em;
+    padding: 20px;
+
+    a {
+        color: inherit;
+    }
+
+    > tr > td > * {
+        &:first-child {
+            margin-top: 0;
+        }
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}
+
+#emailIDCell {
+    font-family: $font-code;
+    color: $theme-neutral-darker;
+}

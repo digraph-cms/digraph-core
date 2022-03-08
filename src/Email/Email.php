@@ -100,7 +100,7 @@ class Email
 
     public function url_manageSubscriptions(): URL
     {
-        return new URL('/~unsubscribe/?email=' . $this->uuid());
+        return new URL('/~unsubscribe/?msg=' . $this->uuid());
     }
 
     public function send()

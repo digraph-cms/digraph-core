@@ -30,7 +30,8 @@
         "ozdemirburak/iris": "^2",
         "opis/closure": "^3.6",
         "html2text/html2text": "^4.3",
-        "phpmailer/phpmailer": "^6.6"
+        "phpmailer/phpmailer": "^6.6",
+        "tijsverkoyen/css-to-inline-styles": "^2.2"
     },
     "suggest": {
         "league/oauth2-github": "Needed to support OAuth sign-ins using GitHub",

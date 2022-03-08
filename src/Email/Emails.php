@@ -4,9 +4,11 @@ namespace DigraphCMS\Email;
 
 use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
+use DigraphCMS\Media\Media;
 use DigraphCMS\UI\Templates;
 use Html2Text\Html2Text;
 use PHPMailer\PHPMailer\PHPMailer;
+use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 
 class Emails
 {
@@ -16,8 +18,6 @@ class Emails
         if (!$email->blocked()) {
             if (Config::get('email.enabled')) {
                 // sending emails is enabled
-                var_dump(static::prepareBody_html($email));
-                var_dump(static::prepareBody_text($email));
                 try {
                     $mailer = static::mail();
                     $mailer->setFrom($email->from());
@@ -36,7 +36,7 @@ class Emails
                     $email->setError($th->getMessage() . ' (' . get_class($th) . ')');
                 }
             } else {
-                // sending emails is disabled
+                // sending emails is disabled, record error in log
                 $email->setError("Sending emails is disabled by config email.enabled");
             }
         }
@@ -64,10 +64,31 @@ class Emails
     protected static function prepareBody_html(Email $email): string
     {
         if (Templates::exists('/email/html/body_' . $email->category() . '.php')) {
-            return Templates::render('/email/html/body_' . $email->category() . '.php', ['email' => $email]);
+            $html = Templates::render('/email/html/body_' . $email->category() . '.php', ['email' => $email]);
         } else {
-            return Templates::render('/email/html/body_default.php', ['email' => $email]);
+            $html = Templates::render('/email/html/body_default.php', ['email' => $email]);
         }
+        $css = '';
+        foreach (Media::glob('/styles_email/*.{scss,css}') as $file) {
+            $css .= $file->content() . PHP_EOL;
+        }
+        return (new CssToInlineStyles)
+            ->convert(
+                $html,
+                static::css()
+            );
+    }
+
+    protected static function css(): string
+    {
+        static $css;
+        if ($css === null) {
+            $css = '';
+            foreach (Media::glob('/styles_email/*.{scss,css}') as $file) {
+                $css .= $file->content() . PHP_EOL;
+            }
+        }
+        return $css;
     }
 
     protected static function prepareBody_text(Email $email): string

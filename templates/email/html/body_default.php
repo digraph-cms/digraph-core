@@ -19,10 +19,10 @@ $variables = Theme::variables('light');
 </head>
 
 <body>
-    <table border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" style="background:<?php echo $variables['background']; ?>;color:<?php echo $variables['color']; ?>;">
+    <table border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" id="bodyTable">
         <tr>
             <td align="center" valign="top">
-                <table border="0" cellpadding="0" cellspacing="0" width="600" style="background:<?php echo $variables['background-bright']; ?>;border: 1px solid <?php echo $variables['theme-neutral']; ?>;">
+                <table border="0" cellpadding="0" cellspacing="0" width="600" id="emailTable">
                     <?php
                     if (Templates::exists('/email/html/header_' . $email->category())) {
                         echo '<tr><td align="center" valign="top" style="background:' . $variables['background-darker'] . ';border-bottom: 1px solid ' . $variables['theme-neutral'] . ';font-family:' . $variables['font-ui'] . '">';
@@ -32,7 +32,7 @@ $variables = Theme::variables('light');
                     ?>
                     <tr>
                         <td align="center" valign="top">
-                            <table border="0" cellpadding="20" cellspacing="0" width="100%" style="border-bottom: 1px solid <?php echo $variables['theme-neutral']; ?>;font-family:<?php echo $variables['font-content']; ?>;">
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%" id="contentTable">
                                 <tr>
                                     <td align="left" valign="top">
                                         <?php echo $email->body_html(); ?>
@@ -42,8 +42,8 @@ $variables = Theme::variables('light');
                         </td>
                     </tr>
                     <tr>
-                        <td align="center" valign="top" style="background:<?php echo $variables['background-darker']; ?>;">
-                            <table border="0" cellpadding="20" cellspacing="0" width="100%" style="font-family:<?php echo $variables['font-ui']; ?>;">
+                        <td align="center" valign="top">
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%" id="footerTable">
                                 <tr>
                                     <td align="left" valign="top" style="font-size:small;">
                                         <?php
@@ -56,7 +56,7 @@ $variables = Theme::variables('light');
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td align="right" valign="top" style="font-size:small;">
+                                    <td align="right" valign="top" style="font-size:small;" id="emailIDCell">
                                         <small>
                                             Email ID: <?php echo $email->uuid(); ?>
                                         </small>
