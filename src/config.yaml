@@ -16,6 +16,14 @@ cache:
   ttl: 300
   fuzz: 120
 
+email:
+  enabled: true
+  from: null
+  categories:
+    service:
+      name: Service emails
+      description: Necessary emails regarding your account or the services provided by the website.
+
 theme:
   bundle_css: true
   bundle_js: true

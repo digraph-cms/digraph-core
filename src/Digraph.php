@@ -35,6 +35,7 @@ class Digraph
      */
     const UUIDCHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     const UUIDPATTERN = '000000';
+    const LONGUUIDPATTERN = '000000000000000000';
 
     /**
      * Generate a response from an automatically-loaded request and render it.
@@ -83,10 +84,11 @@ class Digraph
      * and has no performance implications as they are saved in the database as
      * strings anyway, and no binary/numeric operations are ever needed.
      *
-     * @param string $seed
+     * @param boolean $long
+     * @param string|null $seed
      * @return string
      */
-    public static function uuid(string $seed = null): string
+    public static function uuid($long = false, string $seed = null): string
     {
         if ($seed !== null) {
             mt_srand(crc32($seed));
@@ -99,7 +101,7 @@ class Digraph
             function () use ($fn) {
                 return substr(static::uuidChars(), $fn(0, strlen(static::uuidChars()) - 1), 1);
             },
-            static::uuidPattern()
+            $long ? static::longUuidPattern() : static::uuidPattern()
         );
     }
 
@@ -111,6 +113,11 @@ class Digraph
     public static function uuidPattern(): string
     {
         return Config::get('uuid.pattern') ?? static::UUIDPATTERN;
+    }
+
+    public static function longUuidPattern(): string
+    {
+        return Config::get('uuid.pattern_long') ?? static::LONGUUIDPATTERN;
     }
 
     /**

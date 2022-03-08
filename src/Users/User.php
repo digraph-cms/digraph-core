@@ -99,6 +99,11 @@ class User implements ArrayAccess
         );
     }
 
+    public function email()
+    {
+        return end($this->emails());
+    }
+
     public function name(string $name = null): string
     {
         if ($name) {

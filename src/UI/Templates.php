@@ -92,6 +92,11 @@ class Templates
         }
         return null;
     }
+
+    public static function exists(string $template): bool
+    {
+        return !!static::locateFile($template);
+    }
 }
 
 function require_file(string $file): string
