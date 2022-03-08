@@ -37,9 +37,6 @@ class UserMenu extends MenuBar
                         ->addClass('menuitem--inbox')
                         ->addClass('menuitem--inbox--notify')
                 );
-            } else {
-                $this->inboxItem = $this->addURL(new URL('/~messages/'), 'Inbox')
-                    ->addClass('menuitem--inbox');
             }
             // logout link
             $this->logoutItem = $this->addURL(Users::signoutUrl(Context::url()))

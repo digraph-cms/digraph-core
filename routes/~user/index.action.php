@@ -9,9 +9,7 @@ use DigraphCMS\UI\Format;
 use DigraphCMS\Users\Group;
 use DigraphCMS\Users\Users;
 
-Context::response()->enableCache();
-
-$user = Users::get(Context::url()->action());
+$user = Users::get(Context::arg('user'));
 if (!$user) {
     throw new HttpError(404);
 }

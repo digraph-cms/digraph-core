@@ -38,7 +38,9 @@ class CoreEventSubscriber
         if (Users::get($uuid)) {
             $actions = Router::staticActions('user');
             foreach ($actions as $url) {
-                $url->arg('user', $uuid);
+                if ($url->route() == 'user') {
+                    $url->arg('user', $uuid);
+                }
                 $menu->addURL($url, $url->name(true));
             }
         }
@@ -65,6 +67,17 @@ class CoreEventSubscriber
                 }
             }
         }
+    }
+
+    /**
+     * Add inbox to user actions
+     *
+     * @param URL[] $urls
+     * @return void
+     */
+    public static function onStaticActions_user(array &$urls)
+    {
+        $urls[] = new URL('/~messages/');
     }
 
     /**
@@ -273,12 +286,20 @@ class CoreEventSubscriber
         }
         // if user is specified limit routes for the user being viewed/edited and admins
         if ($url->arg('user')) {
-            return
-                $url->arg('user') == $user->uuid()
-                || Permissions::inMetaGroup('users__admin', $user);
+            if ($url->action() == 'index') {
+                // viewing profiles set to users__view
+                return
+                    $url->arg('user') == $user->uuid()
+                    || Permissions::inMetaGroup('users__view', $user);
+            } else {
+                // everything else limited to users__admin
+                return
+                    $url->arg('user') == $user->uuid()
+                    || Permissions::inMetaGroup('users__admin', $user);
+            }
         }
         // otherwise return whether this is a user
-        return Permissions::inGroup('users', $user);
+        return null;
     }
 
     /**
@@ -308,10 +329,42 @@ class CoreEventSubscriber
      */
     public static function onStaticUrlParent_user(URL $url): ?URL
     {
-        if ($url->arg('user') && $user = Users::get($url->arg('user'))) {
+        if ($url->action() == 'index') {
+            return new URL('/~users/');
+        } elseif ($url->arg('user') && $user = Users::get($url->arg('user'))) {
             return $user->profile();
         }
-        return Users::get(Session::user())->profile();
+        return null;
+    }
+
+    /**
+     * Set inbox parent to user profile
+     *
+     * @param URL $url
+     * @return URL|null
+     */
+    public static function onStaticUrlParent_messages(URL $url): ?URL
+    {
+        if ($url->action() == 'index') {
+            return Users::current()->profile();
+        }
+        return null;
+    }
+
+    /**
+     * Set URL name of user profiles
+     *
+     * @param URL $url
+     * @return string|null
+     */
+    public static function onStaticUrlName_user(URL $url): ?string
+    {
+        if ($url->action() == 'index') {
+            if ($url->arg('user') && $user = Users::get($url->arg('user'))) {
+                return $user->name();
+            }
+        }
+        return null;
     }
 
     /**
@@ -327,7 +380,7 @@ class CoreEventSubscriber
     }
 
     /**
-     * Limits access to ~users route to user editors
+     * Limits access to ~users route to user viewers
      *
      * @param URL $url
      * @param User $user
@@ -335,15 +388,7 @@ class CoreEventSubscriber
      */
     public static function onStaticUrlPermissions_users(URL $url, User $user): ?bool
     {
-        // limit guest profile to editors and admins
-        if ($url->action() == '_guest') {
-            return Permissions::inMetaGroup('users__admin');
-        }
-        // limit other users to their own profile, unless given users__edit or users__view
-        return $url == $user->profile() || Permissions::inMetaGroups([
-            'users__edit',
-            'users__view'
-        ]);
+        return Permissions::inMetaGroup('users__view');
     }
 
     /**

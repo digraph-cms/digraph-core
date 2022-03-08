@@ -109,7 +109,7 @@ class User implements ArrayAccess
 
     public function profile(): URL
     {
-        return new URL('/~users/' . $this->uuid() . '.html');
+        return new URL('/~user/?user=' . $this->uuid());
     }
 
     public function insert()
