@@ -21,7 +21,7 @@ email:
   from: null
   categories:
     service:
-      name: Service emails
+      label: Service Emails
       description: Necessary emails regarding your account or the services provided by the website.
 
 theme:

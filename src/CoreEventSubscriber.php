@@ -297,6 +297,20 @@ class CoreEventSubscriber
     }
 
     /**
+     * URL names for unsubscribe routes
+     *
+     * @param URL $url
+     * @return string|null
+     */
+    public static function onStaticUrlName_unsubscribe(URL $url): ?string
+    {
+        if ($url->action() == 'index') {
+            return 'Manage email preferences';
+        }
+        return 'Unsubscribe';
+    }
+
+    /**
      * Assign user profile page as the parent URL of user management pages
      *
      * @param URL $url

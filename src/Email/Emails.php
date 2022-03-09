@@ -12,6 +12,45 @@ use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 
 class Emails
 {
+    public static function unsubscribe(string $email, string $category)
+    {
+        if (static::isUnsubscribed($email, $category)) return;
+        DB::query()->insertInto(
+            'email_unsubscribe',
+            [
+                'email' => $email,
+                'category' => $category,
+                'time' => time()
+            ]
+        )->execute();
+    }
+
+    public static function resubscribe(string $email, string $category)
+    {
+        DB::query()->delete('email_unsubscribe')
+            ->where('email = ? AND category = ?', [$email, $category])
+            ->execute();
+    }
+
+    public static function isUnsubscribed(string $email, string $category)
+    {
+        return !!DB::query()->from('email_unsubscribe')
+            ->where('email = ? AND category = ?', [$email, $category])
+            ->count();
+    }
+
+    public static function categoryLabel(string $category): string
+    {
+        return Config::get('email.categories.' . $category . '.label')
+            ?? ucwords(preg_replace('/[^a-z0-9]+/', ' ', $category)) . ' Emails';
+    }
+
+    public static function categoryDescription(string $category): string
+    {
+        return Config::get('email.categories.' . $category . '.description')
+            ?? '<em>No email category description found</em>';
+    }
+
     public static function send(Email $email)
     {
         // send email if it isn't blocked by unsubscribes
@@ -59,6 +98,47 @@ class Emails
                 'error' => $email->error()
             ]
         )->execute();
+    }
+
+    public static function get(?string $uuid): ?Email
+    {
+        if (!$uuid) return null;
+        return static::select()
+            ->where('uuid = ?', [$uuid])
+            ->fetch();
+    }
+
+    public static function exists(?string $uuid): bool
+    {
+        if (!$uuid) return false;
+        return !!DB::query()->from('email_log')
+            ->where('uuid = ?', [$uuid])
+            ->count();
+    }
+
+    public static function select(): EmailSelect
+    {
+        return new EmailSelect(
+            DB::query()->from('email_log')
+        );
+    }
+
+    public static function resultToEmail(array $row): Email
+    {
+        return new Email(
+            $row['category'],
+            $row['subject'],
+            $row['to'],
+            $row['to_uuid'],
+            $row['from'],
+            $row['body_html'],
+            $row['body_text'],
+            $row['cc'],
+            $row['bcc'],
+            $row['uuid'],
+            $row['time'],
+            $row['blocked']
+        );
     }
 
     protected static function prepareBody_html(Email $email): string

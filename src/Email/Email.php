@@ -175,6 +175,16 @@ class Email
         return $this->category;
     }
 
+    public function categoryLabel(): string
+    {
+        return Emails::categoryLabel($this->category());
+    }
+
+    public function categoryDescription(): string
+    {
+        return Emails::categoryDescription($this->category());
+    }
+
     public function blocked(): ?bool
     {
         return $this->blocked;

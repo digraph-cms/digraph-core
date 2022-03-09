@@ -154,6 +154,7 @@ Digraph.state = {
                     }
                     return;
                 }
+                // update frame
                 frame.innerHTML = docElement.innerHTML;
                 if (!frame.classList.contains('navigation-frame--stateless')) {
                     if (document.getElementById('breadcrumb') && doc.getElementById('breadcrumb')) {
@@ -162,6 +163,10 @@ Digraph.state = {
                     if (document.getElementsByTagName('title') && doc.getElementsByTagName('title')) {
                         document.getElementsByTagName('title')[0].innerHTML = doc.getElementsByTagName('title')[0].innerHTML;
                     }
+                }
+                // update classes from pulled element
+                if (docElement.getAttribute('class')) {
+                    frame.setAttribute('class', docElement.getAttribute('class'));
                 }
                 // dispatch dom ready event
                 frame.dispatchEvent(
