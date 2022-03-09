@@ -68,39 +68,41 @@ class Messages
             ]
         )->execute();
         // deliver by email
-        if ($message->sensitive()) {
-            // sensitive messages only email a link to view them, so that users must sign in
-            $subject = "Message received";
-            $body = new RichContent(
-                sprintf(
-                    "You received a secure message on %s<br><a href='%s'>View it online</a>",
-                    URLs::site(),
-                    $message->url()
-                )
+        if ($message->email()) {
+            if ($message->sensitive()) {
+                // sensitive messages only email a link to view them, so that users must sign in
+                $subject = "Message received";
+                $body = new RichContent(
+                    sprintf(
+                        "You received a secure message on %s<br><a href='%s'>View it online</a>",
+                        URLs::site(),
+                        $message->url()
+                    )
+                );
+            } else {
+                // non-sensitive messages include the whole message subject and body
+                $subject = $message->subject();
+                $body = new RichContent(
+                    sprintf(
+                        "You received a message on %s<br><a href='%s'>View it online</a>",
+                        URLs::site(),
+                        $message->url()
+                    )
+                        . PHP_EOL . PHP_EOL
+                        . '<hr>'
+                        . PHP_EOL . PHP_EOL
+                        . $message->body()->html()
+                );
+            }
+            $emails = Email::newForUser(
+                $message->category(),
+                $message->recipient(),
+                $subject,
+                $body
             );
-        } else {
-            // non-sensitive messages include the whole message subject and body
-            $subject = $message->subject();
-            $body = new RichContent(
-                sprintf(
-                    "You received a message on %s<br><a href='%s'>View it online</a>",
-                    URLs::site(),
-                    $message->url()
-                )
-                    . PHP_EOL . PHP_EOL
-                    . '<hr>'
-                    . PHP_EOL . PHP_EOL
-                    . $message->body()->html()
-            );
-        }
-        $emails = Email::newForUser(
-            $message->category(),
-            $message->recipient(),
-            $subject,
-            $body
-        );
-        foreach ($emails as $email) {
-            $email->send();
+            foreach ($emails as $email) {
+                $email->send();
+            }
         }
     }
 
