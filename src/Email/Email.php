@@ -34,19 +34,34 @@ class Email
         );
     }
 
+    /**
+     * Return an array of identical emails, one for every address on file for
+     * a given User.
+     *
+     * @param string $category
+     * @param User $user
+     * @param string $subject
+     * @param RichContent $body
+     * @return Email[]
+     */
     public static function newForUser(
         string $category,
         User $user,
         string $subject,
         RichContent $body
-    ): ?Email {
-        return new Email(
-            $category,
-            $subject,
-            $user->email(),
-            $user->uuid(),
-            null,
-            $body->html()
+    ): array {
+        return array_map(
+            function ($email) use ($category, $user, $subject, $body) {
+                return new Email(
+                    $category,
+                    $subject,
+                    $email,
+                    $user->uuid(),
+                    null,
+                    $body->html()
+                );
+            },
+            $user->emails()
         );
     }
 

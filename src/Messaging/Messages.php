@@ -93,13 +93,15 @@ class Messages
                     . $message->body()->html()
             );
         }
-        $email = Email::newForUser(
+        $emails = Email::newForUser(
             $message->category(),
             $message->recipient(),
             $subject,
             $body
         );
-        $email->send();
+        foreach ($emails as $email) {
+            $email->send();
+        }
     }
 
     public static function update(Message $message)
