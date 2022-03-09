@@ -292,10 +292,6 @@ class CoreEventSubscriber
     {
         if (substr($url->action(), 0, 4) == 'msg_') {
             return true;
-        } elseif ($url->action() === 'email_notifications') {
-            return true;
-        } elseif ($url->action() === 'compose') {
-            return Permissions::inMetaGroup('messages__send', $user);
         }
         return Permissions::inGroup('users', $user);
     }
