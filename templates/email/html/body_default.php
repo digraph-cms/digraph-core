@@ -22,7 +22,7 @@ $variables = Theme::variables('light');
     <table border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" id="bodyTable">
         <tr>
             <td align="center" valign="top">
-                <table border="0" cellpadding="0" cellspacing="0" width="600" id="emailTable">
+                <table border="0" cellpadding="0" cellspacing="0" id="emailTable">
                     <?php
                     if (Templates::exists('/email/html/header_' . $email->category())) {
                         echo '<tr><td align="center" valign="top" style="background:' . $variables['background-darker'] . ';border-bottom: 1px solid ' . $variables['theme-neutral'] . ';font-family:' . $variables['font-ui'] . '">';
