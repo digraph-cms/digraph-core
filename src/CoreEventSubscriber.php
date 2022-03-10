@@ -154,7 +154,7 @@ class CoreEventSubscriber
     public static function onTemplateWrapResponse(Response $response)
     {
         $response->content(
-            DOM::html($response->content(), true)
+            DOM::html($response->content())
         );
     }
 
@@ -313,12 +313,22 @@ class CoreEventSubscriber
     {
         if (substr($url->action(), 0, 4) == 'msg_') {
             return true;
-        } elseif ($url->action() === 'email_notifications') {
-            return true;
-        } elseif ($url->action() === 'compose') {
-            return Permissions::inMetaGroup('messages__send', $user);
         }
         return Permissions::inGroup('users', $user);
+    }
+
+    /**
+     * URL names for unsubscribe routes
+     *
+     * @param URL $url
+     * @return string|null
+     */
+    public static function onStaticUrlName_unsubscribe(URL $url): ?string
+    {
+        if ($url->action() == 'index') {
+            return 'Manage email preferences';
+        }
+        return 'Unsubscribe';
     }
 
     /**

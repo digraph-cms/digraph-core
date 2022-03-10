@@ -4,7 +4,9 @@ namespace DigraphCMS\Messaging;
 
 use DateTime;
 use DigraphCMS\DB\DB;
+use DigraphCMS\Email\Email;
 use DigraphCMS\RichContent\RichContent;
+use DigraphCMS\URL\URLs;
 use DigraphCMS\Users\Users;
 
 class Messages
@@ -65,7 +67,55 @@ class Messages
                 'email' => $message->email() ? 1 : 0
             ]
         )->execute();
-        // TODO: deliver by email if requested and allowed by user
+        // deliver by email
+        if ($message->email()) {
+            if ($message->sensitive()) {
+                // sensitive messages only email a link to view them, so that users must sign in
+                $subject = "Message received";
+                $body = new RichContent(
+                    sprintf(
+                        "You received a secure message on %s<br><a href='%s'>View it online</a>",
+                        URLs::site(),
+                        $message->url()
+                    )
+                );
+            } else {
+                // non-sensitive messages include the whole message subject and body
+                $subject = $message->subject();
+                $body = new RichContent(
+                    sprintf(
+                        "You received a message on %s<br><a href='%s'>View it online</a>",
+                        URLs::site(),
+                        $message->url()
+                    )
+                        . PHP_EOL . PHP_EOL
+                        . '<hr>'
+                        . PHP_EOL . PHP_EOL
+                        . $message->body()->html()
+                );
+            }
+            if ($message->important()) {
+                // send important messages to all emails
+                $emails = Email::newForUser_all(
+                    $message->category(),
+                    $message->recipient(),
+                    $subject,
+                    $body
+                );
+                foreach ($emails as $email) {
+                    $email->send();
+                }
+            } else {
+                // send non-important messages only to primary email
+                $email = Email::newForUser(
+                    $message->category(),
+                    $message->recipient(),
+                    $subject,
+                    $body
+                );
+                if ($email) $email->send();
+            }
+        }
     }
 
     public static function update(Message $message)

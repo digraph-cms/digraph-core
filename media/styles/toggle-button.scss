@@ -1,0 +1,49 @@
+.toggle-button {
+    display: inline-block;
+    background-color: var(--background-light);
+    border: $border solid var(--theme-neutral);
+    border-radius: $border-radius;
+    height: 2em !important;
+    min-height: 2em !important;
+    width: 4em;
+    position: relative;
+    box-shadow: var(--shadow-inset);
+
+    .toggle-button__state {
+        display: none;
+    }
+
+    .toggle-button__link {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        font-size: 0;
+
+        &:after {
+            display: block;
+            position: absolute;
+            top: $border;
+            left: $border;
+            bottom: $border;
+            right: 50%;
+            content: "";
+            background: var(--theme-neutral);
+            border-radius: $border-radius;
+        }
+    }
+
+    &.toggle-button--on {
+        border: $border solid var(--cue-safe);
+
+        .toggle-button__link {
+            &:after {
+                left: 50%;
+                right: $border;
+                background: var(--cue-safe);
+            }
+        }
+    }
+}

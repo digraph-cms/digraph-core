@@ -16,6 +16,14 @@ cache:
   ttl: 300
   fuzz: 120
 
+email:
+  enabled: true
+  from: null
+  categories:
+    service:
+      label: Service Emails
+      description: Necessary emails regarding your account or the services provided by the website.
+
 theme:
   bundle_css: true
   bundle_js: true
@@ -66,7 +74,7 @@ users:
     cas: \DigraphCMS\Users\CASUserSource
 
 usermenu:
-  guest_signin: true
+  guest_signin: false
 
 # configuration for user sources, including preset options so that some providers
 # are ready to go just by providing their id and secret parameters

@@ -165,11 +165,12 @@ class Users
     /**
      * Get the top result for a given UUID
      *
-     * @param string $uuid
+     * @param string|null $uuid
      * @return User|null
      */
-    public static function get(string $uuid): ?User
+    public static function get(?string $uuid): ?User
     {
+        if ($uuid === null) return null;
         if (!isset(static::$cache[$uuid])) {
             static::$cache[$uuid] = self::doGet($uuid);
         }

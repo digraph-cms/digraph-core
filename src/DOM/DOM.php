@@ -9,11 +9,13 @@ use DOMNode;
 
 class DOM
 {
-    public static function html(string $html, bool $fragment = false): string
+    public static function html(string $html, bool $fragment = null): string
     {
         if (!trim($html)) {
             return $html;
         }
+
+        $fragment = $fragment ?? strpos($html,'<html') === false;
 
         // set up DOMDocument
         $dom = new DOMDocument();

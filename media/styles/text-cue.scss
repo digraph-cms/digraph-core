@@ -1,0 +1,41 @@
+.text-cue--safe,
+.text-cue--confirmation {
+    padding: $border;
+    vertical-align: middle;
+    line-height: $line-height-tight;
+    color: var(--cue-safe-inv);
+    background-color: var(--cue-safe);
+}
+
+.text-cue--information {
+    padding: $border;
+    vertical-align: middle;
+    line-height: $line-height-tight;
+    color: var(--cue-information-inv);
+    background-color: var(--cue-information);
+}
+
+.text-cue--interactive {
+    padding: $border;
+    vertical-align: middle;
+    line-height: $line-height-tight;
+    color: var(--cue-interactive-inv);
+    background-color: var(--cue-interactive);
+}
+
+.text-cue--warning {
+    padding: $border;
+    vertical-align: middle;
+    line-height: $line-height-tight;
+    color: var(--cue-warning-inv);
+    background-color: var(--cue-warning);
+}
+
+.text-cue--danger,
+.text-cue--error {
+    padding: $border;
+    vertical-align: middle;
+    line-height: $line-height-tight;
+    color: var(--cue-danger-inv);
+    background-color: var(--cue-danger);
+}

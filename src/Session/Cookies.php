@@ -101,7 +101,7 @@ class Cookies
         return true;
     }
 
-    public static function csrfToken($name): string
+    public static function csrfToken($name = 'default'): string
     {
         return
             static::get('csrf', $name) ??
@@ -122,8 +122,9 @@ class Cookies
         return $types;
     }
 
-    public static function optionalTypes(): array {
-        return array_diff(static::allTypes(),static::necessaryTypes());
+    public static function optionalTypes(): array
+    {
+        return array_diff(static::allTypes(), static::necessaryTypes());
     }
 
     public static function form(array $types = null, bool $required = false, bool $skipAllowed = false): FormWrapper
