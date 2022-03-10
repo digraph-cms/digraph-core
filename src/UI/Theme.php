@@ -170,7 +170,7 @@ class Theme
         return @Cookies::get('ui', 'color')['colormode'];
     }
 
-    public static function colorblindMode(): bool
+    public static function colorblindMode(): ?bool
     {
         if ($user = Users::current()) {
             return !!$user['ui.colorblind'];
