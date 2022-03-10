@@ -94,14 +94,26 @@ class Messages
                         . $message->body()->html()
                 );
             }
-            $emails = Email::newForUser(
-                $message->category(),
-                $message->recipient(),
-                $subject,
-                $body
-            );
-            foreach ($emails as $email) {
-                $email->send();
+            if ($message->important()) {
+                // send important messages to all emails
+                $emails = Email::newForUser_all(
+                    $message->category(),
+                    $message->recipient(),
+                    $subject,
+                    $body
+                );
+                foreach ($emails as $email) {
+                    $email->send();
+                }
+            } else {
+                // send non-important messages only to primary email
+                $email = Email::newForUser(
+                    $message->category(),
+                    $message->recipient(),
+                    $subject,
+                    $body
+                );
+                if ($email) $email->send();
             }
         }
     }

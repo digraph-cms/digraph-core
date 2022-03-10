@@ -5,8 +5,11 @@ namespace DigraphCMS\Users;
 use ArrayAccess;
 use DateTime;
 use DigraphCMS\Digraph;
+use DigraphCMS\Email\Email;
 use DigraphCMS\HTML\A;
+use DigraphCMS\RichContent\RichContent;
 use DigraphCMS\Session\Session;
+use DigraphCMS\UI\Templates;
 use DigraphCMS\URL\URL;
 use Flatrr\FlatArrayTrait;
 
@@ -63,18 +66,76 @@ class User implements ArrayAccess
         return $a->__toString();
     }
 
-    public function addEmail(string $email, string $comment = '')
+    public function addEmail(string $email, string $comment = '', bool $skipVerification = false)
     {
+        $email = strtolower($email);
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             throw new \Exception("Invalid email address");
         }
+        $value = [
+            'address' => $email,
+            'time' => time(),
+            'comment' => $comment
+        ];
         foreach ($this['emails'] ?? [] as $k => $existing) {
             if ($existing[0] == $email) {
-                $this['emails.' . $k] = [$email, time(), $comment];
+                unset($this['emails.' . $k]);
+                $this['emails.' . $k] = $value;
                 return;
             }
         }
-        $this->push('emails', [$email, time(), $comment]);
+        $this->push('emails', $value);
+        if ($skipVerification && count($this->emails()) == 1) $this->setPrimaryEmail($email);
+        if (!$skipVerification) $this->sendVerificationEmail($email);
+        $this->update();
+    }
+
+    public function setPrimaryEmail(string $email)
+    {
+        $email = strtolower($email);
+        foreach ($this['emails'] ?? [] as $i => $row) {
+            $this["emails.$i.primary"] = $row['address'] == $email;
+        }
+    }
+
+    public function verifyEmail(string $email)
+    {
+        $email = strtolower($email);
+        foreach ($this['emails'] ?? [] as $i => $row) {
+            if ($row['address'] == $email) {
+                unset($this["emails.$i.verification"]);
+                if (count($this->emails()) == 1) $this->setPrimaryEmail($email);
+            }
+        }
+    }
+
+    public function sendVerificationEmail(string $email)
+    {
+        $email = strtolower($email);
+        $i = null;
+        foreach ($this['emails'] ?? [] as $i => $row) {
+            if ($row['address'] == $email) break;
+        }
+        if ($i === null) return;
+        $this['emails.' . $i . '.verification'] = [
+            'time' => time(),
+            'token' => $token = Digraph::uuid(true)
+        ];
+        $email = Email::newForEmail(
+            'service',
+            $email,
+            'Verify your email address',
+            new RichContent(Templates::render(
+                '/email/account/email-verification.php',
+                [
+                    'user' => $this,
+                    'email' => $email,
+                    'link' => new URL('/~verify-email/?token=' . $token . '&user=' . $this->uuid())
+                ]
+            ))
+        );
+        $email->send();
+        $this->update();
     }
 
     public function removeEmail(string $email)
@@ -89,20 +150,34 @@ class User implements ArrayAccess
         $this['emails'] = $emails;
     }
 
-    public function emails()
+    /**
+     * Return a list of all verified emails attached to this account.
+     *
+     * @return array
+     */
+    public function emails(): array
     {
         return array_map(
             function ($e) {
-                return $e[0];
+                return $e['address'];
             },
-            $this['emails'] ?? []
+            array_filter(
+                $this['emails'] ?? [],
+                function (array $email) {
+                    return !@$email['verification'];
+                }
+            )
         );
     }
 
-    public function email()
+    public function primaryEmail(): ?string
     {
-        $emails = $this->emails();
-        return end($emails);
+        foreach ($this['emails'] as $row) {
+            if (@$row['primary'] && !@$row['verification']) {
+                return $row['address'];
+            }
+        }
+        return null;
     }
 
     public function name(string $name = null): string

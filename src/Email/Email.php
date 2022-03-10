@@ -44,7 +44,7 @@ class Email
      * @param RichContent $body
      * @return Email[]
      */
-    public static function newForUser(
+    public static function newForUser_all(
         string $category,
         User $user,
         string $subject,
@@ -62,6 +62,33 @@ class Email
                 );
             },
             $user->emails()
+        );
+    }
+
+    /**
+     * Return an array of identical emails, one for every address on file for
+     * a given User.
+     *
+     * @param string $category
+     * @param User $user
+     * @param string $subject
+     * @param RichContent $body
+     * @return Email|null
+     */
+    public static function newForUser(
+        string $category,
+        User $user,
+        string $subject,
+        RichContent $body
+    ): ?Email {
+        if (!$user->primaryEmail()) return null;
+        return new Email(
+            $category,
+            $subject,
+            $user->primaryEmail(),
+            $user->uuid(),
+            null,
+            $body->html()
         );
     }
 

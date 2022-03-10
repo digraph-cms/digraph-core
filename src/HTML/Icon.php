@@ -48,6 +48,8 @@ class Icon extends Tag
         'mark-unread' => ['string' => 'mark_email_unread'],
         'done-all' => ['string' => 'done_all'],
         'inbox' => ['string' => 'inbox'],
+        'delete' => ['string' => 'delete'],
+        'star' => ['string' => 'star']
     ];
 
     public function __construct(string $name, string $alt = null)
