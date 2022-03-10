@@ -130,7 +130,7 @@ class User implements ArrayAccess
                 [
                     'user' => $this,
                     'email' => $email,
-                    'link' => new URL('/~verify-email/?token=' . $token . '&user=' . $this->uuid())
+                    'link' => new URL('/~verify_email/?token=' . $token . '&user=' . $this->uuid())
                 ]
             ))
         );

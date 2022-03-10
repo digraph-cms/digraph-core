@@ -137,11 +137,12 @@ class Emails
             $row['bcc'],
             $row['uuid'],
             $row['time'],
-            $row['blocked']
+            $row['blocked'],
+            $row['error']
         );
     }
 
-    protected static function prepareBody_html(Email $email): string
+    public static function prepareBody_html(Email $email): string
     {
         if (Templates::exists('/email/html/body_' . $email->category() . '.php')) {
             $html = Templates::render('/email/html/body_' . $email->category() . '.php', ['email' => $email]);
@@ -171,7 +172,7 @@ class Emails
         return $css;
     }
 
-    protected static function prepareBody_text(Email $email): string
+    public static function prepareBody_text(Email $email): string
     {
         if (Templates::exists('/email/text/body_' . $email->category() . '.php')) {
             return Templates::render('/email/text/body_' . $email->category() . '.php', ['email' => $email]);

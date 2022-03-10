@@ -15,7 +15,6 @@ if (!$user) throw new HttpError(404);
 
 // try to find token in email list
 foreach ($user['emails'] as $i => $row) {
-    var_dump($row);
     if (@$row['verification']['token'] == $token) {
         $user->verifyEmail($row['address']);
         $user->update();

@@ -1,13 +1,18 @@
 #bodyTable {
     background-color: $background-darker;
     color: $color;
+    td,
+    th {
+        padding: 0;
+    }
 }
 
 #emailTable {
     background-color: $background;
     color: $color;
     border: $border solid $theme-neutral;
-    width: 600px;
+    width: 100%;
+    max-width: 600px;
     margin: 20px 0;
 }
 
@@ -32,7 +37,11 @@
 
 #contentTable {
     font-family: $font-content;
-    padding: 20px;
+    padding: 10px 0;
+
+    td {
+        padding: 10px 20px;
+    }
 
     a {
         color: $link-normal;
@@ -60,7 +69,11 @@
     color: $theme-neutral-inv;
     font-family: $font-ui;
     font-size: 0.75em;
-    padding: 20px;
+    padding: 10px 0;
+
+    td {
+        padding: 10px 20px;
+    }
 
     a {
         color: inherit;
@@ -79,4 +92,18 @@
 #emailIDCell {
     font-family: $font-code;
     color: $theme-neutral-darker;
+}
+
+.button {
+    display: block;
+    margin: 20px 0;
+    font-family: $font-ui;
+    border-radius: $border-radius;
+    padding: 20px;
+    background-color: $cue-interactive;
+    color: $cue-interactive-inv !important;
+}
+
+code {
+    font-family: $font-code;
 }

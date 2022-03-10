@@ -18,7 +18,7 @@ $variables = Theme::variables('light');
     <title><?php echo $email->subject(); ?></title>
 </head>
 
-<body>
+<body style="margin:0;">
     <table border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" id="bodyTable">
         <tr>
             <td align="center" valign="top">

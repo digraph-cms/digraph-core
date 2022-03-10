@@ -141,7 +141,7 @@ class CoreEventSubscriber
     public static function onTemplateWrapResponse(Response $response)
     {
         $response->content(
-            DOM::html($response->content(), true)
+            DOM::html($response->content())
         );
     }
 

@@ -104,7 +104,8 @@ class Email
         string $bcc = null,
         string $uuid = null,
         int $time = null,
-        bool $blocked = null
+        bool $blocked = null,
+        string $error = null
     ) {
         $this->category = $category;
         $this->subject = $subject;
@@ -118,6 +119,7 @@ class Email
         $this->uuid = $uuid ?? Digraph::uuid(true);
         $this->time = $time ?? time();
         $this->blocked = $blocked ?? Emails::shouldBlock($this);
+        $this->error = $error;
     }
 
     protected static function generateFrom(): string

@@ -21,8 +21,8 @@ $link = Context::fields()['link'];
 <a href="<?php echo $link; ?>" class="button">Verify your email</a>
 
 <p>
-    If the link above did not render correctly, you can copy and paste the URL:<br>
-    <?php echo $link; ?>
+    If the link above is not displayed correctly, you can copy and paste the URL:<br>
+    <code><?php echo $link; ?></code>
 </p>
 
 <?php echo Templates::render('/email/account/security-notice.php'); ?>
