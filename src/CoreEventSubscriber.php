@@ -299,7 +299,7 @@ class CoreEventSubscriber
             }
         }
         // otherwise return whether this is a user
-        return null;
+        return Permissions::inGroup('users');
     }
 
     /**
