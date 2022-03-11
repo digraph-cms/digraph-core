@@ -13,8 +13,8 @@ class URLTest extends \Codeception\Test\Unit
     protected function _before()
     {
         $_SERVER['HTTP_HOST'] = 'www.test.com';
-        $_SERVER['SCRIPT_NAME'] = '/digraph/index.php';
         URLs::_init($_SERVER);
+        URLs::$sitePath = '/digraph';
         URLs::clearContext();
     }
 

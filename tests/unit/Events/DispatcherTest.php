@@ -32,19 +32,12 @@ class DispatcherTest extends \Codeception\Test\Unit
         $this->assertFalse($ran);
         Dispatcher::dispatchEvent('onTestEvent', [true]);
         $this->assertTrue($ran);
-        // now remove
-        Dispatcher::removeEventListener($id);
-        Dispatcher::dispatchEvent('onTestEvent', [false]);
-        $this->assertTrue($ran);
     }
 
     public function testStaticSubscribers()
     {
         Dispatcher::addSubscriber(StaticSubscriber::class);
         Dispatcher::dispatchEvent('onTestEvent', ['first event ran']);
-        $this->assertEquals('first event ran', StaticSubscriber::$value);
-        Dispatcher::removeSubscriber(StaticSubscriber::class);
-        Dispatcher::dispatchEvent('onTestEvent', ['second event ran']);
         $this->assertEquals('first event ran', StaticSubscriber::$value);
     }
 
@@ -53,9 +46,6 @@ class DispatcherTest extends \Codeception\Test\Unit
         $subscriber = new ObjectSubscriber();
         Dispatcher::addSubscriber($subscriber);
         Dispatcher::dispatchEvent('onTestEvent', ['first event ran']);
-        $this->assertEquals('first event ran', $subscriber->value);
-        Dispatcher::removeSubscriber($subscriber);
-        Dispatcher::dispatchEvent('onTestEvent', ['second event ran']);
         $this->assertEquals('first event ran', $subscriber->value);
     }
 }
