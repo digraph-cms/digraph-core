@@ -179,8 +179,8 @@ class ImageFile extends DeferredFile
 
     public function originalWidth(): int
     {
-        $exif = exif_read_data($this->src());
-        if (@$exif['Orientation']) {
+        $exif = @exif_read_data($this->src());
+        if ($exif && @$exif['Orientation']) {
             if (in_array($exif['Orientation'], [6, 8])) {
                 return $this->image->getHeight();
             }
@@ -190,8 +190,8 @@ class ImageFile extends DeferredFile
 
     public function originalHeight(): int
     {
-        $exif = exif_read_data($this->src());
-        if (@$exif['Orientation']) {
+        $exif = @exif_read_data($this->src());
+        if ($exif && @$exif['Orientation']) {
             if (in_array($exif['Orientation'], [6, 8])) {
                 return $this->image->getWidth();
             }
