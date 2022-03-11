@@ -66,6 +66,15 @@ class User implements ArrayAccess
         return $a->__toString();
     }
 
+    /**
+     * Add an email address to account. Immediately sends notification emails
+     * and updates record in database.
+     *
+     * @param string $email
+     * @param string $comment
+     * @param boolean $skipVerification
+     * @return void
+     */
     public function addEmail(string $email, string $comment = '', bool $skipVerification = false)
     {
         $email = strtolower($email);
@@ -88,16 +97,75 @@ class User implements ArrayAccess
         if ($skipVerification && count($this->emails()) == 1) $this->setPrimaryEmail($email);
         if (!$skipVerification) $this->sendVerificationEmail($email);
         $this->update();
-    }
-
-    public function setPrimaryEmail(string $email)
-    {
-        $email = strtolower($email);
-        foreach ($this['emails'] ?? [] as $i => $row) {
-            $this["emails.$i.primary"] = $row['address'] == $email;
+        // send notification to all verified email addresses
+        // only sends if we skipped verification and this is at least the second address on account
+        if ($skipVerification && count($this->emails()) > 1) {
+            $messages = Email::newForUser_all(
+                'service',
+                $this,
+                'Email address added to account',
+                new RichContent(Templates::render(
+                    '/email/account/email-added.php',
+                    [
+                        'user' => $this,
+                        'email' => $email
+                    ]
+                ))
+            );
+            foreach ($messages as $message) {
+                $message->send();
+            }
         }
     }
 
+    /**
+     * Set primary email to the given address. Will only have an effect if
+     * called with an email that is configured and verified for this account.
+     * 
+     * Immediately sends notification emails and updates record in database.
+     *
+     * @param string $email
+     * @return void
+     */
+    public function setPrimaryEmail(string $email)
+    {
+        $alreadyHadPrimary = !!$this->primaryEmail();
+        $email = strtolower($email);
+        $updated = false;
+        foreach ($this['emails'] ?? [] as $i => $row) {
+            if ($row['address'] == $email && !@$row['verification'] && !@$row['primary']) $updated = true;
+            $this["emails.$i.primary"] = $row['address'] == $email;
+        }
+        if (!$updated) return;
+        $this->update();
+        // send notification to all verified email addresses, if there was
+        // already a different primary email address
+        if ($alreadyHadPrimary) {
+            $messages = Email::newForUser_all(
+                'service',
+                $this,
+                'Primary email address changed',
+                new RichContent(Templates::render(
+                    '/email/account/primary-email-changed.php',
+                    [
+                        'user' => $this,
+                        'email' => $email
+                    ]
+                ))
+            );
+            foreach ($messages as $message) {
+                $message->send();
+            }
+        }
+    }
+
+    /**
+     * Mark an email as verified. Immediately sends notification email and 
+     * updates the record in the database.
+     *
+     * @param string $email
+     * @return void
+     */
     public function verifyEmail(string $email)
     {
         $email = strtolower($email);
@@ -105,10 +173,33 @@ class User implements ArrayAccess
             if ($row['address'] == $email) {
                 unset($this["emails.$i.verification"]);
                 if (count($this->emails()) == 1) $this->setPrimaryEmail($email);
+                $this->update();
+                // send notification emails
+                $messages = Email::newForUser_all(
+                    'service',
+                    $this,
+                    'Email address added to account',
+                    new RichContent(Templates::render(
+                        '/email/account/email-added.php',
+                        [
+                            'user' => $this,
+                            'email' => $email
+                        ]
+                    ))
+                );
+                foreach ($messages as $message) {
+                    $message->send();
+                }
             }
         }
     }
 
+    /**
+     * Generate a fresh token and send a verification email to the given email.
+     *
+     * @param string $email
+     * @return void
+     */
     public function sendVerificationEmail(string $email)
     {
         $email = strtolower($email);
@@ -138,8 +229,37 @@ class User implements ArrayAccess
         $this->update();
     }
 
+    /**
+     * Remove an email from this account. Only does anything if email is in
+     * account. Immediately sends notification emails and updates record in
+     * database.
+     *
+     * @param string $email
+     * @return void
+     */
     public function removeEmail(string $email)
     {
+        // send notification to all emails, including the one removed
+        // note that newForUser_all uses the emails() method, so it will only
+        // send to verified emails
+        if (in_array($email, $this->emails())) {
+            $messages = Email::newForUser_all(
+                'service',
+                $this,
+                'Email address removed from account',
+                new RichContent(Templates::render(
+                    '/email/account/email-removed.php',
+                    [
+                        'user' => $this,
+                        'email' => $email
+                    ]
+                ))
+            );
+            foreach ($messages as $message) {
+                $message->send();
+            }
+        }
+        // remove email from array
         $emails = array_filter(
             $this['emails'],
             function ($e) use ($email) {
@@ -170,6 +290,11 @@ class User implements ArrayAccess
         );
     }
 
+    /**
+     * Get the primary email address for account, if it exists
+     *
+     * @return string|null
+     */
     public function primaryEmail(): ?string
     {
         foreach ($this['emails'] as $row) {
