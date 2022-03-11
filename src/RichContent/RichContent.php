@@ -25,7 +25,7 @@ class RichContent
             $this->created = @$value['created'] ?? time();
             $this->created_by = @$value['created_by'] ?? Session::user() ?? 'guest';
         } else {
-            $this->source = $value;
+            $this->source = $value ?? '';
             $this->created = time();
             $this->created_by = Session::user();
         }

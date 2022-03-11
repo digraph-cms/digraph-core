@@ -4,6 +4,7 @@ namespace DigraphCMS\RichMedia\Types;
 
 use DigraphCMS\Content\Filestore;
 use DigraphCMS\Content\FilestoreFile;
+use DigraphCMS\HTML\DIV;
 use DigraphCMS\HTML\FIGURE;
 use DigraphCMS\HTML\ResponsivePicture;
 use DigraphCMS\RichContent\RichContent;
@@ -20,11 +21,19 @@ class ImageRichMedia extends AbstractRichMedia
      */
     public static function shortCode(ShortcodeInterface $code, $media): ?string
     {
-        $image = new ResponsivePicture(
-            $media->file()->image(),
-            $media['alt']
-        );
-        if ($media->caption()) {
+        try {
+            $image = new ResponsivePicture(
+                $media->file()->image(),
+                $media['alt']
+            );
+        } catch (\Throwable $th) {
+            return (new DIV)
+                ->addClass('notification')
+                ->addClass('notification--error')
+                ->addChild('Exception occurred while rendering image')
+                ->toString();
+        }
+        if ($media->caption()->source()) {
             $figure = (new FIGURE)
                 ->setAttribute('style', 'background-color:' . $media->file()->image()->color())
                 ->addChild($image)

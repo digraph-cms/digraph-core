@@ -72,7 +72,7 @@ $form
         // metadata
         unset($media['meta']);
         $media['meta'] = $meta->value();
-        // insert and close editing interface
+        // update and close editing interface
         $media->update();
         $url = Context::url();
         $url->unsetArg('edit');

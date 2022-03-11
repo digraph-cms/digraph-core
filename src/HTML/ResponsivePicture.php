@@ -35,6 +35,16 @@ class ResponsivePicture extends Tag
         $this->addClass('fancyfit');
     }
 
+    public function setExpectedWidth(int $percent)
+    {
+        $this->expectedWidth = $percent;
+    }
+
+    public function setMaxHeight(int $percent)
+    {
+        $this->maxHeight = $percent;
+    }
+
     protected static function cache(): CacheNamespace
     {
         static $cache;
@@ -141,7 +151,7 @@ class ResponsivePicture extends Tag
     public function children(): array
     {
         return array_merge(
-            method_exists('imagewebp') ? $this->sources(true) : [],
+            function_exists('imagewebp') ? $this->sources(true) : [],
             $this->sources(),
             [$this->img()]
         );
@@ -155,7 +165,11 @@ class ResponsivePicture extends Tag
     public function toString(): string
     {
         return static::cache()->get(
-            $this->image()->identifier(),
+            md5(serialize([
+                $this->image()->identifier(),
+                $this->expectedWidth,
+                $this->maxHeight
+            ])),
             function () {
                 return parent::toString();
             },

@@ -3,6 +3,7 @@
 use DigraphCMS\Config;
 use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
+use DigraphCMS\Digraph;
 use DigraphCMS\HTML\DIV;
 use DigraphCMS\HTML\Forms\Fields\Autocomplete\AutocompleteInput;
 use DigraphCMS\HTTP\RedirectException;
@@ -33,6 +34,26 @@ $wrapper = (new DIV())
     ->setID(Context::arg('frame'));
 $tabs = new TabInterface('tab');
 $wrapper->addChild($tabs);
+
+// adder script
+$acAdder->setID($acAdderID = Digraph::uuid());
+$url = new URL('&add={type}');
+$wrapper->addChild(<<<EOL
+<script>
+    (() => {
+        const ac = document.getElementById("$acAdderID");
+        if (!ac) return;
+        const url = "$url";
+        ac.parentElement.addEventListener('autocomplete-select', (e) => {
+            const evt = new Event('navigation-frame-navigate', {
+                bubbles: true
+            });
+            evt.navigateUrl = url.replace('%7Btype%7D', e.autocompleteValue);
+            ac.dispatchEvent(evt);
+        });
+    })();
+</script>
+EOL);
 
 // delete tab takes over completely as required
 if (Context::arg('delete') && $media = RichMedia::get(Context::arg('delete'))) {
@@ -157,19 +178,3 @@ $tabs->addTab('add', 'Add media', function () use ($acAdder) {
 });
 
 echo $wrapper;
-
-?>
-<script>
-    (() => {
-        const ac = document.getElementById("<?php echo $acAdder->id(); ?>");
-        if (!ac) return;
-        const url = "<?php echo new URL('&add={type}') ?>";
-        ac.parentElement.addEventListener('autocomplete-select', (e) => {
-            const evt = new Event('navigation-frame-navigate', {
-                bubbles: true
-            });
-            evt.navigateUrl = url.replace('%7Btype%7D', e.autocompleteValue);
-            ac.dispatchEvent(evt);
-        });
-    })();
-</script>
