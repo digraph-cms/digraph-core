@@ -168,7 +168,8 @@ class ResponsivePicture extends Tag
             md5(serialize([
                 $this->image()->identifier(),
                 $this->expectedWidth,
-                $this->maxHeight
+                $this->maxHeight,
+                $this->alt
             ])),
             function () {
                 return parent::toString();
