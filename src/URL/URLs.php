@@ -26,7 +26,8 @@ class URLs
             Config::get('urls.site_path') ??
             static::$sitePath = preg_replace('/index\.php$/', '', $SERVER['SCRIPT_NAME']);
         static::$sitePath = preg_replace('@/$@', '', static::$sitePath);
-        static::$siteProtocol = Config::get('urls.protocol') ? Config::get('urls.protocol') . ':' : '';
+        static::$siteProtocol = Config::get('urls.protocol')
+            ?? (static::isHTTPS($SERVER) ? 'https' : 'http');
     }
 
     public static function pathToName(string $path, bool $inPageContext = false): string
@@ -126,7 +127,7 @@ class URLs
      */
     public static function site(): string
     {
-        return static::$siteProtocol . '//' . static::$siteHost . static::$sitePath;
+        return static::$siteProtocol . '://' . static::$siteHost . static::$sitePath;
     }
 
     public static function siteHost(): string
@@ -144,9 +145,10 @@ class URLs
         return static::$siteProtocol;
     }
 
-    protected static function isHTTPS()
+    protected static function isHTTPS(array $SERVER = null)
     {
-        return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-            || $_SERVER['SERVER_PORT'] == 443;
+        $SERVER = $SERVER ?? $_SERVER;
+        return (!empty(@$SERVER['HTTPS']) && @$SERVER['HTTPS'] !== 'off')
+            || @$SERVER['SERVER_PORT'] == 443;
     }
 }

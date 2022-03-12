@@ -24,33 +24,33 @@ class URLTest extends \Codeception\Test\Unit
 
     public function testStaticInitialization()
     {
-        $this->assertEquals('//www.test.com/digraph', URLs::site());
+        $this->assertEquals('http://www.test.com/digraph', URLs::site());
         URLs::_init([
             'HTTP_HOST' => 'www.test.com',
             'SCRIPT_NAME' => '/index.php'
         ]);
-        $this->assertEquals('//www.test.com', URLs::site());
+        $this->assertEquals('http://www.test.com', URLs::site());
     }
 
     public function testPathParsing()
     {
         // both slash and blank should yield the site URL
         $this->assertEquals(
-            '//www.test.com/digraph/',
+            'http://www.test.com/digraph/',
             (new URL('/'))->__toString()
         );
         $this->assertEquals(
-            '//www.test.com/digraph/',
+            'http://www.test.com/digraph/',
             (new URL(''))->__toString()
         );
         // should parse out site paths
         $this->assertEquals(
-            '//www.test.com/digraph/path/file',
+            'http://www.test.com/digraph/path/file',
             (new URL('/path/file'))->__toString()
         );
         // with no context relative paths should be relative to site
         $this->assertEquals(
-            '//www.test.com/digraph/path/file',
+            'http://www.test.com/digraph/path/file',
             (new URL('path/file'))->__toString()
         );
     }
@@ -59,16 +59,16 @@ class URLTest extends \Codeception\Test\Unit
     {
         // should parse out query string with paths and not
         $this->assertEquals(
-            '//www.test.com/digraph/?foo=bar',
+            'http://www.test.com/digraph/?foo=bar',
             (new URL('?foo=bar'))->__toString()
         );
         $this->assertEquals(
-            '//www.test.com/digraph/path/file?foo=bar',
+            'http://www.test.com/digraph/path/file?foo=bar',
             (new URL('/path/file?foo=bar'))->__toString()
         );
         // args should be in order
         $this->assertEquals(
-            '//www.test.com/digraph/path/file?foo=bar&zoo=zar',
+            'http://www.test.com/digraph/path/file?foo=bar&zoo=zar',
             (new URL('/path/file?zoo=zar&foo=bar'))->__toString()
         );
         // args should still be in order after setting post-construction
@@ -76,7 +76,7 @@ class URLTest extends \Codeception\Test\Unit
         $url->query(['z' => 'a', 'a' => 'z']);
         $url->normalize();
         $this->assertEquals(
-            '//www.test.com/digraph/path/file.html?a=z&z=a',
+            'http://www.test.com/digraph/path/file.html?a=z&z=a',
             $url->__toString()
         );
     }
@@ -91,17 +91,17 @@ class URLTest extends \Codeception\Test\Unit
         // setting/clearing context
         URLs::beginContext(new URL('/foo/'));
         $this->assertEquals(
-            '//www.test.com/digraph/foo/',
+            'http://www.test.com/digraph/foo/',
             URLs::context()
         );
         URLs::beginContext(new URL('/foo/bar/baz'));
         $this->assertEquals(
-            '//www.test.com/digraph/foo/bar/baz',
+            'http://www.test.com/digraph/foo/bar/baz',
             URLs::context()
         );
         URLs::endContext();
         $this->assertEquals(
-            '//www.test.com/digraph/foo/',
+            'http://www.test.com/digraph/foo/',
             URLs::context()
         );
         URLs::endContext();
@@ -115,40 +115,40 @@ class URLTest extends \Codeception\Test\Unit
     {
         // .. relative to site root does nothing
         $this->assertEquals(
-            '//www.test.com/digraph/',
+            'http://www.test.com/digraph/',
             (new URL('..'))->__toString()
         );
         // context with a file at the end
         URLs::beginContext(new URL('/a/b/c/d/e/f'));
         $this->assertEquals(
-            '//www.test.com/digraph/a/b/c/d/',
+            'http://www.test.com/digraph/a/b/c/d/',
             (new URL('..'))->__toString()
         );
         $this->assertEquals(
-            '//www.test.com/digraph/a/b/c/d/',
+            'http://www.test.com/digraph/a/b/c/d/',
             (new URL('../'))->__toString()
         );
         $this->assertEquals(
-            '//www.test.com/digraph/a/b/c/',
+            'http://www.test.com/digraph/a/b/c/',
             (new URL('../..'))->__toString()
         );
         $this->assertEquals(
-            '//www.test.com/digraph/a/b/c/',
+            'http://www.test.com/digraph/a/b/c/',
             (new URL('../../'))->__toString()
         );
         // context with a directory at the end
         URLs::beginContext(new URL('/a/b/c/d/e/f/'));
         $this->assertEquals(
-            '//www.test.com/digraph/a/b/c/d/e/',
+            'http://www.test.com/digraph/a/b/c/d/e/',
             (new URL('..'))->__toString()
         );
         $this->assertEquals(
-            '//www.test.com/digraph/a/b/c/d/',
+            'http://www.test.com/digraph/a/b/c/d/',
             (new URL('../..'))->__toString()
         );
         // also test adding a new path after ..s
         $this->assertEquals(
-            '//www.test.com/digraph/a/b/c/d/foo',
+            'http://www.test.com/digraph/a/b/c/d/foo',
             (new URL('../../foo'))->__toString()
         );
     }
@@ -157,7 +157,7 @@ class URLTest extends \Codeception\Test\Unit
     {
         URLs::beginContext(new URL('/foo/bar?baz=buzz'));
         $this->assertEquals(
-            '//www.test.com/digraph/foo/bar?baz=buzz&caz=cuzz',
+            'http://www.test.com/digraph/foo/bar?baz=buzz&caz=cuzz',
             (new URL('&caz=cuzz'))->__toString()
         );
     }
