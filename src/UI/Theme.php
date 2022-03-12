@@ -167,7 +167,9 @@ class Theme
                 ? null
                 : $user['ui.colormode'];
         }
-        return @Cookies::get('ui', 'color')['colormode'];
+        return @Cookies::get('ui', 'color')['colormode'] == 'auto'
+            ? null
+            : @Cookies::get('ui', 'color')['colormode'];
     }
 
     public static function colorblindMode(): ?bool

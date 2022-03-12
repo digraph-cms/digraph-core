@@ -13,7 +13,7 @@ $mode = new ButtonMenu('Color mode', [
         function () {
             Theme::setColorMode(null);
         },
-        [Theme::colorMode() !== null ? 'button--neutral' : 'button--interactive']
+        [Theme::colorMode() === null ? 'button--interactive' : 'button--neutral']
     ),
     new ButtonMenuButton(
         'Dark',
