@@ -17,10 +17,10 @@ echo (new A)
     ->addClass('button')
     ->addClass('button--safe')
     ->addChild('Trust this browser')
-    ->setAttribute('href', Context::fields()['yes_url']);
+    ->setHref(Context::fields()['yes_url']);
 
 echo (new A)
     ->addClass('button')
     ->addClass('button--neutral')
     ->addChild('Sign out when I close the browser')
-    ->setAttribute('href', Context::fields()['no_url']);
+    ->setHref(Context::fields()['no_url']);

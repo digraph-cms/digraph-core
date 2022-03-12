@@ -53,6 +53,8 @@ class URL
             $url->query($query);
             $url = $url->__toString();
         }
+        // strip protocol
+        $url = preg_replace('@^(https?:)?//@', '//', $url);
         // prefix with site URL if it starts with /
         if ($url[0] == '/' && @$url[1] != '/') {
             $url = URLs::site() . $url;

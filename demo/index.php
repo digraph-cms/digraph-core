@@ -25,8 +25,7 @@ else {
 }
 
 // run initial configuration
-CachedInitializer::run(
-    'initialization',
+CachedInitializer::config(
     function (CacheableState $state) {
         $state->mergeConfig(Config::parseJsonFile(__DIR__ . '/../env.json'), true);
         $state->config('paths.base', __DIR__);

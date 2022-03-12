@@ -4,6 +4,8 @@ namespace DigraphCMS\Cache;
 
 use DigraphCMS\Cache\StatelessOpCache;
 use DigraphCMS\Config;
+use DigraphCMS\Events\Dispatcher;
+use DigraphCMS\URL\URLs;
 
 class CachedInitializer
 {
@@ -22,6 +24,21 @@ class CachedInitializer
         } else {
             static::$cache = null;
         }
+    }
+
+    /**
+     * Helper function for setting config, so that anything that needs to be done
+     * after a config change can be called automatically.
+     *
+     * @param callable $fn
+     * @param integer|null $overrideTTL
+     * @return void
+     */
+    public static function config(callable $fn, int $overrideTTL = null)
+    {
+        static::run('config', $fn, null, $overrideTTL);
+        URLs::_init($_SERVER);
+        Dispatcher::dispatchEvent('onConfigInitialized');
     }
 
     /**

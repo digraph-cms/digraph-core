@@ -8,7 +8,7 @@ URLs::_init($_SERVER);
 
 class URLs
 {
-    public static $protocol, $siteHost, $sitePath;
+    public static $siteProtocol, $siteHost, $sitePath;
     public static $context = [];
 
     /**
@@ -26,7 +26,7 @@ class URLs
             Config::get('urls.site_path') ??
             static::$sitePath = preg_replace('/index\.php$/', '', $SERVER['SCRIPT_NAME']);
         static::$sitePath = preg_replace('@/$@', '', static::$sitePath);
-        static::$protocol = Config::get('urls.protocol') ? Config::get('urls.protocol') . ':' : '';
+        static::$siteProtocol = Config::get('urls.protocol') ? Config::get('urls.protocol') . ':' : '';
     }
 
     public static function pathToName(string $path, bool $inPageContext = false): string
@@ -126,7 +126,7 @@ class URLs
      */
     public static function site(): string
     {
-        return static::$protocol . '//' . static::$siteHost . static::$sitePath;
+        return static::$siteProtocol . '//' . static::$siteHost . static::$sitePath;
     }
 
     public static function siteHost(): string
@@ -141,7 +141,7 @@ class URLs
 
     public static function siteProtocol(): string
     {
-        return Config::get('urls.protocol') ?? (static::isHTTPS() ? 'https' : 'http');
+        return static::$siteProtocol;
     }
 
     protected static function isHTTPS()
