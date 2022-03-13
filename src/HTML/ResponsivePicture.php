@@ -48,7 +48,7 @@ class ResponsivePicture extends Tag
     protected static function cache(): CacheNamespace
     {
         static $cache;
-        return $cache ?? $cache = new CacheNamespace('html/responsivepicture');
+        return $cache ?? $cache = new CacheNamespace('html/responsivepicture', Config::get('files.ttl'));
     }
 
     public function attributes(): array
@@ -173,8 +173,7 @@ class ResponsivePicture extends Tag
             ])),
             function () {
                 return parent::toString();
-            },
-            Config::get('images.ttl')
+            }
         );
     }
 }

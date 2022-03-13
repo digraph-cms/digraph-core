@@ -44,7 +44,7 @@ class ImageFile extends DeferredFile
         $this->extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
         $this->content = [$this, 'contentCallback'];
         $this->filename = $filename;
-        $this->cache = new CacheNamespace('image-file');
+        $this->cache = new CacheNamespace('image-file', $this->ttl());
     }
 
     public function color(): string
@@ -59,8 +59,7 @@ class ImageFile extends DeferredFile
                         ColorThief::getColor($this->path())
                     )
                     . ')';
-            },
-            $this->ttl()
+            }
         );
     }
 
