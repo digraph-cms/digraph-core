@@ -29,10 +29,15 @@ class DeferredFile extends File
             return;
         }
         $this->written = true;
-        // if output file already exists and files.ttl config exists, don't
-        // write file again if its age is less than files.ttl
-        if (is_file($this->path()) && Config::get('files.ttl')) {
-            if (time() < (filemtime($this->path()) + Config::get('files.ttl'))) {
+        // if output file already exists and ttl config exists, don't
+        // write file again if its age is less than ttl
+        if (is_file($this->path()) && $this->ttl()) {
+            // -1 means cache files forever
+            if ($this->ttl() == -1) {
+                return;
+            }
+            // otherwise do the math
+            if (time() < (filemtime($this->path()) + $this->ttl())) {
                 return;
             }
         }
@@ -41,6 +46,19 @@ class DeferredFile extends File
         call_user_func($this->content, $this);
         // reset URL
         $this->url = null;
+    }
+
+    /**
+     * Cache TTL pulled once and stored statically both for performance,
+     * and to retrieve it via a function so that child classes can 
+     * have their own TTLs.
+     *
+     * @return integer
+     */
+    public function ttl(): int
+    {
+        static $ttl;
+        return $ttl ?? $ttl = (Config::get('files.ttl') ?? 3600);
     }
 
     public function content(): string

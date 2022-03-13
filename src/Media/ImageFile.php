@@ -69,6 +69,11 @@ class ImageFile extends DeferredFile
         return $this->src;
     }
 
+    /**
+     * Use images.ttl instead of the default files.ttl config option
+     *
+     * @return integer
+     */
     public function ttl(): int
     {
         static $ttl;
