@@ -6,9 +6,10 @@ class CacheNamespace
 {
     protected $name, $ttl;
 
-    public function __construct(string $name)
+    public function __construct(string $name, int $ttl = null)
     {
         $this->name = $name;
+        $this->ttl = $ttl;
     }
 
     /**
@@ -23,7 +24,7 @@ class CacheNamespace
      */
     public function get(string $name, callable $callback = null, int $ttl = null)
     {
-        return Cache::get($this->name . '/' . $name, $callback, $ttl);
+        return Cache::get($this->name . '/' . $name, $callback, $ttl ?? $this->ttl);
     }
 
     public function exists(string $name): bool
@@ -38,6 +39,6 @@ class CacheNamespace
 
     public function set(string $name, $value, int $ttl = null)
     {
-        return Cache::set($this->name . '/' . $name, $value, $ttl);
+        return Cache::set($this->name . '/' . $name, $value, $ttl ?? $this->ttl);
     }
 }
