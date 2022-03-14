@@ -11,9 +11,9 @@ use DigraphCMS\HTML\Forms\UploadMulti;
 use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\RichMedia\RichMedia;
-use DigraphCMS\RichMedia\Types\MultiFileRichMedia;
+use DigraphCMS\RichMedia\Types\ZipRichMedia;
 
-/** @var MultiFileRichMedia */
+/** @var ZipRichMedia */
 $media = RichMedia::get(Context::arg('edit'));
 
 $form = new FormWrapper('add-rich-media-' . Context::arg('edit') . '-' . Context::arg('frame'));

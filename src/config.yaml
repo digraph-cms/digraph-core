@@ -7,7 +7,7 @@ rich_media_types:
   aside: \DigraphCMS\RichMedia\Types\AsideRichMedia
   image: \DigraphCMS\RichMedia\Types\ImageRichMedia
   file: \DigraphCMS\RichMedia\Types\FileRichMedia
-  zip: \DigraphCMS\RichMedia\Types\MultiFileRichMedia
+  zip: \DigraphCMS\RichMedia\Types\ZipRichMedia
   table: \DigraphCMS\RichMedia\Types\TableRichMedia
 
 cache:

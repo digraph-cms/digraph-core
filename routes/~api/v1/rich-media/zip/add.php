@@ -7,7 +7,7 @@ use DigraphCMS\HTML\Forms\Fields\CheckboxListField;
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTML\Forms\UploadMulti;
 use DigraphCMS\HTTP\RedirectException;
-use DigraphCMS\RichMedia\Types\MultiFileRichMedia;
+use DigraphCMS\RichMedia\Types\ZipRichMedia;
 
 $form = new FormWrapper('add-rich-media-' . Context::arg('add') . '-' . Context::arg('frame'));
 $form->form()->setData('target', Context::arg('frame'));
@@ -41,7 +41,7 @@ $form
     ->addChild($files)
     ->addChild($options)
     ->addCallback(function () use ($files, $name, $options) {
-        $media = new MultiFileRichMedia([], ['page_uuid' => Context::arg('uuid')]);
+        $media = new ZipRichMedia([], ['page_uuid' => Context::arg('uuid')]);
         // set name
         $media->name($name->value());
         // set options

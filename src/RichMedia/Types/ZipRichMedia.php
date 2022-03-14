@@ -10,13 +10,12 @@ use DigraphCMS\FS;
 use DigraphCMS\HTML\A;
 use DigraphCMS\HTML\DIV;
 use DigraphCMS\Media\DeferredFile;
-use DigraphCMS\RichMedia\RichMedia;
 use DigraphCMS\UI\Format;
 use DigraphCMS\URL\URL;
 use Thunder\Shortcode\Shortcode\ShortcodeInterface;
 use ZipArchive;
 
-class MultiFileRichMedia extends AbstractRichMedia
+class ZipRichMedia extends AbstractRichMedia
 {
     protected $zipFile;
 
@@ -41,7 +40,7 @@ class MultiFileRichMedia extends AbstractRichMedia
 
     public static function class(): string
     {
-        return 'multifile';
+        return 'zip';
     }
 
     public static function className(): string
