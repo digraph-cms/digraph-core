@@ -7,7 +7,9 @@ use DateTime;
 use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Digraph;
+use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\RichContent\RichContent;
+use DigraphCMS\UI\Format;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\User;
@@ -55,6 +57,48 @@ class Page implements ArrayAccess
         } else {
             return null;
         }
+    }
+
+    public function metadata(): array
+    {
+        $data = [
+            'Created' => sprintf('%s by %s', Format::datetime($this->created()), $this->createdBy()),
+            'Last modified' => sprintf('%s by %s', Format::datetime($this->updated()), $this->updatedBy()),
+            'Type' => $this->class(),
+            'UUID' => '<code>' . $this->uuid() . '</code>',
+            'URLs' => array_map(
+                function (string $slug) {
+                    $url = new URL("/$slug/");
+                    return "<a href='$url'>$slug</a>";
+                },
+                Slugs::list($this->uuid())
+            )
+        ];
+        if ($this['copied_from']) {
+            if ($page = Pages::get($this['copied_from'])) {
+                $data['Copied from'] = $page->url()->html();
+            } else {
+                $data['Copied from'] = '<em>Deleted page <code>' . $this['copied_from'] . '</code></em>';
+            }
+        }
+        Dispatcher::dispatchEvent('onPageMetadata', [$this, &$data]);
+        Dispatcher::dispatchEvent('onPageMetadata_' . $this->class(), [$this, &$data]);
+        return $data;
+    }
+
+    /**
+     * Return all rich content in this page
+     *
+     * @return RichContent[]
+     */
+    public function allRichContent(): array
+    {
+        return array_map(
+            function ($e) {
+                return new RichContent($e);
+            },
+            $this['content'] ?? []
+        );
     }
 
     public function addableTypes(): array
@@ -279,6 +323,12 @@ class Page implements ArrayAccess
     public function uuid(): string
     {
         return $this->uuid;
+    }
+
+    public function setUUID(string $uuid)
+    {
+        $this->uuid = $uuid;
+        return $this;
     }
 
     public function createdBy(): User

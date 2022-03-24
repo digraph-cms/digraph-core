@@ -290,10 +290,9 @@ class Pages
         DB::query()
             ->delete('page')
             ->where(
-                'uuid = ? AND updated = ?',
+                'uuid = ?',
                 [
-                    $page->uuid(),
-                    $page->updatedLast()->format("Y-m-d H:i:s")
+                    $page->uuid()
                 ]
             )
             ->execute();

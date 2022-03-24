@@ -42,8 +42,16 @@ class DB
     public static function commit()
     {
         static::$transactions--;
-        if (static::$transactions == 0) {
+        if (Config::get('db.adapter') != 'sqlite' || static::$transactions == 0) {
             static::pdo()->commit();
+        }
+    }
+
+    public static function rollback()
+    {
+        static::$transactions--;
+        if (Config::get('db.adapter') != 'sqlite' || static::$transactions == 0) {
+            static::pdo()->rollBack();
         }
     }
 

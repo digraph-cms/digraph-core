@@ -2,7 +2,7 @@
     display: block;
     font-family: var(--font-ui);
 
-    >* {
+    > * {
         &:last-child {
             margin-bottom: 0;
         }
@@ -24,6 +24,7 @@ fieldset {
     box-sizing: border-box;
     display: block;
     border-radius: var(--border-radius);
+    margin: 0;
 
     &:disabled,
     &:indeterminate {
@@ -40,7 +41,6 @@ input {
 input,
 select,
 textarea,
-fieldset,
 .CodeMirror {
     border: $border solid var(--theme-neutral);
     border-radius: var(--border-radius);
@@ -128,8 +128,37 @@ label {
     font-weight: bold;
 }
 
+fieldset,
 .form-field {
     margin: $grid/2 0;
+}
+
+fieldset {
+    border: $border solid var(--theme-neutral);
+    border-radius: $border-radius;
+    padding: $grid;
+
+    legend {
+        position: relative;
+        display: block;
+        font-family: $font-ui;
+        font-weight: bold;
+        padding: 0 $grid/2;
+        color: var(--theme-neutral-darker);
+    }
+
+    > legend + * {
+        margin-top: -$grid/2;
+    }
+
+    > * {
+        &:first-child {
+            margin-top: 0;
+        }
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
 }
 
 .form-field--error {
@@ -157,7 +186,6 @@ label {
 }
 
 .form-field {
-
     .checkbox-list,
     .radio-list {
         margin: $grid/2 0;
@@ -176,7 +204,7 @@ label {
 .radio-list {
     margin: $grid 0;
 
-    >.form-field {
+    > .form-field {
         margin: $grid/2 0;
 
         &:last-child {
@@ -191,7 +219,7 @@ label {
 
 .checkbox-list-field,
 .radio-list-field {
-    >label {
+    > label {
         font-size: smaller;
     }
 }

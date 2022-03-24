@@ -17,7 +17,7 @@ class PageInput extends AutocompleteInput
             $endpoint ?? new URL('/~api/v1/autocomplete/page.php'),
             function (string $value) {
                 if ($page = Pages::get($value)) {
-                    return Dispatcher::firstValue('onPageAutoCompleteCard', [$page]);
+                    return Dispatcher::firstValue('onPageAutocompleteCard', [$page]);
                 }
                 return null;
             }
