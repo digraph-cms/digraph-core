@@ -155,7 +155,9 @@ class Page implements ArrayAccess
 
     public function slugPattern(string $slugPattern = null): ?string
     {
-        $this->slugPattern = $slugPattern ?? $this->slugPattern;
+        if ($slugPattern && Slugs::validatePattern($this, $slugPattern)) {
+            $this->slugPattern = $slugPattern;
+        }
         return $this->slugPattern;
     }
 

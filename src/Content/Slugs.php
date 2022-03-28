@@ -78,6 +78,19 @@ class Slugs
 
     public static function setFromPattern(Page $page, string $pattern, bool $unique = false)
     {
+        $slug = static::compilePattern($page, $pattern);
+        // set slug
+        static::set($page, $slug, $unique);
+    }
+
+    public static function validatePattern(Page $page, string $pattern): bool
+    {
+        return !!static::compilePattern($page, $pattern);
+    }
+
+    public static function compilePattern(Page $page, string $pattern): ?string
+    {
+        // pull variables
         $slug = preg_replace_callback(
             '/\[([a-z]+?)\]/',
             function (array $m) use ($page) {
@@ -90,18 +103,12 @@ class Slugs
         );
         // if slug doesn't have a value, return and UUID or existing slug will continue to be used
         if (!$slug) {
-            return;
+            return null;
         }
         // prepend parent slug if necessary
         if (substr($slug, 0, 1) != '/' && $page->parent()) {
             $slug = $page->parent()->route() . '/' . $slug;
         }
-        // set slug
-        static::set($page, $slug, $unique);
-    }
-
-    public static function set(Page $page, string $slug, $unique = false)
-    {
         // trim and clean up
         $slug = strtolower($slug);
         $slug = iconv('UTF-8', 'ASCII//TRANSLIT', $slug);
@@ -109,6 +116,12 @@ class Slugs
         $slug = preg_replace('@/+@', '/', $slug);
         $slug = preg_replace('@^home/@', '', $slug);
         $slug = trim($slug, '/');
+        // return
+        return $slug;
+    }
+
+    public static function set(Page $page, string $slug, $unique = false)
+    {
         // validate
         if (!static::validate($slug)) {
             throw new \Exception("Slug $slug is not valid");

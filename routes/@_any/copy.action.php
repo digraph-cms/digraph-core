@@ -21,9 +21,16 @@ $parent = (new PageField('Parent'))
         Context::page()->parent()
             ? (Context::page()->parentPage() ? Context::page()->parentPage()->uuid() : null)
             : null
-    )
-    ->setRequired(true);
+    );
 $form->addChild($parent);
+
+$slug = (new Field('URL pattern'))
+    ->setDefault(
+        Context::page()->slugPattern()
+    )
+    ->setRequired(false)
+    ->addTip('Add a leading slash to make pattern relative to site root, otherwise it will be relative to the page\'s parent URL.');
+$form->addChild($slug);
 
 $name = (new Field('Name'))
     ->setDefault(Context::page()->name() . ' copy')
@@ -43,7 +50,7 @@ if ($media->count() && Context::page()->allRichContent()) {
     $form->addChild($group);
 }
 
-$form->addCallback(function () use ($clones, $parent, $name) {
+$form->addCallback(function () use ($clones, $parent, $slug, $name) {
     DB::beginTransaction();
     // copy page
     $newPage = clone Context::page();
@@ -77,8 +84,14 @@ $form->addCallback(function () use ($clones, $parent, $name) {
         $fn($data);
         $newPage->set(null, $data);
     }
+    // set URL pattern
+    if ($slug->value()) {
+        $newPage->slugPattern($slug->value());
+    }
     // create link to parent
-    Pages::insertLink($parent->value(), $newPage->uuid());
+    if ($parent->value()) {
+        Pages::insertLink($parent->value(), $newPage->uuid());
+    }
     // insert new page
     $newPage->insert();
     // commit database updates
@@ -88,7 +101,7 @@ $form->addCallback(function () use ($clones, $parent, $name) {
     Notifications::flashConfirmation(sprintf(
         'Copied %s from %s',
         $newPage->url()->html(),
-        Pages::get($parent->value())->url()->html()
+        Context::page()->url()->html()
     ));
     throw new RedirectException($newPage->url_edit());
 });
