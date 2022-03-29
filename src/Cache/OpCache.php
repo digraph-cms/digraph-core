@@ -5,8 +5,6 @@ namespace DigraphCMS\Cache;
 use DigraphCMS\Config;
 use DigraphCMS\FS;
 
-use function Opis\Closure\serialize;
-
 class OpCache extends AbstractCacheDriver
 {
     protected $dir;
@@ -51,7 +49,7 @@ class OpCache extends AbstractCacheDriver
     {
         $filename = $this->filename($name);
         $content = @file_get_contents($filename, false, null, 13, 16);
-        // first check for expiration of 'false'
+        // first check for expiration of INF
         if (substr($content, 0, 3) === 'INF') {
             return false;
         }
@@ -132,7 +130,7 @@ class OpCache extends AbstractCacheDriver
         // still save to internal memory cache even if ttl is 0
         // this means TTLs of 0 can be safely used like a fast ephemeral cache
         if ($ttl !== 0) {
-            $value = serialize($value);
+            $value = static::serialize($value);
             // save into file and compile opcache
             $filename = $this->filename($name);
             FS::mkdir(dirname($filename));
@@ -140,11 +138,45 @@ class OpCache extends AbstractCacheDriver
             file_put_contents(
                 $filename,
                 sprintf(
-                    '<?php $exp = %s; $val = \\Opis\\Closure\\unserialize(\'%s\');',
+                    '<?php $exp = %s; $val = %s;',
                     is_infinite($exp) ? "INF" : $exp,
-                    str_replace('\'', '\\\'', $value)
+                    $value
                 ),
                 LOCK_EX
+            );
+        }
+    }
+
+    protected static function serialize($value): string
+    {
+        if ($value === null) {
+            return 'null';
+        } elseif ($value === true) {
+            return 'true';
+        } elseif ($value === false) {
+            return 'false';
+        } elseif (is_numeric($value)) {
+            return "$value";
+        } elseif (is_string($value)) {
+            return "'" . str_replace("'", "\\'", $value) . "'";
+        } elseif (is_infinite($value)) {
+            return 'INF';
+        } else {
+            return static::serialize_object($value);
+        }
+    }
+
+    protected static function serialize_object($value): string
+    {
+        try {
+            return sprintf(
+                '\\unserialize(\'%s\')',
+                str_replace("'", "\\'", \serialize($value))
+            );
+        } catch (\Throwable $th) {
+            return sprintf(
+                '\\unserialize(\'%s\')',
+                str_replace("'", "\\'", \Opis\Closure\serialize($value))
             );
         }
     }
