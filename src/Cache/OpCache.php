@@ -49,7 +49,7 @@ class OpCache extends AbstractCacheDriver
     {
         $filename = $this->filename($name);
         $content = @file_get_contents($filename, false, null, 13, 16);
-        // first check for expiration of 'false'
+        // first check for expiration of INF
         if (substr($content, 0, 3) === 'INF') {
             return false;
         }
