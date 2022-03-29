@@ -28,6 +28,7 @@ else {
 CachedInitializer::config(
     function (CacheableState $state) {
         $state->mergeConfig(Config::parseJsonFile(__DIR__ . '/../env.json'), true);
+        $state->mergeConfig(Config::parseYamlFile(__DIR__ . '/../env.yaml'), true);
         $state->config('paths.base', __DIR__);
         $state->config('paths.web', __DIR__);
     }

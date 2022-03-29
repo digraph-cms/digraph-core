@@ -3,6 +3,7 @@
 
 use DigraphCMS\Context;
 use DigraphCMS\Session\Cookies;
+use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\Templates;
 use DigraphCMS\Users\Users;
 
@@ -12,6 +13,12 @@ Cookies::required(['system', 'auth', 'csrf']);
 $urls = Users::allSigninURLs(Context::arg('_bounce'));
 if (count($urls) == 1) {
     Context::response()->redirect(reset($urls));
+    return;
+}
+
+// error for zero options
+if (count($urls) == 0) {
+    Notifications::printError("No signin sources configured");
     return;
 }
 

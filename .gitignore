@@ -13,3 +13,4 @@ composer.lock
 .DS_Store
 .vscode
 env.json
+env.yaml
