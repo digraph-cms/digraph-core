@@ -76,6 +76,7 @@ class DB
     {
         if (!self::$pdo) {
             try {
+                // set up database
                 switch (Config::get('db.adapter')) {
                     case 'sqlite':
                         self::$pdo = new PDO(
@@ -96,6 +97,8 @@ class DB
                             Config::get('db.pdo_options')
                         );
                         self::$pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+                        // after setting up remove password from config so it's harder to exfiltrate
+                        Config::set('db.pass', false);
                         break;
                     default:
                         throw new \Exception("Unsupported DB adapter " . Config::get('db.adapter'));

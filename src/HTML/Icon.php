@@ -49,7 +49,10 @@ class Icon extends Tag
         'done-all' => ['string' => 'done_all'],
         'inbox' => ['string' => 'inbox'],
         'delete' => ['string' => 'delete'],
-        'star' => ['string' => 'star']
+        'star' => ['string' => 'star'],
+        'url' => ['string' => 'link'],
+        'database' => ['string' => '&#xeeff;', 'type' => 'icofont'],
+        'template' => ['string' => 'snippet_folder'],
     ];
 
     public function __construct(string $name, string $alt = null)
@@ -84,6 +87,16 @@ class Icon extends Tag
             $this->valid = false;
         }
         return $this;
+    }
+
+    public function attributes(): array
+    {
+        return array_merge(
+            parent::attributes(),
+            [
+                'title' => $this->alt
+            ]
+        );
     }
 
     public function children(): array

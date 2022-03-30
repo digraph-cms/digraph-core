@@ -47,9 +47,11 @@
 }
 
 .icon {
+    display: inline-block;
     font-size: 1em;
-    line-height: 1;
+    line-height: 0;
     speak: none;
+    vertical-align: middle;
 }
 
 .icon--material {
