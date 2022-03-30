@@ -136,7 +136,7 @@ class FormWrapper extends Tag
 
     public function addChild($child)
     {
-        if ($child instanceof InputInterface) {
+        if (method_exists($child, 'setForm')) {
             $child->setForm($this);
         }
         return parent::addChild($child);
@@ -149,6 +149,8 @@ class FormWrapper extends Tag
 
     public function toString(): string
     {
+        // recursively set form on children
+        $this->setForm($this->children());
         // call callbacks when printed
         if ($this->ready()) {
             while ($this->callbacks) {
@@ -162,5 +164,17 @@ class FormWrapper extends Tag
             ->setID($this->formID());
         // return normal printing
         return parent::toString();
+    }
+
+    protected function setForm(array $children)
+    {
+        foreach ($children as $child) {
+            if ($child instanceof Tag) {
+                if (method_exists($child, 'setForm')) {
+                    $child->setForm($this);
+                }
+                $this->setForm($child->children());
+            }
+        }
     }
 }

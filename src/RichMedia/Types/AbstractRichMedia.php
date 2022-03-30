@@ -127,6 +127,12 @@ abstract class AbstractRichMedia implements ArrayAccess
         return $this->pageUUID;
     }
 
+    public function setPageUUID(string $pageUUID)
+    {
+        $this->pageUUID = $pageUUID;
+        return $this;
+    }
+
     public function insert()
     {
         return RichMedia::insert($this);
@@ -145,6 +151,12 @@ abstract class AbstractRichMedia implements ArrayAccess
     public function uuid(): string
     {
         return $this->uuid;
+    }
+
+    public function setUUID(string $uuid)
+    {
+        $this->uuid = $uuid;
+        return $this;
     }
 
     public function createdBy(): User

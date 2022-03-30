@@ -61,9 +61,9 @@ $form = (new FormWrapper('add-' . Context::arg('uuid')))
         );
         $page->name($name->value());
         $page->richContent('body', $content->value());
-        $page->insert();
-        // create edge to parent
+        // create edge to parent and insert
         Pages::insertLink(Context::page()->uuid(), $page->uuid());
+        $page->insert();
         // commit and redirect
         DB::commit();
         Notifications::flashConfirmation('Page created: ' . $page->url()->html());
