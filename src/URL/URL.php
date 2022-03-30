@@ -3,7 +3,7 @@
 namespace DigraphCMS\URL;
 
 use DigraphCMS\Config;
-use DigraphCMS\Content\Page;
+use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Content\Pages;
 use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
@@ -137,7 +137,7 @@ class URL
         return "<a href=\"$normalized\"$class$target>" . $normalized->name($inPageContext) . "</a>";
     }
 
-    public function page(): ?Page
+    public function page(): ?AbstractPage
     {
         if ($this->explicitlyStaticRoute()) {
             return null;

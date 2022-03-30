@@ -3,7 +3,7 @@
 namespace DigraphCMS\RichContent;
 
 use DigraphCMS\Config;
-use DigraphCMS\Content\Page;
+use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Content\Pages;
 use DigraphCMS\HTML\A;
 use DigraphCMS\HTML\Text;
@@ -86,7 +86,7 @@ class ShortCodesListener
                 // if there are multiple pages, give link link--multiple-options class
                 // make default title indicate that there are multiple options
                 $title = "Multiple options: " . implode(', ', array_map(
-                    function (Page $page): string {
+                    function (AbstractPage $page): string {
                         return $page->name();
                     },
                     $pages

@@ -2,13 +2,10 @@
 
 namespace DigraphCMS;
 
-use DigraphCMS\Content\Page;
-use DigraphCMS\HTTP\AccessDeniedError;
+use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\HTTP\Request;
 use DigraphCMS\HTTP\Response;
 use DigraphCMS\URL\URL;
-use DigraphCMS\Users\Permissions;
-use DigraphCMS\Users\Users;
 use Flatrr\SelfReferencingFlatArray;
 use Throwable;
 
@@ -84,7 +81,7 @@ class Context
         return static::$response;
     }
 
-    public static function page(Page $page = null): ?Page
+    public static function page(AbstractPage $page = null): ?AbstractPage
     {
         return static::data('page', $page);
     }

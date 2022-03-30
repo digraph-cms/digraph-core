@@ -169,9 +169,9 @@ class Pages
      * slug match, followed by the oldest alternate slug match.
      *
      * @param string $uuid_or_slug
-     * @return Page|null
+     * @return AbstractPage|null
      */
-    public static function get(string $uuid_or_slug): ?Page
+    public static function get(string $uuid_or_slug): ?AbstractPage
     {
         if (!isset(static::$cache[$uuid_or_slug])) {
             static::$cache[$uuid_or_slug] =
@@ -181,7 +181,7 @@ class Pages
         return static::$cache[$uuid_or_slug];
     }
 
-    protected static function doGetByUUID(string $uuid_or_slug): ?Page
+    protected static function doGetByUUID(string $uuid_or_slug): ?AbstractPage
     {
         $result = DB::query()->from('page')
             ->where('uuid = ?', [$uuid_or_slug])
@@ -195,7 +195,7 @@ class Pages
         }
     }
 
-    protected static function doGetBySlug(string $slug): ?Page
+    protected static function doGetBySlug(string $slug): ?AbstractPage
     {
         $result = DB::query()->from('page_slug')
             ->select('page.*')
@@ -216,7 +216,7 @@ class Pages
         return Config::get('page_types.' . $result['class']) ?? Config::get('page_types.default');
     }
 
-    public static function update(Page $page)
+    public static function update(AbstractPage $page)
     {
         DB::beginTransaction();
         Dispatcher::dispatchEvent('onBeforePageUpdate', [$page]);
@@ -245,7 +245,7 @@ class Pages
         DB::commit();
     }
 
-    public static function insert(Page $page)
+    public static function insert(AbstractPage $page)
     {
         // insert value
         Dispatcher::dispatchEvent('onBeforePageInsert', [$page]);
@@ -270,7 +270,7 @@ class Pages
         Dispatcher::dispatchEvent('onAfterPageInsert', [$page]);
     }
 
-    public static function delete(Page $page)
+    public static function delete(AbstractPage $page)
     {
         DB::beginTransaction();
         // events
@@ -313,10 +313,10 @@ class Pages
      * Remove a given object from the object cache so that it will be recreated
      * if pulled again
      *
-     * @param Page $page
+     * @param AbstractPage $page
      * @return void
      */
-    protected static function filterCache(Page $page)
+    protected static function filterCache(AbstractPage $page)
     {
         foreach (static::$cache as $i => $v) {
             if ($v->uuid() == $page->uuid()) {
@@ -330,9 +330,9 @@ class Pages
      * from the cache if the given uuid has been seen before.
      *
      * @param array $result
-     * @return Page|null
+     * @return AbstractPage|null
      */
-    public static function resultToPage(array $result): ?Page
+    public static function resultToPage(array $result): ?AbstractPage
     {
         if (!is_array($result)) {
             return null;

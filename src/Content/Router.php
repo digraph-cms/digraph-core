@@ -16,10 +16,10 @@ class Router
     /**
      * Get a list of all the actions available for the given page
      *
-     * @param Page $page
+     * @param AbstractPage $page
      * @return URL[]
      */
-    public static function pageActions(Page $page): array
+    public static function pageActions(AbstractPage $page): array
     {
         $urls = [];
         foreach ($page->routeClasses() as $c) {
@@ -127,7 +127,7 @@ class Router
     /**
      * Search for and execute a route handler for a given page and action.
      */
-    public static function pageRoute(Page $page, string $action)
+    public static function pageRoute(AbstractPage $page, string $action)
     {
         // try specific routes first
         foreach ($page->routeClasses() as $c) {
@@ -152,11 +152,11 @@ class Router
      * Check whether a handler for a given page route exists, but do not
      * actually execute it yet.
      *
-     * @param Page $route
+     * @param AbstractPage $route
      * @param string $action
      * @return boolean
      */
-    public static function pageRouteExists(Page $page, string $action): bool
+    public static function pageRouteExists(AbstractPage $page, string $action): bool
     {
         foreach (self::$sources as $source) {
             // try specific routes first

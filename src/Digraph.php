@@ -3,7 +3,7 @@
 namespace DigraphCMS;
 
 use DigraphCMS\Cache\UserCacheNamespace;
-use DigraphCMS\Content\Page;
+use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Content\Router;
 use DigraphCMS\Content\Pages;
 use DigraphCMS\Events\Dispatcher;
@@ -185,7 +185,7 @@ class Digraph
                 $action = $request->url()->action();
                 if (count($pages) == 1 && !Router::staticRouteExists($route, $action)) {
                     // one page with no matching static route: put it in Context and build content
-                    /** @var Page */
+                    /** @var AbstractPage */
                     $page = reset($pages);
                     // first check if this is the page's actual preferred URL
                     $pageURL = $page->url($action, Context::url()->query());
@@ -311,7 +311,7 @@ class Digraph
         }
     }
 
-    protected static function doPageRoute(Page $page, string $action): ?bool
+    protected static function doPageRoute(AbstractPage $page, string $action): ?bool
     {
         $content = Router::pageRoute($page, $action);
         if ($content !== null) {

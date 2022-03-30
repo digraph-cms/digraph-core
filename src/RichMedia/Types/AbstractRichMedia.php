@@ -6,7 +6,7 @@ use ArrayAccess;
 use DateTime;
 use DigraphCMS\Content\Filestore;
 use DigraphCMS\Content\FilestoreFile;
-use DigraphCMS\Content\Page;
+use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Content\Pages;
 use DigraphCMS\Digraph;
 use DigraphCMS\HTML\DIV;
@@ -117,7 +117,7 @@ abstract class AbstractRichMedia implements ArrayAccess
         return $this->name;
     }
 
-    public function media(): ?Page
+    public function media(): ?AbstractPage
     {
         return Pages::get($this->pageUUID);
     }

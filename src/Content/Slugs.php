@@ -76,23 +76,23 @@ class Slugs
             ->execute();
     }
 
-    public static function setFromPattern(Page $page, string $pattern, bool $unique = false)
+    public static function setFromPattern(AbstractPage $page, string $pattern, bool $unique = false)
     {
         $slug = static::compilePattern($page, $pattern);
         // set slug
         static::set($page, $slug, $unique);
     }
 
-    public static function validatePattern(Page $page, string $pattern): bool
+    public static function validatePattern(AbstractPage $page, string $pattern): bool
     {
         return !!static::compilePattern($page, $pattern);
     }
 
-    public static function compilePattern(Page $page, string $pattern): ?string
+    public static function compilePattern(AbstractPage $page, string $pattern): ?string
     {
         // pull variables
         $slug = preg_replace_callback(
-            '/\[([a-z]+?)\]/',
+            '/\[([a-z\-]+?)\]/',
             function (array $m) use ($page) {
                 return
                     Dispatcher::firstValue('onSlugVariable', [$page, $m[1]]) ??
@@ -120,8 +120,10 @@ class Slugs
         return $slug;
     }
 
-    public static function set(Page $page, string $slug, $unique = false)
+    public static function set(AbstractPage $page, string $slug, $unique = null)
     {
+        // pull unique default from page class
+        $unique = $unique ?? $page::DEFAULT_UNIQUE_SLUG;
         // validate
         if (!static::validate($slug)) {
             throw new \Exception("Slug $slug is not valid");
@@ -143,7 +145,7 @@ class Slugs
         static::insert($page->uuid(), $slug);
     }
 
-    protected static function uniqueSlug(string $slug, Page $page): string
+    protected static function uniqueSlug(string $slug, AbstractPage $page): string
     {
         $uuid = str_split(str_replace('/[^a-z0-9]/', '', substr($page->uuid(), 4)), 4);
         $slug .= '_' . substr($page->uuid(), 0, 4);

@@ -2,13 +2,13 @@
 
 namespace DigraphCMS\UI\MenuBar;
 
-use DigraphCMS\Content\Page;
+use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\HTML\DIV;
 use DigraphCMS\URL\URL;
 
 class MenuBar extends DIV
 {
-    public function addPage(Page $page, string $label = null): MenuItem
+    public function addPage(AbstractPage $page, string $label = null): MenuItem
     {
         $item = new MenuItem($page->url(), $label ?? $page->name());
         $this->addChild($item);

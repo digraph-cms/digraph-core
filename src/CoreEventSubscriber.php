@@ -3,7 +3,7 @@
 namespace DigraphCMS;
 
 use DigraphCMS\Content\Filestore;
-use DigraphCMS\Content\Page;
+use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Content\Pages;
 use DigraphCMS\Content\Router;
 use DigraphCMS\Content\Slugs;
@@ -172,33 +172,33 @@ class CoreEventSubscriber
     /**
      * Set initial slug pattern after a page is inserted.
      *
-     * @param Page $page
+     * @param AbstractPage $page
      * @return void
      */
-    public static function onAfterPageInsert(Page $page)
+    public static function onAfterPageInsert(AbstractPage $page)
     {
-        Slugs::setFromPattern($page, $page->slugPattern(), true);
+        Slugs::setFromPattern($page, $page->slugPattern());
     }
 
     /**
      * Update slug pattern after a page is updated.
      *
-     * @param Page $page
+     * @param AbstractPage $page
      * @return void
      */
-    public static function onAfterPageUpdate(Page $page)
+    public static function onAfterPageUpdate(AbstractPage $page)
     {
-        Slugs::setFromPattern($page, $page->slugPattern(), true);
+        Slugs::setFromPattern($page, $page->slugPattern());
     }
 
     /**
      * Build a card for a page in the results of an autocomplete field.
      *
-     * @param Page $page
+     * @param AbstractPage $page
      * @param string|null $query
      * @return array
      */
-    public static function onPageAutocompleteCard(Page $page, string $query = null): array
+    public static function onPageAutocompleteCard(AbstractPage $page, string $query = null): array
     {
         $name = $page->name();
         $url = $page->url();
@@ -243,11 +243,11 @@ class CoreEventSubscriber
     /**
      * Score how well a page matches a given query.
      *
-     * @param Page $page
+     * @param AbstractPage $page
      * @param string $query
      * @return void
      */
-    public static function onScorePageResult(Page $page, string $query)
+    public static function onScorePageResult(AbstractPage $page, string $query)
     {
         $query = strtolower($query);
         $score = 0;
