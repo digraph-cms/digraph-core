@@ -44,7 +44,7 @@ $pattern = (new Field('Set new URL pattern'))
     ->addTip('Add a leading slash to make pattern relative to site root, otherwise it will be relative to the page\'s parent URL.');
 
 $unique = (new CheckboxField('Force URL to be unique'))
-    ->setDefault(true)
+    ->setDefault(Context::page()::DEFAULT_UNIQUE_SLUG)
     ->addTip('Check this box to force the generated URL to be unique. If it collides with an existing URL it will have a random ID appended to it.')
     ->addTip('Leave unchecked to allow it to collide with existing URLs. Disambiguation pages are served at any colliding URLs automatically if necessary.');
 
