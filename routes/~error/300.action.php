@@ -3,6 +3,13 @@
 use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
 use DigraphCMS\HTTP\RedirectException;
+use DigraphCMS\UI\Breadcrumb;
+use DigraphCMS\URL\URL;
+
+$top = Breadcrumb::top();
+$top->setName('Disambiguation page');
+Breadcrumb::top($top);
+Breadcrumb::parent(new URL('/'));
 
 $requestUrl = Context::request()->originalUrl();
 $staticUrl = Context::data('300_static');
