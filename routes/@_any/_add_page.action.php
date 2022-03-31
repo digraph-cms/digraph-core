@@ -35,8 +35,6 @@ if (Pages::exists(Context::arg('uuid'))) {
     throw new RedirectException($url);
 }
 
-Cookies::required(['system', 'csrf']);
-
 $page = Context::page();
 
 $name = (new Field('Page name'))
