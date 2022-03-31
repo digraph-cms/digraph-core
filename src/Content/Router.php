@@ -159,17 +159,9 @@ class Router
     public static function pageRouteExists(AbstractPage $page, string $action): bool
     {
         foreach (self::$sources as $source) {
-            // try specific routes first
             foreach ($page->routeClasses() as $route) {
                 $path = "$source/@$route/$action.action.*";
-                if (is_file($path)) {
-                    return true;
-                }
-            }
-            // try wildcard routes last
-            foreach ($page->routeClasses() as $route) {
-                $path = "$source/@$route/$action.action.*";
-                if (is_file($path)) {
+                if (glob($path)) {
                     return true;
                 }
             }

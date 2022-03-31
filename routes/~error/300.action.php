@@ -19,7 +19,7 @@ $pages = Context::data('300_pages');
         $urls[] = $staticUrl;
     }
     foreach ($pages as $page) {
-        if (!Router::pageRouteExists($page,$requestUrl->action())) {
+        if (!Router::pageRouteExists($page, $requestUrl->action())) {
             continue;
         }
         $urls[] = $url = $page->url($requestUrl->action(), $requestUrl->query());
