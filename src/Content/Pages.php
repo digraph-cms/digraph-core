@@ -232,7 +232,7 @@ class Pages
                 ]
             )
             ->set([
-                'name' => $page->name(),
+                'name' => $page->name(null, true, true),
                 'data' => json_encode($page->get()),
                 'slug_pattern' => $page->slugPattern(),
                 'class' => $page->class(),
@@ -255,7 +255,7 @@ class Pages
                 'page',
                 [
                     'uuid' => $page->uuid(),
-                    'name' => $page->name(),
+                    'name' => $page->name(null, true, true),
                     'data' => json_encode($page->get()),
                     'slug_pattern' => $page->slugPattern(),
                     'class' => $page->class(),

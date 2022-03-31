@@ -187,19 +187,19 @@ abstract class AbstractPage implements ArrayAccess
 
     protected static function getClass(): string
     {
-        $thisClass = preg_replace('/^[^\\\]/','\\\$0',get_called_class());
+        $thisClass = preg_replace('/^[^\\\]/', '\\\$0', get_called_class());
         foreach (Config::get('page_types') as $name => $class) {
             if ($class == $thisClass) return $name;
         }
         throw new \Exception("Page class $thisClass is not configured");
     }
 
-    public function name(string $name = null, bool $unfiltered = false): string
+    public function name(string $name = null, bool $unfiltered = false, bool $forDB = false): string
     {
         if ($name) {
             $this->name = $name;
         }
-        if ($unfiltered) {
+        if ($unfiltered || $forDB) {
             return $this->name;
         } else {
             return htmlentities($this->name);
