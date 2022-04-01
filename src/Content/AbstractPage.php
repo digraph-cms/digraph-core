@@ -266,7 +266,7 @@ abstract class AbstractPage implements ArrayAccess
         if ($action && !preg_match('/\.[a-z0-9]+$/', $action)) {
             $action .= '.html';
         }
-        if ($action == 'urls.html') {
+        if ($action == 'urls.html' || $action == 'links.html') {
             $uuid = true;
         }
         if ($uuid === true) {
