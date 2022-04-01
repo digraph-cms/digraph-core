@@ -26,7 +26,7 @@ class ActionMenu extends MenuBar
         // set menu label and class
         $this->setAttribute('aria-label', 'Action menu');
         // context action if URL is same as context
-        if ($this->url->__toString() == Context::url()->__toString()) {
+        if (Context::response()->status() == 200 && $this->url->__toString() == Context::url()->__toString()) {
             foreach (static::$contextActions as $a) {
                 $this->addUrl($a[0], @$a[1] ?? $a[0]->name(true))
                     ->addClass('menuitem--context-action')
