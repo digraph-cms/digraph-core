@@ -28,7 +28,7 @@ abstract class AbstractRichMedia implements ArrayAccess
         unset as protected rawUnset;
     }
 
-    protected $uuid, $pageUUID, $name;
+    protected $uuid, $parent, $name;
     protected $created, $created_by;
     protected $updated, $updated_by;
 
@@ -39,8 +39,8 @@ abstract class AbstractRichMedia implements ArrayAccess
 
     public function __construct(array $data = [], array $metadata = [])
     {
-        $this->uuid = @$metadata['uuid'] ?? Digraph::uuid();
-        $this->pageUUID = @$metadata['page_uuid'];
+        $this->uuid = @$metadata['uuid'] ?? Digraph::uuid('m');
+        $this->parent = @$metadata['parent'];
         $this->created = @$metadata['created'] ?? new DateTime();
         $this->created_by = @$metadata['created_by'];
         $this->updated = @$metadata['updated'] ?? new DateTime();
@@ -119,17 +119,17 @@ abstract class AbstractRichMedia implements ArrayAccess
 
     public function media(): ?AbstractPage
     {
-        return Pages::get($this->pageUUID);
+        return Pages::get($this->parent);
     }
 
-    public function pageUUID(): ?string
+    public function parent(): ?string
     {
-        return $this->pageUUID;
+        return $this->parent;
     }
 
-    public function setPageUUID(string $pageUUID)
+    public function setParent(string $pageUUID)
     {
-        $this->pageUUID = $pageUUID;
+        $this->parent = $pageUUID;
         return $this;
     }
 

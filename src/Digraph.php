@@ -35,7 +35,6 @@ class Digraph
      */
     const UUIDCHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     const UUIDPATTERN = '000000';
-    const LONGUUIDPATTERN = '000000000000000000';
 
     /**
      * Generate a response from an automatically-loaded request and render it.
@@ -84,11 +83,11 @@ class Digraph
      * and has no performance implications as they are saved in the database as
      * strings anyway, and no binary/numeric operations are ever needed.
      *
-     * @param boolean $long
+     * @param string|null $prefix
      * @param string|null $seed
      * @return string
      */
-    public static function uuid($long = false, string $seed = null): string
+    public static function uuid(string $prefix = null, string $seed = null): string
     {
         if ($seed !== null) {
             mt_srand(crc32($seed));
@@ -96,13 +95,14 @@ class Digraph
         } else {
             $fn = 'random_int';
         }
-        return preg_replace_callback(
-            '/0/',
-            function () use ($fn) {
-                return substr(static::uuidChars(), $fn(0, strlen(static::uuidChars()) - 1), 1);
-            },
-            $long ? static::longUuidPattern() : static::uuidPattern()
-        );
+        return ($prefix ? $prefix . '_' : '')
+            . preg_replace_callback(
+                '/0/',
+                function () use ($fn) {
+                    return substr(static::uuidChars(), $fn(0, strlen(static::uuidChars()) - 1), 1);
+                },
+                static::uuidPattern()
+            );
     }
 
     public static function uuidChars(): string
@@ -115,11 +115,6 @@ class Digraph
         return Config::get('uuid.pattern') ?? static::UUIDPATTERN;
     }
 
-    public static function longUuidPattern(): string
-    {
-        return Config::get('uuid.pattern_long') ?? static::LONGUUIDPATTERN;
-    }
-
     /**
      * Determine whether a string is a valid UUID, in terms of length and basic
      * composition (character types, placement of dashes, etc).
@@ -129,7 +124,7 @@ class Digraph
      */
     public static function validateUUID(string $uuid): bool
     {
-        $pattern = '/^' . str_replace('0', '[' . static::uuidChars() . ']', preg_quote(static::uuidPattern(), '/')) . '$/';
+        $pattern = '/^([a-z]+_)?' . str_replace('0', '[' . static::uuidChars() . ']', preg_quote(static::uuidPattern(), '/')) . '$/';
         return preg_match($pattern, $uuid);
     }
 

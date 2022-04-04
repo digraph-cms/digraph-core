@@ -169,7 +169,7 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
     /**
      * Fetch first DataObject, or raw row if returnDataObjects
      *
-     * @return Page|array|null
+     * @return object|array|null
      */
     public function fetch()
     {

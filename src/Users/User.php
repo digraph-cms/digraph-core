@@ -27,7 +27,7 @@ class User implements ArrayAccess
 
     public function __construct(array $data = [], array $metadata = [])
     {
-        $this->uuid = @$metadata['uuid'] ?? Digraph::uuid();
+        $this->uuid = @$metadata['uuid'] ?? Digraph::uuid('usr');
         $this->name = @$metadata['name'] ?? Users::randomName();
         $this->created = @$metadata['created'] ?? new DateTime();
         $this->created_by = @$metadata['created_by'] ?? Session::user();
@@ -210,7 +210,7 @@ class User implements ArrayAccess
         if ($i === null) return;
         $this['emails.' . $i . '.verification'] = [
             'time' => time(),
-            'token' => $token = Digraph::uuid(true)
+            'token' => $token = Digraph::uuid()
         ];
         $email = Email::newForEmail(
             'service',

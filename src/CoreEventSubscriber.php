@@ -89,7 +89,7 @@ class CoreEventSubscriber
      */
     public static function onRichMediaAutocompleteCard(AbstractRichMedia $media, string $query)
     {
-        $page = $media->pageUUID() ? Pages::get($media->pageUUID()) : null;
+        $page = $media->parent() ? Pages::get($media->parent()) : null;
         return [
             'html' => '<div class="title">' . $media->name() . '</div><div class="meta">' . ($page ? $page->name() : '') . '</div><div class="meta">' . Format::datetime($media->updated()) . '</div>',
             'value' => $media->uuid(),

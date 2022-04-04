@@ -41,7 +41,7 @@ $form
     ->addChild($files)
     ->addChild($options)
     ->addCallback(function () use ($files, $name, $options) {
-        $media = new ZipRichMedia([], ['page_uuid' => Context::arg('uuid')]);
+        $media = new ZipRichMedia([], ['parent' => Context::arg('uuid')]);
         // set name
         $media->name($name->value());
         // set options

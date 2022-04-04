@@ -62,7 +62,7 @@ $form->addCallback(function () use ($clones, $parent, $slug, $name) {
     foreach ($clones as $uuid => $field) {
         if ($field->value()) {
             $clonedMedia[$uuid] = clone RichMedia::get($uuid);
-            $clonedMedia[$uuid]->setUUID(Digraph::uuid());
+            $clonedMedia[$uuid]->setUUID(Digraph::uuid('m'));
             $clonedMedia[$uuid]->setPageUUID($newPage->uuid());
             $clonedMedia[$uuid]->insert();
         }

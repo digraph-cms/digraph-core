@@ -116,7 +116,7 @@ class Email
         $this->body_text = $body_text ?? Emails::html2text($body_html);
         $this->cc = $cc ?? Config::get('email.cc');
         $this->bcc = $bcc ?? Config::get('email.bcc');
-        $this->uuid = $uuid ?? Digraph::uuid(true);
+        $this->uuid = $uuid ?? Digraph::uuid('eml');
         $this->time = $time ?? time();
         $this->blocked = $blocked ?? Emails::shouldBlock($this);
         $this->error = $error;
