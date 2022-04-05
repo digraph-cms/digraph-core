@@ -36,10 +36,10 @@ class Format
         return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$size[$factor];
     }
 
-    public static function date($date, $textOnly = false): string
+    public static function date($date, $textOnly = false, $precise = false): string
     {
         $date = static::parseDate($date);
-        if ($date->format('Y') == date('Y')) {
+        if (!$precise && $date->format('Y') == date('Y')) {
             if ($date->format('Ydm') == date('Ydm')) {
                 $text = 'today';
             } else {
@@ -54,10 +54,10 @@ class Format
         return $text;
     }
 
-    public static function datetime($date, $textOnly = false): string
+    public static function datetime($date, $textOnly = false, $precise = false): string
     {
         $date = static::parseDate($date);
-        if ($date->format('Y') == date('Y')) {
+        if (!$precise && $date->format('Y') == date('Y')) {
             if ($date->format('Ydm') == date('Ydm')) {
                 $text = $date->format(static::$datetimeFormat_today);
             } else {

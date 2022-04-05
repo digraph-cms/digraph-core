@@ -37,6 +37,13 @@
         background: var(--cue-danger);
         color: var(--cue-danger-inv);
     }
+
+    > *:first-child {
+        margin-top: 0;
+    }
+    > *:last-child {
+        margin-bottom: 0;
+    }
 }
 
 .card__title {
@@ -87,7 +94,7 @@ extra file card styling for multifile cards
         margin-top: $grid/2;
     }
 
-    .card__title+.multifile-card__list {
+    .card__title + .multifile-card__list {
         margin-top: 0;
     }
 }

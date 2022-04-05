@@ -19,7 +19,7 @@ class SELECT extends Tag implements InputInterface
     public function __construct(array $options = null)
     {
         $this->setOptions($options);
-        $this->setID($id ?? 'input-' . self::$counter++);
+        $this->setID($id ?? 'select-' . static::$counter++);
     }
 
     public function children(): array
@@ -31,7 +31,7 @@ class SELECT extends Tag implements InputInterface
                     return sprintf(
                         '<option value="%s"%s>%s</option>',
                         $key,
-                        $this->valueString(true) == $key ? ' selected="true"' : '',
+                        $this->value(true) == $opt['value'] || $this->valueString(true) == $key ? ' selected="true"' : '',
                         $opt['label']
                     );
                 },
@@ -181,7 +181,7 @@ class SELECT extends Tag implements InputInterface
 
     public function default()
     {
-        return @$this->options[$this->default]['value'];
+        return $this->default;
     }
 
     protected function submittedValue()
@@ -197,21 +197,21 @@ class SELECT extends Tag implements InputInterface
 
     public function value($useDefault = false)
     {
-        if ($key = $this->valueString($useDefault)) {
+        if ($key = $this->valueString()) {
             return @$this->options[$key]['value'];
+        } elseif ($useDefault) {
+            return $this->default();
         } else {
             return null;
         }
     }
 
-    public function valueString($useDefault = false)
+    public function valueString()
     {
         if ($this->value) {
             return $this->value;
         } elseif (($value = trim($this->submittedValue())) || $this->submitted()) {
             return $value ? $value : null;
-        } elseif ($useDefault) {
-            return $this->default();
         } else {
             return null;
         }
