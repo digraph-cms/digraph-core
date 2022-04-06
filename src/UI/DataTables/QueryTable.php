@@ -4,7 +4,7 @@ namespace DigraphCMS\UI\DataTables;
 
 class QueryTable extends AbstractPaginatedTable
 {
-    protected $query, $callback, $headers;
+    protected $query, $callback, $headers, $body;
 
     /**
      * Must be given a mapped query object and callable item for handling
@@ -22,15 +22,14 @@ class QueryTable extends AbstractPaginatedTable
 
     public function body(): array
     {
-        static $body;
-        if ($body === null) {
-            $body = [];
+        if ($this->body === null) {
+            $this->body = [];
             $this->query->offset($this->paginator->startItem());
             $this->query->limit($this->paginator->perPage());
             while ($item = $this->query->fetch()) {
-                $body[] = ($this->callback)($item, $this);
+                $this->body[] = ($this->callback)($item, $this);
             }
         }
-        return $body;
+        return $this->body;
     }
 }
