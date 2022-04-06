@@ -29,6 +29,7 @@ class Icon extends Tag
         'italic' => ['string' => 'format_italic'],
         'code' => ['string' => 'code'],
         'quote' => ['string' => 'format_quote'],
+        'toc' => ['string' => 'toc'],
         'list-bullet' => ['string' => 'format_list_bulleted'],
         'list-numbered' => ['string' => 'format_list_numbered'],
         'user-search' => ['string' => 'person_search'],
@@ -53,6 +54,8 @@ class Icon extends Tag
         'url' => ['string' => 'link'],
         'database' => ['string' => '&#xeeff;', 'type' => 'icofont'],
         'template' => ['string' => 'snippet_folder'],
+        'next' => ['string' => 'skip_next'],
+        'previous' => ['string' => 'skip_previous'],
     ];
 
     public function __construct(string $name, string $alt = null)
