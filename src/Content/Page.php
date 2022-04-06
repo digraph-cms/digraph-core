@@ -21,6 +21,16 @@ class Page extends AbstractPage
         }
     }
 
+    public function allRichContent(): array
+    {
+        return array_map(
+            function ($arr) {
+                return new RichContent($arr);
+            },
+            $this['content'] ?? []
+        );
+    }
+
     public function routeClasses(): array
     {
         return ['page', '_any'];

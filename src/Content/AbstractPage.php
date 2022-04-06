@@ -35,6 +35,7 @@ abstract class AbstractPage implements ArrayAccess
     protected static $class;
 
     abstract public function richContent(string $index, RichContent $content = null): ?RichContent;
+    abstract public function allRichContent(): array;
 
     public function __construct(array $data = [], array $metadata = [])
     {
