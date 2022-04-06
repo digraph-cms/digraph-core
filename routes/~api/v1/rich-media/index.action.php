@@ -20,7 +20,6 @@ use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Permissions;
 
 Permissions::requireMetaGroup('content__edit');
-Context::response()->template('framed.php');
 
 // fancy autocomplete search form
 $acAdder = new AutocompleteInput('rich-media-type-search', new URL('/~api/v1/autocomplete/rich-media-type.php'));

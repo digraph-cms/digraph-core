@@ -9,7 +9,6 @@ use DigraphCMS\UI\Toolbars\ToolbarSeparator;
 use DigraphCMS\UI\Toolbars\ToolbarSpacer;
 use DigraphCMS\URL\URL;
 
-Context::response()->template('framed.php');
 $page = Context::arg('uuid') ? Pages::get(Context::arg('uuid')) : null;
 $action = Context::arg('action');
 $only = Context::arg('only') ? explode(',', Context::arg('only')) : [];

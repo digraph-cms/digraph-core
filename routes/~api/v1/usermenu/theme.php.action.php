@@ -5,8 +5,6 @@ use DigraphCMS\UI\ButtonMenus\ButtonMenu;
 use DigraphCMS\UI\ButtonMenus\ButtonMenuButton;
 use DigraphCMS\UI\Theme;
 
-Context::response()->template('framed.php');
-
 $mode = new ButtonMenu('Color mode', [
     new ButtonMenuButton(
         'Auto',

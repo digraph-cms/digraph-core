@@ -117,12 +117,14 @@ Digraph.state = {
     get: (url, frame) => {
         Digraph.state.addXHRListeners(frame);
         frame.stateUpdateRequest.open('GET', url);
+        frame.stateUpdateRequest.setRequestHeader('X-For-Navigation-Frame', 'y');
         frame.stateUpdateRequest.send();
     },
     // post the given data to the given URL and replace frame contents
     post: (data, url, frame) => {
         Digraph.state.addXHRListeners(frame);
         frame.stateUpdateRequest.open('POST', url, true);
+        frame.stateUpdateRequest.setRequestHeader('X-For-Navigation-Frame', 'y');
         frame.stateUpdateRequest.send(data);
     },
     addXHRListeners: (frame) => {
