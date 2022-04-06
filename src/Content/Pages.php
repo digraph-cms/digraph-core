@@ -279,7 +279,7 @@ class Pages
         // delete links
         DB::query()
             ->delete('page_link')
-            ->where('start_page = :uuid OR end_page = :uuid', ['uuid' => $page->uuid()])
+            ->where('start_page = ? OR end_page = ?', [$page->uuid(), $page->uuid()])
             ->execute();
         // delete slugs
         DB::query()
