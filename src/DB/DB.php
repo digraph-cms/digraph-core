@@ -5,7 +5,6 @@ namespace DigraphCMS\DB;
 use DigraphCMS\Config;
 use DigraphCMS\Digraph;
 use DigraphCMS\Events\Dispatcher;
-use DigraphCMS\HTTP\Response;
 use Envms\FluentPDO\Query;
 use PDO;
 use PDOException;
