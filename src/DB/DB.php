@@ -24,7 +24,7 @@ class DB
     {
         switch ($exception->getMessage()) {
             case 'SQLSTATE[HY000]: General error: 5 database is locked':
-                Digraph::buildErrorContent(503, 'Database is locked for writing or maintenance, please try again in a few minutes');
+                Digraph::buildErrorContent(503, 'Database is locked for writing or maintenance, please try again in a moment');
                 break;
             default:
                 Digraph::buildErrorContent(500, 'Unspecified database error');
