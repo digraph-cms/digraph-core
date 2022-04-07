@@ -19,6 +19,8 @@ class DB
     protected static $phinxPaths = [];
     protected static $transactions = 0;
 
+    const NESTED_TRANSACTION_SUPPORT = ['mysql'];
+
     public static function onException_PDOException(PDOException $exception)
     {
         switch ($exception->getMessage()) {
@@ -34,7 +36,7 @@ class DB
     public static function beginTransaction()
     {
         static::$transactions++;
-        if (!static::pdo()->inTransaction()) {
+        if (in_array(Config::get('db.adapter'), static::NESTED_TRANSACTION_SUPPORT) || !static::pdo()->inTransaction()) {
             static::pdo()->beginTransaction();
         }
     }
@@ -42,7 +44,7 @@ class DB
     public static function commit()
     {
         static::$transactions--;
-        if (Config::get('db.adapter') != 'sqlite' || static::$transactions == 0) {
+        if (in_array(Config::get('db.adapter'), static::NESTED_TRANSACTION_SUPPORT) || static::$transactions == 0) {
             static::pdo()->commit();
         }
     }
@@ -50,7 +52,7 @@ class DB
     public static function rollback()
     {
         static::$transactions--;
-        if (Config::get('db.adapter') != 'sqlite' || static::$transactions == 0) {
+        if (in_array(Config::get('db.adapter'), static::NESTED_TRANSACTION_SUPPORT) || static::$transactions == 0) {
             static::pdo()->rollBack();
         }
     }
