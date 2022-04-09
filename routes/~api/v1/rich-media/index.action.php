@@ -24,9 +24,6 @@ Permissions::requireMetaGroup('content__edit');
 // fancy autocomplete search form
 $acAdder = new AutocompleteInput('rich-media-type-search', new URL('/~api/v1/autocomplete/rich-media-type.php'));
 $acAdder->setAttribute('placeholder', 'search to add media');
-if (RichMedia::select(Context::arg('uuid'))->count()) {
-    $acAdder->addClass('navigation-frame__autofocus');
-}
 
 // wrapper
 $wrapper = (new DIV())
@@ -153,6 +150,7 @@ if (Context::arg('uuid') && RichMedia::select(Context::arg('uuid'))->count()) {
 
 // media adding tab
 $tabs->addTab('add', 'Add media', function () use ($acAdder) {
+    $acAdder->addClass('navigation-frame__autofocus');
     $table = new ArrayTable(
         Config::get('rich_media_types'),
         function ($name) {
