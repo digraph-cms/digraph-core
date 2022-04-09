@@ -243,12 +243,11 @@ Digraph.state = {
         return [parent, target];
     },
     frameIsStateless: (frame) => {
-        var parent = frame;
-        while (parent = parent.parentElement) {
-            if (parent.classList.contains('navigation-frame--stateless')) {
+        do {
+            if (frame.classList.contains('navigation-frame--stateless')) {
                 return true;
             }
-        }
+        } while (frame = frame.parentElement);
         return false;
     }
 };
