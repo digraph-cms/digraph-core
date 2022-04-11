@@ -63,6 +63,18 @@ class Dispatcher
     }
 
     /**
+     * Retrieve the raw callables of all event listeners for a given event
+     *
+     * @param string $event
+     * @return callable[]
+     */
+    public static function getListeners(string $event): array
+    {
+        $event = static::normalizeEventName($event);
+        return self::$listeners[$event] ?? [];
+    }
+
+    /**
      * Return the "first" non-null value returned by a listener for the event.
      * 
      * ! Note that order is reversed from usual, so the last added listeners run first
