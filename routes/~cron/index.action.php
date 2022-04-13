@@ -5,7 +5,6 @@ use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\Cron\Cron;
 use DigraphCMS\HTTP\HttpError;
-use DigraphCMS\Session\Cookies;
 
 // route or poor man's cron must be enabled
 if (!(Config::get('cron.route_enabled') || Config::get('cron.poor_mans_cron'))) {
@@ -28,4 +27,5 @@ $count = Cache::get(
 
 // browser-side output
 Context::response()->filename('cron.js');
-echo "// cron ran $count jobs";
+echo "// script does nothing in client" . PHP_EOL;
+echo "// jobs run in last execution: $count";

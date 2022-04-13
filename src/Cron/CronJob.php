@@ -9,7 +9,7 @@ use DigraphCMS\DB\DB;
 class CronJob
 {
     protected $id, $parent, $name, $interval;
-    protected $run_next, $run_last, $run_halted;
+    protected $run_next, $run_last;
     protected $error_time, $error_message;
     protected $job;
 
@@ -87,11 +87,6 @@ class CronJob
         return $this->run_last;
     }
 
-    public function runHalted(): ?int
-    {
-        return $this->run_halted;
-    }
-
     public function errorTime(): ?int
     {
         return $this->error_time;
@@ -105,7 +100,7 @@ class CronJob
     public function job(): ?callable
     {
         if (!is_callable($this->job)) {
-            $this->halt('Job is not callable, it may reference a plugin or feature that no longer exists');
+            $this->recordError('Job is not callable, it may reference a plugin or feature that no longer exists');
             return null;
         }
         return $this->job;
@@ -122,7 +117,7 @@ class CronJob
 
     public function recordError(string $message)
     {
-        if (!$this->id()) return;
+        if ($this->id() === null) return;
         DB::query()->update(
             'cron',
             [
@@ -133,60 +128,21 @@ class CronJob
         )->execute();
     }
 
-    public function halt(string $message)
+    public function insert()
     {
-        if (!$this->id()) return;
-        DB::query()->update(
-            'cron',
-            [
-                'run_halted' => time(),
-                'error_time' => time(),
-                'error_message' => 'HALTED: ' . $message
-            ],
-            $this->id()
-        )->execute();
-    }
-
-    public function restart()
-    {
-        if (!$this->id()) return;
-        DB::query()->update(
-            'cron',
-            [
-                'run_halted' => null,
-                'run_next' => time()
-            ],
-            $this->id()
-        )->execute();
-    }
-
-    public function save(bool $forceUpdateJob = null, bool $forceUpdateNextRun = null)
-    {
-        $row = [
-            'parent' => $this->parent(),
-            'name' => $this->name(),
-            'interval' => $this->interval(),
-            'run_next' => $this->runNext(),
-            'run_last' => $this->runLast(),
-            'run_halted' => $this->runHalted(),
-            'error_time' => $this->errorTime(),
-            'error_message' => $this->errorMessage(),
-            'job' => $this->serializedJob()
-        ];
-        if ($this->id()) {
-            unset($row['parent']);
-            unset($row['name']);
-            if (!$forceUpdateNextRun) unset($row['run_next']);
-            if (!$forceUpdateJob) unset($row['job']);
-            DB::query()->update(
-                'cron',
-                $row,
-                $this->id()
-            )->execute();
-        } else {
+        if ($this->id() === null) {
             $this->id = DB::query()->insertInto(
                 'cron',
-                $row
+                [
+                    'parent' => $this->parent(),
+                    'name' => $this->name(),
+                    'interval' => $this->interval(),
+                    'run_next' => $this->runNext(),
+                    'run_last' => $this->runLast(),
+                    'error_time' => $this->errorTime(),
+                    'error_message' => $this->errorMessage(),
+                    'job' => $this->serializedJob()
+                ]
             )->execute();
         }
     }

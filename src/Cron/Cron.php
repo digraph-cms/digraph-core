@@ -22,11 +22,15 @@ class Cron
         return Cache::get(
             'cron/pmc',
             function () {
-                // return nothing if there are no cron jobs
-                if (!static::getNextJob()) return null;
+                // return nothing if there are no pending cron jobs, and also none exist whatsoever
+                // this will allow cron jobs to be automatically built at first install
+                // even if poor man's cron is in use
+                if (!static::getNextJob() && DB::query()->from('cron')->limit(1)->count()) {
+                    return null;
+                }
                 // render code
                 return sprintf(
-                    '<script>if (window.Worker) { new Worker("%s"); }</script>',
+                    PHP_EOL . '<script>if (window.Worker) { new Worker("%s"); }</script>' . PHP_EOL,
                     new URL('/~cron/')
                 );
             },
@@ -83,9 +87,9 @@ class Cron
     {
         if ($job->id() === null) return false;
         // make sure necessary lock files directory exists
-        FS::mkdir(Config::get('cache.path') . '/cron_locks/');
+        FS::mkdir(Config::get('cache.path') . '/cron/locks/');
         // get lock file lock
-        $lockFile = Config::get('cache.path') . '/cron_locks/' . $job->id();
+        $lockFile = Config::get('cache.path') . '/cron/locks/' . $job->id();
         touch($lockFile);
         static::$locks = fopen($lockFile, 'r');
         if (!flock(static::$locks, LOCK_EX)) {
@@ -99,7 +103,7 @@ class Cron
     {
         if ($job->id() === null) return;
         // release and delete file lock
-        $lockFile = Config::get('cache.path') . '/cron_locks/' . $job->id();
+        $lockFile = Config::get('cache.path') . '/cron/locks/' . $job->id();
         flock(static::$locks[$job->id()], LOCK_UN);
         fclose(static::$locks[$job->id()]);
         unlink($lockFile);
@@ -111,7 +115,7 @@ class Cron
             $jobs = Dispatcher::getListeners('onCron_' . $name);
             foreach ($jobs as $fn) {
                 $runner = new CronJob('DispatcherJobs', static::generateDispatcherJobName($fn), $fn, $name);
-                $runner->save(true);
+                $runner->insert();
             }
         }
     }
@@ -136,12 +140,11 @@ class Cron
     protected static function getNextJob(): ?CronJob
     {
         $query = DB::query()->from('cron')
-            ->where('run_halted is null')
-            ->where('run_next <= ' . time())
+            ->where('run_next <= ?', [time()])
             ->order('run_next ASC, id ASC')
             ->limit(1);
         if (static::$skip) {
-            $query->where('id NOT IN ?', [static::$skip]);
+            $query->where('id NOT IN (?)', [static::$skip]);
         }
         if ($query->execute() && $result = $query->getResult()) {
             if ($result = $result->fetchObject(CronJob::class)) {

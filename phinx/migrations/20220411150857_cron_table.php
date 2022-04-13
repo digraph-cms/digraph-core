@@ -15,7 +15,6 @@ final class CronTable extends AbstractMigration
             ->addColumn('interval', 'string', ['length' => 25])
             ->addColumn('run_next', 'integer')
             ->addColumn('run_last', 'integer', ['null' => true])
-            ->addColumn('run_halted', 'integer', ['null' => true])
             ->addColumn('error_time', 'integer', ['null' => true])
             ->addColumn('error_message', 'text', ['null' => true, 'length' => 250])
             ->addColumn('job', 'text', ['limit' => MysqlAdapter::TEXT_REGULAR])
@@ -23,7 +22,6 @@ final class CronTable extends AbstractMigration
             ->addIndex(['parent', 'name'], ['unique' => true])
             ->addIndex('run_next')
             ->addIndex('run_last')
-            ->addIndex('run_halted')
             ->addIndex('error_time')
             ->create();
     }
