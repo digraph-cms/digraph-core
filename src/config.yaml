@@ -10,6 +10,20 @@ rich_media_types:
   zip: \DigraphCMS\RichMedia\Types\ZipRichMedia
   table: \DigraphCMS\RichMedia\Types\TableRichMedia
 
+cron:
+  route_enabled: false
+  poor_mans_cron: true
+  time_limit: 0
+  intervals:
+    default: 1 hour
+    frequent: 5 minutes
+    halfhourly: 30 minutes
+    hourly: 1 hour
+    daily: 1 day
+    weekly: 1 week
+    biweekly: 2 weeks
+    monthly: monthly
+
 cache:
   path: ${paths.base}/cache
   driver: \DigraphCMS\Cache\OpCache
@@ -85,7 +99,7 @@ user_sources:
         name: GitHub
         class: \League\OAuth2\Client\Provider\Github
         scope:
-          - 'user:email'
+          - "user:email"
       google:
         name: Google
         class: \League\OAuth2\Client\Provider\Google
