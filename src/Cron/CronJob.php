@@ -62,6 +62,14 @@ class CronJob
         return $this->id === false ? null : $this->id;
     }
 
+    public function delete()
+    {
+        if ($this->id() === null) return;
+        DB::query()
+            ->delete('cron', $this->id())
+            ->execute();
+    }
+
     public function parent(): string
     {
         return $this->parent;

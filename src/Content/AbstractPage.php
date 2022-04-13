@@ -5,6 +5,7 @@ namespace DigraphCMS\Content;
 use ArrayAccess;
 use DateTime;
 use DigraphCMS\Config;
+use DigraphCMS\Cron\CronJob;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Digraph;
 use DigraphCMS\Events\Dispatcher;
@@ -293,13 +294,44 @@ abstract class AbstractPage implements ArrayAccess
         return $url;
     }
 
+    protected function prepareCronJobs(): bool
+    {
+        foreach (array_keys(Config::get('cron.intervals')) as $interval) {
+            $method = "onCron_$interval";
+            $uuid = $this->uuid();
+            if (method_exists($this, $method)) {
+                $job = new CronJob(
+                    'Page',
+                    "$uuid::$method",
+                    function (CronJob $job) use ($uuid, $method) {
+                        static::runCronJob($job, $uuid, $method);
+                    },
+                    $interval
+                );
+                $job->insert();
+            }
+        }
+        return true;
+    }
+
+    protected static function runCronJob(CronJob $job, string $uuid, string $method)
+    {
+        // pull page and delete the job if page or method one no longer exists
+        $page = Pages::get($uuid);
+        if (!$page || !is_callable([$page, $method])) $job->delete();
+        // run method
+        call_user_func([$page, $method], $job);
+    }
+
     public function insert()
     {
+        $this->prepareCronJobs();
         return Pages::insert($this);
     }
 
     public function update()
     {
+        $this->prepareCronJobs();
         return Pages::update($this);
     }
 

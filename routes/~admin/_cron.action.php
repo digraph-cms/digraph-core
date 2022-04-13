@@ -60,44 +60,40 @@ if ($errors->count()) {
     );
 }
 
-if ($recent->count()) {
-    echo "<h2>Recently run</h2>";
-    echo new QueryTable(
-        $recent,
-        function (array $row): array {
-            return [
-                $row['id'],
-                Format::datetime($row['run_last']),
-                $row['parent'],
-                $row['name']
-            ];
-        },
-        [
-            new ColumnHeader('Job ID'),
-            new ColumnHeader('Time'),
-            new ColumnHeader('Parent'),
-            new ColumnHeader('Name')
-        ]
-    );
-}
+echo "<h2>Recently run</h2>";
+echo new QueryTable(
+    $recent,
+    function (array $row): array {
+        return [
+            $row['id'],
+            Format::datetime($row['run_last']),
+            $row['parent'],
+            $row['name']
+        ];
+    },
+    [
+        new ColumnHeader('Job ID'),
+        new ColumnHeader('Time'),
+        new ColumnHeader('Parent'),
+        new ColumnHeader('Name')
+    ]
+);
 
-if ($upcoming->count()) {
-    echo "<h2>Upcoming runs</h2>";
-    echo new QueryTable(
-        $upcoming,
-        function (array $row): array {
-            return [
-                $row['id'],
-                Format::datetime($row['run_next']),
-                $row['parent'],
-                $row['name']
-            ];
-        },
-        [
-            new ColumnHeader('Job ID'),
-            new ColumnHeader('Scheduled time'),
-            new ColumnHeader('Parent'),
-            new ColumnHeader('Name')
-        ]
-    );
-}
+echo "<h2>Upcoming runs</h2>";
+echo new QueryTable(
+    $upcoming,
+    function (array $row): array {
+        return [
+            $row['id'],
+            Format::datetime($row['run_next']),
+            $row['parent'],
+            $row['name']
+        ];
+    },
+    [
+        new ColumnHeader('Job ID'),
+        new ColumnHeader('Scheduled time'),
+        new ColumnHeader('Parent'),
+        new ColumnHeader('Name')
+    ]
+);
