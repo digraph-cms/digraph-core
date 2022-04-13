@@ -26,6 +26,7 @@ $count = Cache::get(
 );
 
 // browser-side output
+Context::response()->browserTTL(120);
 Context::response()->filename('cron.js');
 echo "// script does nothing in client" . PHP_EOL;
 echo "// jobs run in last execution: $count";
