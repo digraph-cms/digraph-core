@@ -1,0 +1,154 @@
+.progress-bar {
+    box-sizing: border-box;
+    position: relative;
+    background: var(--cue-information-darker);
+    box-shadow: var(--shadow-inset);
+    padding: $grid/4;
+    margin: $grid 0;
+    font-family: $font-ui;
+    font-size: $grid * 0.75;
+    color: var(--cue-information-inv);
+    overflow: hidden;
+}
+
+.progress-bar__indicator {
+    height: $grid * 1.5;
+    position: relative;
+    overflow: hidden;
+    display: block;
+    background-color: var(--cue-information-bright);
+    background-image: linear-gradient(center bottom, var(--cue-information) 37%, var(--cue-information-dark) 69%);
+    width: 100%;
+    &:after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background-image: linear-gradient(
+            -45deg,
+            var(--cue-information-a20) 25%,
+            transparent 25%,
+            transparent 50%,
+            var(--cue-information-a20) 50%,
+            var(--cue-information-a20) 75%,
+            transparent 75%,
+            transparent
+        );
+        z-index: 1;
+        background-size: 50px 50px;
+        animation: move 2s linear infinite;
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+        border-top-left-radius: 20px;
+        border-bottom-left-radius: 20px;
+        overflow: hidden;
+        animation: progress-bar__move 2s linear infinite;
+    }
+}
+
+.progress-bar__text {
+    position: absolute;
+    top: $grid/4;
+    left: $grid/2;
+    z-index: 2;
+    opacity: 0.75;
+    white-space: nowrap;
+    overflow: hidden;
+    line-height: $grid * 1.5;
+    font-weight: bold;
+}
+
+.progress-bar--interactive {
+    background: var(--cue-interactive-darker);
+    color: var(--cue-interactive-inv);
+    .progress-bar__indicator {
+        background-color: var(--cue-interactive-bright);
+        background-image: linear-gradient(center bottom, var(--cue-interactive) 37%, var(--cue-interactive-dark) 69%);
+        &:after {
+            background-image: linear-gradient(
+                -45deg,
+                var(--cue-interactive-a20) 25%,
+                transparent 25%,
+                transparent 50%,
+                var(--cue-interactive-a20) 50%,
+                var(--cue-interactive-a20) 75%,
+                transparent 75%,
+                transparent
+            );
+        }
+    }
+}
+
+.progress-bar--safe {
+    background: var(--cue-safe-darker);
+    color: var(--cue-safe-inv);
+    .progress-bar__indicator {
+        background-color: var(--cue-safe-bright);
+        background-image: linear-gradient(center bottom, var(--cue-safe) 37%, var(--cue-safe-dark) 69%);
+        &:after {
+            background-image: linear-gradient(
+                -45deg,
+                var(--cue-safe-a20) 25%,
+                transparent 25%,
+                transparent 50%,
+                var(--cue-safe-a20) 50%,
+                var(--cue-safe-a20) 75%,
+                transparent 75%,
+                transparent
+            );
+        }
+    }
+}
+
+.progress-bar--warning {
+    background: var(--cue-warning-darker);
+    color: var(--cue-warning-inv);
+    .progress-bar__indicator {
+        background-color: var(--cue-warning-bright);
+        background-image: linear-gradient(center bottom, var(--cue-warning) 37%, var(--cue-warning-dark) 69%);
+        &:after {
+            background-image: linear-gradient(
+                -45deg,
+                var(--cue-warning-a20) 25%,
+                transparent 25%,
+                transparent 50%,
+                var(--cue-warning-a20) 50%,
+                var(--cue-warning-a20) 75%,
+                transparent 75%,
+                transparent
+            );
+        }
+    }
+}
+
+.progress-bar--danger {
+    background: var(--cue-danger-darker);
+    color: var(--cue-danger-inv);
+    .progress-bar__indicator {
+        background-color: var(--cue-danger-bright);
+        background-image: linear-gradient(center bottom, var(--cue-danger) 37%, var(--cue-danger-dark) 69%);
+        &:after {
+            background-image: linear-gradient(
+                -45deg,
+                var(--cue-danger-a20) 25%,
+                transparent 25%,
+                transparent 50%,
+                var(--cue-danger-a20) 50%,
+                var(--cue-danger-a20) 75%,
+                transparent 75%,
+                transparent
+            );
+        }
+    }
+}
+
+@keyframes progress-bar__move {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 50px 50px;
+    }
+}

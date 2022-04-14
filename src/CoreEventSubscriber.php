@@ -7,6 +7,7 @@ use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Content\Pages;
 use DigraphCMS\Content\Router;
 use DigraphCMS\Content\Slugs;
+use DigraphCMS\DB\DB;
 use DigraphCMS\DOM\CodeHighlighter;
 use DigraphCMS\DOM\DOM;
 use DigraphCMS\DOM\DOMEvent;
@@ -26,6 +27,16 @@ use function DigraphCMS\Content\require_file;
 
 class CoreEventSubscriber
 {
+
+    public static function onCron_daily()
+    {
+        // clean up old deferred execution jobs
+        DB::query()->delete('defex')
+            ->where('run is null')
+            ->where('run < ?', [time() - (90 * 86400)])
+            ->execute();
+    }
+
     /**
      * Add user action menu links to user profiles
      *
