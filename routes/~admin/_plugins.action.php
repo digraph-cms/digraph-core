@@ -17,6 +17,11 @@
 use DigraphCMS\Config;
 use DigraphCMS\HTML\Icon;
 use DigraphCMS\Plugins\Plugins;
+use DigraphCMS\UI\Notifications;
+
+if (!Plugins::plugins()) {
+    Notifications::printNotice('No plugins installed');
+}
 
 echo "<table>";
 foreach (Plugins::plugins() as $name => $plugin) {
