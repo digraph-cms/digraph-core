@@ -12,7 +12,7 @@ use DigraphCMS\URL\URL;
 $group = Context::arg('id');
 if (!$group || !Deferred::groupCount($group)) throw new HttpError(404, 'Group not found');
 
-echo "<h1>Deferred job group $group</h1>";
+echo "<h1>Group $group</h1>";
 
 printf(
     '<p>Total jobs: %s',

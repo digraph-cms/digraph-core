@@ -1,12 +1,12 @@
 .progress-bar {
+    @include uncolored-links;
     box-sizing: border-box;
     position: relative;
     background-color: var(--cue-information-darker);
     box-shadow: var(--shadow-inset);
-    padding: $grid/4;
+    padding: $grid/2;
     margin: $grid 0;
     font-family: $font-ui;
-    font-size: $grid * 0.75;
     color: var(--cue-information-inv);
     overflow: hidden;
     transition: background-color 0.5s;
@@ -24,8 +24,8 @@
         var(--cue-information-bright) 50%,
         var(--cue-information-lighter) 100%
     );
-    width: 100%;
-    transition: width 1s, background-color 0.5s, background-image 0.5s;
+    width: 0;
+    transition: width 2s, background-color 0.5s, background-image 0.5s;
     &:after {
         content: "";
         position: absolute;
@@ -58,6 +58,7 @@
 
 .progress-bar__text {
     position: absolute;
+    font-size: 0.75 * $grid;
     top: $grid/4;
     left: $grid;
     z-index: 2;
@@ -66,6 +67,12 @@
     overflow: hidden;
     line-height: $grid * 1.5;
     font-weight: bold;
+}
+
+.progress-bar__after {
+    margin-top: $grid/2;
+    font-size: $grid;
+    line-height: 1.4;
 }
 
 .progress-bar--interactive {
@@ -200,22 +207,21 @@
     }
 }
 
-.deferred-progress-bar--waiting,
-.deferred-progress-bar--nojs {
+.deferred-progress-bar {
+    font-family: $font-ui;
+    background: var(--background-dark);
+    color: var(--color);
+    margin: $grid 0;
     .progress-bar {
-        .progress-bar__indicator {
-            width: 0%;
-            transition: width 0;
-        }
+        margin: 0;
     }
 }
 
-.deferred-progress-bar--nojs {
-    .progress-bar {
-        .progress-bar__indicator:after {
-            opacity: 0;
-        }
-    }
+.deferred-progress-bar__note {
+    font-size: smaller;
+    padding: $grid/2;
+    text-align: right;
+    opacity: 0.75;
 }
 
 @keyframes progress-bar__move {

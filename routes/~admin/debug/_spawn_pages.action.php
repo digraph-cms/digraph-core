@@ -38,11 +38,12 @@ if ($form->ready()) {
     $count = $count->value();
     $depth = $depth->value();
     $job = new DeferredJob(function (DeferredJob $job) use ($parent, $count, $depth) {
-        // first order of business is to spawn copies
-        while (Deferred::groupCount($job->group()) < $count) $job->spawnClone();
+        // first order of business is to spawn up to 50 copies
+        $spawned = 0;
+        while (($spawned++ < 50) && (Deferred::groupCount($job->group()) < $count)) $job->spawnClone();
         // next traverse up to $depth-1 random links from $parent and spawn a page there
         $depth = random_int(0, $depth - 1);
-        while ($depth >= 0 && $child = Graph::randomChildID($parent)) {
+        while ($depth > 0 && $child = Graph::randomChildID($parent)) {
             $parent = $child;
             $depth--;
         }
@@ -56,7 +57,9 @@ if ($form->ready()) {
         return 'Created ' . $page->url();
     });
     $job->insert();
-    echo new DeferredProgressBar($job->group(), 'Creating pages');
+    $bar = new DeferredProgressBar($job->group(), 'Creating pages');
+    $bar->setDisplayAfter('Created ' . $count . ' pages');
+    echo $bar;
 } else {
     echo $form;
 }

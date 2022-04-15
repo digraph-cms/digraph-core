@@ -27,11 +27,11 @@ Scripts for displaying deferred job progress bars
             wrapper.classList.remove('deferred-progress-bar--waiting');
             if (e.target.status == 200) {
                 var data = JSON.parse(e.target.response);
-                if (!data) return barError(wrapper,"No data");
+                if (!data) return barError(wrapper, "No data");
                 if (data.pending == 0) return barComplete(wrapper);
-                var pct = Math.round(100*(data.completed/data.total));
+                var pct = Math.round(100 * (data.completed / data.total));
                 var indicator = wrapper.getElementsByClassName('progress-bar__indicator')[0];
-                indicator.style.width = pct+'%';
+                indicator.style.width = pct + '%';
                 setTimeout(() => updateBar(wrapper), 500);
             } else {
                 barError(wrapper, 'Error ' + e.target.status);
@@ -51,6 +51,23 @@ Scripts for displaying deferred job progress bars
         indicator.style.width = '100%';
         bar.classList.add('progress-bar--safe');
         text.innerText = '';
+        if (wrapper.dataset.displayAfter) {
+            var after = atob(wrapper.dataset.displayAfter);
+            bar.innerHTML += '<div class="progress-bar__after">' + after + '</div>';
+        }
+        if (wrapper.dataset.bounceAfter) {
+            var after = atob(wrapper.dataset.bounceAfter);
+            bar.innerHTML += '<div class="progress-bar__after progress-bar__after--redirect"><a href="' + after + '">Click here if you are not redirected automatically in <span class="progress-bar__after--redirect__counter">5</span> seconds</a></div>';
+            var counter = bar.getElementsByClassName('progress-bar__after--redirect__counter')[0];
+            var interval = setInterval(() => {
+                var s = parseInt(counter.innerText) - 1;
+                counter.innerText = s;
+                if (s == 0) {
+                    clearInterval(interval);
+                    window.location.href = after;
+                }
+            }, 1000);
+        }
     }
 
     function barError(wrapper, message) {
