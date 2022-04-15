@@ -33,7 +33,7 @@ class CoreEventSubscriber
         // clean up old deferred execution jobs
         DB::query()->delete('defex')
             ->where('run is null')
-            ->where('run < ?', [time() - (90 * 86400)])
+            ->where('run < ?', [time() - (7 * 86400)])
             ->execute();
     }
 

@@ -9,7 +9,7 @@ use DigraphCMS\Digraph;
 
 class DeferredJob
 {
-    protected $id, $group, $run, $error_time, $error_message, $job;
+    protected $id, $group, $run, $error_time, $error_message, $job, $trace;
 
     public function __construct(callable $job = null, string $group = null)
     {
@@ -19,6 +19,7 @@ class DeferredJob
             : $job ?? function () {
                 return 'Empty job';
             };
+        $this->trace = $this->trace ?? debug_backtrace();
     }
 
     public function execute(): bool
@@ -52,7 +53,8 @@ class DeferredJob
             'defex',
             [
                 '`group`' => $this->group(),
-                'job' => $this->serializedJob()
+                'job' => $this->serializedJob(),
+                'trace' => $this->serializedTrace()
             ]
         )->execute();
     }
@@ -63,6 +65,15 @@ class DeferredJob
             return serialize($this->job);
         } catch (\Throwable $th) {
             return \Opis\Closure\serialize($this->job);
+        }
+    }
+
+    protected function serializedTrace(): string
+    {
+        try {
+            return serialize($this->trace);
+        } catch (\Throwable $th) {
+            return \Opis\Closure\serialize($this->trace);
         }
     }
 
