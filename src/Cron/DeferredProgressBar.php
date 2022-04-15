@@ -8,17 +8,20 @@ class DeferredProgressBar extends Tag
 {
     protected $tag = 'div';
     protected $group;
-    protected $completeMessage;
 
-    public function __construct(string $group, string $completeMessage = '')
+    public function __construct(string $group)
     {
         $this->group = $group;
         $this->id = 'deferred-progress-bar--' . $group;
     }
 
-    public function children(): array {
+    public function children(): array
+    {
         return array_merge(
-            ['<div class="progress-bar"><span class="progress-bar__indicator"></span></div>'],
+            [
+                '<noscript><div class="notification notification--error">This progress bar will not function correctly without javascript</div></noscript>',
+                '<div class="progress-bar"><span class="progress-bar__indicator"></span><span class="progress-bar__text"></span></div>'
+            ],
             parent::children()
         );
     }
@@ -38,7 +41,8 @@ class DeferredProgressBar extends Tag
         return array_merge(
             parent::classes(),
             [
-                'deferred-progress-bar'
+                'deferred-progress-bar',
+                'deferred-progress-bar--nojs'
             ]
         );
     }

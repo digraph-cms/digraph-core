@@ -11,6 +11,7 @@ use DigraphCMS\DB\DB;
 use DigraphCMS\UI\DataTables\ColumnHeader;
 use DigraphCMS\UI\DataTables\QueryTable;
 use DigraphCMS\UI\Format;
+use DigraphCMS\URL\URL;
 
 $recent = DB::query()->from('defex')
     ->where('run is not null')
@@ -31,8 +32,16 @@ if ($errors->count()) {
         $errors,
         function (array $row): array {
             return [
-                $row['id'],
-                $row['group'],
+                sprintf(
+                    '<a href="%s">%s</a>',
+                    new URL('_inspect_job.html?id=' . $row['id']),
+                    $row['id']
+                ),
+                sprintf(
+                    '<a href="%s">%s</a>',
+                    new URL('_inspect_group.html?id=' . $row['group']),
+                    $row['group']
+                ),
                 Format::datetime($row['run']),
                 $row['message']
             ];
@@ -51,8 +60,16 @@ echo new QueryTable(
     $recent,
     function (array $row): array {
         return [
-            $row['id'],
-            $row['group'],
+            sprintf(
+                '<a href="%s">%s</a>',
+                new URL('_inspect_job.html?id=' . $row['id']),
+                $row['id']
+            ),
+            sprintf(
+                '<a href="%s">%s</a>',
+                new URL('_inspect_group.html?id=' . $row['group']),
+                $row['group']
+            ),
             Format::datetime($row['run']),
             $row['message']
         ];
@@ -70,11 +87,20 @@ echo new QueryTable(
     $upcoming,
     function (array $row): array {
         return [
-            $row['id'],
-            $row['group']
+            sprintf(
+                '<a href="%s">%s</a>',
+                new URL('_inspect_job.html?id=' . $row['id']),
+                $row['id']
+            ),
+            sprintf(
+                '<a href="%s">%s</a>',
+                new URL('_inspect_group.html?id=' . $row['group']),
+                $row['group']
+            )
         ];
     },
     [
         new ColumnHeader('Job ID'),
-        new ColumnHeader('Group')    ]
+        new ColumnHeader('Group')
+    ]
 );

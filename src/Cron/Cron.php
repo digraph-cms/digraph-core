@@ -23,9 +23,10 @@ class Cron
                 // return nothing if there are no pending cron jobs, and also none exist whatsoever
                 // this will allow cron jobs to be automatically built at first install
                 // even if poor man's cron is in use
-                if (!static::getNextJob() && DB::query()->from('cron')->limit(1)->count()) {
-                    return null;
-                }
+                $run = static::getNextJob()
+                    || Deferred::getNextJob()
+                    || DB::query()->from('cron')->limit(1)->count() == 0;
+                if (!$run) return '';
                 // render code
                 return sprintf(
                     PHP_EOL . '<script>if (window.Worker) { new Worker("%s"); }</script>' . PHP_EOL,
