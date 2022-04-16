@@ -13,7 +13,7 @@ rich_media_types:
 cron:
   route_enabled: false
   poor_mans_cron: true
-  time_limit: 5
+  time_limit: 1
   intervals:
     default: 1 hour
     frequent: 5 minutes
