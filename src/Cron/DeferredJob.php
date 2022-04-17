@@ -65,13 +65,12 @@ class DeferredJob
 
     public function spawn(callable $job)
     {
-        (new DeferredJob($job, $this->group()))
-            ->insert();
+        return new DeferredJob($job, $this->group());
     }
 
     public function spawnClone()
     {
-        $this->spawn($this->job);
+        return $this->spawn($this->job);
     }
 
     public function group(): string

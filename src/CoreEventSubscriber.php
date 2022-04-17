@@ -39,13 +39,6 @@ class CoreEventSubscriber
                 ->execute();
             return "Cleaned up $count old deferred execution jobs";
         });
-        // vacuum sqlite database
-        if (Config::get('db.adapter') == 'sqlite') {
-            new DeferredJob(function(){
-                DB::pdo()->exec('VACUUM');
-                return "Vacuumed database";
-            });
-        }
     }
 
     /**

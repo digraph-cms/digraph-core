@@ -302,7 +302,7 @@ abstract class AbstractPage implements ArrayAccess
             $method = "onCron_$interval";
             $uuid = $this->uuid();
             if (method_exists($this, $method)) {
-                $job = new CronJob(
+                new CronJob(
                     'Page',
                     "$uuid::$method",
                     function (CronJob $job) use ($uuid, $method) {
@@ -310,7 +310,6 @@ abstract class AbstractPage implements ArrayAccess
                     },
                     $interval
                 );
-                $job->insert();
             }
         }
         return true;
