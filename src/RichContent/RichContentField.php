@@ -51,8 +51,8 @@ class RichContentField extends Field
         // add basic tips
         $this->addTip(sprintf(
             'Content can be formatted with <a href="%s" target="_lightbox">Markdown</a> and <a href="%s" target="_lightbox">ShortCodes</a>',
-            new URL('/~markdown/'),
-            new URL('/~shortcodes/')
+            new URL('/~manual/editing/markdown.html'),
+            new URL('/~manual/editing/shortcodes.html')
         ));
     }
 

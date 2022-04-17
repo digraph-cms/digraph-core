@@ -25,7 +25,7 @@ class Router
         foreach ($page->routeClasses() as $c) {
             foreach (self::search("@$c/*.action.*") as $file) {
                 $action = basename($file);
-                $action = substr($action, 0, strlen($action) - 11);
+                $action = preg_replace('/\.action\..+$/', '', $action);
                 if ($action == '@wildcard' || $action == 'index') {
                     continue;
                 }
@@ -61,7 +61,7 @@ class Router
         }
         foreach (self::search("~$route/*.action.*") as $file) {
             $action = basename($file);
-            $action = substr($action, 0, strlen($action) - 11);
+            $action = preg_replace('/\.action\..+$/', '', $action);
             if ($action == '@wildcard' || $action == 'index') {
                 continue;
             }
