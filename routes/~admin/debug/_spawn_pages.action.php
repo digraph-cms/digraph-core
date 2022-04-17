@@ -56,7 +56,6 @@ if ($form->ready()) {
         DB::commit();
         return 'Created ' . $page->url();
     });
-    $job->insert();
     $bar = new DeferredProgressBar($job->group(), 'Creating pages');
     $bar->setDisplayAfter('Created ' . $count . ' pages');
     echo $bar;

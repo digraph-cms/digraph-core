@@ -19,6 +19,15 @@ class DeferredJob
             : $job ?? function () {
                 return 'Empty job';
             };
+        // insert into database immediately
+        if ($this->id() !== null) return;
+        $this->id = DB::query()->insertInto(
+            'defex',
+            [
+                '`group`' => $this->group(),
+                'job' => $this->serializedJob()
+            ]
+        )->execute();
     }
 
     public function execute(): bool
@@ -43,18 +52,6 @@ class DeferredJob
         Locking::release('defex_' . $this->id());
         // return true
         return true;
-    }
-
-    public function insert()
-    {
-        if ($this->id() !== null) return;
-        $this->id = DB::query()->insertInto(
-            'defex',
-            [
-                '`group`' => $this->group(),
-                'job' => $this->serializedJob()
-            ]
-        )->execute();
     }
 
     protected function serializedJob(): string

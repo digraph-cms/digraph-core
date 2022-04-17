@@ -17,7 +17,6 @@ $job = new DeferredJob(
         return 'Ran a piece';
     }
 );
-$job->insert();
 
 $bar = new DeferredProgressBar($job->group());
 $bar->setDisplayAfter('Successfully did a bunch of nothing');

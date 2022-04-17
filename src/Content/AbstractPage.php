@@ -345,14 +345,12 @@ abstract class AbstractPage implements ArrayAccess
     public function recursiveDelete(string $jobGroup = null): DeferredJob
     {
         $uuid = $this->uuid();
-        $job = new DeferredJob(
+        return new DeferredJob(
             function (DeferredJob $job) use ($uuid) {
                 return static::recursiveDeleteAction($job, $uuid);
             },
             $jobGroup
         );
-        $job->insert();
-        return $job;
     }
 
     public static function recursiveDeleteAction(DeferredJob $job, string $uuid)
