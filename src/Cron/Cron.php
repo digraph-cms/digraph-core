@@ -6,13 +6,11 @@ use DigraphCMS\Cache\Cache;
 use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Events\Dispatcher;
-use DigraphCMS\FS;
 use DigraphCMS\URL\URL;
 
 class Cron
 {
     protected static $skip = [];
-    protected static $locks = [];
 
     public static function renderPoorMansCron()
     {
@@ -25,9 +23,10 @@ class Cron
                 // return nothing if there are no pending cron jobs, and also none exist whatsoever
                 // this will allow cron jobs to be automatically built at first install
                 // even if poor man's cron is in use
-                if (!static::getNextJob() && DB::query()->from('cron')->limit(1)->count()) {
-                    return null;
-                }
+                $run = static::getNextJob()
+                    || Deferred::getNextJob()
+                    || DB::query()->from('cron')->limit(1)->count() == 0;
+                if (!$run) return '';
                 // render code
                 return sprintf(
                     PHP_EOL . '<script>if (window.Worker) { new Worker("%s"); }</script>' . PHP_EOL,
@@ -52,61 +51,20 @@ class Cron
         static::buildDispatcherJobs();
         // count number of jobs run
         $count = 0;
+        // flip a coin to see if Deferred goes first
+        $deferredFirst = random_int(0, 1);
+        if ($deferredFirst) $count += Deferred::runJobs(null, $endByTime);
         // proceed with jobs one at a time
-        while ($job = static::getNextJob()) {
+        while ((!$endByTime || time() < $endByTime) && $job = static::getNextJob()) {
             // don't make more than one attempt per job
             static::$skip[] = $job->id();
-            // try to get lock
-            if (!static::getLock($job)) continue;
-            // try to execute a single job, if a lock was obtained for it
-            $count++;
-            try {
-                // run job, runner should handle logging its own success
-                $job->run();
-            } catch (\Throwable $th) {
-                // record exception in table
-                DB::query()->update(
-                    'cron',
-                    [
-                        'error_time' => time(),
-                        'error_message' => get_class($th) . ': ' . $th->getMessage()
-                    ],
-                    $job->id()
-                )->execute();
-            }
-            // release lock
-            static::releaseLock($job);
-            // break loop if time limit has been reached
-            if ($endByTime && time() >= $endByTime) break;
+            // execute job
+            $count += $job->execute() ? 1 : 0;
         }
+        // run Deferred jobs afterwards if it lost the coin toss
+        if (!$deferredFirst) $count += Deferred::runJobs(null, $endByTime);
         // return number of jobs run
         return $count;
-    }
-
-    protected static function getLock(CronJob $job): bool
-    {
-        if ($job->id() === null) return false;
-        // make sure necessary lock files directory exists
-        FS::mkdir(Config::get('cache.path') . '/cron/locks/');
-        // get lock file lock
-        $lockFile = Config::get('cache.path') . '/cron/locks/' . $job->id();
-        touch($lockFile);
-        static::$locks = fopen($lockFile, 'r');
-        if (!flock(static::$locks, LOCK_EX)) {
-            fclose(static::$locks);
-            return false;
-        }
-        return true;
-    }
-
-    protected static function releaseLock(CronJob $job)
-    {
-        if ($job->id() === null) return;
-        // release and delete file lock
-        $lockFile = Config::get('cache.path') . '/cron/locks/' . $job->id();
-        flock(static::$locks[$job->id()], LOCK_UN);
-        fclose(static::$locks[$job->id()]);
-        unlink($lockFile);
     }
 
     protected static function buildDispatcherJobs()
@@ -146,7 +104,7 @@ class Cron
         if (static::$skip) {
             $query->where('id NOT IN (?)', [static::$skip]);
         }
-        if ($query->execute() && $result = $query->getResult()) {
+        if (@$query->execute() && $result = $query->getResult()) {
             if ($result = $result->fetchObject(CronJob::class)) {
                 return $result;
             }

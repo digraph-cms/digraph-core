@@ -7,6 +7,8 @@ use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Content\Pages;
 use DigraphCMS\Content\Router;
 use DigraphCMS\Content\Slugs;
+use DigraphCMS\Cron\DeferredJob;
+use DigraphCMS\DB\DB;
 use DigraphCMS\DOM\CodeHighlighter;
 use DigraphCMS\DOM\DOM;
 use DigraphCMS\DOM\DOMEvent;
@@ -26,6 +28,26 @@ use function DigraphCMS\Content\require_file;
 
 class CoreEventSubscriber
 {
+
+    public static function onCron_daily()
+    {
+        // clean up old deferred execution jobs
+        new DeferredJob(function(){
+            $count = DB::query()->delete('defex')
+                ->where('run is null')
+                ->where('run < ?', [time() - (7 * 86400)])
+                ->execute();
+            return "Cleaned up $count old deferred execution jobs";
+        });
+        // vacuum sqlite database
+        if (Config::get('db.adapter') == 'sqlite') {
+            new DeferredJob(function(){
+                DB::pdo()->exec('VACUUM');
+                return "Vacuumed database";
+            });
+        }
+    }
+
     /**
      * Add user action menu links to user profiles
      *

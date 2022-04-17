@@ -3,6 +3,7 @@
 namespace DigraphCMS\Cron;
 
 use DateTime;
+use DigraphCMS\Cache\Locking;
 use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
 
@@ -22,22 +23,34 @@ class CronJob
         $this->interval = $interval ?? $this->interval ?? 'default';
     }
 
-    public function run()
+    public function execute()
     {
-        error_log('running job ' . $this->id());
+        if ($this->id() === null) return false;
+        // try to get lock
+        if (!Locking::lock('cron_' . $this->id())) return false;
+        // only execute if ID exists, meaning this job is in the database
         $this->run_last = time();
         $this->computeNextRun();
-        DB::query()->update(
-            'cron',
-            [
-                'run_last' => $this->run_last,
-                'run_next' => $this->run_next
-            ],
-            $this->id()
-        )->execute();
-        if ($this->job()) {
-            call_user_func($this->job(), $this);
+        $row = [
+            'run_last' => $this->run_last,
+            'run_next' => $this->run_next
+        ];
+        try {
+            if ($this->job()) {
+                call_user_func($this->job(), $this);
+            }
+        } catch (\Throwable $th) {
+            $row['error_time'] = time();
+            $row['error_message'] = get_class($th) . ': ' . $th->getMessage();
         }
+        // save results to db
+        DB::query()
+            ->update('cron', $row, $this->id())
+            ->execute();
+        // release lock
+        Locking::release('cron_' . $this->id());
+        // return true
+        return true;
     }
 
     protected function computeNextRun()

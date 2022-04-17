@@ -1,0 +1,234 @@
+.progress-bar {
+    @include uncolored-links;
+    box-sizing: border-box;
+    position: relative;
+    background-color: var(--cue-information-darker);
+    box-shadow: var(--shadow-inset);
+    padding: $grid/2;
+    margin: $grid 0;
+    font-family: $font-ui;
+    color: var(--cue-information-inv);
+    overflow: hidden;
+    transition: background-color 0.5s;
+}
+
+.progress-bar__indicator {
+    height: $grid * 1.5;
+    position: relative;
+    overflow: hidden;
+    display: block;
+    background-color: var(--cue-information-bright);
+    background-image: linear-gradient(
+        0deg,
+        var(--cue-information) 0%,
+        var(--cue-information-bright) 50%,
+        var(--cue-information-lighter) 100%
+    );
+    width: 0;
+    transition: width 2s, background-color 0.5s, background-image 0.5s;
+    &:after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background-image: linear-gradient(
+            -45deg,
+            var(--cue-information-a20) 25%,
+            transparent 25%,
+            transparent 50%,
+            var(--cue-information-a20) 50%,
+            var(--cue-information-a20) 75%,
+            transparent 75%,
+            transparent
+        );
+        z-index: 1;
+        background-size: 50px 50px;
+        animation: move 2s linear infinite;
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+        border-top-left-radius: 20px;
+        border-bottom-left-radius: 20px;
+        overflow: hidden;
+        animation: progress-bar__move 2s linear infinite;
+        transition: background-color 0.5s, background-image 0.5s, opacity 0.5s;
+    }
+}
+
+.progress-bar__text {
+    position: absolute;
+    font-size: 0.75 * $grid;
+    top: $grid/4;
+    left: $grid;
+    z-index: 2;
+    opacity: 0.75;
+    white-space: nowrap;
+    overflow: hidden;
+    line-height: $grid * 1.5;
+    font-weight: bold;
+}
+
+.progress-bar__after {
+    margin-top: $grid/2;
+    font-size: $grid;
+    line-height: 1.4;
+}
+
+.progress-bar--interactive {
+    background: var(--cue-interactive-darker);
+    color: var(--cue-interactive-inv);
+    .progress-bar__indicator {
+        background-color: var(--cue-interactive-bright);
+        background-image: linear-gradient(
+            0deg,
+            var(--cue-interactive) 0%,
+            var(--cue-interactive-bright) 50%,
+            var(--cue-interactive-lighter) 100%
+        );
+        &:after {
+            background-image: linear-gradient(
+                -45deg,
+                var(--cue-interactive-a20) 25%,
+                transparent 25%,
+                transparent 50%,
+                var(--cue-interactive-a20) 50%,
+                var(--cue-interactive-a20) 75%,
+                transparent 75%,
+                transparent
+            );
+        }
+    }
+}
+
+.progress-bar--safe {
+    background: var(--cue-safe-darker);
+    color: var(--cue-safe-inv);
+    .progress-bar__indicator {
+        background-color: var(--cue-safe-bright);
+        background-image: linear-gradient(
+            0deg,
+            var(--cue-safe) 0%,
+            var(--cue-safe-bright) 50%,
+            var(--cue-safe-lighter) 100%
+        );
+        &:after {
+            background-image: linear-gradient(
+                -45deg,
+                var(--cue-safe-a20) 25%,
+                transparent 25%,
+                transparent 50%,
+                var(--cue-safe-a20) 50%,
+                var(--cue-safe-a20) 75%,
+                transparent 75%,
+                transparent
+            );
+        }
+    }
+}
+
+.progress-bar--warning {
+    background: var(--cue-warning-darker);
+    color: var(--cue-warning-inv);
+    .progress-bar__indicator {
+        background-color: var(--cue-warning-bright);
+        background-image: linear-gradient(
+            0deg,
+            var(--cue-warning) 0%,
+            var(--cue-warning-bright) 50%,
+            var(--cue-warning-lighter) 100%
+        );
+        &:after {
+            background-image: linear-gradient(
+                -45deg,
+                var(--cue-warning-a20) 25%,
+                transparent 25%,
+                transparent 50%,
+                var(--cue-warning-a20) 50%,
+                var(--cue-warning-a20) 75%,
+                transparent 75%,
+                transparent
+            );
+        }
+    }
+}
+
+.progress-bar--danger {
+    background: var(--cue-danger-darker);
+    color: var(--cue-danger-inv);
+    .progress-bar__indicator {
+        background-color: var(--cue-danger-bright);
+        background-image: linear-gradient(
+            0deg,
+            var(--cue-danger) 0%,
+            var(--cue-danger-bright) 50%,
+            var(--cue-danger-lighter) 100%
+        );
+        &:after {
+            background-image: linear-gradient(
+                -45deg,
+                var(--cue-danger-a20) 25%,
+                transparent 25%,
+                transparent 50%,
+                var(--cue-danger-a20) 50%,
+                var(--cue-danger-a20) 75%,
+                transparent 75%,
+                transparent
+            );
+        }
+    }
+}
+
+.deferred-progress-bar--waiting .progress-bar,
+.deferred-progress-bar--nojs .progress-bar,
+.progress-bar--neutral {
+    background: var(--theme-neutral-darker);
+    color: var(--theme-neutral-inv);
+    .progress-bar__indicator {
+        background-color: var(--theme-neutral-bright);
+        background-image: linear-gradient(
+            0deg,
+            var(--theme-neutral) 0%,
+            var(--theme-neutral-bright) 50%,
+            var(--theme-neutral-lighter) 100%
+        );
+        &:after {
+            background-image: linear-gradient(
+                -45deg,
+                var(--theme-neutral-a20) 25%,
+                transparent 25%,
+                transparent 50%,
+                var(--theme-neutral-a20) 50%,
+                var(--theme-neutral-a20) 75%,
+                transparent 75%,
+                transparent
+            );
+        }
+    }
+}
+
+.deferred-progress-bar {
+    font-family: $font-ui;
+    background: var(--background-dark);
+    color: var(--color);
+    margin: $grid 0;
+    .progress-bar {
+        margin: 0;
+    }
+}
+
+.deferred-progress-bar__note {
+    font-size: smaller;
+    padding: $grid/2;
+    text-align: right;
+    opacity: 0.75;
+}
+
+@keyframes progress-bar__move {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 50px 50px;
+    }
+}
