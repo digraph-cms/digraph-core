@@ -1,23 +1,28 @@
+<h1>Delete page</h1>
 <?php
 
+use DigraphCMS\Content\Graph;
 use DigraphCMS\Context;
 use DigraphCMS\HTTP\RedirectException;
+use DigraphCMS\Session\Cookies;
 use DigraphCMS\UI\ButtonMenus\SingleButton;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\URL\URL;
 
-Notifications::printError('Are you sure you would like to delete <strong>' . Context::page()->name() . '</strong>? This action cannot be undone.');
+$page = Context::page();
+Notifications::printError('Are you sure you would like to delete <strong>' . $page->name() . '</strong>? This action cannot be undone.');
 
-$button = new SingleButton(
+// has child pages, so remind user of that
+if ($count = Graph::childIDs($page->uuid())->count()) {
+    Notifications::printError("$count child pages and everything under them will also be deleted.");
+}
+
+echo new SingleButton(
     'Confirm deletion',
     function () {
-        Context::page()->delete();
-        Notifications::flashConfirmation('<strong>' . Context::page()->name() . '</strong> deleted');
         throw new RedirectException(
-            Context::page()->parent() ? Context::page()->parent() : new URL('/')
+            new URL('_delete.html?csrf='.Cookies::csrfToken('delete_'.Context::pageUUID()))
         );
     },
     ['button--danger']
 );
-
-echo $button;

@@ -15,7 +15,6 @@ final class DeferredExecutionTable extends AbstractMigration
             ->addColumn('error', 'boolean', ['null' => true])
             ->addColumn('message', 'text', ['null' => true, 'length' => 250])
             ->addColumn('job', 'text', ['limit' => MysqlAdapter::TEXT_REGULAR])
-            ->addColumn('trace', 'text', ['limit' => MysqlAdapter::TEXT_REGULAR])
             ->addIndex('group')
             ->addIndex('run')
             ->addIndex('error')

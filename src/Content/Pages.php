@@ -4,10 +4,11 @@ namespace DigraphCMS\Content;
 
 use DateTime;
 use DigraphCMS\Config;
+use DigraphCMS\Cron\DeferredJob;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Events\Dispatcher;
+use DigraphCMS\RichMedia\RichMedia;
 use DigraphCMS\Session\Session;
-use Envms\FluentPDO\Queries\Select;
 
 class Pages
 {
@@ -53,22 +54,6 @@ class Pages
         $query->where('start_page = ?', [$start]);
         $query->order($order);
         return $query;
-    }
-
-    /**
-     * Get just the uuids of the children of a given Page uuid. This is 
-     * potentially quite a bit faster than children()
-     *
-     * @param string $start
-     * @param string $order
-     * @return Select
-     */
-    public static function childIDs(string $start, string $order = 'created ASC'): Select
-    {
-        $query = DB::query()->from('page_link');
-        $query->where('start_page = ?', [$start]);
-        $query->order($order);
-        return $query->execute()->fetchColumn('end_page');
     }
 
     /**

@@ -6,10 +6,12 @@ use ArrayAccess;
 use DateTime;
 use DigraphCMS\Config;
 use DigraphCMS\Cron\CronJob;
+use DigraphCMS\Cron\DeferredJob;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Digraph;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\RichContent\RichContent;
+use DigraphCMS\RichMedia\RichMedia;
 use DigraphCMS\UI\Format;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Permissions;
@@ -338,6 +340,59 @@ abstract class AbstractPage implements ArrayAccess
     public function delete()
     {
         return Pages::delete($this);
+    }
+
+    public function recursiveDelete(string $jobGroup = null): DeferredJob
+    {
+        $uuid = $this->uuid();
+        $job = new DeferredJob(
+            function (DeferredJob $job) use ($uuid) {
+                return static::recursiveDeleteAction($job, $uuid);
+            },
+            $jobGroup
+        );
+        $job->insert();
+        return $job;
+    }
+
+    public static function recursiveDeleteAction(DeferredJob $job, string $uuid)
+    {
+        // get page
+        $page = Pages::get($uuid);
+        if (!$page) return "Page $uuid already deleted";
+        // queue all children for recursive deletion
+        $children = Graph::childIDs($uuid);
+        while ($child = $children->fetch()) {
+            $job->spawn(
+                function (DeferredJob $job) use ($child) {
+                    return static::recursiveDeleteAction($job, $child['end_page']);
+                }
+            );
+        }
+        // queue deletion of all associated rich media
+        $media = RichMedia::select($uuid);
+        while ($m = $media->fetch()) {
+            $mUUID = $m->uuid();
+            $job->spawn(
+                function () use ($mUUID) {
+                    $media = RichMedia::get($mUUID);
+                    $media->delete();
+                    return "Deleted rich media " . $media->name();
+                }
+            );
+        }
+        // queue deletion of this page last
+        $job->spawn(
+            function () use ($uuid) {
+                // get page
+                $page = Pages::get($uuid);
+                if (!$page) return "Page $uuid already deleted";
+                // delete
+                $page->delete();
+                return "Deleted page " . $page->name() . " ($uuid)";
+            }
+        );
+        return "Queued page for deletion " . $page->name() . " ($uuid)";
     }
 
     public function uuid(): string
