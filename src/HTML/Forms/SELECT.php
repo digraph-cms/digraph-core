@@ -12,6 +12,7 @@ class SELECT extends Tag implements InputInterface
     protected $required = false;
     protected $requiredMessage;
     protected $value;
+    protected $default;
 
     /** @var FormWrapper|null */
     protected $form;
