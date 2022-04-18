@@ -10,6 +10,7 @@ class SELECT extends Tag implements InputInterface
     protected $tag = 'select';
     protected $options = [];
     protected $required = false;
+    protected $value;
 
     /** @var FormWrapper|null */
     protected $form;
