@@ -14,13 +14,34 @@ class CronJob
     protected $error_time, $error_message;
     protected $job;
 
-    public function __construct(string $parent = null, string $name = null, callable $fn = null, string $interval = null)
+    public function __construct(string $parent = null, string $name = null, callable $job = null, string $interval = null)
     {
-        $this->parent = $parent ?? $this->parent;
-        $this->name = $name ?? $this->name;
-        $this->job = $fn ?? unserialize($this->job);
+        $this->parent = $this->parent ?? $parent;
+        $this->name = $this->name ?? $name;
+        $this->job = $this->job !== null
+            ? unserialize($this->job)
+            : $job ?? function () {
+                return 'Empty job';
+            };
         $this->run_next = $this->run_next ?? time();
-        $this->interval = $interval ?? $this->interval ?? 'default';
+        $this->interval = $this->interval ?? $interval ?? 'default';
+        // insert into database immediately if not already in there
+        // "already in there" keys off parent/name pair
+        if ($this->id() === null) {
+            $this->id = DB::query()->insertInto(
+                'cron',
+                [
+                    'parent' => $this->parent(),
+                    '`name`' => $this->name(),
+                    '`interval`' => $this->interval(),
+                    'run_next' => $this->runNext(),
+                    'run_last' => $this->runLast(),
+                    'error_time' => $this->errorTime(),
+                    'error_message' => $this->errorMessage(),
+                    'job' => $this->serializedJob()
+                ]
+            )->execute();
+        }
     }
 
     public function execute()
@@ -147,24 +168,5 @@ class CronJob
             ],
             $this->id()
         )->execute();
-    }
-
-    public function insert()
-    {
-        if ($this->id() === null) {
-            $this->id = DB::query()->insertInto(
-                'cron',
-                [
-                    'parent' => $this->parent(),
-                    '`name`' => $this->name(),
-                    '`interval`' => $this->interval(),
-                    'run_next' => $this->runNext(),
-                    'run_last' => $this->runLast(),
-                    'error_time' => $this->errorTime(),
-                    'error_message' => $this->errorMessage(),
-                    'job' => $this->serializedJob()
-                ]
-            )->execute();
-        }
     }
 }

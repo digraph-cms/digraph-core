@@ -72,8 +72,7 @@ class Cron
         foreach (Config::get('cron.intervals') as $name => $interval) {
             $jobs = Dispatcher::getListeners('onCron_' . $name);
             foreach ($jobs as $fn) {
-                $runner = new CronJob('Dispatcher', static::generateDispatcherJobName($fn), $fn, $name);
-                $runner->insert();
+                new CronJob('Dispatcher', static::generateDispatcherJobName($fn), $fn, $name);
             }
         }
     }

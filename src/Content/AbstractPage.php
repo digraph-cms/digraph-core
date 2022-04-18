@@ -296,7 +296,7 @@ abstract class AbstractPage implements ArrayAccess
         return $url;
     }
 
-    protected function prepareCronJobs(): bool
+    public function prepareCronJobs(): bool
     {
         foreach (array_keys(Config::get('cron.intervals')) as $interval) {
             $method = "onCron_$interval";
