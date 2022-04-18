@@ -326,12 +326,14 @@ abstract class AbstractPage implements ArrayAccess
 
     public function insert(string $parent_uuid = null)
     {
-        return Pages::insert($this, $parent_uuid) && $this->prepareCronJobs();
+        $this->prepareCronJobs();
+        return Pages::insert($this, $parent_uuid);
     }
 
     public function update()
     {
-        return Pages::update($this) && $this->prepareCronJobs();
+        $this->prepareCronJobs();
+        return Pages::update($this);
     }
 
     public function delete()
