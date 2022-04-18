@@ -230,11 +230,13 @@ class Pages
         DB::commit();
     }
 
-    public static function insert(AbstractPage $page)
+    public static function insert(AbstractPage $page, string $parent_uuid = null)
     {
-        // insert value
+        DB::beginTransaction();
+        // pre-insert events
         Dispatcher::dispatchEvent('onBeforePageInsert', [$page]);
         Dispatcher::dispatchEvent('onBeforePageInsert_' . $page->class(), [$page]);
+        // insert page
         DB::query()
             ->insertInto(
                 'page',
@@ -251,8 +253,12 @@ class Pages
                 ]
             )
             ->execute();
+        // insert link if specified
+        if ($parent_uuid) static::insertLink($parent_uuid, $page->uuid());
+        // post-insert events
         Dispatcher::dispatchEvent('onAfterPageInsert_' . $page->class(), [$page]);
         Dispatcher::dispatchEvent('onAfterPageInsert', [$page]);
+        DB::commit();
     }
 
     public static function delete(AbstractPage $page)

@@ -50,10 +50,7 @@ if ($form->ready()) {
         $page = new Page();
         $page->name('Mock page ' . $page->uuid());
         $page->richContent('body', new RichContent('# Mock page ' . $page->uuid()));
-        DB::beginTransaction();
-        Graph::insertLink($parent, $page->uuid());
-        $page->insert();
-        DB::commit();
+        $page->insert($parent);
         return 'Created ' . $page->url();
     });
     $bar = new DeferredProgressBar($job->group(), 'Creating pages');

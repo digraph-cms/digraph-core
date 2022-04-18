@@ -49,7 +49,6 @@ $form = (new FormWrapper('add-' . Context::arg('uuid')))
     ->addChild($name)
     ->addChild($content)
     ->addCallback(function () use ($name, $content) {
-        DB::beginTransaction();
         // insert page
         $page = new Page(
             [],
@@ -59,11 +58,9 @@ $form = (new FormWrapper('add-' . Context::arg('uuid')))
         );
         $page->name($name->value());
         $page->richContent('body', $content->value());
-        // create edge to parent and insert
-        Pages::insertLink(Context::page()->uuid(), $page->uuid());
-        $page->insert();
-        // commit and redirect
-        DB::commit();
+        // insert with parent link to current context page
+        $page->insert(Context::page()->uuid());
+        // redirect
         Notifications::flashConfirmation('Page created: ' . $page->url()->html());
         throw new RedirectException($page->url_edit());
     });

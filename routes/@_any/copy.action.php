@@ -88,12 +88,8 @@ $form->addCallback(function () use ($clones, $parent, $slug, $name) {
     if ($slug->value()) {
         $newPage->slugPattern($slug->value());
     }
-    // create link to parent
-    if ($parent->value()) {
-        Pages::insertLink($parent->value(), $newPage->uuid());
-    }
     // insert new page
-    $newPage->insert();
+    $newPage->insert($parent->value());
     // commit database updates
     DB::commit();
     // bounce to edit page for new page
