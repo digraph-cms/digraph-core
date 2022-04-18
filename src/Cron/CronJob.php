@@ -157,7 +157,7 @@ class CronJob
                 [
                     'parent' => $this->parent(),
                     '`name`' => $this->name(),
-                    'interval' => $this->interval(),
+                    '`interval`' => $this->interval(),
                     'run_next' => $this->runNext(),
                     'run_last' => $this->runLast(),
                     'error_time' => $this->errorTime(),
