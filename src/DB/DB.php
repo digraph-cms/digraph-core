@@ -5,6 +5,7 @@ namespace DigraphCMS\DB;
 use DigraphCMS\Config;
 use DigraphCMS\Digraph;
 use DigraphCMS\Events\Dispatcher;
+use DigraphCMS\Users\Permissions;
 use Envms\FluentPDO\Query;
 use PDO;
 use PDOException;
@@ -18,18 +19,19 @@ class DB
     protected static $phinxPaths = [];
     protected static $transactions = 0;
 
-    const NESTED_TRANSACTION_SUPPORT = ['mysql'];
+    const NESTED_TRANSACTION_SUPPORT = [];
 
     public static function onException_PDOException(PDOException $exception)
     {
         switch ($exception->getMessage()) {
             case 'SQLSTATE[HY000]: General error: 5 database is locked':
                 Digraph::buildErrorContent(503, 'Database is locked for writing or maintenance, please try again in a moment');
-                break;
+                return true;
             default:
-                Digraph::buildErrorContent(500, 'Unspecified database error');
+                if (Permissions::inGroup('admins')) Digraph::buildErrorContent(500, 'Database error: ' . $exception->getMessage());
+                else Digraph::buildErrorContent(500, 'Database error');
+                return true;
         }
-        return true;
     }
 
     public static function beginTransaction()
