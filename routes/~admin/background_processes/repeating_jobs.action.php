@@ -19,7 +19,7 @@ $recent = DB::query()->from('cron')
 
 $upcoming = DB::query()->from('cron')
     ->where('run_next >= ?', [time()])
-    ->whereOr('(run_next < ? AND run_last < ?)', [time(), time()])
+    ->whereOr('run_last IS NULL')
     ->order('run_next asc');
 
 $errors = DB::query()->from('cron')
