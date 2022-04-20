@@ -26,6 +26,7 @@ class Icon extends Tag
         'database' => ['string' => '&#xeeff;', 'type' => 'icofont'],
         'delete' => ['string' => 'delete'],
         'done-all' => ['string' => 'done_all'],
+        'edit' => ['string' => 'edit'],
         'heading' => ['string' => 'title'],
         'hide' => ['string' => 'hide_source'],
         'highlight' => ['string' => 'highlight_alt'],
