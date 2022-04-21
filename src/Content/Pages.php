@@ -4,10 +4,8 @@ namespace DigraphCMS\Content;
 
 use DateTime;
 use DigraphCMS\Config;
-use DigraphCMS\Cron\DeferredJob;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Events\Dispatcher;
-use DigraphCMS\RichMedia\RichMedia;
 use DigraphCMS\Session\Session;
 
 class Pages
@@ -247,9 +245,9 @@ class Pages
                     'slug_pattern' => $page->slugPattern(),
                     'class' => $page->class(),
                     'created' => time(),
-                    'created_by' => $page->createdByUUID() ?? Session::uuid(),
+                    'created_by' => Session::uuid(),
                     'updated' => time(),
-                    'updated_by' => $page->updatedByUUID() ?? Session::uuid(),
+                    'updated_by' => Session::uuid(),
                 ]
             )
             ->execute();
