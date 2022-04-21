@@ -2,7 +2,7 @@
 
 namespace DigraphCMS\UI;
 
-use DigraphCMS\Content\Page;
+use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Content\Pages;
 use DigraphCMS\Context;
 use DigraphCMS\HTML\Tag;
@@ -15,7 +15,7 @@ class TableOfContents extends Tag
     protected $perPage = 10;
     protected $sort = 'name ASC';
 
-    public function __construct(Page $page)
+    public function __construct(AbstractPage $page)
     {
         $this->page = $page;
     }
