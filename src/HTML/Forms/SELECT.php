@@ -13,6 +13,7 @@ class SELECT extends Tag implements InputInterface
     protected $requiredMessage;
     protected $value;
     protected $default;
+    protected $validators = [];
 
     /** @var FormWrapper|null */
     protected $form;
