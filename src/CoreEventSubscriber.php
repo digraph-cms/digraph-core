@@ -5,7 +5,6 @@ namespace DigraphCMS;
 use DigraphCMS\Content\Filestore;
 use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Content\Pages;
-use DigraphCMS\Content\Router;
 use DigraphCMS\Content\Slugs;
 use DigraphCMS\Cron\DeferredJob;
 use DigraphCMS\DB\DB;
