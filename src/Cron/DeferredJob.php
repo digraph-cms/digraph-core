@@ -36,18 +36,29 @@ class DeferredJob
         // try to get lock
         if (!Locking::lock('defex_' . $this->id())) return false;
         // only execute if ID exists, meaning this job is in the database
-        $row = ['run' => time()];
-        try {
-            $row['message'] = strval(call_user_func($this->job, $this));
-            $row['error'] = false;
-        } catch (\Throwable $th) {
-            $row['error'] = true;
-            $row['message'] = get_class($th) . ': ' . $th->getMessage();
-        }
-        // save results to db
         DB::query()
-            ->update('defex', $row, $this->id())
+            ->update('defex', ['run' => time()], $this->id())
             ->execute();
+        try {
+            DB::query()
+                ->update(
+                    'defex',
+                    [
+                        'message' => strval(call_user_func($this->job, $this))
+                    ],
+                    $this->id()
+                );
+        } catch (\Throwable $th) {
+            DB::query()
+                ->update(
+                    'defex',
+                    [
+                        'message' => get_class($th) . ': ' . $th->getMessage(),
+                        'error' => true
+                    ],
+                    $this->id()
+                );
+        }
         // release lock
         Locking::release('defex_' . $this->id());
         // return true
