@@ -10,7 +10,7 @@ final class DefaultHomePage extends AbstractMigration
     {
         $this->table('page')
             ->insert([
-                'uuid' => 'home',
+                'uuid' => 'p_home',
                 'name' => 'Home',
                 'class' => 'page',
                 'slug_pattern' => '/home',
@@ -35,7 +35,7 @@ final class DefaultHomePage extends AbstractMigration
         $this->table('page_slug')
             ->insert([
                 'url' => 'home',
-                'page_uuid' => 'home'
+                'page_uuid' => 'p_home'
             ])
             ->save();
     }
