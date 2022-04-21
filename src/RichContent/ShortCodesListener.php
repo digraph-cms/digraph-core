@@ -5,9 +5,11 @@ namespace DigraphCMS\RichContent;
 use DigraphCMS\Config;
 use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Content\Pages;
+use DigraphCMS\Context;
 use DigraphCMS\HTML\A;
 use DigraphCMS\HTML\Text;
 use DigraphCMS\RichMedia\RichMedia;
+use DigraphCMS\UI\TableOfContents;
 use DigraphCMS\URL\URL;
 use DigraphCMS\URL\WaybackMachine;
 use Thunder\Shortcode\Shortcode\ShortcodeInterface;
@@ -25,12 +27,20 @@ class ShortCodesListener
      */
     public static function onShortCode(ShortcodeInterface $s): ?string
     {
-        if ($class = Config::get('rich_media_types.'.$s->getName())) {
+        if ($class = Config::get('rich_media_types.' . $s->getName())) {
             if (($media = RichMedia::get($s->getBbCode())) instanceof $class) {
                 return $class::shortCode($s, $media);
             }
         }
         return null;
+    }
+
+    public static function onShortCode_toc(ShortcodeInterface $s): ?string
+    {
+        $page = Pages::get($s->getBbCode() ?? Context::pageUUID());
+        if (!$page) return null;
+        $toc = new TableOfContents($page);
+        return $toc->__toString();
     }
 
     /**
