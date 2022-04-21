@@ -15,6 +15,7 @@ Session::_init();
 final class Session
 {
     private static $auth;
+    private static $overrideUser;
 
     public static function _init()
     {
@@ -47,7 +48,7 @@ final class Session
                 if ($row) {
                     // valid authentication, set it
                     static::setAuth(new Authentication($row));
-                }else {
+                } else {
                     // otherwise clear auth cookie to avoid repetitive DB calls
                     static::clearAuthCookie();
                 }
@@ -55,13 +56,21 @@ final class Session
         }
     }
 
+    public static function overrideUser(string $userUUID = null)
+    {
+        static::$overrideUser = $userUUID;
+    }
+
+    public static function uuid(): string
+    {
+        return static::user() ?? 'guest';
+    }
+
     public static function user(): ?string
     {
-        if (static::$auth) {
-            return static::$auth->userUUID();
-        } else {
-            return null;
-        }
+        if (static::$overrideUser) return static::$overrideUser;
+        elseif (static::$auth) return static::$auth->userUUID();
+        else return null;
     }
 
     public static function authentication(): ?Authentication

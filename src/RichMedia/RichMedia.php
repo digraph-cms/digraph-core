@@ -98,7 +98,7 @@ class RichMedia
                 'name' => $media->name(),
                 'parent' => $media->parent(),
                 'updated' => time(),
-                'updated_by' => Session::user()
+                'updated_by' => Session::uuid()
             ])
             ->execute();
         Dispatcher::dispatchEvent('onAfterRichMediaUpdate_' . $media->class(), [$media]);
@@ -121,9 +121,9 @@ class RichMedia
                     'name' => $media->name(),
                     'parent' => $media->parent(),
                     'created' => time(),
-                    'created_by' => $media->createdByUUID() ?? Session::user(),
+                    'created_by' => $media->createdByUUID() ?? Session::uuid(),
                     'updated' => time(),
-                    'updated_by' => $media->updatedByUUID() ?? Session::user(),
+                    'updated_by' => $media->updatedByUUID() ?? Session::uuid(),
                 ]
             )
             ->execute();

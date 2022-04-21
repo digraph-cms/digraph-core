@@ -88,8 +88,7 @@ class TableOfContents extends Tag
 
     protected function generateItems(): array
     {
-        $children = Pages::children($this->page->uuid());
-        $children->order($this->sort);
+        $children = Pages::children($this->page->uuid(), $this->sort);
         $children->limit(($this->firstPage - $this->perPage) + ($this->page() * $this->perPage));
         $output = [];
         while ($page = $children->fetch()) $output[] = sprintf(

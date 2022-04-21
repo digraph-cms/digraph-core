@@ -88,7 +88,7 @@ users:
     cas: \DigraphCMS\Users\CASUserSource
 
 usermenu:
-  guest_signin: false
+  guest_signin: true
 
 # configuration for user sources, including preset options so that some providers
 # are ready to go just by providing their id and secret parameters

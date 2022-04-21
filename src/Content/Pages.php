@@ -4,10 +4,8 @@ namespace DigraphCMS\Content;
 
 use DateTime;
 use DigraphCMS\Config;
-use DigraphCMS\Cron\DeferredJob;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Events\Dispatcher;
-use DigraphCMS\RichMedia\RichMedia;
 use DigraphCMS\Session\Session;
 
 class Pages
@@ -222,7 +220,7 @@ class Pages
                 'slug_pattern' => $page->slugPattern(),
                 'class' => $page->class(),
                 'updated' => time(),
-                'updated_by' => Session::user()
+                'updated_by' => Session::uuid()
             ])
             ->execute();
         Dispatcher::dispatchEvent('onAfterPageUpdate_' . $page->class(), [$page]);
@@ -247,9 +245,9 @@ class Pages
                     'slug_pattern' => $page->slugPattern(),
                     'class' => $page->class(),
                     'created' => time(),
-                    'created_by' => $page->createdByUUID() ?? Session::user(),
+                    'created_by' => Session::uuid(),
                     'updated' => time(),
-                    'updated_by' => $page->updatedByUUID() ?? Session::user(),
+                    'updated_by' => Session::uuid(),
                 ]
             )
             ->execute();

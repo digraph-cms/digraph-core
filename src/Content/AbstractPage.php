@@ -12,6 +12,7 @@ use DigraphCMS\Digraph;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\RichContent\RichContent;
 use DigraphCMS\RichMedia\RichMedia;
+use DigraphCMS\Session\Session;
 use DigraphCMS\UI\Format;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Permissions;
@@ -45,10 +46,10 @@ abstract class AbstractPage implements ArrayAccess
         $this->uuid = @$metadata['uuid'] ?? Digraph::uuid();
         $this->name = @$metadata['name'] ?? 'Untitled';
         $this->created = @$metadata['created'] ?? new DateTime();
-        $this->created_by = @$metadata['created_by'];
+        $this->created_by = @$metadata['created_by'] ?? Session::uuid();
         $this->updated = @$metadata['updated'] ?? new DateTime();
         $this->updated_last = clone $this->updated;
-        $this->updated_by = @$metadata['updated_by'];
+        $this->updated_by = @$metadata['updated_by'] ?? Session::uuid();
         $this->rawSet(null, $data);
         $this->changed = false;
         $this->slugPattern = @$metadata['slug_pattern'] ?? static::DEFAULT_SLUG;
@@ -405,20 +406,20 @@ abstract class AbstractPage implements ArrayAccess
 
     public function createdBy(): User
     {
-        return $this->created_by ? Users::user($this->created_by) : Users::guest();
+        return Users::user($this->created_by);
     }
 
     public function updatedBy(): User
     {
-        return $this->updated_by ? Users::user($this->updated_by) : Users::guest();
+        return Users::user($this->updated_by);
     }
 
-    public function createdByUUID(): ?string
+    public function createdByUUID(): string
     {
         return $this->created_by;
     }
 
-    public function updatedByUUID(): ?string
+    public function updatedByUUID(): string
     {
         return $this->updated_by;
     }

@@ -12,7 +12,7 @@ Context::response()->private(true);
 
 echo new MessageTable(
     Messages::select()
-        ->where('sender = ?', [Session::user()])
+        ->where('sender = ?', [Session::uuid()])
         ->order('time desc'),
     true
 );
