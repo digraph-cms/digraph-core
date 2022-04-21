@@ -359,7 +359,7 @@ abstract class AbstractPage implements ArrayAccess
         $page = Pages::get($uuid);
         if (!$page) return "Page $uuid already deleted";
         // extensible recursive deletion
-        $class = $page::class;
+        $class = get_class($page);
         if (method_exists($class, 'onRecursiveDeleteAction')) {
             $class::onRecursiveDeleteAction($job, $page);
         }
