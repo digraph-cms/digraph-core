@@ -33,7 +33,7 @@ class Filestore
         return true;
     }
 
-    public static function upload(string $src, string $filename, string $media_uuid, array $meta)
+    public static function upload(string $src, string $filename, string $parent, array $meta): FilestoreFile
     {
         $hash = md5_file($src);
         $dest = static::path($hash);
@@ -44,7 +44,7 @@ class Filestore
             $hash,
             $filename,
             filesize($dest),
-            $media_uuid,
+            $parent,
             $meta,
             time(),
             Session::user()
@@ -65,7 +65,7 @@ class Filestore
                     'hash' => $file->hash(),
                     'filename' => $file->filename(),
                     'bytes' => filesize($file->src()),
-                    'rich_media_uuid' => $file->mediaUUID(),
+                    'parent' => $file->mediaUUID(),
                     'meta' => json_encode($file->meta()),
                     'created' => $file->created()->getTimestamp(),
                     'created_by' => $file->createdByUUID()
@@ -137,7 +137,7 @@ class Filestore
             $result['hash'],
             $result['filename'],
             $result['bytes'],
-            $result['rich_media_uuid'],
+            $result['parent'],
             $data,
             $result['created'],
             $result['created_by']

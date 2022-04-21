@@ -222,7 +222,7 @@ class Pages
                 'slug_pattern' => $page->slugPattern(),
                 'class' => $page->class(),
                 'updated' => time(),
-                'updated_by' => Session::user()
+                'updated_by' => Session::uuid()
             ])
             ->execute();
         Dispatcher::dispatchEvent('onAfterPageUpdate_' . $page->class(), [$page]);
@@ -247,9 +247,9 @@ class Pages
                     'slug_pattern' => $page->slugPattern(),
                     'class' => $page->class(),
                     'created' => time(),
-                    'created_by' => $page->createdByUUID() ?? Session::user(),
+                    'created_by' => $page->createdByUUID() ?? Session::uuid(),
                     'updated' => time(),
-                    'updated_by' => $page->updatedByUUID() ?? Session::user(),
+                    'updated_by' => $page->updatedByUUID() ?? Session::uuid(),
                 ]
             )
             ->execute();

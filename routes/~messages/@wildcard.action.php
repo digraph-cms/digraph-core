@@ -27,16 +27,16 @@ Context::fields()['page.name'] = 'Message';
 
 // if message is sensitive, only allow it to signed in users
 if ($message->sensitive()) {
-    if (Session::user() != $message->recipientUUID()) {
+    if (Session::uuid() != $message->recipientUUID()) {
         Permissions::requireMetaGroup('messages__admin');
     }
-    if ($message->senderUUID() && Session::user() != $message->senderUUID()) {
+    if ($message->senderUUID() && Session::uuid() != $message->senderUUID()) {
         Permissions::requireMetaGroup('messages__admin');
     }
 }
 
 // mark as read if this is the recipient
-if (!$message->read() && Session::user() == $message->recipientUUID()) {
+if (!$message->read() && Session::uuid() == $message->recipientUUID()) {
     $message->setRead(true);
     $message->update();
 }
