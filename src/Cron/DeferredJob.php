@@ -44,10 +44,11 @@ class DeferredJob
                 ->update(
                     'defex',
                     [
-                        'message' => strval(call_user_func($this->job, $this))
+                        'message' => strval(call_user_func($this->job, $this)),
+                        'error' => false
                     ],
                     $this->id()
-                );
+                )->execute();
         } catch (\Throwable $th) {
             DB::query()
                 ->update(
@@ -57,7 +58,7 @@ class DeferredJob
                         'error' => true
                     ],
                     $this->id()
-                );
+                )->execute();
         }
         // release lock
         Locking::release('defex_' . $this->id());

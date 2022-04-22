@@ -15,7 +15,7 @@ use DigraphCMS\URL\URL;
 
 $recent = DB::query()->from('defex')
     ->where('run is not null')
-    ->where('error = 0')
+    ->where('error <> 1')
     ->order('run desc, id desc');
 
 $upcoming = DB::query()->from('defex')

@@ -11,7 +11,7 @@ class TableOfContents extends Tag
 {
     protected $tag = 'ul';
     protected $page;
-    protected $firstPage = 100;
+    protected $firstPage = 20;
     protected $perPage = 10;
     protected $sort = 'name ASC';
 
@@ -19,6 +19,7 @@ class TableOfContents extends Tag
     {
         $this->page = $page;
         $this->parents = $parents;
+        $this->parents[] = $page->uuid();
     }
 
     public function classes(): array
@@ -90,13 +91,12 @@ class TableOfContents extends Tag
     protected function generateItems(): array
     {
         $parents = $this->parents;
-        $parents[] = $this->page->uuid();
         $children = Pages::children($this->page->uuid(), $this->sort);
         $children->limit(($this->firstPage - $this->perPage) + ($this->page() * $this->perPage));
         $output = [];
         while ($page = $children->fetch()) {
             // skip any pages that are in the parents list
-            if (in_array($page->uuid(), [$parents])) continue;
+            if (in_array($page->uuid(), $parents)) continue;
             // add list item
             $output[] = sprintf(
                 '<li><a href="%s">%s</a>%s</li>',
