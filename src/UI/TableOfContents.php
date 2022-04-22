@@ -90,7 +90,7 @@ class TableOfContents extends Tag
     protected function generateItems(): array
     {
         $parents = $this->parents;
-        $parents[] = $this->uuid();
+        $parents[] = $this->page->uuid();
         $children = Pages::children($this->page->uuid(), $this->sort);
         $children->limit(($this->firstPage - $this->perPage) + ($this->page() * $this->perPage));
         $output = [];
