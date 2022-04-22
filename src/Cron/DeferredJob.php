@@ -6,6 +6,7 @@ use DateTime;
 use DigraphCMS\Cache\Locking;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Digraph;
+use DigraphCMS\Session\Session;
 
 class DeferredJob
 {
@@ -35,6 +36,8 @@ class DeferredJob
         if ($this->id() === null) return false;
         // try to get lock
         if (!Locking::lock('defex_' . $this->id())) return false;
+        // override user
+        Session::overrideUser('system');
         // only execute if ID exists, meaning this job is in the database
         DB::query()
             ->update('defex', ['run' => time()], $this->id())
@@ -60,6 +63,8 @@ class DeferredJob
                     $this->id()
                 )->execute();
         }
+        // remove override user
+        Session::overrideUser(null);
         // release lock
         Locking::release('defex_' . $this->id());
         // return true

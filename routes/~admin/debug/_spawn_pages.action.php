@@ -32,6 +32,7 @@ $depth = (new Field('Maximum nesting depth'))
 $depth->input()->setAttribute('type', 'number');
 $form->addChild($depth);
 
+echo '<div id="spawn-pages-interface" class="navigation-frame navigation-frame--stateless" data-target="_top">';
 if ($form->ready()) {
     $parent = $parent->value();
     $count = $count->value();
@@ -58,3 +59,4 @@ if ($form->ready()) {
 } else {
     echo $form;
 }
+echo '</div>';

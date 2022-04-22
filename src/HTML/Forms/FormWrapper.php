@@ -158,6 +158,7 @@ class FormWrapper extends Tag
             }
         }
         // set up actual form tag
+        foreach ($this->attributes() as $k => $v) $this->form()->setAttribute($k, $v);
         $this->form()
             ->setAttribute('method', $this->method())
             ->setAttribute('action', $this->action())

@@ -9,8 +9,13 @@ use DigraphCMS\Session\Cookies;
 $page = Context::page();
 if (Context::arg('csrf') != Cookies::csrfToken('delete_' . Context::pageUUID())) throw new HttpError(400);
 
+echo '<div id="recursive-delete-interface" class="navigation-frame navigation-frame--stateless" data-target="_frame">';
+
 $job = $page->recursiveDelete();
 
 $bar = new DeferredProgressBar($job->group());
 $bar->setDisplayAfter('Successfully deleted page and everything under it');
+
 echo $bar;
+
+echo '</div>';

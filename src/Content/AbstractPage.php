@@ -7,6 +7,7 @@ use DateTime;
 use DigraphCMS\Config;
 use DigraphCMS\Cron\CronJob;
 use DigraphCMS\Cron\DeferredJob;
+use DigraphCMS\Cron\RecursivePageJob;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Digraph;
 use DigraphCMS\Events\Dispatcher;
@@ -344,58 +345,43 @@ abstract class AbstractPage implements ArrayAccess
 
     public function recursiveDelete(string $jobGroup = null): DeferredJob
     {
-        $uuid = $this->uuid();
-        return new DeferredJob(
-            function (DeferredJob $job) use ($uuid) {
-                return static::recursiveDeleteAction($job, $uuid);
+        return new RecursivePageJob(
+            $this->uuid(),
+            function (DeferredJob $job, AbstractPage $page) {
+                $uuid = $page->uuid();
+                // extensible recursive deletion
+                $class = get_class($page);
+                if (method_exists($class, 'onRecursiveDelete')) {
+                    $class::onRecursiveDeleteAction($job, $page);
+                }
+                // queue deletion of all associated rich media
+                $media = RichMedia::select($uuid);
+                while ($m = $media->fetch()) {
+                    $mUUID = $m->uuid();
+                    $job->spawn(
+                        function () use ($mUUID) {
+                            $media = RichMedia::get($mUUID);
+                            $media->delete();
+                            return "Deleted rich media " . $media->name();
+                        }
+                    );
+                }
+                // queue deletion of this page last
+                $job->spawn(
+                    function () use ($uuid) {
+                        // get page
+                        $page = Pages::get($uuid);
+                        if (!$page) return "Page $uuid already deleted";
+                        // delete
+                        $page->delete();
+                        return "Deleted page " . $page->name() . " ($uuid)";
+                    }
+                );
+                return "Queued page for deletion " . $page->name() . " ($uuid)";
             },
+            true,
             $jobGroup
         );
-    }
-
-    public static function recursiveDeleteAction(DeferredJob $job, string $uuid)
-    {
-        // get page
-        $page = Pages::get($uuid);
-        if (!$page) return "Page $uuid already deleted";
-        // extensible recursive deletion
-        $class = get_class($page);
-        if (method_exists($class, 'onRecursiveDeleteAction')) {
-            $class::onRecursiveDeleteAction($job, $page);
-        }
-        // queue all children for recursive deletion
-        $children = Graph::childIDs($uuid);
-        while ($child = $children->fetch()) {
-            $job->spawn(
-                function (DeferredJob $job) use ($child) {
-                    return static::recursiveDeleteAction($job, $child['end_page']);
-                }
-            );
-        }
-        // queue deletion of all associated rich media
-        $media = RichMedia::select($uuid);
-        while ($m = $media->fetch()) {
-            $mUUID = $m->uuid();
-            $job->spawn(
-                function () use ($mUUID) {
-                    $media = RichMedia::get($mUUID);
-                    $media->delete();
-                    return "Deleted rich media " . $media->name();
-                }
-            );
-        }
-        // queue deletion of this page last
-        $job->spawn(
-            function () use ($uuid) {
-                // get page
-                $page = Pages::get($uuid);
-                if (!$page) return "Page $uuid already deleted";
-                // delete
-                $page->delete();
-                return "Deleted page " . $page->name() . " ($uuid)";
-            }
-        );
-        return "Queued page for deletion " . $page->name() . " ($uuid)";
     }
 
     public function uuid(): string

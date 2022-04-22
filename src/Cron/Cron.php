@@ -6,7 +6,6 @@ use DigraphCMS\Cache\Cache;
 use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Events\Dispatcher;
-use DigraphCMS\Session\Session;
 use DigraphCMS\URL\URL;
 
 class Cron
@@ -48,8 +47,6 @@ class Cron
 
     public static function runJobs(int $endByTime = null): int
     {
-        // set override user to system
-        Session::overrideUser('system');
         // get jobs from Dispatcher, and convert them into DB jobs
         static::buildDispatcherJobs();
         // count number of jobs run
@@ -65,8 +62,6 @@ class Cron
         }
         // run Deferred jobs afterwards if it lost the coin toss
         if (!$deferredFirst) $count += Deferred::runJobs(null, $endByTime);
-        // unset override user
-        Session::overrideUser(null);
         // return number of jobs run
         return $count;
     }
