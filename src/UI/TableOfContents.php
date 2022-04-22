@@ -15,9 +15,10 @@ class TableOfContents extends Tag
     protected $perPage = 10;
     protected $sort = 'name ASC';
 
-    public function __construct(AbstractPage $page)
+    public function __construct(AbstractPage $page, $parents = [])
     {
         $this->page = $page;
+        $this->parents = $parents;
     }
 
     public function classes(): array
@@ -88,15 +89,22 @@ class TableOfContents extends Tag
 
     protected function generateItems(): array
     {
+        $parents = $this->parents;
+        $parents[] = $this->uuid();
         $children = Pages::children($this->page->uuid(), $this->sort);
         $children->limit(($this->firstPage - $this->perPage) + ($this->page() * $this->perPage));
         $output = [];
-        while ($page = $children->fetch()) $output[] = sprintf(
-            '<li><a href="%s">%s</a>%s</li>',
-            $page->url(),
-            $page->name(),
-            (Pages::children($page->uuid())->count() ? trim(new TableOfContents($page)) : '')
-        );
+        while ($page = $children->fetch()) {
+            // skip any pages that are in the parents list
+            if (in_array($page->uuid(), [$parents])) continue;
+            // add list item
+            $output[] = sprintf(
+                '<li><a href="%s">%s</a>%s</li>',
+                $page->url(),
+                $page->name(),
+                (Pages::children($page->uuid())->count() ? trim(new TableOfContents($page, $parents)) : '')
+            );
+        }
         return $output;
     }
 }
