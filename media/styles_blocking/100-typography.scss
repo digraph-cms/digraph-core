@@ -222,14 +222,26 @@ blockquote {
     }
 }
 
+del,
+ins,
+mark {
+    @include uncolored-links;
+}
+
 del {
     background: var(--cue-danger);
     color: var(--cue-danger-inv);
     padding: $border;
 }
 
+ins {
+    background: var(--cue-safe);
+    color: var(--cue-safe-inv);
+    padding: $border;
+    text-decoration: underline;
+}
+
 mark {
-    @include uncolored-links;
     background: var(--cue-information);
     color: var(--cue-information-inv);
     padding: $border;
