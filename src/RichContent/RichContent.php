@@ -23,7 +23,7 @@ class RichContent
         if (is_array($value)) {
             $this->source = @$value['source'] ?? '';
             $this->created = @$value['created'] ?? time();
-            $this->created_by = @$value['created_by'] ?? Session::user() ?? 'guest';
+            $this->created_by = @$value['created_by'] ?? Session::uuid();
         } else {
             $this->source = $value ?? '';
             $this->created = time();

@@ -52,8 +52,7 @@ class Cron
         // count number of jobs run
         $count = 0;
         // flip a coin to see if Deferred goes first
-        $deferredFirst = random_int(0, 1);
-        if ($deferredFirst) $count += Deferred::runJobs(null, $endByTime);
+        if ($deferredFirst = random_int(0, 1)) $count += Deferred::runJobs(null, $endByTime);
         // proceed with jobs one at a time
         while ((!$endByTime || time() < $endByTime) && $job = static::getNextJob()) {
             // don't make more than one attempt per job

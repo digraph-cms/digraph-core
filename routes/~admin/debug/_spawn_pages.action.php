@@ -9,7 +9,6 @@ use DigraphCMS\Content\Page;
 use DigraphCMS\Cron\Deferred;
 use DigraphCMS\Cron\DeferredJob;
 use DigraphCMS\Cron\DeferredProgressBar;
-use DigraphCMS\DB\DB;
 use DigraphCMS\HTML\Forms\Field;
 use DigraphCMS\HTML\Forms\Fields\Autocomplete\PageField;
 use DigraphCMS\HTML\Forms\FormWrapper;
@@ -33,6 +32,7 @@ $depth = (new Field('Maximum nesting depth'))
 $depth->input()->setAttribute('type', 'number');
 $form->addChild($depth);
 
+echo '<div id="spawn-pages-interface" class="navigation-frame navigation-frame--stateless" data-target="_top">';
 if ($form->ready()) {
     $parent = $parent->value();
     $count = $count->value();
@@ -49,7 +49,7 @@ if ($form->ready()) {
         }
         $page = new Page();
         $page->name('Mock page ' . $page->uuid());
-        $page->richContent('body', new RichContent('# Mock page ' . $page->uuid()));
+        $page->richContent('body', new RichContent('# Mock page ' . $page->uuid() . PHP_EOL . PHP_EOL . '[toc/]'));
         $page->insert($parent);
         return 'Created ' . $page->url();
     });
@@ -59,3 +59,4 @@ if ($form->ready()) {
 } else {
     echo $form;
 }
+echo '</div>';

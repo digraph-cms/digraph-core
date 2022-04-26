@@ -6,6 +6,7 @@ use DateTime;
 use DigraphCMS\Cache\Locking;
 use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
+use DigraphCMS\Session\Session;
 
 class CronJob
 {
@@ -49,6 +50,8 @@ class CronJob
         if ($this->id() === null) return false;
         // try to get lock
         if (!Locking::lock('cron_' . $this->id())) return false;
+        // override user
+        Session::overrideUser('system');
         // only execute if ID exists, meaning this job is in the database
         $this->run_last = time();
         $this->computeNextRun();
@@ -68,6 +71,8 @@ class CronJob
         DB::query()
             ->update('cron', $row, $this->id())
             ->execute();
+        // remove override on user
+        Session::overrideUser(null);
         // release lock
         Locking::release('cron_' . $this->id());
         // return true

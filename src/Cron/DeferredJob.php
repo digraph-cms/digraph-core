@@ -6,6 +6,7 @@ use DateTime;
 use DigraphCMS\Cache\Locking;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Digraph;
+use DigraphCMS\Session\Session;
 
 class DeferredJob
 {
@@ -35,19 +36,35 @@ class DeferredJob
         if ($this->id() === null) return false;
         // try to get lock
         if (!Locking::lock('defex_' . $this->id())) return false;
+        // override user
+        Session::overrideUser('system');
         // only execute if ID exists, meaning this job is in the database
-        $row = ['run' => time()];
-        try {
-            $row['message'] = strval(call_user_func($this->job, $this));
-            $row['error'] = false;
-        } catch (\Throwable $th) {
-            $row['error'] = true;
-            $row['message'] = get_class($th) . ': ' . $th->getMessage();
-        }
-        // save results to db
         DB::query()
-            ->update('defex', $row, $this->id())
+            ->update('defex', ['run' => time()], $this->id())
             ->execute();
+        try {
+            DB::query()
+                ->update(
+                    'defex',
+                    [
+                        'message' => strval(call_user_func($this->job, $this)),
+                        'error' => false
+                    ],
+                    $this->id()
+                )->execute();
+        } catch (\Throwable $th) {
+            DB::query()
+                ->update(
+                    'defex',
+                    [
+                        'message' => get_class($th) . ': ' . $th->getMessage(),
+                        'error' => true
+                    ],
+                    $this->id()
+                )->execute();
+        }
+        // remove override user
+        Session::overrideUser(null);
         // release lock
         Locking::release('defex_' . $this->id());
         // return true

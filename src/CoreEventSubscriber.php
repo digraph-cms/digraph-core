@@ -5,7 +5,6 @@ namespace DigraphCMS;
 use DigraphCMS\Content\Filestore;
 use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Content\Pages;
-use DigraphCMS\Content\Router;
 use DigraphCMS\Content\Slugs;
 use DigraphCMS\Cron\DeferredJob;
 use DigraphCMS\DB\DB;
@@ -39,26 +38,6 @@ class CoreEventSubscriber
                 ->execute();
             return "Cleaned up $count old deferred execution jobs";
         });
-    }
-
-    /**
-     * Add user action menu links to user profiles
-     *
-     * @param ActionMenu $menu
-     * @return void
-     */
-    public static function onActionMenu_users(ActionMenu $menu)
-    {
-        $uuid = Context::url()->action();
-        if (Users::get($uuid)) {
-            $actions = Router::staticActions('user');
-            foreach ($actions as $url) {
-                if ($url->route() == 'user') {
-                    $url->arg('user', $uuid);
-                }
-                $menu->addURL($url, $url->name(true));
-            }
-        }
     }
 
     /**
@@ -124,7 +103,7 @@ class CoreEventSubscriber
     public static function onAfterRichMediaDelete(AbstractRichMedia $media)
     {
         $files = Filestore::select()->where(
-            'rich_media_uuid = ?',
+            'parent = ?',
             [$media->uuid()]
         );
         foreach ($files as $file) {
@@ -404,18 +383,6 @@ class CoreEventSubscriber
     public static function onStaticUrlPermissions_groups(URL $url, User $user): ?bool
     {
         return Permissions::inMetaGroup('users__edit');
-    }
-
-    /**
-     * Limits access to ~users route to user viewers
-     *
-     * @param URL $url
-     * @param User $user
-     * @return boolean|null
-     */
-    public static function onStaticUrlPermissions_users(URL $url, User $user): ?bool
-    {
-        return Permissions::inMetaGroup('users__view');
     }
 
     /**

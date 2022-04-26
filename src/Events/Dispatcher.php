@@ -9,33 +9,6 @@ class Dispatcher
     protected static $listeners = [];
     protected static $locations = [];
     protected static $staticIDs = [];
-    public static $closeResponseBeforeShutdown = true;
-
-    public static function __shutdown()
-    {
-        // dispatch onBeforeShutdown event for anything that needs the session
-        self::dispatchEvent('onBeforeShutdown');
-        // if close before shutdown is false, don't do anything to close connection
-        if (!self::$closeResponseBeforeShutdown) {
-            self::dispatchEvent('onShutdown');
-            return;
-        }
-        // try to close connection
-        if (is_callable('fastcgi_finish_request')) {
-            // preferred method using session_write_close and fastcgi_finish_request
-            session_write_close();
-            fastcgi_finish_request();
-            self::dispatchEvent('onShutdown');
-        } else {
-            // alternative hacky method, doesn't work as well
-            ignore_user_abort(true);
-            flush();
-            session_write_close();
-            ob_start();
-            self::dispatchEvent('onShutdown');
-            ob_end_clean();
-        }
-    }
 
     /**
      * Remove all listeners/subscribers
@@ -176,6 +149,3 @@ class Dispatcher
 
 // register core event subscriber
 Dispatcher::addSubscriber(CoreEventSubscriber::class);
-
-// register shutdown function so events can hook into it
-register_shutdown_function(Dispatcher::class . '::__shutdown');

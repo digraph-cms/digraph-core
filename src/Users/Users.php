@@ -69,11 +69,9 @@ class Users
         $query = DB::query()
             ->from('user_group')
             ->where('uuid = ?', [$uuid]);
-        if ($group = $query->fetch()) {
-            return new Group($group['uuid'], $group['name']);
-        } else {
-            return null;
-        }
+        if ($group = $query->fetch()) return new Group($group['uuid'], $group['name']);
+        elseif ($uuid == 'admins') return new Group('admins', 'Administrators');
+        else return null;
     }
 
     /**
@@ -214,12 +212,21 @@ class Users
         return $guest;
     }
 
+    public static function system(): NullUser
+    {
+        static $guest;
+        $guest = $guest ?? new NullUser([], [
+            'uuid' => 'system',
+            'name' => "System"
+        ]);
+        return $guest;
+    }
+
     public static function null($uuid): NullUser
     {
-        if ($uuid == 'guest') {
-            return static::guest();
-        }
-        if (!isset(static::$null[$uuid])) {
+        if ($uuid == 'guest') return static::guest();
+        elseif ($uuid == 'system') return static::system();
+        elseif (!isset(static::$null[$uuid])) {
             static::$null[$uuid] = new NullUser([], [
                 'uuid' => $uuid,
                 'name' => Users::randomName($uuid)
