@@ -94,10 +94,12 @@ class Slugs
         $slug = preg_replace_callback(
             '/\[([a-z\-]+?)\]/',
             function (array $m) use ($page) {
-                return
+                $value =
                     Dispatcher::firstValue('onSlugVariable', [$page, $m[1]]) ??
                     Dispatcher::firstValue('onSlugVariable_' . $m[1], [$page]) ??
                     $page->slugVariable($m[1]);
+                $value = preg_replace('@[^a-z0-9\-_\/]+@i', '_', $value);
+                return $value;
             },
             $pattern
         );
@@ -157,11 +159,6 @@ class Slugs
 
     protected static function insert(string $page_uuid, string $slug)
     {
-        // $check = DB::query()->from('page_slug')
-        //     ->where('page_uuid = ? AND url = ?', [$page_uuid, $slug]);
-        // if ($check->count()) {
-        //     return;
-        // }
         if (!static::validate($slug)) {
             throw new \Exception("Invalid slug");
         }
