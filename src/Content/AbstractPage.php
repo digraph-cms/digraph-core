@@ -352,7 +352,7 @@ abstract class AbstractPage implements ArrayAccess
                 // extensible recursive deletion
                 $class = get_class($page);
                 if (method_exists($class, 'onRecursiveDelete')) {
-                    $class::onRecursiveDeleteAction($job, $page);
+                    $class::onRecursiveDelete($job, $page);
                 }
                 // queue deletion of all associated rich media
                 $media = RichMedia::select($uuid);
