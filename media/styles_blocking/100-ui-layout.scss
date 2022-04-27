@@ -201,6 +201,9 @@ span.notification {
 }
 
 @media print {
+    .menubar--actionmenu,
+    .menubar--usermenu,
+    #main-nav,
     #footer {
         display: none;
     }
