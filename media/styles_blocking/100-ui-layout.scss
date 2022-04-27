@@ -205,6 +205,6 @@ span.notification {
     .menubar--usermenu,
     #main-nav,
     #footer {
-        display: none;
+        display: none !important;
     }
 }
