@@ -11,10 +11,12 @@
 
     &.card--light {
         background: var(--background-light);
+        color: var(--color);
     }
 
     &.card--dark {
         background: var(--background-dark);
+        color: var(--color);
     }
 
     &.card--neutral {
