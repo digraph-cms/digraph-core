@@ -10,7 +10,11 @@
     box-shadow: var(--shadow);
 
     &.card--light {
-        background: var(--theme-background-light);
+        background: var(--background-light);
+    }
+
+    &.card--dark {
+        background: var(--background-dark);
     }
 
     &.card--neutral {
