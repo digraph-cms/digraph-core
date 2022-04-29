@@ -85,5 +85,5 @@ $fn = function () use ($tabs) {
 
 $tabs->addTab('parents', 'Parents', $fn);
 $tabs->addTab('children', 'Children', $fn);
-$tabs->defaultTab('children');
+$tabs->defaultTab('parents');
 echo $tabs;
