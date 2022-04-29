@@ -150,7 +150,6 @@ if (Context::arg('uuid') && RichMedia::select(Context::arg('uuid'))->count()) {
 
 // media adding tab
 $tabs->addTab('add', 'Add media', function () use ($acAdder) {
-    $acAdder->addClass('navigation-frame__autofocus');
     $table = new ArrayTable(
         Config::get('rich_media_types'),
         function ($name) {
