@@ -14,7 +14,7 @@ class DeferredJob
 
     public function __construct(callable $job = null, string $group = null)
     {
-        $this->group = $this->group ?? $group ?? Digraph::uuid() . '_' . time();
+        $this->group = $this->group ?? $group ?? static::uuid();
         $this->job = $this->job !== null
             ? unserialize($this->job)
             : $job ?? function () {
@@ -29,6 +29,11 @@ class DeferredJob
                 'job' => $this->serializedJob()
             ]
         )->execute();
+    }
+
+    protected static function uuid(): string
+    {
+        return Digraph::uuid() . '_' . time();
     }
 
     public function execute(): bool
