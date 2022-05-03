@@ -2,6 +2,7 @@
 
 namespace DigraphCMS\UI;
 
+use Caxy\HtmlDiff\HtmlDiff;
 use DateTime;
 use DateTimeZone;
 use DigraphCMS\Config;
@@ -20,6 +21,11 @@ class Format
         static::$dateFormat_thisYear = Config::get('theme.format.date_thisyear') ?? 'F j';
         static::$datetimeFormat_thisYear = Config::get('theme.format.datetime_thisyear') ?? 'F j, g:ia';
         static::$datetimeFormat_today = Config::get('theme.format.datetime_today') ?? 'g:ia';
+    }
+
+    public static function htmlDiff(string $a, string $b): string
+    {
+        return (new HtmlDiff($a, $b))->build();
     }
 
     public static function base64obfuscate(string $string, string $message = 'javascript required to view')
