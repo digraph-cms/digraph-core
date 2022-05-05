@@ -101,15 +101,11 @@ window.addEventListener('popstate', (e) => {
 Digraph.state = {
     // get requested URL and updated browser history so that forward/back work
     getAndPush: (url, frame) => {
-        Digraph.state.get(url, frame);
-        history.pushState({ url: url, frame: frame.getAttribute('id') },
-            document.getElementsByTagName('title')[0].innerHTML,
-            url
-        );
+        Digraph.state.get(url, frame, true);
     },
     // only get the requested URL and replace frame contents
-    get: (url, frame) => {
-        Digraph.state.addXHRListeners(frame);
+    get: (url, frame, pushState = false) => {
+        Digraph.state.addXHRListeners(frame, pushState);
         frame.stateUpdateRequest.open('GET', url);
         frame.stateUpdateRequest.setRequestHeader('X-For-Navigation-Frame', 'y');
         frame.stateUpdateRequest.send();
@@ -121,7 +117,7 @@ Digraph.state = {
         frame.stateUpdateRequest.setRequestHeader('X-For-Navigation-Frame', 'y');
         frame.stateUpdateRequest.send(data);
     },
-    addXHRListeners: (frame) => {
+    addXHRListeners: (frame, pushState = false) => {
         frame.classList.add('loading');
         if (frame.stateUpdateRequest) {
             frame.stateUpdateRequest.abort();
@@ -186,6 +182,13 @@ Digraph.state = {
                 // focus autofocus element
                 var af = frame.getElementsByClassName('navigation-frame__autofocus')[0];
                 if (af) af.focus();
+                // if requested, push state on completion
+                if (pushState) {
+                    history.pushState({ url: frame.stateUpdateRequest.responseURL, frame: frame.getAttribute('id') },
+                        document.getElementsByTagName('title')[0].innerHTML,
+                        frame.stateUpdateRequest.responseURL
+                    );
+                }
             } else {
                 if (document.getElementById('notifications')) {
                     var error = document.createElement('div');
