@@ -8,6 +8,8 @@
     font-family: $font-ui;
     margin: $grid 0;
     box-shadow: var(--shadow);
+    width: fit-content;
+    max-width: 100%;
 
     &.card--light {
         background: var(--background-light);

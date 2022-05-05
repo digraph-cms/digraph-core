@@ -20,6 +20,7 @@ figure {
     flex-direction: column;
     margin: $grid 0;
     align-items: center;
+    width: fit-content;
     max-width: 100%;
 
     >picture {
