@@ -3,6 +3,7 @@
 namespace DigraphCMS\HTML\Forms;
 
 use DateTime;
+use DigraphCMS\UI\Theme;
 
 class DateInput extends INPUT
 {
@@ -21,10 +22,10 @@ class DateInput extends INPUT
     {
         if ($value = parent::value($useDefault)) {
             if (is_string($value)) {
-                $value = DateTime::createFromFormat('Y-m-d', $value);
-                $value->setTime(0,0,0,0);
+                $value = DateTime::createFromFormat('Y-m-d', $value, Theme::timezone()->getName());
+                $value->setTime(0, 0, 0, 0);
                 return $value;
-            }else {
+            } else {
                 return $value;
             }
         }

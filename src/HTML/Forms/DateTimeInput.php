@@ -33,7 +33,7 @@ class DateTimeInput extends INPUT
     {
         if ($value = parent::value($useDefault)) {
             if (is_string($value)) {
-                return DateTime::createFromFormat('Y-m-d\TH:i:s', Theme::timezone());
+                return DateTime::createFromFormat('Y-m-d\TH:i:s', Theme::timezone()->getName());
             } else {
                 return $value;
             }
