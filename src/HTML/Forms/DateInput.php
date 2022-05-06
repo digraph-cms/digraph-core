@@ -22,7 +22,7 @@ class DateInput extends INPUT
     {
         if ($value = parent::value($useDefault)) {
             if (is_string($value)) {
-                $value = DateTime::createFromFormat('Y-m-d', $value, Theme::timezone()->getName());
+                $value = DateTime::createFromFormat('Y-m-d', $value, Theme::timezone());
                 $value->setTime(0, 0, 0, 0);
                 return $value;
             } else {
