@@ -16,6 +16,7 @@ use DigraphCMS\RichContent\RichContent;
 use DigraphCMS\RichMedia\RichMedia;
 use DigraphCMS\Session\Session;
 use DigraphCMS\UI\Format;
+use DigraphCMS\UI\Theme;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\User;
@@ -121,7 +122,7 @@ abstract class AbstractPage implements ArrayAccess
         return array_filter(
             array_keys(Config::get('page_types')),
             function (string $type) {
-                return true;
+                return Router::pageRouteExists($this, '_add_' . $type);
             }
         );
     }
