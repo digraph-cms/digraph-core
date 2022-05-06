@@ -15,7 +15,7 @@ class Format
 
     public static function _init()
     {
-        static::$timezone = new DateTimeZone(Config::get('theme.timezone') ?? 'UTC');
+        static::$timezone = Theme::timezone();
         static::$dateFormat = Config::get('theme.format.date') ?? 'F j, Y';
         static::$datetimeFormat = Config::get('theme.format.datetime') ?? 'F j, Y, g:ia';
         static::$dateFormat_thisYear = Config::get('theme.format.date_thisyear') ?? 'F j';
