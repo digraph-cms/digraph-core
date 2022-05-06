@@ -17,7 +17,7 @@ class DateTimeInput extends INPUT
                 'type' => 'datetime-local',
                 'step' => $this->step,
                 'value' => $this->value(true)
-                    ? $this->value(true)->format('Y-m-d\TH:i:s')
+                    ? $this->value(true)->format('Y-m-d\TH:i')
                     : null
             ]
         );
@@ -33,7 +33,7 @@ class DateTimeInput extends INPUT
     {
         if ($value = parent::value($useDefault)) {
             if (is_string($value)) {
-                return DateTime::createFromFormat('Y-m-d\TH:i:s', $value, Theme::timezone());
+                return DateTime::createFromFormat('Y-m-d\TH:i', $value, Theme::timezone());
             } else {
                 return $value;
             }
