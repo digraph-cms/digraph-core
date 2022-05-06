@@ -21,7 +21,9 @@ class DateInput extends INPUT
     {
         if ($value = parent::value($useDefault)) {
             if (is_string($value)) {
-                return DateTime::createFromFormat('Y-m-d', $value);
+                $value = DateTime::createFromFormat('Y-m-d', $value);
+                $value->setTime(0,0,0,0);
+                return $value;
             }else {
                 return $value;
             }
