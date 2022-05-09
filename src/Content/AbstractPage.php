@@ -4,6 +4,7 @@ namespace DigraphCMS\Content;
 
 use ArrayAccess;
 use DateTime;
+use DateTimeZone;
 use DigraphCMS\Config;
 use DigraphCMS\Cron\CronJob;
 use DigraphCMS\Cron\DeferredJob;
@@ -73,14 +74,14 @@ abstract class AbstractPage implements ArrayAccess
     protected function _datetime(string $key): ?DateTime
     {
         if ($this[$key]) {
-            return DateTime::createFromFormat('c', $this[$key], Theme::timezone());
+            return DateTime::createFromFormat('U', $this[$key], Theme::timezone());
         }
         return null;
     }
 
     protected function _setDatetime(string $key, DateTime $date)
     {
-        $this[$key] = $date->format('c');
+        $this[$key] = $date->getTimestamp();
     }
 
     public function metadata(): array
