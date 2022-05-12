@@ -3,7 +3,7 @@
     font-family: var(--font-ui);
     max-width: 100%;
 
-    > * {
+    >* {
         &:last-child {
             margin-bottom: 0;
         }
@@ -81,6 +81,10 @@ input[type="radio"] {
     width: auto;
     font-size: 1rem;
 
+    +label {
+        margin-left: $grid/2;
+    }
+
     &:before {
         @include material-icon;
         display: inline-block;
@@ -148,14 +152,15 @@ fieldset {
         color: var(--theme-neutral-darker);
     }
 
-    > legend + * {
+    >legend+* {
         margin-top: -$grid/2;
     }
 
-    > * {
+    >* {
         &:first-child {
             margin-top: 0;
         }
+
         &:last-child {
             margin-bottom: 0;
         }
@@ -187,6 +192,7 @@ fieldset {
 }
 
 .form-field {
+
     .checkbox-list,
     .radio-list {
         margin: $grid/2 0;
@@ -205,7 +211,7 @@ fieldset {
 .radio-list {
     margin: $grid 0;
 
-    > .form-field {
+    >.form-field {
         margin: $grid/2 0;
 
         &:last-child {
@@ -220,7 +226,7 @@ fieldset {
 
 .checkbox-list-field,
 .radio-list-field {
-    > label {
+    >label {
         font-size: smaller;
     }
 }
