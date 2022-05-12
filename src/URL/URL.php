@@ -261,6 +261,24 @@ class URL
         return 'index';
     }
 
+    public function actionPrefix(): ?string
+    {
+        $action = $this->action();
+        if ($pos = strpos($action, '_')) {
+            return substr($action, 0, $pos);
+        }
+        return null;
+    }
+
+    public function actionSuffix(): ?string
+    {
+        $action = $this->action();
+        if ($pos = strpos($action, '_')) {
+            return substr($action, $pos + 1);
+        }
+        return null;
+    }
+
     public function pathString(): string
     {
         // strip trailing index.html

@@ -132,15 +132,27 @@ class Router
         // try specific routes first
         foreach ($page->routeClasses() as $c) {
             $output = self::tryRoute("@$c/$action");
-            if ($output !== null) {
+            if (trim($output ?? '')) {
                 Context::end();
                 return $output;
+            }
+        }
+        // check if there's a prefix
+        if ($pos = strpos($action, '_')) {
+            $prefix = substr($action, 0, $pos);
+            // try prefix wildcard route
+            foreach ($page->routeClasses() as $c) {
+                $output = self::tryRoute("@$c/@wildcard_$prefix");
+                if (trim($output ?? '')) {
+                    Context::end();
+                    return $output;
+                }
             }
         }
         // try wildcard routes last
         foreach ($page->routeClasses() as $c) {
             $output = self::tryRoute("@$c/@wildcard");
-            if ($output !== null) {
+            if (trim($output ?? '')) {
                 Context::end();
                 return $output;
             }
@@ -177,12 +189,21 @@ class Router
         $route = preg_replace('/^~/', '', $route);
         // try specific route
         $output = self::tryRoute("~$route/$action");
-        if ($output !== null) {
+        if (trim($output ?? '')) {
             return $output;
+        }
+        // check if there's a prefix
+        if ($pos = strpos($action, '_')) {
+            $prefix = substr($action, 0, $pos);
+            // try prefix wildcard route
+            $output = self::tryRoute("@$route/@wildcard_$prefix");
+            if (trim($output ?? '')) {
+                return $output;
+            }
         }
         // try wildcard route
         $output = self::tryRoute("~$route/@wildcard");
-        if ($output !== null) {
+        if (trim($output ?? '')) {
             return $output;
         }
         return null;
