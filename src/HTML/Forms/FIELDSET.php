@@ -8,6 +8,7 @@ class FIELDSET extends Tag
 {
     protected $tag = 'fieldset';
     protected $legend = null;
+    protected $form;
 
     public function __construct(string $label = null)
     {
@@ -17,8 +18,17 @@ class FIELDSET extends Tag
         }
     }
 
+    public function setForm(FormWrapper $form)
+    {
+        $this->form = $form;
+        foreach ($this->children() as $child) {
+            if (method_exists($child, 'setForm')) $child->setForm($this->form);
+        }
+    }
+
     public function toString(): string
     {
+        if ($this->form) $this->setForm($this->form);
         return parent::toString();
     }
 }
