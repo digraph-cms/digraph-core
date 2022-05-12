@@ -4,8 +4,9 @@ namespace DigraphCMS\HTML\Forms;
 
 class Email extends INPUT
 {
-    public function __construct()
+    public function __construct(string $id = null)
     {
+        parent::__construct($id);
         $this->addValidator(function () {
             if (!$this->value()) return null;
             return filter_var($this->value(), FILTER_VALIDATE_EMAIL);

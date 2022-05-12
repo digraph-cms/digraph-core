@@ -21,7 +21,7 @@ class INPUT extends Tag implements InputInterface
 
     public function __construct(string $id = null)
     {
-        $this->setID($id ?? 'input-' . static::$counter++);
+        $this->setID($id ?? 'input-' . crc32(get_called_class($this) . static::$counter++));
     }
 
     public function validationError(): ?string
