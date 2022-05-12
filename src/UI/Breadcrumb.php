@@ -55,6 +55,19 @@ class Breadcrumb
     }
 
     /**
+     * Conveniently set the name of the top of the breadcrumb with one method.
+     *
+     * @param string $name
+     * @return void
+     */
+    public static function setTopName(string $name)
+    {
+        $top = static::top();
+        $top->setName($name);
+        static::top($top);
+    }
+
+    /**
      * Get or set/override the parent URL to use for generating the breadcrumb.
      *
      * @param URL $url
