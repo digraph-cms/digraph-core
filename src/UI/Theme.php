@@ -2,6 +2,7 @@
 
 namespace DigraphCMS\UI;
 
+use DateTimeZone;
 use DigraphCMS\Cache\Cache;
 use DigraphCMS\Config;
 use DigraphCMS\Digraph;
@@ -190,6 +191,11 @@ class Theme
             $classes[] = 'colors--colorblind';
         }
         return $classes;
+    }
+
+    public static function timezone(): DateTimeZone
+    {
+        return new DateTimeZone(Config::get('theme.timezone') ?? 'UTC');
     }
 
     public static function variables(string $mode = 'light'): array

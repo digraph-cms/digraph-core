@@ -4,13 +4,21 @@
     box-sizing: border-box;
     background: var(--theme-accent);
     color: var(--theme-accent-inv);
-    padding: $grid/2;
+    padding: $grid;
     font-family: $font-ui;
     margin: $grid 0;
     box-shadow: var(--shadow);
+    width: fit-content;
+    max-width: 100%;
 
     &.card--light {
-        background: var(--theme-background-light);
+        background: var(--background-light);
+        color: var(--color);
+    }
+
+    &.card--dark {
+        background: var(--background-dark);
+        color: var(--color);
     }
 
     &.card--neutral {
@@ -36,6 +44,13 @@
     &.card--error {
         background: var(--cue-danger);
         color: var(--cue-danger-inv);
+    }
+
+    > *:first-child {
+        margin-top: 0;
+    }
+    > *:last-child {
+        margin-bottom: 0;
     }
 }
 
@@ -87,7 +102,7 @@ extra file card styling for multifile cards
         margin-top: $grid/2;
     }
 
-    .card__title+.multifile-card__list {
+    .card__title + .multifile-card__list {
         margin-top: 0;
     }
 }

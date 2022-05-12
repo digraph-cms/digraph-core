@@ -1,4 +1,4 @@
-<h1>Maintenance tools</h1>
+<h1>Background jobs</h1>
 
 <?php
 

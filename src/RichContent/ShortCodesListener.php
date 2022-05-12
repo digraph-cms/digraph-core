@@ -3,11 +3,13 @@
 namespace DigraphCMS\RichContent;
 
 use DigraphCMS\Config;
-use DigraphCMS\Content\Page;
+use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Content\Pages;
+use DigraphCMS\Context;
 use DigraphCMS\HTML\A;
 use DigraphCMS\HTML\Text;
 use DigraphCMS\RichMedia\RichMedia;
+use DigraphCMS\UI\TableOfContents;
 use DigraphCMS\URL\URL;
 use DigraphCMS\URL\WaybackMachine;
 use Thunder\Shortcode\Shortcode\ShortcodeInterface;
@@ -25,12 +27,20 @@ class ShortCodesListener
      */
     public static function onShortCode(ShortcodeInterface $s): ?string
     {
-        if ($class = Config::get('rich_media_types.'.$s->getName())) {
+        if ($class = Config::get('rich_media_types.' . $s->getName())) {
             if (($media = RichMedia::get($s->getBbCode())) instanceof $class) {
                 return $class::shortCode($s, $media);
             }
         }
         return null;
+    }
+
+    public static function onShortCode_toc(ShortcodeInterface $s): ?string
+    {
+        $page = Pages::get($s->getBbCode() ?? Context::pageUUID());
+        if (!$page) return null;
+        $toc = new TableOfContents($page);
+        return $toc->__toString();
     }
 
     /**
@@ -86,7 +96,7 @@ class ShortCodesListener
                 // if there are multiple pages, give link link--multiple-options class
                 // make default title indicate that there are multiple options
                 $title = "Multiple options: " . implode(', ', array_map(
-                    function (Page $page): string {
+                    function (AbstractPage $page): string {
                         return $page->name();
                     },
                     $pages

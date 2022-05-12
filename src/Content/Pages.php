@@ -7,7 +7,6 @@ use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\Session\Session;
-use Envms\FluentPDO\Queries\Select;
 
 class Pages
 {
@@ -53,22 +52,6 @@ class Pages
         $query->where('start_page = ?', [$start]);
         $query->order($order);
         return $query;
-    }
-
-    /**
-     * Get just the uuids of the children of a given Page uuid. This is 
-     * potentially quite a bit faster than children()
-     *
-     * @param string $start
-     * @param string $order
-     * @return Select
-     */
-    public static function childIDs(string $start, string $order = 'created ASC'): Select
-    {
-        $query = DB::query()->from('page_link');
-        $query->where('start_page = ?', [$start]);
-        $query->order($order);
-        return $query->execute()->fetchColumn('end_page');
     }
 
     /**
@@ -169,9 +152,9 @@ class Pages
      * slug match, followed by the oldest alternate slug match.
      *
      * @param string $uuid_or_slug
-     * @return Page|null
+     * @return AbstractPage|null
      */
-    public static function get(string $uuid_or_slug): ?Page
+    public static function get(string $uuid_or_slug): ?AbstractPage
     {
         if (!isset(static::$cache[$uuid_or_slug])) {
             static::$cache[$uuid_or_slug] =
@@ -181,7 +164,7 @@ class Pages
         return static::$cache[$uuid_or_slug];
     }
 
-    protected static function doGetByUUID(string $uuid_or_slug): ?Page
+    protected static function doGetByUUID(string $uuid_or_slug): ?AbstractPage
     {
         $result = DB::query()->from('page')
             ->where('uuid = ?', [$uuid_or_slug])
@@ -195,7 +178,7 @@ class Pages
         }
     }
 
-    protected static function doGetBySlug(string $slug): ?Page
+    protected static function doGetBySlug(string $slug): ?AbstractPage
     {
         $result = DB::query()->from('page_slug')
             ->select('page.*')
@@ -216,7 +199,7 @@ class Pages
         return Config::get('page_types.' . $result['class']) ?? Config::get('page_types.default');
     }
 
-    public static function update(Page $page)
+    public static function update(AbstractPage $page)
     {
         DB::beginTransaction();
         Dispatcher::dispatchEvent('onBeforePageUpdate', [$page]);
@@ -232,12 +215,12 @@ class Pages
                 ]
             )
             ->set([
-                'name' => $page->name(),
+                'name' => $page->name(null, true, true),
                 'data' => json_encode($page->get()),
                 'slug_pattern' => $page->slugPattern(),
                 'class' => $page->class(),
                 'updated' => time(),
-                'updated_by' => Session::user()
+                'updated_by' => Session::uuid()
             ])
             ->execute();
         Dispatcher::dispatchEvent('onAfterPageUpdate_' . $page->class(), [$page]);
@@ -245,32 +228,38 @@ class Pages
         DB::commit();
     }
 
-    public static function insert(Page $page)
+    public static function insert(AbstractPage $page, string $parent_uuid = null)
     {
-        // insert value
+        DB::beginTransaction();
+        // pre-insert events
         Dispatcher::dispatchEvent('onBeforePageInsert', [$page]);
         Dispatcher::dispatchEvent('onBeforePageInsert_' . $page->class(), [$page]);
+        // insert page
         DB::query()
             ->insertInto(
                 'page',
                 [
                     'uuid' => $page->uuid(),
-                    'name' => $page->name(),
+                    'name' => $page->name(null, true, true),
                     'data' => json_encode($page->get()),
                     'slug_pattern' => $page->slugPattern(),
                     'class' => $page->class(),
                     'created' => time(),
-                    'created_by' => $page->createdByUUID() ?? Session::user(),
+                    'created_by' => Session::uuid(),
                     'updated' => time(),
-                    'updated_by' => $page->updatedByUUID() ?? Session::user(),
+                    'updated_by' => Session::uuid(),
                 ]
             )
             ->execute();
+        // insert link if specified
+        if ($parent_uuid) static::insertLink($parent_uuid, $page->uuid());
+        // post-insert events
         Dispatcher::dispatchEvent('onAfterPageInsert_' . $page->class(), [$page]);
         Dispatcher::dispatchEvent('onAfterPageInsert', [$page]);
+        DB::commit();
     }
 
-    public static function delete(Page $page)
+    public static function delete(AbstractPage $page)
     {
         DB::beginTransaction();
         // events
@@ -279,7 +268,7 @@ class Pages
         // delete links
         DB::query()
             ->delete('page_link')
-            ->where('start_page = :uuid OR end_page = :uuid', ['uuid' => $page->uuid()])
+            ->where('start_page = ? OR end_page = ?', [$page->uuid(), $page->uuid()])
             ->execute();
         // delete slugs
         DB::query()
@@ -290,10 +279,9 @@ class Pages
         DB::query()
             ->delete('page')
             ->where(
-                'uuid = ? AND updated = ?',
+                'uuid = ?',
                 [
-                    $page->uuid(),
-                    $page->updatedLast()->format("Y-m-d H:i:s")
+                    $page->uuid()
                 ]
             )
             ->execute();
@@ -314,10 +302,10 @@ class Pages
      * Remove a given object from the object cache so that it will be recreated
      * if pulled again
      *
-     * @param Page $page
+     * @param AbstractPage $page
      * @return void
      */
-    protected static function filterCache(Page $page)
+    protected static function filterCache(AbstractPage $page)
     {
         foreach (static::$cache as $i => $v) {
             if ($v->uuid() == $page->uuid()) {
@@ -331,9 +319,9 @@ class Pages
      * from the cache if the given uuid has been seen before.
      *
      * @param array $result
-     * @return Page|null
+     * @return AbstractPage|null
      */
-    public static function resultToPage(array $result): ?Page
+    public static function resultToPage(array $result): ?AbstractPage
     {
         if (!is_array($result)) {
             return null;

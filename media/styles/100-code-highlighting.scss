@@ -4,6 +4,8 @@ code {
     padding: $border;
     color: var(--color);
     background: var(--background-light);
+    width: fit-content;
+    max-width: 100%;;
 }
 
 pre > code {

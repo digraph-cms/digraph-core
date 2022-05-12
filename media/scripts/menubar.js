@@ -11,8 +11,7 @@ Make menu dropdowns work more nicely
         Array.from(target.getElementsByClassName('menubar'))
             .filter(m => !m.classList.contains('menubar--js'))
             .filter(m => !m.parentElement.classList.contains('menuitem__dropdown'))
-            .forEach(m => {
-                var menu = m;
+            .forEach(menu => {
                 menu.classList.add('menubar--js');
                 var toggle = document.createElement('span');
                 toggle.innerHTML = '<a class="menuitem__link">' + (menu.getAttribute('aria-label') ?? 'Menu') + '</a>';

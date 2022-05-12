@@ -111,7 +111,7 @@ if ($user = $source->lookupUser($provider, $providerID)) {
         $source->authorizeUser($user->uuid(), $provider, $providerID);
         // sign in as new user
         Session::authenticate($user->uuid(), 'Signed up with ' . $fullSourceTitle, Context::arg('rememberme') == 'y');
-        Notifications::flashConfirmation("Authorized $fullSourceTitle to sign into new account " . Users::current());
+        Notifications::flashConfirmation("Welcome, " . Users::current());
         DB::commit();
     }
 }

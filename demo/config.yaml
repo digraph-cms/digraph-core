@@ -1,0 +1,30 @@
+urls:
+  protocol: http
+
+errors:
+  display_trace: true
+
+cache:
+  ttl: 30
+
+files:
+  ttl: 30
+  css:
+    minify: true
+    sourcemap: true
+
+images:
+  ttl: 3600
+
+theme:
+  bundle_css: false
+  bundle_js: false
+  head_cache_ttl: 30
+
+user_sources:
+  cas:
+    providers:
+      demo:
+        active: true
+        name: Demo login provider
+        mock_cas_user: true

@@ -2,7 +2,7 @@
 
 namespace DigraphCMS\UI\DataTables;
 
-use DigraphCMS\Content\Page;
+use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Content\PageSelect;
 
 class PageTable extends QueryTable
@@ -22,7 +22,7 @@ class PageTable extends QueryTable
         );
     }
 
-    public function callback(Page $page): array
+    public function callback(AbstractPage $page): array
     {
         return [
             $page->url()->html(),

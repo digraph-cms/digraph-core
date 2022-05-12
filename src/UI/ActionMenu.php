@@ -13,12 +13,26 @@ class ActionMenu extends MenuBar
 {
     protected $url;
     protected $adderItem, $adderMenu;
+    protected static $contextActions = [];
+
+    public static function addContextAction(URL $url, string $name = null)
+    {
+        static::$contextActions[] = [$url, $name];
+    }
 
     public function __construct(URL $url = null)
     {
         $this->url = $url ? clone $url : Context::url();
         // set menu label and class
         $this->setAttribute('aria-label', 'Action menu');
+        // context action if URL is same as context
+        if (Context::response()->status() == 200 && $this->url->__toString() == Context::url()->__toString()) {
+            foreach (static::$contextActions as $a) {
+                $this->addUrl($a[0], @$a[1] ?? $a[0]->name(true))
+                    ->addClass('menuitem--context-action')
+                    ->addClass('menuitem--' . $a[0]->action());
+            }
+        }
         // page actions
         if ($page = $this->url->page()) {
             $this->addClass('menubar--actionmenu--page');

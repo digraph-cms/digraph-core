@@ -156,11 +156,13 @@ class OpCache extends AbstractCacheDriver
         } elseif ($value === false) {
             return 'false';
         } elseif (is_numeric($value)) {
-            return "$value";
+            if (is_infinite($value)) {
+                return 'INF';
+            } else {
+                return "$value";
+            }
         } elseif (is_string($value)) {
             return "'" . str_replace("'", "\\'", $value) . "'";
-        } elseif (is_infinite($value)) {
-            return 'INF';
         } else {
             return static::serialize_object($value);
         }

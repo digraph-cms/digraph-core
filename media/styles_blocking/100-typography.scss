@@ -3,6 +3,10 @@ body {
     line-height: $line-height;
 }
 
+strong {
+    font-weight: bold;
+}
+
 h1,
 h2,
 h3,
@@ -46,7 +50,8 @@ figure,
 article,
 .tab-interface,
 .incidental-content,
-table {
+table,
+fieldset {
     h1,
     h2,
     h3,
@@ -97,6 +102,12 @@ hr,
 .paginator,
 .data-table {
     margin: $grid 0;
+    &:first-child {
+        margin-top: 0;
+    }
+    &:last-child {
+        margin-bottom: 0;
+    }
 }
 
 hr {
@@ -215,14 +226,30 @@ blockquote {
     }
 }
 
-del {
+del,
+ins,
+mark,
+.del,
+.ins {
+    @include uncolored-links;
+}
+
+del,
+.del {
     background: var(--cue-danger);
     color: var(--cue-danger-inv);
     padding: $border;
 }
 
+ins,
+.ins {
+    background: var(--cue-safe);
+    color: var(--cue-safe-inv);
+    padding: $border;
+    text-decoration: underline;
+}
+
 mark {
-    @include uncolored-links;
     background: var(--cue-information);
     color: var(--cue-information-inv);
     padding: $border;
@@ -241,6 +268,45 @@ mark {
     &.mark--danger {
         background: var(--cue-danger);
         color: var(--cue-danger-inv);
+    }
+}
+
+@media print {
+    del,
+    ins,
+    mark,
+    .del,
+    .ins {
+        background: transparent;
+    }
+
+    del,
+    .del {
+        color: var(--cue-danger);
+        text-decoration: line-through !important;
+    }
+
+    ins,
+    .ins {
+        color: var(--cue-safe);
+        text-decoration: underline !important;
+    }
+
+    mark {
+        color: var(--cue-information);
+        text-decoration: underline;
+
+        &.mark--safe {
+            color: var(--cue-safe);
+        }
+
+        &.mark--warning {
+            color: var(--cue-warning);
+        }
+
+        &.mark--danger {
+            color: var(--cue-danger);
+        }
     }
 }
 

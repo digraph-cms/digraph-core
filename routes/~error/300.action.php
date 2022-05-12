@@ -3,6 +3,13 @@
 use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
 use DigraphCMS\HTTP\RedirectException;
+use DigraphCMS\UI\Breadcrumb;
+use DigraphCMS\URL\URL;
+
+$top = Breadcrumb::top();
+$top->setName('Disambiguation page');
+Breadcrumb::top($top);
+Breadcrumb::parent(new URL('/'));
 
 $requestUrl = Context::request()->originalUrl();
 $staticUrl = Context::data('300_static');
@@ -19,7 +26,7 @@ $pages = Context::data('300_pages');
         $urls[] = $staticUrl;
     }
     foreach ($pages as $page) {
-        if (!Router::pageRouteExists($page,$requestUrl->action())) {
+        if (!Router::pageRouteExists($page, $requestUrl->action())) {
             continue;
         }
         $urls[] = $url = $page->url($requestUrl->action(), $requestUrl->query());

@@ -9,8 +9,6 @@ use DigraphCMS\UI\Toolbars\ToolbarLink;
 use DigraphCMS\UI\Toolbars\ToolbarSpacer;
 use DigraphCMS\URL\URL;
 
-Context::response()->template('framed.php');
-
 echo "<div id='inbox-dropdown' class='navigation-frame navigation-frame--stateless' data-target='frame'>";
 
 $messages = Messages::notify();

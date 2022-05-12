@@ -2,6 +2,7 @@
 
 namespace DigraphCMS\UI;
 
+use Caxy\HtmlDiff\HtmlDiff;
 use DateTime;
 use DateTimeZone;
 use DigraphCMS\Config;
@@ -14,12 +15,17 @@ class Format
 
     public static function _init()
     {
-        static::$timezone = new DateTimeZone(Config::get('theme.timezone') ?? 'UTC');
+        static::$timezone = Theme::timezone();
         static::$dateFormat = Config::get('theme.format.date') ?? 'F j, Y';
         static::$datetimeFormat = Config::get('theme.format.datetime') ?? 'F j, Y, g:ia';
         static::$dateFormat_thisYear = Config::get('theme.format.date_thisyear') ?? 'F j';
         static::$datetimeFormat_thisYear = Config::get('theme.format.datetime_thisyear') ?? 'F j, g:ia';
         static::$datetimeFormat_today = Config::get('theme.format.datetime_today') ?? 'g:ia';
+    }
+
+    public static function htmlDiff(string $a, string $b): string
+    {
+        return (new HtmlDiff($a, $b))->build();
     }
 
     public static function base64obfuscate(string $string, string $message = 'javascript required to view')
@@ -36,10 +42,10 @@ class Format
         return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$size[$factor];
     }
 
-    public static function date($date, $textOnly = false): string
+    public static function date($date, $textOnly = false, $precise = false): string
     {
         $date = static::parseDate($date);
-        if ($date->format('Y') == date('Y')) {
+        if (!$precise && $date->format('Y') == date('Y')) {
             if ($date->format('Ydm') == date('Ydm')) {
                 $text = 'today';
             } else {
@@ -54,10 +60,10 @@ class Format
         return $text;
     }
 
-    public static function datetime($date, $textOnly = false): string
+    public static function datetime($date, $textOnly = false, $precise = false): string
     {
         $date = static::parseDate($date);
-        if ($date->format('Y') == date('Y')) {
+        if (!$precise && $date->format('Y') == date('Y')) {
             if ($date->format('Ydm') == date('Ydm')) {
                 $text = $date->format(static::$datetimeFormat_today);
             } else {

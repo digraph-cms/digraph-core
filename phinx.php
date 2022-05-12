@@ -12,8 +12,8 @@ CachedInitializer::run(
     'initialization',
     function (CacheableState $state) {
         $state->mergeConfig(Config::parseJsonFile(__DIR__ . '/env.json'), true);
-        $state->config('paths.base', __DIR__.'/demo');
-        $state->config('paths.web', __DIR__.'/demo');
+        $state->config('paths.base', __DIR__ . '/demo');
+        $state->config('paths.web', __DIR__ . '/demo');
     }
 );
 
@@ -21,7 +21,10 @@ return
     [
         'paths' => [
             'migrations' => DB::migrationPaths(),
-            'seeds' => DB::seedPaths()
+            'seeds' => array_merge( // note that for this project seeds have an extra demo path
+                [__DIR__ . '/demo/seeds'],
+                DB::seedPaths()
+            )
         ],
         'environments' => [
             'default_migration_table' => 'phinxlog',

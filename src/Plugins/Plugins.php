@@ -18,17 +18,20 @@ class Plugins
 
     public static function loadFromDirectory(string $directory)
     {
-        if (!is_dir($directory)) {
+        $directory = realpath($directory);
+        if (!$directory || !is_dir($directory)) {
             return;
         }
-        foreach (new DirectoryIterator($directory) as $f) {
-            if (!$f->isDir() || $f->isDot()) {
-                continue;
+        $files = array_filter(
+            scandir($directory),
+            function ($file) use ($directory) {
+                if ($file == '.' || $file == '..') return false;
+                return is_dir("$directory/$file");
             }
-            $path = $f->getRealPath();
-            if (is_dir($path)) {
-                static::load($path, true);
-            }
+        );
+        natcasesort($files);
+        foreach ($files as $file) {
+            static::load("$directory/$file", true);
         }
     }
 
@@ -105,23 +108,32 @@ class Plugins
                     $state->mergeConfig(Config::parseYamlFile($pluginDirectory . '/config.yaml'));
                 }
                 // get plugin class and queue it for creation
-                $pluginFile = $pluginDirectory . '/src/Plugin.php';
+                $pluginFile = $pluginDirectory . '/plugin.php';
                 $match = null;
-                if (!preg_match('/namespace (.+);/', file_get_contents($pluginFile), $match)) {
-                    throw new \Exception("Error parsing namespace from Plugin " . $pluginFile);
+                $contents = file_get_contents($pluginFile);
+                // get namespace
+                if (!preg_match('/namespace (.+);/', $contents, $match)) {
+                    throw new \Exception("Error parsing namespace from plugin " . $pluginFile);
                 }
                 $namespace = $match[1];
-                $class = $namespace . '\\Plugin';
+                // get class name
+                if (!preg_match('/class (.+) extends (\\\DigraphCMS\\\Plugins\\\)?AbstractPlugin/', $contents, $match)) {
+                    throw new \Exception("Error parsing class name from plugin " . $pluginFile);
+                }
+                $classname = $match[1];
+                $class = $namespace . '\\' . $classname;
                 $state['classes.' . md5($class)] = $class;
                 // queue autoloader generation if requested
-                if ($generateAutoloader) {
+                if ($generateAutoloader && is_dir($pluginDirectory . '/src')) {
                     $state['autoloaders.' . md5($class)] = [
                         $pluginDirectory . '/src',
                         $namespace
                     ];
                 }
             },
-            function (CacheableState $state) {
+            function (CacheableState $state) use ($pluginDirectory) {
+                // require plugin file manually, it might not conform to autoloader
+                require_once $pluginDirectory . '/plugin.php';
                 // configure autoloaders
                 foreach ($state['autoloaders'] ?? [] as $al) {
                     static::autoloader($al[1], $al[0]);
@@ -142,6 +154,11 @@ class Plugins
         );
     }
 
+    /**
+     * Get a list of all currently-installed plugins
+     *
+     * @return AbstractPlugin[]
+     */
     public static function plugins(): array
     {
         return static::$plugins;
@@ -168,7 +185,5 @@ class Plugins
         foreach ($plugin->phinxFolders() as $dir) {
             DB::addPhinxPath($dir);
         }
-        // call post-registration hook
-        $plugin->registered();
     }
 }

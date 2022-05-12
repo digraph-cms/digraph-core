@@ -18,13 +18,13 @@ class FilestoreFile extends DeferredFile
 {
     protected $uuid, $hash, $filename, $media, $meta, $image;
 
-    public function __construct(string $uuid, string $hash, string $filename, int $bytes, string $media_uuid, array $meta, int $created, ?string $created_by)
+    public function __construct(string $uuid, string $hash, string $filename, int $bytes, string $parent, array $meta, int $created, ?string $created_by)
     {
         $this->uuid = $uuid;
         $this->hash = $this->identifier = $hash;
         $this->filename = $filename;
         $this->bytes = $bytes;
-        $this->media = $media_uuid;
+        $this->media = $parent;
         $this->meta = $meta;
         $this->created = (new DateTime())->setTimestamp($created);
         $this->created_by = $created_by;

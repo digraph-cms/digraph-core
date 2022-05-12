@@ -44,7 +44,7 @@ echo $form
     ->addChild($page)
     ->addCallback(function () use ($name, $mode, $url, $page) {
         // set up new bookmark media
-        $media = new BookmarkRichMedia([], ['page_uuid' => Context::arg('uuid')]);
+        $media = new BookmarkRichMedia([], ['parent' => Context::arg('uuid')]);
         // set up name
         $media->name($name->value());
         // save other fields

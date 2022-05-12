@@ -10,8 +10,9 @@ class ConditionalContainer extends DIV
 {
     public function toString(): string
     {
-        if (!array_filter($this->children(), function (Node $node) {
-            return !$node->hidden();
+        if (!array_filter($this->children(), function ($node) {
+            if ($node instanceof Node) return !$node->hidden();
+            else return !!$node;
         })) {
             return "";
         } else {

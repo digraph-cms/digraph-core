@@ -21,12 +21,22 @@ class NullUser extends User
                 $a->setAttribute('target', '_top');
             }
         }
+        if ($this->uuid() == 'system') {
+            $a->addClass('user-link--system');
+            $url = $this->profile();
+            if (Permissions::url($url)) {
+                $a->setAttribute('href', $url);
+                $a->setAttribute('target', '_top');
+            }
+        }
         return $a->__toString();
     }
 
     public function profile(): URL
     {
-        return new URL('/~users/_' . $this->uuid() . '.html');
+        if ($this->uuid() == 'system') return parent::profile();
+        elseif ($this->uuid() == 'guest') return parent::profile();
+        else return new URL('/~users/_' . $this->uuid() . '.html');
     }
 
     public function insert()
@@ -47,10 +57,8 @@ class NullUser extends User
      */
     public function groups(): array
     {
-        if ($this->uuid() == 'guest') {
-            return [new Group('guests', "Guests")];
-        } else {
-            return [];
-        }
+        if ($this->uuid() == 'guest') return [new Group('guests', "Guests")];
+        if ($this->uuid() == 'system') return [new Group('system', "System"), Users::group('admins')];
+        else return [];
     }
 }

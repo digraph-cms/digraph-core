@@ -27,13 +27,13 @@ class User implements ArrayAccess
 
     public function __construct(array $data = [], array $metadata = [])
     {
-        $this->uuid = @$metadata['uuid'] ?? Digraph::uuid();
+        $this->uuid = @$metadata['uuid'] ?? Digraph::uuid('usr');
         $this->name = @$metadata['name'] ?? Users::randomName();
         $this->created = @$metadata['created'] ?? new DateTime();
-        $this->created_by = @$metadata['created_by'] ?? Session::user();
+        $this->created_by = @$metadata['created_by'] ?? Session::uuid();
         $this->updated = @$metadata['updated'] ?? new DateTime();
         $this->updated_last = clone $this->updated;
-        $this->updated_by = @$metadata['updated_by'] ?? Session::user();
+        $this->updated_by = @$metadata['updated_by'] ?? Session::uuid();
         $this->rawSet(null, $data);
         $this->changed = false;
     }
@@ -210,7 +210,7 @@ class User implements ArrayAccess
         if ($i === null) return;
         $this['emails.' . $i . '.verification'] = [
             'time' => time(),
-            'token' => $token = Digraph::uuid(true)
+            'token' => $token = Digraph::uuid()
         ];
         $email = Email::newForEmail(
             'service',
@@ -335,20 +335,20 @@ class User implements ArrayAccess
 
     public function createdBy(): User
     {
-        return $this->created_by ? Users::user($this->created_by) : Users::guest();
+        return Users::user($this->created_by);
     }
 
     public function updatedBy(): User
     {
-        return $this->updated_by ? Users::user($this->updated_by) : Users::guest();
+        return Users::user($this->updated_by);
     }
 
-    public function createdByUUID(): ?string
+    public function createdByUUID(): string
     {
         return $this->created_by;
     }
 
-    public function updatedByUUID(): ?string
+    public function updatedByUUID(): string
     {
         return $this->updated_by;
     }

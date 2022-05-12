@@ -23,7 +23,7 @@ class Message
         $this->subject = $subject;
         $this->recipient = $recipient;
         $this->body = $body;
-        $this->uuid = $uuid ?? Digraph::uuid(true);
+        $this->uuid = $uuid ?? Digraph::uuid('msg');
         $this->category = $category;
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-use DigraphCMS\Content\Page;
+use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Content\Pages;
 use DigraphCMS\Context;
 use DigraphCMS\Events\Dispatcher;
@@ -41,7 +41,7 @@ if (count($pages) < 100) {
 
 // score results
 $pages = array_map(
-    function (Page $page) {
+    function (AbstractPage $page) {
         return [
             $page,
             Dispatcher::firstValue('onScorePageResult', [$page, Context::arg('query')])
@@ -68,7 +68,7 @@ $pages = array_unique($pages, SORT_REGULAR);
 
 echo json_encode(
     array_map(
-        function (Page $page) {
+        function (AbstractPage $page) {
             return Dispatcher::firstValue('onPageAutocompleteCard', [$page, Context::arg('query')]);
         },
         array_slice($pages, 0, 50)

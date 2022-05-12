@@ -76,6 +76,9 @@ class Templates
                 $fields['page.name'] = strip_tags(Context::url()->name());
             }
         }
+        // override template for navigation frame responses
+        if (Context::request()->headers()->get('x-for-navigation-frame') == 'y') $response->template('framed.php');
+        // render
         $response->content(static::render($response->template()));
     }
 

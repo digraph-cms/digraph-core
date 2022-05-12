@@ -41,7 +41,7 @@ echo $form
     ->addChild($file)
     ->addCallback(function () use ($name, $toggle, $table, $file) {
         // set up new table media
-        $media = new TableRichMedia([], ['page_uuid' => Context::arg('uuid')]);
+        $media = new TableRichMedia([], ['parent' => Context::arg('uuid')]);
         // set up name
         $media->name($name->value());
         // if toggle is set to 'edit' save editor contents

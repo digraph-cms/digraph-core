@@ -6,12 +6,13 @@ use ArrayAccess;
 use DateTime;
 use DigraphCMS\Content\Filestore;
 use DigraphCMS\Content\FilestoreFile;
-use DigraphCMS\Content\Page;
+use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Content\Pages;
 use DigraphCMS\Digraph;
 use DigraphCMS\HTML\DIV;
 use DigraphCMS\HTML\Text;
 use DigraphCMS\RichMedia\RichMedia;
+use DigraphCMS\Session\Session;
 use DigraphCMS\UI\Format;
 use DigraphCMS\UI\Toolbars\ToolbarLink;
 use DigraphCMS\UI\Toolbars\ToolbarSeparator;
@@ -28,7 +29,7 @@ abstract class AbstractRichMedia implements ArrayAccess
         unset as protected rawUnset;
     }
 
-    protected $uuid, $pageUUID, $name;
+    protected $uuid, $parent, $name;
     protected $created, $created_by;
     protected $updated, $updated_by;
 
@@ -39,13 +40,13 @@ abstract class AbstractRichMedia implements ArrayAccess
 
     public function __construct(array $data = [], array $metadata = [])
     {
-        $this->uuid = @$metadata['uuid'] ?? Digraph::uuid();
-        $this->pageUUID = @$metadata['page_uuid'];
+        $this->uuid = @$metadata['uuid'] ?? Digraph::uuid('m');
+        $this->parent = @$metadata['parent'];
         $this->created = @$metadata['created'] ?? new DateTime();
-        $this->created_by = @$metadata['created_by'];
+        $this->created_by = @$metadata['created_by'] ?? Session::uuid();
         $this->updated = @$metadata['updated'] ?? new DateTime();
         $this->updated_last = clone $this->updated;
-        $this->updated_by = @$metadata['updated_by'];
+        $this->updated_by = @$metadata['updated_by'] ?? Session::uuid();
         $this->name = @$metadata['name'] ?? 'Unnamed media';
         $this->rawSet(null, $data);
         $this->changed = false;
@@ -117,14 +118,20 @@ abstract class AbstractRichMedia implements ArrayAccess
         return $this->name;
     }
 
-    public function media(): ?Page
+    public function media(): ?AbstractPage
     {
-        return Pages::get($this->pageUUID);
+        return Pages::get($this->parent);
     }
 
-    public function pageUUID(): ?string
+    public function parent(): ?string
     {
-        return $this->pageUUID;
+        return $this->parent;
+    }
+
+    public function setParent(string $pageUUID)
+    {
+        $this->parent = $pageUUID;
+        return $this;
     }
 
     public function insert()
@@ -145,6 +152,12 @@ abstract class AbstractRichMedia implements ArrayAccess
     public function uuid(): string
     {
         return $this->uuid;
+    }
+
+    public function setUUID(string $uuid)
+    {
+        $this->uuid = $uuid;
+        return $this;
     }
 
     public function createdBy(): User

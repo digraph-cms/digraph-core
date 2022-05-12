@@ -15,18 +15,17 @@ class RichMedia
 
     /**
      * Quickly determine whether a given UUID exists.
-     * primary or alternate.
      *
      * @param string $uuid
-     * @param string|null $page_uuid
+     * @param string|null $parent
      * @return RichMedia|null
      */
-    public static function exists(string $uuid, string $page_uuid = null): bool
+    public static function exists(string $uuid, string $parent = null): bool
     {
         $query = DB::query()->from('rich_media')
             ->where('uuid = ?', [$uuid]);
-        if ($page_uuid) {
-            $query->where('page_uuid = ?', [$page_uuid]);
+        if ($parent) {
+            $query->where('parent = ?', [$parent]);
         }
         return !!$query->count();
     }
@@ -34,14 +33,14 @@ class RichMedia
     /**
      * Generate a RichMediaSelect object for building queries to the pages table
      *
-     * @param string|null $page_uuid
+     * @param string|null $parent
      * @return RichMediaSelect
      */
-    public static function select(string $page_uuid = null): RichMediaSelect
+    public static function select(string $parent = null): RichMediaSelect
     {
         $query = DB::query()->from('rich_media');
-        if ($page_uuid) {
-            $query->where('page_uuid = ?', [$page_uuid]);
+        if ($parent) {
+            $query->where('parent = ?', [$parent]);
         }
         return new RichMediaSelect($query);
     }
@@ -50,10 +49,10 @@ class RichMedia
      * Get all Media that match the given UUID, and optionally page UUID
      * 
      * @param string $uuid
-     * @param string|null $page_uuid
+     * @param string|null $parent
      * @return AbstractRichMedia|null
      */
-    public static function get(string $uuid, string $page_uuid = null): ?AbstractRichMedia
+    public static function get(string $uuid, string $parent = null): ?AbstractRichMedia
     {
         if (!isset(static::$cache[$uuid])) {
             $query = static::select()
@@ -61,8 +60,8 @@ class RichMedia
                 ->limit(1);
             static::$cache[$uuid] = $query->fetch();
         }
-        if ($page_uuid && static::$cache[$uuid]) {
-            if (static::$cache[$uuid]->pageUUID() != $page_uuid) {
+        if ($parent && static::$cache[$uuid]) {
+            if (static::$cache[$uuid]->pageUUID() != $parent) {
                 return null;
             }
         }
@@ -97,9 +96,9 @@ class RichMedia
                 'data' => json_encode($media->get()),
                 'class' => $media->class(),
                 'name' => $media->name(),
-                'page_uuid' => $media->pageUUID(),
+                'parent' => $media->parent(),
                 'updated' => time(),
-                'updated_by' => Session::user()
+                'updated_by' => Session::uuid()
             ])
             ->execute();
         Dispatcher::dispatchEvent('onAfterRichMediaUpdate_' . $media->class(), [$media]);
@@ -120,11 +119,11 @@ class RichMedia
                     'data' => json_encode($media->get()),
                     'class' => $media->class(),
                     'name' => $media->name(),
-                    'page_uuid' => $media->pageUUID(),
+                    'parent' => $media->parent(),
                     'created' => time(),
-                    'created_by' => $media->createdByUUID() ?? Session::user(),
+                    'created_by' => $media->createdByUUID() ?? Session::uuid(),
                     'updated' => time(),
-                    'updated_by' => $media->updatedByUUID() ?? Session::user(),
+                    'updated_by' => $media->updatedByUUID() ?? Session::uuid(),
                 ]
             )
             ->execute();
@@ -198,7 +197,7 @@ class RichMedia
                 'class' => $result['class'],
                 'name' => $result['name'],
                 'uuid' => $result['uuid'],
-                'page_uuid' => $result['page_uuid'],
+                'parent' => $result['parent'],
                 'created' => (new DateTime)->setTimestamp($result['created']),
                 'created_by' => $result['created_by'],
                 'updated' => (new DateTime)->setTimestamp($result['updated']),

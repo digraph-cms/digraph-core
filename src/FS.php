@@ -95,6 +95,19 @@ class FS
         }
         return is_dir($path);
     }
+
+    /**
+     * Touch a file, including creating parent directories as necessary.
+     *
+     * @param string $path
+     * @return void
+     */
+    public static function touch(string $path)
+    {
+        $dir = dirname($path);
+        if (!is_dir($dir)) static::mkdir($dir);
+        touch($path);
+    }
 }
 
 FS::_init();

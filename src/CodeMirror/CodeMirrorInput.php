@@ -11,12 +11,14 @@ class CodeMirrorInput extends TEXTAREA
     protected $wrapper;
     protected $mode = 'gfm';
     protected $config = [];
+    protected static $idCounter = 0;
 
     public function __construct()
     {
         $this->wrapper = new DIV;
         $this->wrapper->addChild('%s');
         $this->wrapper->addClass('codemirror-input-wrapper');
+        $this->setID('codemirror-input--' . static::$idCounter++);
     }
 
     protected function mode(): string

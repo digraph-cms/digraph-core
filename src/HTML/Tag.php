@@ -235,7 +235,7 @@ abstract class Tag extends Node
                 }
             }
         }
-        $html .= '>' . PHP_EOL;
+        $html .= '>';
         // children and closing tag if not a void tag
         if (!$this->void()) {
             // children
@@ -243,7 +243,7 @@ abstract class Tag extends Node
                 $html .= $child;
             }
             // closing tag
-            $html .= '</' . $this->tag . '>' . PHP_EOL;
+            $html .= '</' . $this->tag . '>';
         }
         return $html;
     }

@@ -8,13 +8,6 @@ document.addEventListener('DigraphDOMReady', (e) => {
     for (let i = 0; i < divs.length; i++) {
         const div = divs[i];
         if (div.classList.contains('navigation-frame')) {
-            // set this frame as stateless if it has a stateless ancestor
-            var parent = div;
-            while (parent = parent.parentElement) {
-                if (parent.classList.contains('navigation-frame--stateless')) {
-                    div.classList.add('navigation-frame--stateless');
-                }
-            }
             // load initial source
             if (div.dataset.initialSource) {
                 div.resetFrame = function (e) {
@@ -37,7 +30,8 @@ document.addEventListener('navigation-frame-navigate', (e) => {
     [parent, target] = Digraph.state.navigationParentAndTarget(event_target);
     // parent and target found
     if (parent && target) {
-        if (parent.classList.contains('navigation-frame--stateless')) {
+        // dispatch appropriate events
+        if (Digraph.state.frameIsStateless(parent)) {
             // stateless navigation frames don't update the address bar or browser history
             Digraph.state.get(event_url, parent);
         } else {
@@ -69,7 +63,7 @@ document.addEventListener('click', (e) => {
     [parent, target] = Digraph.state.navigationParentAndTarget(event_target);
     // parent and target found
     if (parent && event_target && !event_target.attributes.target && target != '_top') {
-        if (parent.classList.contains('navigation-frame--stateless')) {
+        if (Digraph.state.frameIsStateless(parent)) {
             // stateless navigation frames don't update the address bar or browser history
             Digraph.state.get(event_target.getAttribute('href'), parent);
         } else {
@@ -107,25 +101,23 @@ window.addEventListener('popstate', (e) => {
 Digraph.state = {
     // get requested URL and updated browser history so that forward/back work
     getAndPush: (url, frame) => {
-        Digraph.state.get(url, frame);
-        history.pushState({ url: url, frame: frame.getAttribute('id') },
-            document.getElementsByTagName('title')[0].innerHTML,
-            url
-        );
+        Digraph.state.get(url, frame, true);
     },
     // only get the requested URL and replace frame contents
-    get: (url, frame) => {
-        Digraph.state.addXHRListeners(frame);
+    get: (url, frame, pushState = false) => {
+        Digraph.state.addXHRListeners(frame, pushState);
         frame.stateUpdateRequest.open('GET', url);
+        frame.stateUpdateRequest.setRequestHeader('X-For-Navigation-Frame', 'y');
         frame.stateUpdateRequest.send();
     },
     // post the given data to the given URL and replace frame contents
     post: (data, url, frame) => {
         Digraph.state.addXHRListeners(frame);
         frame.stateUpdateRequest.open('POST', url, true);
+        frame.stateUpdateRequest.setRequestHeader('X-For-Navigation-Frame', 'y');
         frame.stateUpdateRequest.send(data);
     },
-    addXHRListeners: (frame) => {
+    addXHRListeners: (frame, pushState = false) => {
         frame.classList.add('loading');
         if (frame.stateUpdateRequest) {
             frame.stateUpdateRequest.abort();
@@ -156,7 +148,7 @@ Digraph.state = {
                 }
                 // update frame
                 frame.innerHTML = docElement.innerHTML;
-                if (!frame.classList.contains('navigation-frame--stateless')) {
+                if (!Digraph.state.frameIsStateless(frame)) {
                     if (document.getElementById('breadcrumb') && doc.getElementById('breadcrumb')) {
                         document.getElementById('breadcrumb').innerHTML = doc.getElementById('breadcrumb').innerHTML;
                     }
@@ -190,6 +182,13 @@ Digraph.state = {
                 // focus autofocus element
                 var af = frame.getElementsByClassName('navigation-frame__autofocus')[0];
                 if (af) af.focus();
+                // if requested, push state on completion
+                if (pushState) {
+                    history.pushState({ url: frame.stateUpdateRequest.responseURL, frame: frame.getAttribute('id') },
+                        document.getElementsByTagName('title')[0].innerHTML,
+                        frame.stateUpdateRequest.responseURL
+                    );
+                }
             } else {
                 if (document.getElementById('notifications')) {
                     var error = document.createElement('div');
@@ -245,5 +244,13 @@ Digraph.state = {
             target = parent.getAttribute('id');
         }
         return [parent, target];
+    },
+    frameIsStateless: (frame) => {
+        do {
+            if (frame.classList.contains('navigation-frame--stateless')) {
+                return true;
+            }
+        } while (frame = frame.parentElement);
+        return false;
     }
 };

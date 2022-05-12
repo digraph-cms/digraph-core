@@ -8,6 +8,18 @@
         background-color: transparent;
         color: inherit;
 
+        &.menuitem--current {
+            opacity: 1;
+            background-color: var(--cue-interactive);
+            color: var(--cue-interactive-inv);
+        }
+
+        &.menuitem--current-parent {
+            opacity: 1;
+            background-color: var(--cue-interactive-a50);
+            color: var(--cue-interactive-inv);
+        }
+
         &:hover,
         &:focus,
         &:focus-within,
@@ -20,13 +32,6 @@
                     text-decoration: underline;
                 }
             }
-        }
-
-        &.menuitem--current,
-        &.menuitem--current-parent {
-            opacity: 1;
-            background-color: var(--cue-interactive);
-            color: var(--cue-interactive-inv);
         }
 
         &.menuitem--page-display {

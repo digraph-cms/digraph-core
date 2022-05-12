@@ -15,41 +15,52 @@ class Icon extends Tag
     protected $valid = false;
 
     const ICONS = [
-        'undo' => ['string' => 'undo'],
-        'redo' => ['string' => 'redo'],
-        'link' => ['string' => 'link'],
-        'close' => ['string' => 'close'],
-        'copy' => ['string' => 'content_copy'],
-        'options' => ['string' => 'settings'],
-        'media' => ['string' => 'perm_media'],
+        'add' => ['string' => 'add'],
+        'archive' => ['string' => 'archive'],
         'article' => ['string' => 'article'],
-        'hide' => ['string' => 'hide_source'],
-        'heading' => ['string' => 'title'],
         'bold' => ['string' => 'format_bold'],
-        'italic' => ['string' => 'format_italic'],
+        'clear-format' => ['string' => 'format_clear'],
+        'close' => ['string' => 'close'],
         'code' => ['string' => 'code'],
-        'quote' => ['string' => 'format_quote'],
+        'copy' => ['string' => 'content_copy'],
+        'database' => ['string' => '&#xeeff;', 'type' => 'icofont'],
+        'delete' => ['string' => 'delete'],
+        'done-all' => ['string' => 'done_all'],
+        'edit' => ['string' => 'edit'],
+        'heading' => ['string' => 'title'],
+        'hide' => ['string' => 'visibility_off'],
+        'highlight' => ['string' => 'highlight_alt'],
+        'important' => ['string' => 'label_important'],
+        'inbox' => ['string' => 'inbox'],
+        'insert-chart' => ['string' => 'insert_chart'],
+        'italic' => ['string' => 'format_italic'],
+        'link' => ['string' => 'link'],
         'list-bullet' => ['string' => 'format_list_bulleted'],
         'list-numbered' => ['string' => 'format_list_numbered'],
-        'user-search' => ['string' => 'person_search'],
-        'insert-chart' => ['string' => 'insert_chart'],
-        'post-add' => ['string' => 'post_add'],
-        'settings-applications' => ['string' => 'settings_applications'],
-        'pages' => ['string' => 'pages'],
-        'person' => ['string' => 'person'],
-        'strikethrough' => ['string' => 'strikethrough_s'],
-        'highlight' => ['string' => 'highlight_alt'],
-        'clear-format' => ['string' => 'format_clear'],
-        'important' => ['string' => 'label_important'],
-        'secure' => ['string' => 'lock'],
-        'archive' => ['string' => 'archive'],
-        'move-to-inbox' => ['string' => 'move_to_inbox'],
         'mark-read' => ['string' => 'mark_email_read'],
         'mark-unread' => ['string' => 'mark_email_unread'],
-        'done-all' => ['string' => 'done_all'],
-        'inbox' => ['string' => 'inbox'],
-        'delete' => ['string' => 'delete'],
-        'star' => ['string' => 'star']
+        'media' => ['string' => 'perm_media'],
+        'move-to-inbox' => ['string' => 'move_to_inbox'],
+        'next' => ['string' => 'skip_next'],
+        'options' => ['string' => 'settings'],
+        'pages' => ['string' => 'pages'],
+        'pending' => ['string' => 'pending_actions'],
+        'person' => ['string' => 'person'],
+        'post-add' => ['string' => 'post_add'],
+        'previous' => ['string' => 'skip_previous'],
+        'publish' => ['string' => 'publish'],
+        'quote' => ['string' => 'format_quote'],
+        'redo' => ['string' => 'redo'],
+        'secure' => ['string' => 'lock'],
+        'settings-applications' => ['string' => 'settings_applications'],
+        'show' => ['string' => 'visibility'],
+        'star' => ['string' => 'star'],
+        'strikethrough' => ['string' => 'strikethrough_s'],
+        'template' => ['string' => 'snippet_folder'],
+        'toc' => ['string' => 'toc'],
+        'undo' => ['string' => 'undo'],
+        'url' => ['string' => 'link'],
+        'user-search' => ['string' => 'person_search'],
     ];
 
     public function __construct(string $name, string $alt = null)
@@ -84,6 +95,16 @@ class Icon extends Tag
             $this->valid = false;
         }
         return $this;
+    }
+
+    public function attributes(): array
+    {
+        return array_merge(
+            parent::attributes(),
+            [
+                'title' => $this->alt
+            ]
+        );
     }
 
     public function children(): array

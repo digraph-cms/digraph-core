@@ -23,7 +23,7 @@ $form
     ->addChild($name)
     ->addChild($content)
     ->addCallback(function () use ($name, $content) {
-        $media = new AsideRichMedia([], ['page_uuid' => Context::arg('uuid')]);
+        $media = new AsideRichMedia([], ['parent' => Context::arg('uuid')]);
         // save name
         $media->name($name->value());
         // save content

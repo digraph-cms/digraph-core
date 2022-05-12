@@ -3,7 +3,7 @@
 namespace DigraphCMS\HTTP;
 
 use DigraphCMS\Config;
-use DigraphCMS\Content\Page;
+use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Context;
 use DigraphCMS\Digraph;
 use DigraphCMS\Events\Dispatcher;
@@ -136,7 +136,7 @@ class Response
             0;
     }
 
-    public function page(Page $page = null): ?Page
+    public function page(AbstractPage $page = null): ?AbstractPage
     {
         if ($page) {
             $this->page = $page;

@@ -3,10 +3,11 @@
 namespace DigraphCMS;
 
 use DigraphCMS\Content\Filestore;
-use DigraphCMS\Content\Page;
+use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Content\Pages;
-use DigraphCMS\Content\Router;
 use DigraphCMS\Content\Slugs;
+use DigraphCMS\Cron\DeferredJob;
+use DigraphCMS\DB\DB;
 use DigraphCMS\DOM\CodeHighlighter;
 use DigraphCMS\DOM\DOM;
 use DigraphCMS\DOM\DOMEvent;
@@ -26,24 +27,17 @@ use function DigraphCMS\Content\require_file;
 
 class CoreEventSubscriber
 {
-    /**
-     * Add user action menu links to user profiles
-     *
-     * @param ActionMenu $menu
-     * @return void
-     */
-    public static function onActionMenu_users(ActionMenu $menu)
+
+    public static function onCron_daily()
     {
-        $uuid = Context::url()->action();
-        if (Users::get($uuid)) {
-            $actions = Router::staticActions('user');
-            foreach ($actions as $url) {
-                if ($url->route() == 'user') {
-                    $url->arg('user', $uuid);
-                }
-                $menu->addURL($url, $url->name(true));
-            }
-        }
+        // clean up old deferred execution jobs
+        new DeferredJob(function(){
+            $count = DB::query()->delete('defex')
+                ->where('run is null')
+                ->where('run < ?', [time() - (7 * 86400)])
+                ->execute();
+            return "Cleaned up $count old deferred execution jobs";
+        });
     }
 
     /**
@@ -89,7 +83,7 @@ class CoreEventSubscriber
      */
     public static function onRichMediaAutocompleteCard(AbstractRichMedia $media, string $query)
     {
-        $page = $media->pageUUID() ? Pages::get($media->pageUUID()) : null;
+        $page = $media->parent() ? Pages::get($media->parent()) : null;
         return [
             'html' => '<div class="title">' . $media->name() . '</div><div class="meta">' . ($page ? $page->name() : '') . '</div><div class="meta">' . Format::datetime($media->updated()) . '</div>',
             'value' => $media->uuid(),
@@ -109,7 +103,7 @@ class CoreEventSubscriber
     public static function onAfterRichMediaDelete(AbstractRichMedia $media)
     {
         $files = Filestore::select()->where(
-            'rich_media_uuid = ?',
+            'parent = ?',
             [$media->uuid()]
         );
         foreach ($files as $file) {
@@ -172,33 +166,33 @@ class CoreEventSubscriber
     /**
      * Set initial slug pattern after a page is inserted.
      *
-     * @param Page $page
+     * @param AbstractPage $page
      * @return void
      */
-    public static function onAfterPageInsert(Page $page)
+    public static function onAfterPageInsert(AbstractPage $page)
     {
-        Slugs::setFromPattern($page, $page->slugPattern(), true);
+        Slugs::setFromPattern($page, $page->slugPattern());
     }
 
     /**
      * Update slug pattern after a page is updated.
      *
-     * @param Page $page
+     * @param AbstractPage $page
      * @return void
      */
-    public static function onAfterPageUpdate(Page $page)
+    public static function onAfterPageUpdate(AbstractPage $page)
     {
-        Slugs::setFromPattern($page, $page->slugPattern(), true);
+        Slugs::setFromPattern($page, $page->slugPattern());
     }
 
     /**
      * Build a card for a page in the results of an autocomplete field.
      *
-     * @param Page $page
+     * @param AbstractPage $page
      * @param string|null $query
      * @return array
      */
-    public static function onPageAutocompleteCard(Page $page, string $query = null): array
+    public static function onPageAutocompleteCard(AbstractPage $page, string $query = null): array
     {
         $name = $page->name();
         $url = $page->url();
@@ -243,11 +237,11 @@ class CoreEventSubscriber
     /**
      * Score how well a page matches a given query.
      *
-     * @param Page $page
+     * @param AbstractPage $page
      * @param string $query
      * @return void
      */
-    public static function onScorePageResult(Page $page, string $query)
+    public static function onScorePageResult(AbstractPage $page, string $query)
     {
         $query = strtolower($query);
         $score = 0;
@@ -389,18 +383,6 @@ class CoreEventSubscriber
     public static function onStaticUrlPermissions_groups(URL $url, User $user): ?bool
     {
         return Permissions::inMetaGroup('users__edit');
-    }
-
-    /**
-     * Limits access to ~users route to user viewers
-     *
-     * @param URL $url
-     * @param User $user
-     * @return boolean|null
-     */
-    public static function onStaticUrlPermissions_users(URL $url, User $user): ?bool
-    {
-        return Permissions::inMetaGroup('users__view');
     }
 
     /**

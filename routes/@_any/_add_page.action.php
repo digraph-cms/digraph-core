@@ -35,8 +35,6 @@ if (Pages::exists(Context::arg('uuid'))) {
     throw new RedirectException($url);
 }
 
-Cookies::required(['system', 'csrf']);
-
 $page = Context::page();
 
 $name = (new Field('Page name'))
@@ -51,7 +49,6 @@ $form = (new FormWrapper('add-' . Context::arg('uuid')))
     ->addChild($name)
     ->addChild($content)
     ->addCallback(function () use ($name, $content) {
-        DB::beginTransaction();
         // insert page
         $page = new Page(
             [],
@@ -61,11 +58,9 @@ $form = (new FormWrapper('add-' . Context::arg('uuid')))
         );
         $page->name($name->value());
         $page->richContent('body', $content->value());
-        $page->insert();
-        // create edge to parent
-        Pages::insertLink(Context::page()->uuid(), $page->uuid());
-        // commit and redirect
-        DB::commit();
+        // insert with parent link to current context page
+        $page->insert(Context::page()->uuid());
+        // redirect
         Notifications::flashConfirmation('Page created: ' . $page->url()->html());
         throw new RedirectException($page->url_edit());
     });

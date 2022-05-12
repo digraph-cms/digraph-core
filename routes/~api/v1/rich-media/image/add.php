@@ -33,7 +33,7 @@ $form
     ->addChild($caption)
     ->addCallback(function () use ($file, $name, $alt, $caption) {
         // set up new media and its file
-        $media = new ImageRichMedia([], ['page_uuid' => Context::arg('uuid')]);
+        $media = new ImageRichMedia([], ['parent' => Context::arg('uuid')]);
         $media['file'] = $file->input()->filestore($media->uuid())->uuid();
         // set up name
         if ($name->value()) {

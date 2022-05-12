@@ -19,16 +19,11 @@ if (php_sapi_name() === 'cli-server') {
     }
 }
 
-// cache initialization outside built-in server
-else {
-    CachedInitializer::configureCache(__DIR__ . '/cache', 60);
-}
-
 // run initial configuration
 CachedInitializer::config(
     function (CacheableState $state) {
-        $state->mergeConfig(Config::parseJsonFile(__DIR__ . '/../env.json'), true);
-        $state->mergeConfig(Config::parseYamlFile(__DIR__ . '/../env.yaml'), true);
+        $state->mergeConfig(Config::parseYamlFile(__DIR__ . '/config.yaml'), true);
+        $state->mergeConfig(Config::parseYamlFile(__DIR__ . '/env.yaml'), true);
         $state->config('paths.base', __DIR__);
         $state->config('paths.web', __DIR__);
     }

@@ -2,6 +2,7 @@
 
 namespace DigraphCMS\Content;
 
+use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
 use Envms\FluentPDO\Queries\Select;
 
@@ -44,6 +45,32 @@ class Graph
             $query->where('page_link.type = ?', [$type]);
         }
         return $query;
+    }
+
+    public static function randomChildID(string $uuid, string $type = null): ?string
+    {
+        $query = static::childIDs($uuid, $type)
+            ->limit(1);
+        if (Config::get('db.adapter') == 'sqlite') {
+            $query->order('RANDOM()');
+        } else {
+            $query->order('RAND()');
+        }
+        $result = $query->fetch();
+        return $result ? $result['end_page'] : null;
+    }
+
+    public static function randomParentID(string $uuid, string $type = null): ?string
+    {
+        $query = static::parentIDs($uuid, $type)
+            ->limit(1);
+        if (Config::get('db.adapter') == 'sqlite') {
+            $query->order('RANDOM()');
+        } else {
+            $query->order('RAND()');
+        }
+        $result = $query->fetch();
+        return $result ? $result['start_page'] : null;
     }
 
     public static function children(string $uuid, string $type = null): PageSelect
