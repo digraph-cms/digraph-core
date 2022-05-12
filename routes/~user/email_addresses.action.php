@@ -42,6 +42,7 @@ echo new ArrayTable(
 
 $address = (new Field('Add email', (new INPUT)->setAttribute('type', 'email')))
     ->setRequired(true)
+    ->addTip('New emails must be verified before they can be used, a confirmation link will be sent to the email you enter.')
     ->addValidator(function (INPUT $input) use ($user) {
         foreach ($user['emails'] as $e) {
             if ($e['address'] == strtolower($input->value())) {
