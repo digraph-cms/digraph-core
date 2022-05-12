@@ -17,7 +17,53 @@ class Users
     protected static $null = [];
 
     /**
-     * Undocumented function
+     * Return all provider IDs associated with a given user for the specified
+     * user source/provider.
+     *
+     * @param string $userUUID
+     * @param string $source
+     * @param string $provider
+     * @return string[]
+     */
+    public static function providerIDs(string $userUUID, string $source, string $provider): array
+    {
+        return array_map(
+            function ($row) {
+                return $row['provider_id'];
+            },
+            DB::query()->from('user_source')
+                ->where('user_uuid = ?', [$userUUID])
+                ->where('source = ?', [$source])
+                ->where('provider = ?', [$provider])
+                ->fetchAll()
+        );
+    }
+
+    /**
+     * Locate the user specified by a given source/provider/id, if it exists.
+     *
+     * @param string $source
+     * @param string $provider
+     * @param string $id
+     * @return User|null
+     */
+    public static function locateUser(string $source, string $provider, string $id): ?User
+    {
+        $result = DB::query()->from('user_source')
+            ->leftJoin('user on user_source.user_uuid = user.uuid')
+            ->where('source = ?', [$source])
+            ->where('provider = ?', [$provider])
+            ->where('provider_id = ?', [$id])
+            ->limit(1)
+            ->fetch();
+        return $result
+            ? static::resultToUser($result)
+            : null;
+    }
+
+    /**
+     * Get an array of all possible signin URLs, so that if there are more than
+     * one options can be presented to the user.
      *
      * @param string|null $bounce
      * @return URL[]
