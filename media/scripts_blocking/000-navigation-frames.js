@@ -85,7 +85,17 @@ document.addEventListener('submit', (e) => {
             data.append(e.submitter.name, e.submitter.value);
         }
         // submit
-        Digraph.state.post(data, e.target.getAttribute('action'), parent);
+        if (e.target.getAttribute('method') == 'GET') {
+            var url = new URL(e.target.getAttribute('action'));
+            Array.from(data.keys()).forEach(e => url.searchParams.set(e, data.get(e)));
+            if (Digraph.state.frameIsStateless(parent)) {
+                Digraph.state.get(url.toString(), parent);
+            } else {
+                Digraph.state.getAndPush(url.toString(), parent);
+            }
+        } else {
+            Digraph.state.post(data, e.target.getAttribute('action'), parent);
+        }
         e.preventDefault();
     }
 });

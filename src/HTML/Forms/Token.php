@@ -76,10 +76,7 @@ class Token extends INPUT
                 return Cookies::csrfToken('forms');
             }
         } else {
-            return md5(serialize([
-                $_SERVER['HTTP_USER_AGENT'],
-                $_SERVER['REMOTE_ADDR']
-            ]));
+            return '1';
         }
     }
 
