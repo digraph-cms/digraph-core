@@ -26,7 +26,7 @@ class Router
             foreach (self::search("@$c/*.action.*") as $file) {
                 $action = basename($file);
                 $action = preg_replace('/\.action\..+$/', '', $action);
-                if ($action == '@wildcard' || $action == 'index') {
+                if (substr($action, 0, 9) == '@wildcard' || $action == 'index') {
                     continue;
                 }
                 if (!preg_match('/\.[a-z0-9]+$/', $action)) {
@@ -62,7 +62,7 @@ class Router
         foreach (self::search("~$route/*.action.*") as $file) {
             $action = basename($file);
             $action = preg_replace('/\.action\..+$/', '', $action);
-            if ($action == '@wildcard' || $action == 'index') {
+            if (substr($action, 0, 9) == '@wildcard' || $action == 'index') {
                 continue;
             }
             if (!preg_match('/\.[a-z0-9]+$/', $action)) {
