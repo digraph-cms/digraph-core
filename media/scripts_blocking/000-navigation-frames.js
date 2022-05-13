@@ -85,7 +85,7 @@ document.addEventListener('submit', (e) => {
             data.append(e.submitter.name, e.submitter.value);
         }
         // submit
-        if (e.target.getAttribute('method') == 'GET') {
+        if (e.target.getAttribute('method') == 'get') {
             var url = new URL(e.target.getAttribute('action'));
             Array.from(data.keys()).forEach(e => url.searchParams.set(e, data.get(e)));
             if (Digraph.state.frameIsStateless(parent)) {
