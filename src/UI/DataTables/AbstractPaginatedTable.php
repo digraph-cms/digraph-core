@@ -2,8 +2,14 @@
 
 namespace DigraphCMS\UI\DataTables;
 
+use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
+use DigraphCMS\Context;
+use DigraphCMS\FS;
+use DigraphCMS\Media\DeferredFile;
+use DigraphCMS\Media\File;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\Paginator;
+use DigraphCMS\URL\URL;
 
 abstract class AbstractPaginatedTable
 {
@@ -11,6 +17,7 @@ abstract class AbstractPaginatedTable
     protected $paginator;
     protected $headers = [];
     protected $caption;
+    protected $filename;
 
     abstract public function body(): array;
 
@@ -18,6 +25,12 @@ abstract class AbstractPaginatedTable
     {
         $this->myID = self::$id++;
         $this->paginator = new Paginator($count);
+    }
+
+    public function setFilename(?string $filename)
+    {
+        $this->filename = $filename;
+        return $this;
     }
 
     public function caption(string $caption = null): ?string
@@ -28,6 +41,47 @@ abstract class AbstractPaginatedTable
         return $this->caption;
     }
 
+    public function downloadFile(): File
+    {
+        return new DeferredFile(
+            $this->filename . '.ods',
+            function (DeferredFile $file) {
+                FS::touch($file->path());
+                $writer = WriterEntityFactory::createODSWriter();
+                $writer->openToFile($file->path() . '.tmp.ods');
+                $writer->close();
+                FS::copy($file->path() . '.tmp.ods', $file->path());
+                unlink($file->path() . '.tmp.ods');
+            },
+            'paginatedTable--' . Context::url() . '--' . $this->id()
+        );
+    }
+
+    public function download(): string
+    {
+        if (!$this->filename || $this->paginator()->count() == 0) return '';
+        ob_start();
+        echo "<div class='data-table__download navigation-frame navigation-frame--stateless' id='" . $this->id() . "__download'>";
+        $arg = $this->id() . '__download';
+        if (Context::arg($arg) == 'true') {
+            // prepare download and display link to it
+            $file = $this->downloadFile();
+            printf(
+                '<div class="notification notification--confirmation">Download ready: <a href="%s" target="_top">%s</a></div>',
+                $file->url(),
+                $file->filename()
+            );
+        } else {
+            // link to initialize
+            printf(
+                '<a href="%s" class="button">Download table data</a>',
+                new URL('&' . $arg . '=true')
+            );
+        }
+        echo "</div>";
+        return ob_get_clean();
+    }
+
     public function __toString()
     {
         ob_start();
@@ -35,7 +89,10 @@ abstract class AbstractPaginatedTable
         if ($this->paginator()->count() == 0) {
             Notifications::printNotice('Nothing to display');
         } else {
+            echo "<div class='data-table__top'>";
             echo $this->paginator();
+            echo $this->download();
+            echo "</div>";
             echo "<table>";
             if ($this->caption) {
                 echo "<caption>" . $this->caption() . "</caption>";
@@ -43,6 +100,7 @@ abstract class AbstractPaginatedTable
             $this->printHeaders();
             $this->printBody();
             echo "</table>";
+            echo "<div class='data-table__bottom'>";
             echo $this->paginator();
             if ($this->paginator()->pages() > 1) {
                 $start = number_format($this->paginator->startItem() + 1);
@@ -54,6 +112,7 @@ abstract class AbstractPaginatedTable
                 $count = number_format($this->paginator->count());
                 echo "<small class='paginator-status'>Displaying $start to $end of $count</small>";
             }
+            echo "</div>";
         }
         echo "</div>";
         return ob_get_clean();

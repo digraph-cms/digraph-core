@@ -52,6 +52,7 @@ article,
 .incidental-content,
 table,
 fieldset {
+
     h1,
     h2,
     h3,
@@ -84,6 +85,10 @@ fieldset {
     h6 {
         font-size: 1em;
     }
+
+    >*:last-child {
+        margin-bottom: 0;
+    }
 }
 
 table,
@@ -102,9 +107,11 @@ hr,
 .paginator,
 .data-table {
     margin: $grid 0;
+
     &:first-child {
         margin-top: 0;
     }
+
     &:last-child {
         margin-bottom: 0;
     }
@@ -119,9 +126,38 @@ hr {
 
 .paginator {
     font-family: $font-ui;
+    display: flex;
+    background-color: var(--background-dark);
+    border-radius: $border-radius;
+    overflow: hidden;
+}
+
+.paginator__link {
+    padding: $grid/2 $grid;
+    text-decoration: none;
+    color: var(--color) !important;
+
+    &:nth-child(odd) {
+        background-color: var(--background-darker);
+    }
+
+    &:hover,
+    &:focus {
+        background-color: var(--cue-interactive);
+        color: var(--cue-interactive-inv) !important;
+        text-decoration: underline;
+    }
+
+    &.paginator__link--current {
+        background-color: var(--cue-information) !important;
+        color: var(--cue-information-inv) !important;
+        text-decoration: none !important;
+        font-weight: bold;
+    }
 }
 
 li {
+
     ul,
     ol {
         margin: 0;
@@ -138,7 +174,7 @@ code {
     font-family: $font-code;
 }
 
-pre > code {
+pre>code {
     display: block;
     overflow: auto;
 }
@@ -149,7 +185,7 @@ table {
     margin: 0;
     border-collapse: collapse;
 
-    pre > code {
+    pre>code {
         max-width: 25vw;
     }
 }
@@ -167,7 +203,7 @@ tr:nth-child(even) {
     }
 }
 
-thead + tbody {
+thead+tbody {
     tr:nth-child(even) {
         background: var(--theme-neutral-a20);
     }
@@ -190,7 +226,7 @@ th {
 
 th,
 td.header,
-thead > tr {
+thead>tr {
     font-family: $font-ui;
     text-align: left;
     background-color: var(--theme-accent) !important;
@@ -216,10 +252,11 @@ blockquote {
     font-style: italic;
     border-left: $border solid var(--theme-neutral);
 
-    > * {
+    >* {
         &:first-child {
             margin-top: 0;
         }
+
         &:last-child {
             margin-bottom: 0;
         }
@@ -272,6 +309,7 @@ mark {
 }
 
 @media print {
+
     del,
     ins,
     mark,
@@ -316,8 +354,10 @@ ol {
 }
 
 #content {
+
     ul,
     ol {
+
         ul,
         ol {
             border-left: $border dotted var(--theme-neutral-a80);

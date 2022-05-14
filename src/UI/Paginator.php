@@ -95,13 +95,13 @@ class Paginator
         $links = [];
         // link to previous page
         if ($this->page() > 1) {
-            $links[] = $this->link($this->page() - 1, 'previous', 'link-previous');
+            $links[] = $this->link($this->page() - 1, 'previous', 'previous');
         }
         // link to first page
         if ($this->group() > 0) {
-            $links[] = $this->link(1, 'first', 'link-firstpage');
+            $links[] = $this->link(1, 'first', 'firstpage');
             // link to previous group
-            $links[] = $this->link($this->groupStartPage() - 1, null, 'link-previousgroup');
+            $links[] = $this->link($this->groupStartPage() - 1, null, 'previousgroup');
         }
         // primary page links from within group
         for ($i = $this->groupStartPage(); $i <= $this->groupEndPage(); $i++) {
@@ -109,15 +109,15 @@ class Paginator
         }
         // link to next group
         if ($this->group() < $this->groupCount() && $this->groupEndPage() < $this->pages()) {
-            $links[] = $this->link($this->groupEndPage() + 1, null, 'link-nextgroup');
+            $links[] = $this->link($this->groupEndPage() + 1, null, 'nextgroup');
         }
         // link to last page
         if ($this->group() < $this->groupCount() - 1) {
-            $links[] = $this->link($this->pages(), 'last', 'link-lastpage');
+            $links[] = $this->link($this->pages(), 'last', 'lastpage');
         }
         // link to next page
         if ($this->page() < $this->pages()) {
-            $links[] = $this->link($this->page() + 1, 'next', 'link-next');
+            $links[] = $this->link($this->page() + 1, 'next', 'next');
         }
         return $links;
     }
@@ -126,14 +126,14 @@ class Paginator
     {
         $url = $this->url($page);
         $text = $text ?? number_format($page);
-        $classes = ['paginator-link'];
+        $classes = ['paginator__link'];
         if ($page == $this->page()) {
-            $classes[] = 'paginator-link-current';
+            $classes[] = 'paginator__link--current';
             $text = "<strong>$text</strong>";
             return "<a data-page='$page' class='" . implode(' ', $classes) . "' data-target='_frame' title='Page " . number_format($page) . "'>$text</a>";
         }
         if ($class) {
-            $classes[] = $class;
+            $classes[] = 'paginator__link--' . $class;
         }
         return "<a href='$url' data-page='$page' class='" . implode(' ', $classes) . "' data-target='_frame' title='Page " . number_format($page) . "'>$text</a>";
     }

@@ -149,6 +149,7 @@ class URL
     public function setName(string $name = null)
     {
         $this->name = $name;
+        return $this;
     }
 
     public function name(bool $inPageContext = false): string
