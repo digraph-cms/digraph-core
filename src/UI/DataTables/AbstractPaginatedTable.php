@@ -2,7 +2,9 @@
 
 namespace DigraphCMS\UI\DataTables;
 
+use Box\Spout\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
+use Box\Spout\Writer\WriterAbstract;
 use DigraphCMS\Context;
 use DigraphCMS\FS;
 use DigraphCMS\Media\DeferredFile;
@@ -11,13 +13,17 @@ use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\Paginator;
 use DigraphCMS\URL\URL;
 
+use function Opis\Closure\serialize;
+
 abstract class AbstractPaginatedTable
 {
     protected static $id = 0;
     protected $paginator;
     protected $headers = [];
     protected $caption;
-    protected $filename;
+    protected $downloadFilename;
+    protected $downloadCallback;
+    protected $downloadHeaders;
 
     abstract public function body(): array;
 
@@ -27,9 +33,11 @@ abstract class AbstractPaginatedTable
         $this->paginator = new Paginator($count);
     }
 
-    public function setFilename(?string $filename)
+    public function enableDownload(string $filename, callable $callback, array $headers)
     {
-        $this->filename = $filename;
+        $this->downloadFilename = $filename;
+        $this->downloadCallback = $callback;
+        $this->downloadHeaders = $headers;
         return $this;
     }
 
@@ -44,22 +52,46 @@ abstract class AbstractPaginatedTable
     public function downloadFile(): File
     {
         return new DeferredFile(
-            $this->filename . '.ods',
+            $this->downloadFilename . '.ods',
             function (DeferredFile $file) {
                 FS::touch($file->path());
                 $writer = WriterEntityFactory::createODSWriter();
                 $writer->openToFile($file->path() . '.tmp.ods');
+                // set up headers
+                $writer->addRow(WriterEntityFactory::createRow(
+                    array_map(
+                        function ($cell) {
+                            if (!($cell instanceof Cell)) $cell = WriterEntityFactory::createCell($cell);
+                            return $cell;
+                        },
+                        $this->downloadHeaders
+                    )
+                ));
+                // load results into rows
+                $this->writeDownloadFile($writer);
+                // close/save
                 $writer->close();
                 FS::copy($file->path() . '.tmp.ods', $file->path());
                 unlink($file->path() . '.tmp.ods');
             },
-            'paginatedTable--' . Context::url() . '--' . $this->id()
+            'tabledownload/' . $this->downloadFileID()
         );
     }
 
+    protected function downloadFileID(): string
+    {
+        return md5(serialize([
+            $this,
+            Context::url(),
+            Context::request()->post()
+        ]));
+    }
+
+    abstract protected function writeDownloadFile(WriterAbstract $writer);
+
     public function download(): string
     {
-        if (!$this->filename || $this->paginator()->count() == 0) return '';
+        if (!$this->downloadFilename || $this->paginator()->count() == 0) return '';
         ob_start();
         echo "<div class='data-table__download navigation-frame navigation-frame--stateless' id='" . $this->id() . "__download'>";
         $arg = $this->id() . '__download';

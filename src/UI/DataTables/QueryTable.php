@@ -2,11 +2,10 @@
 
 namespace DigraphCMS\UI\DataTables;
 
+use Box\Spout\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
+use Box\Spout\Writer\WriterAbstract;
 use DigraphCMS\Context;
-use DigraphCMS\FS;
-use DigraphCMS\Media\DeferredFile;
-use DigraphCMS\Media\File;
 
 class QueryTable extends AbstractPaginatedTable
 {
@@ -26,31 +25,30 @@ class QueryTable extends AbstractPaginatedTable
         $this->headers = $headers;
     }
 
-    public function downloadFile(): File
+    protected function writeDownloadFile(WriterAbstract $writer)
     {
-        return new DeferredFile(
-            $this->filename . '.ods',
-            function (DeferredFile $file) {
-                FS::touch($file->path());
-                $writer = WriterEntityFactory::createODSWriter();
-                $writer->openToFile($file->path() . '.tmp.ods');
-                $query = clone $this->query;
-                while ($r = $query->fetch()) {
-                    $writer->addRow(WriterEntityFactory::createRow(
-                        array_map(
-                            function ($c) {
-                                return WriterEntityFactory::createCell($c);
-                            },
-                            ($this->callback)($r, $this)
-                        )
-                    ));
-                }
-                $writer->close();
-                FS::copy($file->path() . '.tmp.ods', $file->path());
-                unlink($file->path() . '.tmp.ods');
-            },
-            'queryTable--' . Context::url() . '--' . $this->id()
-        );
+        // load all query results into rows
+        $query = clone $this->query;
+        while ($r = $query->fetch()) {
+            $writer->addRow(WriterEntityFactory::createRow(
+                array_map(
+                    function ($cell) {
+                        if (!($cell instanceof Cell)) $cell = WriterEntityFactory::createCell($cell);
+                        return $cell;
+                    },
+                    ($this->downloadCallback)($r, $this)
+                )
+            ));
+        }
+    }
+
+    protected function downloadFileID(): string
+    {
+        return md5(serialize([
+            $this->query->getQuery(),
+            Context::url(),
+            Context::request()->post()
+        ]));
     }
 
     public function body(): array
