@@ -4,7 +4,7 @@ namespace DigraphCMS\Session;
 
 class CookieRequiredError extends \Exception
 {
-    protected $cookieType;
+    protected $cookieTypes;
 
     public function __construct(array $cookieTypes, string $message = '')
     {
