@@ -1,4 +1,4 @@
-name: CI
+name: PHPStan
 
 on: [push]
 
@@ -18,3 +18,4 @@ jobs:
         memory_limit: 128M
         php_extensions: gd zip exif
         php_version: 7.4
+        level: 0

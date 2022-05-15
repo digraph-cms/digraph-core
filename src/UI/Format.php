@@ -94,6 +94,8 @@ class Format
             return $dt;
         } elseif (is_string($date)) {
             return new DateTime($date, static::timezone());
+        } else {
+            throw new \Exception("Error parsing date");
         }
     }
 

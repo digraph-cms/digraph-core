@@ -8,6 +8,8 @@ use Box\Spout\Writer\WriterAbstract;
 
 class ArrayTable extends AbstractPaginatedTable
 {
+    protected $array, $callback;
+
     /**
      * Undocumented function
      *
