@@ -54,7 +54,7 @@ class Dispatcher
      *
      * @param string $event
      * @param array $args
-     * @return void
+     * @return mixed
      */
     public static function firstValue(string $event, array $args = [])
     {
