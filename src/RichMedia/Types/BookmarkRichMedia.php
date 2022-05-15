@@ -40,7 +40,7 @@ class BookmarkRichMedia extends AbstractRichMedia
             $url = $bookmark['url'];
             $link->setAttribute('href', $url);
             if (!WaybackMachine::check($url)) {
-                if ($wb = WaybackMachine::get($url, $bookmark->updated())) {
+                if ($wb = WaybackMachine::get($url)) {
                     // Wayback Machine says URL is broken and found an archived copy
                     $link->setAttribute('href', $wb->helperURL())
                         ->addClass('link--wayback')

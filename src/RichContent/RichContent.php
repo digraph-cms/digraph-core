@@ -16,7 +16,7 @@ class RichContent
     /**
      * Construct using either a string or a complete array including metadata
      *
-     * @param string|array $value
+     * @param null|string|array $value
      */
     public function __construct($value)
     {

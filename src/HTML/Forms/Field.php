@@ -145,6 +145,7 @@ class Field extends DIV implements InputInterface
     public function setForm(FormWrapper $form)
     {
         $this->input()->setForm($form);
+        return $this;
     }
 
     public function required(): bool

@@ -36,7 +36,7 @@ class Templates
         // get template alias
         $template = Config::get("templates.aliases.$template") ?? $template;
         // do rendering and output
-        $output = static::doRender($template, $fields);
+        $output = static::doRender($template);
         Context::end();
         return $output;
     }

@@ -105,6 +105,7 @@ class Radio extends Tag implements InputInterface
     public function setValue($value)
     {
         $this->value = $value;
+        return $this;
     }
 
     public function form(): ?FormWrapper
@@ -124,6 +125,7 @@ class Radio extends Tag implements InputInterface
     public function setForm(FormWrapper $form)
     {
         $this->form = $form;
+        return $this;
     }
 
     public function id(bool $omitKey = false): ?string

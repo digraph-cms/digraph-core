@@ -436,7 +436,7 @@ class Theme
                     $files,
                     array_map(
                         Media::class . '::get',
-                        Media::globToPaths($url_or_file, $async)
+                        Media::globToPaths($url_or_file)
                     )
                 );
             } else {
@@ -474,7 +474,7 @@ class Theme
             // bundle scripts
             $file = new DeferredFile(
                 "$name.js",
-                function (DeferredFile $file) use ($files, $name) {
+                function (DeferredFile $file) use ($files) {
                     $content = "";
                     foreach ($files as $f) {
                         $content .= $f->content() . PHP_EOL . ';';

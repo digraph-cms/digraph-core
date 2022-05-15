@@ -10,7 +10,7 @@ use DigraphCMS\Context;
 class WaybackResult
 {
 
-    protected $originalURL, $wbURL, $wbTime;
+    protected $originalURL, $wbURL, $wbTime, $created;
 
     public function __construct(string $originalURL, ?string $wbURL, ?int $wbTime, int $created = null)
     {

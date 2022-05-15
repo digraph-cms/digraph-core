@@ -45,11 +45,9 @@ abstract class AbstractRichMedia implements ArrayAccess
         $this->created = @$metadata['created'] ?? new DateTime();
         $this->created_by = @$metadata['created_by'] ?? Session::uuid();
         $this->updated = @$metadata['updated'] ?? new DateTime();
-        $this->updated_last = clone $this->updated;
         $this->updated_by = @$metadata['updated_by'] ?? Session::uuid();
         $this->name = @$metadata['name'] ?? 'Unnamed media';
         $this->rawSet(null, $data);
-        $this->changed = false;
     }
 
     public function file(): FilestoreFile
@@ -188,10 +186,5 @@ abstract class AbstractRichMedia implements ArrayAccess
     public function updated(): DateTime
     {
         return clone $this->updated;
-    }
-
-    public function updatedLast(): DateTime
-    {
-        return clone $this->updated_last;
     }
 }

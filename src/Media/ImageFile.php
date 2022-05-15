@@ -444,7 +444,7 @@ class ImageFile extends DeferredFile
      * @param integer $width
      * @param integer $height
      * @param boolean $upscale
-     * @return true
+     * @return $this
      */
     public function cover(int $width, int $height, $upscale = false)
     {
@@ -453,6 +453,7 @@ class ImageFile extends DeferredFile
             $width,
             $height
         );
+        return $this;
     }
 
     const CROP_TOP_LEFT = Manipulations::CROP_TOP_LEFT;

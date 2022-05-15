@@ -23,7 +23,7 @@ class SELECT extends Tag implements InputInterface
     public function __construct(array $options = null)
     {
         $this->setOptions($options);
-        $this->setID($id ?? 'select-' . static::$counter++);
+        $this->setID('select-' . static::$counter++);
     }
 
     public function children(): array
@@ -35,7 +35,7 @@ class SELECT extends Tag implements InputInterface
                     return sprintf(
                         '<option value="%s"%s>%s</option>',
                         $key,
-                        $this->value(true) == $opt['value'] || $this->valueString(true) == $key ? ' selected="true"' : '',
+                        $this->value(true) == $opt['value'] || $this->valueString() == $key ? ' selected="true"' : '',
                         $opt['label']
                     );
                 },

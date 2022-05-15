@@ -102,6 +102,7 @@ class Checkbox extends Tag implements InputInterface
     public function setValue($value)
     {
         $this->value = $value;
+        return $this;
     }
 
     public function form(): ?FormWrapper
@@ -121,6 +122,7 @@ class Checkbox extends Tag implements InputInterface
     public function setForm(FormWrapper $form)
     {
         $this->form = $form;
+        return $this;
     }
 
     public function id(): ?string

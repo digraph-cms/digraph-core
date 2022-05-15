@@ -4,7 +4,6 @@ namespace DigraphCMS\Content;
 
 use ArrayAccess;
 use DateTime;
-use DateTimeZone;
 use DigraphCMS\Config;
 use DigraphCMS\Cron\CronJob;
 use DigraphCMS\Cron\DeferredJob;
@@ -38,8 +37,10 @@ abstract class AbstractPage implements ArrayAccess
     protected $slug = false;
     protected $created, $created_by;
     protected $updated, $updated_by;
+    protected $updated_last;
     protected $slugCollisions;
     protected static $class;
+    protected $slugPattern;
 
     abstract public function richContent(string $index, RichContent $content = null): ?RichContent;
     abstract public function allRichContent(): array;
@@ -54,7 +55,6 @@ abstract class AbstractPage implements ArrayAccess
         $this->updated_last = clone $this->updated;
         $this->updated_by = @$metadata['updated_by'] ?? Session::uuid();
         $this->rawSet(null, $data);
-        $this->changed = false;
         $this->slugPattern = @$metadata['slug_pattern'] ?? static::DEFAULT_SLUG;
     }
 

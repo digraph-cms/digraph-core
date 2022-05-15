@@ -72,6 +72,7 @@ class RadioList extends DIV implements InputInterface
         if ($this->form()) {
             return $this->form()->submitted();
         }
+        return false;
     }
 
     public function id(): ?string
@@ -160,6 +161,7 @@ class RadioList extends DIV implements InputInterface
                 $f['field']->setDefault(false);
             }
         }
+        return $this;
     }
 
     /**
@@ -169,11 +171,12 @@ class RadioList extends DIV implements InputInterface
     public function setValue($value)
     {
         foreach ($this->fields as $f) {
-            if ($f['value'] == $default) {
+            if ($f['value'] == $value) {
                 $f['field']->setValue(true);
             } else {
                 $f['field']->setValue(false);
             }
         }
+        return $this;
     }
 }

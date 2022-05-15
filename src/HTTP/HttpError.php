@@ -6,6 +6,8 @@ use Exception;
 
 class HttpError extends Exception
 {
+    protected $status;
+
     public function __construct(int $status, string $message = null)
     {
         $this->status = $status;

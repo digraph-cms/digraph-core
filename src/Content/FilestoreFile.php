@@ -17,6 +17,7 @@ use Mimey\MimeTypes;
 class FilestoreFile extends DeferredFile
 {
     protected $uuid, $hash, $filename, $media, $meta, $image;
+    protected $bytes, $created, $created_by;
 
     public function __construct(string $uuid, string $hash, string $filename, int $bytes, string $parent, array $meta, int $created, ?string $created_by)
     {
