@@ -16,6 +16,11 @@ class CheckboxListField extends Field
         $this->addClass('checkbox-list-field');
     }
 
+    public function input(): CheckboxList
+    {
+        return parent::input();
+    }
+
     public function field(string $key): ?CheckboxField
     {
         return $this->input()->field($key);

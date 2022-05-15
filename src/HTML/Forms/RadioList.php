@@ -149,7 +149,7 @@ class RadioList extends DIV implements InputInterface
     }
 
     /**
-     * @param string|null $required
+     * @param string|null $default
      * @return $this
      */
     public function setDefault($default)
@@ -165,7 +165,7 @@ class RadioList extends DIV implements InputInterface
     }
 
     /**
-     * @param array|null $required
+     * @param array|null $value
      * @return $this
      */
     public function setValue($value)

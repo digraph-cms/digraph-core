@@ -58,6 +58,11 @@ abstract class AbstractPage implements ArrayAccess
         $this->slugPattern = @$metadata['slug_pattern'] ?? static::DEFAULT_SLUG;
     }
 
+    public static function onRecursiveDelete(DeferredJob $job, AbstractPage $page)
+    {
+        // does nothing, but can be extended
+    }
+
     protected function _date(string $key): ?DateTime
     {
         if ($this[$key]) {
@@ -379,9 +384,7 @@ abstract class AbstractPage implements ArrayAccess
                 $uuid = $page->uuid();
                 // extensible recursive deletion
                 $class = get_class($page);
-                if (method_exists($class, 'onRecursiveDelete')) {
-                    $class::onRecursiveDelete($job, $page);
-                }
+                $class::onRecursiveDelete($job, $page);
                 // queue deletion of all associated rich media
                 $media = RichMedia::select($uuid);
                 while ($m = $media->fetch()) {

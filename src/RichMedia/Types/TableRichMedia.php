@@ -14,7 +14,7 @@ class TableRichMedia extends AbstractRichMedia
      * Generate a shortcode rendering of this media
      *
      * @param ShortcodeInterface $code
-     * @param self $media
+     * @param self $table
      * @return string|null
      */
     public static function shortCode(ShortcodeInterface $code, $table): ?string

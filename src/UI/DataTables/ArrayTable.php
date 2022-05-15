@@ -5,6 +5,7 @@ namespace DigraphCMS\UI\DataTables;
 use Box\Spout\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\WriterAbstract;
+use ArrayAccess;
 
 class ArrayTable extends AbstractPaginatedTable
 {
@@ -13,7 +14,7 @@ class ArrayTable extends AbstractPaginatedTable
     /**
      * Undocumented function
      *
-     * @param ArrayAccess|Countable|array $array
+     * @param ArrayAccess|array $array
      * @param callable $callback
      * @param array $headers
      */

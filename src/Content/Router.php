@@ -164,7 +164,7 @@ class Router
      * Check whether a handler for a given page route exists, but do not
      * actually execute it yet.
      *
-     * @param AbstractPage $route
+     * @param AbstractPage $page
      * @param string $action
      * @return boolean
      */

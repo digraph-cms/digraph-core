@@ -18,4 +18,4 @@ jobs:
         memory_limit: 256M
         php_extensions: gd zip exif
         php_version: 7.4
-        level: 1
+        level: 2

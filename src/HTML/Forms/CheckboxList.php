@@ -159,7 +159,7 @@ class CheckboxList extends DIV implements InputInterface
     }
 
     /**
-     * @param array|null $required
+     * @param array|null $default
      * @return $this
      */
     public function setDefault($default)
@@ -175,7 +175,7 @@ class CheckboxList extends DIV implements InputInterface
     }
 
     /**
-     * @param array|null $required
+     * @param array|null $value
      * @return $this
      */
     public function setValue($value)

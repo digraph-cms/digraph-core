@@ -86,7 +86,7 @@ class Radio extends Tag implements InputInterface
      * Set the default value of this input, to be used if no value is
      * submitted in the get/post values.
      *
-     * @param $value
+     * @param string|int $value
      * @return $this
      */
     public function setDefault($value)
@@ -99,7 +99,7 @@ class Radio extends Tag implements InputInterface
      * Set the value of this input explicitly. It will not respond to
      * different submitted values from this point onward.
      *
-     * @param $value
+     * @param string|int $value
      * @return $this
      */
     public function setValue($value)

@@ -16,6 +16,11 @@ class RadioListField extends Field
         $this->addClass('radio-list-field');
     }
 
+    public function input(): RadioList
+    {
+        return parent::input();
+    }
+
     public function field(string $key): ?RadioField
     {
         return $this->input()->field($key);

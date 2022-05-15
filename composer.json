@@ -70,7 +70,7 @@
             "phinx seed:run"
         ],
         "stan": [
-            "phpstan analyse src/ --level=1 --memory-limit=256M"
+            "phpstan analyse src/ --level=2 --memory-limit=256M"
         ]
     }
 }

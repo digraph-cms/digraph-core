@@ -18,7 +18,7 @@ class RichMedia
      *
      * @param string $uuid
      * @param string|null $parent
-     * @return RichMedia|null
+     * @return bool
      */
     public static function exists(string $uuid, string $parent = null): bool
     {
@@ -86,10 +86,9 @@ class RichMedia
         DB::query()
             ->update('rich_media')
             ->where(
-                'uuid = ? AND updated = ?',
+                'uuid = ?',
                 [
-                    $media->uuid(),
-                    $media->updatedLast()->getTimestamp()
+                    $media->uuid()
                 ]
             )
             ->set([
