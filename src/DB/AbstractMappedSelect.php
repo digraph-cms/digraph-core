@@ -169,7 +169,7 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
     /**
      * Fetch first DataObject, or raw row if returnDataObjects
      *
-     * @return object|array|null
+     * @return mixed
      */
     public function fetch()
     {
@@ -203,8 +203,8 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
     /**
      * Fetch pairs
      *
-     * @param $key
-     * @param $value
+     * @param string $key
+     * @param string $value
      * @param boolean $object
      * @return array|\PDOStatement
      */
@@ -233,7 +233,7 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
         return $this->iterator;
     }
 
-    public function count()
+    public function count(): int
     {
         return $this->query->count();
     }
@@ -252,7 +252,7 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
         return $this->getIterator()->key();
     }
 
-    public function next()
+    public function next(): void
     {
         $this->getIterator()->next();
     }
@@ -267,7 +267,7 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
      *
      * @return void
      */
-    public function rewind()
+    public function rewind(): void
     {
         if (method_exists($this->getIterator(), 'rewind')) {
             $this->getIterator()->rewind();

@@ -10,6 +10,7 @@ class Request
     protected $originalUrl = null;
     protected $method = null;
     protected $headers = null;
+    protected $post = [];
 
     public function __construct(URL $url, string $method, RequestHeaders $headers, array $post)
     {

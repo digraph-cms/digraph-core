@@ -76,7 +76,7 @@ class OrderingInput extends INPUT
      * Undocumented function
      *
      * @param array $labels
-     * @return this
+     * @return $this
      */
     public function setLabels(array $labels)
     {

@@ -56,7 +56,8 @@
         "league/oauth2-github": "^3.0||^2.0",
         "league/oauth2-facebook": "^2.0",
         "league/oauth2-google": "^4.0||^3.0",
-        "jasig/phpcas": "^1.4"
+        "jasig/phpcas": "^1.4",
+        "phpstan/phpstan": "^1.6"
     },
     "scripts": {
         "server": [
@@ -67,6 +68,9 @@
         ],
         "seed": [
             "phinx seed:run"
+        ],
+        "stan": [
+            "phpstan analyse src/ --level=2 --memory-limit=256M"
         ]
     }
 }

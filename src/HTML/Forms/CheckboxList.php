@@ -73,6 +73,7 @@ class CheckboxList extends DIV implements InputInterface
         if ($this->form()) {
             return $this->form()->submitted();
         }
+        return false;
     }
 
     public function id(): ?string
@@ -158,7 +159,7 @@ class CheckboxList extends DIV implements InputInterface
     }
 
     /**
-     * @param array|null $required
+     * @param array|null $default
      * @return $this
      */
     public function setDefault($default)
@@ -170,10 +171,11 @@ class CheckboxList extends DIV implements InputInterface
                 $f['field']->setDefault(false);
             }
         }
+        return $this;
     }
 
     /**
-     * @param array|null $required
+     * @param array|null $value
      * @return $this
      */
     public function setValue($value)
@@ -185,5 +187,6 @@ class CheckboxList extends DIV implements InputInterface
                 $f['field']->setValue(false);
             }
         }
+        return $this;
     }
 }

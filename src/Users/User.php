@@ -23,6 +23,7 @@ class User implements ArrayAccess
     protected $uuid, $name;
     protected $created, $created_by;
     protected $updated, $updated_by;
+    protected $updated_last;
     protected $groups;
 
     public function __construct(array $data = [], array $metadata = [])
@@ -35,7 +36,6 @@ class User implements ArrayAccess
         $this->updated_last = clone $this->updated;
         $this->updated_by = @$metadata['updated_by'] ?? Session::uuid();
         $this->rawSet(null, $data);
-        $this->changed = false;
     }
 
     /**

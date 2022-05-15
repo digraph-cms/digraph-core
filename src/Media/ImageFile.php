@@ -444,7 +444,7 @@ class ImageFile extends DeferredFile
      * @param integer $width
      * @param integer $height
      * @param boolean $upscale
-     * @return true
+     * @return $this
      */
     public function cover(int $width, int $height, $upscale = false)
     {
@@ -453,6 +453,7 @@ class ImageFile extends DeferredFile
             $width,
             $height
         );
+        return $this;
     }
 
     const CROP_TOP_LEFT = Manipulations::CROP_TOP_LEFT;
@@ -488,7 +489,7 @@ class ImageFile extends DeferredFile
      * @param integer $height
      * @param integer $focalX
      * @param integer $focalY
-     * @param integer $zoom
+     * @param float $zoom
      * @return $this
      */
     public function focalCrop(int $width, int $height, int $focalX, int $focalY, float $zoom = 1)
@@ -534,7 +535,7 @@ class ImageFile extends DeferredFile
     }
 
     /**
-     * @param integer $gamma 0.1 to 9.99
+     * @param float $gamma 0.1 to 9.99
      * @return $this
      */
     public function gamma(float $gamma)

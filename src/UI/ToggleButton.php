@@ -14,6 +14,7 @@ class ToggleButton extends Tag
     protected static $idCounter = 0;
 
     protected $state;
+    protected $toggleOn, $toggleOff;
 
     public function __construct(bool $state, callable $toggleOn, callable $toggleOff)
     {

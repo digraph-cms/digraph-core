@@ -2,13 +2,19 @@
 
 namespace DigraphCMS\UI\DataTables;
 
+use Box\Spout\Common\Entity\Cell;
+use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
+use Box\Spout\Writer\WriterAbstract;
+use ArrayAccess;
 
 class ArrayTable extends AbstractPaginatedTable
 {
+    protected $array, $callback;
+
     /**
      * Undocumented function
      *
-     * @param ArrayAccess|Countable|array $array
+     * @param ArrayAccess|array $array
      * @param callable $callback
      * @param array $headers
      */
@@ -18,6 +24,22 @@ class ArrayTable extends AbstractPaginatedTable
         $this->array = $array;
         $this->callback = $callback;
         $this->headers = $headers;
+    }
+
+    function writeDownloadFile(WriterAbstract $writer)
+    {
+        // write entire array into rows
+        foreach ($this->array as $r) {
+            $writer->addRow(WriterEntityFactory::createRow(
+                array_map(
+                    function ($cell) {
+                        if (!($cell instanceof Cell)) $cell = WriterEntityFactory::createCell($cell);
+                        return $cell;
+                    },
+                    ($this->downloadCallback)($r, $this)
+                )
+            ));
+        }
     }
 
     public function body(): array

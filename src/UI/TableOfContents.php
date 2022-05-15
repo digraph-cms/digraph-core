@@ -14,6 +14,7 @@ class TableOfContents extends Tag
     protected $firstPage = 20;
     protected $perPage = 10;
     protected $sort = 'name ASC';
+    protected $parents = [];
 
     public function __construct(AbstractPage $page, $parents = [])
     {

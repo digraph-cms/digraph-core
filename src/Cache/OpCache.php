@@ -11,6 +11,7 @@ class OpCache extends AbstractCacheDriver
     protected $cache = [];
     protected $lockHandles = [];
     protected $fuzz;
+    protected $ttl;
 
     public function __construct()
     {
@@ -81,6 +82,8 @@ class OpCache extends AbstractCacheDriver
                 $this->lockRead($filename);
                 // include file
                 try {
+                    $exp = 0;
+                    $val = null;
                     include $filename;
                 } catch (\Throwable $th) {
                     // unlock file before throwing errors

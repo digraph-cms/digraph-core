@@ -21,6 +21,7 @@ class Response
     protected $template = null;
     protected $filename = null;
     protected $mime = null;
+    protected $staleTTL;
 
     public function __construct(int $status = null)
     {
@@ -95,7 +96,7 @@ class Response
             // config value for this page class
             ($this->page() ? Config::get('page_cache.cachettl.' . $this->page()->class()) : null) ??
             // page object's ttl
-            ($this->page() ? $this->page->cacheTTL($this->url()->action()) : null) ??
+            ($this->page() ? $this->page->cacheTTL($this->page()->url()->action()) : null) ??
             // default of 0
             0;
     }
@@ -113,7 +114,7 @@ class Response
             // config value for this page class
             ($this->page() ? Config::get('page_cache.stalettl.' . $this->page()->class()) : null) ??
             // page object's ttl
-            ($this->page() ? $this->page->staleTTL($this->url()->action()) : null) ??
+            ($this->page() ? $this->page->staleTTL($this->page()->url()->action()) : null) ??
             // default of 0
             0;
     }
@@ -131,7 +132,7 @@ class Response
             // config value for this page class
             ($this->page() ? Config::get('page_cache.browserttl.' . $this->page()->class()) : null) ??
             // page object's ttl
-            ($this->page() ? $this->page->browserTTL($this->url()->action()) : null) ??
+            ($this->page() ? $this->page->browserTTL($this->page()->url()->action()) : null) ??
             // default of 0
             0;
     }

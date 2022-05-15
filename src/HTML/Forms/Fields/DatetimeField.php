@@ -12,6 +12,11 @@ class DatetimeField extends Field
         parent::__construct($label, new DateTimeInput());
     }
 
+    public function input(): DateTimeInput
+    {
+        return parent::input();
+    }
+
     public function setStep($seconds)
     {
         $this->input()->setStep($seconds);

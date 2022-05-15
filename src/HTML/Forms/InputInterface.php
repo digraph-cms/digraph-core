@@ -5,7 +5,7 @@ namespace DigraphCMS\HTML\Forms;
 interface InputInterface
 {
     /**
-     * @param FORM $form
+     * @param FormWrapper $form
      * @return $this
      */
     public function setForm(FormWrapper $form);
@@ -28,13 +28,13 @@ interface InputInterface
     public function setRequired(bool $required, string $message = null);
 
     /**
-     * @param mixed $required
+     * @param mixed $default
      * @return $this
      */
     public function setDefault($default);
 
     /**
-     * @param mixed $required
+     * @param mixed $value
      * @return $this
      */
     public function setValue($value);

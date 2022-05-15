@@ -23,7 +23,7 @@ class SELECT extends Tag implements InputInterface
     public function __construct(array $options = null)
     {
         $this->setOptions($options);
-        $this->setID($id ?? 'select-' . static::$counter++);
+        $this->setID('select-' . static::$counter++);
     }
 
     public function children(): array
@@ -35,7 +35,7 @@ class SELECT extends Tag implements InputInterface
                     return sprintf(
                         '<option value="%s"%s>%s</option>',
                         $key,
-                        $this->value(true) == $opt['value'] || $this->valueString(true) == $key ? ' selected="true"' : '',
+                        $this->value(true) == $opt['value'] || $this->valueString() == $key ? ' selected="true"' : '',
                         $opt['label']
                     );
                 },
@@ -132,7 +132,7 @@ class SELECT extends Tag implements InputInterface
      * Set the default value of this input, to be used if no value is
      * submitted in the get/post values.
      *
-     * @param $value
+     * @param string|int|null $value
      * @return $this
      */
     public function setDefault($value)
@@ -145,7 +145,7 @@ class SELECT extends Tag implements InputInterface
      * Set the value of this input explicitly. It will not respond to
      * different submitted values from this point onward.
      *
-     * @param $value
+     * @param string|int|null $value
      * @return $this
      */
     public function setValue($value)

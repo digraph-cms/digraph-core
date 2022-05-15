@@ -5,7 +5,7 @@ namespace DigraphCMS\UI\ButtonMenus;
 class ButtonMenuButton
 {
     protected static $id = 1;
-    protected $label, $callback, $classes;
+    protected $myID, $label, $callback, $classes;
 
     public function __construct(string $label, callable $callback, array $classes = [])
     {

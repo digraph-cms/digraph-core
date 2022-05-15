@@ -54,7 +54,7 @@ class Dispatcher
      *
      * @param string $event
      * @param array $args
-     * @return void
+     * @return mixed
      */
     public static function firstValue(string $event, array $args = [])
     {
@@ -101,30 +101,23 @@ class Dispatcher
      * either case this means going through all public methods and adding
      * listeners for any that look like event names 
      * (i.e. onCamelCaseName_optionalMore)
-     * 
-     * Returns an array of all added methods and their IDs that can be used to
-     * remove them.
      *
      * @param mixed $object_or_class
-     * @return array
+     * @return void
      */
-    public static function addSubscriber($object_or_class): array
+    public static function addSubscriber($object_or_class)
     {
-        $ids = [];
         if (is_object($object_or_class)) {
             // add callable [object, method] arrays
             foreach (self::getMethods($object_or_class) as $method) {
-                $ids[$method] = self::addEventListener($method, [$object_or_class, $method]);
+                self::addEventListener($method, [$object_or_class, $method]);
             }
         } elseif (class_exists($object_or_class)) {
             // add strings of static methods
             foreach (self::getMethods($object_or_class) as $method) {
-                $ids[$method] = self::addEventListener($method, "$object_or_class::$method");
+                self::addEventListener($method, "$object_or_class::$method");
             }
-            // save IDs for removeSubscriber
-            self::$staticIDs[$object_or_class] = $ids;
         }
-        return $ids;
     }
 
     /**
