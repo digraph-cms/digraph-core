@@ -10,6 +10,7 @@ class Checkbox extends Tag implements InputInterface
     protected $tag = 'input';
     protected $void = true;
 
+    /** @var FormWrapper */
     protected $form;
     protected $default;
     protected $value;
