@@ -18,6 +18,7 @@ use function Opis\Closure\serialize;
 abstract class AbstractPaginatedTable
 {
     protected static $id = 0;
+    protected $myID;
     protected $paginator;
     protected $headers = [];
     protected $caption;

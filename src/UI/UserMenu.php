@@ -15,7 +15,7 @@ use DigraphCMS\Users\Users;
 
 class UserMenu extends MenuBar
 {
-    protected $adminItem, $themeItem, $userItem, $loginItem, $logoutItem;
+    protected $adminItem, $themeItem, $userItem, $loginItem, $logoutItem, $inboxItem;
 
     public function __construct()
     {
