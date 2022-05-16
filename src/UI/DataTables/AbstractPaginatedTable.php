@@ -9,6 +9,7 @@ use DigraphCMS\Media\File;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\Paginator;
 use DigraphCMS\URL\URL;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
@@ -24,6 +25,7 @@ abstract class AbstractPaginatedTable
     protected $downloadFilename;
     protected $downloadCallback;
     protected $downloadHeaders;
+    protected $finalizeCallback;
 
     abstract public function body(): array;
 
@@ -50,11 +52,12 @@ abstract class AbstractPaginatedTable
         return $this;
     }
 
-    public function enableDownload(string $filename, callable $callback, array $headers)
+    public function enableDownload(string $filename, callable $callback, array $headers, callable $finalizeCallback = null)
     {
         $this->downloadFilename = $filename;
         $this->downloadCallback = $callback;
         $this->downloadHeaders = $headers;
+        $this->finalizeCallback = $finalizeCallback;
         return $this;
     }
 
@@ -83,6 +86,12 @@ abstract class AbstractPaginatedTable
                 $spreadsheet->getActiveSheet()->setAutoFilter(
                     $spreadsheet->getActiveSheet()->calculateWorksheetDimension()
                 );
+                foreach ($spreadsheet->getActiveSheet()->getColumnIterator() as $column) {
+                    $spreadsheet->getActiveSheet()->getColumnDimension($column->getColumnIndex())->setAutoSize(true);
+                }
+                $spreadsheet->getActiveSheet()->freezePane(Coordinate::stringFromColumnIndex($writer->freezeColumns() + 1) . '2');
+                // run finalization callback
+                if ($this->finalizeCallback) call_user_func($this->finalizeCallback, $spreadsheet);
                 // save file
                 (new Xlsx($spreadsheet))
                     ->save($file->path() . '.tmp');
