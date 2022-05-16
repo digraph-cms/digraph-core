@@ -62,13 +62,13 @@ class TableRichMedia extends AbstractRichMedia
         $reader->setReadDataOnly(true);
         $spreadsheet = $reader->load($path);
         // loop through rows and cells in first sheet only, generating table data
-        $data = $spreadsheet->getActiveSheet()->toArray(null,true,true,true);
-        foreach ($data as $row) {
+        $sdata = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
+        foreach ($sdata as $rid => $row) {
             $r = [];
-            foreach ($row as $cell) {
-                $r[Digraph::uuid()] = $cell;
+            foreach ($row as $cid => $cell) {
+                $r[Digraph::uuid(null, md5(serialize([$rid, $cid])))] = $cell;
             }
-            $data[Digraph::uuid()] = $r;
+            $data[Digraph::uuid(null, md5($rid))] = $r;
         }
         // overwrite existing table data
         unset($this['table']);
