@@ -23,22 +23,14 @@ class ArrayTable extends AbstractPaginatedTable
         parent::__construct(count($array));
         $this->array = $array;
         $this->callback = $callback;
-        $this->headers = $headers;
+        $this->setHeaders($headers);
     }
 
-    function writeDownloadFile(WriterAbstract $writer)
+    function writeDownloadFile(DownloadWriter $writer)
     {
         // write entire array into rows
         foreach ($this->array as $r) {
-            $writer->addRow(WriterEntityFactory::createRow(
-                array_map(
-                    function ($cell) {
-                        if (!($cell instanceof Cell)) $cell = WriterEntityFactory::createCell($cell);
-                        return $cell;
-                    },
-                    ($this->downloadCallback)($r, $this)
-                )
-            ));
+            $writer->writeRow(call_user_func($this->downloadCallback,$r,$this));
         }
     }
 

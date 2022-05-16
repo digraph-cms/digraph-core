@@ -2,9 +2,6 @@
 
 namespace DigraphCMS\UI\DataTables;
 
-use Box\Spout\Common\Entity\Cell;
-use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
-use Box\Spout\Writer\WriterAbstract;
 use DigraphCMS\Context;
 
 class QueryTable extends AbstractPaginatedTable
@@ -25,20 +22,12 @@ class QueryTable extends AbstractPaginatedTable
         $this->headers = $headers;
     }
 
-    protected function writeDownloadFile(WriterAbstract $writer)
+    protected function writeDownloadFile(DownloadWriter $writer)
     {
         // load all query results into rows
         $query = clone $this->query;
         while ($r = $query->fetch()) {
-            $writer->addRow(WriterEntityFactory::createRow(
-                array_map(
-                    function ($cell) {
-                        if (!($cell instanceof Cell)) $cell = WriterEntityFactory::createCell($cell);
-                        return $cell;
-                    },
-                    ($this->downloadCallback)($r, $this)
-                )
-            ));
+            $writer->writeRow(call_user_func($this->downloadCallback,$r,$this));
         }
     }
 
