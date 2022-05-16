@@ -2,9 +2,6 @@
 
 namespace DigraphCMS\UI\DataTables;
 
-use Box\Spout\Common\Entity\Cell;
-use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
-use Box\Spout\Writer\WriterAbstract;
 use DigraphCMS\Context;
 use DigraphCMS\FS;
 use DigraphCMS\Media\DeferredFile;
@@ -12,6 +9,8 @@ use DigraphCMS\Media\File;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\Paginator;
 use DigraphCMS\URL\URL;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 use function Opis\Closure\serialize;
 
@@ -34,6 +33,23 @@ abstract class AbstractPaginatedTable
         $this->paginator = new Paginator($count);
     }
 
+    /**
+     * Set headers
+     *
+     * @param ColumnHeader[]|string[] $headers
+     * @return $this
+     */
+    public function setHeaders(array $headers)
+    {
+        $this->headers = array_map(function ($header) {
+            if (!($header instanceof ColumnHeader)) {
+                return new ColumnHeader($header);
+            }
+            return $header;
+        }, $headers);
+        return $this;
+    }
+
     public function enableDownload(string $filename, callable $callback, array $headers)
     {
         $this->downloadFilename = $filename;
@@ -53,27 +69,25 @@ abstract class AbstractPaginatedTable
     public function downloadFile(): File
     {
         return new DeferredFile(
-            $this->downloadFilename . '.ods',
+            $this->downloadFilename . '.xlsx',
             function (DeferredFile $file) {
                 FS::touch($file->path());
-                $writer = WriterEntityFactory::createODSWriter();
-                $writer->openToFile($file->path() . '.tmp.ods');
+                $spreadsheet = new Spreadsheet();
+                $writer = new DownloadWriter($spreadsheet);
                 // set up headers
-                $writer->addRow(WriterEntityFactory::createRow(
-                    array_map(
-                        function ($cell) {
-                            if (!($cell instanceof Cell)) $cell = WriterEntityFactory::createCell($cell);
-                            return $cell;
-                        },
-                        $this->downloadHeaders
-                    )
-                ));
-                // load results into rows
+                $writer->writeHeaders($this->downloadHeaders);
+                // call abstract method to convert data into rows
                 $this->writeDownloadFile($writer);
-                // close/save
-                $writer->close();
-                FS::copy($file->path() . '.tmp.ods', $file->path());
-                unlink($file->path() . '.tmp.ods');
+                // wrap up formatting stuff
+                $spreadsheet->setActiveSheetIndex(0);
+                $spreadsheet->getActiveSheet()->setAutoFilter(
+                    $spreadsheet->getActiveSheet()->calculateWorksheetDimension()
+                );
+                // save file
+                (new Xlsx($spreadsheet))
+                    ->save($file->path() . '.tmp');
+                FS::copy($file->path() . '.tmp', $file->path());
+                unlink($file->path() . '.tmp');
             },
             'tabledownload/' . $this->downloadFileID()
         );
@@ -88,7 +102,7 @@ abstract class AbstractPaginatedTable
         ]));
     }
 
-    abstract protected function writeDownloadFile(WriterAbstract $writer);
+    abstract protected function writeDownloadFile(DownloadWriter $writer);
 
     public function download(): string
     {

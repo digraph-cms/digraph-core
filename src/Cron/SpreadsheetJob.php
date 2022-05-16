@@ -2,11 +2,11 @@
 
 namespace DigraphCMS\Cron;
 
-use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
 use DigraphCMS\FS;
 use Exception;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use Throwable;
 
 class SpreadsheetJob extends DeferredJob
@@ -28,11 +28,13 @@ class SpreadsheetJob extends DeferredJob
     {
         try {
             DB::beginTransaction();
-            $reader = ReaderEntityFactory::createReaderFromFile($file);
-            $reader->open($file);
-            foreach ($reader->getSheetIterator() as $sheetNum => $sheet) {
+            $filename = basename($file);
+            $reader = IOFactory::createReaderForFile($file);
+            $reader->setReadDataOnly(true);
+            $spreadsheet = $reader->load($file);
+            $data = $spreadsheet->getActiveSheet()->toArray(null,true,true,true);
                 $header = null;
-                foreach ($sheet->getRowIterator() as $rowNum => $row) {
+                foreach ($data as $rowNum => $row) {
                     // set up headers
                     if (!$header) {
                         foreach ($row->getCells() as $cell) {
@@ -40,24 +42,16 @@ class SpreadsheetJob extends DeferredJob
                         }
                         continue;
                     }
-                    // convert row to array
-                    $rowArray = [];
-                    foreach ($row->getCells() as $i => $cell) {
-                        $rowArray[$header[$i]] = $cell->getValue();
-                    }
                     // set up deferred job
-                    $job->spawn(function () use ($rowFn, $rowArray, $sheetNum, $rowNum) {
-                        return $rowFn($rowArray, $sheetNum, $rowNum) ?? "Processed sheet $sheetNum row $rowNum";
+                    $job->spawn(function () use ($rowFn, $row, $rowNum, $filename) {
+                        return $rowFn($row, $rowNum) ?? "Processed $filename row $rowNum";
                     });
                 }
-            }
             // final job to clean up file
             $job->spawn(function () use ($file) {
                 if (unlink($file)) return "Deleted temp file $file";
                 else return "Failed to delete temp file $file";
             });
-            // close and commit
-            $reader->close();
             DB::commit();
             return "Set up spreadsheet processing jobs";
         } catch (Throwable $th) {
