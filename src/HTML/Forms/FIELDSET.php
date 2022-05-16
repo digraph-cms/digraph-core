@@ -22,7 +22,7 @@ class FIELDSET extends Tag
     {
         $this->form = $form;
         foreach ($this->children() as $child) {
-            if (method_exists($child, 'setForm')) $child->setForm($this->form);
+            if (is_object($child) && method_exists($child, 'setForm')) $child->setForm($this->form);
         }
     }
 
