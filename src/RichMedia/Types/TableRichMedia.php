@@ -2,9 +2,13 @@
 
 namespace DigraphCMS\RichMedia\Types;
 
-use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use DigraphCMS\Digraph;
 use DigraphCMS\RichContent\RichContent;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Reader\Csv;
+use PhpOffice\PhpSpreadsheet\Reader\Ods;
+use PhpOffice\PhpSpreadsheet\Reader\Xls;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 use Thunder\Shortcode\Shortcode\ShortcodeInterface;
 
 class TableRichMedia extends AbstractRichMedia
@@ -41,29 +45,30 @@ class TableRichMedia extends AbstractRichMedia
     {
         switch ($extension) {
             case 'csv':
-                $reader = ReaderEntityFactory::createCSVReader();
+                $reader = new Csv;
                 break;
             case 'xlsx':
-                $reader = ReaderEntityFactory::createXLSXReader();
+                $reader = new Xlsx;
+                break;
+            case 'xls':
+                $reader = new Xls;
                 break;
             case 'ods':
-                $reader = ReaderEntityFactory::createODSReader();
+                $reader = new Ods;
                 break;
             default:
-                $reader = ReaderEntityFactory::createReaderFromFile($path);
+                $reader = IOFactory::createReaderForFile($path);
         }
-        $reader->open($path);
+        $reader->setReadDataOnly(true);
+        $spreadsheet = $reader->load($path);
         // loop through rows and cells in first sheet only, generating table data
-        $data = [];
-        foreach ($reader->getSheetIterator() as $sheet) {
-            foreach ($sheet->getRowIterator() as $row) {
-                $r = [];
-                foreach ($row->getCells() as $cell) {
-                    $r[Digraph::uuid()] = $cell->getValue();
-                }
-                $data[Digraph::uuid()] = $r;
+        $data = $spreadsheet->getActiveSheet()->toArray(null,true,true,true);
+        foreach ($data as $row) {
+            $r = [];
+            foreach ($row as $cell) {
+                $r[Digraph::uuid()] = $cell;
             }
-            break; //break after first sheet
+            $data[Digraph::uuid()] = $r;
         }
         // overwrite existing table data
         unset($this['table']);
