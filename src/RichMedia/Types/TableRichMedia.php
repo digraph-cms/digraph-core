@@ -63,6 +63,7 @@ class TableRichMedia extends AbstractRichMedia
         $spreadsheet = $reader->load($path);
         // loop through rows and cells in first sheet only, generating table data
         $sdata = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
+        $data = [];
         foreach ($sdata as $rid => $row) {
             $r = [];
             foreach ($row as $cid => $cell) {
