@@ -27,8 +27,8 @@ class Locking
     public static function release(int $id)
     {
         DB::query()
-        ->delete('locking', $id)
-        ->execute();
+            ->delete('locking', $id)
+            ->execute();
     }
 
     protected static function getExclusiveLock(string $name, int $ttl): ?int
@@ -38,6 +38,7 @@ class Locking
             ->where('`name` = ?', [$name])
             ->where('`expires` > ?', [time()])
             ->limit(1);
+        $id = null;
         if (!$query->count()) {
             // no exclusive locks exist, save this shared lock
             $id = DB::query()->insertInto(
@@ -61,6 +62,7 @@ class Locking
             ->where('`expires` > ?', [time()])
             ->where('`exclusive` = 1')
             ->limit(1);
+        $id = null;
         if (!$query->count()) {
             // no exclusive locks exist, save this shared lock
             $id = DB::query()->insertInto(
