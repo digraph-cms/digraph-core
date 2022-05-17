@@ -2,7 +2,9 @@
 
 namespace DigraphCMS;
 
-class FS
+FS::_init();
+
+abstract class FS
 {
     public static $umask_file, $umask_dir;
 
@@ -109,5 +111,3 @@ class FS
         touch($path);
     }
 }
-
-FS::_init();

@@ -25,7 +25,7 @@ use DigraphCMS\Users\Users;
 
 use function DigraphCMS\Content\require_file;
 
-class CoreEventSubscriber
+abstract class CoreEventSubscriber
 {
 
     public static function onCron_daily()

@@ -22,7 +22,7 @@ use DigraphCMS\Users\Permissions;
 use Mimey\MimeTypes;
 use Throwable;
 
-class Digraph
+abstract class Digraph
 {
     /**
      * The characters and pattern used to generate UUIDs can be modified in config

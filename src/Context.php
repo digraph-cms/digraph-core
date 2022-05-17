@@ -9,7 +9,7 @@ use DigraphCMS\URL\URL;
 use Flatrr\SelfReferencingFlatArray;
 use Throwable;
 
-class Context
+abstract class Context
 {
     protected static $request, $response, $url, $thrown;
     protected static $data = [];

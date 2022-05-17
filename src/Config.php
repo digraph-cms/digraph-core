@@ -8,7 +8,7 @@ use DigraphCMS\Cache\CachedInitializer;
 use Flatrr\SelfReferencingFlatArray;
 use Spyc;
 
-class Config implements InitializedClassInterface
+abstract class Config implements InitializedClassInterface
 {
     /** @var SelfReferencingFlatArray */
     protected static $data;

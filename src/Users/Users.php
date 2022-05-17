@@ -10,7 +10,7 @@ use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\Session\Session;
 use DigraphCMS\URL\URL;
 
-class Users
+abstract class Users
 {
     protected static $sources = [];
     protected static $cache = [];
