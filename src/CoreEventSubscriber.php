@@ -38,6 +38,13 @@ abstract class CoreEventSubscriber
                 ->execute();
             return "Cleaned up $count old deferred execution jobs";
         });
+        // clean up old locking records
+        new DeferredJob(function(){
+            $count = DB::query()->delete('locking')
+                ->where('expires < ?', [time() - 86400])
+                ->execute();
+            return "Cleaned up $count old locking records";
+        });
     }
 
     /**

@@ -49,7 +49,7 @@ class CronJob
     {
         if ($this->id() === null) return false;
         // try to get lock
-        if (!Locking::lock('cron_' . $this->id())) return false;
+        if (!($lock = Locking::lock('cron_' . $this->id(), false, 30))) return false;
         // override user
         Session::overrideUser('system');
         // only execute if ID exists, meaning this job is in the database
@@ -74,7 +74,7 @@ class CronJob
         // remove override on user
         Session::overrideUser(null);
         // release lock
-        Locking::release('cron_' . $this->id());
+        Locking::release($lock);
         // return true
         return true;
     }

@@ -2,68 +2,77 @@
 
 namespace DigraphCMS\Cache;
 
-use DigraphCMS\Config;
-use Symfony\Component\Lock\LockFactory;
-use Symfony\Component\Lock\SharedLockInterface;
-use Symfony\Component\Lock\SharedLockStoreInterface;
-use Symfony\Component\Lock\Store\FlockStore;
+use DigraphCMS\DB\DB;
 
 class Locking
 {
-    protected static $locks = [];
-
-    public static function share(string $name, bool $blocking = false): bool
+    public static function share(string $name, bool $blocking = false, int $ttl = 5): ?int
     {
-        $lock = static::lockObject($name);
-        if (!$blocking) {
-            return $lock->acquireRead();
-        } else {
-            while (!$lock->acquireRead()) {
-                usleep(random_int(0, 100));
-            }
-            return true;
+        while (!($id = static::getSharedLock($name, $ttl))) {
+            if ($blocking) usleep(random_int(0, 100));
+            else return null;
         }
+        return $id;
     }
 
-    public static function lock(string $name, bool $blocking = false): bool
+    public static function lock(string $name, bool $blocking = false, int $ttl = 5): ?int
     {
-        $lock = static::lockObject($name);
-        if (!$blocking) {
-            return $lock->acquire();
-        } else {
-            while (!$lock->acquire()) {
-                usleep(random_int(0, 100));
-            }
-            return true;
+        while (!($id = static::getExclusiveLock($name, $ttl))) {
+            if ($blocking) usleep(random_int(0, 100));
+            else return null;
         }
+        return $id;
     }
 
-    public static function release(string $name)
+    public static function release(int $id)
     {
-        if (static::$locks[$name]) {
-            static::$locks[$name]->release();
+        DB::query()
+        ->delete('locking', $id)
+        ->execute();
+    }
+
+    protected static function getExclusiveLock(string $name, int $ttl): ?int
+    {
+        DB::beginTransaction();
+        $query = DB::query()->from('locking')
+            ->where('`name` = ?', [$name])
+            ->where('`expires` > ?', [time()])
+            ->limit(1);
+        if (!$query->count()) {
+            // no exclusive locks exist, save this shared lock
+            $id = DB::query()->insertInto(
+                'locking',
+                [
+                    '`name`' => $name,
+                    '`expires`' => time() + $ttl,
+                    '`exclusive`' => true
+                ]
+            )->execute();
         }
+        DB::commit();
+        return $id ? $id : null;
     }
 
-    public static function lockObject(string $name, int $ttl = 300): SharedLockInterface
+    protected static function getSharedLock(string $name, int $ttl): ?int
     {
-        return static::$locks[$name]
-            ?? static::$locks[$name] = static::factory()->createLock($name, $ttl);
-    }
-
-    protected static function store(): SharedLockStoreInterface
-    {
-        static $store;
-        if (!$store) {
-            $store = new FlockStore(Config::get('cache.path') . '/locking');
+        DB::beginTransaction();
+        $query = DB::query()->from('locking')
+            ->where('`name` = ?', [$name])
+            ->where('`expires` > ?', [time()])
+            ->where('`exclusive` = 1')
+            ->limit(1);
+        if (!$query->count()) {
+            // no exclusive locks exist, save this shared lock
+            $id = DB::query()->insertInto(
+                'locking',
+                [
+                    '`name`' => $name,
+                    '`expires`' => time() + $ttl,
+                    '`exclusive`' => false
+                ]
+            )->execute();
         }
-        return $store;
-    }
-
-    protected static function factory(): LockFactory
-    {
-        static $factory;
-        return $factory
-            ?? $factory = new LockFactory(static::store());
+        DB::commit();
+        return $id ? $id : null;
     }
 }
