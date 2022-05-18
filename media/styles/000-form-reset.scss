@@ -139,31 +139,25 @@ fieldset,
 }
 
 fieldset {
-    border: $border solid var(--theme-neutral);
+    border: 1px groove var(--background-darker);
+    background-color: var(--background-dark);
     border-radius: $border-radius;
     padding: $grid;
+    padding-top: $grid/2;
+
+    fieldset {
+        border: 1px groove var(--background-dark);
+        background-color: var(--background-darker);
+    }
 
     legend {
         position: relative;
         display: block;
         font-family: $font-ui;
-        font-weight: bold;
+        font-weight: light;
         padding: 0 $grid/2;
-        color: var(--theme-neutral-darker);
-    }
-
-    >legend+* {
-        margin-top: -$grid/2;
-    }
-
-    >* {
-        &:first-child {
-            margin-top: 0;
-        }
-
-        &:last-child {
-            margin-bottom: 0;
-        }
+        font-size: larger;
+        opacity: 0.5;
     }
 }
 
