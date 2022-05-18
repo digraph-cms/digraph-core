@@ -150,7 +150,7 @@ class FormWrapper extends Tag
     public function toString(): string
     {
         // recursively set form on children
-        $this->setForm($this->children());
+        $this->setChildrenForms($this->children());
         // call callbacks when printed
         if ($this->ready()) {
             while ($this->callbacks) {
@@ -167,14 +167,14 @@ class FormWrapper extends Tag
         return parent::toString();
     }
 
-    protected function setForm(array $children)
+    protected function setChildrenForms(array $children)
     {
         foreach ($children as $child) {
             if ($child instanceof Tag) {
                 if (method_exists($child, 'setForm')) {
                     $child->setForm($this);
                 }
-                $this->setForm($child->children());
+                $this->setChildrenForms($child->children());
             }
         }
     }
