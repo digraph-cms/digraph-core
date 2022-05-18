@@ -18,6 +18,16 @@ class FIELDSET extends Tag
         }
     }
 
+    public function validationError(): ?string
+    {
+        foreach ($this->children() as $child) {
+            if (is_object($child) && method_exists($child, 'setForm')) {
+                if ($error = $child->validationError()) return $error;
+            }
+        }
+        return null;
+    }
+
     public function setForm(FormWrapper $form)
     {
         $this->form = $form;

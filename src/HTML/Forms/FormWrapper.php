@@ -55,7 +55,7 @@ class FormWrapper extends Tag
     {
         $valid = true;
         foreach ($this->children() as $child) {
-            if ($child instanceof InputInterface) {
+            if (is_object($child) && method_exists($child, 'validationError')) {
                 if ($child->validationError()) {
                     $valid = false;
                 }
