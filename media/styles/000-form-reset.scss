@@ -48,6 +48,9 @@ textarea,
     background-color: var(--background-lighter);
     color: var(--color);
     width: 100%;
+    line-height: 1.4;
+    font-size: 1rem;
+    box-sizing: border-box;
 }
 
 .CodeMirror {
@@ -143,11 +146,26 @@ fieldset {
     background-color: var(--background-dark);
     border-radius: $border-radius;
     padding: $grid;
-    padding-top: $grid/2;
+    padding-top: $grid/4;
 
     fieldset {
-        border: 1px groove var(--background-dark);
-        background-color: var(--background-darker);
+        border: 1px groove var(--background);
+        background-color: var(--background);
+
+        fieldset {
+            border: 1px groove var(--background-darker);
+            background-color: var(--background-dark);
+
+            fieldset {
+                border: 1px groove var(--background);
+                background-color: var(--background);
+        
+                fieldset {
+                    border: 1px groove var(--background-darker);
+                    background-color: var(--background-dark);
+                }
+            }
+        }
     }
 
     legend {
@@ -156,7 +174,6 @@ fieldset {
         font-family: $font-ui;
         font-weight: light;
         padding: 0 $grid/2;
-        font-size: larger;
         opacity: 0.5;
     }
 }

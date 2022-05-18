@@ -31,7 +31,8 @@ class SELECT extends Tag implements InputInterface
         return [
             implode('', array_map(
                 function ($opt) {
-                    $key = md5(serialize($opt['value']));
+                    if (is_string($opt['value']) || is_int($opt['value'])) $key = $opt['value'];
+                    else $key = md5(serialize($opt['value']));
                     return sprintf(
                         '<option value="%s"%s>%s</option>',
                         $key,

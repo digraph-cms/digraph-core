@@ -35,6 +35,14 @@
     border-top: 0;
     background-color: var(--background-light);
     color: var(--color);
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    z-index: 1000;
+    box-shadow: var(--shadow);
+    line-height: 1.4;
+    font-size: 1rem;
 
     >div {
         &:nth-child(even) {
@@ -78,7 +86,7 @@
             content: "no results";
             font-size: inherit;
             animation: none;
-            font-family: $font-ui !important;
+            font-family: $font-ui  !important;
             font-weight: bold;
         }
 

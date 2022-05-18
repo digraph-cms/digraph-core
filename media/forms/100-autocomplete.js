@@ -79,9 +79,16 @@ class DigraphAutocomplete {
         }
         // set up event listeners
         this.wrapper.addEventListener('keydown', (e) => { this.globalKeyDownHandler(e); });
-        this.input.addEventListener('focus', (e) => { this.focusEvent(e); });
-        this.input.addEventListener('blur', (e) => { this.blurEvent(e); });
-        this.input.addEventListener('blur', (e) => { this.wrapper.classList.remove('focused'); });
+        this.input.addEventListener('focus', (e) => {
+            if (!this.input.value && this.input.dataset.enteredValue) {
+                this.input.value = this.input.dataset.enteredValue;
+            }
+            this.focusEvent(e);
+        });
+        this.input.addEventListener('blur', (e) => {
+            this.blurEvent(e);
+            this.wrapper.classList.remove('focused');
+        });
         this.input.addEventListener('change', (e) => { this.changeHandler(e); });
         this.input.addEventListener('keydown', (e) => { this.keyDownHandler(e); });
         this.results.addEventListener('click', (e) => { this.resultSelectEvent(e); });
@@ -97,8 +104,13 @@ class DigraphAutocomplete {
         this.clearSelection.addEventListener('click', (e) => {
             this.value.value = '';
             this.selected.style.display = 'none';
+            this.input.value = '';
             this.input.style.display = null;
-            this.input.focus();
+            // enter initial awaiting input state
+            this.setState('awaiting-input');
+            this.resultFocused = false;
+            this.results.innerHTML = '';
+            this.input.previousValue = '';
         });
     }
     /**
@@ -249,6 +261,10 @@ class DigraphAutocomplete {
             this.wrapper.classList.remove('focused');
             if (this.selected.style.display != 'none') {
                 this.input.style.display = 'none';
+                this.input.dataset.enteredValue = this.input.value;
+            } else {
+                this.input.dataset.enteredValue = this.input.value;
+                this.input.value = '';
             }
         }
     }
