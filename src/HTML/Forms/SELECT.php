@@ -83,7 +83,9 @@ class SELECT extends Tag implements InputInterface
      */
     public function setOption($value, string $label)
     {
-        $this->options[md5(serialize($value))] = [
+        if (is_string($value) || is_int($value)) $key = $value;
+        else $key = md5(serialize($value));
+        $this->options[$key] = [
             'value' => $value,
             'label' => $label
         ];
