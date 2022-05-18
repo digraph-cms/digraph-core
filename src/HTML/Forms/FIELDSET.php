@@ -21,7 +21,7 @@ class FIELDSET extends Tag
     public function validationError(): ?string
     {
         foreach ($this->children() as $child) {
-            if (is_object($child) && method_exists($child, 'setForm')) {
+            if (is_object($child) && method_exists($child, 'validationError')) {
                 if ($error = $child->validationError()) return $error;
             }
         }
