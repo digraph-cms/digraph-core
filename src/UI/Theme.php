@@ -366,56 +366,67 @@ class Theme
 
     public static function addBlockingThemeCss($url)
     {
+        if (in_array($url, static::$blockingThemeCss)) return;
         static::$blockingThemeCss[] = $url;
     }
 
     public static function addBlockingPageCss($url)
     {
+        if (in_array($url, static::$blockingPageCss)) return;
         static::$blockingPageCss[] = $url;
     }
 
     public static function addExternalThemeCss($url)
     {
+        if (in_array($url, static::$externalThemeCss)) return;
         static::$externalThemeCss[] = $url;
     }
 
     public static function addExternalPageCss($url)
     {
+        if (in_array($url, static::$externalPageCss)) return;
         static::$externalPageCss[] = $url;
     }
 
     public static function addInternalThemeCss($url)
     {
+        if (in_array($url, static::$internalThemeCss)) return;
         static::$internalThemeCss[] = $url;
     }
 
     public static function addInternalPageCss($url)
     {
+        if (in_array($url, static::$internalPageCss)) return;
         static::$internalPageCss[] = $url;
     }
 
     public static function addBlockingThemeJs($url_or_file)
     {
+        if (in_array($url_or_file, static::$blockingThemeJs)) return;
         static::$blockingThemeJs[] = $url_or_file;
     }
 
     public static function addBlockingPageJs($url_or_file)
     {
+        if (in_array($url_or_file, static::$blockingPageJs)) return;
         static::$blockingPageJs[] = $url_or_file;
     }
 
     public static function addThemeJs($url_or_file)
     {
+        if (in_array($url_or_file, static::$asyncThemeJs)) return;
         static::$asyncThemeJs[] = $url_or_file;
     }
 
     public static function addPageJs($url_or_file)
     {
+        if (in_array($url_or_file, static::$asyncPageJs)) return;
         static::$asyncPageJs[] = $url_or_file;
     }
 
     public static function addInlinePageJs($string_or_file)
     {
+        if (in_array($string_or_file, static::$inlinePageJs)) return;
         static::$inlinePageJs[] = $string_or_file;
     }
 
