@@ -31,7 +31,7 @@ class Format
     public static function base64obfuscate(string $string, string $message = 'javascript required to view')
     {
         return
-            '<base64>' . base64_encode($string) . '</base64>'
+            '<base64 style="display:none;">' . base64_encode($string) . '</base64>'
             . '<noscript><span class="notification notification--error">' . $message . '</span></noscript>';
     }
 
