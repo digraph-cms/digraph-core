@@ -20,8 +20,9 @@ class SELECT extends Tag implements InputInterface
 
     protected static $counter = 0;
 
-    public function __construct(array $options = null)
+    public function __construct(array $options = null, $emptyText = '-- select --')
     {
+        $this->setOption(null, $emptyText);
         $this->setOptions($options);
         $this->setID('select-' . static::$counter++);
     }
