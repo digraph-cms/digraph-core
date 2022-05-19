@@ -6,6 +6,7 @@ use ArrayAccess;
 use DateTime;
 use DigraphCMS\Digraph;
 use DigraphCMS\Email\Email;
+use DigraphCMS\Email\Emails;
 use DigraphCMS\HTML\A;
 use DigraphCMS\RichContent\RichContent;
 use DigraphCMS\Session\Session;
@@ -113,7 +114,7 @@ class User implements ArrayAccess
                 ))
             );
             foreach ($messages as $message) {
-                $message->send();
+                Emails::send($message);
             }
         }
     }
@@ -154,7 +155,7 @@ class User implements ArrayAccess
                 ))
             );
             foreach ($messages as $message) {
-                $message->send();
+                Emails::send($message);
             }
         }
     }
@@ -188,7 +189,7 @@ class User implements ArrayAccess
                     ))
                 );
                 foreach ($messages as $message) {
-                    $message->send();
+                    Emails::send($message);
                 }
             }
         }
@@ -225,7 +226,7 @@ class User implements ArrayAccess
                 ]
             ))
         );
-        $email->send();
+        Emails::send($email);
         $this->update();
     }
 
@@ -256,7 +257,7 @@ class User implements ArrayAccess
                 ))
             );
             foreach ($messages as $message) {
-                $message->send();
+                Emails::send($message);
             }
         }
         // remove email from array

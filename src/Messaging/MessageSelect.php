@@ -4,6 +4,10 @@ namespace DigraphCMS\Messaging;
 
 use DigraphCMS\DB\AbstractObjectSelect;
 
+/**
+ * @method Message|null fetch()
+ * @method Message[] fetchAll()
+ */
 class MessageSelect extends AbstractObjectSelect
 {
     const OBJECT_CLASS = Message::class;

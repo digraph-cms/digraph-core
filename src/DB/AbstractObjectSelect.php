@@ -27,22 +27,6 @@ abstract class AbstractObjectSelect implements \Countable, \Iterator
         $this->query->disableSmartJoin();
     }
 
-    /**
-     * Specify which columns to select, optionally overriding defaults
-     *
-     * @param string $columns
-     * @param boolean $overrideDefault
-     * @return $this
-     */
-    public function select($columns, bool $overrideDefault = false)
-    {
-        if ($overrideDefault) {
-            $this->returnDataObjects = false;
-        }
-        $this->query->select($columns, $overrideDefault);
-        return $this;
-    }
-
     public function leftJoin(string $table)
     {
         $this->query->leftJoin($table);
@@ -136,19 +120,6 @@ abstract class AbstractObjectSelect implements \Countable, \Iterator
     }
 
     /**
-     * Add a GROUP BY clause
-     *
-     * @param string $column
-     * @return $this
-     */
-    public function group(string $column)
-    {
-        $this->returnDataObjects = false;
-        $this->query->group($column);
-        return $this;
-    }
-
-    /**
      * Returns a single column
      *
      * @param integer $columnNumber
@@ -161,7 +132,7 @@ abstract class AbstractObjectSelect implements \Countable, \Iterator
     }
 
     /**
-     * Fetch first DataObject, or raw row if returnDataObjects
+     * Fetch first object
      *
      * @return mixed
      */
@@ -172,13 +143,11 @@ abstract class AbstractObjectSelect implements \Countable, \Iterator
     }
 
     /**
-     * Fetch all DataObjects, or raw rows if returnDataObjects
+     * Fetch all objects
      *
-     * @param string $index
-     * @param string $selectOnly
      * @return array
      */
-    public function fetchAll($index = '', $selectOnly = '')
+    public function fetchAll()
     {
         $this->query->asObject(static::OBJECT_CLASS);
         return $this->query->fetchAll();
