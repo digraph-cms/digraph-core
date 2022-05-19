@@ -1,6 +1,5 @@
 <?php
 
-use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
 use DigraphCMS\HTML\Icon;
 use DigraphCMS\Messaging\Messages;

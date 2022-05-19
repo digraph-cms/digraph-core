@@ -13,7 +13,7 @@ final class MessagingTables extends AbstractMigration
             ->addColumn('uuid', 'uuid')
             ->addColumn('category', 'string', ['length' => 50])
             ->addColumn('subject', 'string', ['length' => 250])
-            ->addColumn('sender', 'uuid', ['null' => true])
+            ->addColumn('sender', 'uuid')
             ->addColumn('recipient', 'uuid')
             ->addColumn('body', 'text', ['limit' => MysqlAdapter::TEXT_REGULAR])
             ->addColumn('time', 'integer')

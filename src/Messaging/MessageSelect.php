@@ -2,14 +2,11 @@
 
 namespace DigraphCMS\Messaging;
 
-use DigraphCMS\DB\AbstractMappedSelect;
+use DigraphCMS\DB\AbstractObjectSelect;
 
-class MessageSelect extends AbstractMappedSelect
+class MessageSelect extends AbstractObjectSelect
 {
-    protected function doRowToObject(array $row)
-    {
-        return Messages::resultToMessage($row);
-    }
+    const OBJECT_CLASS = Message::class;
 
     /**
      * Add where clause to limit to archive messages only

@@ -3,28 +3,41 @@
 namespace DigraphCMS\Messaging;
 
 use DateTime;
+use DigraphCMS\DB\AbstractManagedObject;
 use DigraphCMS\Digraph;
 use DigraphCMS\RichContent\RichContent;
+use DigraphCMS\Session\Session;
 use DigraphCMS\UI\Templates;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\User;
+use DigraphCMS\Users\Users;
 
-class Message
+class Message extends AbstractManagedObject
 {
-    protected $uuid, $subject, $sender, $recipient, $body, $time, $category;
+    const OBJECT_MANAGER = Messages::class;
+    protected $id;
+    protected $uuid;
+    protected $category;
+    protected $subject;
+    protected $sender;
+    protected $recipient;
+    protected $body;
+    protected $time;
     protected $read = false;
     protected $archived = false;
     protected $important = false;
     protected $sensitive = false;
     protected $email = false;
 
-    public function __construct(string $subject, User $recipient, RichContent $body, string $category, string $uuid = null)
+    public function __construct(string $subject = null, User $recipient = null, RichContent $body = null, string $category = null)
     {
-        $this->subject = $subject;
-        $this->recipient = $recipient;
-        $this->body = $body;
-        $this->uuid = $uuid ?? Digraph::uuid('msg');
-        $this->category = $category;
+        $this->subject = $this->subject ?? $subject;
+        $this->recipient = $this->recipient ?? $recipient->uuid();
+        $this->body = $this->body ?? json_encode(($body ?? new RichContent(''))->array());
+        $this->category = $this->category ?? $category ?? 'messaging';
+        $this->uuid = $this->uuid ?? Digraph::uuid('msg');
+        $this->sender = $this->sender ?? 'system';
+        $this->time = $this->time ?? time();
     }
 
     public function __toString()
@@ -34,7 +47,7 @@ class Message
 
     public function url()
     {
-        return new URL('/~messages/msg_' . $this->uuid() . '.html');
+        return new URL('/~messages/' . $this->uuid() . '.html');
     }
 
     public function send()
@@ -58,14 +71,14 @@ class Message
         return strip_tags($this->subject);
     }
 
-    public function sender(): ?User
+    public function sender(): User
     {
-        return $this->sender;
+        return Users::user($this->sender);
     }
 
-    public function senderUUID(): ?string
+    public function senderUUID(): string
     {
-        return $this->sender() ? $this->sender()->uuid() : null;
+        return $this->sender;
     }
 
     public function setSender(?User $sender)
@@ -75,37 +88,37 @@ class Message
 
     public function recipient(): User
     {
-        return $this->recipient;
+        return Users::user($this->recipient);
     }
 
     public function recipientUUID(): string
     {
-        return $this->recipient()->uuid();
+        return $this->recipient;
     }
 
     public function setRecipient(User $recipient)
     {
-        $this->recipient = $recipient;
+        $this->recipient = $recipient->uuid();
     }
 
     public function body(): RichContent
     {
-        return $this->body;
+        return new RichContent(json_decode($this->body, true));
     }
 
     public function setBody(RichContent $body)
     {
-        $this->body = $body;
+        $this->body = json_encode($body->array());
     }
 
-    public function time(): ?DateTime
+    public function time(): DateTime
     {
-        return $this->time ? clone $this->time : null;
+        return (new DateTime)->setTimestamp($this->time);
     }
 
     public function setTime(DateTime $time)
     {
-        $this->time = clone $time;
+        $this->time = $time->getTimestamp();
     }
 
     public function read(): bool

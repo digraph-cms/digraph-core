@@ -33,7 +33,6 @@ class MessageTable extends QueryTable
     public function callback(Message $message): array
     {
         $toolbar = (new DIV);
-        // ->addClass('toolbar');
         if ($message->archived()) {
             $toolbar->addChild(
                 (new ToolbarLink(

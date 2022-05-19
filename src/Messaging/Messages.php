@@ -2,26 +2,38 @@
 
 namespace DigraphCMS\Messaging;
 
-use DateTime;
-use DigraphCMS\DB\DB;
+use DigraphCMS\DB\AbstractObjectManager;
 use DigraphCMS\Email\Email;
+use DigraphCMS\Email\Emails;
 use DigraphCMS\RichContent\RichContent;
 use DigraphCMS\URL\URLs;
-use DigraphCMS\Users\Users;
 
-class Messages
+/**
+ * @method static MessageSelect select()
+ * @method static bool insert(Message $message)
+ * @method static bool update(Message $message)
+ * @method static bool delete(Message $message)
+ */
+class Messages extends AbstractObjectManager
 {
-    /**
-     * Generate a select object for building queries
-     *
-     * @return MessageSelect
-     */
-    public static function select(): MessageSelect
-    {
-        return new MessageSelect(
-            DB::query()->from('message')
-        );
-    }
+    const TABLE = 'message';
+    const INSERT_COLUMNS = [
+        'uuid',
+        'category',
+        'subject',
+        'sender',
+        'recipient',
+        'body',
+        'time',
+        'important',
+        'sensitive',
+        'email',
+    ];
+    const UPDATE_COLUMNS = [
+        'read',
+        'archived',
+    ];
+    const SELECT_CLASS = MessageSelect::class;
 
     public static function get(string $uuid): ?Message
     {
@@ -30,43 +42,10 @@ class Messages
             ->fetch();
     }
 
-    public static function resultToMessage(array $row): Message
-    {
-        $message = new Message(
-            $row['subject'],
-            Users::user($row['recipient']),
-            new RichContent(json_decode($row['body'], true)),
-            $row['category'],
-            $row['uuid']
-        );
-        $message->setSender($row['sender'] ? Users::user($row['sender']) : null);
-        $message->setTime((new DateTime)->setTimestamp($row['time']));
-        $message->setRead(!!$row['read']);
-        $message->setArchived(!!$row['archived']);
-        $message->setImportant(!!$row['important']);
-        $message->setSensitive(!!$row['sensitive']);
-        $message->setEmail(!!$row['email']);
-        return $message;
-    }
-
     public static function send(Message $message)
     {
         // deliver message through in-site messaging
-        DB::query()->insertInto(
-            'message',
-            [
-                'uuid' => $message->uuid(),
-                'category' => $message->category(),
-                'subject' => $message->subject(),
-                'sender' => $message->senderUUID(),
-                'recipient' => $message->recipientUUID(),
-                'body' => json_encode($message->body()->array()),
-                'time' => $message->time()->getTimestamp(),
-                'important' => $message->important() ? 1 : 0,
-                'sensitive' => $message->sensitive() ? 1 : 0,
-                'email' => $message->email() ? 1 : 0
-            ]
-        )->execute();
+        $inserted = $message->insert();
         // deliver by email
         if ($message->email()) {
             if ($message->sensitive()) {
@@ -103,7 +82,7 @@ class Messages
                     $body
                 );
                 foreach ($emails as $email) {
-                    $email->send();
+                    Emails::send($email);
                 }
             } else {
                 // send non-important messages only to primary email
@@ -113,22 +92,10 @@ class Messages
                     $subject,
                     $body
                 );
-                if ($email) $email->send();
+                if ($email) Emails::send($email);
             }
         }
-    }
-
-    public static function update(Message $message)
-    {
-        DB::query()->update('message')
-            ->where('uuid = ?', [$message->uuid()])
-            ->set(
-                [
-                    'read' => $message->read() ? 1 : 0,
-                    'archived' => $message->archived() ? 1 : 0
-                ]
-            )
-            ->execute();
+        return $inserted;
     }
 
     /**

@@ -10,14 +10,8 @@ use DigraphCMS\Users\Permissions;
 
 Context::response()->private(true);
 
-if (substr(Context::url()->action(), 0, 4) != 'msg_') {
-    throw new HttpError(404);
-}
-
-$message = Messages::get(substr(Context::url()->action(), 4));
-if (!$message) {
-    throw new HttpError(404);
-}
+$message = Messages::get(Context::url()->action());
+if (!$message) throw new HttpError(404);
 
 // set generic breadcrumb name
 $url = Context::url();

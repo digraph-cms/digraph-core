@@ -196,7 +196,7 @@ class Router
         if ($pos = strpos($action, '_')) {
             $prefix = substr($action, 0, $pos);
             // try prefix wildcard route
-            $output = self::tryRoute("@$route/@wildcard_$prefix");
+            $output = self::tryRoute("~$route/@wildcard_$prefix");
             if (trim($output ?? '')) {
                 return $output;
             }

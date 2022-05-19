@@ -147,11 +147,6 @@ class Email
         return new URL('/~unsubscribe/?msg=' . $this->uuid());
     }
 
-    public function send()
-    {
-        Emails::send($this);
-    }
-
     public function uuid(): string
     {
         return $this->uuid;
