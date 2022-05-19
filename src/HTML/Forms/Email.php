@@ -9,7 +9,9 @@ class Email extends INPUT
         parent::__construct($id);
         $this->addValidator(function () {
             if (!$this->value()) return null;
-            return filter_var($this->value(), FILTER_VALIDATE_EMAIL);
+            return !filter_var($this->value(), FILTER_VALIDATE_EMAIL)
+                ? 'Please enter a valid email address'
+                : null;
         });
     }
 
