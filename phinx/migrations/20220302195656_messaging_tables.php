@@ -24,8 +24,8 @@ final class MessagingTables extends AbstractMigration
             ->addColumn('email', 'boolean')
             ->addIndex('uuid', ['unique' => true])
             ->addIndex('category')
-            ->addIndex('sender')
-            ->addIndex('recipient')
+            ->addForeignKey(['sender'], 'user', ['uuid'])
+            ->addForeignKey(['recipient'], 'user', ['uuid'])
             ->addIndex('time')
             ->addIndex('email')
             ->create();

@@ -25,9 +25,9 @@ final class RichMedia extends AbstractMigration
             ->addIndex('class')
             ->addIndex('name')
             ->addIndex('created')
-            ->addIndex('created_by')
+            ->addForeignKey(['created_by'], 'user', ['uuid'])
             ->addIndex('updated')
-            ->addIndex('updated_by')
+            ->addForeignKey(['updated_by'], 'user', ['uuid'])
             ->create();
     }
 }
