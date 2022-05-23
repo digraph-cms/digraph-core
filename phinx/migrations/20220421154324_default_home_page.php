@@ -2,15 +2,17 @@
 
 declare(strict_types=1);
 
+use DigraphCMS\Digraph;
 use Phinx\Migration\AbstractMigration;
 
 final class DefaultHomePage extends AbstractMigration
 {
     public function change(): void
     {
+        $uuid = Digraph::uuid();
         $this->table('page')
             ->insert([
-                'uuid' => 'p_home',
+                'uuid' => $uuid,
                 'name' => 'Home',
                 'class' => 'page',
                 'slug_pattern' => '/home',
@@ -35,7 +37,7 @@ final class DefaultHomePage extends AbstractMigration
         $this->table('page_slug')
             ->insert([
                 'url' => 'home',
-                'page_uuid' => 'p_home'
+                'page_uuid' => $uuid
             ])
             ->save();
     }
