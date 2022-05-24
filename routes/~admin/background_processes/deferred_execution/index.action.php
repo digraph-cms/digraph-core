@@ -8,6 +8,8 @@
 <?php
 
 use DigraphCMS\DB\DB;
+use DigraphCMS\UI\DataTables\CellWriters\DateTimeCell;
+use DigraphCMS\UI\DataTables\CellWriters\LinkCell;
 use DigraphCMS\UI\DataTables\ColumnHeader;
 use DigraphCMS\UI\DataTables\QueryTable;
 use DigraphCMS\UI\Format;
@@ -28,7 +30,7 @@ $errors = DB::query()->from('defex')
 
 if ($errors->count()) {
     echo "<h2>Errors</h2>";
-    echo new QueryTable(
+    $table = new QueryTable(
         $errors,
         function (array $row): array {
             return [
@@ -53,10 +55,28 @@ if ($errors->count()) {
             new ColumnHeader('Message')
         ]
     );
+    $table->enableDownload(
+        'recent deferred execution errors',
+        function (array $row) {
+            return [
+                new LinkCell($row['id'], new URL('_inspect_job.html?id=' . $row['id'])),
+                new LinkCell($row['group'], new URL('_inspect_group.html?id=' . $row['group'])),
+                new DateTimeCell(Format::parseDate($row['run'])),
+                $row['message']
+            ];
+        },
+        [
+            'Job ID',
+            'Group',
+            'Time',
+            'Message'
+        ]
+    );
+    echo $table;
 }
 
 echo "<h2>Recently run</h2>";
-echo new QueryTable(
+$table = new QueryTable(
     $recent,
     function (array $row): array {
         return [
@@ -81,9 +101,27 @@ echo new QueryTable(
         new ColumnHeader('Message')
     ]
 );
+$table->enableDownload(
+    'recent deferred execution jobs',
+    function (array $row) {
+        return [
+            new LinkCell($row['id'], new URL('_inspect_job.html?id=' . $row['id'])),
+            new LinkCell($row['group'], new URL('_inspect_group.html?id=' . $row['group'])),
+            new DateTimeCell(Format::parseDate($row['run'])),
+            $row['message']
+        ];
+    },
+    [
+        'Job ID',
+        'Group',
+        'Time',
+        'Message'
+    ]
+);
+echo $table;
 
 echo "<h2>Upcoming runs</h2>";
-echo new QueryTable(
+$table = new QueryTable(
     $upcoming,
     function (array $row): array {
         return [
@@ -104,3 +142,17 @@ echo new QueryTable(
         new ColumnHeader('Group')
     ]
 );
+$table->enableDownload(
+    'upcoming deferred execution jobs',
+    function (array $row) {
+        return [
+            new LinkCell($row['id'], new URL('_inspect_job.html?id=' . $row['id'])),
+            new LinkCell($row['group'], new URL('_inspect_group.html?id=' . $row['group']))
+        ];
+    },
+    [
+        'Job ID',
+        'Group'
+    ]
+);
+echo $table;

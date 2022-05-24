@@ -2,6 +2,7 @@
 
 namespace DigraphCMS\UI\DataTables;
 
+use DigraphCMS\UI\DataTables\CellWriters\AbstractCellWriter;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
@@ -16,7 +17,8 @@ class DownloadWriter
         $this->spreadsheet = $spreadsheet;
     }
 
-    public function freezeColumns(): int {
+    public function freezeColumns(): int
+    {
         return $this->freezeColumns;
     }
 
@@ -26,7 +28,8 @@ class DownloadWriter
      * @param integer $columns
      * @return $this
      */
-    public function setFreezeColumns(int $columns) {
+    public function setFreezeColumns(int $columns)
+    {
         $this->freezeColumns = $columns;
         return $this;
     }
@@ -41,7 +44,7 @@ class DownloadWriter
                 $row,
                 $cell
             );
-            $cell = $this->spreadsheet->getActiveSheet()->getCellByColumnAndRow($i+1,$row);
+            $cell = $this->spreadsheet->getActiveSheet()->getCellByColumnAndRow($i + 1, $row);
             $cell->getStyle()->getFont()->setBold(true);
             $cell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID);
             $cell->getStyle()->getFill()->setStartColor(new Color('FFCCCCCC'));
@@ -51,13 +54,17 @@ class DownloadWriter
     public function writeRow(array $cells)
     {
         $this->spreadsheet->setActiveSheetIndex(0);
-        $row = $this->spreadsheet->getActiveSheet()->getHighestDataRow()+1;
+        $row = $this->spreadsheet->getActiveSheet()->getHighestDataRow() + 1;
         foreach (array_values($cells) as $i => $cell) {
-            $this->spreadsheet->getActiveSheet()->setCellValueByColumnAndRow(
-                $i + 1,
-                $row,
-                $cell
-            );
+            if ($cell instanceof AbstractCellWriter) {
+                $cell->write($this->spreadsheet->getActiveSheet(), $i + 1, $row);
+            } else {
+                $this->spreadsheet->getActiveSheet()->setCellValueByColumnAndRow(
+                    $i + 1,
+                    $row,
+                    $cell
+                );
+            }
         }
     }
 }

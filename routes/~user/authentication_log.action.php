@@ -5,6 +5,9 @@ use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\Session\Session;
+use DigraphCMS\UI\DataTables\CellWriters\DateTimeCell;
+use DigraphCMS\UI\DataTables\CellWriters\LongTextCell;
+use DigraphCMS\UI\DataTables\CellWriters\UserCell;
 use DigraphCMS\UI\DataTables\ColumnHeader;
 use DigraphCMS\UI\DataTables\QueryColumnHeader;
 use DigraphCMS\UI\DataTables\QueryTable;
@@ -49,5 +52,31 @@ $table = new QueryTable(
     ]
 );
 $table->paginator()->perPage(10);
+
+$table->enableDownload(
+    'authentication log',
+    function (array $row) use ($user) {
+        return [
+            new UserCell($user),
+            new DateTimeCell(Format::parseDate($row['created'])),
+            new LongTextCell($row['comment']),
+            new LongTextCell(Session::fullBrowser($row['ua']) . PHP_EOL . $row['ua']),
+            $row['ip'],
+            new DateTimeCell(Format::parseDate($row['expires'])),
+            @$row['date'] ? new DateTimeCell(Format::date($row['date'])) : "",
+            new LongTextCell(@$row['reason'] ?? ""),
+        ];
+    },
+    [
+        'User',
+        'Date',
+        'Comment',
+        'User agent',
+        'IP',
+        'Expiration',
+        'Deauthorized',
+        'Deauthorization reason',
+    ]
+);
 
 echo $table;

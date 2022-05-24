@@ -1,12 +1,10 @@
 <?php
 
-use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\Cron\Deferred;
 use DigraphCMS\DB\DB;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\UI\Format;
-use DigraphCMS\UI\Theme;
 use DigraphCMS\URL\URL;
 
 $job = DB::query()->from('defex')->where('id = ?', [Context::arg('id')])->fetch();
@@ -44,12 +42,3 @@ echo '<textarea style="width:40em;">' . htmlspecialchars($job['job']) . '</texta
 echo '</td></tr>';
 
 echo "</table>";
-
-$trim = function ($file) {
-    $file = realpath($file);
-    $base = realpath(Config::get('paths.base'));
-    if (substr($file, 0, strlen($base)) == $base) {
-        $file = substr($file, strlen($base));
-    }
-    return $file;
-};

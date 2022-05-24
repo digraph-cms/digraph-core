@@ -11,6 +11,7 @@ use DigraphCMS\UI\Paginator;
 use DigraphCMS\URL\URL;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 use function Opis\Closure\serialize;
@@ -79,6 +80,11 @@ abstract class AbstractPaginatedTable
                 $writer = new DownloadWriter($spreadsheet);
                 // set up headers
                 $writer->writeHeaders($this->downloadHeaders);
+                // set autosized widths by default
+                foreach ($spreadsheet->getActiveSheet()->getColumnIterator() as $column) {
+                    $dimension = $spreadsheet->getActiveSheet()->getColumnDimension($column->getColumnIndex());
+                    $dimension->setAutoSize(true);
+                }
                 // call abstract method to convert data into rows
                 $this->writeDownloadFile($writer);
                 // wrap up formatting stuff
@@ -86,9 +92,7 @@ abstract class AbstractPaginatedTable
                 $spreadsheet->getActiveSheet()->setAutoFilter(
                     $spreadsheet->getActiveSheet()->calculateWorksheetDimension()
                 );
-                foreach ($spreadsheet->getActiveSheet()->getColumnIterator() as $column) {
-                    $spreadsheet->getActiveSheet()->getColumnDimension($column->getColumnIndex())->setAutoSize(true);
-                }
+                // freeze top pane
                 $spreadsheet->getActiveSheet()->freezePane(Coordinate::stringFromColumnIndex($writer->freezeColumns() + 1) . '2');
                 // run finalization callback
                 if ($this->finalizeCallback) call_user_func($this->finalizeCallback, $spreadsheet);

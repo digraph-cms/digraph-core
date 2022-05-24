@@ -12,6 +12,7 @@ use DigraphCMS\UI\DataTables\ColumnHeader;
 use DigraphCMS\UI\DataTables\QueryTable;
 use DigraphCMS\UI\Format;
 use DigraphCMS\UI\Toolbars\ToolbarLink;
+use DigraphCMS\URL\URL;
 
 $recent = DB::query()->from('cron')
     ->where('run_last is not null')
@@ -46,7 +47,11 @@ if ($errors->count()) {
                 Format::datetime($row['error_time']),
                 $row['error_message'],
                 $row['parent'],
-                $row['name']
+                sprintf(
+                    '<a href="%s">%s</a>',
+                    new URL('_inspect_job.html?id=' . $row['id']),
+                    $row['name']
+                )
             ];
         },
         [
@@ -68,7 +73,11 @@ echo new QueryTable(
             $row['id'],
             Format::datetime($row['run_last']),
             $row['parent'],
-            $row['name']
+            sprintf(
+                '<a href="%s">%s</a>',
+                new URL('_inspect_job.html?id=' . $row['id']),
+                $row['name']
+            )
         ];
     },
     [
@@ -87,7 +96,11 @@ echo new QueryTable(
             $row['id'],
             Format::datetime($row['run_next']),
             $row['parent'],
-            $row['name']
+            sprintf(
+                '<a href="%s">%s</a>',
+                new URL('_inspect_job.html?id=' . $row['id']),
+                $row['name']
+            )
         ];
     },
     [
