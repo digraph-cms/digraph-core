@@ -250,6 +250,7 @@ abstract class Digraph
                             static::buildErrorContent(500.1);
                         }
                     }
+                    Context::response()->template('fallback.php');
                     Templates::wrapResponse(Context::response());
                 } catch (RedirectException $r) {
                     // RedirectExceptions are used to allow exception handling that becomes a redirect
