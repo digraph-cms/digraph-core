@@ -116,7 +116,7 @@ class DB
                         break;
                 }
             } catch (\Throwable $th) {
-                throw new \Exception("Error setting up PDO: " . $th->getMessage());
+                throw new DBConnectionException("Error setting up PDO: " . $th->getMessage());
             }
             // throw exceptions on PDO errors
             self::$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

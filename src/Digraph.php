@@ -6,6 +6,7 @@ use DigraphCMS\Cache\UserCacheNamespace;
 use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Content\Router;
 use DigraphCMS\Content\Pages;
+use DigraphCMS\DB\DBConnectionException;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTTP\AccessDeniedError;
 use DigraphCMS\HTTP\HttpError;
@@ -215,6 +216,13 @@ abstract class Digraph
             if (static::inferMime() == 'text/html') {
                 Templates::wrapResponse(Context::response());
             }
+        } catch (DBConnectionException $ex) {
+            // generate a fallback error page for DB connection errors, we use the fallback template because a
+            // broken db connection breaks a LOT of things
+            Context::response()->template('fallback.php');
+            Context::thrown($ex);
+            static::buildErrorContent(500.2);
+            Templates::wrapResponse(Context::response());
         } catch (Throwable $th) {
             // do shared tasks, then re-throw to do things with different types
             try {
