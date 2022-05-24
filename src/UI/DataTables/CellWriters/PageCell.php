@@ -6,7 +6,7 @@ use DigraphCMS\Content\Page;
 use PhpOffice\PhpSpreadsheet\Cell\Cell;
 
 /**
- * @method __construct(Page)
+ * @method __construct(Page $page)
  * @property Page $value
  */
 class PageCell extends AbstractCellWriter

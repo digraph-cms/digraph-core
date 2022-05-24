@@ -7,7 +7,7 @@ use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 /**
- * @method __construct(DateTime)
+ * @method __construct(DateTime $date)
  * @property DateTime $value
  */
 class DateTimeCell extends AbstractCellWriter
