@@ -24,7 +24,7 @@
             display: none;
             color: inherit;
             text-decoration: none !important;
-            vertical-align: baseline;
+            vertical-align: top;
 
             &:hover {
                 transform: scale(1.25);
@@ -33,13 +33,13 @@
             &:after {
                 @include material-icon;
                 font-size: $grid;
-                content: '\ead0';
-                vertical-align: baseline;
+                content: 'south';
+                vertical-align: middle;
             }
 
             &.column-sort-asc {
                 &:after {
-                    content: '\eacf';
+                    content: 'north';
                 }
             }
 
