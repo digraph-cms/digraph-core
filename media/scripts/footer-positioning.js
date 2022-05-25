@@ -5,6 +5,7 @@ peeking out below it.
 */
 (() => {
     window.addEventListener('DigraphDOMReady', checkFooterPosition);
+    window.addEventListener('DigraphLayoutUpdated', checkFooterPosition);
     window.addEventListener('resize', checkFooterPosition);
     window.addEventListener('load', checkFooterPosition);
     checkFooterPosition();
