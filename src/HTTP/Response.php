@@ -218,9 +218,12 @@ class Response
     public function renderContent()
     {
         Dispatcher::dispatchEvent('onResponseRender', [$this]);
+        $content = null;
         if (Digraph::inferMime($this) == 'text/html') {
             Dispatcher::dispatchEvent('onResponseRender_html', [$this]);
+            $content = utf8_decode($this->content());
+            $content = mb_convert_encoding($content, "UTF-8");
         }
-        echo $this->content();
+        echo $content ?? $this->content();
     }
 }

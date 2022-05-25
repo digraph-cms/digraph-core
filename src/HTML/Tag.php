@@ -125,7 +125,7 @@ abstract class Tag extends Node
      * @param mixed $value
      * @return $this
      */
-    public function setAttribute(string $key, $value)
+    public function setAttribute(string $key, $value = null)
     {
         $this->attributes[$key] = $value;
         return $this;
@@ -202,10 +202,10 @@ abstract class Tag extends Node
         }
         // set inline styles
         if ($style = $this->style()) {
-            array_walk($style,function(&$v,$k) {
+            array_walk($style, function (&$v, $k) {
                 $v = "$k:$v";
             });
-            $attributes['style'] = implode(';',$style);
+            $attributes['style'] = implode(';', $style);
         }
         return $attributes;
     }
@@ -231,7 +231,7 @@ abstract class Tag extends Node
             foreach ($attributes as $name => $value) {
                 $html .= ' ' . $name;
                 if ($value !== null) {
-                    $html .= '="' . htmlentities(static::encodeValue($value)) . '"';
+                    $html .= '="' . htmlspecialchars(static::encodeValue($value)) . '"';
                 }
             }
         }

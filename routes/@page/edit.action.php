@@ -15,7 +15,7 @@ Cookies::required(['system', 'csrf']);
 $page = Context::page();
 
 $name = (new Field('Page name'))
-    ->setDefault($page->name())
+    ->setDefault($page->name(null, true))
     ->setRequired(true)
     ->addTip('The name to be used when referring or linking to this page from elsewhere on the site.');
 
