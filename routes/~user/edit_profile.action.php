@@ -27,6 +27,7 @@ Dispatcher::dispatchEvent('onEditProfileForm', [$form, $user]);
 
 if ($form->ready()) {
     $user->name($name->value());
+    $user['name_explicitly_set'] = true;
     $user->update();
     Notifications::flashConfirmation('Profile changes saved');
     throw new RefreshException();

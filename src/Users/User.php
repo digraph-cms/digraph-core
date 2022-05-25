@@ -27,6 +27,10 @@ class User implements ArrayAccess
     protected $updated_last;
     protected $groups;
 
+    const DEFAULT_DATA = [
+        'name_explicitly_set' => false
+    ];
+
     public function __construct(array $data = [], array $metadata = [])
     {
         $this->uuid = @$metadata['uuid'] ?? Digraph::uuid('usr');
@@ -36,7 +40,7 @@ class User implements ArrayAccess
         $this->updated = @$metadata['updated'] ?? new DateTime();
         $this->updated_last = clone $this->updated;
         $this->updated_by = @$metadata['updated_by'] ?? Session::uuid();
-        $this->rawSet(null, $data);
+        $this->rawSet(null, array_merge(static::DEFAULT_DATA, $data));
     }
 
     /**
