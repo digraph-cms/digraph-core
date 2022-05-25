@@ -323,7 +323,10 @@ class DigraphAutocomplete {
         const query = new URLSearchParams();
         query.append('csrf', Digraph.getCookie('csrf', 'autocomplete'));
         query.append('query', this.input.value);
-        this.xhr.open('GET', this.input.dataset.autocompleteSource + '?' + query.toString());
+        const sepChar = this.input.dataset.autocompleteSource.includes('?')
+            ? '&'
+            : '?';
+        this.xhr.open('GET', this.input.dataset.autocompleteSource + sepChar + query.toString());
         this.xhr.send();
     }
     setState(state) {

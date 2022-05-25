@@ -221,12 +221,14 @@ abstract class AbstractPage implements ArrayAccess
 
     public function class(): string
     {
-        return static::$class ?? static::$class = static::getClass();
+        static $classes = [];
+        $class = get_class($this);
+        return @$classes[$class] ?? $classes[$class] = static::getClass($class);
     }
 
-    protected static function getClass(): string
+    protected function getClass(string $thisClass): string
     {
-        $thisClass = preg_replace('/^[^\\\]/', '\\\$0', get_called_class());
+        $thisClass = preg_replace('/^[^\\\]/', '\\\$0', $thisClass);
         foreach (Config::get('page_types') as $name => $class) {
             if ($class == $thisClass) return $name;
         }

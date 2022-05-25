@@ -16,11 +16,23 @@ Context::response()->filename('response.json');
 
 // get exact results
 $pages = Pages::getAll(Context::arg('query'));
+// filter by class
+if (Context::arg('class')) {
+    $pages = array_filter(
+        $pages,
+        function (AbstractPage $page) {
+            return $page->class() == Context::arg('class');
+        }
+    );
+}
 // get stricter name matches
 if (count($pages) < 100) {
     $query = Pages::select()->limit(100);
     foreach (preg_split('/ +/', Context::arg('query')) as $word) {
         $query->where('name like ?', ['%' . $word . '%']);
+    }
+    if (Context::arg('class')) {
+        $query->where('class = ?', [Context::arg('class')]);
     }
     $pages = array_merge(
         $pages,
@@ -32,6 +44,9 @@ if (count($pages) < 100) {
     $query = Pages::select()->limit(100);
     foreach (preg_split('/ +/', Context::arg('query')) as $word) {
         $query->where('name like ?', ['%' . $word . '%'], 'OR');
+    }
+    if (Context::arg('class')) {
+        $query->where('class = ?', [Context::arg('class')]);
     }
     $pages = array_merge(
         $pages,
