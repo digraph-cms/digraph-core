@@ -121,10 +121,14 @@ abstract class Digraph
      * composition (character types, placement of dashes, etc).
      *
      * @param string $uuid
+     * @param string|null $prefix
      * @return boolean
      */
-    public static function validateUUID(string $uuid): bool
+    public static function validateUUID(string $uuid, string $prefix = null): bool
     {
+        if ($prefix) {
+            if (substr($uuid, 0, strlen($prefix) + 1) != $prefix . '_') return false;
+        }
         $pattern = '/^([a-z]+_)?' . str_replace('0', '[' . static::uuidChars() . ']', preg_quote(static::uuidPattern(), '/')) . '$/';
         return preg_match($pattern, $uuid);
     }
