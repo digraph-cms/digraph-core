@@ -1,0 +1,60 @@
+.collapsible,
+.collapsible--js {
+    border: $border dotted var(--theme-neutral-a50);
+    background-color: var(--theme-neutral-a10);
+    padding: $grid;
+    max-width: 100%;
+}
+
+.collapsible--js {
+    margin: $grid 0;
+    display: block;
+}
+
+.collapsible__button {
+    margin: -$grid;
+    background-color: var(--theme-neutral);
+    color: var(--theme-neutral-inv);
+    font-size: smaller;
+    padding: $grid/2;
+    font-family: $font-ui;
+    cursor: pointer;
+    display: none;
+
+    &:hover {
+        background-color: var(--cue-interactive) !important;
+        color: var(--cue-interactive-inv) !important;
+    }
+}
+
+.collapsible__collapse {
+    margin-top: $grid;
+}
+
+.collapsible--js {
+    .collapsible__collapse {
+        display: none;
+    }
+
+    .collapsible__expand {
+        display: block;
+    }
+
+    .collapsible__content {
+        display: none;
+    }
+}
+
+.collapsible--js--expanded {
+    .collapsible__collapse {
+        display: block;
+    }
+
+    .collapsible__expand {
+        display: none;
+    }
+
+    .collapsible__content {
+        display: contents;
+    }
+}
