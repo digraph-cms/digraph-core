@@ -138,7 +138,7 @@ class DSOQuery implements \Countable, \Iterator
 
     public function current()
     {
-        $this->getIterator()->current();
+        return $this->getIterator()->current();
     }
 
     public function key()
@@ -164,6 +164,6 @@ class DSOQuery implements \Countable, \Iterator
     protected function getIterator(): ArrayIterator
     {
         return $this->iterator
-            ?? $this->iterator = new ArrayIterator($this->execute());
+            ?? $this->iterator = new ArrayIterator($this->fetchAll());
     }
 }
