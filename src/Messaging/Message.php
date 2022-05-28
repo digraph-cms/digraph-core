@@ -3,42 +3,15 @@
 namespace DigraphCMS\Messaging;
 
 use DateTime;
-use DigraphCMS\DB\AbstractManagedObject;
-use DigraphCMS\Digraph;
+use DigraphCMS\DataObjects\DSOObject;
 use DigraphCMS\RichContent\RichContent;
-use DigraphCMS\Session\Session;
 use DigraphCMS\UI\Templates;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
 
-class Message extends AbstractManagedObject
+class Message extends DSOObject
 {
-    const OBJECT_MANAGER = Messages::class;
-    protected $id;
-    protected $uuid;
-    protected $category;
-    protected $subject;
-    protected $sender;
-    protected $recipient;
-    protected $body;
-    protected $time;
-    protected $read = false;
-    protected $archived = false;
-    protected $important = false;
-    protected $sensitive = false;
-    protected $email = false;
-
-    public function __construct(string $subject = null, User $recipient = null, RichContent $body = null, string $category = null)
-    {
-        $this->subject = $this->subject ?? $subject;
-        $this->recipient = $this->recipient ?? $recipient->uuid();
-        $this->body = $this->body ?? json_encode(($body ?? new RichContent(''))->array());
-        $this->category = $this->category ?? $category ?? 'messaging';
-        $this->uuid = $this->uuid ?? Digraph::uuid('msg');
-        $this->sender = $this->sender ?? 'system';
-        $this->time = $this->time ?? time();
-    }
 
     public function __toString()
     {
@@ -47,132 +20,96 @@ class Message extends AbstractManagedObject
 
     public function url()
     {
-        return new URL('/~messages/' . $this->uuid() . '.html');
+        return new URL('/~messages/msg_' . $this->uuid() . '.html');
     }
 
-    public function send()
+    public function insert(): bool
     {
-        $this->time = new DateTime;
-        Messages::send($this);
-    }
-
-    public function update()
-    {
-        Messages::update($this);
-    }
-
-    public function uuid(): string
-    {
-        return $this->uuid;
+        $this['time'] = time();
+        return parent::insert();
     }
 
     public function subject(): string
     {
-        return strip_tags($this->subject);
+        return strip_tags($this['subject']);
+    }
+
+    public function setSubject(string $subject)
+    {
+        $this['subject'] = $subject;
+        return $this;
     }
 
     public function sender(): User
     {
-        return Users::user($this->sender);
+        return Users::user($this['sender']);
     }
 
     public function senderUUID(): string
     {
-        return $this->sender;
+        return $this['sender'];
     }
 
     public function setSender(?User $sender)
     {
-        $this->sender = $sender;
+        $this['sender'] = $sender->uuid();
+        return $this;
     }
 
     public function recipient(): User
     {
-        return Users::user($this->recipient);
+        return Users::user($this['recipient']);
     }
 
     public function recipientUUID(): string
     {
-        return $this->recipient;
+        return $this['recipient'];
     }
 
     public function setRecipient(User $recipient)
     {
-        $this->recipient = $recipient->uuid();
+        $this['recipient'] = $recipient->uuid();
+        return $this;
     }
 
     public function body(): RichContent
     {
-        return new RichContent(json_decode($this->body, true));
+        return new RichContent($this['body']);
     }
 
     public function setBody(RichContent $body)
     {
-        $this->body = json_encode($body->array());
+        $this['body'] = $body->array();
+        return $this;
     }
 
     public function time(): DateTime
     {
-        return (new DateTime)->setTimestamp($this->time);
+        return (new DateTime)->setTimestamp($this['time']);
     }
 
     public function setTime(DateTime $time)
     {
-        $this->time = $time->getTimestamp();
+        $this['time'] = $time->getTimestamp();
     }
 
     public function read(): bool
     {
-        return $this->read;
+        return !!$this['read'];
     }
 
     public function setRead(bool $read)
     {
-        $this->read = $read;
+        $this['read'] = $read;
     }
 
     public function archived(): bool
     {
-        return $this->archived;
+        return !!$this['archived'];
     }
 
     public function setArchived(bool $archived)
     {
-        $this->archived = $archived;
-    }
-
-    public function important(): bool
-    {
-        return $this->important;
-    }
-
-    public function setImportant(bool $important)
-    {
-        $this->important = $important;
-    }
-
-    public function sensitive(): bool
-    {
-        return $this->sensitive;
-    }
-
-    public function setSensitive(bool $sensitive)
-    {
-        $this->sensitive = $sensitive;
-    }
-
-    public function email(): bool
-    {
-        return $this->email;
-    }
-
-    public function setEmail(bool $email)
-    {
-        $this->email = $email;
-    }
-
-    public function category(): string
-    {
-        return $this->category;
+        $this['archived'] = $archived;
     }
 }

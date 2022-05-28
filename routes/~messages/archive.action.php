@@ -11,8 +11,8 @@ Permissions::requireAuth();
 Context::response()->private(true);
 
 echo new MessageTable(
-    Messages::select()
+    Messages::query()
         ->archive()
-        ->where('recipient = ?', [Session::uuid()])
-        ->order('time desc')
+        ->where('${recipient} = ?', [Session::uuid()])
+        ->order('${time} desc')
 );

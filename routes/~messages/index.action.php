@@ -9,8 +9,8 @@ use DigraphCMS\Session\Session;
 Context::response()->private(true);
 
 echo new MessageTable(
-    Messages::select()
+    Messages::query()
         ->inbox()
-        ->where('recipient = ?', [Session::uuid()])
-        ->order('time desc')
+        ->where('${recipient} = ?', [Session::uuid()])
+        ->order('${time} desc')
 );

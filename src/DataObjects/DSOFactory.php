@@ -2,12 +2,15 @@
 
 namespace DigraphCMS\DataObjects;
 
+use Destructr\DSOInterface;
 use Destructr\Factory;
+use Destructr\Search;
+use DigraphCMS\Session\Session;
 
 class DSOFactory extends Factory
 {
-    const ID_CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    const ID_LENGTH = 8;
+    const ID_CHARS = 'abcdefghijklmnopqrstuvwxyz123456789';
+    const ID_LENGTH = 10;
     const SCHEMA = [];
     protected $schema = [];
 
@@ -18,9 +21,37 @@ class DSOFactory extends Factory
         $this->schema = static::buildSchema($type);
     }
 
+    public function get(string $uuid): ?DSOObject
+    {
+        $result = $this->query()
+            ->where('${dso.id} = ?', [$uuid])
+            ->limit(1)
+            ->fetchAll();
+        return array_shift($result);
+    }
+
     public function class(?array $data): ?string
     {
         return DSOObject::class;
+    }
+
+    protected function hook_create(DSOInterface $dso)
+    {
+        if (!$dso->get('dso.id')) {
+            $dso->set('dso.id', static::generate_id(static::ID_CHARS, static::ID_LENGTH), true);
+        }
+        if (!$dso->get('dso.created.date')) {
+            $dso->set('dso.created.date', time());
+        }
+        if (!$dso->get('dso.created.user')) {
+            $dso->set('dso.created.user', Session::uuid());
+        }
+    }
+
+    protected function hook_update(DSOInterface $dso)
+    {
+        $dso->set('dso.updated.date', time());
+        $dso->set('dso.updated.user', Session::uuid());
     }
 
     /**
@@ -37,7 +68,7 @@ class DSOFactory extends Factory
             [
                 'dso.id' => [
                     'name' => 'dso_id', //column name to be used
-                    'type' => 'VARCHAR(16)', //column type
+                    'type' => 'VARCHAR(32)', //column type
                     'index' => 'BTREE', //whether/how to index
                     'unique' => true, //whether column should be unique
                     'primary' => true, //whether column should be the primary key
@@ -47,8 +78,8 @@ class DSOFactory extends Factory
                     'type' => 'BIGINT',
                     'index' => 'BTREE',
                 ],
-                'dso.modified.date' => [
-                    'name' => 'dso_modified_date',
+                'dso.updated.date' => [
+                    'name' => 'dso_updated_date',
                     'type' => 'BIGINT',
                     'index' => 'BTREE',
                 ],
@@ -64,5 +95,14 @@ class DSOFactory extends Factory
     public function query(): DSOQuery
     {
         return new DSOQuery($this);
+    }
+
+    /**
+     * @deprecated use query() instead
+     * @return Search
+     */
+    public function search(): Search
+    {
+        return parent::search();
     }
 }

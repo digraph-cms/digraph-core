@@ -1,7 +1,8 @@
 page_types:
   page: \DigraphCMS\Content\Page
 
-data_objects: []
+data_objects:
+  messages: \DigraphCMS\Messaging\MessageFactory
 
 rich_media_types:
   bookmark: \DigraphCMS\RichMedia\Types\BookmarkRichMedia

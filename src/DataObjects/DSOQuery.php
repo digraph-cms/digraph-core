@@ -64,7 +64,7 @@ class DSOQuery implements \Countable, \Iterator
 
     public function generateOrder(): string
     {
-        if (!$this->order) return '${dso.created.date} ASC';
+        if (!$this->order) return '${created.date} ASC';
         return implode(', ', array_map(
             function ($order): string {
                 return $order[0];
