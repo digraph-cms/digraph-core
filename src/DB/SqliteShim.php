@@ -25,7 +25,6 @@ class SqliteShim
             }
         }
         $out = @"$out";
-        // todo: coerce into specified type if necessary
         return $out;
     }
 }

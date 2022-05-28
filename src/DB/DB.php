@@ -45,7 +45,7 @@ class DB
     public static function commit()
     {
         static::$transactions--;
-        if (in_array(Config::get('db.adapter'), static::NESTED_TRANSACTION_SUPPORT) || static::$transactions == 0) {
+        if (in_array(Config::get('db.adapter'), static::NESTED_TRANSACTION_SUPPORT) || (static::$transactions == 0 && static::pdo()->inTransaction())) {
             static::pdo()->commit();
         }
     }
@@ -53,7 +53,7 @@ class DB
     public static function rollback()
     {
         static::$transactions--;
-        if (in_array(Config::get('db.adapter'), static::NESTED_TRANSACTION_SUPPORT) || static::$transactions == 0) {
+        if (in_array(Config::get('db.adapter'), static::NESTED_TRANSACTION_SUPPORT) || (static::$transactions == 0 && static::pdo()->inTransaction())) {
             static::pdo()->rollBack();
         }
     }
