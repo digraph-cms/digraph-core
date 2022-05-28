@@ -50,7 +50,7 @@ class DSOQuery implements \Countable, \Iterator
 
     public function count(): int
     {
-        return $this->searchObject()->count($params ?? $this->parameters(), $this->includeDeleted);
+        return $this->searchObject()->count($this->parameters(), $this->includeDeleted);
     }
 
     public function parameters(): array
@@ -112,7 +112,7 @@ class DSOQuery implements \Countable, \Iterator
         $outputParameters = [];
         foreach ($parameters as $k => $v) {
             if (is_int($k)) {
-                $k = 'dsoatp' . $this->parameterCount++;
+                $k = 'dsoatp' . $this->parameterCounter++;
                 $clause = preg_replace('/\?/', ':' . $k, $clause, 1);
             }
             $outputParameters[$k] = $v;
