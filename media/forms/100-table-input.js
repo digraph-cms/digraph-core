@@ -25,6 +25,10 @@ class DigraphTableInput {
         // listeners for syncing data into input field
         this.wrapper.addEventListener('editable-table-layout-change', e => this.syncDataToInput());
         this.wrapper.addEventListener('editable-table-content-change', e => this.syncDataToInput());
+        // set up submit listener
+        if (this.input.form) {
+            this.input.form.addEventListener('submit', e => this.syncDataToInput());
+        }
     }
     syncDataToInput() {
         this.input.value = JSON.stringify(this.table.data());
