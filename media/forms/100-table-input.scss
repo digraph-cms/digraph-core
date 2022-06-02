@@ -107,6 +107,11 @@ th {
         z-index: 101;
         position: absolute;
         box-shadow: var(--shadow);
+
+        &:focus,
+        &:focus-within {
+            z-index: 102;
+        }
     }
 
     .editable-table__controls__top,
