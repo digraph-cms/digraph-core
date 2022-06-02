@@ -96,7 +96,8 @@ abstract class CoreEventSubscriber
             'value' => $media->uuid(),
             'class' => 'rich-media',
             'extra' => [
-                'tag' => $media->defaultTag()
+                'tag' => $media->defaultTag(),
+                'wrappingTag' => $media->defaultWrappingTag()
             ]
         ];
     }

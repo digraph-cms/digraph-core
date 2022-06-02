@@ -67,9 +67,15 @@ class TableRichMedia extends AbstractRichMedia
         foreach ($sdata as $rid => $row) {
             $r = [];
             foreach ($row as $cid => $cell) {
-                $r[Digraph::uuid(null, md5(serialize([$rid, $cid])))] = $cell;
+                $r[] = [
+                    'id' => Digraph::uuid(null, md5(serialize([$rid, $cid]))),
+                    'cell' => $cell
+                ];
             }
-            $data[Digraph::uuid(null, md5($rid))] = $r;
+            $data[] = [
+                'id' => Digraph::uuid(null, md5($rid)),
+                'row' => $r
+            ];
         }
         // overwrite existing table data
         unset($this['table']);
@@ -92,8 +98,12 @@ class TableRichMedia extends AbstractRichMedia
     {
         $html = "<$wrapTag>";
         foreach ($group as $rowID => $row) {
+            $rowID = $row['id'];
+            $row = $row['row'];
             $html .= sprintf('<tr data-row-id="%s">', $rowID);
-            foreach ($row as $cellID => $cell) {
+            foreach ($row as $cell) {
+                $cellID = $cell['id'];
+                $cell = $cell['cell'];
                 $html .= sprintf(
                     '<%s data-cell-id="%s">%s</%s>',
                     $cellTag,

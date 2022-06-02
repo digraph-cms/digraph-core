@@ -56,6 +56,15 @@ class RichContentField extends Field
         ));
     }
 
+    public function id(): ?string
+    {
+        static $idCounter = 0;
+        if (!parent::id()) {
+            $this->setID('rich-content-field--' . $idCounter++);
+        }
+        return parent::id();
+    }
+
     public function pageUuid(): ?string
     {
         return $this->pageUuid;

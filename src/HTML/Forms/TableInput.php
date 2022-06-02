@@ -34,8 +34,24 @@ class TableInput extends INPUT
     {
         if ($this->default === null) {
             $this->default = [
-                'head' => [Digraph::uuid() => [Digraph::uuid() => '']],
-                'body' => [Digraph::uuid() => [Digraph::uuid() => '']]
+                'head' => [[
+                    'id' => Digraph::uuid(),
+                    'row' => [
+                        [
+                            'id' => Digraph::uuid(),
+                            'cell' => ''
+                        ]
+                    ]
+                ]],
+                'body' => [[
+                    'id' => Digraph::uuid(),
+                    'row' => [
+                        [
+                            'id' => Digraph::uuid(),
+                            'cell' => ''
+                        ]
+                    ]
+                ]]
             ];
         }
         return parent::default();

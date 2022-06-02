@@ -20,7 +20,10 @@ echo $wrapper;
         var ac = document.getElementById('<?php echo $wrapper->id(); ?>');
         // select value and reset toolbar
         ac.addEventListener('autocomplete-select', (e) => {
-            ac.dispatchEvent(Digraph.RichContent.insertEvent(e.autocompleteExtra.tag));
+            ac.dispatchEvent(Digraph.RichContent.insertEvent(
+                e.autocompleteExtra.wrappingTag,
+                e.autocompleteExtra.tag
+            ));
             ac.dispatchEvent(new Event('navigation-frame-reset', {
                 bubbles: true
             }));

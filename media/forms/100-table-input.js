@@ -68,16 +68,18 @@ class EditableTable {
     }
     _setData(group, data) {
         group.innerHTML = '';
-        for (const row_id in data) {
-            if (Object.hasOwnProperty.call(data, row_id)) {
-                const cells = data[row_id];
+        for (const r in data) {
+            if (Object.hasOwnProperty.call(data, r)) {
+                const cells = data[r].row;
+                const row_id = data[r].id;
                 this.insertRow(group, null, row_id);
                 // set cell values
                 const row = group.childNodes[group.childNodes.length - 1];
                 var col = 0;
-                for (const cell_id in cells) {
-                    if (Object.hasOwnProperty.call(cells, cell_id)) {
-                        const cell_data = cells[cell_id];
+                for (const c in cells) {
+                    if (Object.hasOwnProperty.call(cells, c)) {
+                        const cell_data = cells[c].cell;
+                        const cell_id = cells[c].id;
                         if (!row.childNodes[col]) this.insertColumn();
                         var cell = row.childNodes[col];
                         cell.id = cell_id;
@@ -85,7 +87,6 @@ class EditableTable {
                         col++;
                     }
                 }
-                // group.appendChild(row);
             }
         }
     }
@@ -227,13 +228,22 @@ class EditableTable {
         }
     }
     _groupData(group) {
-        var data = {};
+        var data = [];
         Array.from(group.childNodes).forEach(
-            row => {
-                data[row.id] = {};
-                Array.from(row.childNodes).forEach(
-                    cell => data[row.id][cell.id] = cell.getElementsByTagName('textarea')[0].value
+            r => {
+                var row = {
+                    id: r.id,
+                    row: []
+                };
+                Array.from(r.childNodes).forEach(
+                    c => {
+                        row.row.push({
+                            id: c.id,
+                            cell: c.getElementsByTagName('textarea')[0].value
+                        });
+                    }
                 )
+                data.push(row);
             }
         );
         return data;

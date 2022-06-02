@@ -64,8 +64,8 @@ abstract class AbstractRichMedia implements ArrayAccess
             (new ToolbarLink('insert embed code', 'post-add', null, null))
                 ->setAttribute('onclick', sprintf(
                     'this.dispatchEvent(Digraph.RichContent.insertTagEvent("%s", %s))',
-                    $this->insertTagName(),
-                    Format::js_encode_object($this->insertTagOptions())
+                    $this->tagName(),
+                    Format::js_encode_object($this->tagOptions())
                 ))
         );
         // TODO: customizeable embedding links
@@ -82,24 +82,43 @@ abstract class AbstractRichMedia implements ArrayAccess
         return $toolbar;
     }
 
-    public function insertTagOptions(): array
+    public function tagOptions(): array
     {
         return [
             '_' => $this->uuid()
         ];
     }
 
-    public function insertTagName(): string
+    public function tagOptionsString(): string
     {
-        return $this->tagName();
+        $output = [];
+        $options = $this->tagOptions();
+        if ($first = @$options['_']) {
+            unset($options['_']);
+            $output[] = '="' . $first . '"';
+        }
+        foreach ($options as $k => $v) {
+            $output[] = $k . '="' . $v . '"';
+        }
+        return implode(' ', $output);
     }
 
     public function defaultTag(): string
     {
         return sprintf(
-            '[%s="%s"/]',
+            '[%s%s/]',
             $this->tagName(),
-            $this->uuid()
+            $this->tagOptionsString(),
+        );
+    }
+
+    public function defaultWrappingTag(): ?string
+    {
+        return sprintf(
+            '[%s%s]{content}[/%s]',
+            $this->tagName(),
+            $this->tagOptionsString(),
+            $this->tagName(),
         );
     }
 
