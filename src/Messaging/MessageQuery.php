@@ -2,16 +2,13 @@
 
 namespace DigraphCMS\Messaging;
 
-use DigraphCMS\DB\AbstractObjectSelect;
+use DigraphCMS\DataObjects\DSOQuery;
 
 /**
- * @method Message|null fetch()
  * @method Message[] fetchAll()
  */
-class MessageSelect extends AbstractObjectSelect
+class MessageQuery extends DSOQuery
 {
-    const OBJECT_CLASS = Message::class;
-
     /**
      * Add where clause to limit to archive messages only
      *
@@ -19,7 +16,7 @@ class MessageSelect extends AbstractObjectSelect
      */
     public function archive()
     {
-        return $this->where('`archived` = 1');
+        return $this->where('${archived} = 1');
     }
 
     /**
@@ -29,7 +26,7 @@ class MessageSelect extends AbstractObjectSelect
      */
     public function inbox()
     {
-        return $this->where('`archived` = 0');
+        return $this->where('${archived} <> 1');
     }
 
     /**
@@ -39,7 +36,7 @@ class MessageSelect extends AbstractObjectSelect
      */
     public function read()
     {
-        return $this->where('`read` = 1');
+        return $this->where('${read} = 1');
     }
 
     /**
@@ -49,6 +46,6 @@ class MessageSelect extends AbstractObjectSelect
      */
     public function unread()
     {
-        return $this->where('`read` = 0');
+        return $this->where('${read} <> 1');
     }
 }

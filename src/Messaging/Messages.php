@@ -2,111 +2,43 @@
 
 namespace DigraphCMS\Messaging;
 
-use DigraphCMS\DB\AbstractObjectManager;
-use DigraphCMS\Email\Email;
-use DigraphCMS\Email\Emails;
+use DigraphCMS\DataObjects\AbstractStaticDSOFactory;
 use DigraphCMS\RichContent\RichContent;
-use DigraphCMS\URL\URLs;
+use DigraphCMS\Users\User;
 
 /**
- * @method static MessageSelect select()
- * @method static bool insert(Message $message)
- * @method static bool update(Message $message)
- * @method static bool delete(Message $message)
+ * @method static MessageQuery query()
  */
-class Messages extends AbstractObjectManager
+class Messages extends AbstractStaticDSOFactory
 {
-    const TABLE = 'message';
-    const INSERT_COLUMNS = [
-        'uuid',
-        'category',
-        'subject',
-        'sender',
-        'recipient',
-        'body',
-        'time',
-        'important',
-        'sensitive',
-        'email',
-    ];
-    const UPDATE_COLUMNS = [
-        'read',
-        'archived',
-    ];
-    const SELECT_CLASS = MessageSelect::class;
-
-    public static function get(string $uuid): ?Message
+    protected static function name(): string
     {
-        return static::select()
-            ->where('uuid = ?', [$uuid])
-            ->fetch();
+        return 'messages';
     }
 
-    public static function send(Message $message)
+    public static function create(User $recipient, string $subject, RichContent $body): Message
     {
-        // deliver message through in-site messaging
-        $inserted = $message->insert();
-        // deliver by email
-        if ($message->email()) {
-            if ($message->sensitive()) {
-                // sensitive messages only email a link to view them, so that users must sign in
-                $subject = "Message received";
-                $body = new RichContent(
-                    sprintf(
-                        "You received a secure message on %s<br><a href='%s'>View it online</a>",
-                        URLs::site(),
-                        $message->url()
-                    )
-                );
-            } else {
-                // non-sensitive messages include the whole message subject and body
-                $subject = $message->subject();
-                $body = new RichContent(
-                    sprintf(
-                        "You received a message on %s<br><a href='%s'>View it online</a>",
-                        URLs::site(),
-                        $message->url()
-                    )
-                        . PHP_EOL . PHP_EOL
-                        . '<hr>'
-                        . PHP_EOL . PHP_EOL
-                        . $message->body()->html()
-                );
-            }
-            if ($message->important()) {
-                // send important messages to all emails
-                $emails = Email::newForUser_all(
-                    $message->category(),
-                    $message->recipient(),
-                    $subject,
-                    $body
-                );
-                foreach ($emails as $email) {
-                    Emails::send($email);
-                }
-            } else {
-                // send non-important messages only to primary email
-                $email = Email::newForUser(
-                    $message->category(),
-                    $message->recipient(),
-                    $subject,
-                    $body
-                );
-                if ($email) Emails::send($email);
-            }
-        }
-        return $inserted;
+        /** @var Message */
+        $message = static::factory()->create([
+            'sender' => 'system',
+            'archived' => false,
+            'read' => false
+        ]);
+        $message->setRecipient($recipient);
+        $message->setSubject($subject);
+        $message->setBody($body);
+        return $message;
     }
 
     /**
      * Query to return unread inbox messages, used for notification dot and
      * user menu interface
      *
-     * @return MessageSelect
+     * @return MessageQuery
      */
-    public static function notify(): MessageSelect
+    public static function notify(): MessageQuery
     {
-        return static::select()
+        return static::query()
             ->inbox()
             ->unread();
     }

@@ -2,6 +2,7 @@
 
 use DigraphCMS\Context;
 use DigraphCMS\HTTP\HttpError;
+use DigraphCMS\Messaging\Message;
 use DigraphCMS\Messaging\Messages;
 use DigraphCMS\Session\Session;
 use DigraphCMS\UI\Breadcrumb;
@@ -10,7 +11,8 @@ use DigraphCMS\Users\Permissions;
 
 Context::response()->private(true);
 
-$message = Messages::get(Context::url()->action());
+/** @var Message */
+$message = Messages::get(Context::url()->actionSuffix());
 if (!$message) throw new HttpError(404);
 
 // set generic breadcrumb name
@@ -19,14 +21,12 @@ $url->setName('Message');
 Breadcrumb::top($url);
 Context::fields()['page.name'] = 'Message';
 
-// if message is sensitive, only allow it to signed in users
-if ($message->sensitive()) {
-    if (Session::uuid() != $message->recipientUUID()) {
-        Permissions::requireMetaGroup('messages__admin');
-    }
-    if ($message->senderUUID() && Session::uuid() != $message->senderUUID()) {
-        Permissions::requireMetaGroup('messages__admin');
-    }
+// only allow signed in users
+if (Session::uuid() != $message->recipientUUID()) {
+    Permissions::requireMetaGroup('messages__admin');
+}
+if ($message->senderUUID() && Session::uuid() != $message->senderUUID()) {
+    Permissions::requireMetaGroup('messages__admin');
 }
 
 // mark as read if this is the recipient

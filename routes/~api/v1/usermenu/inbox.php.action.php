@@ -1,7 +1,6 @@
 <?php
 
 use DigraphCMS\DB\DB;
-use DigraphCMS\HTML\Icon;
 use DigraphCMS\Messaging\Messages;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\Toolbars\ToolbarLink;
@@ -13,6 +12,7 @@ echo "<div id='inbox-dropdown' class='navigation-frame navigation-frame--statele
 $messages = Messages::notify();
 if (!$messages->count()) {
     Notifications::printNotice('No unread messages');
+    echo "<script>document.getElementsByClassName('menuitem--inbox--notify')[0].style.display = 'none';</script>";
 } else {
     echo "<div class='inbox-dropdown__controls toolbar'>";
     echo new ToolbarLink(
@@ -44,10 +44,8 @@ if (!$messages->count()) {
     foreach ($messages as $message) {
         echo "<div class='inbox-dropdown__message'>";
         echo sprintf(
-            "<a href='%s' data-target='_top' class='inbox-dropdown__message__subject'>%s%s%s</a>",
+            "<a href='%s' data-target='_top' class='inbox-dropdown__message__subject'>%s</a>",
             $message->url(),
-            $message->important() ? new Icon('important') : '',
-            $message->sensitive() ? new Icon('secure') : '',
             $message->subject()
         );
         echo "<div class='inbox-dropdown__message__controls'>";

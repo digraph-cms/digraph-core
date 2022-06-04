@@ -14,7 +14,7 @@ class MessageTable extends QueryTable
 {
     protected $showRecipient;
 
-    public function __construct(MessageSelect $select, $showRecipient = false)
+    public function __construct(MessageQuery $select, $showRecipient = false)
     {
         $this->showRecipient = $showRecipient;
         $columns = [
@@ -89,13 +89,11 @@ class MessageTable extends QueryTable
         }
         return [
             sprintf(
-                '<a href="%s">%s%s%s</a>',
+                '<a href="%s">%s</a>',
                 $message->url(),
-                $message->important() ? new Icon('important') : '',
-                $message->sensitive() ? new Icon('secure') : '',
                 $message->subject()
             ),
-            $message->sender() ?? '<em>system</em>',
+            $message->sender(),
             Format::datetime($message->time()),
             $toolbar
         ];
