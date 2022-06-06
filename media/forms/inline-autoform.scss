@@ -1,0 +1,9 @@
+.inline-autoform {
+    display: flex;
+
+    &.form--submitting {
+        .submit-button {
+            display: none;
+        }
+    }
+}

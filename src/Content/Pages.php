@@ -39,22 +39,6 @@ class Pages
     }
 
     /**
-     * Get the child Pages of a given Page uuid
-     *
-     * @param string $start
-     * @param string $order
-     * @return PageSelect
-     */
-    public static function children(string $start, string $order = 'created ASC'): PageSelect
-    {
-        $query = static::select();
-        $query->leftJoin('page_link ON uuid = end_page');
-        $query->where('start_page = ?', [$start]);
-        $query->order($order);
-        return $query;
-    }
-
-    /**
      * Insert a link of the specified type between $start and $end. If no type
      * is specified the type 'normal' will be used.
      *
@@ -216,6 +200,8 @@ class Pages
             )
             ->set([
                 'name' => $page->name(null, true, true),
+                'sort_name' => $page->sortName(),
+                'sort_weight' => $page->sortWeight(),
                 'data' => json_encode($page->get()),
                 'slug_pattern' => $page->slugPattern(),
                 'class' => $page->class(),
@@ -241,6 +227,8 @@ class Pages
                 [
                     'uuid' => $page->uuid(),
                     'name' => $page->name(null, true, true),
+                    'sort_name' => $page->sortName(),
+                    'sort_weight' => $page->sortWeight(),
                     'data' => json_encode($page->get()),
                     'slug_pattern' => $page->slugPattern(),
                     'class' => $page->class(),
@@ -345,6 +333,9 @@ class Pages
                 'updated_by' => $result['updated_by'],
             ]
         );
+        static::$cache[$result['uuid']]
+            ->setSortName($result['sort_name'])
+            ->setSortWeight($result['sort_weight']);
         return static::$cache[$result['uuid']];
     }
 }

@@ -3,7 +3,6 @@
 namespace DigraphCMS\UI;
 
 use DigraphCMS\Content\AbstractPage;
-use DigraphCMS\Content\Pages;
 use DigraphCMS\Context;
 use DigraphCMS\HTML\Tag;
 
@@ -13,7 +12,6 @@ class TableOfContents extends Tag
     protected $page;
     protected $firstPage = 20;
     protected $perPage = 10;
-    protected $sort = 'name ASC';
     protected $parents = [];
 
     public function __construct(AbstractPage $page, $parents = [])
@@ -69,7 +67,7 @@ class TableOfContents extends Tag
 
     public function maxPage(): int
     {
-        $count = Pages::children($this->page->uuid())->count();
+        $count = $this->page->children()->count();
         if ($count <= $this->firstPage) return 1;
         else return ceil(($count - $this->firstPage) / $this->perPage) + 1;
     }
@@ -92,7 +90,7 @@ class TableOfContents extends Tag
     protected function generateItems(): array
     {
         $parents = $this->parents;
-        $children = Pages::children($this->page->uuid(), $this->sort);
+        $children = $this->page->children();
         $children->limit(($this->firstPage - $this->perPage) + ($this->page() * $this->perPage));
         $output = [];
         while ($page = $children->fetch()) {
@@ -103,7 +101,7 @@ class TableOfContents extends Tag
                 '<li><a href="%s">%s</a>%s</li>',
                 $page->url(),
                 $page->name(),
-                (Pages::children($page->uuid())->count() ? trim(new TableOfContents($page, $parents)) : '')
+                ($page->children()->count() ? trim(new TableOfContents($page, $parents)) : '')
             );
         }
         return $output;

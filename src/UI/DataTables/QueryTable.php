@@ -22,7 +22,7 @@ class QueryTable extends AbstractPaginatedTable
         parent::__construct($query->count());
         $this->query = $query;
         $this->callback = $callback;
-        $this->headers = $headers;
+        $this->setHeaders($headers);
     }
 
     protected function writeDownloadFile(DownloadWriter $writer)

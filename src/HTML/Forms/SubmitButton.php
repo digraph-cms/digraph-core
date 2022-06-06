@@ -12,7 +12,12 @@ class SubmitButton extends Tag
     protected $text = 'Submit';
     protected $form;
 
-    public function text(): string {
+    protected $classes = [
+        'submit-button'
+    ];
+
+    public function text(): string
+    {
         return $this->text;
     }
 
@@ -22,7 +27,8 @@ class SubmitButton extends Tag
      * @param string $text
      * @return $this
      */
-    public function setText(string $text) {
+    public function setText(string $text)
+    {
         $this->text = $text;
         return $this;
     }

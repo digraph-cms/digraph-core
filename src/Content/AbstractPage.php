@@ -32,8 +32,11 @@ abstract class AbstractPage implements ArrayAccess
 
     const DEFAULT_SLUG = '[name]';
     const DEFAULT_UNIQUE_SLUG = true;
+    const ORDER_IGNORES_WEIGHT = false;
+    const ORDER_USES_SORT_NAME = true;
 
-    protected $uuid, $name;
+    protected $uuid, $name, $sortName;
+    protected $sortWeight = 0;
     protected $slug = false;
     protected $created, $created_by;
     protected $updated, $updated_by;
@@ -235,9 +238,29 @@ abstract class AbstractPage implements ArrayAccess
         throw new \Exception("Page class $thisClass is not configured");
     }
 
+    /**
+     * Retrieve children of this page, as ordered and filtered in the preferred
+     * way for this particular class/page. May be ordered or filtered different
+     * than what comes out of Graph::children(), and should be used when
+     * displaying most user-facing interfaces for the page.
+     * 
+     * For example, this method might change the default ordering to creation
+     * date for a blog/news section, or updated date for a list of downloads.
+     * 
+     * The default AbstractPage behavior is to respect the sort order column,
+     * and then sort by sort name falling back to normal name.
+     *
+     * @return PageSelect
+     */
+    public function children(): PageSelect
+    {
+        return Graph::children($this->uuid(), null, static::ORDER_IGNORES_WEIGHT)
+            ->order('COALESCE(sort_name, name) ASC');
+    }
+
     public function name(string $name = null, bool $unfiltered = false, bool $forDB = false): string
     {
-        if ($name) {
+        if ($name !== null) {
             $this->name = $name;
         }
         if ($unfiltered || $forDB) {
@@ -245,6 +268,35 @@ abstract class AbstractPage implements ArrayAccess
         } else {
             return htmlentities($this->name);
         }
+    }
+
+    public function sortName(): ?string
+    {
+        return $this->sortName ? $this->sortName : null;
+    }
+
+    public function sortWeight(): int
+    {
+        return $this->sortWeight;
+    }
+
+    public function setSortName(?string $name)
+    {
+        $this->sortName = strip_tags($name);
+        return $this;
+    }
+
+    /**
+     * Set the sorting weight of this page. Default is zero, and the defaults
+     * used elsewhere are "extra sticky" = -200, "sticky" = -100, and "heavy" = 100
+     *
+     * @param integer|null $weight
+     * @return void
+     */
+    public function setSortWeight(?int $weight)
+    {
+        $this->sortWeight = $weight ?? 0;
+        return $this;
     }
 
     /**

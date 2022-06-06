@@ -36,7 +36,7 @@ class SELECT extends Tag implements InputInterface
                     return sprintf(
                         '<option value="%s"%s>%s</option>',
                         $key,
-                        $this->value(true) == $opt['value'] || $this->valueString() == $key ? ' selected="true"' : '',
+                        $this->value(true) === $opt['value'] || $this->valueString() === $key ? ' selected="true"' : '',
                         $opt['label']
                     );
                 },

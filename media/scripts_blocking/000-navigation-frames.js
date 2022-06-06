@@ -76,6 +76,7 @@ document.addEventListener('click', (e) => {
 
 // submit handler for forms in navigation frames
 document.addEventListener('submit', (e) => {
+    Digraph.setFormSubmittingClass(e.target);
     var [parent, target] = Digraph.state.navigationParentAndTarget(e.target);
     // parent and target found
     if (parent && target && target != '_top') {
@@ -99,6 +100,36 @@ document.addEventListener('submit', (e) => {
         e.preventDefault();
     }
 });
+
+// Digraph.submitForm to programmatically submit forms respecting navigation frames
+Digraph.submitForm = function (form) {
+    Digraph.setFormSubmittingClass(form);
+    var [parent, target] = Digraph.state.navigationParentAndTarget(form);
+    if (parent && target && target != '_top') {
+        // submit using navigation frames if there's a target
+        var data = new FormData(form);
+        if (form.getAttribute('method') == 'get') {
+            var url = new URL(form.getAttribute('action'));
+            Array.from(data.keys()).forEach(e => url.searchParams.set(e, data.get(e)));
+            if (Digraph.state.frameIsStateless(parent)) {
+                Digraph.state.get(url.toString(), parent);
+            } else {
+                Digraph.state.getAndPush(url.toString(), parent);
+            }
+        } else {
+            Digraph.state.post(data, form.getAttribute('action'), parent);
+        }
+    } else {
+        // otherwise submit normally
+        form.submit();
+    }
+}
+
+Digraph.setFormSubmittingClass = function (form) {
+    var wrapper = form;
+    if (form.classList.contains('detached-form')) wrapper = form.parentElement;
+    wrapper.classList.add('form--submitting');
+}
 
 // popstate handler for back button
 window.addEventListener('popstate', (e) => {
