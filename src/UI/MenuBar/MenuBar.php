@@ -4,6 +4,7 @@ namespace DigraphCMS\UI\MenuBar;
 
 use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\HTML\DIV;
+use DigraphCMS\UI\Breadcrumb;
 use DigraphCMS\URL\URL;
 
 class MenuBar extends DIV
@@ -12,6 +13,20 @@ class MenuBar extends DIV
     {
         $item = new MenuItem($page->url(), $label ?? $page->name());
         $this->addChild($item);
+        return $item;
+    }
+
+    public function addPageDropdown(AbstractPage $page, string $label = null, bool $openContext = false, int $depth = 3): MenuItem
+    {
+        $item = $this->addPage($page, $label);
+        if ($openContext && in_array($page->url(), Breadcrumb::breadcrumb())) $item->addClass('menuitem--open');
+        if ($depth-- && $page->children()->count()) {
+            $subMenu = new MenuBar;
+            $item->addChild($subMenu);
+            foreach ($page->children() as $child) {
+                $subMenu->addPageDropdown($child, null, $openContext, $depth);
+            }
+        }
         return $item;
     }
 
