@@ -56,7 +56,8 @@
     &:hover,
     &:focus,
     &:focus-within,
-    &.menuitem--focus {
+    &.menuitem--focus,
+    &.menuitem--open {
         opacity: 1;
 
         >a.menuitem__link {
@@ -157,7 +158,8 @@
     &:hover,
     &:focus,
     &:focus-within,
-    &.menuitem--focus {
+    &.menuitem--focus,
+    &.menuitem--open {
         >.menuitem__dropdown {
             display: block;
         }
@@ -166,7 +168,8 @@
     // give actually hovered/focused dropdown a slightly higher z index
     &:hover,
     &:focus,
-    &:focus-within {
+    &:focus-within,
+    &.menuitem--open {
         >.menuitem__dropdown {
             z-index: 101;
         }
@@ -203,6 +206,7 @@
         position: relative !important;
         margin-left: $grid;
         min-width: auto;
+        box-shadow: none;
     }
 
     .menuitem {
@@ -230,6 +234,121 @@
                     content: "close" !important;
                 }
             }
+        }
+    }
+}
+
+/* styles for vertical display */
+.menubar.menubar--vertical {
+    flex-direction: column;
+    height: auto !important;
+    background-color: transparent;
+    color: inherit;
+    border: $border/2 solid var(--theme-neutral-a50);
+
+    .menubar {
+        background-color: transparent;
+        color: inherit;
+
+        .menuitem>a {
+            border-left: 0;
+            border-right: 0;
+            border-top: 0;
+        }
+    }
+
+    .menuitem__dropdown {
+        position: relative !important;
+        min-width: auto;
+        box-shadow: none;
+        background-color: var(--theme-neutral-a50);
+        border: $border/2 solid var(--theme-neutral-a50);
+        border-left: $grid/2 solid var(--theme-neutral-a50);
+    }
+
+    .menuitem {
+        height: auto;
+        overflow: visible;
+        line-height: $grid;
+        font-size: $grid*0.8;
+
+        >a {
+            border: $border/2 solid var(--theme-neutral-a50);
+        }
+
+        &.menuitem--current,
+        &.menuitem--current-parent {
+            opacity: 1;
+            background-color: var(--cue-interactive);
+            color: var(--cue-interactive-inv);
+
+            >a {
+                background-color: inherit;
+                color: inherit;
+            }
+        }
+    }
+
+    .menubar--overflowed__toggle {
+        display: none;
+    }
+
+    .menubar--overflowed__toggle {
+        border-bottom: $border solid var(--cue-interactive) !important;
+
+        .menuitem__link {
+            &:after {
+                content: "close" !important;
+            }
+        }
+    }
+}
+
+/* manual-toggle menu items */
+.menuitem--dropdown--manual-toggle {
+    position: relative;
+
+    >.menuitem__link {
+        padding-left: $grid*2  !important;
+
+        &:after {
+            display: none !important;
+        }
+    }
+
+    >.menuitem--dropdown__toggle {
+        position: absolute;
+        top: $grid/2;
+        left: $grid/2;
+        width: $grid;
+        font-size: $grid*0.75;
+        font-weight: 900;
+        text-decoration: none !important;
+        text-align: center;
+        line-height: $grid;
+        cursor: pointer;
+
+        &:hover {
+            background-color: var(--cue-interactive-bright) !important;
+            color: var(--cue-interactive-inv) !important;
+        }
+
+        &:before {
+            content: '+';
+        }
+    }
+
+    >.menuitem__dropdown {
+        display: none !important;
+    }
+
+    &.menuitem--open {
+        >.menuitem__dropdown {
+            display: block !important;
+        }
+
+        >.menuitem--dropdown__toggle:before {
+            content: '-';
         }
     }
 }

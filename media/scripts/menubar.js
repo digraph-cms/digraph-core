@@ -52,13 +52,32 @@ Make menu dropdowns work more nicely
     updateDropDowns();
     function updateDropDowns(e) {
         var target = e ? e.target ?? document : document;
+        // mark all manual-toggle menu items
+        Array.from(target.getElementsByClassName('menubar--manual-toggle'))
+            .forEach(menu => {
+                Array.from(menu.getElementsByClassName('menuitem--dropdown'))
+                    .forEach(menuItem => {
+                        if (menuItem.classList.contains('menuitem--dropdown--manual-toggle')) return;
+                        menuItem.classList.add('menuitem--dropdown--manual-toggle');
+                        var toggle = document.createElement('a');
+                        toggle.classList.add('menuitem--dropdown__toggle');
+                        menuItem.insertBefore(toggle, menuItem.firstChild);
+                        toggle.addEventListener('click', (e) => {
+                            if (menuItem.classList.contains('menuitem--open')) menuItem.classList.remove('menuitem--open');
+                            else menuItem.classList.add('menuitem--open');
+                        })
+                    });
+            });
+        // set up listeners for all non-manual-toggle items
         Array.from(target.getElementsByClassName('menuitem--dropdown'))
-            .filter(m => !m.classList.contains('menuitem--dropdown-js'))
+            .filter(m => !m.classList.contains('menuitem--dropdown--js'))
+            .filter(m => !m.classList.contains('menuitem--dropdown--manual-toggle'))
             .forEach(m => {
                 m.classList.add('menuitem--dropdown--js');
                 m.addEventListener('mouseenter', () => {
                     // add focus class and clear timer if it exists
                     m.classList.add('menuitem--focus');
+                    m.dispatchEvent(new Event('DigraphLayoutUpdated', { bubbles: true }));
                     if (m.timer) clearTimeout(m.timer);
                     // load iframe if necessary
                     if (m.dataset.dropdownUrl) {
@@ -74,7 +93,10 @@ Make menu dropdowns work more nicely
                 });
                 m.addEventListener('mouseleave', () => {
                     // set timer to clear focus class
-                    m.timer = setTimeout(() => m.classList.remove('menuitem--focus'), 500);
+                    m.timer = setTimeout(() => {
+                        m.classList.remove('menuitem--focus');
+                        m.dispatchEvent(new Event('DigraphLayoutUpdated', { bubbles: true }));
+                    }, 1000);
                 });
             });
     }
