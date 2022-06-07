@@ -258,6 +258,7 @@
     }
 
     .menuitem__dropdown {
+        margin-left: 0;
         position: relative !important;
         min-width: auto;
         box-shadow: none;
@@ -268,7 +269,7 @@
 
     .menuitem {
         height: auto;
-        overflow: visible;
+        text-overflow: ellipsis;
         line-height: $grid;
         font-size: $grid*0.8;
 
