@@ -5,18 +5,22 @@ code {
     color: var(--color);
     background: var(--background-light);
     width: fit-content;
-    max-width: 100%;;
+    max-width: 100%;
+    ;
 }
 
-pre > code {
-    box-sizing: border-box;
-    display: block;
-    overflow-x: auto;
+pre {
     padding: $grid*0.75 $grid;
     box-shadow: var(--shadow);
+    display: block;
+    overflow-x: auto;
     max-height: 75vh;
     border-left: $border solid var(--theme-neutral);
     max-width: $line-length;
+}
+
+pre>code {
+    box-sizing: border-box;
     line-height: 1.5;
 }
 

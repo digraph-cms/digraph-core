@@ -36,33 +36,33 @@ use DigraphCMS\UI\UserMenu;
 </head>
 
 <body class='template-fallback no-js'>
-        <?php
-        try {
-            echo new UserMenu;
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
-        try {
-            echo Templates::render('sections/header.php');
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
-        try {
-            echo Templates::render('sections/navbar.php');
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
-        echo '<main id="content">';
-        echo '<div id="main-content">';
-        echo Context::response()->content();
-        echo '</div>';
-        echo '</main>';
-        try {
-            echo Templates::render('sections/footer.php');
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
-        ?>
+    <?php
+    try {
+        echo new UserMenu;
+    } catch (\Throwable $th) {
+        //throw $th;
+    }
+    try {
+        echo Templates::render('sections/header.php');
+    } catch (\Throwable $th) {
+        //throw $th;
+    }
+    try {
+        echo Templates::render('sections/navbar.php');
+    } catch (\Throwable $th) {
+        //throw $th;
+    }
+    echo '<main id="content">';
+    echo '<div id="main-content">';
+    echo Context::response()->content();
+    echo '</div>';
+    echo '</main>';
+    try {
+        echo Templates::render('sections/footer.php');
+    } catch (\Throwable $th) {
+        //throw $th;
+    }
+    ?>
     </main>
 </body>
 
