@@ -62,7 +62,13 @@
         >a.menuitem__link {
             background-color: var(--background);
             color: var(--color);
+        }
+    }
 
+    &:hover,
+    &:focus,
+    &.menuitem--focus {
+        >a.menuitem__link {
             &:link {
                 text-decoration: underline;
             }
@@ -287,6 +293,10 @@
                 background-color: var(--cue-interactive-inv);
                 color: var(--cue-interactive);
                 font-weight: bold;
+            }
+
+            >.menuitem__dropdown {
+                background-color: var(--cue-interactive);
             }
         }
     }
