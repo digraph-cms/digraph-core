@@ -16,12 +16,12 @@ class DSOObject extends DSO
 
     public function created(): DateTime
     {
-        return (new DateTime)->setTimezone($this['dso.created.date']);
+        return (new DateTime)->setTimestamp($this['dso.created.date']);
     }
 
     public function updated(): DateTime
     {
-        return (new DateTime)->setTimezone($this['dso.updated.date']);
+        return (new DateTime)->setTimestamp($this['dso.updated.date']);
     }
 
     public function createdBy(): User

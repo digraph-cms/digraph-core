@@ -59,6 +59,7 @@ class DataObjects
             /** @var AbstractSQLDriver */
             $driver = DriverFactory::factoryFromPDO(DB::pdo());
             $driver->createSchemaTable();
+            $driver->disableTransactions();
         }
         return $driver;
     }

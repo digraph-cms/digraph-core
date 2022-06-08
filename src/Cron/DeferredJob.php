@@ -38,42 +38,37 @@ class DeferredJob
 
     public function execute(): bool
     {
+        // only execute if ID exists, meaning this job is in the database
         if ($this->id() === null) return false;
         // try to get lock
         if (!($lock = Locking::lock('defex_' . $this->id(), false, 30))) return false;
         // override user
         Session::overrideUser('system');
-        // only execute if ID exists, meaning this job is in the database
-        DB::query()
-            ->update('defex', ['run' => time()], $this->id())
-            ->execute();
+        // execute
         try {
-            DB::query()
-                ->update(
-                    'defex',
-                    [
-                        'message' => strval(call_user_func($this->job, $this)),
-                        'error' => false
-                    ],
-                    $this->id()
-                )->execute();
+            $message = strval(call_user_func($this->job, $this));
+            $error = false;
         } catch (\Throwable $th) {
-            DB::query()
-                ->update(
-                    'defex',
-                    [
-                        'message' => get_class($th) . ': ' . $th->getMessage(),
-                        'error' => true
-                    ],
-                    $this->id()
-                )->execute();
+            $message = get_class($th) . ': ' . $th->getMessage();
+            $error = true;
         }
+        // write result to db
+        $result = DB::query()
+            ->update(
+                'defex',
+                [
+                    'run' => time(),
+                    'message' => $message,
+                    'error' => $error
+                ],
+                $this->id()
+            )->execute();
         // remove override user
         Session::overrideUser(null);
         // release lock
         Locking::release($lock);
         // return true
-        return true;
+        return !!$result;
     }
 
     protected function serializedJob(): string

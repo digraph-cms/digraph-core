@@ -9,18 +9,15 @@ code {
     ;
 }
 
-pre {
-    padding: $grid*0.75 $grid;
-    box-shadow: var(--shadow);
+pre>code {
+    box-sizing: border-box;
     display: block;
     overflow-x: auto;
+    padding: $grid*0.75 $grid;
+    box-shadow: var(--shadow);
     max-height: 75vh;
     border-left: $border solid var(--theme-neutral);
     max-width: $line-length;
-}
-
-pre>code {
-    box-sizing: border-box;
     line-height: 1.5;
 }
 

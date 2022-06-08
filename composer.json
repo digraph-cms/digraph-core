@@ -35,7 +35,7 @@
         "tijsverkoyen/css-to-inline-styles": "^2.2",
         "caxy/php-htmldiff": "^0.1.10",
         "phpoffice/phpspreadsheet": "^1.23",
-        "byjoby/destructr": "^1.6"
+        "byjoby/destructr": "^1.7"
     },
     "suggest": {
         "league/oauth2-github": "Needed to support OAuth sign-ins using GitHub",
