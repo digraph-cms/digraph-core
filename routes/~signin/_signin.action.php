@@ -3,9 +3,10 @@
 use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
+use DigraphCMS\Email\Email;
+use DigraphCMS\Email\Emails;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTTP\HttpError;
-use DigraphCMS\Messaging\Message;
 use DigraphCMS\RichContent\RichContent;
 use DigraphCMS\Session\Cookies;
 use DigraphCMS\Session\Session;
@@ -85,21 +86,22 @@ if ($user = $source->lookupUser($provider, $providerID)) {
     if ($user = Session::user()) {
         // user is signed in, link this pair to their account
         $source->authorizeUser($user, $provider, $providerID);
-        // send a message indicating that a new auth method was added
-        $message = new Message(
-            "New sign-in method added to your account",
+        // send emails indicating that a new auth method was added
+        $emails = Email::newForUser_all(
+            'service',
             Users::current(),
+            "New sign-in method added to your account",
             new RichContent(Templates::render(
                 '/email/account/new-sign-in-method.php',
                 [
                     'user' => Users::current(),
                     'source' => $fullSourceTitle
                 ]
-            )),
-            'service'
+            ))
         );
-        $message->setEmail(true);
-        $message->send();
+        foreach ($emails as $email) {
+            Emails::send($email);
+        }
     } else {
         // user is not signed in, create a new user and link pair to it
         DB::beginTransaction();

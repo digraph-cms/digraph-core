@@ -22,7 +22,7 @@ class EmailSelect extends AbstractMappedSelect
     }
 
     /**
-     * Add where clause to limit to non-blocked messages only
+     * Add where clause to limit to non-blocked emails only
      *
      * @return $this
      */

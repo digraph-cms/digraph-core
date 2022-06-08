@@ -60,7 +60,7 @@ foreach ($addresses as $address) {
 // display either unsubscribe or resubscribe button
 echo "<div class='navigation-frame navigation-frame--stateless' id='email-unsubscribe-form' data-target='frame'>";
 if ($unsubscribed) {
-    Notifications::printConfirmation('You are unsubscribed from these messages');
+    Notifications::printConfirmation('You are unsubscribed from these emails');
     echo new SingleButton(
         'Resubscribe',
         function () use ($addresses, $email) {

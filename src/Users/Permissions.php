@@ -16,9 +16,7 @@ class Permissions
      * the group admins and any ending in __edit will always include admins
      * and editors
      */
-    const METAGROUPS = [
-        'messages__send' => ['admins']
-    ];
+    const METAGROUPS = [];
 
     public static function url(URL $url, User $user = null): bool
     {

@@ -5,7 +5,6 @@ namespace DigraphCMS\UI;
 use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\Events\Dispatcher;
-use DigraphCMS\Messaging\Messages;
 use DigraphCMS\Session\Session;
 use DigraphCMS\UI\MenuBar\MenuBar;
 use DigraphCMS\UI\MenuBar\MenuItem;
@@ -24,20 +23,6 @@ class UserMenu extends MenuBar
             // user profile link
             $this->userItem = $this->addURL($user->profile())
                 ->addClass('menuitem--user');
-            // inbox link, and dropdown if there are unread inbox items
-            $messages = Messages::notify();
-            if ($messages->count()) {
-                $this->addChild(
-                    $this->inboxItem =
-                        (new MenuItemFrame(
-                            new URL('/~messages/'),
-                            'Inbox',
-                            new URL('/~api/v1/usermenu/inbox.php')
-                        ))
-                        ->addClass('menuitem--inbox')
-                        ->addClass('menuitem--inbox--notify')
-                );
-            }
             // logout link
             $this->logoutItem = $this->addURL(Users::signoutUrl(Context::url()))
                 ->addClass('menuitem--logout');

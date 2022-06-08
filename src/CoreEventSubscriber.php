@@ -71,17 +71,6 @@ abstract class CoreEventSubscriber
     }
 
     /**
-     * Add inbox to user actions
-     *
-     * @param URL[] $urls
-     * @return void
-     */
-    public static function onStaticActions_user(array &$urls)
-    {
-        $urls[] = new URL('/~messages/');
-    }
-
-    /**
      * Construct a card for displaying rich media in autocomplete fields
      *
      * @param AbstractRichMedia $media
@@ -305,21 +294,6 @@ abstract class CoreEventSubscriber
     }
 
     /**
-     * Special permissions for pages within ~messages route
-     *
-     * @param URL $url
-     * @param User $user
-     * @return boolean|null
-     */
-    public static function onStaticUrlPermissions_messages(URL $url, User $user): ?bool
-    {
-        if (substr($url->action(), 0, 4) == 'msg_') {
-            return true;
-        }
-        return Permissions::inGroup('users', $user);
-    }
-
-    /**
      * URL names for unsubscribe routes
      *
      * @param URL $url
@@ -345,22 +319,6 @@ abstract class CoreEventSubscriber
             return new URL('/~users/');
         } elseif ($url->arg('user') && $user = Users::get($url->arg('user'))) {
             return $user->profile();
-        }
-        return null;
-    }
-
-    /**
-     * Set inbox parent to user profile
-     *
-     * @param URL $url
-     * @return URL|null
-     */
-    public static function onStaticUrlParent_messages(URL $url): ?URL
-    {
-        if ($url->action() == 'index') {
-            return Users::current()
-                ? Users::current()->profile()
-                : null;
         }
         return null;
     }

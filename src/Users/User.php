@@ -105,7 +105,7 @@ class User implements ArrayAccess
         // send notification to all verified email addresses
         // only sends if we skipped verification and this is at least the second address on account
         if ($skipVerification && count($this->emails()) > 1) {
-            $messages = Email::newForUser_all(
+            $emails = Email::newForUser_all(
                 'service',
                 $this,
                 'Email address added to account',
@@ -117,8 +117,8 @@ class User implements ArrayAccess
                     ]
                 ))
             );
-            foreach ($messages as $message) {
-                Emails::send($message);
+            foreach ($emails as $email) {
+                Emails::send($email);
             }
         }
     }
@@ -146,7 +146,7 @@ class User implements ArrayAccess
         // send notification to all verified email addresses, if there was
         // already a different primary email address
         if ($alreadyHadPrimary) {
-            $messages = Email::newForUser_all(
+            $emails = Email::newForUser_all(
                 'service',
                 $this,
                 'Primary email address changed',
@@ -158,8 +158,8 @@ class User implements ArrayAccess
                     ]
                 ))
             );
-            foreach ($messages as $message) {
-                Emails::send($message);
+            foreach ($emails as $email) {
+                Emails::send($email);
             }
         }
     }
@@ -180,7 +180,7 @@ class User implements ArrayAccess
                 if (count($this->emails()) == 1) $this->setPrimaryEmail($email);
                 $this->update();
                 // send notification emails
-                $messages = Email::newForUser_all(
+                $emails = Email::newForUser_all(
                     'service',
                     $this,
                     'Email address added to account',
@@ -192,8 +192,8 @@ class User implements ArrayAccess
                         ]
                     ))
                 );
-                foreach ($messages as $message) {
-                    Emails::send($message);
+                foreach ($emails as $email) {
+                    Emails::send($email);
                 }
             }
         }
@@ -248,7 +248,7 @@ class User implements ArrayAccess
         // note that newForUser_all uses the emails() method, so it will only
         // send to verified emails
         if (in_array($email, $this->emails())) {
-            $messages = Email::newForUser_all(
+            $emails = Email::newForUser_all(
                 'service',
                 $this,
                 'Email address removed from account',
@@ -260,8 +260,8 @@ class User implements ArrayAccess
                     ]
                 ))
             );
-            foreach ($messages as $message) {
-                Emails::send($message);
+            foreach ($emails as $email) {
+                Emails::send($email);
             }
         }
         // remove email from array
