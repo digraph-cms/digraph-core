@@ -46,7 +46,6 @@
 
     &.menuitem--current {
         opacity: 0.5;
-        text-decoration: underline;
     }
 
     &.menuitem--current-parent {
@@ -250,10 +249,13 @@
         background-color: transparent;
         color: inherit;
 
-        .menuitem>a {
+        .menuitem>.menuitem__link {
             border-left: 0;
             border-right: 0;
             border-top: 0;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
         }
     }
 
@@ -269,23 +271,22 @@
 
     .menuitem {
         height: auto;
-        text-overflow: ellipsis;
-        line-height: $grid;
-        font-size: $grid*0.8;
+        line-height: 1.4em;
+        font-size: inherit;
 
-        >a {
+        >.menuitem__link {
             border: $border/2 solid var(--theme-neutral-a50);
         }
 
         &.menuitem--current,
         &.menuitem--current-parent {
             opacity: 1;
-            background-color: var(--cue-interactive);
-            color: var(--cue-interactive-inv);
+            border-top: $border solid var(--cue-interactive);
 
-            >a {
-                background-color: inherit;
-                color: inherit;
+            >.menuitem__link {
+                background-color: var(--cue-interactive-inv);
+                color: var(--cue-interactive);
+                font-weight: bold;
             }
         }
     }
@@ -321,8 +322,8 @@
         position: absolute;
         top: $grid/2;
         left: $grid/2;
-        width: $grid;
-        font-size: $grid*0.75;
+        width: 1.4em;
+        height: 1.4em;
         font-weight: 900;
         text-decoration: none !important;
         text-align: center;
