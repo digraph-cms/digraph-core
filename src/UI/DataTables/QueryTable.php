@@ -3,7 +3,6 @@
 namespace DigraphCMS\UI\DataTables;
 
 use DigraphCMS\Context;
-use DigraphCMS\DataObjects\DSOQuery;
 use DigraphCMS\DB\AbstractMappedSelect;
 use Envms\FluentPDO\Queries\Select;
 
@@ -14,7 +13,7 @@ class QueryTable extends AbstractPaginatedTable
     /**
      * Must be given a mapped query object and callable item for handling
      *
-     * @param DSOQuery|AbstractMappedSelect|Select $query
+     * @param AbstractMappedSelect|Select $query
      * @param callable $callback
      */
     public function __construct($query, callable $callback, array $headers = [])
