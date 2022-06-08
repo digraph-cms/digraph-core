@@ -28,7 +28,7 @@ class Group
     public function url(): URL
     {
         if ($this->uuid == 'users') {
-            return new URL('/~users/');
+            return new URL('/~admin/user_list.html');
         }
         return new URL('/~groups/' . $this->uuid() . '.html');
     }
