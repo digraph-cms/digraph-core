@@ -158,9 +158,11 @@ abstract class CoreEventSubscriber
         /** @var DOMElement */
         $node = $e->getNode();
         $href = $node->getAttribute('href');
-        if (!$href || $node->getAttribute('data-wayback-ignore')) return;
-        $href = preg_replace('@^(https?:)?//@', '//', $href);
-        if (substr($href, 0, strlen($site)) != $site) {
+        if (!$href) return;
+        if ($node->getAttribute('data-wayback-ignore')) return;
+        if (!preg_match('/^https?:\/\//', $href)) return;
+        $normalizedURL = preg_replace('@^(https?:)?//@', '//', $href);
+        if (substr($normalizedURL, 0, strlen($site)) != $site) {
             if (!WaybackMachine::check($href)) {
                 if ($wb = WaybackMachine::get($href)) {
                     // Wayback Machine says URL is broken and found an archived copy
@@ -169,7 +171,7 @@ abstract class CoreEventSubscriber
                     $node->setAttribute('title', 'Wayback Machine: ' . $href);
                 } else {
                     // broken URL but no archived copy found
-                    $node->setAttribute('data-link-broken');
+                    $node->setAttribute('data-link-broken', 'true');
                     $node->setAttribute('title', 'Link may be broken');
                 }
             }

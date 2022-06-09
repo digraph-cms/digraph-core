@@ -20,7 +20,7 @@ class DOM
         $fragment = $fragment ?? strpos($html, '<html') === false;
 
         return Cache::get(
-            md5($html),
+            'dom/html/' . md5($html),
             function () use ($html, $fragment) {
                 // set up DOMDocument
                 $dom = new DOMDocument();

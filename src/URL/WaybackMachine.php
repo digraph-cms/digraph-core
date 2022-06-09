@@ -5,6 +5,7 @@ namespace DigraphCMS\URL;
 use DateTime;
 use DateTimeZone;
 use DigraphCMS\Cache\Cache;
+use DigraphCMS\Cache\Locking;
 use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
@@ -80,6 +81,12 @@ class WaybackMachine
 
     protected static function sendNotificationEmail($url)
     {
+        $lock = Locking::lock(
+            'wayback_notification_' . md5(Context::url() . $url),
+            true,
+            Config::get('wayback.notify_frequency')
+        );
+        if (!$lock) return;
         foreach (Config::get('wayback.notify_emails') as $addr) {
             $email = Email::newForEmail(
                 'wayback',

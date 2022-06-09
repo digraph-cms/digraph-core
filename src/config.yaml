@@ -69,6 +69,8 @@ db:
 wayback:
   # enter a list of emails that will be notified when a broken link is found
   notify_emails: []
+  # maximum notification frequency per context URL
+  notify_frequency: 604800
   # maximum number of checks to run per pageview
   max_checks: 5
   # maximum number of API calls to make per pageview
@@ -76,7 +78,7 @@ wayback:
   # how long to cache API call results
   api_cache_ttl: 30 days
   # how frequently to check if links are down
-  check_ttl: 604800 # one week
+  check_ttl: 86400
   # how long to wait for checks to time out
   check_timeout: 5
   # how long to allow connection to time out

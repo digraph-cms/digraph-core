@@ -14,7 +14,7 @@ final class WaybackMachine extends AbstractMigration
             ->addColumn('uuid', 'uuid')
             ->addColumn('url', 'string', ['length' => 250])
             ->addColumn('wb_time', 'integer', ['null' => true])
-            ->addColumn('wb_url', 'string', ['length' => 250], ['null' => true])
+            ->addColumn('wb_url', 'string', ['length' => 250, 'null' => true])
             ->addColumn('created', 'integer')
             ->addIndex('uuid', ['unique' => true])
             ->addIndex('url')
