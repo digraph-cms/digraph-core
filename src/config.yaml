@@ -29,7 +29,7 @@ cache:
   driver: \DigraphCMS\Cache\OpCache
   ttl: 300
   fuzz: 120
-  dom_ttl: 3600
+  dom_ttl: 600
 
 email:
   enabled: true
@@ -72,13 +72,13 @@ wayback:
   # maximum notification frequency per context URL
   notify_frequency: 604800
   # maximum number of checks to run per pageview
-  max_checks: 5
+  max_checks: 10
   # maximum number of API calls to make per pageview
   max_api_calls: 10
   # how long to cache API call results
   api_cache_ttl: 30 days
   # how frequently to check if links are down
-  check_ttl: 86400
+  check_ttl: 3600
   # how long to wait for checks to time out
   check_timeout: 5
   # how long to allow connection to time out
