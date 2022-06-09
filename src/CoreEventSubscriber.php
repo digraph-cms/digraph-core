@@ -19,6 +19,8 @@ use DigraphCMS\UI\ActionMenu;
 use DigraphCMS\UI\Format;
 use DigraphCMS\UI\MenuBar\MenuItem;
 use DigraphCMS\URL\URL;
+use DigraphCMS\URL\URLs;
+use DigraphCMS\URL\WaybackMachine;
 use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
@@ -31,7 +33,7 @@ abstract class CoreEventSubscriber
     public static function onCron_daily()
     {
         // clean up old deferred execution jobs
-        new DeferredJob(function(){
+        new DeferredJob(function () {
             $count = DB::query()->delete('defex')
                 ->where('run is null')
                 ->where('run < ?', [time() - (7 * 86400)])
@@ -39,7 +41,7 @@ abstract class CoreEventSubscriber
             return "Cleaned up $count old deferred execution jobs";
         });
         // clean up old locking records
-        new DeferredJob(function(){
+        new DeferredJob(function () {
             $count = DB::query()->delete('locking')
                 ->where('expires < ?', [time() - 86400])
                 ->execute();
@@ -147,6 +149,31 @@ abstract class CoreEventSubscriber
         $response->content(
             DOM::html($response->content())
         );
+    }
+
+    public static function onDOMElement_a(DOMEvent $e)
+    {
+        static $site;
+        $site = $site ?? preg_replace('@^(https?:)?//@', '//', URLs::site());
+        /** @var DOMElement */
+        $node = $e->getNode();
+        $href = $node->getAttribute('href');
+        if (!$href || $node->getAttribute('data-wayback-ignore')) return;
+        $href = preg_replace('@^(https?:)?//@', '//', $href);
+        if (substr($href, 0, strlen($site)) != $site) {
+            if (!WaybackMachine::check($href)) {
+                if ($wb = WaybackMachine::get($href)) {
+                    // Wayback Machine says URL is broken and found an archived copy
+                    $node->setAttribute('href', $wb->helperURL());
+                    $node->setAttribute('data-link-wayback', 'true');
+                    $node->setAttribute('title', 'Wayback Machine: ' . $href);
+                } else {
+                    // broken URL but no archived copy found
+                    $node->setAttribute('data-link-broken');
+                    $node->setAttribute('title', 'Link may be broken');
+                }
+            }
+        }
     }
 
     /**

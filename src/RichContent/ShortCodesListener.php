@@ -57,19 +57,6 @@ class ShortCodesListener
             $link = (new A)
                 ->setAttribute('href', $url)
                 ->addChild($s->getContent() ? $s->getContent() : preg_replace('/^(https?:)?\/\//', '', $url));
-            // check in wayback machine
-            if (!WaybackMachine::check($url)) {
-                if ($wb = WaybackMachine::get($url)) {
-                    // Wayback Machine says URL is broken and found an archived copy
-                    $link->setAttribute('href', $wb->helperURL())
-                        ->addClass('link--wayback')
-                        ->setAttribute('title', 'Wayback Machine: ' . $url);
-                } else {
-                    // broken URL but no archived copy found
-                    $link->addClass('link--broken')
-                        ->setAttribute('title', 'Link may be broken');
-                }
-            }
             // return built link
             return $link;
         }

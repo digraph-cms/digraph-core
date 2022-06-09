@@ -1,4 +1,4 @@
-a.link--broken {
+a[data-link-broken] {
     background-color: var(--cue-danger);
     color: var(--cue-danger-inv);
 
@@ -8,7 +8,7 @@ a.link--broken {
     }
 }
 
-a.link--wayback {
+a[data-link-wayback] {
     background-color: var(--cue-warning);
     color: var(--cue-warning-inv);
 

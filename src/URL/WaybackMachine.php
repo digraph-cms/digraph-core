@@ -6,7 +6,12 @@ use DateTime;
 use DateTimeZone;
 use DigraphCMS\Cache\Cache;
 use DigraphCMS\Config;
+use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
+use DigraphCMS\Email\Email;
+use DigraphCMS\Email\Emails;
+use DigraphCMS\RichContent\RichContent;
+use DigraphCMS\UI\Templates;
 use Throwable;
 
 class WaybackMachine
@@ -62,6 +67,7 @@ class WaybackMachine
                     } elseif ($errno == 28) {
                         return true;
                     } else {
+                        static::sendNotificationEmail($url);
                         return false;
                     }
                 } catch (Throwable $th) {
@@ -70,6 +76,19 @@ class WaybackMachine
             },
             Config::get('wayback.check_ttl')
         );
+    }
+
+    protected static function sendNotificationEmail($url)
+    {
+        foreach (Config::get('wayback.notify_emails') as $addr) {
+            $email = Email::newForEmail(
+                'wayback',
+                $addr,
+                'Broken link on ' . Context::url(),
+                new RichContent(Templates::render('email/wayback/broken-link.php', ['broken_url' => $url]))
+            );
+            Emails::send($email);
+        }
     }
 
     protected static function normalizeURL(string $url): string
@@ -203,7 +222,7 @@ class WaybackMachine
                 [
                     'uuid' => $result->uuid(),
                     'url' => $result->originalURL(),
-                    'wb_time' => $result->wbTime()->getTimestamp(),
+                    'wb_time' => $result->wbTime() ? $result->wbTime()->getTimestamp() : null,
                     'wb_url' => $result->wbURL(),
                     'created' => $result->created()->getTimestamp(),
                 ]
