@@ -5,12 +5,13 @@ namespace DigraphCMS\DOM;
 use DigraphCMS\Cache\Cache;
 use DigraphCMS\Config;
 use DigraphCMS\Events\Dispatcher;
-use DOMDocument;
 use DOMElement;
 use DOMNode;
+use Masterminds\HTML5;
 
 class DOM
 {
+
     public static function html(string $html, bool $fragment = null): string
     {
         if (!trim($html)) {
@@ -23,13 +24,9 @@ class DOM
             'dom/html/' . md5($html),
             function () use ($html, $fragment) {
                 // set up DOMDocument
-                $dom = new DOMDocument();
-                if (!@$dom->loadHTML($html, \LIBXML_NOERROR & \LIBXML_NOWARNING & \LIBXML_NOBLANKS)) {
-                    return $html;
-                }
+                $dom = static::html5()->loadHTML($html);
                 // dispatch events
                 static::dispatchEvents($dom, $fragment ? 'fragment' : 'full');
-
                 //normalize and output to HTML
                 $dom->normalizeDocument();
                 if (!$fragment) {
@@ -40,15 +37,17 @@ class DOM
                         $html = $dom->saveHTML();
                     }
                 }
-                //fix self-closing tags that aren't actually allowed to self-close in HTML
-                $html = preg_replace('@(<(a|script|noscript|table|iframe|noframes|canvas|style)[^>]*)/>@ims', '$1></$2>', $html);
-                //fix non-self-closing tags that are supposed to self-close
-                $html = preg_replace('@(<(source)[^>]*)></\2>@ims', '$1 />', $html);
                 // return processed HTML
                 return $html;
             },
             Config::get('cache.dom_ttl')
         );
+    }
+
+    protected static function html5(): HTML5
+    {
+        static $html5;
+        return $html5 ?? $html5 = new HTML5();
     }
 
     protected static function bodyOnly(DOMNode $dom): ?string

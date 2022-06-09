@@ -231,7 +231,7 @@ abstract class Tag extends Node
             foreach ($attributes as $name => $value) {
                 $html .= ' ' . $name;
                 if ($value !== null) {
-                    $html .= '="' . htmlspecialchars(static::encodeValue($value)) . '"';
+                    $html .= '="' . htmlentities(static::encodeValue($value)) . '"';
                 }
             }
         }

@@ -221,8 +221,6 @@ class Response
         $content = null;
         if (Digraph::inferMime($this) == 'text/html') {
             Dispatcher::dispatchEvent('onResponseRender_html', [$this]);
-            $content = utf8_decode($this->content());
-            $content = mb_convert_encoding($content, "UTF-8");
         }
         echo $content ?? $this->content();
     }
