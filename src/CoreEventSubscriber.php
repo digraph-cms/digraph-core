@@ -24,6 +24,7 @@ use DigraphCMS\URL\WaybackMachine;
 use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
+use DOMElement;
 
 use function DigraphCMS\Content\require_file;
 
