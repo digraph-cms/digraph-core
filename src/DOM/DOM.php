@@ -37,6 +37,12 @@ class DOM
                         $html = $dom->saveHTML();
                     }
                 }
+                // fix oddities
+                $html = str_ireplace(
+                    ['<br></br>'],
+                    ['<br/>'],
+                    $html
+                );
                 // return processed HTML
                 return $html;
             },
