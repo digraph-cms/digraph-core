@@ -61,11 +61,26 @@ echo implode('', array_map(
 echo "</tr>";
 foreach ($categories as $category) {
     if ($category == 'service') continue;
+    $count = Emails::select()
+        ->where('category = ?', [$category])
+        ->where(
+            '('
+                . implode(' OR ', array_map(
+                    function ($address) {
+                        return "`to` = ?";
+                    },
+                    $addresses
+                ))
+                . ')',
+            $addresses
+        )->count();
+    if (!$count) continue;
     echo "<tr>";
     // email type information
     echo "<th>";
     echo "<strong>" . Emails::categoryLabel($category) . "</strong>";
     echo "<br><small>" . Emails::categoryDescription($category) . "</small>";
+    echo "<br><small>" . $count . " sent to you</small>";
     echo "</th>";
     // unsubscribe options
     foreach ($addresses as $address) {
