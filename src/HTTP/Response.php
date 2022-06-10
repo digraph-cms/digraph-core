@@ -222,6 +222,6 @@ class Response
         if (Digraph::inferMime($this) == 'text/html') {
             Dispatcher::dispatchEvent('onResponseRender_html', [$this]);
         }
-        echo $content ?? $this->content();
+        echo $this->content();
     }
 }
