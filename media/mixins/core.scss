@@ -182,10 +182,9 @@
 }
 
 @mixin uncolored-links {
-    a,
     a:link,
     a:active,
-    a:hover,
+    a:link:hover,
     a:focus,
     a:visited {
         color: inherit;
