@@ -218,7 +218,6 @@ class Response
     public function renderContent()
     {
         Dispatcher::dispatchEvent('onResponseRender', [$this]);
-        $content = null;
         if (Digraph::inferMime($this) == 'text/html') {
             Dispatcher::dispatchEvent('onResponseRender_html', [$this]);
         }
