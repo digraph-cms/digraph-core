@@ -33,6 +33,28 @@ class Filestore
         return true;
     }
 
+    public static function create(string $data, string $filename, string $parent, array $meta): FilestoreFile
+    {
+        $hash = md5($data);
+        $dest = static::path($hash);
+        FS::mkdir(dirname($dest));
+        file_put_contents($dest, $data);
+        $file = new FilestoreFile(
+            Digraph::uuid('fil'),
+            $hash,
+            $filename,
+            filesize($dest),
+            $parent,
+            $meta,
+            time(),
+            Session::user()
+        );
+        $file->write();
+        static::insert($file);
+        static::$cache[$file->uuid()] = $file;
+        return $file;
+    }
+
     public static function upload(string $src, string $filename, string $parent, array $meta): FilestoreFile
     {
         $hash = md5_file($src);
