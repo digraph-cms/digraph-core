@@ -44,7 +44,7 @@ abstract class CoreEventSubscriber
         // clean up old locking records
         new DeferredJob(function () {
             $count = DB::query()->delete('locking')
-                ->where('expires < ?', [time() - 86400])
+                ->where('expires < ?', [strtotime('-7 days')])
                 ->execute();
             return "Cleaned up $count old locking records";
         });
