@@ -44,6 +44,17 @@ class DeferredJob
         if (!($lock = Locking::lock('defex_' . $this->id(), false, 30))) return false;
         // override user
         Session::overrideUser('system');
+        // set currently executing message
+        DB::query()
+            ->update(
+                'defex',
+                [
+                    'run' => time(),
+                    'message' => 'No message: May be executing now. If this message persists this job may have failed to run properly.',
+                    'error' => true,
+                ],
+                $this->id()
+            )->execute();
         // execute
         try {
             $message = strval(call_user_func($this->job, $this));
@@ -57,7 +68,6 @@ class DeferredJob
             ->update(
                 'defex',
                 [
-                    'run' => time(),
                     'message' => $message,
                     'error' => $error
                 ],
