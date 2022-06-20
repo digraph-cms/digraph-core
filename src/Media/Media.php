@@ -114,6 +114,30 @@ class Media
 
     public static function onGetMedia_js(string $path): ?File
     {
+        // glob handler
+        if (basename($path) == '*.js') {
+            return new DeferredFile(
+                basename(dirname($path)) . '.js',
+                function (DeferredFile $file) use ($path) {
+                    file_put_contents(
+                        $file->path(),
+                        CSS::scss(
+                            implode(
+                                PHP_EOL,
+                                array_map(
+                                    function (string $path): string {
+                                        return static::get($path)->content();
+                                    },
+                                    static::globToPaths($path, $path)
+                                )
+                            )
+                        )
+                    );
+                },
+                $path
+            );
+        }
+        // single file handler
         if ($source = static::locate($path)) {
             return new DeferredFile(
                 basename($path),
@@ -136,6 +160,30 @@ class Media
 
     public static function onGetMedia_css(string $path): ?File
     {
+        // glob handler
+        if (basename($path) == '*.css') {
+            return new DeferredFile(
+                basename(dirname($path)) . '.css',
+                function (DeferredFile $file) use ($path) {
+                    file_put_contents(
+                        $file->path(),
+                        CSS::scss(
+                            implode(
+                                PHP_EOL,
+                                array_map(
+                                    function (string $path): string {
+                                        return "@import \"$path\";";
+                                    },
+                                    static::globToPaths(preg_replace('/\.css$/', '.{scss,css}', $path))
+                                )
+                            )
+                        )
+                    );
+                },
+                $path
+            );
+        }
+        // single file handler
         if ($source = static::locate(substr($path, 0, strlen($path) - 3) . '{css,scss}')) {
             return new DeferredFile(
                 preg_replace('/\.scss$/', '.css', basename($path)),
