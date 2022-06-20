@@ -123,12 +123,12 @@ class Media
                         $file->path(),
                         CSS::scss(
                             implode(
-                                PHP_EOL,
+                                PHP_EOL . PHP_EOL,
                                 array_map(
                                     function (string $path): string {
                                         return static::get($path)->content();
                                     },
-                                    static::globToPaths($path, $path)
+                                    static::globToPaths($path)
                                 )
                             )
                         )
