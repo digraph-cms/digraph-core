@@ -108,6 +108,7 @@ class DB
                             Config::get('db.pdo_options')
                         );
                         self::$pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+                        self::$pdo->setAttribute(PDO::ATTR_TIMEOUT, 10);
                         // after setting up remove password from config so it's harder to exfiltrate
                         Config::set('db.pass', false);
                         break;
