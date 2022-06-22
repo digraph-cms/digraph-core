@@ -18,6 +18,17 @@ use Throwable;
 class WaybackMachine
 {
     protected static $checksCount = 0;
+    protected static $active = true;
+
+    public static function activate()
+    {
+        static::$active = true;
+    }
+
+    public static function deactivate()
+    {
+        static::$active = false;
+    }
 
     /**
      * Check whether a given URL appears to be broken. Does so by making an
@@ -33,6 +44,7 @@ class WaybackMachine
      */
     public static function check(string $url): ?bool
     {
+        if (!static::$active) return true;
         static $cache = [];
         // strip fragment portion of URL
         $url = preg_replace('/#.*$/', '', $url);
@@ -144,6 +156,7 @@ class WaybackMachine
 
     public static function get(string $url): ?WaybackResult
     {
+        if (!static::$active) return null;
         static $cache = [];
         $url = static::normalizeURL($url);
 
