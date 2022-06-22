@@ -73,6 +73,7 @@ class WaybackMachine
                     curl_exec($ch);
                     $code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
                     $errno = curl_errno($ch);
+                    $errmsg = curl_error($ch);
                     curl_close($ch);
                     $success = $code >= 200 && $code < 400;
                     if ($success) {
@@ -80,7 +81,7 @@ class WaybackMachine
                     } elseif ($errno == 28) {
                         return true;
                     } else {
-                        static::sendNotificationEmail($url);
+                        static::sendNotificationEmail($url, $code, $errno, $errmsg);
                         return false;
                     }
                 } catch (Throwable $th) {
@@ -91,7 +92,7 @@ class WaybackMachine
         );
     }
 
-    protected static function sendNotificationEmail($url)
+    protected static function sendNotificationEmail($url, $code, $errno, $error)
     {
         $lock = Locking::lock(
             'wayback_notification_' . md5(Context::url() . $url),
@@ -104,7 +105,17 @@ class WaybackMachine
                 'wayback',
                 $addr,
                 'Broken link on ' . Context::url(),
-                new RichContent(Templates::render('email/wayback/broken-link.php', ['broken_url' => $url]))
+                new RichContent(
+                    Templates::render(
+                        'email/wayback/broken-link.php',
+                        [
+                            'broken_url' => $url,
+                            'http_status' => $code,
+                            'curl_errno' => $errno,
+                            'curl_error' => $error
+                        ]
+                    )
+                )
             );
             Emails::send($email);
         }
