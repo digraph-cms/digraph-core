@@ -17,7 +17,7 @@ class Deferred
             // don't make more than one attempt per job
             static::$skip[] = $job->id();
             // execute job
-            $count += $job->execute() ? 1 : 0;
+            if ($job->execute()) $count++;
         }
         // return number of jobs run
         return $count;

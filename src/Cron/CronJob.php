@@ -49,7 +49,7 @@ class CronJob
     {
         if ($this->id() === null) return false;
         // try to get lock
-        if (!($lock = Locking::lock('cron_' . $this->id(), false, 30))) return false;
+        if (!($lock = Locking::lock('cron_' . $this->id(), false, 450))) return false;
         // override user
         Session::overrideUser('system');
         // only execute if ID exists, meaning this job is in the database
@@ -60,10 +60,12 @@ class CronJob
             'run_next' => $this->run_next
         ];
         try {
+            $error = false;
             if ($this->job()) {
                 call_user_func($this->job(), $this);
             }
         } catch (\Throwable $th) {
+            $error = true;
             $row['error_time'] = time();
             $row['error_message'] = get_class($th) . ': ' . $th->getMessage();
         }
@@ -75,8 +77,8 @@ class CronJob
         Session::overrideUser(null);
         // release lock
         Locking::release($lock);
-        // return true
-        return true;
+        // return error state
+        return $error;
     }
 
     protected function computeNextRun()

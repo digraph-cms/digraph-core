@@ -41,20 +41,9 @@ class DeferredJob
         // only execute if ID exists, meaning this job is in the database
         if ($this->id() === null) return false;
         // try to get lock
-        if (!($lock = Locking::lock('defex_' . $this->id(), false, 30))) return false;
+        if (!($lock = Locking::lock('defex_' . $this->id(), false, 450))) return false;
         // override user
         Session::overrideUser('system');
-        // set currently executing message
-        DB::query()
-            ->update(
-                'defex',
-                [
-                    'run' => time(),
-                    'message' => 'No message: May be executing now. If this message persists this job may have failed to run properly.',
-                    'error' => true,
-                ],
-                $this->id()
-            )->execute();
         // execute
         try {
             $message = strval(call_user_func($this->job, $this));
@@ -64,10 +53,11 @@ class DeferredJob
             $error = true;
         }
         // write result to db
-        $result = DB::query()
+        DB::query()
             ->update(
                 'defex',
                 [
+                    'run' => time(),
                     'message' => $message,
                     'error' => $error
                 ],
@@ -77,8 +67,8 @@ class DeferredJob
         Session::overrideUser(null);
         // release lock
         Locking::release($lock);
-        // return true
-        return !!$result;
+        // return error state
+        return $error;
     }
 
     protected function serializedJob(): string

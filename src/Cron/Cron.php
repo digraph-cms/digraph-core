@@ -58,7 +58,7 @@ class Cron
             // don't make more than one attempt per job
             static::$skip[] = $job->id();
             // execute job
-            $count += $job->execute() ? 1 : 0;
+            if ($job->execute()) $count++;
         }
         // run Deferred jobs afterwards if it lost the coin toss
         if (!$deferredFirst) $count += Deferred::runJobs(null, $endByTime);
