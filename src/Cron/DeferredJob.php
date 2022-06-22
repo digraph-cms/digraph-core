@@ -87,7 +87,7 @@ class DeferredJob
 
     public function spawnClone()
     {
-        return $this->spawn($this->job);
+        return new DeferredJob($this->job, $this->group());
     }
 
     public function group(): string
