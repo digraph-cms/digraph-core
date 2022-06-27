@@ -8,11 +8,32 @@ class Token extends INPUT
 {
     protected $CSRF = true;
     protected $uniqueCSRF = false;
+    protected $doNotUse = false;
 
     public function __construct(FormWrapper $form)
     {
         $this->setForm($form);
         $this->setID('token');
+    }
+
+    public function doNotUse(): bool
+    {
+        return $this->doNotUse;
+    }
+
+    /**
+     * Set a flag that allows this token to be not used, which disables automatic
+     * form submission, but simplifies things when you're using GET requests
+     * and whether the form was "submitted" doesn't matter, like for search
+     * forms.
+     *
+     * @param boolean $doNotUse
+     * @return void
+     */
+    public function setDoNotUse(bool $doNotUse)
+    {
+        $this->doNotUse = $doNotUse;
+        return $this;
     }
 
     public function validationError(): ?string
@@ -80,7 +101,8 @@ class Token extends INPUT
         }
     }
 
-    public function default(): string {
+    public function default(): string
+    {
         return $this->token();
     }
 
@@ -90,5 +112,11 @@ class Token extends INPUT
         $attributes['type'] = 'hidden';
         $attributes['value'] = $this->token();
         return $attributes;
+    }
+
+    public function toString(): string
+    {
+        if ($this->doNotUse) return '';
+        else return parent::toString();
     }
 }

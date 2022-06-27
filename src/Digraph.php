@@ -14,6 +14,7 @@ use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\HTTP\Request;
 use DigraphCMS\HTTP\RequestHeaders;
 use DigraphCMS\HTTP\Response;
+use DigraphCMS\Search\Search;
 use DigraphCMS\Session\Cookies;
 use DigraphCMS\UI\Templates;
 use DigraphCMS\UI\Theme;
@@ -298,7 +299,9 @@ abstract class Digraph
         }
         // generate response
         if (!static::normalResponse()) {
+            // generate error response and delete this URL from the search index
             static::buildErrorContent(404);
+            Search::deleteURL(Context::url());
         }
         // output caching: cache for response cacheTTL if generating content
         // took longer in ms than config content_cache.min_ms

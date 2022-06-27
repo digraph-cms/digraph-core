@@ -23,7 +23,8 @@ cron:
     daily: 1 day
     weekly: 1 week
     biweekly: 2 weeks
-    monthly: monthly
+    monthly: 1 month
+    index_page: 1 day
 
 cache:
   path: ${paths.base}/cache

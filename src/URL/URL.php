@@ -303,6 +303,11 @@ class URL
         }
     }
 
+    public function fullPathString(): string
+    {
+        return $this->pathString() . $this->queryString();
+    }
+
     /**
      * Get or set the in-site path of this URL
      *
