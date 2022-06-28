@@ -32,10 +32,10 @@ class CompatibleSearchQuery extends AbstractSearchQuery
         $order = [];
         foreach ($words as $word) {
             $this->where('instr(body,?)', [$word]);
-            $order[] = 'instr(body,?)';
+            $order[] = 'instr(body,' . DB::pdo()->quote($word) . ')';
         }
         // basic ordering is how close matches are to top
-        if ($order) $this->order(implode('+', $order) . ' asc', $words);
+        if ($order) $this->order(implode('+', $order) . ' asc');
         // ordering tie breaker is id, so newer things go higher
         $this->order('id desc');
     }
