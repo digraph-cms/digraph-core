@@ -1,0 +1,34 @@
+.search-results {
+    table {
+        background: transparent;
+        color: inherit;
+        border: 0;
+
+        tr,
+        td {
+            background: transparent;
+        }
+
+        td:first-child {
+            padding-left: 0;
+        }
+
+        td:last-child {
+            padding-right: 0;
+        }
+    }
+}
+
+.search-results__title {
+    font-weight: bold;
+    font-size: larger;
+}
+
+.search-results__body {
+    color: var(--color-lighter);
+}
+
+.search-results__url {
+    font-size: smaller;
+    color: var(--cue-information);
+}

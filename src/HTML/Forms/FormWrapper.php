@@ -129,6 +129,18 @@ class FormWrapper extends Tag
         return $this;
     }
 
+    /**
+     * Set the URL this form should direct to
+     *
+     * @param URL|null $action
+     * @return $this
+     */
+    public function setAction(?URL $action)
+    {
+        $this->action = $action;
+        return $this;
+    }
+
     public function action(): URL
     {
         return $this->action ?? Context::url();
