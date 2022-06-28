@@ -9,7 +9,7 @@ final class SearchIndex extends AbstractMigration
 {
     public function change(): void
     {
-        $this->table('search_index', ['engine' => 'MyISAM'])
+        $this->table('search_index', ['engine' => 'InnoDB'])
             ->addColumn('url', 'string', ['length' => 250])
             ->addColumn('title', 'string', ['length' => 250])
             ->addColumn('body', 'text', ['length' => MysqlAdapter::TEXT_MEDIUM])

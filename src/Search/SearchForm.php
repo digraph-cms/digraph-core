@@ -14,6 +14,7 @@ class SearchForm extends FormWrapper
     public function __construct(bool $full = false)
     {
         parent::__construct('search');
+        $this->button()->setText('search');
         $this->setAction(new URL('/~search/'));
         $this->token()->setDoNotUse(true);
         $this->addClass('search-form');
@@ -21,24 +22,29 @@ class SearchForm extends FormWrapper
 
         $this->queryField = new INPUT('query');
         $this->queryField->addClass('search-form__query');
+        $this->queryField->setAttribute('placeholder', 'Search this site');
         $this->addChild($this->queryField);
 
         if ($full && Search::availableModes()) {
             $this->modeField = new SELECT(Search::availableModes());
+            $this->modeField->setID('mode');
             $this->addClass('search-form--full');
-            $this->queryField->addClass('search-form__mode');
+            $this->modeField->addClass('search-form__mode');
             $this->addChild($this->modeField);
         }
     }
 
-    public function mode(): ?string
+    public function queryMode(): ?string
     {
-        if ($this->modeField) return $this->modeField->value();
-        return null;
+        // return mode field value if it exists
+        if ($this->modeField) return $this->modeField->value(true);
+        // otherwise return either first available mode or null
+        elseif ($modes = Search::availableModes()) return key($modes);
+        else return null;
     }
 
     public function query(): string
     {
-        return $this->queryField->value();
+        return $this->queryField->value(true) ?? '';
     }
 }
