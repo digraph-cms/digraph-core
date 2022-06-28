@@ -32,3 +32,8 @@
     font-size: smaller;
     color: var(--cue-information);
 }
+
+.card.card--search-results-highlight {
+    max-width: 100%;
+    width: auto;
+}
