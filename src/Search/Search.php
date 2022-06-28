@@ -39,6 +39,8 @@ class Search
 
     public static function query(string $search, string $mode = null): AbstractSearchQuery
     {
+        $mode = $mode ?? $mode = static::defaultMode();
+        if ($mode && !in_array($mode, static::availableModes())) $mode = static::defaultMode();
         switch ($mode) {
             case 'natural':
                 $query = new NaturalSearchQuery($search);
@@ -51,6 +53,14 @@ class Search
         }
         Dispatcher::dispatchEvent('onSearchQuery', [$query, $search, $mode]);
         return $query;
+    }
+
+    public static function defaultMode(): ?string
+    {
+        if (DB::driver() == 'mysql') {
+            return 'natural';
+        }
+        return null;
     }
 
     public static function availableModes(): array
