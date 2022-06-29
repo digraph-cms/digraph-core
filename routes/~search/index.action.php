@@ -38,7 +38,7 @@ $table = new QueryTable(
         return [
             implode(PHP_EOL, [
                 sprintf('<div class="search-results__title"><a href="%s">%s<a></div>', $result->url(), $result->title()),
-                sprintf('<div class="search-results__body">%s</div>', $result->body()),
+                sprintf('<div class="search-results__body">%s</div>', $result->snippet()),
                 sprintf('<div class="search-results__url">%s</div>', $result->url()),
             ])
         ];

@@ -8,7 +8,7 @@ use DigraphCMS\URL\URL;
 
 class Search
 {
-    public static function indexURL(URL $url, string $title, string $content)
+    public static function indexURL(string $owner, URL $url, string $title, string $content)
     {
         if (DB::query()->from('search_index')->where('url = ?', [$url->fullPathString()])->count()) {
             // update existing record if it exists
@@ -16,6 +16,7 @@ class Search
                 ->update(
                     'search_index',
                     [
+                        'owner' => $owner,
                         'title' => $title,
                         'body' => static::cleanBody($content)
                     ]
@@ -28,6 +29,7 @@ class Search
                 ->insertInto(
                     'search_index',
                     [
+                        'owner' => $owner,
                         'url' => $url->fullPathString(),
                         'title' => $title,
                         'body' => static::cleanBody($content)
