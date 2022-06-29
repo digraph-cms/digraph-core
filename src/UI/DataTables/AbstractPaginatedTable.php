@@ -11,7 +11,6 @@ use DigraphCMS\UI\Paginator;
 use DigraphCMS\URL\URL;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 use function Opis\Closure\serialize;

@@ -130,12 +130,12 @@ class Paginator
         if ($page == $this->page()) {
             $classes[] = 'paginator__link--current';
             $text = "<strong>$text</strong>";
-            return "<a data-page='$page' class='" . implode(' ', $classes) . "' data-target='_frame' title='Page " . number_format($page) . "'>$text</a>";
+            return "<a data-page='$page' class='" . implode(' ', $classes) . "' title='Page " . number_format($page) . "'>$text</a>";
         }
         if ($class) {
             $classes[] = 'paginator__link--' . $class;
         }
-        return "<a href='$url' data-page='$page' class='" . implode(' ', $classes) . "' data-target='_frame' title='Page " . number_format($page) . "'>$text</a>";
+        return "<a href='$url' data-page='$page' class='" . implode(' ', $classes) . "' title='Page " . number_format($page) . "'>$text</a>";
     }
 
     protected function url(int $page): URL
