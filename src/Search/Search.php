@@ -10,6 +10,7 @@ class Search
 {
     public static function indexURL(string $owner, URL $url, string $title, string $content)
     {
+        $title = strip_tags($title);
         if (DB::query()->from('search_index')->where('url = ?', [$url->fullPathString()])->count()) {
             // update existing record if it exists
             DB::query()
@@ -86,6 +87,11 @@ class Search
 
     protected static function cleanBody(string $input): string
     {
-        return strtolower(strip_tags($input));
+        // strip tags
+        $body = strip_tags($input);
+        // make lower case for sqlite
+        if (DB::driver() == 'sqlite') $body = strtolower($body);
+        // return
+        return $body;
     }
 }
