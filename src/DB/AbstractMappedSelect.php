@@ -3,6 +3,8 @@
 namespace DigraphCMS\DB;
 
 use ArrayIterator;
+use DigraphCMS\Cache\Cache;
+use DigraphCMS\Events\Dispatcher;
 use Envms\FluentPDO\Queries\Select;
 use PDOStatement;
 
@@ -56,6 +58,26 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
         return $this;
     }
 
+    protected function parseJsonRefs(?string $string): ?string
+    {
+        if ($string === null) return null;
+        return preg_replace_callback(
+            '/\$\{([^\.\}\\\]+)\.([^\}\\\]+)\}/',
+            function ($matches) {
+                return Cache::get(
+                    'db/jsonref/' . md5($matches[0]),
+                    function () use ($matches) {
+                        return Dispatcher::firstValue(
+                            'onDbExpandJsonPath_' . DB::driver(),
+                            [$matches[2], $matches[1]]
+                        );
+                    }
+                );
+            },
+            $string
+        );
+    }
+
     /**
      * Add to the WHERE clause, defaulting to appending with "AND"
      *
@@ -66,6 +88,7 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
      */
     public function where($condition, $parameters = [], $separator = "AND")
     {
+        $condition = $this->parseJsonRefs($condition);
         $this->query->where($condition, $parameters, $separator);
         return $this;
     }
@@ -80,6 +103,7 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
      */
     public function whereOr($condition, $parameters = [], $separator = "AND")
     {
+        $condition = $this->parseJsonRefs($condition);
         $this->query->whereOr($condition, $parameters, $separator);
         return $this;
     }
@@ -102,6 +126,7 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
      */
     public function order(?string $column)
     {
+        $column = $this->parseJsonRefs($column);
         $this->query->order($column);
         return $this;
     }
