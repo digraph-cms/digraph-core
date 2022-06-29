@@ -16,11 +16,12 @@ class Pages
      * Quickly determine whether a given UUID exists. Does not check slugs,
      * primary or alternate.
      *
-     * @param string $uuid
+     * @param string|null $uuid
      * @return boolean
      */
-    public static function exists(string $uuid): bool
+    public static function exists(?string $uuid): bool
     {
+        if (!$uuid) return false;
         $query = DB::query()->from('page')
             ->where('uuid = ?', [$uuid]);
         return !!$query->count();
@@ -85,11 +86,13 @@ class Pages
      * followed by primary slug matches, followed by alternate slug matches.
      * Within the groups pages are sorted oldest creation date first.
      *
-     * @param string $uuid_or_slug
+     * @param string|null $uuid_or_slug
      * @return array
      */
-    public static function getAll(string $uuid_or_slug): array
+    public static function getAll(?string $uuid_or_slug): array
     {
+        // return empty for null
+        if (!$uuid_or_slug) return [];
         // get best-case scenarios by uuid or primary slug
         $main = static::select()
             ->where('uuid = ?', [$uuid_or_slug])
@@ -111,11 +114,13 @@ class Pages
      * so it can be used to much more quickly determine whether and the number
      * of results available for a given UUID or slug.
      *
-     * @param string $uuid_or_slug
+     * @param string|null $uuid_or_slug
      * @return integer
      */
-    public static function countAll(string $uuid_or_slug): int
+    public static function countAll(?string $uuid_or_slug): int
     {
+        // return zero for null
+        if (!$uuid_or_slug) return 0;
         // get best-case scenarios by uuid or primary slug
         $main = static::select()
             ->where('uuid = ?', [$uuid_or_slug])
@@ -135,11 +140,12 @@ class Pages
      * match will take precedence, followed by the oldest creation date primary 
      * slug match, followed by the oldest alternate slug match.
      *
-     * @param string $uuid_or_slug
+     * @param string|null $uuid_or_slug
      * @return AbstractPage|null
      */
-    public static function get(string $uuid_or_slug): ?AbstractPage
+    public static function get(?string $uuid_or_slug): ?AbstractPage
     {
+        if (!$uuid_or_slug) return null;
         if (!isset(static::$cache[$uuid_or_slug])) {
             static::$cache[$uuid_or_slug] =
                 self::doGetByUUID($uuid_or_slug) ??
