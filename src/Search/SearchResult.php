@@ -56,6 +56,7 @@ class SearchResult
                         break;
                     }
                 }
+                if (strlen($bodyWord) > 25) $bodyWord = substr($bodyWord, 0, 25);
                 $snippet[] = $matches
                     ? "<strong>$bodyWord</strong>"
                     : $bodyWord;

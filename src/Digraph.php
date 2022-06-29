@@ -2,10 +2,12 @@
 
 namespace DigraphCMS;
 
+use DigraphCMS\Cache\Locking;
 use DigraphCMS\Cache\UserCacheNamespace;
 use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Content\Router;
 use DigraphCMS\Content\Pages;
+use DigraphCMS\Cron\DeferredJob;
 use DigraphCMS\DB\DBConnectionException;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTTP\AccessDeniedError;
@@ -216,6 +218,19 @@ abstract class Digraph
                     );
                 }
                 static::buildResponseContent();
+            }
+            // do search indexing if necessary
+            if (Context::response()->searchIndex()) {
+                $id = 'response_index:' . Context::url()->fullPathString();
+                if (Locking::lock($id, false, Config::get('search.response_index.interval'))) {
+                    $content = Context::response()->content();
+                    $name = Context::fields()['page.name'] ?? Context::url()->name();
+                    $url = Context::url();
+                    new DeferredJob(function () use ($content, $name, $url) {
+                        Search::indexURL('response_index', $url, $name, $content);
+                        return "Indexed response for " . $url;
+                    }, 'response_index');
+                }
             }
             // wrap with template (HTML only)
             if (static::inferMime() == 'text/html') {

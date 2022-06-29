@@ -85,13 +85,25 @@ class Search
             ->execute();
     }
 
-    protected static function cleanBody(string $input): string
+    /**
+     * Turns an input string into a plain text representation so it can be
+     * searched usefully.
+     *
+     * @param string $input
+     * @return string
+     */
+    protected static function cleanBody(string $body): string
     {
-        // strip tags
-        $body = strip_tags($input);
+        // call dispatcher for initial work
+        Dispatcher::dispatchEvent('onSearchIndexBody', [&$body]);
+        // do initial stripping by adding whitespace where tags were
+        $body = preg_replace('/\<base64.*?\>.+?\<\/base64\>/im', '', $body);
+        $body = preg_replace('/\<.+?\>/m', ' ', $body);
+        // fully and properly strip tags
+        $body = strip_tags($body);
         // make lower case for sqlite
         if (DB::driver() == 'sqlite') $body = strtolower($body);
         // return
-        return $body;
+        return trim($body);
     }
 }

@@ -11,6 +11,10 @@ rich_media_types:
   zip: \DigraphCMS\RichMedia\Types\ZipRichMedia
   table: \DigraphCMS\RichMedia\Types\TableRichMedia
 
+search:
+  response_index:
+    interval: 86400
+
 cron:
   route_enabled: false
   poor_mans_cron: true

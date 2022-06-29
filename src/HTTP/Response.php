@@ -22,11 +22,29 @@ class Response
     protected $filename = null;
     protected $mime = null;
     protected $staleTTL;
+    protected $searchIndex = false;
 
     public function __construct(int $status = null)
     {
         $this->status($status);
         $this->headers = new ResponseHeaders();
+    }
+
+    public function searchIndex(): bool
+    {
+        return $this->searchIndex;
+    }
+
+    /**
+     * Set whether this response should have its content added to the search index
+     *
+     * @param boolean $indexResponse
+     * @return $this
+     */
+    public function setSearchIndex(bool $indexResponse)
+    {
+        $this->searchIndex = $indexResponse;
+        return $this;
     }
 
     public function mime(string $mime = null): ?string

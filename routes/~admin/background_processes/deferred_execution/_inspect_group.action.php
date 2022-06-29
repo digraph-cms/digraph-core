@@ -2,6 +2,7 @@
 
 use DigraphCMS\Context;
 use DigraphCMS\Cron\Deferred;
+use DigraphCMS\Cron\DeferredProgressBar;
 use DigraphCMS\DB\DB;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\UI\DataTables\ColumnHeader;
@@ -28,6 +29,14 @@ if ($count = $pending->count()) {
 } else {
     echo "<br>All jobs complete</p>";
 }
+
+echo '<div id="deferred-run-jobs" data-target="_frame" class="navigation-frame navigation-frame--stateless">';
+if (Context::arg('run_jobs')) {
+    echo new DeferredProgressBar($group);
+} elseif ($count) {
+    echo "<a href='" . new URL('&run_jobs=true') . "'>Run remaining jobs now</a>";
+}
+echo "</div>";
 
 $first = DB::query()->from('defex')
     ->where('`group` = ?', [$group])

@@ -3,6 +3,7 @@
 namespace DigraphCMS\UI;
 
 use DigraphCMS\Context;
+use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\URL\URL;
 
 class Paginator
@@ -46,9 +47,10 @@ class Paginator
     public function page(): int
     {
         $page = Context::arg($this->arg());
-        if ($page < 1 || $page > $this->pages()) {
-            Context::url()->unsetArg($this->arg());
+        if ($page === null) {
             return 1;
+        } elseif ($page < 1 || $page > $this->pages()) {
+            throw new HttpError(404);
         } else {
             return $page;
         }
