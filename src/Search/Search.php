@@ -89,7 +89,7 @@ class Search
      * Turns an input string into a plain text representation so it can be
      * searched usefully.
      *
-     * @param string $input
+     * @param string $body
      * @return string
      */
     protected static function cleanBody(string $body): string
