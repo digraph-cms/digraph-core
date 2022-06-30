@@ -10,7 +10,7 @@ final class SearchIndexExpiration extends AbstractMigration
     public function change(): void
     {
         $this->table('search_index')
-            ->addColumn('updated', 'integer')
+            ->addColumn('updated', 'integer', ['default' => time()])
             ->addIndex('updated')
             ->update();
     }
