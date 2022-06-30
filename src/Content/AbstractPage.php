@@ -13,6 +13,7 @@ use DigraphCMS\Digraph;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\RichContent\RichContent;
 use DigraphCMS\RichMedia\RichMedia;
+use DigraphCMS\Search\Search;
 use DigraphCMS\Session\Session;
 use DigraphCMS\UI\Format;
 use DigraphCMS\UI\Theme;
@@ -402,6 +403,12 @@ abstract class AbstractPage implements ArrayAccess
             }
         }
         return true;
+    }
+
+    public function onCron_index_pages()
+    {
+        $body = $this->richContent('body');
+        if ($body) Search::indexURL($this->uuid(), $this->url(), $this->name(), $body->html());
     }
 
     protected static function runCronJob(CronJob $job, string $uuid, string $method)

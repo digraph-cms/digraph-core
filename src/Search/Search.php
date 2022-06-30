@@ -19,7 +19,8 @@ class Search
                     [
                         'owner' => $owner,
                         'title' => $title,
-                        'body' => static::cleanBody($content)
+                        'body' => static::cleanBody($content),
+                        'updated' => time()
                     ]
                 )
                 ->where('url=?', [$url->fullPathString()])
@@ -33,7 +34,8 @@ class Search
                         'owner' => $owner,
                         'url' => $url->fullPathString(),
                         'title' => $title,
-                        'body' => static::cleanBody($content)
+                        'body' => static::cleanBody($content),
+                        'updated' => time()
                     ]
                 )
                 ->execute();
