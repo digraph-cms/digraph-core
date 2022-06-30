@@ -17,7 +17,8 @@ class Search
                     'search_index',
                     [
                         'title' => $title,
-                        'body' => static::cleanBody($content)
+                        'body' => static::cleanBody($content),
+                        'updated' => time()
                     ]
                 )
                 ->where('url=?', [$url->fullPathString()])
@@ -30,7 +31,8 @@ class Search
                     [
                         'url' => $url->fullPathString(),
                         'title' => $title,
-                        'body' => static::cleanBody($content)
+                        'body' => static::cleanBody($content),
+                        'updated' => time()
                     ]
                 )
                 ->execute();

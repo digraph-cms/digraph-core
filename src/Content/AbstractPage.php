@@ -405,7 +405,7 @@ abstract class AbstractPage implements ArrayAccess
         return true;
     }
 
-    public function onCron_index_page()
+    public function onCron_index_pages()
     {
         $body = $this->richContent('body');
         if ($body) Search::indexURL($this->url(), $this->name(), $body->html());
