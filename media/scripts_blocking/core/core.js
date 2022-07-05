@@ -38,11 +38,12 @@ document.addEventListener('DOMContentLoaded', (e) => {
 });
 
 document.addEventListener('DigraphDOMReady', (e) => {
-    const es = e.target.getElementsByTagName('base64');
+    const es = e.target.getElementsByClassName('base64-obfuscated');
     for (let i = 0; i < es.length; i++) {
         const element = es[i];
-        element.innerHTML = atob(element.innerHTML);
-        element.style.display = 'contents';
+        element.innerHTML = atob(element.firstChild.innerHTML);
+        element.classList.remove('base64-obfuscated');
+        element.classList.remove('base64-obfuscated--decoded');
         element.dispatchEvent(
             new Event('DigraphDOMReady', {
                 bubbles: true,

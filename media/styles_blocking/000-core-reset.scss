@@ -94,6 +94,14 @@ img {
     height: auto;
 }
 
+.base64-obfuscated__message {
+    display: inline-block;
+}
+
+.base64-obfuscated__data {
+    display: none;
+}
+
 @keyframes spin-loading-overlay {
     from {
         transform: translate(-50%, -50%) rotate(0deg);

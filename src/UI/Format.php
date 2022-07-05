@@ -30,9 +30,11 @@ class Format
 
     public static function base64obfuscate(string $string, string $message = 'javascript required to view')
     {
-        return
-            '<base64 style="display:none;">' . base64_encode($string) . '</base64>'
-            . '<noscript><span class="notification notification--error">' . $message . '</span></noscript>';
+        return sprintf(
+            '<span class="base64-obfuscated"><span class="base64-obfuscated__data">%s</span><span class="base64-obfuscated__message">%s</span></span>',
+            base64_encode($string),
+            $message
+        );
     }
 
     public static function filesize(int $bytes, int $decimals = 1): string

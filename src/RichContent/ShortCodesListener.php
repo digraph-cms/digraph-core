@@ -9,6 +9,7 @@ use DigraphCMS\Context;
 use DigraphCMS\HTML\A;
 use DigraphCMS\HTML\Text;
 use DigraphCMS\RichMedia\RichMedia;
+use DigraphCMS\UI\Format;
 use DigraphCMS\UI\TableOfContents;
 use DigraphCMS\URL\URL;
 use DigraphCMS\URL\WaybackMachine;
@@ -61,6 +62,19 @@ class ShortCodesListener
             return $link;
         }
         return null;
+    }
+
+    /**
+     * Obfuscate a link to an email address
+     *
+     * @param ShortcodeInterface $s
+     * @return string|null
+     */
+    public static function onShortCode_email(ShortcodeInterface $s): ?string
+    {
+        $email = $s->getBbCode() ?? $s->getContent();
+        $content = $s->getContent() ? $s->getContent() : $email;
+        return Format::base64obfuscate(sprintf('<a href="mailto:%s">%s</a>', $email, $content));
     }
 
     /**
