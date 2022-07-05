@@ -108,7 +108,7 @@ abstract class CoreEventSubscriber
                         $uuid,
                         function (DeferredJob $job, AbstractPage $page) {
                             if (!$page->slugPattern()) return $page->uuid() . ": No slug pattern";
-                            Slugs::setFromPattern($page, $page->slugPattern());
+                            Slugs::setFromPattern($page, $page->slugPattern(), $page::DEFAULT_UNIQUE_SLUG);
                             return $page->uuid() . " slug set to " . $page->slug();
                         },
                         false,
