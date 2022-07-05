@@ -78,7 +78,7 @@ class CronJob
         // release lock
         Locking::release($lock);
         // return error state
-        return $error;
+        return !$error;
     }
 
     protected function computeNextRun()

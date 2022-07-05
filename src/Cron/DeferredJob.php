@@ -68,7 +68,7 @@ class DeferredJob
         // release lock
         Locking::release($lock);
         // return error state
-        return $error;
+        return !$error;
     }
 
     protected function serializedJob(): string

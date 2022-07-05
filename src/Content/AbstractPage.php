@@ -393,8 +393,8 @@ abstract class AbstractPage implements ArrayAccess
             $uuid = $this->uuid();
             if (method_exists($this, $method)) {
                 new CronJob(
-                    'Page',
-                    "$uuid::$method",
+                    "Page $uuid",
+                    "$method",
                     function (CronJob $job) use ($uuid, $method) {
                         static::runCronJob($job, $uuid, $method);
                     },

@@ -70,16 +70,24 @@ class Cron
     {
         if (is_object($object_or_class)) $class = get_class($object_or_class);
         elseif (class_exists($object_or_class)) $class = $object_or_class;
-        else throw new \Exception("Cron subsciber must be an object or class");
+        else throw new \Exception("Cron subscriber must be an object or class");
         // add strings of static methods
         foreach (self::getMethods($class) as $method) {
             new CronJob(
                 'CronSubscriber',
                 "$class::$method",
-                [$class, $method],
+                function (CronJob $job) use ($class, $method) {
+                    static::runSubscriberJob($job, $class, $method);
+                },
                 substr($method, 8)
             );
         }
+    }
+
+    protected static function runSubscriberJob(CronJob $job, $class, $method)
+    {
+        if (!method_exists($class, $method)) $job->delete();
+        call_user_func([$class, $method], $job);
     }
 
     /**
