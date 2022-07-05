@@ -389,7 +389,7 @@ abstract class AbstractPage implements ArrayAccess
     public function prepareCronJobs(): bool
     {
         foreach (array_keys(Config::get('cron.intervals')) as $interval) {
-            $method = "onCron_$interval";
+            $method = "cronJob_$interval";
             $uuid = $this->uuid();
             if (method_exists($this, $method)) {
                 new CronJob(
@@ -405,7 +405,7 @@ abstract class AbstractPage implements ArrayAccess
         return true;
     }
 
-    public function onCron_index_pages()
+    public function cronJob_index_pages()
     {
         $body = $this->richContent('body');
         if ($body) Search::indexURL($this->uuid(), $this->url(), $this->name(), $body->html());
@@ -422,13 +422,11 @@ abstract class AbstractPage implements ArrayAccess
 
     public function insert(string $parent_uuid = null)
     {
-        $this->prepareCronJobs();
         return Pages::insert($this, $parent_uuid);
     }
 
     public function update()
     {
-        $this->prepareCronJobs();
         return Pages::update($this);
     }
 

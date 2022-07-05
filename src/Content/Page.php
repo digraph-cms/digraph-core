@@ -24,7 +24,7 @@ class Page extends AbstractPage
         }
     }
 
-    public function onCron_index_page()
+    public function cronJob_index_page()
     {
         $body = $this->richContent('body');
         if ($body) Search::indexURL($this->uuid(), $this->url(), $this->name(), $body->html());

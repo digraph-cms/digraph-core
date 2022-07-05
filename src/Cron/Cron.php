@@ -4,8 +4,9 @@ namespace DigraphCMS\Cron;
 
 use DigraphCMS\Cache\Cache;
 use DigraphCMS\Config;
+use DigraphCMS\CoreEventSubscriber;
 use DigraphCMS\DB\DB;
-use DigraphCMS\Events\Dispatcher;
+use DigraphCMS\Plugins\Plugins;
 use DigraphCMS\URL\URL;
 
 class Cron
@@ -49,6 +50,9 @@ class Cron
     {
         // count number of jobs run
         $count = 0;
+        // prepare jobs from core and plugins
+        static::registerSubscriber(CoreEventSubscriber::class);
+        foreach (Plugins::plugins() as $plugin) static::registerSubscriber($plugin);
         // proceed with jobs one at a time
         while ((!$endByTime || time() < $endByTime) && $job = static::getNextJob()) {
             // don't make more than one attempt per job
@@ -60,6 +64,41 @@ class Cron
         $count += Deferred::runJobs(null, $endByTime);
         // return number of jobs run
         return $count;
+    }
+
+    public static function registerSubscriber($object_or_class)
+    {
+        if (is_object($object_or_class)) $class = get_class($object_or_class);
+        elseif (class_exists($object_or_class)) $class = $object_or_class;
+        else throw new \Exception("Cron subsciber must be an object or class");
+        // add strings of static methods
+        foreach (self::getMethods($class) as $method) {
+            new CronJob(
+                'CronSubscriber',
+                "$class::$method",
+                [$class, $method],
+                substr($method, 8)
+            );
+        }
+    }
+
+    /**
+     * Return the methods of a given object or class that look like they could
+     * be event names.
+     *
+     * @param mixed $object_or_class
+     * @return array
+     */
+    protected static function getMethods($object_or_class): array
+    {
+        return array_filter(
+            get_class_methods($object_or_class),
+            function ($e) {
+                return
+                    substr($e, 0, 8) == 'cronJob_'
+                    && preg_match('/^cronJob_[a-z]+(_[a-z]+)*$/', $e);
+            }
+        );
     }
 
     protected static function getNextJob(): ?CronJob
