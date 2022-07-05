@@ -2,13 +2,27 @@
 
 namespace DigraphCMS\Events;
 
+use DigraphCMS\Cache\Locking;
 use DigraphCMS\CoreEventSubscriber;
+use DigraphCMS\Cron\CronJob;
+
+// register core event subscriber
+Dispatcher::addSubscriber(CoreEventSubscriber::class);
+register_shutdown_function([Dispatcher::class, 'shutdownFunction']);
 
 class Dispatcher
 {
     protected static $listeners = [];
     protected static $locations = [];
     protected static $staticIDs = [];
+    protected static $cronJobs = [];
+
+    public static function shutdownFunction()
+    {
+        if (Locking::lock('DispatcherCronJobs', true, 60)) {
+            foreach (static::$cronJobs as $job) call_user_func($job);
+        }
+    }
 
     /**
      * Remove all listeners/subscribers
@@ -31,9 +45,36 @@ class Dispatcher
      */
     public static function addEventListener(string $event, callable $callback)
     {
+        // check if this is a cron event
+        if (substr($event, 0, 7) === 'onCron_') {
+            static::$cronJobs[] = function () use ($event, $callback) {
+                $name = static::generateCronJobName($callback);
+                new CronJob('Dispatcher', $name, $callback, substr($event, 7));
+                return;
+            };
+        }
+        // add normally otherwise
         self::$locations[] = $event;
         self::$listeners[$event][] = $callback;
     }
+
+    protected static function generateCronJobName($fn)
+    {
+        // might be a straight string
+        if (is_string($fn)) return $fn;
+        // might be an array pair
+        list($classOrObj, $method) = $fn;
+        if (is_object($classOrObj)) {
+            return sprintf(
+                '%s->%s (%s)',
+                get_class($classOrObj),
+                $method,
+                md5(\Opis\Closure\serialize($classOrObj))
+            );
+        }
+        return implode('::', $fn);
+    }
+
 
     /**
      * Retrieve the raw callables of all event listeners for a given event
@@ -139,6 +180,3 @@ class Dispatcher
         );
     }
 }
-
-// register core event subscriber
-Dispatcher::addSubscriber(CoreEventSubscriber::class);

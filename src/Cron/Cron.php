@@ -47,8 +47,6 @@ class Cron
 
     public static function runJobs(int $endByTime = null): int
     {
-        // get jobs from Dispatcher, and convert them into DB jobs
-        static::buildDispatcherJobs();
         // count number of jobs run
         $count = 0;
         // proceed with jobs one at a time
@@ -62,33 +60,6 @@ class Cron
         $count += Deferred::runJobs(null, $endByTime);
         // return number of jobs run
         return $count;
-    }
-
-    protected static function buildDispatcherJobs()
-    {
-        foreach (Config::get('cron.intervals') as $name => $interval) {
-            $jobs = Dispatcher::getListeners('onCron_' . $name);
-            foreach ($jobs as $fn) {
-                new CronJob('Dispatcher', static::generateDispatcherJobName($fn), $fn, $name);
-            }
-        }
-    }
-
-    protected static function generateDispatcherJobName($fn)
-    {
-        // might be a straight string
-        if (is_string($fn)) return $fn;
-        // might be an array pair
-        list($classOrObj, $method) = $fn;
-        if (is_object($classOrObj)) {
-            return sprintf(
-                '%s->%s (%s)',
-                get_class($classOrObj),
-                $method,
-                md5(\Opis\Closure\serialize($classOrObj))
-            );
-        }
-        return implode('::', $fn);
     }
 
     protected static function getNextJob(): ?CronJob
