@@ -18,16 +18,21 @@ use Throwable;
 class WaybackMachine
 {
     protected static $checksCount = 0;
-    protected static $active = true;
+    protected static $active = null;
 
     public static function activate()
     {
-        static::$active = true;
+        if (static::active() === false) static::$active = true;
     }
 
     public static function deactivate()
     {
-        static::$active = false;
+        if (static::active() === true) static::$active = false;
+    }
+
+    public static function active(): bool
+    {
+        return static::$active ?? Config::get('wayback.active');
     }
 
     /**
@@ -44,7 +49,7 @@ class WaybackMachine
      */
     public static function check(string $url): ?bool
     {
-        if (!static::$active) return true;
+        if (!static::active()) return true;
         static $cache = [];
         // strip fragment portion of URL
         $url = preg_replace('/#.*$/', '', $url);
@@ -167,7 +172,7 @@ class WaybackMachine
 
     public static function get(string $url): ?WaybackResult
     {
-        if (!static::$active) return null;
+        if (!static::active()) return null;
         static $cache = [];
         $url = static::normalizeURL($url);
 
