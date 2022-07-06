@@ -38,12 +38,12 @@ class Router
         foreach ($page->routeClasses() as $c) {
             Dispatcher::dispatchEvent('onPageActions_' . $c, [&$urls]);
         }
-        return array_filter(
+        return array_unique(array_filter(
             $urls,
             function (URL $url) {
                 return $url->permissions();
             }
-        );
+        ));
     }
 
     /**
@@ -71,12 +71,12 @@ class Router
         }
         Dispatcher::dispatchEvent('onStaticActions', [&$urls]);
         Dispatcher::dispatchEvent('onStaticActions_' . $route, [&$urls]);
-        return array_filter(
+        return array_unique(array_filter(
             $urls,
             function (URL $url) {
                 return $url->permissions();
             }
-        );
+        ));
     }
 
     public static function search(string $glob): array
