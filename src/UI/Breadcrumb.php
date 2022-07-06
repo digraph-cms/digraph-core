@@ -2,7 +2,6 @@
 
 namespace DigraphCMS\UI;
 
-use DigraphCMS\Cache\UserCacheNamespace;
 use DigraphCMS\Config;
 use DigraphCMS\Content\Pages;
 use DigraphCMS\Context;
@@ -15,9 +14,8 @@ class Breadcrumb
 
     public static function print()
     {
-        $cache = new UserCacheNamespace('breadcrumb');
-        echo $cache->get(
-            md5(Context::url()),
+        echo Context::cache()->get(
+            'breadcrumb',
             function () {
                 ob_start();
                 $breadcrumb = static::breadcrumb();

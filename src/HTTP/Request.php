@@ -2,6 +2,8 @@
 
 namespace DigraphCMS\HTTP;
 
+use DigraphCMS\Session\Cookies;
+use DigraphCMS\Session\Session;
 use DigraphCMS\URL\URL;
 
 class Request
@@ -11,6 +13,8 @@ class Request
     protected $method = null;
     protected $headers = null;
     protected $post = [];
+    protected $user = null;
+    protected $hash = null;
 
     public function __construct(URL $url, string $method, RequestHeaders $headers, array $post)
     {
@@ -19,6 +23,22 @@ class Request
         $this->method = $method;
         $this->headers = $headers;
         $this->post = $post;
+        $this->user = Session::uuid();
+    }
+
+    public function hash()
+    {
+        if (!$this->hash) {
+            $this->hash = md5(serialize([
+                $this->url,
+                $this->method,
+                $this->headers,
+                $this->post,
+                $this->user,
+                Cookies::cacheMutatingCookies()
+            ]));
+        }
+        return $this->hash;
     }
 
     public function post(): array

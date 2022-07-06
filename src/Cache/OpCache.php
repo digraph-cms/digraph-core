@@ -164,8 +164,6 @@ class OpCache extends AbstractCacheDriver
             } else {
                 return "$value";
             }
-        } elseif (is_string($value)) {
-            return "'" . str_replace("'", "\\'", $value) . "'";
         } else {
             return static::serialize_object($value);
         }

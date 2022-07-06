@@ -65,11 +65,6 @@
     "session": {
         "strict_ip_check": true
     },
-    "content_cache": {
-        "enabled": true,
-        "min_ms": 100,
-        "default_ttl": 60
-    },
     "ui": {
         "breadcrumb": {
             "min_length": 1,
@@ -92,17 +87,6 @@
         "links": false,
         "umask_file": 79,
         "umask_dir": 2
-    },
-    "page_cache": {
-        "cachettl": {
-            "_any": null
-        },
-        "browserttl": {
-            "_any": null
-        },
-        "stalettl": {
-            "_any": 600
-        }
     },
     "errors": {
         "display_trace": false

@@ -45,6 +45,8 @@ cache:
   ttl: 300
   fuzz: 120
   dom_ttl: 600
+  template_ttl: 600
+  content_ttl: 600
 
 email:
   enabled: true

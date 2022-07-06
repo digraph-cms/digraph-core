@@ -9,6 +9,7 @@ use DigraphCMS\Search\Search;
 
 class Page extends AbstractPage
 {
+
     public function richContent(string $index, RichContent $content = null): ?RichContent
     {
         // update content only if it is different from what exists

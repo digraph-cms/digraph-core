@@ -2,6 +2,7 @@
 
 namespace DigraphCMS;
 
+use DigraphCMS\Cache\CacheNamespace;
 use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\HTTP\Request;
 use DigraphCMS\HTTP\Response;
@@ -13,6 +14,19 @@ abstract class Context
 {
     protected static $request, $response, $url, $thrown;
     protected static $data = [];
+
+    /**
+     * Get a cache namespace specific to the current request hash
+     *
+     * @param string|null $section
+     * @return CacheNamespace
+     */
+    public static function cache(string $section = null): CacheNamespace
+    {
+        $namespace = 'context/' . substr(static::request()->hash(), 0, 2) . '/' . static::request()->hash();
+        if ($section) $namespace .= "/$section";
+        return new CacheNamespace($namespace);
+    }
 
     public static function url(URL $url = null): URL
     {

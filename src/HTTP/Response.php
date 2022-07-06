@@ -93,12 +93,13 @@ class Response
         if ($private !== null) {
             $this->private = $private;
         }
-        return $this->private || Session::user() != 'guest';
+        return $this->private || Session::uuid() != 'guest';
     }
 
     public function enableCache()
     {
-        $this->cacheTTL($this->cacheTTL() ? $this->cacheTTL() : Config::get('content_cache.default_ttl'));
+        if (!$this->cacheTTL()) $this->cacheTTL(Config::get('cache.content_ttl'));
+        return $this;
     }
 
     public function cacheTTL(int $ttl = null): int
@@ -109,12 +110,6 @@ class Response
         return
             // explicitly set value
             $this->cacheTTL ??
-            // config value for any page class
-            Config::get('page_cache.cachettl._any') ??
-            // config value for this page class
-            ($this->page() ? Config::get('page_cache.cachettl.' . $this->page()->class()) : null) ??
-            // page object's ttl
-            ($this->page() ? $this->page->cacheTTL($this->page()->url()->action()) : null) ??
             // default of 0
             0;
     }
@@ -127,14 +122,8 @@ class Response
         return
             // explicitly set value
             $this->staleTTL ??
-            // config value for any page class
-            Config::get('page_cache.stalettl._any') ??
-            // config value for this page class
-            ($this->page() ? Config::get('page_cache.stalettl.' . $this->page()->class()) : null) ??
-            // page object's ttl
-            ($this->page() ? $this->page->staleTTL($this->page()->url()->action()) : null) ??
-            // default of 0
-            0;
+            // default of 10 minutes
+            600;
     }
 
     public function browserTTL(int $ttl = null): int
@@ -145,10 +134,6 @@ class Response
         return
             // explicitly set value
             $this->browserTTL ??
-            // config value for any page class
-            Config::get('page_cache.browserttl._any') ??
-            // config value for this page class
-            ($this->page() ? Config::get('page_cache.browserttl.' . $this->page()->class()) : null) ??
             // page object's ttl
             ($this->page() ? $this->page->browserTTL($this->page()->url()->action()) : null) ??
             // default of 0

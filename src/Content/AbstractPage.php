@@ -319,18 +319,6 @@ abstract class AbstractPage implements ArrayAccess
     }
 
     /**
-     * How long output may be cached internally to improve performance. Not
-     * exposed in response headers.
-     *
-     * @param string $action
-     * @return integer|null
-     */
-    public function cacheTTL(string $action): ?int
-    {
-        return null;
-    }
-
-    /**
      * How long output may be served by proxies even if it is otherwise stale,
      * or if there is an error. Used in max-stale and max-stale-error directives
      * in the cache-control response header.

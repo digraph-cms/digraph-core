@@ -3,7 +3,6 @@
 namespace DigraphCMS;
 
 use DigraphCMS\Cache\Locking;
-use DigraphCMS\Cache\UserCacheNamespace;
 use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Content\Router;
 use DigraphCMS\Content\Pages;
@@ -17,7 +16,6 @@ use DigraphCMS\HTTP\Request;
 use DigraphCMS\HTTP\RequestHeaders;
 use DigraphCMS\HTTP\Response;
 use DigraphCMS\Search\Search;
-use DigraphCMS\Session\Cookies;
 use DigraphCMS\UI\Templates;
 use DigraphCMS\UI\Theme;
 use DigraphCMS\URL\URL;
@@ -287,7 +285,7 @@ abstract class Digraph
             }
         }
         ob_end_clean();
-        // finalize response and return
+        // finalize response and dispatch ready events
         $response = Context::response();
         Dispatcher::dispatchEvent('onResponseReady', [$response]);
         if (static::inferMime($response) == 'text/html') {
@@ -295,36 +293,25 @@ abstract class Digraph
         }
         Context::end();
         URLs::endContext();
-        return $response;
     }
 
     protected static function buildResponseContent()
     {
-        // check output cache
-        if (Config::get('content_cache.enabled')) {
-            $cache = new UserCacheNamespace('content_cache');
-            $hash = md5(serialize([Context::request(), Cookies::cacheMutatingCookies()]));
-            if ($cache->exists($hash) && !$cache->expired($hash)) {
-                Context::response($cache->get($hash));
-                return;
-            }
-            $time = microtime(true);
-        } else {
-            $cache = null;
+        if ($response = Context::cache()->get('content_cache')) {
+            Context::response($response);
+            return;
         }
-        // generate response
         if (!static::normalResponse()) {
             // generate error response and delete this URL from the search index
             static::buildErrorContent(404);
             Search::deleteURL(Context::url());
         }
-        // output caching: cache for response cacheTTL if generating content
-        // took longer in ms than config content_cache.min_ms
-        if ($cache && $ttl = Context::response()->cacheTTL()) {
-            $time = round((microtime(true) - $time) * 1000);
-            if ($time > Config::get('content_cache.min_ms')) {
-                $cache->set($hash, Context::response(), $ttl);
-            }
+        if (Context::response()->cacheTTL()) {
+            Context::cache()->set(
+                'content_cache',
+                Context::response(),
+                Context::response()->cacheTTL()
+            );
         }
     }
 

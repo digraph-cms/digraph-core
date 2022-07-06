@@ -79,7 +79,13 @@ class Templates
         // override template for navigation frame responses
         if (Context::request()->headers()->get('x-for-navigation-frame') == 'y') $response->template('framed.php');
         // render
-        $response->content(static::render($response->template()));
+        $response->content(Context::cache('wrapresponse')->get(
+            md5($response->content()),
+            function () use ($response) {
+                return static::render($response->template());
+            },
+            $response->cacheTTL() ?? Config::get('cache.template_ttl')
+        ));
     }
 
     protected static function locateFile(string $template): ?string
