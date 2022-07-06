@@ -10,6 +10,22 @@ use DigraphCMS\URL\URL;
 
 class MenuBar extends DIV
 {
+    protected $checkPermissions = false;
+
+    /**
+     * Set whether this menu should check the permissions of its children when
+     * rendering. Default is to not check them, because it takes a significant
+     * amount of time.
+     *
+     * @param boolean $check
+     * @return $this
+     */
+    public function setCheckPermissions(bool $check)
+    {
+        $this->checkPermissions = $check;
+        return $this;
+    }
+
     public function addPage(AbstractPage $page, string $label = null): MenuItem
     {
         $item = new MenuItem($page->url(), $label ?? $page->name());
@@ -43,11 +59,15 @@ class MenuBar extends DIV
 
     /**
      * Children in MenuBars are automatically filtered by their URL permissions
+     * if setCheckPermissions has been set to true
      *
      * @return array
      */
     public function children(): array
     {
+        // return unfiltered list if checkPermissions is off
+        if (!$this->checkPermissions) return parent::children();
+        // otherwise filter by URL permissions
         return array_filter(
             parent::children(),
             function ($e) {

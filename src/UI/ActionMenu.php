@@ -14,6 +14,7 @@ class ActionMenu extends MenuBar
     protected $url;
     protected $adderItem, $adderMenu;
     protected static $contextActions = [];
+    protected $checkPermissions = true;
 
     public static function addContextAction(URL $url, string $name = null)
     {
