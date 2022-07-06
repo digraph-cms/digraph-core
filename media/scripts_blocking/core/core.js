@@ -37,22 +37,6 @@ document.addEventListener('DOMContentLoaded', (e) => {
     );
 });
 
-document.addEventListener('DigraphDOMReady', (e) => {
-    const es = e.target.getElementsByClassName('base64-obfuscated');
-    for (let i = 0; i < es.length; i++) {
-        const element = es[i];
-        element.innerHTML = atob(element.firstChild.innerHTML);
-        element.classList.remove('base64-obfuscated');
-        element.classList.remove('base64-obfuscated--decoded');
-        element.dispatchEvent(
-            new Event('DigraphDOMReady', {
-                bubbles: true,
-                cancelable: false
-            })
-        );
-    }
-});
-
 /**
  * Tools for managing messaging back up to the topmost frame
  * This should maybe stay in core.js because it's small and needs to load fast
