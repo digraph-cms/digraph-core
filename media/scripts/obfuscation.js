@@ -10,7 +10,7 @@
             .forEach(element => {
                 element.innerHTML = atob(element.firstChild.innerHTML);
                 element.classList.remove('base64-obfuscated');
-                element.classList.remove('base64-obfuscated--decoded');
+                element.classList.add('base64-obfuscated--decoded');
                 element.dispatchEvent(
                     new Event('DigraphDOMReady', {
                         bubbles: true,
