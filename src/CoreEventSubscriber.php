@@ -97,8 +97,8 @@ abstract class CoreEventSubscriber
                     new RecursivePageJob(
                         $uuid,
                         function (DeferredJob $job, AbstractPage $page) {
-                            $page->prepareCronJobs();
-                            return sprintf("Prepared cron jobs for %s (%s)", $page->name(), $page->uuid());
+                            $count = $page->prepareCronJobs();
+                            return sprintf("Prepared %s cron jobs for %s (%s)", $count, $page->name(), $page->uuid());
                         },
                         false,
                         $job->group()
