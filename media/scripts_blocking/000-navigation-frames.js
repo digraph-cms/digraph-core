@@ -66,6 +66,38 @@ document.addEventListener('click', (e) => {
     [parent, target] = Digraph.state.navigationParentAndTarget(event_target);
     // parent and target found
     if (parent && event_target && !event_target.attributes.target && target != '_top') {
+        // scroll to parent if requested
+        var scroll = event_target.dataset.navigationFrameScroll ?? parent.dataset.navigationFrameScroll;
+        if (scroll) {
+            switch (scroll) {
+                case 'top':
+                    scroll = 'start';
+                    break;
+                case 'start':
+                    scroll = 'start';
+                    break;
+                case 'bottom':
+                    scroll = 'end';
+                    break;
+                case 'end':
+                    scroll = 'end';
+                    break;
+                case 'center':
+                    scroll = 'center';
+                    break;
+                case 'nearest':
+                    scroll = 'nearest';
+                    break;
+                default:
+                    scroll = 'top';
+            }
+            parent.scrollIntoView({
+                behavior: "smooth",
+                inline: "nearest",
+                block: scroll
+            });
+        }
+        // do navigation
         if (Digraph.state.frameIsStateless(parent)) {
             // stateless navigation frames don't update the address bar or browser history
             Digraph.state.get(event_target.getAttribute('href'), parent);
