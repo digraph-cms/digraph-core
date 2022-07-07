@@ -5,6 +5,7 @@ namespace DigraphCMS\UI;
 use Caxy\HtmlDiff\HtmlDiff;
 use DateTime;
 use DateTimeZone;
+use DigraphCMS\Cache\Cache;
 use DigraphCMS\Config;
 
 Format::_init();
@@ -25,7 +26,13 @@ class Format
 
     public static function htmlDiff(string $a, string $b): string
     {
-        return (new HtmlDiff($a, $b))->build();
+        return Cache::get(
+            'format/htmldiff/' . md5(md5($a) . md5($b)),
+            function () use ($a, $b) {
+                return (new HtmlDiff($a, $b))->build();
+            },
+            -1
+        );
     }
 
     public static function base64obfuscate(string $string, string $message = 'javascript required to view')
