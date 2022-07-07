@@ -79,7 +79,7 @@ class Cookies
      *
      * @return array
      */
-    public static function cacheMutatingCookies(): array
+    public static function cacheMutators(): array
     {
         return [
             'ui' => [

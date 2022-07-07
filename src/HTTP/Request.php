@@ -3,8 +3,8 @@
 namespace DigraphCMS\HTTP;
 
 use DigraphCMS\Session\Cookies;
-use DigraphCMS\Session\Session;
 use DigraphCMS\URL\URL;
+use DigraphCMS\Users\Users;
 
 class Request
 {
@@ -23,7 +23,7 @@ class Request
         $this->method = $method;
         $this->headers = $headers;
         $this->post = $post;
-        $this->user = Session::uuid();
+        $this->user = Users::current();
     }
 
     public function hash()
@@ -35,7 +35,7 @@ class Request
                 $this->headers,
                 $this->post,
                 $this->user,
-                Cookies::cacheMutatingCookies()
+                Cookies::cacheMutators()
             ]));
         }
         return $this->hash;
