@@ -9,7 +9,7 @@ class AdminUser extends AbstractSeed
     {
         $this->table('user')
             ->insert([
-                'uuid' => 'usr_demoadmin',
+                'uuid' => 'demoadmin',
                 'name' => 'Demo Administrator',
                 'data' => '{}',
                 'created' => time(),
@@ -20,7 +20,7 @@ class AdminUser extends AbstractSeed
             ->save();
         $this->table('user_source')
             ->insert([
-                'user_uuid' => 'usr_demoadmin',
+                'user_uuid' => 'demoadmin',
                 'source' => 'cas',
                 'provider' => 'demo',
                 'provider_id' => 'admin',
@@ -29,7 +29,7 @@ class AdminUser extends AbstractSeed
             ->save();
         $this->table('user_group_membership')
             ->insert([
-                'user_uuid' => 'usr_demoadmin',
+                'user_uuid' => 'demoadmin',
                 'group_uuid' => 'admins'
             ])
             ->save();

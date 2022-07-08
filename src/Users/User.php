@@ -33,7 +33,7 @@ class User implements ArrayAccess
 
     public function __construct(array $data = [], array $metadata = [])
     {
-        $this->uuid = @$metadata['uuid'] ?? Digraph::uuid('usr');
+        $this->uuid = @$metadata['uuid'] ?? Digraph::uuid();
         $this->name = @$metadata['name'] ?? Users::randomName();
         $this->created = @$metadata['created'] ?? new DateTime();
         $this->created_by = @$metadata['created_by'] ?? Session::uuid();
