@@ -40,7 +40,7 @@ class Filestore
         FS::mkdir(dirname($dest));
         file_put_contents($dest, $data);
         $file = new FilestoreFile(
-            Digraph::uuid('fil'),
+            Digraph::uuid(),
             $hash,
             $filename,
             filesize($dest),
@@ -62,7 +62,7 @@ class Filestore
         FS::mkdir(dirname($dest));
         FS::copy($src, $dest, false, true);
         $file = new FilestoreFile(
-            Digraph::uuid('fil'),
+            Digraph::uuid(),
             $hash,
             $filename,
             filesize($dest),

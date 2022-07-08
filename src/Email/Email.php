@@ -116,7 +116,7 @@ class Email
         $this->body_text = $body_text ?? Emails::html2text($body_html);
         $this->cc = $cc ?? Config::get('email.cc');
         $this->bcc = $bcc ?? Config::get('email.bcc');
-        $this->uuid = $uuid ?? Digraph::uuid('eml');
+        $this->uuid = $uuid ?? Digraph::uuid();
         $this->time = $time ?? time();
         $this->blocked = $blocked ?? Emails::shouldBlock($this);
         $this->error = $error;
@@ -139,7 +139,7 @@ class Email
 
     public function url_unsubscribe(): URL
     {
-        return new URL('/~unsubscribe/' . $this->uuid() . '.html');
+        return new URL('/~unsubscribe/eml_' . $this->uuid() . '.html');
     }
 
     public function url_manageSubscriptions(): URL

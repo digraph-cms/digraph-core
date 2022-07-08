@@ -12,7 +12,7 @@ use DigraphCMS\URL\URL;
 $addresses = [];
 
 // only allow access with valid email ID or by being signed in
-$email = Emails::get(Context::url()->action());
+$email = Emails::get(Context::url()->actionSuffix());
 if (!$email) throw new HttpError(404);
 if ($email->category() == 'service') throw new HttpError(404);
 if ($user = $email->toUser()) {
