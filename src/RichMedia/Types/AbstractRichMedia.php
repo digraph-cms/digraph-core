@@ -40,7 +40,7 @@ abstract class AbstractRichMedia implements ArrayAccess
 
     public function __construct(array $data = [], array $metadata = [])
     {
-        $this->uuid = @$metadata['uuid'] ?? Digraph::uuid('m');
+        $this->uuid = @$metadata['uuid'] ?? Digraph::uuid();
         $this->parent = @$metadata['parent'];
         $this->created = @$metadata['created'] ?? new DateTime();
         $this->created_by = @$metadata['created_by'] ?? Session::uuid();
