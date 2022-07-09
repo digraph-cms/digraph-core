@@ -122,8 +122,8 @@ class Response
         return
             // explicitly set value
             $this->staleTTL ??
-            // default of 10 minutes
-            600;
+            // default to 10x cacheTTL
+            10 * $this->cacheTTL();
     }
 
     public function browserTTL(int $ttl = null): int
