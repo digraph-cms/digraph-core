@@ -2,13 +2,16 @@
 
 namespace DigraphCMS\Cache;
 
+use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
 
 class Locking
 {
+    protected static $driver;
+
     public static function share(string $name, bool $blocking = false, int $ttl = 5): ?int
     {
-        while (!($id = static::getSharedLock($name, $ttl))) {
+        while (!($id = static::driver()->getSharedLock($name, $ttl))) {
             if ($blocking) usleep(random_int(0, 100));
             else return null;
         }
@@ -17,7 +20,7 @@ class Locking
 
     public static function lock(string $name, bool $blocking = false, int $ttl = 5): ?int
     {
-        while (!($id = static::getExclusiveLock($name, $ttl))) {
+        while (!($id = static::driver()->getExclusiveLock($name, $ttl))) {
             if ($blocking) usleep(random_int(0, 100));
             else return null;
         }
@@ -26,55 +29,18 @@ class Locking
 
     public static function release(int $id)
     {
-        DB::query()
-            ->delete('locking', $id)
-            ->execute();
+        static::driver()->release($id);
     }
 
-    protected static function getExclusiveLock(string $name, int $ttl): ?int
+    protected static function driver(): LockingDriver
     {
-        DB::beginTransaction();
-        $query = DB::query()->from('locking')
-            ->where('`name` = ?', [$name])
-            ->where('`expires` > ?', [time()])
-            ->limit(1);
-        $id = null;
-        if (!$query->count()) {
-            // no exclusive locks exist, save this shared lock
-            $id = DB::query()->insertInto(
-                'locking',
-                [
-                    '`name`' => $name,
-                    '`expires`' => time() + $ttl,
-                    '`exclusive`' => true
-                ]
-            )->execute();
+        if (!static::$driver) {
+            $class = Config::get('locking.driver')
+                ?? DB::driver() == 'sqlite'
+                ? LockingDriverDB::class
+                : LockingDriverNull::class;
+            static::$driver = new $class;
         }
-        DB::commit();
-        return $id ? $id : null;
-    }
-
-    protected static function getSharedLock(string $name, int $ttl): ?int
-    {
-        DB::beginTransaction();
-        $query = DB::query()->from('locking')
-            ->where('`name` = ?', [$name])
-            ->where('`expires` > ?', [time()])
-            ->where('`exclusive` = 1')
-            ->limit(1);
-        $id = null;
-        if (!$query->count()) {
-            // no exclusive locks exist, save this shared lock
-            $id = DB::query()->insertInto(
-                'locking',
-                [
-                    '`name`' => $name,
-                    '`expires`' => time() + $ttl,
-                    '`exclusive`' => false
-                ]
-            )->execute();
-        }
-        DB::commit();
-        return $id ? $id : null;
+        return static::$driver;
     }
 }
