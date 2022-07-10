@@ -9,9 +9,11 @@
     word-wrap: normal;
     direction: ltr;
     line-height: 1;
-    /* Better Font Rendering =========== */
     -webkit-font-feature-settings: "liga";
     -webkit-font-smoothing: antialiased;
+    -moz-font-feature-settings: "liga";
+    -moz-osx-font-smoothing: grayscale;
+    font-display: swap;
 }
 
 @mixin material-icon {
@@ -25,4 +27,7 @@
     direction: ltr;
     -moz-font-feature-settings: "liga";
     -moz-osx-font-smoothing: grayscale;
+    -webkit-font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
+    font-display: swap;
 }
