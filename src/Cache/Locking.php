@@ -37,8 +37,8 @@ class Locking
         if (!static::$driver) {
             $class = Config::get('locking.driver')
                 ?? DB::driver() == 'sqlite'
-                ? LockingDriverDB::class
-                : LockingDriverNull::class;
+                ? LockingDriverNull::class
+                : LockingDriverDB::class;
             static::$driver = new $class;
         }
         return static::$driver;
