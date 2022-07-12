@@ -4,6 +4,7 @@ namespace DigraphCMS;
 
 use DigraphCMS\Cache\CacheNamespace;
 use DigraphCMS\Content\AbstractPage;
+use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\HTTP\Request;
 use DigraphCMS\HTTP\Response;
 use DigraphCMS\URL\URL;
@@ -14,6 +15,30 @@ abstract class Context
 {
     protected static $request, $response, $url, $thrown;
     protected static $data = [];
+
+    public static function ensureUUIDArg($checkWith = null)
+    {
+        // ensure arg exists
+        if (!static::arg('uuid')) {
+            $url = Context::url();
+            $url->arg('uuid', Digraph::uuid());
+            throw new RedirectException($url);
+        }
+        // validate UUID
+        if (!Digraph::validateUUID(Context::arg('uuid') ?? '')) {
+            $url = Context::url();
+            $url->arg('uuid', Digraph::uuid());
+            throw new RedirectException($url);
+        }
+        // check with passed-in class
+        if ($checkWith) {
+            if ($checkWith::exists(Context::arg('uuid'))) {
+                $url = Context::url();
+                $url->arg('uuid', Digraph::uuid());
+                throw new RedirectException($url);
+            }
+        }
+    }
 
     /**
      * Get a cache namespace specific to the current request hash
