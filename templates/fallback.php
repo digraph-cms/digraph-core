@@ -8,7 +8,6 @@ use DigraphCMS\Context;
 use DigraphCMS\Media\Media;
 use DigraphCMS\UI\Templates;
 use DigraphCMS\UI\Theme;
-use DigraphCMS\UI\UserMenu;
 
 ?>
 <!DOCTYPE html>
@@ -37,16 +36,6 @@ use DigraphCMS\UI\UserMenu;
 
 <body class='template-fallback no-js'>
     <?php
-    try {
-        echo new UserMenu;
-    } catch (\Throwable $th) {
-        //throw $th;
-    }
-    try {
-        echo Templates::render('sections/header.php');
-    } catch (\Throwable $th) {
-        //throw $th;
-    }
     try {
         echo Templates::render('sections/navbar.php');
     } catch (\Throwable $th) {
