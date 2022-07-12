@@ -160,7 +160,7 @@ fieldset {
             fieldset {
                 border: 1px groove var(--background);
                 background-color: var(--background);
-        
+
                 fieldset {
                     border: 1px groove var(--background-darker);
                     background-color: var(--background-dark);
@@ -184,9 +184,17 @@ fieldset {
     padding: $grid/2;
 }
 
+.form-field__tips {
+    line-height: $line-height-tight;
+}
+
 .form-field__tips__tip {
     display: block;
-    margin: $grid/2 0;
+    margin: $grid/4 0;
+
+    &:first-child {
+        margin-top: 0;
+    }
 
     &:last-child {
         margin-bottom: 0;
