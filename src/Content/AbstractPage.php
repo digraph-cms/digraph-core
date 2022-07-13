@@ -46,9 +46,6 @@ abstract class AbstractPage implements ArrayAccess
     protected static $class;
     protected $slugPattern;
 
-    abstract public function richContent(string $index, RichContent $content = null): ?RichContent;
-    abstract public function allRichContent(): array;
-
     public function __construct(array $data = [], array $metadata = [])
     {
         $this->uuid = @$metadata['uuid'] ?? Digraph::uuid();
@@ -60,6 +57,31 @@ abstract class AbstractPage implements ArrayAccess
         $this->updated_by = @$metadata['updated_by'] ?? Session::uuid();
         $this->rawSet(null, $data);
         $this->slugPattern = @$metadata['slug_pattern'] ?? static::DEFAULT_SLUG;
+    }
+
+    public function richContent(string $index, RichContent $content = null): ?RichContent
+    {
+        // update content only if it is different from what exists
+        if ($content && !$content->compare($this["content.$index"])) {
+            unset($this["content.$index"]);
+            $this["content.$index"] = $content->array();
+        }
+        // return RichContent object
+        if ($this["content.$index"]) {
+            return new RichContent($this["content.$index"]);
+        } else {
+            return null;
+        }
+    }
+
+    public function allRichContent(): array
+    {
+        return array_map(
+            function ($arr) {
+                return new RichContent($arr);
+            },
+            $this['content'] ?? []
+        );
     }
 
     public static function onRecursiveDelete(DeferredJob $job, AbstractPage $page)
