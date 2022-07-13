@@ -108,7 +108,7 @@ class Format
         if (!$exact) {
             // ...search the last occurance of a space...
             $spacepos = strrpos($truncate, ' ');
-            if (isset($spacepos)) {
+            if ($spacepos !== false) {
                 // ...and cut the text in this position
                 $truncate = substr($truncate, 0, $spacepos);
             }
