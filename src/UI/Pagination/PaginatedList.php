@@ -20,6 +20,7 @@ class PaginatedList extends Tag
     protected $source;
     protected $body, $top, $bottom, $before, $after;
     protected $items;
+    protected $callback;
 
     /**
      * @param mixed $source

@@ -10,7 +10,7 @@ use DigraphCMS\URL\URL;
 class Paginator extends ConditionalContainer
 {
     protected static $counter = 0;
-    protected $count, $perPage, $groupPages, $breadcrumbUpdated, $pages;
+    protected $myID, $count, $perPage, $groupPages, $breadcrumbUpdated, $pages;
 
     public function __construct(?int $itemCount, int $perPage = 25, int $groupPages = 10)
     {
