@@ -35,7 +35,7 @@ class Format
      * @param integer $length
      * @param string $ending
      * @param boolean $exact
-     * @return void
+     * @return string
      */
     public static function truncateHTML(
         $text,
