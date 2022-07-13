@@ -2,7 +2,6 @@
 
 use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
-use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTML\Forms\Field;
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTTP\RefreshException;

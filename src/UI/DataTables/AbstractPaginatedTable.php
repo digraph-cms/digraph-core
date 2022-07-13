@@ -21,7 +21,6 @@ abstract class AbstractPaginatedTable
     protected $myID;
     protected $paginator;
     protected $headers = [];
-    protected $caption;
     protected $downloadFilename;
     protected $downloadCallback;
     protected $downloadHeaders;
@@ -59,14 +58,6 @@ abstract class AbstractPaginatedTable
         $this->downloadHeaders = $headers;
         $this->finalizeCallback = $finalizeCallback;
         return $this;
-    }
-
-    public function caption(string $caption = null): ?string
-    {
-        if ($caption !== null) {
-            $this->caption = $caption;
-        }
-        return $this->caption;
     }
 
     public function downloadFile(): File
@@ -153,9 +144,6 @@ abstract class AbstractPaginatedTable
             echo $this->download();
             echo "</div>";
             echo "<table>";
-            if ($this->caption) {
-                echo "<caption>" . $this->caption() . "</caption>";
-            }
             $this->printHeaders();
             $this->printBody();
             echo "</table>";

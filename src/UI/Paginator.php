@@ -3,29 +3,50 @@
 namespace DigraphCMS\UI;
 
 use DigraphCMS\Context;
+use DigraphCMS\HTML\ConditionalContainer;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\URL\URL;
 
-class Paginator
+class Paginator extends ConditionalContainer
 {
-    protected static $id = 0;
-    protected $myID, $count, $perPage, $groupPages, $breadcrumbUpdated;
+    protected static $counter = 0;
+    protected $count, $perPage, $groupPages, $breadcrumbUpdated, $pages;
 
-    public function __construct(int $itemCount, int $perPage = 25, int $groupPages = 10)
+    public function __construct(?int $itemCount, int $perPage = 25, int $groupPages = 10)
     {
-        $this->myID = self::$id++;
+        $this->myID = self::$counter++;
         $this->count = $itemCount;
         $this->perPage = $perPage;
         $this->groupPages = $groupPages;
+        $this->addClass('paginator');
+    }
+
+    public function children(): array
+    {
+        $children = parent::children();
+        if ($this->pages() > 1) {
+            foreach ($this->links() as $link) {
+                $children[] = $link;
+            }
+            $children[] = $this->statusDisplay();
+        }
+        return $children;
     }
 
     public function __toString()
     {
-        if ($this->pages() == 1) {
-            return '';
-        }
         $this->updateBreadcrumb();
-        return "<div class='paginator'>" . implode(' ', $this->links()) . "</div>";
+        return parent::__toString();
+    }
+
+    protected function statusDisplay()
+    {
+        $out = sprintf('%s to %s', number_format($this->startItem() + 1), number_format(min($this->endItem() + 1, $this->count)));
+        if ($this->count !== null) $out .= ' of ' . number_format($this->count);
+        return sprintf(
+            '<span class="paginator__status">%s</span>',
+            $out
+        );
     }
 
     protected function updateBreadcrumb()
@@ -61,7 +82,7 @@ class Paginator
         return floor(($this->page() - 1) / $this->groupPages);
     }
 
-    public function groupCount(): int
+    public function groupCount(): float
     {
         return ceil($this->pages() / $this->groupPages);
     }
@@ -114,7 +135,7 @@ class Paginator
             $links[] = $this->link($this->groupEndPage() + 1, null, 'nextgroup');
         }
         // link to last page
-        if ($this->group() < $this->groupCount() - 1) {
+        if ($this->groupCount() !== INF && $this->group() < $this->groupCount() - 1) {
             $links[] = $this->link($this->pages(), 'last', 'lastpage');
         }
         // link to next page
@@ -175,18 +196,15 @@ class Paginator
         return $this->groupPages;
     }
 
-    public function pages(): int
+    public function pages(): float
     {
-        return ceil($this->count / $this->perPage);
+        if ($this->pages !== null) return $this->pages;
+        elseif ($this->count !== null) return ceil($this->count / $this->perPage);
+        else return INF;
     }
 
     public function arg(): string
     {
         return '_page' . ($this->myID ? $this->myID : '');
-    }
-
-    public function id(): int
-    {
-        return $this->myID;
     }
 }
