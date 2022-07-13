@@ -6,13 +6,14 @@ use DigraphCMS\Config;
 use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Content\Pages;
 use DigraphCMS\Context;
+use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTML\A;
 use DigraphCMS\HTML\Text;
+use DigraphCMS\RichContent\Video\VideoEmbed;
 use DigraphCMS\RichMedia\RichMedia;
 use DigraphCMS\UI\Format;
 use DigraphCMS\UI\TableOfContents;
 use DigraphCMS\URL\URL;
-use DigraphCMS\URL\WaybackMachine;
 use Thunder\Shortcode\Shortcode\ShortcodeInterface;
 
 class ShortCodesListener
@@ -34,6 +35,11 @@ class ShortCodesListener
             }
         }
         return null;
+    }
+
+    public static function onShortCode_video(ShortcodeInterface $s): ?string
+    {
+        return VideoEmbed::fromURL(trim($s->getContent()));
     }
 
     public static function onShortCode_toc(ShortcodeInterface $s): ?string
