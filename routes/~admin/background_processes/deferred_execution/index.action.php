@@ -55,7 +55,7 @@ if ($errors->count()) {
             new ColumnHeader('Message')
         ]
     );
-    $table->enableDownload(
+    $table->download(
         'recent deferred execution errors',
         function (array $row) {
             return [

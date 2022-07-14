@@ -33,30 +33,34 @@ class SpreadsheetJob extends DeferredJob
             $reader->setReadDataOnly(true);
             $spreadsheet = $reader->load($file);
             $data = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
-            $header = false;
             foreach ($data as $rowNum => $row) {
-                // first row is headers
-                if (!$header) {
-                    $header = true;
-                    // set up setupFn if applicable
-                    if ($setupFn) $job->spawn(function () use ($setupFn, $file) {
-                        return $setupFn($file) ?? "Ran setup function";
+                if (!$rowNum == 1) {
+                    // first row is headers
+                    // set up setupFn job if applicable
+                    if ($setupFn) $job->spawn(function (DeferredJob $job) use ($setupFn, $file) {
+                        $reader = IOFactory::createReaderForFile($file);
+                        $reader->setReadDataOnly(true);
+                        $spreadsheet = $reader->load($file);
+                        return $setupFn($spreadsheet, $job) ?? "Ran setup function";
                     });
-                    continue;
+                } else {
+                    // set up deferred job for this row
+                    $job->spawn(function (DeferredJob $job) use ($rowFn, $row, $rowNum, $filename) {
+                        return $rowFn($row, $rowNum, $job) ?? "Processed $filename row $rowNum";
+                    });
                 }
-                // set up deferred job
-                $job->spawn(function () use ($rowFn, $row, $rowNum, $filename) {
-                    return $rowFn($row, $rowNum) ?? "Processed $filename row $rowNum";
-                });
             }
+            // set up teardownFn job if applicable
+            if ($teardownFn) $job->spawn(function (DeferredJob $job) use ($teardownFn, $file) {
+                $reader = IOFactory::createReaderForFile($file);
+                $reader->setReadDataOnly(true);
+                $spreadsheet = $reader->load($file);
+                return $teardownFn($spreadsheet, $job) ?? "Ran teardown function";
+            });
             // final job to clean up file
             $job->spawn(function () use ($file) {
                 if (unlink($file)) return "Deleted temp file $file";
                 else return "Failed to delete temp file $file";
-            });
-            // set up teardownFn if applicable
-            if ($teardownFn) $job->spawn(function () use ($teardownFn, $file) {
-                return $teardownFn($file) ?? "Ran teardown function";
             });
             DB::commit();
             return "Set up spreadsheet processing jobs";
