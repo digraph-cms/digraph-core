@@ -10,6 +10,7 @@ class PaginatedTable extends PaginatedList
 {
     protected $headers;
     protected $tag = 'div';
+    protected $dl_button = 'Download table';
 
     /**
      * @param mixed $source

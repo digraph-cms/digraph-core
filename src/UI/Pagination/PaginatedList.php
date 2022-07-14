@@ -31,6 +31,7 @@ class PaginatedList extends Tag
     protected $items;
     protected $callback;
     protected $dl_filename, $dl_callback, $dl_headers, $dl_finalize_callback;
+    protected $dl_button = 'Download';
 
     /**
      * @param mixed $source
@@ -197,15 +198,20 @@ class PaginatedList extends Tag
             // prepare download and display link to it
             $file = $this->downloadFile();
             $out .= sprintf(
-                '<div class="notification notification--confirmation">Ready: <a href="%s" target="_top">%s</a></div>',
+                '<div class="notification notification--confirmation"><a href="%s" target="_top" download="%s" id="%s">%s</a></div>',
                 $file->url(),
+                $file->filename(),
+                $arg,
                 $file->filename()
             );
+            // auto download
+            $out .= sprintf('<script>document.getElementById("%s").click();</script>', $arg);
         } else {
             // link to initialize
             $out .= sprintf(
-                '<a href="%s" class="button">Download</a>',
-                new URL('&' . $arg . '=true')
+                '<a href="%s" class="button">%s</a>',
+                new URL('&' . $arg . '=true'),
+                $this->dl_button
             );
         }
         $out .= "</div>";
@@ -219,12 +225,13 @@ class PaginatedList extends Tag
      * @param callable|null $finalizeCallback
      * @return $this
      */
-    public function download(string $filename, callable $callback, array $headers = [], callable $finalizeCallback = null)
+    public function download(string $filename, callable $callback, array $headers = [], callable $finalizeCallback = null, string $buttonText = null)
     {
         $this->dl_filename = $filename;
         $this->dl_callback = $callback;
         $this->dl_headers = $headers;
         $this->dl_finalize_callback = $finalizeCallback;
+        $this->dl_button = $buttonText ?? $this->dl_button;
         return $this;
     }
 
