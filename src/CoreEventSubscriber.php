@@ -414,13 +414,16 @@ abstract class CoreEventSubscriber
     public static function onStaticUrlName_users_profile(URL $url): ?string
     {
         if ($url->action() == 'index') {
+            $user = null;
             if ($url->arg('id') && $user = Users::get($url->arg('id'))) {
                 $user = $user;
             } elseif (!$url->arg('id')) {
                 $user = Users::current() ?? Users::guest();
             }
-            if ($user == Users::current()) return "My profile";
-            else return $user->name();
+            if ($user) {
+                if ($user == Users::current()) return "My profile";
+                else return $user->name();
+            }
         }
         return null;
     }
@@ -429,7 +432,7 @@ abstract class CoreEventSubscriber
      * Set URL parent of user profile pages
      *
      * @param URL $url
-     * @return string|null
+     * @return URL|null
      */
     public static function onStaticUrlParent_users_profile(URL $url): ?URL
     {
