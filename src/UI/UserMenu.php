@@ -22,7 +22,7 @@ class UserMenu extends MenuBar
         if ($user = Users::current()) {
             // actions for authenticated user
             // user profile link
-            $this->userItem = $this->addURL($user->profile())
+            $this->userItem = $this->addURL($user->profile(), $user->name())
                 ->addClass('menuitem--user');
             // logout link
             $this->logoutItem = $this->addURL(Users::signoutUrl(Context::url()))

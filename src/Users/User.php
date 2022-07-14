@@ -63,7 +63,7 @@ class User implements ArrayAccess
             ->addClass('user-link')
             ->addChild($this->name());
         $url = $this->profile();
-        if (Permissions::url($url)) {
+        if ($url && Permissions::url($url)) {
             $a
                 ->setAttribute('href', $url)
                 ->setAttribute('target', '_top');
@@ -318,9 +318,9 @@ class User implements ArrayAccess
         return $this->name;
     }
 
-    public function profile(): URL
+    public function profile(): ?URL
     {
-        return new URL('/~user/?user=' . $this->uuid());
+        return new URL('/~users/profile/?id=' . $this->uuid());
     }
 
     public function insert()

@@ -237,7 +237,7 @@ class Cookies
 
     public static function onCookieDescribe_auth()
     {
-        $logURL = new URL('/~user/authentication_log.html');
+        $logURL = new URL('/~users/profile/authentication_log.html');
         return
             "Used by this website for remembering and verifying the identity of the currently signed in user." .
             "<br>These cookies' contents may be stored and logged for security and troubleshooting purposes. They will be associated with personally identifiable information including the date, time, your public IP address, your browser's user agent string, and your account." .
@@ -286,7 +286,7 @@ class Cookies
 
     public static function onCookieDescribe_auth_session()
     {
-        $url = new URL('/~user/authentication_log.html');
+        $url = new URL('/~users/profile/authentication_log.html');
         return "Stores an authorization token used to verify that you are signed in as " . Users::current() . '. ' .
             "This cookie is logged and stored in a way that links your account to your IP address, sign-in time, and browser user agent." .
             "To view this stored information visit <a href='$url'>your account's authentication log</a>.";

@@ -9,10 +9,8 @@ use DigraphCMS\UI\Pagination\PageTable;
 use DigraphCMS\Users\Group;
 use DigraphCMS\Users\Users;
 
-$user = Users::get(Context::arg('user'));
-if (!$user) {
-    throw new HttpError(404);
-}
+$user = Users::get(Context::arg('user')) ?? Users::current();
+if (!$user) throw new HttpError(404);
 
 echo "<h1>User profile: " . $user->name() . "</h1>";
 

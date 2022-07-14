@@ -13,11 +13,11 @@ use DigraphCMS\URL\URL;
 </p>
 
 <ul>
-    <li><?php echo (new URL('/~user/authentication_methods.html'))->html(); ?></li>
+    <li><?php echo (new URL('/~users/profile/authentication_methods.html'))->html(); ?></li>
     <?php
     if (!Config::get('php_session.enabled')) {
         echo "<li>";
-        echo (new URL('/~user/authentication_log.html'))->html();
+        echo (new URL('/~users/profile/authentication_log.html'))->html();
         echo "</li>";
     }
     ?>

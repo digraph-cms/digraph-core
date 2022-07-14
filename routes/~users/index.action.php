@@ -5,8 +5,6 @@ use DigraphCMS\UI\Pagination\UserTable;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
 
-Context::response()->enableCache();
-
 $users = Users::select();
 
 echo "<h1>All users</h1>";

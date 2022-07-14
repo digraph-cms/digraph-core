@@ -21,7 +21,7 @@ foreach ($user['emails'] as $i => $row) {
         if ($user->uuid() == Session::user()) {
             // signed in as this user, bounce to email address page
             Notifications::flashConfirmation('Email address verified: ' . $row['address']);
-            throw new RedirectException(new URL('/~user/email_addresses.html'));
+            throw new RedirectException(new URL('/~users/profile/email_addresses.html'));
         } elseif (!Session::user()) {
             // user is not signed in, prompt them to sign in
             Notifications::printConfirmation('Email address verified: ' . $row['address']);

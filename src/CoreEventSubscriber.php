@@ -122,18 +122,18 @@ abstract class CoreEventSubscriber
     }
 
     /**
-     * Preserve/enforce "user" argument in actions across the user route
+     * Preserve/enforce "id" argument in actions across the users/profile route
      *
      * @param ActionMenu $menu
      * @return void
      */
-    public static function onActionMenu_user(ActionMenu $menu)
+    public static function onActionMenu_users_profile(ActionMenu $menu)
     {
         foreach ($menu->children() as $item) {
             if ($item instanceof MenuItem) {
                 $url = $item->url();
-                if ($url && $url->route() == 'user') {
-                    $url->arg('user', Context::arg('user') ?? Session::user());
+                if ($url && $url->route() == 'users/profile') {
+                    $url->arg('user', Context::arg('id') ?? Session::user());
                     $menu->removeChild($item);
                     $new = $menu->addURL($url, $item->label());
                     foreach ($item->classes() as $class) {
@@ -363,30 +363,27 @@ abstract class CoreEventSubscriber
     }
 
     /**
-     * Limits access to ~user route to signed-in users only, unless user is 
-     * specified in an arg, in which case it limits to that user or admins
-     *
      * @param URL $url
      * @param User $user
      * @return boolean|null
      */
-    public static function onStaticUrlPermissions_user(URL $url, User $user): ?bool
+    public static function onStaticUrlPermissions_users(URL $url, User $user): ?bool
     {
         // disable authentication log if php sessions are being used
-        if (Config::get('php_session.enabled') && $url->path() == '/~user/authentication_log.html') {
+        if (Config::get('php_session.enabled') && $url->path() == '/~users/profile/authentication_log.html') {
             return false;
         }
         // if user is specified limit routes for the user being viewed/edited and admins
-        if ($url->arg('user')) {
+        if ($url->arg('id')) {
             if ($url->action() == 'index') {
                 // viewing profiles set to users__view
                 return
-                    $url->arg('user') == $user->uuid()
+                    $url->arg('id') == $user->uuid()
                     || Permissions::inMetaGroup('users__view', $user);
             } else {
                 // everything else limited to users__admin
                 return
-                    $url->arg('user') == $user->uuid()
+                    $url->arg('id') == $user->uuid()
                     || Permissions::inMetaGroup('users__admin', $user);
             }
         }
@@ -409,32 +406,22 @@ abstract class CoreEventSubscriber
     }
 
     /**
-     * Assign user profile page as the parent URL of user management pages
-     *
-     * @param URL $url
-     * @return URL|null
-     */
-    public static function onStaticUrlParent_user(URL $url): ?URL
-    {
-        if ($url->action() == 'index') {
-            return new URL('/~users/');
-        } elseif ($url->arg('user') && $user = Users::get($url->arg('user'))) {
-            return $user->profile();
-        }
-        return null;
-    }
-
-    /**
      * Set URL name of user profiles
      *
      * @param URL $url
      * @return string|null
      */
-    public static function onStaticUrlName_user(URL $url): ?string
+    public static function onStaticUrlName_users_profile(URL $url): ?string
     {
         if ($url->action() == 'index') {
-            if ($url->arg('user') && $user = Users::get($url->arg('user'))) {
-                return $user->name();
+            if ($url->arg('id') && $user = Users::get($url->arg('id'))) {
+                $user = $user;
+            } elseif (!$url->arg('id')) {
+                $user = Users::current() ?? Users::guest();
+            }
+            if ($user) {
+                if ($user == Users::current()) return 'My profile';
+                else return $user->name();
             }
         }
         return null;

@@ -32,11 +32,11 @@ class NullUser extends User
         return $a->__toString();
     }
 
-    public function profile(): URL
+    public function profile(): ?URL
     {
         if ($this->uuid() == 'system') return parent::profile();
         elseif ($this->uuid() == 'guest') return parent::profile();
-        else return new URL('/~users/_' . $this->uuid() . '.html');
+        else return null;
     }
 
     public function insert()
