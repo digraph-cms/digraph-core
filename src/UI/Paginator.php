@@ -12,7 +12,7 @@ class Paginator extends ConditionalContainer
     protected static $counter = 0;
     protected $myID, $count, $perPage, $groupPages, $breadcrumbUpdated, $pages;
 
-    public function __construct(?int $itemCount, int $perPage = 25, int $groupPages = 10)
+    public function __construct(?int $itemCount, int $perPage = 10, int $groupPages = 10)
     {
         $this->myID = self::$counter++;
         $this->count = $itemCount;

@@ -67,35 +67,20 @@ document.addEventListener('click', (e) => {
     // parent and target found
     if (parent && event_target && !event_target.attributes.target && target != '_top') {
         // scroll to parent if requested
-        var scroll = event_target.dataset.navigationFrameScroll ?? parent.dataset.navigationFrameScroll;
         if (scroll) {
             switch (scroll) {
                 case 'top':
-                    scroll = 'start';
-                    break;
-                case 'start':
-                    scroll = 'start';
+                    Digraph.scrollIntoView(parent, 'top');
                     break;
                 case 'bottom':
-                    scroll = 'end';
-                    break;
-                case 'end':
-                    scroll = 'end';
+                    Digraph.scrollIntoView(parent, 'bottom');
                     break;
                 case 'center':
-                    scroll = 'center';
-                    break;
-                case 'nearest':
-                    scroll = 'nearest';
+                    Digraph.scrollIntoView(parent, 'center');
                     break;
                 default:
-                    scroll = 'top';
+                    Digraph.scrollIntoView(parent, 'top');
             }
-            parent.scrollIntoView({
-                behavior: "smooth",
-                inline: "nearest",
-                block: scroll
-            });
         }
         // do navigation
         if (Digraph.state.frameIsStateless(parent)) {
