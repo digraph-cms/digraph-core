@@ -6,7 +6,7 @@ use DigraphCMS\HTML\DIV;
 use DigraphCMS\HTML\TABLE;
 use DigraphCMS\HTML\Tag;
 
-class PaginatedTable extends PaginatedList
+class PaginatedTable extends PaginatedSection
 {
     protected $headers;
     protected $tag = 'div';
@@ -32,7 +32,7 @@ class PaginatedTable extends PaginatedList
     {
         if (!$this->body) {
             $items = $this->items();
-            if (!$items) return $this->body = (new DIV)->addClass('notification notification--notice')->addChild('Nothing to display');
+            if (!$items) return $this->body = (new DIV)->addClass('notification notification--notice')->addChild('Table is empty');
             $this->body = new TABLE;
             $this->body->addClass('paginated-section__body');
             if ($this->headers) {
