@@ -1,20 +1,41 @@
 <?php
 
-namespace DigraphCMS\UI\DataTables;
+namespace DigraphCMS\Spreadsheets;
 
-use DigraphCMS\UI\DataTables\CellWriters\AbstractCellWriter;
+use DigraphCMS\Spreadsheets\CellWriters\AbstractCellWriter;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 
-class DownloadWriter
+class SpreadsheetWriter
 {
     protected $spreadsheet;
+    protected $headers = false;
     protected $freezeColumns = 0;
 
-    public function __construct(Spreadsheet $spreadsheet)
+    public function __construct()
     {
-        $this->spreadsheet = $spreadsheet;
+        $this->spreadsheet = new Spreadsheet;
+    }
+
+    public function spreadsheet(): Spreadsheet
+    {
+        // set autosized widths by default
+        foreach ($this->spreadsheet->getActiveSheet()->getColumnIterator() as $column) {
+            $dimension = $this->spreadsheet->getActiveSheet()->getColumnDimension($column->getColumnIndex());
+            $dimension->setAutoSize(true);
+        }
+        // wrap up formatting stuff
+        $this->spreadsheet->setActiveSheetIndex(0);
+        $this->spreadsheet->getActiveSheet()->setAutoFilter(
+            $this->spreadsheet->getActiveSheet()->calculateWorksheetDimension()
+        );
+        // freeze rows/columns
+        if ($this->headers) $this->spreadsheet->getActiveSheet()->freezePane(Coordinate::stringFromColumnIndex($this->freezeColumns() + 1) . '2');
+        else $this->spreadsheet->getActiveSheet()->freezePane(Coordinate::stringFromColumnIndex($this->freezeColumns() + 1) . '1');
+        // return
+        return $this->spreadsheet;
     }
 
     public function freezeColumns(): int
@@ -36,6 +57,7 @@ class DownloadWriter
 
     public function writeHeaders(array $cells)
     {
+        $this->headers = true;
         $this->spreadsheet->setActiveSheetIndex(0);
         $row = 1;
         foreach (array_values($cells) as $i => $cell) {

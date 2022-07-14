@@ -5,13 +5,13 @@ use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\Session\Session;
-use DigraphCMS\UI\DataTables\CellWriters\DateTimeCell;
-use DigraphCMS\UI\DataTables\CellWriters\LongTextCell;
-use DigraphCMS\UI\DataTables\CellWriters\UserCell;
-use DigraphCMS\UI\DataTables\ColumnHeader;
-use DigraphCMS\UI\DataTables\QueryColumnHeader;
-use DigraphCMS\UI\DataTables\QueryTable;
+use DigraphCMS\Spreadsheets\CellWriters\DateTimeCell;
+use DigraphCMS\Spreadsheets\CellWriters\LongTextCell;
+use DigraphCMS\Spreadsheets\CellWriters\UserCell;
 use DigraphCMS\UI\Format;
+use DigraphCMS\UI\Pagination\ColumnHeader;
+use DigraphCMS\UI\Pagination\ColumnSortingHeader;
+use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\Users\Users;
 use donatj\UserAgent\UserAgentParser;
 
@@ -28,7 +28,7 @@ $query = DB::query()
     ->order('session.created desc');
 
 $parser = new UserAgentParser();
-$table = new QueryTable(
+$table = new PaginatedTable(
     $query,
     function (array $row) use ($parser) {
         return [
@@ -42,18 +42,18 @@ $table = new QueryTable(
         ];
     },
     [
-        new QueryColumnHeader('Date', 'session.created', $query),
+        new ColumnSortingHeader('Date', 'session.created', $query),
         new ColumnHeader('Comment'),
         new ColumnHeader('IP'),
         new ColumnHeader('User agent'),
-        new QueryColumnHeader('Expiration', 'session.expires', $query),
-        new QueryColumnHeader('Deauthorized', 'session_expiration.date', $query),
+        new ColumnSortingHeader('Expiration', 'session.expires', $query),
+        new ColumnSortingHeader('Deauthorized', 'session_expiration.date', $query),
         new ColumnHeader('Deauthorization reason'),
     ]
 );
 $table->paginator()->perPage(10);
 
-$table->enableDownload(
+$table->download(
     'authentication log',
     function (array $row) use ($user) {
         return [

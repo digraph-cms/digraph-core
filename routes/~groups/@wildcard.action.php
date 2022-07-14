@@ -3,7 +3,7 @@
 use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
 use DigraphCMS\HTTP\HttpError;
-use DigraphCMS\UI\DataTables\UserTable;
+use DigraphCMS\UI\Pagination\UserTable;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
 use DigraphCMS\Users\UserSelect;

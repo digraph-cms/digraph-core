@@ -8,10 +8,10 @@ use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\Session\Session;
 use DigraphCMS\UI\CallbackLink;
-use DigraphCMS\UI\DataTables\ArrayTable;
-use DigraphCMS\UI\DataTables\ColumnHeader;
 use DigraphCMS\UI\Format;
 use DigraphCMS\UI\Notifications;
+use DigraphCMS\UI\Pagination\ColumnHeader;
+use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\UI\Toolbars\ToolbarLink;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
@@ -23,9 +23,10 @@ echo "<h1>Manage email addresses</h1>";
 
 echo "<div class='navigation-frame navigation-frame--stateless' id='email-management-frame' data-target='frame'>";
 
-echo new ArrayTable(
-    $user['emails'] ?? [],
-    function (int $i, array $row) use ($user): array {
+echo new PaginatedTable(
+    array_reverse($user['emails'] ?? []),
+    function (int $i) use ($user): array {
+        $row = $user['emails'][$i];
         return [
             $row['address']
                 . ($row['comment'] ? '<div><small>' . $row['comment'] . '</small></div>' : ''),
@@ -86,7 +87,7 @@ function statusCell(User $user, int $i, array $row)
         }
     } elseif (@$row['primary']) {
         $out .= "<div class='text-cue--safe'>Primary, Verified</div>";
-    }else {
+    } else {
         $out .= "<div class='text-cue--safe'>Verified</div>";
     }
     return $out;

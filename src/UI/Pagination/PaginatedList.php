@@ -3,13 +3,22 @@
 namespace DigraphCMS\UI\Pagination;
 
 use Countable;
+use DigraphCMS\Context;
+use DigraphCMS\DB\AbstractMappedSelect;
 use DigraphCMS\Events\Dispatcher;
+use DigraphCMS\FS;
 use DigraphCMS\HTML\ConditionalContainer;
 use DigraphCMS\HTML\DIV;
 use DigraphCMS\HTML\Tag;
-use DigraphCMS\UI\Notifications;
+use DigraphCMS\Media\DeferredFile;
+use DigraphCMS\Media\File;
+use DigraphCMS\Spreadsheets\SpreadsheetWriter;
 use DigraphCMS\UI\Paginator;
+use DigraphCMS\URL\URL;
+use Envms\FluentPDO\Queries\Select;
 use Iterator;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 
 class PaginatedList extends Tag
 {
@@ -21,10 +30,11 @@ class PaginatedList extends Tag
     protected $body, $top, $bottom, $before, $after;
     protected $items;
     protected $callback;
+    protected $dl_filename, $dl_callback, $dl_headers, $dl_finalize_callback;
 
     /**
      * @param mixed $source
-     * @param callable $callback
+     * @param callable|null $callback
      */
     public function __construct($source, ?callable $callback)
     {
@@ -68,8 +78,11 @@ class PaginatedList extends Tag
     protected function items(): array
     {
         if ($this->items === null) {
-            // Use DB offset/limit if available
-            if (method_exists($this->source, 'offset') && method_exists($this->source, 'limit') && method_exists($this->source, 'fetchAll')) {
+            if (
+                $this->source instanceof Select
+                || $this->source instanceof AbstractMappedSelect
+                || (is_object($this->source) && method_exists($this->source, 'offset') && method_exists($this->source, 'limit') && method_exists($this->source, 'fetchAll'))
+            ) {
                 $source = clone $this->source;
                 $source->offset($this->paginator()->startItem());
                 $source->limit($this->paginator()->perPage());
@@ -118,9 +131,15 @@ class PaginatedList extends Tag
     {
         if (!$this->before) {
             $this->before = new ConditionalContainer;
+            // add paginator
             $this->before->addClass('paginated-section__before');
             $this->before->addChild($this->paginator());
+            // add spacer to keep everything after paginator right
             $this->before->addChild('<span class="paginated-section__spacer"></span>');
+            // add download if necessary
+            if ($this->dl_filename && $this->paginator()->count() > 0) {
+                $this->before->addChild($this->downloadTool());
+            }
         }
         return $this->before;
     }
@@ -128,10 +147,12 @@ class PaginatedList extends Tag
     public function after(): ConditionalContainer
     {
         if (!$this->after) {
+            // add paginator
             $this->after = new ConditionalContainer;
             $this->after->addClass('paginated-section__after');
             $this->after->addChild($this->paginator());
-            $this->before->addChild('<span class="paginated-section__spacer"></span>');
+            // add spacer to keep everything after paginator right
+            $this->after->addChild('<span class="paginated-section__spacer"></span>');
         }
         return $this->after;
     }
@@ -157,14 +178,91 @@ class PaginatedList extends Tag
     public function body(): Tag
     {
         if (!$this->body) {
+            $items = $this->items();
+            if (!$items) return $this->body = (new DIV)->addClass('notification notification--notice')->addChild('Nothing to display');
             $this->body = new DIV;
             $this->body->addClass('paginated-section__body');
-            $items = $this->items();
-            if (!$items) Notifications::printNotice('Nothing to display');
             foreach ($items as $item) {
                 $this->body->addChild($item);
             }
         }
         return $this->body;
+    }
+
+    public function downloadTool(): string
+    {
+        $out = "<div class='paginated-section__download navigation-frame navigation-frame--stateless' id='" . $this->id() . "__download'>";
+        $arg = 'dl_' . md5($this->id());
+        if (Context::arg($arg) == 'true') {
+            // prepare download and display link to it
+            $file = $this->downloadFile();
+            $out .= sprintf(
+                '<div class="notification notification--confirmation">Ready: <a href="%s" target="_top">%s</a></div>',
+                $file->url(),
+                $file->filename()
+            );
+        } else {
+            // link to initialize
+            $out .= sprintf(
+                '<a href="%s" class="button">Download</a>',
+                new URL('&' . $arg . '=true')
+            );
+        }
+        $out .= "</div>";
+        return $out;
+    }
+
+    /**
+     * @param string $filename
+     * @param callable $callback
+     * @param array $headers
+     * @param callable|null $finalizeCallback
+     * @return $this
+     */
+    public function download(string $filename, callable $callback, array $headers = [], callable $finalizeCallback = null)
+    {
+        $this->dl_filename = $filename;
+        $this->dl_callback = $callback;
+        $this->dl_headers = $headers;
+        $this->dl_finalize_callback = $finalizeCallback;
+        return $this;
+    }
+
+    protected function downloadFile(): File
+    {
+        return new DeferredFile(
+            $this->dl_filename . '.xlsx',
+            function (DeferredFile $file) {
+                FS::touch($file->path());
+                $writer = new SpreadsheetWriter();
+                // write headers
+                if ($this->dl_headers) $writer->writeHeaders($this->dl_headers);
+                // loop through source and run callback to get cells
+                foreach ($this->source as $item) {
+                    $writer->writeRow($this->runDlCallback($item));
+                }
+                // run finalization callback
+                if ($this->dl_finalize_callback) call_user_func($this->dl_finalize_callback, $writer);
+                // save file
+                (new Xlsx($writer->spreadsheet()))
+                    ->save($file->path() . '.tmp');
+                FS::copy($file->path() . '.tmp', $file->path());
+                unlink($file->path() . '.tmp');
+            },
+            [get_called_class(), $this->downloadFileID()]
+        );
+    }
+
+    protected function runDlCallback($item): array
+    {
+        return call_user_func($this->dl_callback, $item);
+    }
+
+    protected function downloadFileID(): string
+    {
+        return md5(serialize([
+            Context::url()->path(),
+            $this->id()
+        ]));
     }
 }

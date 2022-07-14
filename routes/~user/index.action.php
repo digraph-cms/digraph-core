@@ -4,8 +4,8 @@ use DigraphCMS\Content\Pages;
 use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
 use DigraphCMS\HTTP\HttpError;
-use DigraphCMS\UI\DataTables\PageTable;
 use DigraphCMS\UI\Format;
+use DigraphCMS\UI\Pagination\PageTable;
 use DigraphCMS\Users\Group;
 use DigraphCMS\Users\Users;
 

@@ -8,11 +8,11 @@
 <?php
 
 use DigraphCMS\DB\DB;
-use DigraphCMS\UI\DataTables\CellWriters\DateTimeCell;
-use DigraphCMS\UI\DataTables\CellWriters\LinkCell;
-use DigraphCMS\UI\DataTables\ColumnHeader;
-use DigraphCMS\UI\DataTables\QueryTable;
+use DigraphCMS\Spreadsheets\CellWriters\DateTimeCell;
+use DigraphCMS\Spreadsheets\CellWriters\LinkCell;
 use DigraphCMS\UI\Format;
+use DigraphCMS\UI\Pagination\ColumnHeader;
+use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\URL\URL;
 
 $recent = DB::query()->from('defex')
@@ -30,7 +30,7 @@ $errors = DB::query()->from('defex')
 
 if ($errors->count()) {
     echo "<h2>Errors</h2>";
-    $table = new QueryTable(
+    $table = new PaginatedTable(
         $errors,
         function (array $row): array {
             return [
@@ -76,7 +76,7 @@ if ($errors->count()) {
 }
 
 echo "<h2>Recently run</h2>";
-$table = new QueryTable(
+$table = new PaginatedTable(
     $recent,
     function (array $row): array {
         return [
@@ -101,7 +101,7 @@ $table = new QueryTable(
         new ColumnHeader('Message')
     ]
 );
-$table->enableDownload(
+$table->download(
     'recent deferred execution jobs',
     function (array $row) {
         return [
@@ -121,7 +121,7 @@ $table->enableDownload(
 echo $table;
 
 echo "<h2>Upcoming runs</h2>";
-$table = new QueryTable(
+$table = new PaginatedTable(
     $upcoming,
     function (array $row): array {
         return [
@@ -142,7 +142,7 @@ $table = new QueryTable(
         new ColumnHeader('Group')
     ]
 );
-$table->enableDownload(
+$table->download(
     'upcoming deferred execution jobs',
     function (array $row) {
         return [

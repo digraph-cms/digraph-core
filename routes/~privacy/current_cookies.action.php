@@ -14,12 +14,12 @@ Context::response()->private(true);
 
 use DigraphCMS\Session\Cookies;
 use DigraphCMS\UI\ButtonMenus\SingleButton;
-use DigraphCMS\UI\DataTables\ArrayTable;
-use DigraphCMS\UI\DataTables\ColumnHeader;
+use DigraphCMS\UI\Pagination\ColumnHeader;
+use DigraphCMS\UI\Pagination\PaginatedTable;
 
-$table = new ArrayTable(
-    $_COOKIE,
-    function (string $key, string $item) {
+$table = new PaginatedTable(
+    array_reverse($_COOKIE),
+    function (string $key) {
         if ($value = json_decode($_COOKIE[$key], true)) {
             $value = json_encode($value, JSON_PRETTY_PRINT);
         } else {

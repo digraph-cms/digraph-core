@@ -5,9 +5,9 @@ use DigraphCMS\Cron\Deferred;
 use DigraphCMS\Cron\DeferredProgressBar;
 use DigraphCMS\DB\DB;
 use DigraphCMS\HTTP\HttpError;
-use DigraphCMS\UI\DataTables\ColumnHeader;
-use DigraphCMS\UI\DataTables\QueryTable;
 use DigraphCMS\UI\Format;
+use DigraphCMS\UI\Pagination\ColumnHeader;
+use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\URL\URL;
 
 $group = Context::arg('id');
@@ -68,7 +68,7 @@ if ($first && $last && $last['run']) {
     );
 }
 
-echo new QueryTable(
+echo new PaginatedTable(
     $jobs,
     function (array $row): array {
         return [

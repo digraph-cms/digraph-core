@@ -1,6 +1,6 @@
 <?php
 
-namespace DigraphCMS\UI\DataTables\CellWriters;
+namespace DigraphCMS\Spreadsheets\CellWriters;
 
 use DigraphCMS\Content\Page;
 use PhpOffice\PhpSpreadsheet\Cell\Cell;

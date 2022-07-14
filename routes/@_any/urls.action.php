@@ -7,16 +7,16 @@ use DigraphCMS\HTML\Forms\Fields\CheckboxField;
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\UI\ButtonMenus\SingleButton;
-use DigraphCMS\UI\DataTables\ArrayTable;
-use DigraphCMS\UI\DataTables\ColumnHeader;
 use DigraphCMS\UI\Notifications;
+use DigraphCMS\UI\Pagination\ColumnHeader;
+use DigraphCMS\UI\Pagination\PaginatedTable;
 
 echo '<div class="navigation-frame" id="page-urls-form">';
 
 // display table
-$table = new ArrayTable(
+$table = new PaginatedTable(
     Slugs::list(Context::page()->uuid()),
-    function (int $i, string $slug) {
+    function (string $slug) {
         $button = new SingleButton(
             'Remove',
             function () use ($slug) {

@@ -9,10 +9,10 @@ use DigraphCMS\HTML\Forms\Fields\Autocomplete\PageField;
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\UI\ButtonMenus\SingleButton;
-use DigraphCMS\UI\DataTables\ColumnHeader;
-use DigraphCMS\UI\DataTables\QueryColumnHeader;
-use DigraphCMS\UI\DataTables\QueryTable;
 use DigraphCMS\UI\Notifications;
+use DigraphCMS\UI\Pagination\ColumnHeader;
+use DigraphCMS\UI\Pagination\ColumnSortingHeader;
+use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\UI\TabInterface;
 
 $tabs = new TabInterface();
@@ -28,7 +28,7 @@ $fn = function () use ($tabs) {
     } else {
         $query = Graph::parentIDs(Context::page()->uuid())->order('page_link.id desc');
     }
-    $table = new QueryTable(
+    $table = new PaginatedTable(
         $query,
         function (array $row) use ($mode) {
             $page = ($mode == 'children' ? Pages::get($row['end_page']) : Pages::get($row['start_page']));
@@ -50,7 +50,7 @@ $fn = function () use ($tabs) {
         },
         [
             new ColumnHeader($mode == 'children' ? 'Child' : 'Parent'),
-            new QueryColumnHeader('Type', 'page_link.type', $query),
+            new ColumnSortingHeader('Type', 'page_link.type', $query),
             new ColumnHeader('Remove link')
         ]
     );
