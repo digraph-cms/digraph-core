@@ -13,7 +13,6 @@ use DigraphCMS\HTML\Tag;
 use DigraphCMS\Media\DeferredFile;
 use DigraphCMS\Media\File;
 use DigraphCMS\Spreadsheets\SpreadsheetWriter;
-use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\Paginator;
 use DigraphCMS\URL\URL;
 use Envms\FluentPDO\Queries\Select;
@@ -243,7 +242,7 @@ class PaginatedList extends Tag
                     $writer->writeRow($this->runDlCallback($item));
                 }
                 // run finalization callback
-                if ($this->finalizeCallback) call_user_func($this->finalizeCallback, $writer);
+                if ($this->dl_finalize_callback) call_user_func($this->dl_finalize_callback, $writer);
                 // save file
                 (new Xlsx($writer->spreadsheet()))
                     ->save($file->path() . '.tmp');

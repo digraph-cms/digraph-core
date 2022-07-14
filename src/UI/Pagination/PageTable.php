@@ -3,10 +3,11 @@
 namespace DigraphCMS\UI\Pagination;
 
 use DigraphCMS\Content\AbstractPage;
+use DigraphCMS\Content\PageSelect;
 
 class PageTable extends PaginatedTable
 {
-    public function __construct($select)
+    public function __construct(PageSelect $select)
     {
         parent::__construct(
             $select,

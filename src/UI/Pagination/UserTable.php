@@ -3,10 +3,11 @@
 namespace DigraphCMS\UI\Pagination;
 
 use DigraphCMS\Users\User;
+use DigraphCMS\Users\UserSelect;
 
 class UserTable extends PaginatedTable
 {
-    public function __construct($select)
+    public function __construct(UserSelect $select)
     {
         parent::__construct(
             $select,
@@ -18,8 +19,8 @@ class UserTable extends PaginatedTable
                 ];
             },
             [
-                new QueryColumnHeader('User', 'name', $select),
-                new QueryColumnHeader('Registered', 'created', $select),
+                new ColumnSortingHeader('User', 'name', $select),
+                new ColumnSortingHeader('Registered', 'created', $select),
                 new ColumnHeader('Groups')
             ]
         );
