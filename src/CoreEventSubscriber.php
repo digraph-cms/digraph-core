@@ -133,7 +133,7 @@ abstract class CoreEventSubscriber
             if ($item instanceof MenuItem) {
                 $url = $item->url();
                 if ($url && $url->route() == 'users/profile') {
-                    $url->arg('user', Context::arg('id') ?? Session::user());
+                    $url->arg('id', Context::arg('id') ?? Session::user());
                     $menu->removeChild($item);
                     $new = $menu->addURL($url, $item->label());
                     foreach ($item->classes() as $class) {
@@ -373,22 +373,22 @@ abstract class CoreEventSubscriber
         if (Config::get('php_session.enabled') && $url->path() == '/~users/profile/authentication_log.html') {
             return false;
         }
+        // limit list to users__view
+        if ($url->route() == 'users') return Permissions::inMetaGroup('users__view', $user);
         // if user is specified limit routes for the user being viewed/edited and admins
-        if ($url->arg('id')) {
+        if ($url->route() == 'users/profile' && $url->arg('id')) {
             if ($url->action() == 'index') {
                 // viewing profiles set to users__view
-                return
-                    $url->arg('id') == $user->uuid()
+                return ($url->arg('id') == $user->uuid() && $user->uuid() != 'guest')
                     || Permissions::inMetaGroup('users__view', $user);
             } else {
                 // everything else limited to users__admin
-                return
-                    $url->arg('id') == $user->uuid()
+                return ($url->arg('id') == $user->uuid() && $user->uuid() != 'guest')
                     || Permissions::inMetaGroup('users__admin', $user);
             }
         }
         // otherwise return whether this is a user
-        return Permissions::inGroup('users');
+        return Permissions::inGroup('users', $user);
     }
 
     /**
@@ -419,24 +419,24 @@ abstract class CoreEventSubscriber
             } elseif (!$url->arg('id')) {
                 $user = Users::current() ?? Users::guest();
             }
-            if ($user) {
-                if ($user == Users::current()) return 'My profile';
-                else return $user->name();
-            }
+            if ($user == Users::current()) return "My profile";
+            else return $user->name();
         }
         return null;
     }
 
     /**
-     * Limits access to ~groups route to user editors
+     * Set URL parent of user profile pages
      *
      * @param URL $url
-     * @param User $user
-     * @return boolean|null
+     * @return string|null
      */
-    public static function onStaticUrlPermissions_groups(URL $url, User $user): ?bool
+    public static function onStaticUrlParent_users_profile(URL $url): ?URL
     {
-        return Permissions::inMetaGroup('users__edit');
+        if ($url->action() != 'index' && $url->arg('id')) {
+            return new URL('/~users/profile/?id=' . $url->arg('id'));
+        }
+        return null;
     }
 
     /**

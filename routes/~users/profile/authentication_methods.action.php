@@ -16,7 +16,7 @@ use DigraphCMS\UI\Pagination\ColumnSortingHeader;
 use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\Users\Users;
 
-$user = Users::get(Context::arg('user') ?? Session::user());
+$user = Users::get(Context::arg('id') ?? Session::user());
 if (!$user) {
     throw new HttpError(404, "User not found");
 }
