@@ -198,7 +198,7 @@ class PaginatedSection extends Tag
             // prepare download and display link to it
             $file = $this->downloadFile();
             $out .= sprintf(
-                '<div class="notification notification--confirmation"><a href="%s" target="_top" download="%s" id="%s">%s</a></div>',
+                '<a href="%s" class="button" target="_top" download="%s" id="%s">%s</a>',
                 $file->url(),
                 $file->filename(),
                 $arg,

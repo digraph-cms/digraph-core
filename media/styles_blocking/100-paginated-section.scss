@@ -29,21 +29,13 @@
 .paginated-section__download {
   min-height: 0 !important;
 
-  .button,
-  .notification {
+  .button {
     background-color: #1d6f42 !important;
     color: #fff !important;
-  }
 
-  .button,
-  .notification a {
     &:after {
       @include icofont;
       content: '\eb10';
-      display: inline-block;
-      font-size: 1.5em;
-      vertical-align: middle;
-      margin-left: $grid/2;
     }
   }
 }
