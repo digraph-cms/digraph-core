@@ -10,6 +10,7 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 class SpreadsheetWriter
 {
+    protected $spreadsheet;
     protected $headers = false;
     protected $freezeColumns = 0;
 
