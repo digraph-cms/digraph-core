@@ -11,20 +11,20 @@ use Throwable;
 
 class SpreadsheetJob extends DeferredJob
 {
-    public function __construct(string $srcFile, callable $rowFn = null, string $ext = null, string $group = null)
+    public function __construct(string $srcFile, callable $rowFn = null, string $ext = null, string $group = null, callable $setupFn = null, callable $teardownFn = null)
     {
         $group = $group ?? parent::uuid();
         $ext = strtolower($ext ?? pathinfo($srcFile, PATHINFO_EXTENSION) ?? '.xlsx');
         $cacheFile = Config::get('cache.path') . '/spreadsheet_jobs/' . $group . '.' . $ext;
         FS::touch($cacheFile);
         FS::copy($srcFile, $cacheFile, false, true);
-        $function = function (DeferredJob $job) use ($cacheFile, $rowFn) {
-            return static::prepareJobs($job, $cacheFile, $rowFn);
+        $function = function (DeferredJob $job) use ($cacheFile, $rowFn, $setupFn, $teardownFn) {
+            return static::prepareJobs($job, $cacheFile, $rowFn, $setupFn, $teardownFn);
         };
         parent::__construct($function, $group);
     }
 
-    public static function prepareJobs(DeferredJob $job, string $file, callable $rowFn): string
+    public static function prepareJobs(DeferredJob $job, string $file, callable $rowFn, ?callable $setupFn, ?callable $teardownFn): string
     {
         try {
             DB::beginTransaction();
@@ -32,25 +32,31 @@ class SpreadsheetJob extends DeferredJob
             $reader = IOFactory::createReaderForFile($file);
             $reader->setReadDataOnly(true);
             $spreadsheet = $reader->load($file);
-            $data = $spreadsheet->getActiveSheet()->toArray(null,true,true,true);
-                $header = null;
-                foreach ($data as $rowNum => $row) {
-                    // set up headers
-                    if (!$header) {
-                        foreach ($row->getCells() as $cell) {
-                            $header[] = $cell->getValue();
-                        }
-                        continue;
-                    }
-                    // set up deferred job
-                    $job->spawn(function () use ($rowFn, $row, $rowNum, $filename) {
-                        return $rowFn($row, $rowNum) ?? "Processed $filename row $rowNum";
+            $data = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
+            $header = false;
+            foreach ($data as $rowNum => $row) {
+                // first row is headers
+                if (!$header) {
+                    $header = true;
+                    // set up setupFn if applicable
+                    if ($setupFn) $job->spawn(function () use ($setupFn, $file) {
+                        return $setupFn($file) ?? "Ran setup function";
                     });
+                    continue;
                 }
+                // set up deferred job
+                $job->spawn(function () use ($rowFn, $row, $rowNum, $filename) {
+                    return $rowFn($row, $rowNum) ?? "Processed $filename row $rowNum";
+                });
+            }
             // final job to clean up file
             $job->spawn(function () use ($file) {
                 if (unlink($file)) return "Deleted temp file $file";
                 else return "Failed to delete temp file $file";
+            });
+            // set up teardownFn if applicable
+            if ($teardownFn) $job->spawn(function () use ($teardownFn, $file) {
+                return $teardownFn($file) ?? "Ran teardown function";
             });
             DB::commit();
             return "Set up spreadsheet processing jobs";
