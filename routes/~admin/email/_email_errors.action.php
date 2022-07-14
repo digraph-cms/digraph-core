@@ -3,12 +3,12 @@
 
 use DigraphCMS\Email\Email;
 use DigraphCMS\Email\Emails;
-use DigraphCMS\UI\DataTables\ColumnHeader;
-use DigraphCMS\UI\DataTables\QueryTable;
 use DigraphCMS\UI\Format;
+use DigraphCMS\UI\Pagination\ColumnHeader;
+use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\URL\URL;
 
-echo new QueryTable(
+echo new PaginatedTable(
     Emails::select()
         ->where('error is not null')
         ->order('time desc'),

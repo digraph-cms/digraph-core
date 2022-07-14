@@ -5,8 +5,8 @@ use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\Search\Search;
 use DigraphCMS\Search\SearchForm;
 use DigraphCMS\Search\SearchResult;
-use DigraphCMS\UI\DataTables\QueryTable;
 use DigraphCMS\UI\Notifications;
+use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\URL\URL;
 
 $form = new SearchForm(true);
@@ -32,7 +32,7 @@ if ($highlighted) {
 
 $query = Search::query($form->query(), $form->queryMode());
 
-$table = new QueryTable(
+$table = new PaginatedTable(
     $query,
     function (SearchResult $result): array {
         return [

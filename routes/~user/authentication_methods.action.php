@@ -9,11 +9,11 @@ use DigraphCMS\DB\DB;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\Session\Session;
 use DigraphCMS\UI\ButtonMenus\SingleButton;
-use DigraphCMS\UI\DataTables\ColumnHeader;
-use DigraphCMS\UI\DataTables\QueryColumnHeader;
-use DigraphCMS\UI\DataTables\QueryTable;
 use DigraphCMS\UI\Format;
 use DigraphCMS\UI\Notifications;
+use DigraphCMS\UI\Pagination\ColumnHeader;
+use DigraphCMS\UI\Pagination\ColumnSortingHeader;
+use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\Users\Users;
 
 $user = Users::get(Context::arg('user') ?? Session::user());
@@ -29,14 +29,14 @@ $query = DB::query()
 $headers = [
     new ColumnHeader('Provider'),
     new ColumnHeader('ID'),
-    new QueryColumnHeader('Added', 'created', $query)
+    new ColumnSortingHeader('Added', 'created', $query)
 ];
 $count = $query->count();
 if ($count > 1) {
     $headers[] = new ColumnHeader('');
 }
 
-$table = new QueryTable(
+$table = new PaginatedTable(
     $query,
     function ($row) use ($count) {
         $source = Users::source($row['source']);

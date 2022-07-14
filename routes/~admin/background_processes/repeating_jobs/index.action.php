@@ -8,9 +8,9 @@
 <?php
 
 use DigraphCMS\DB\DB;
-use DigraphCMS\UI\DataTables\ColumnHeader;
-use DigraphCMS\UI\DataTables\QueryTable;
 use DigraphCMS\UI\Format;
+use DigraphCMS\UI\Pagination\ColumnHeader;
+use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\UI\Toolbars\ToolbarLink;
 use DigraphCMS\URL\URL;
 
@@ -29,7 +29,7 @@ $errors = DB::query()->from('cron')
 
 if ($errors->count()) {
     echo "<h2>Errors</h2>";
-    echo new QueryTable(
+    echo new PaginatedTable(
         $errors,
         function (array $row): array {
             return [
@@ -66,7 +66,7 @@ if ($errors->count()) {
 }
 
 echo "<h2>Recently run</h2>";
-echo new QueryTable(
+echo new PaginatedTable(
     $recent,
     function (array $row): array {
         return [
@@ -89,7 +89,7 @@ echo new QueryTable(
 );
 
 echo "<h2>Upcoming runs</h2>";
-echo new QueryTable(
+echo new PaginatedTable(
     $upcoming,
     function (array $row): array {
         return [

@@ -1,6 +1,6 @@
 <?php
 
-namespace DigraphCMS\UI\DataTables\CellWriters;
+namespace DigraphCMS\Spreadsheets\CellWriters;
 
 use DateTime;
 use PhpOffice\PhpSpreadsheet\Cell\Cell;

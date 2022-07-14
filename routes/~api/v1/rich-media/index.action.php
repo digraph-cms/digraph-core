@@ -11,10 +11,9 @@ use DigraphCMS\RichMedia\RichMedia;
 use DigraphCMS\RichMedia\Types\AbstractRichMedia;
 use DigraphCMS\UI\ButtonMenus\ButtonMenu;
 use DigraphCMS\UI\ButtonMenus\ButtonMenuButton;
-use DigraphCMS\UI\DataTables\ArrayTable;
-use DigraphCMS\UI\DataTables\QueryColumnHeader;
-use DigraphCMS\UI\DataTables\QueryTable;
 use DigraphCMS\UI\Format;
+use DigraphCMS\UI\Pagination\ColumnSortingHeader;
+use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\UI\TabInterface;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Permissions;
@@ -121,7 +120,7 @@ if (Context::arg('uuid') && RichMedia::select(Context::arg('uuid'))->count()) {
     $tabs->addTab('page', 'Existing media', function () use ($acAdder) {
         $query = RichMedia::select(Context::arg('uuid'))
             ->order('updated DESC');
-        $table = new QueryTable(
+        $table = new PaginatedTable(
             $query,
             function (AbstractRichMedia $media) {
                 $name = $media->name();
@@ -138,8 +137,8 @@ if (Context::arg('uuid') && RichMedia::select(Context::arg('uuid'))->count()) {
                 ];
             },
             [
-                new QueryColumnHeader('Media', 'name', $query),
-                new QueryColumnHeader('Modified', 'updated', $query)
+                new ColumnSortingHeader('Media', 'name', $query),
+                new ColumnSortingHeader('Modified', 'updated', $query)
             ]
         );
         $table->paginator()->perPage(10);
@@ -150,7 +149,7 @@ if (Context::arg('uuid') && RichMedia::select(Context::arg('uuid'))->count()) {
 
 // media adding tab
 $tabs->addTab('add', 'Add media', function () use ($acAdder) {
-    $table = new ArrayTable(
+    $table = new PaginatedTable(
         Config::get('rich_media_types'),
         function ($name) {
             $class = Config::get('rich_media_types.' . $name);

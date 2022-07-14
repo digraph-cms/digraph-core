@@ -1,0 +1,31 @@
+.paginated-section {
+  margin: $grid 0;
+  align-items: center;
+}
+
+.paginated-section__before,
+.paginated-section__after,
+.paginated-section__top,
+.paginated-section__bottom {
+  display: flex;
+  margin: 0;
+
+  >*,
+  .paginator {
+    margin: 0;
+  }
+}
+
+.paginated-section__spacer {
+  flex-grow: 1;
+}
+
+.paginated-section__body {
+  margin: $grid/4 0;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.paginated-section__download {
+  min-height: 0 !important;
+}

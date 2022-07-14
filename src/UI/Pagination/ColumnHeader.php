@@ -1,6 +1,6 @@
 <?php
 
-namespace DigraphCMS\UI\DataTables;
+namespace DigraphCMS\UI\Pagination;
 
 use DigraphCMS\Context;
 use DigraphCMS\UI\Breadcrumb;
@@ -8,14 +8,13 @@ use DigraphCMS\UI\Breadcrumb;
 class ColumnHeader
 {
     protected static $id = 0;
-    protected $myID, $label, $sorter, $order, $header;
+    protected $myID, $label, $sorter, $order;
 
-    public function __construct(string $label, callable $sorter = null, bool $header = false)
+    public function __construct(string $label, callable $sorter = null)
     {
         $this->myID = self::$id++;
         $this->label = $label;
         $this->sorter = $sorter;
-        $this->header = $header;
         if ($this->sorter) {
             // is sortable
             $order = Context::url()->arg('_sortorder');
@@ -47,9 +46,6 @@ class ColumnHeader
         ];
         if ($this->order) {
             $classes[] = 'sorted-' . $this->order;
-        }
-        if ($this->header) {
-            $classes[] = 'header';
         }
         if ($this->sorter) {
             $classes[] = 'sortable';
@@ -128,3 +124,4 @@ class ColumnHeader
         return 'c' . $this->myID;
     }
 }
+

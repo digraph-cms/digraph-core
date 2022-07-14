@@ -5,7 +5,7 @@
 <?php
 
 use DigraphCMS\Content\Pages;
-use DigraphCMS\UI\DataTables\PageTable;
+use DigraphCMS\UI\Pagination\PageTable;
 
 echo new PageTable(
     Pages::select()

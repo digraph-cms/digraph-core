@@ -10,8 +10,8 @@ use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTML\Forms\INPUT;
 use DigraphCMS\HTML\Forms\SELECT;
 use DigraphCMS\HTTP\RefreshException;
-use DigraphCMS\UI\DataTables\QueryTable;
 use DigraphCMS\UI\Notifications;
+use DigraphCMS\UI\Pagination\PaginatedTable;
 
 if (Context::page()::ORDER_IGNORES_WEIGHT) {
     Notifications::printWarning("This page does not use the weight column displayed here to sort its child pages.");
@@ -22,7 +22,7 @@ if (!Context::page()::ORDER_USES_SORT_NAME) {
 }
 
 $query = Context::page()->children();
-$table = new QueryTable(
+$table = new PaginatedTable(
     $query,
     function (AbstractPage $page): array {
         // set up name form

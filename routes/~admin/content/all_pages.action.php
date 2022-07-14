@@ -2,7 +2,7 @@
 
 use DigraphCMS\Content\Pages;
 use DigraphCMS\Context;
-use DigraphCMS\UI\DataTables\PageTable;
+use DigraphCMS\UI\Pagination\PageTable;
 
 Context::response()->enableCache();
 

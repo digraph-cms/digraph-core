@@ -3,11 +3,11 @@
 
 use DigraphCMS\DB\DB;
 use DigraphCMS\Email\Emails;
-use DigraphCMS\UI\DataTables\ColumnHeader;
-use DigraphCMS\UI\DataTables\QueryTable;
 use DigraphCMS\UI\Format;
+use DigraphCMS\UI\Pagination\ColumnHeader;
+use DigraphCMS\UI\Pagination\PaginatedTable;
 
-echo new QueryTable(
+echo new PaginatedTable(
     DB::query()->from('email_unsubscribe')
         ->order('time desc'),
     function (array $row): array {
