@@ -172,14 +172,13 @@ class WaybackMachine
 
     public static function get(string $url): ?WaybackResult
     {
-        if (!static::active()) return null;
         static $cache = [];
+
+        if (!static::active()) return null;
         $url = static::normalizeURL($url);
 
         // return from memory cache if available
-        if (isset($cache[$url])) {
-            return $cache[$url];
-        }
+        if (isset($cache[$url])) return $cache[$url];
 
         // try to retrieve from database
         $query = DB::query()->from('wayback_machine')
@@ -187,40 +186,36 @@ class WaybackMachine
             ->order('wb_time desc')
             ->limit(1);
         if ($row = $query->fetch()) {
-            // cache null if wb_time is null, this means no result was found
-            if (!$row['wb_time']) {
-                $cache[$url] = null;
-            }
-            // otherwise cache a result object
-            else {
-                $cache[$url] = new WaybackResult(
+                $result = new WaybackResult(
                     $row['url'],
                     $row['wb_url'],
                     $row['wb_time'],
                     $row['created']
                 );
-            }
+                // memory cache null for expired (might still regenerate below)
+                if ($result->expired()) $cache[$url] = null;
+                // unexpired but empty results memory cache and immediately return null
+                elseif (!$result->wbTime()) return $cache[$url] = null;
+                // unexpired non-empty results memory cache and immediately return themselves
+                else return $cache[$url] = $result;
         }
 
         // we might have to actually hit the API now
 
-        // return immediately if we've made our maximum api calls for this page
-        if (static::$checksCount >= Config::get('wayback.max_api_calls')) {
-            return $cache[$url];
-        }
+        // cache null and return immediately if we've made our maximum api calls for this page
+        if (static::$checksCount >= Config::get('wayback.max_api_calls')) return $cache[$url] = null;
 
-        // return immediately if result is a WaybackResult and not expired
-        // if result is expired, we should make a fresh check to the API
-        if (@$cache[$url] instanceof WaybackResult && !$cache[$url]->expired()) {
-            return $cache[$url];
-        }
+        // use a lock to rate-limit each API call
+        if (!Locking::lock('wayback-api ' . $url, false, 3600)) return $cache[$url] = null;
 
-        // retrieve from API if not found in DB or expired
+        // build API request URL
         static::$checksCount++;
         $wb = sprintf(
             'http://archive.org/wayback/available?url=%s',
             urlencode($url)
         );
+
+        // make request with curl
         $ch = curl_init($wb);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $response = curl_exec($ch);
@@ -246,8 +241,6 @@ class WaybackMachine
                     null
                 );
             }
-            // begin transaction
-            DB::beginTransaction();
             // delete this result if it already exists in the database
             DB::query()->deleteFrom('wayback_machine')
                 ->where('uuid = ?', [$result->uuid()])
@@ -263,8 +256,6 @@ class WaybackMachine
                     'created' => $result->created()->getTimestamp(),
                 ]
             )->execute();
-            // commit transaction
-            DB::commit();
             // return return value
             return $cache[$url] = $return;
         } else {
