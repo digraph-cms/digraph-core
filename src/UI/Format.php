@@ -41,7 +41,7 @@ class Format
         $text,
         $length = 100,
         $ending = '...',
-        $exact = false,
+        $exact = false
     ) {
         // if the plain text is shorter than the maximum length, return the whole text
         if (strlen(preg_replace('/<.*?>/', '', $text)) <= $length) {
