@@ -27,7 +27,8 @@ $acAdder->setAttribute('placeholder', 'search to add media');
 // wrapper
 $wrapper = (new DIV())
     ->setID(Context::arg('frame'));
-$tabs = new TabInterface('tab');
+$tabs = new TabInterface(md5(Context::arg('frame')));
+$tabs->arg('_tab_tab');
 $wrapper->addChild($tabs);
 
 // adder script
@@ -150,7 +151,7 @@ if (Context::arg('uuid') && RichMedia::select(Context::arg('uuid'))->count()) {
 // media adding tab
 $tabs->addTab('add', 'Add media', function () use ($acAdder) {
     $table = new PaginatedTable(
-        Config::get('rich_media_types'),
+        array_keys(Config::get('rich_media_types')),
         function ($name) {
             $class = Config::get('rich_media_types.' . $name);
             $url = Context::url();
