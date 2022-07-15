@@ -55,6 +55,14 @@ class Theme
                 'shadow-inset' => 'inset calc(var(--grid)/8) calc(var(--grid)/4) var(--grid) rgba(0,0,0,0.15)',
                 'border' => '2px',
                 'border-radius' => '4px',
+                'sidebar' => [
+                    'small-width' => '15em',
+                    'small-activate' => '50em',
+                    'medium-width' => '20em',
+                    'medium-activate' => '60em',
+                    'large-width' => '25em',
+                    'large-activate' => '70em',
+                ],
                 'font' => [
                     'content' => 'serif',
                     'header' => 'sans-serif',

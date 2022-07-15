@@ -2,6 +2,7 @@
 
 namespace DigraphCMS\UI\Sidebar;
 
+use DigraphCMS\Config;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\UI\Templates;
 
@@ -10,7 +11,7 @@ class Sidebar
     protected static $blocks_top = [];
     protected static $blocks_middle = [];
     protected static $blocks_bottom = [];
-    protected static $active = true;
+    protected static $active = null;
 
     public static function add($block)
     {
@@ -27,20 +28,22 @@ class Sidebar
         static::$blocks_bottom[] = $block;
     }
 
-    public static function setActive(bool $active)
+    public static function setActive(?bool $active)
     {
         static::$active = $active;
     }
 
-    public function active(): bool
+    public static function active(): bool
     {
-        return static::$active;
+        return Dispatcher::firstValue('onSidebarActive')
+            ?? static::$active
+            ?? Config::get('sidebar.default_state');
     }
 
     public static function render(): string
     {
         // skip if not active
-        if (!static::$active) return '';
+        if (!static::active()) return '';
         // load top blocks from dispatcher
         $blocks = [];
         Dispatcher::dispatchEvent('onSidebar_first', [new SidebarEvent($blocks)]);

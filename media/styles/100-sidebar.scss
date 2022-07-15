@@ -44,10 +44,10 @@
   }
 }
 
-@media (min-width: 50em) {
+@media (min-width: $sidebar-small-activate) {
   #page-wrapper {
     display: grid;
-    grid-template-columns: auto 15em;
+    grid-template-columns: auto $sidebar-small-width;
     column-gap: $grid*2;
   }
 
@@ -66,18 +66,14 @@
   }
 }
 
-@media (min-width: 60em) {
+@media (min-width: $sidebar-medium-activate) {
   #page-wrapper {
-    display: grid;
-    grid-template-columns: auto 20em;
-    column-gap: $grid*2;
+    grid-template-columns: auto $sidebar-medium-width;
   }
 }
 
-@media (min-width: 70em) {
+@media (min-width: $sidebar-large-activate) {
   #page-wrapper {
-    display: grid;
-    grid-template-columns: auto 25em;
-    column-gap: $grid*2;
+    grid-template-columns: auto $sidebar-large-width;
   }
 }

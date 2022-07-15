@@ -15,6 +15,9 @@ search:
   response_index:
     interval: 86400
 
+sidebar:
+  default_state: true
+
 cron:
   route_enabled: false
   poor_mans_cron: true
