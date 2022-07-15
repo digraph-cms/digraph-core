@@ -6,6 +6,7 @@ Minimal template page for use in navigation frames.
 use DigraphCMS\Context;
 use DigraphCMS\UI\Breadcrumb;
 use DigraphCMS\UI\Notifications;
+use DigraphCMS\UI\Sidebar\Sidebar;
 
 ?>
 <!DOCTYPE html>
@@ -27,11 +28,17 @@ use DigraphCMS\UI\Notifications;
         Breadcrumb::print();
         ?>
     </div>
-    <?php Notifications::printSection(); ?>
-    <main id="content">
-        <div id="main-content">
-            <?php echo Context::response()->content(); ?>
-        </div>
+    <main id="page-wrapper">
+        <?php
+        echo '<div id="content">';
+        Breadcrumb::print();
+        Notifications::printSection();
+        echo '<div id="article">';
+        echo Context::response()->content();
+        echo '</div>';
+        echo '</div>';
+        echo Sidebar::render();
+        ?>
     </main>
 </body>
 

@@ -1,18 +1,12 @@
 body {
     margin: 0;
 
-    > .action-menu {
+    >.action-menu {
         padding: 0;
-    }
-
-    > #content {
-        > :first-child {
-            margin-top: 0;
-        }
     }
 }
 
-body > .action-menu,
+body>.action-menu,
 #header,
 #main-nav,
 #breadcrumb,
@@ -38,10 +32,6 @@ body > .action-menu,
 
     font-size: smaller;
     font-family: $font-ui;
-
-    h1 {
-        display: none;
-    }
 
     ul,
     li {
@@ -88,9 +78,6 @@ body > .action-menu,
 }
 
 #notifications {
-    > h1 {
-        display: none;
-    }
 
     .notification {
         border-radius: 0;
@@ -145,38 +132,27 @@ span.notification {
     padding: 0;
 }
 
-#content {
+#page-wrapper {
+    margin: $grid;
+}
+
+#article {
     @include clearfix;
     margin: 0;
-    padding: $grid * 2;
+    box-sizing: border-box;
 
-    #main-content {
-        margin-top: $grid;
-
-        > h1 {
-            font-size: 3rem;
-            padding-bottom: $grid;
-            border-bottom: $grid/2 solid var(--background-light);
-            margin-bottom: $grid * 2;
-        }
-
-        > * {
-            &:first-child {
-                margin-top: 0;
-            }
-
-            &:last-child {
-                margin-bottom: 0;
-            }
-        }
-    }
-
-    .action-menu + h1,
-    > h1:first-child {
+    .action-menu+h1 {
         margin-top: 0;
     }
 
-    > * {
+    >h1:first-child {
+        font-size: 3rem;
+        padding-bottom: $grid;
+        border-bottom: $grid/2 solid var(--background-light);
+        margin-bottom: $grid * 2;
+    }
+
+    >* {
         &:first-child {
             margin-top: 0;
         }
@@ -201,10 +177,12 @@ span.notification {
 }
 
 @media print {
+
     .menubar--actionmenu,
     .menubar--usermenu,
     #main-nav,
-    #footer {
+    #footer,
+    #sidebar {
         display: none !important;
     }
 }

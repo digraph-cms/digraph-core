@@ -41,9 +41,11 @@ use DigraphCMS\UI\Theme;
     } catch (\Throwable $th) {
         //throw $th;
     }
-    echo '<main id="content">';
-    echo '<div id="main-content">';
+    echo '<main id="page-wrapper">';
+    echo '<div id="content">';
+    echo '<div id="article">';
     echo Context::response()->content();
+    echo '</div>';
     echo '</div>';
     echo '</main>';
     try {

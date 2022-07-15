@@ -132,10 +132,7 @@ class Router
         // try specific routes first
         foreach ($page->routeClasses() as $c) {
             $output = self::tryRoute("@$c/$action");
-            if (trim($output ?? '')) {
-                Context::end();
-                return $output;
-            }
+            if (trim($output ?? '')) return $output;
         }
         // check if there's a prefix
         if ($pos = strpos($action, '_')) {
@@ -143,19 +140,13 @@ class Router
             // try prefix wildcard route
             foreach ($page->routeClasses() as $c) {
                 $output = self::tryRoute("@$c/@wildcard_$prefix");
-                if (trim($output ?? '')) {
-                    Context::end();
-                    return $output;
-                }
+                if (trim($output ?? '')) return $output;
             }
         }
         // try wildcard routes last
         foreach ($page->routeClasses() as $c) {
             $output = self::tryRoute("@$c/@wildcard");
-            if (trim($output ?? '')) {
-                Context::end();
-                return $output;
-            }
+            if (trim($output ?? '')) return $output;
         }
         return null;
     }

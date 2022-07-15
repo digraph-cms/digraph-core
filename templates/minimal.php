@@ -32,11 +32,13 @@ use DigraphCMS\UI\Theme;
     ?>
     <main id="content">
         <?php
+        echo '<div id="page-wrapper">';
         Breadcrumb::print();
         echo new ActionMenu;
         Notifications::printSection();
-        echo '<div id="main-content">';
+        echo '<div id="article">';
         echo Context::response()->content();
+        echo '</div>';
         echo '</div>';
         ?>
     </main>

@@ -20,7 +20,7 @@ class Breadcrumb
                 ob_start();
                 $breadcrumb = static::breadcrumb();
                 if (count($breadcrumb) >= Config::get('ui.breadcrumb.min_length')) {
-                    echo "<section id='breadcrumb' class='breadcrumb'><h1>Breadcrumb</h1><ul>";
+                    echo "<section id='breadcrumb' class='breadcrumb'><ul>";
                     foreach ($breadcrumb as $url) {
                         echo "<li>" . $url->html([], true) . "</li>";
                     }

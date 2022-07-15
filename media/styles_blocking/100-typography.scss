@@ -137,13 +137,17 @@ code {
 }
 
 pre,
-code {
-    font-family: $font-code;
-}
-
+blockquote,
 pre>code {
     display: block;
     overflow: auto;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+pre,
+code {
+    font-family: $font-code;
 }
 
 table {
@@ -214,7 +218,6 @@ blockquote {
     background: var(--background-light);
     padding: $grid;
     margin: $grid 0;
-    box-shadow: var(--shadow);
     max-width: $line-length;
     font-style: italic;
     border-left: $border solid var(--theme-neutral);
@@ -320,7 +323,7 @@ ol {
     padding-left: $grid * 2;
 }
 
-#content {
+#article {
 
     ul,
     ol {

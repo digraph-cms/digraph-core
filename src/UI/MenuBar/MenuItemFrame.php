@@ -26,7 +26,7 @@ class MenuItemFrame extends MenuItem
             (new DIV)
                 ->setID(Digraph::uuid())
                 ->addClass('menuitem__frame')
-                ->setData('id', 'main-content')
+                ->setData('id', 'article')
         );
     }
 
