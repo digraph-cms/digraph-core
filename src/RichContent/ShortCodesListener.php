@@ -6,7 +6,6 @@ use DigraphCMS\Config;
 use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Content\Pages;
 use DigraphCMS\Context;
-use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTML\A;
 use DigraphCMS\HTML\Text;
 use DigraphCMS\RichContent\Video\VideoEmbed;
@@ -46,7 +45,7 @@ class ShortCodesListener
     {
         $page = Pages::get($s->getBbCode() ?? Context::pageUUID());
         if (!$page) return null;
-        $toc = new TableOfContents($page);
+        $toc = new TableOfContents($page, intval($s->getParameter('depth', 1)));
         return $toc->__toString();
     }
 

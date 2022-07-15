@@ -13,12 +13,14 @@ class TableOfContents extends Tag
     protected $firstPage = 20;
     protected $perPage = 10;
     protected $parents = [];
+    protected $depth;
 
-    public function __construct(AbstractPage $page, $parents = [])
+    public function __construct(AbstractPage $page, $depth = null, $parents = [])
     {
         $this->page = $page;
         $this->parents = $parents;
         $this->parents[] = $page->uuid();
+        $this->depth = $depth;
     }
 
     public function classes(): array
@@ -101,7 +103,9 @@ class TableOfContents extends Tag
                 '<li><a href="%s">%s</a>%s</li>',
                 $page->url(),
                 $page->name(),
-                ($page->children()->count() ? trim(new TableOfContents($page, $parents)) : '')
+                $this->depth > 1 && $page->children()->count()
+                    ? trim(new TableOfContents($page, $this->depth - 1, $parents))
+                    : ''
             );
         }
         return $output;
