@@ -57,6 +57,10 @@ class Sidebar
         Dispatcher::dispatchEvent('onSidebar_top', [new SidebarEvent($blocks)]);
         // merge in internal middle blocks
         $blocks = array_merge($blocks, static::$blocks_middle);
+        // load sidebar/middle.php template to middle
+        if (Templates::exists('sidebar/middle.php')) {
+            $blocks[] = Templates::render('sidebar/middle.php');
+        }
         // bottom blocks from dispatcher
         Dispatcher::dispatchEvent('onSidebar_bottom', [new SidebarEvent($blocks)]);
         // merge in internal bottom blocks
