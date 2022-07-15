@@ -1,6 +1,5 @@
 .paginated-section {
   margin: $grid 0;
-  align-items: center;
 }
 
 .paginated-section__before,
@@ -9,11 +8,17 @@
 .paginated-section__bottom {
   display: flex;
   margin: 0;
+  align-items: flex-start;
 
   >*,
   .paginator {
     margin: 0;
   }
+}
+
+.paginated-section__before,
+.paginated-section__after {
+  align-items: flex-end;
 }
 
 .paginated-section__spacer {
