@@ -278,6 +278,8 @@
         height: auto;
         line-height: 1.4em;
         font-size: inherit;
+        background-color: var(--background-dark);
+        color: var(--color);
 
         >.menuitem__link {
             border: $border/2 solid var(--theme-neutral-a50);
