@@ -1,0 +1,9 @@
+.paginated-table__autoarray {
+    font-size: smaller;
+    line-height: $line-height-tight;
+
+    >div {
+        padding-left: $grid;
+        text-indent: -$grid;
+    }
+}

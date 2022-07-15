@@ -55,6 +55,13 @@ class PaginatedTable extends PaginatedSection
     {
         return implode(PHP_EOL, array_map(
             function ($cell) {
+                if (is_array($cell)) {
+                    array_walk($cell, function (&$value, $key) {
+                        if (!$value) $value = false;
+                        else $value = "<div><strong>$key</strong>: $value</div>";
+                    });
+                    return '<td class="paginated-table__autoarray">' . implode(PHP_EOL, array_filter($cell)) . '</td>';
+                }
                 return "<td>$cell</td>";
             },
             call_user_func($this->callback, $cells)
