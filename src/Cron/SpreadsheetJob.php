@@ -5,8 +5,8 @@ namespace DigraphCMS\Cron;
 use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
 use DigraphCMS\FS;
+use DigraphCMS\Spreadsheets\SpreadsheetReader;
 use Exception;
-use PhpOffice\PhpSpreadsheet\IOFactory;
 use Throwable;
 
 class SpreadsheetJob extends DeferredJob
@@ -29,41 +29,37 @@ class SpreadsheetJob extends DeferredJob
         try {
             DB::beginTransaction();
             $filename = basename($file);
-            $reader = IOFactory::createReaderForFile($file);
-            $reader->setReadDataOnly(true);
-            $spreadsheet = $reader->load($file);
-            $data = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
-            foreach ($data as $rowNum => $row) {
-                if (!$rowNum == 1) {
-                    // first row is headers
-                    // set up setupFn job if applicable
-                    if ($setupFn) $job->spawn(function (DeferredJob $job) use ($setupFn, $file) {
-                        $reader = IOFactory::createReaderForFile($file);
-                        $reader->setReadDataOnly(true);
-                        $spreadsheet = $reader->load($file);
-                        return $setupFn($spreadsheet, $job) ?? "Ran setup function";
-                    });
-                } else {
-                    // set up deferred job for this row
-                    $job->spawn(function (DeferredJob $job) use ($rowFn, $row, $rowNum, $filename) {
-                        return $rowFn($row, $rowNum, $job) ?? "Processed $filename row $rowNum";
-                    });
-                }
+            $count = 0;
+            // spawn setupFn job if applicable
+            if ($setupFn) {
+                $count++;
+                $job->spawn(function (DeferredJob $job) use ($setupFn, $file) {
+                    return $setupFn($file, $job) ?? "Ran setup function";
+                });
             }
-            // set up teardownFn job if applicable
-            if ($teardownFn) $job->spawn(function (DeferredJob $job) use ($teardownFn, $file) {
-                $reader = IOFactory::createReaderForFile($file);
-                $reader->setReadDataOnly(true);
-                $spreadsheet = $reader->load($file);
-                return $teardownFn($spreadsheet, $job) ?? "Ran teardown function";
-            });
-            // final job to clean up file
+            // spawn jobs for every row
+            foreach (SpreadsheetReader::rows($file) as $i => $row) {
+                $count++;
+                $job->spawn(function (DeferredJob $job) use ($rowFn, $row, $filename, $i) {
+                    return $rowFn($row, $job) ?? "$filename row $i";
+                });
+            }
+            // spawn teardownFn job if applicable
+            if ($teardownFn) {
+                $count++;
+                $job->spawn(function (DeferredJob $job) use ($teardownFn, $file) {
+                    return $teardownFn($file, $job) ?? "Ran setup function";
+                });
+            }
+            // spawn final job to clean up file
+            $count++;
             $job->spawn(function () use ($file) {
                 if (unlink($file)) return "Deleted temp file $file";
                 else return "Failed to delete temp file $file";
             });
+            // commit and return status
             DB::commit();
-            return "Set up spreadsheet processing jobs";
+            return "Set up $count spreadsheet processing jobs";
         } catch (Throwable $th) {
             DB::rollback();
             throw new Exception("Error processing spreadsheet $file: " . get_class($th) . ":" . $th->getMessage());
