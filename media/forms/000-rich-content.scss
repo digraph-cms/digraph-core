@@ -1,135 +1,61 @@
 .rich-content-editor__dynamic-editor {
-    display: flex;
-    position: relative;
-    background: var(--theme-neutral);
-    border-radius: var(--border-radius);
-    gap: var(--border);
-    border: var(--border) solid var(--theme-neutral);
-    overflow: hidden;
-    height: 80vh;
+    display: grid;
+    grid-template-columns: auto 15em;
+    border: $border solid var(--theme-neutral);
+    border-radius: $border-radius;
+
+    .CodeMirror {
+        border-radius: 0;
+        border-bottom-left-radius: $border-radius;
+        border-left: 0;
+        border-bottom: 0;
+        border-right: 0;
+    }
 }
 
 .rich-content-editor__content-editor {
-    flex-basis: 3;
-    flex-grow: 1;
-    background: var(--background);
-    display: flex;
-    flex-direction: column;
-    overflow: auto;
-    min-width: 15em;
-    flex-basis: 30em;
+    grid-column-start: 1;
 
     .rich-content-editor__toolbar {
-        border: 0;
-        border-bottom: var(--border) solid var(--theme-neutral);
+        border-top-left-radius: $border-radius;
     }
 
-    .rich-content-editor__content-editor__editor {
-        overflow: auto;
-        flex-grow: 1;
-    }
+    &:last-child {
+        grid-column-end: 3;
 
-    .CodeMirror {
-        height: auto;
-        border: 0;
-        font-size: inherit;
-        background: var(--background);
-    }
+        .rich-content-editor__toolbar {
+            border-top-right-radius: $border-radius;
+        }
 
-    >textarea {
-        border: 0;
-        display: block;
-        margin: 0;
-        border-radius: 0;
+        .CodeMirror {
+            border-bottom-right-radius: $border-radius;
+        }
     }
 }
 
 .rich-content-editor__media-editor {
-    flex-basis: 30em;
-    overflow: auto;
-    padding-left: $grid;
-    position: relative;
+    grid-column-start: 2;
+    background-color: var(--background-dark);
+    border-left: $border solid var(--theme-neutral);
+    border-top-right-radius: $border-radius;
+    border-bottom-right-radius: $border-radius;
 
-    .rich-content-editor__dynamic-editor {
-        height: 50vh;
-    }
+    .rich-content-editor__media-editor-frame {
+        padding: $grid/2;
 
-    .rich-content-editor__media-editor__size-toggle {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: $grid;
-        overflow: hidden;
-        bottom: 0;
-        font-size: $grid;
-        background: var(--theme-neutral-dark);
-        color: var(--theme-neutral-inv);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-
-        &:hover {
-            background: var(--cue-interactive);
-            color: var(--cue-interactive-inv);
+        >h1 {
+            font-size: 1em;
+            margin-top: 0 !important;
         }
 
-        &:before {
-            @include material-icon;
-            content: "chevron_left";
+        >* {
+            &:first-child {
+                margin-top: 0;
+            }
+
+            &:last-child {
+                margin-bottom: 0;
+            }
         }
-    }
-}
-
-.rich-content-editor__media-editor--wide,
-.rich-content-editor__media-editor--wide-forced {
-    flex-basis: 100%;
-
-    .rich-content-editor__media-editor__size-toggle:before {
-        content: "chevron_right";
-    }
-}
-
-.rich-content-editor__media-editor--wide {
-    .rich-content-editor__media-editor__size-toggle:before {
-        content: "chevron_right";
-    }
-}
-
-.rich-content-editor__media-editor--wide-forced {
-    padding-left: 0;
-    margin-left: -$border;
-
-    .rich-content-editor__media-editor__size-toggle {
-        display: none;
-    }
-}
-
-.rich-content-editor__media-editor-frame {
-    height: 100%;
-
-    >.tab-interface {
-        height: 100%;
-        margin: 0;
-        margin-left: $border;
-
-        .tab-interface-content {
-            overflow: auto;
-            border-top-right-radius: var(--border-radius);
-            border-bottom-right-radius: var(--border-radius);
-            border-bottom-left-radius: var(--border-radius);
-        }
-    }
-}
-
-body.no-js {
-    .rich-content-editor__dynamic-editor {
-        display: none;
-    }
-}
-
-.rich-content-editor.rich-content-editor--mini {
-    .rich-content-editor__dynamic-editor {
-        height: 10rem;
     }
 }
