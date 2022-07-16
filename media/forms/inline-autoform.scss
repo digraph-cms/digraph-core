@@ -11,3 +11,11 @@
 .inline-form {
     display: flex;
 }
+
+.autoform {
+    &.form--submitting {
+        .submit-button {
+            display: none;
+        }
+    }
+}

@@ -139,6 +139,10 @@ class DigraphAutocomplete {
         this.results.style.display = 'none';
         this.wrapper.classList.remove('ui-focused');
         this.wrapper.classList.remove('focused');
+        // autosubmit if specified
+        if (this.input.classList.contains('autocomplete-input--autosubmit')) {
+            Digraph.submitForm(this.value.form);
+        }
     }
     /**
      * @param {Event} e 
