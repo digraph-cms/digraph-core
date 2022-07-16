@@ -14,6 +14,11 @@ document.addEventListener('DigraphDOMReady', (e) => {
                     Digraph.state.get(div.dataset.initialSource, div);
                     e.stopPropagation();
                 }
+                div.reloadFrame = function (e) {
+                    if (div.dataset.currentUrl)
+                        Digraph.state.get(div.dataset.currentUrl, div);
+                    e.stopPropagation();
+                }
                 div.addEventListener('navigation-frame-reset', div.resetFrame);
                 div.dispatchEvent(new Event('navigation-frame-reset'));
             }
