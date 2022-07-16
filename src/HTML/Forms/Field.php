@@ -142,6 +142,12 @@ class Field extends DIV implements InputInterface
         return $this->input()->submitted();
     }
 
+    public function addForm(FormWrapper $form)
+    {
+        $form->addChild($this);
+        return $this;
+    }
+
     public function setForm(FormWrapper $form)
     {
         $this->input()->setForm($form);
