@@ -9,31 +9,6 @@
         "site_path": "/",
         "site_host": null
     },
-    "codemirror": {
-        "dependencies": {
-            "mode/gfm/gfm": [
-                "addon/mode/overlay",
-                "mode/markdown/markdown",
-                "addon/edit/continuelist",
-                "mode/xml/xml"
-            ],
-            "mode/php/php": [
-                "mode/xml/xml",
-                "mode/javascript/javascript",
-                "mode/css/css",
-                "mode/htmlmixed/htmlmixed",
-                "mode/clike/clike"
-            ]
-        },
-        "mode": {
-            "gfm": {
-                "config": {
-                    "gitHubSpice": false,
-                    "taskLists": false
-                }
-            }
-        }
-    },
     "files": {
         "path": "${paths.web}/files",
         "url": "/files",

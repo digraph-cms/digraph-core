@@ -21,7 +21,13 @@ class CodeMirrorInput extends TEXTAREA
         $this->setID('codemirror-input--' . static::$idCounter++);
     }
 
-    protected function mode(): string
+    public function setMode(string $mode)
+    {
+        $this->mode = $mode;
+        return $this;
+    }
+
+    public function mode(): string
     {
         return $this->mode;
     }
@@ -29,15 +35,22 @@ class CodeMirrorInput extends TEXTAREA
     public function config(): array
     {
         return array_merge(
-            Config::get(sprintf('codemirror.mode.%s.config', $this->mode())) ?? [],
+            Config::get(sprintf('codemirror.config.%s', $this->mode())) ?? [],
             $this->config
         );
     }
 
     public function toString(): string
     {
-        CodeMirror::loadMode($this->mode());
-        $this->wrapper->setData('codemirror-mode', $this->mode);
+        CodeMirror::loadMode(
+            (Config::get('codemirror.loadalias.' . $this->mode()))
+                ?? $this->mode()
+        );
+        $this->wrapper->setData(
+            'codemirror-mode',
+            (Config::get('codemirror.modealias.' . $this->mode()))
+                ?? $this->mode()
+        );
         $this->wrapper->setData('codemirror-config', json_encode($this->config()));
         return sprintf(
             $this->wrapper->__toString(),
