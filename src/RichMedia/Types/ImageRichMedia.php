@@ -9,6 +9,7 @@ use DigraphCMS\HTML\FIGURE;
 use DigraphCMS\HTML\Forms\Field;
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTML\Forms\UploadSingle;
+use DigraphCMS\HTML\Icon;
 use DigraphCMS\HTML\ResponsivePicture;
 use DigraphCMS\RichContent\RichContent;
 use DigraphCMS\RichContent\RichContentField;
@@ -16,6 +17,11 @@ use Thunder\Shortcode\Shortcode\ShortcodeInterface;
 
 class ImageRichMedia extends AbstractRichMedia
 {
+
+    public function icon()
+    {
+        return new Icon('image');
+    }
 
     public function prepareForm(FormWrapper $form, $create = false)
     {

@@ -10,11 +10,17 @@ use DigraphCMS\HTML\Forms\Field;
 use DigraphCMS\HTML\Forms\Fields\CheckboxListField;
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTML\Forms\UploadSingle;
+use DigraphCMS\HTML\Icon;
 use DigraphCMS\UI\Format;
 use Thunder\Shortcode\Shortcode\ShortcodeInterface;
 
 class FileRichMedia extends AbstractRichMedia
 {
+
+    function icon()
+    {
+        return new Icon('download');
+    }
 
     public function prepareForm(FormWrapper $form, $create = false)
     {

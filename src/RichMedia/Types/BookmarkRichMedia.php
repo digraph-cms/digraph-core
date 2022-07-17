@@ -8,10 +8,16 @@ use DigraphCMS\HTML\Forms\Field;
 use DigraphCMS\HTML\Forms\Fields\Autocomplete\PageField;
 use DigraphCMS\HTML\Forms\Fields\RadioListField;
 use DigraphCMS\HTML\Forms\FormWrapper;
+use DigraphCMS\HTML\Icon;
 use Thunder\Shortcode\Shortcode\ShortcodeInterface;
 
 class BookmarkRichMedia extends AbstractRichMedia
 {
+    public function icon()
+    {
+        return new Icon('bookmark');
+    }
+
     public static function className(): string
     {
         return 'Bookmark';

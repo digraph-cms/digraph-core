@@ -84,7 +84,7 @@
     text-decoration: none !important;
     display: inline-block;
 
-    > .icon {
+    >.icon {
         display: block;
         font-size: inherit;
         line-height: 1;
@@ -118,6 +118,14 @@
             .toolbar__button__tooltip {
                 right: auto;
                 left: 0;
+            }
+        }
+
+        &.toolbar__button--compact-tip {
+            .toolbar__button__tooltip {
+                right: 0;
+                left: 0;
+                width: 100%;
             }
         }
     }

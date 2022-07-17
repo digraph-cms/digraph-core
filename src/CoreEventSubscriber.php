@@ -155,7 +155,7 @@ abstract class CoreEventSubscriber
     {
         $page = $media->parent() ? Pages::get($media->parent()) : null;
         return [
-            'html' => '<div class="title">' . $media->name() . '</div><div class="meta">' . ($page ? $page->name() : '') . '</div><div class="meta">' . Format::datetime($media->updated()) . '</div>',
+            'html' => '<div class="title">' . $media->icon() . ' ' . $media->name() . '</div><div class="meta">' . ($page ? $page->name() : '') . '</div><div class="meta">' . Format::datetime($media->updated()) . '</div>',
             'value' => $media->uuid(),
             'class' => 'rich-media',
             'extra' => [

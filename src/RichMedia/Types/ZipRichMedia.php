@@ -14,6 +14,7 @@ use DigraphCMS\HTML\Forms\Fields\CheckboxListField;
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTML\Forms\OrderingInput;
 use DigraphCMS\HTML\Forms\UploadMulti;
+use DigraphCMS\HTML\Icon;
 use DigraphCMS\Media\DeferredFile;
 use DigraphCMS\UI\Format;
 use DigraphCMS\URL\URL;
@@ -23,6 +24,11 @@ use ZipArchive;
 class ZipRichMedia extends AbstractRichMedia
 {
     protected $zipFile;
+
+    public function icon()
+    {
+        return new Icon('zip');
+    }
 
     public function prepareForm(FormWrapper $form, $create = false)
     {

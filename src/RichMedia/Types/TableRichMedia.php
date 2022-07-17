@@ -8,6 +8,7 @@ use DigraphCMS\HTML\Forms\Fields\RadioListField;
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTML\Forms\TableInput;
 use DigraphCMS\HTML\Forms\UploadSingle;
+use DigraphCMS\HTML\Icon;
 use DigraphCMS\RichContent\RichContent;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
@@ -18,6 +19,11 @@ use Thunder\Shortcode\Shortcode\ShortcodeInterface;
 
 class TableRichMedia extends AbstractRichMedia
 {
+
+    public function icon()
+    {
+        return new Icon('table');
+    }
 
     protected function prepareForm(FormWrapper $form, $create = false)
     {

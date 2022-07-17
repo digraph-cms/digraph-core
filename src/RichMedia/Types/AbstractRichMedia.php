@@ -9,6 +9,7 @@ use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Content\Pages;
 use DigraphCMS\Digraph;
 use DigraphCMS\HTML\Forms\FormWrapper;
+use DigraphCMS\HTML\Icon;
 use DigraphCMS\RichMedia\RichMedia;
 use DigraphCMS\Session\Session;
 use DigraphCMS\Users\User;
@@ -31,6 +32,16 @@ abstract class AbstractRichMedia implements ArrayAccess
     abstract public static function description(): string;
     abstract public function shortCode(ShortcodeInterface $code): ?string;
     abstract protected function prepareForm(FormWrapper $form, $create = false);
+
+    public function icon()
+    {
+        return new Icon('widgets');
+    }
+
+    public function hasTuner(): bool
+    {
+        return false;
+    }
 
     public static function class(): string
     {

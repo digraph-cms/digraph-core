@@ -39,15 +39,26 @@ if ($form->ready()) {
 }
 
 // display list
-$media = RichMedia::select(Context::arg('uuid'));
+$media = RichMedia::select(Context::arg('uuid'))
+    ->order('updated DESC');
 if (!$media->count()) echo '<p><em>No existing rich media</em></p>';
 else {
     $table = new PaginatedTable(
         $media,
         function (AbstractRichMedia $media): array {
+            $main = '<strong style="draggable:true;">' . $media->icon() . ' ' . $media->name() . '</strong>';
             return [
-                $media->name(),
+                $main,
+                $media->hasTuner()
+                    ? (new ToolbarLink('Tune embed', 'tune', null, null))
+                    ->addClass('toolbar__button--compact-tip')
+                    ->setAttribute('onclick', sprintf(
+                        'Digraph.popup("%s")',
+                        new URL('/~richmedia/tune/?frame=' . Context::arg('frame') . '&uuid=' . $media->uuid())
+                    ))
+                    : '',
                 (new ToolbarLink('Edit', 'edit', null, null))
+                    ->addClass('toolbar__button--compact-tip')
                     ->setAttribute('onclick', sprintf(
                         'Digraph.popup("%s")',
                         new URL('/~richmedia/editor/?frame=' . Context::arg('frame') . '&uuid=' . $media->uuid())

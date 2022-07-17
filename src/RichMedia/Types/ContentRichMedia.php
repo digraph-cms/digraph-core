@@ -2,15 +2,19 @@
 
 namespace DigraphCMS\RichMedia\Types;
 
-use DigraphCMS\Context;
 use DigraphCMS\HTML\Forms\Field;
 use DigraphCMS\HTML\Forms\FormWrapper;
+use DigraphCMS\HTML\Icon;
 use DigraphCMS\RichContent\RichContent;
 use DigraphCMS\RichContent\RichContentField;
 use Thunder\Shortcode\Shortcode\ShortcodeInterface;
 
 class ContentRichMedia extends AbstractRichMedia
 {
+    public function icon()
+    {
+        return new Icon('segment');
+    }
 
     public function prepareForm(FormWrapper $form, $create = false)
     {
