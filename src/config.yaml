@@ -75,6 +75,8 @@ codemirror:
       - mode/css/css
       - mode/htmlmixed/htmlmixed
       - mode/clike/clike
+    mode/sass/sass:
+      - mode/css/css
   modealias:
     php: text/x-php
     phphtml: application/x-httpd-php

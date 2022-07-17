@@ -527,17 +527,13 @@ class Theme
     protected static function renderInlineJs(array $strings_or_files)
     {
         foreach ($strings_or_files as $string_or_file) {
-            if (basename($string_or_file) == '*.js') {
+            if ($string_or_file instanceof File) {
+                echo "<script>";
+                echo $string_or_file->content();
+                echo "</script>" . PHP_EOL;
+            } elseif (basename($string_or_file) == '*.js') {
                 // recurse if filename is *.js
                 static::renderInlineJs(Media::globToPaths($string_or_file));
-            } else {
-                // print script inline
-                if ($string_or_file instanceof File) {
-                    $string_or_file = $string_or_file->content();
-                }
-                echo "<script>";
-                echo $string_or_file;
-                echo "</script>" . PHP_EOL;
             }
         }
     }
@@ -582,6 +578,7 @@ class Theme
         if (!Config::get('theme.bundle_css')) {
             $files = [];
             foreach ($urls as $url) {
+                if ($url instanceof File) $url = $url->url();
                 if (preg_match('/\/\*\.css$/', $url)) {
                     //wildcard search
                     $url = new URL($url);
@@ -602,14 +599,18 @@ class Theme
         } else {
             $files = [];
             foreach ($urls as $url) {
-                if (preg_match('/\/\*\.css$/', $url)) {
-                    //wildcard search
+                if ($url instanceof File) {
+                    // can't bundle files passed directly in because they might not have a path 
+                    // that Media can find them at
+                    echo "<link rel='stylesheet' href='" . $url->url() . "'>" . PHP_EOL;
+                } elseif (preg_match('/\/\*\.css$/', $url)) {
+                    // wildcard search
                     $url = new URL($url);
                     foreach (Media::search(preg_replace('/\.s?css$/', '.{scss,css}', $url->path())) as $file) {
                         $files[] = $url->directory() . basename($file);
                     }
                 } else {
-                    //normal single file
+                    // normal single file
                     $files[] = $url;
                 }
             }
@@ -678,7 +679,7 @@ class Theme
      */
     public static function head(): string
     {
-        $key = md5(serialize([
+        $key = md5(\Opis\Closure\serialize([
             static::$variables,
             static::$blockingThemeCss,
             static::$blockingPageCss,
