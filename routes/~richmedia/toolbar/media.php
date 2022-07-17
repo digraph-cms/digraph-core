@@ -5,6 +5,9 @@ use DigraphCMS\HTML\DIV;
 use DigraphCMS\HTML\Forms\Fields\Autocomplete\AutocompleteInput;
 use DigraphCMS\UI\Toolbars\ToolbarLink;
 use DigraphCMS\URL\URL;
+use DigraphCMS\Users\Permissions;
+
+Permissions::requireMetaGroup('richmedia__edit');
 
 echo new ToolbarLink('', 'link', null, null);
 $wrapper = (new DIV())->setID(Digraph::uuid())->setStyle('width', '100%');

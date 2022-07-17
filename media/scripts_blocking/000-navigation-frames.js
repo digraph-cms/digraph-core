@@ -14,6 +14,10 @@ document.addEventListener('DigraphDOMReady', (e) => {
                     Digraph.state.get(div.dataset.initialSource, div);
                     e.stopPropagation();
                 }
+                div.reloadFrame = function (e) {
+                    if (div.dataset.currentUrl)
+                        Digraph.state.get(div.dataset.currentUrl, div);
+                }
                 div.addEventListener('navigation-frame-reset', div.resetFrame);
                 div.dispatchEvent(new Event('navigation-frame-reset'));
             }
@@ -221,6 +225,8 @@ Digraph.state = {
                 if (docElement.getAttribute('class')) {
                     frame.setAttribute('class', docElement.getAttribute('class'));
                 }
+                // update data-current-url {
+                frame.setAttribute('data-current-url', frame.stateUpdateRequest.responseURL);
                 // dispatch dom ready event
                 frame.dispatchEvent(
                     new Event('DigraphDOMReady', {

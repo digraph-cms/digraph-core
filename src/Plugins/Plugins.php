@@ -108,32 +108,35 @@ class Plugins
                     $state->mergeConfig(Config::parseYamlFile($pluginDirectory . '/config.yaml'));
                 }
                 // get plugin class and queue it for creation
-                $pluginFile = $pluginDirectory . '/plugin.php';
-                $match = null;
-                $contents = file_get_contents($pluginFile);
-                // get namespace
-                if (!preg_match('/namespace (.+);/', $contents, $match)) {
-                    throw new \Exception("Error parsing namespace from plugin " . $pluginFile);
+                $found = false;
+                foreach (glob($pluginDirectory . '/*.php') as $pluginFile) {
+                    $match = null;
+                    $contents = file_get_contents($pluginFile);
+                    // get namespace
+                    if (!preg_match('/namespace (.+);/', $contents, $match)) continue;
+                    $namespace = $match[1];
+                    // get class name
+                    if (!preg_match('/class (.+) extends (\\\DigraphCMS\\\Plugins\\\)?AbstractPlugin/', $contents, $match)) continue;
+                    $classname = $match[1];
+                    // we have a namespace and a class name
+                    $found = true;
+                    $state['plugin_file'] = $pluginFile;
+                    $class = $namespace . '\\' . $classname;
+                    $state['classes.' . md5($class)] = $class;
+                    // queue autoloader generation if requested
+                    if ($generateAutoloader && is_dir($pluginDirectory . '/src')) {
+                        $state['autoloaders.' . md5($class)] = [
+                            $pluginDirectory . '/src',
+                            $namespace
+                        ];
+                    }
                 }
-                $namespace = $match[1];
-                // get class name
-                if (!preg_match('/class (.+) extends (\\\DigraphCMS\\\Plugins\\\)?AbstractPlugin/', $contents, $match)) {
-                    throw new \Exception("Error parsing class name from plugin " . $pluginFile);
-                }
-                $classname = $match[1];
-                $class = $namespace . '\\' . $classname;
-                $state['classes.' . md5($class)] = $class;
-                // queue autoloader generation if requested
-                if ($generateAutoloader && is_dir($pluginDirectory . '/src')) {
-                    $state['autoloaders.' . md5($class)] = [
-                        $pluginDirectory . '/src',
-                        $namespace
-                    ];
-                }
+                // no match found, throw an exception
+                if (!$found) throw new \Exception("Failed to find a valid plugin in " . $pluginDirectory);
             },
-            function (CacheableState $state) use ($pluginDirectory) {
+            function (CacheableState $state) {
                 // require plugin file manually, it might not conform to autoloader
-                require_once $pluginDirectory . '/plugin.php';
+                require_once $state['plugin_file'];
                 // configure autoloaders
                 foreach ($state['autoloaders'] ?? [] as $al) {
                     static::autoloader($al[1], $al[0]);

@@ -20,7 +20,7 @@ class DeferredFile extends File
         }
         // take in content/identifier
         $this->content = $content;
-        $this->identifier = md5(serialize($identifier));
+        $this->identifier = md5(\Opis\Closure\serialize($identifier));
     }
 
     public function write()

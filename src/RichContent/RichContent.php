@@ -4,14 +4,11 @@ namespace DigraphCMS\RichContent;
 
 use DateTime;
 use DigraphCMS\Context;
-use DigraphCMS\Session\Session;
-use DigraphCMS\Users\User;
-use DigraphCMS\Users\Users;
 
 class RichContent
 {
     protected $source, $html;
-    protected $created, $created_by, $updated_links;
+    protected $created;
 
     /**
      * Construct using either a string or a complete array including metadata
@@ -23,11 +20,9 @@ class RichContent
         if (is_array($value)) {
             $this->source = @$value['source'] ?? '';
             $this->created = @$value['created'] ?? time();
-            $this->created_by = @$value['created_by'] ?? Session::uuid();
         } else {
             $this->source = $value ?? '';
             $this->created = time();
-            $this->created_by = Session::user();
         }
     }
 
@@ -66,7 +61,6 @@ class RichContent
         return [
             "source" => $this->source(),
             "created" => $this->created,
-            "created_by" => $this->createdByUUID()
         ];
     }
 
@@ -78,40 +72,6 @@ class RichContent
     public function created(): DateTime
     {
         return (new DateTime)->setTimestamp($this->created);
-    }
-
-    /**
-     * Return a last-modified date for this content, which includes the last
-     * modified date of any referenced media, such as Rich Media or embeds.
-     *
-     * @return DateTime
-     */
-    public function updatedLinks(): DateTime
-    {
-        if (!$this->updated_links) {
-            $this->buildHTML();
-        }
-        return (new DateTime)->setTimestamp($this->updated_links);
-    }
-
-    /**
-     * Return the UUID of the user who modified this content
-     *
-     * @return string
-     */
-    public function createdByUUID(): string
-    {
-        return $this->created_by;
-    }
-
-    /**
-     * Return the user who created/updated this piece of content
-     *
-     * @return User
-     */
-    public function createdBy(): User
-    {
-        return Users::user($this->created_by);
     }
 
     /**
@@ -142,19 +102,13 @@ class RichContent
      * Do the heavy lifting of converting source value to final
      * HTML values. Shortcodes are parsed before Markdown, so that
      * Markdown can see them as HTML and not mess them up.
-     * 
-     * Also sets this Rich Content and a data field called RichContent_time into
-     * Context, and reads RichContent_time out afterwards. This means that while
-     * parsing ShortCodes and Markdown 
      *
      * @return void
      */
     protected function buildHTML()
     {
         Context::data('RichContent', $this);
-        Context::data('RichContent_time', $this->created);
         $this->html = $this->parseSource($this->source());
-        $this->updated_links = Context::data('RichContent_time');
     }
 
     /**

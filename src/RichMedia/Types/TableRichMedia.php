@@ -3,6 +3,11 @@
 namespace DigraphCMS\RichMedia\Types;
 
 use DigraphCMS\Digraph;
+use DigraphCMS\HTML\Forms\Field;
+use DigraphCMS\HTML\Forms\Fields\RadioListField;
+use DigraphCMS\HTML\Forms\FormWrapper;
+use DigraphCMS\HTML\Forms\TableInput;
+use DigraphCMS\HTML\Forms\UploadSingle;
 use DigraphCMS\RichContent\RichContent;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
@@ -14,21 +19,87 @@ use Thunder\Shortcode\Shortcode\ShortcodeInterface;
 class TableRichMedia extends AbstractRichMedia
 {
 
-    /**
-     * Generate a shortcode rendering of this media
-     *
-     * @param ShortcodeInterface $code
-     * @param self $table
-     * @return string|null
-     */
-    public static function shortCode(ShortcodeInterface $code, $table): ?string
+    protected function prepareForm(FormWrapper $form, $create = false)
     {
-        return $table->render();
+        // name input
+        $name = (new Field('Name'))
+            ->setDefault($this->name())
+            ->setRequired(true)
+            ->addForm($form);
+
+        // toggle field for choosing whether to edit manually or upload spreadsheet
+        $mode = (new RadioListField('How would you like to enter the table\'s content?', [
+            'edit' => 'Edit table content manually',
+            'file' => 'Upload a spreadsheet'
+        ]))
+            ->setRequired(true)
+            ->setDefault('edit')
+            ->addForm($form);
+
+        // manual table editing field
+        $table = (new Field('Table content', new TableInput()))
+            ->setDefault($this['table'])
+            ->setID('rich-table-edit-field')
+            ->addForm($form);
+
+        // file uploading field
+        $file = (new Field('Upload file', new UploadSingle()))
+            ->setID('rich-table-file-field')
+            ->addTip('Uploading a spreadsheet will entirely replace all table content, including row/cell IDs, which means existing subset embeds will break if you use this feature')
+            ->addTip('First row will be used as headers')
+            ->addForm($form);
+
+        // special validators to ensure file is require when file mode is selected
+        $file->addValidator(function () use ($file, $mode) {
+            if (!$file->value() && $mode->value() == 'url') {
+                return "This field is required";
+            } else return null;
+        });
+
+        // special scripting for front end visibility
+        $form->__toString();
+        $edit_mode_id = $mode->field('edit')->input()->id();
+        $file_mode_id = $mode->field('file')->input()->id();
+        $edit_field = $table->id();
+        $file_field = $file->id();
+        $form->addChild(<<<SCRIPT
+            <script>
+                (() => {
+                    // get elements
+                    var edit = document.getElementById('$edit_mode_id');
+                    var file = document.getElementById('$file_mode_id');
+                    var edit_field = document.getElementById('$edit_field');
+                    var file_field = document.getElementById('$file_field');
+                    // add event listeners
+                    edit.addEventListener('change', checkStatus);
+                    file.addEventListener('change', checkStatus);
+                    // do initial check
+                    checkStatus();
+                    // status checking 
+                    function checkStatus() {
+                        edit_field.style.display = edit.checked ? null : 'none';
+                        file_field.style.display = file.checked ? null : 'none';
+                    }
+                })();
+            </script>
+            SCRIPT);
+
+        // callback to set values
+        $form->addCallback(function () use ($name, $mode, $table, $file) {
+            $this->name($name->value());
+            if ($mode->value() == 'file') {
+                $f = $file->value();
+                $this->setTableFromFile($f['tmp_name'], pathinfo($f['name'], PATHINFO_EXTENSION));
+            } else {
+                unset($this['table']);
+                $this['table'] = $table->value();
+            }
+        });
     }
 
-    public static function class(): string
+    public function shortCode(ShortcodeInterface $code): ?string
     {
-        return 'table';
+        return $this->render();
     }
 
     public static function className(): string
@@ -41,7 +112,7 @@ class TableRichMedia extends AbstractRichMedia
         return 'Rich editor for tables, including the option to upload a spreadsheet';
     }
 
-    public function setTableFromFile(string $path, $extension = null)
+    protected function setTableFromFile(string $path, $extension = null)
     {
         switch ($extension) {
             case 'csv':

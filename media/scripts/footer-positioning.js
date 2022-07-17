@@ -12,6 +12,7 @@ peeking out below it.
 
     function checkFooterPosition() {
         const footer = document.getElementById('footer');
+        if (!footer) return;
         const offset = footer.classList.contains('footer--fixed') ? footer.offsetHeight : 0;
         if (window.innerHeight > document.body.offsetHeight + offset) {
             footer.classList.add('footer--fixed');

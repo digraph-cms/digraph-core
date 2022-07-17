@@ -3,9 +3,11 @@
 namespace DigraphCMS\RichContent;
 
 use DigraphCMS\CodeMirror\CodeMirrorInput;
+use DigraphCMS\Digraph;
 use DigraphCMS\HTML\DIV;
 use DigraphCMS\HTML\Forms\Field;
 use DigraphCMS\URL\URL;
+use DigraphCMS\Users\Permissions;
 
 class RichContentField extends Field
 {
@@ -24,7 +26,7 @@ class RichContentField extends Field
             ->addClass('rich-content-editor__content-editor');
         $this->wrapper->addChild($this->contentEditor);
         // only add media editor if $hideMediaEditor is false
-        if (!$hideMediaEditor) {
+        if (!$hideMediaEditor || !Permissions::inMetaGroup('richmedia__edit')) {
             $this->mediaEditor = (new DIV())
                 ->addClass('rich-content-editor__media-editor');
             $this->mediaEditorFrame = (new DIV())
@@ -103,16 +105,16 @@ class RichContentField extends Field
 
     public function toString(): string
     {
-        $id = md5($this->id());
+        $id = Digraph::uuid(null, $this->id());
         $uuid = $this->pageUuid();
         if ($this->mediaEditor) {
             $this->mediaEditorFrame
-                ->setID("rm_$id")
-                ->setData('initial-source', new URL("/~api/v1/rich-media/?frame=rm_$id&uuid=$uuid"));
+                ->setID("b$id")
+                ->setData('initial-source', new URL("/~richmedia/sidebar/?frame=b$id&uuid=$uuid"));
         }
         $this->toolbarFrame
-            ->setID("tb_$id")
-            ->setData('initial-source', new URL("/~api/v1/rich-media/toolbar/?frame=tb_$id&uuid=$uuid"));
+            ->setID("t$id")
+            ->setData('initial-source', new URL("/~richmedia/toolbar/?frame=t$id&uuid=$uuid"));
         // return normally
         return parent::toString();
     }

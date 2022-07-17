@@ -30,13 +30,13 @@ use DigraphCMS\UI\Theme;
     <?php
     echo Templates::render('sections/navbar.php');
     ?>
-    <main id="content">
+    <main id="page-wrapper">
         <?php
-        echo '<div id="page-wrapper">';
+        echo '<div id="content">';
         Breadcrumb::print();
         echo new ActionMenu;
         Notifications::printSection();
-        echo '<div id="article">';
+        echo '<div id="article" class="page--' . Context::pageUUID() . '">';
         echo Context::response()->content();
         echo '</div>';
         echo '</div>';

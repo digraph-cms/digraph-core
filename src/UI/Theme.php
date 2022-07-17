@@ -449,29 +449,33 @@ class Theme
         /** @var File[] */
         $files = [];
         foreach ($urls_or_files as $url_or_file) {
-            if (basename($url_or_file) == '*.js') {
-                // search and recurse if the filename is *.js
-                $files = array_merge(
-                    $files,
-                    array_map(
-                        Media::class . '::get',
-                        Media::globToPaths($url_or_file)
-                    )
-                );
-            } else {
-                if (is_string($url_or_file)) {
-                    if (preg_match('@^(https?)?//@', $url_or_file)) {
-                        // embed external stuff immediately
-                        $url = $url_or_file;
-                    } else {
-                        // get media files for internal stuff so it can be bundled or embedded
-                        $r = $url_or_file;
-                        $url_or_file = Media::get($url_or_file);
-                        if (!$url_or_file) {
-                            throw new HttpError(500, 'JS file ' . $r . ' not found');
-                        }
-                        $files[] = $url_or_file;
+            if ($url_or_file instanceof File) {
+                $files[] = $url_or_file;
+            } elseif (is_string($url_or_file)) {
+                if (preg_match('@^(https?)?//@', $url_or_file)) {
+                    // embed external stuff immediately
+                    printf(
+                        '<script src="%s"%s></script>' . PHP_EOL,
+                        $url_or_file,
+                        $async ? ' async' : ''
+                    );
+                } elseif (basename($url_or_file) == '*.js') {
+                    // search and recurse if the filename is *.js
+                    $files = array_merge(
+                        $files,
+                        array_map(
+                            Media::class . '::get',
+                            Media::globToPaths($url_or_file)
+                        )
+                    );
+                } else {
+                    // get media files for internal stuff so it can be bundled or embedded
+                    $r = $url_or_file;
+                    $url_or_file = Media::get($url_or_file);
+                    if (!$url_or_file) {
+                        throw new HttpError(500, 'JS file ' . $r . ' not found');
                     }
+                    $files[] = $url_or_file;
                 }
             }
         }
@@ -483,11 +487,11 @@ class Theme
             echo "<!-- $name -->";
             foreach ($files as $file) {
                 // render script tag
-                echo "<script src='" . $file->url() . "'";
-                if ($async) {
-                    echo " async";
-                }
-                echo "></script>" . PHP_EOL;
+                printf(
+                    '<script src="%s"%s></script>' . PHP_EOL,
+                    $file->url(),
+                    $async ? ' async' : ''
+                );
             }
         } else {
             // bundle scripts
@@ -508,11 +512,11 @@ class Theme
                 )
             );
             $file->write();
-            echo "<script src='" . $file->url() . "'";
-            if ($async) {
-                echo " async";
-            }
-            echo "></script>" . PHP_EOL;
+            printf(
+                '<script src="%s"%s></script>' . PHP_EOL,
+                $file->url(),
+                $async ? ' async' : ''
+            );
         }
     }
 
@@ -523,17 +527,13 @@ class Theme
     protected static function renderInlineJs(array $strings_or_files)
     {
         foreach ($strings_or_files as $string_or_file) {
-            if (basename($string_or_file) == '*.js') {
+            if ($string_or_file instanceof File) {
+                echo "<script>";
+                echo $string_or_file->content();
+                echo "</script>" . PHP_EOL;
+            } elseif (basename($string_or_file) == '*.js') {
                 // recurse if filename is *.js
                 static::renderInlineJs(Media::globToPaths($string_or_file));
-            } else {
-                // print script inline
-                if ($string_or_file instanceof File) {
-                    $string_or_file = $string_or_file->content();
-                }
-                echo "<script>";
-                echo $string_or_file;
-                echo "</script>" . PHP_EOL;
             }
         }
     }
@@ -544,7 +544,9 @@ class Theme
         Config::set('files.css.sourcemap', false);
         $files = [];
         foreach (array_merge(static::$blockingThemeCss, static::$blockingPageCss) as $url) {
-            if (preg_match('/\/\*\.css$/', $url)) {
+            if ($url instanceof File) {
+                $files[] = $url;
+            } elseif (preg_match('/\/\*\.css$/', $url)) {
                 //wildcard search
                 foreach (Media::glob(preg_replace('/\.css$/', '.{scss,css}', $url)) as $file) {
                     $files[] = $file;
@@ -578,6 +580,7 @@ class Theme
         if (!Config::get('theme.bundle_css')) {
             $files = [];
             foreach ($urls as $url) {
+                if ($url instanceof File) $url = $url->url();
                 if (preg_match('/\/\*\.css$/', $url)) {
                     //wildcard search
                     $url = new URL($url);
@@ -598,14 +601,18 @@ class Theme
         } else {
             $files = [];
             foreach ($urls as $url) {
-                if (preg_match('/\/\*\.css$/', $url)) {
-                    //wildcard search
+                if ($url instanceof File) {
+                    // can't bundle files passed directly in because they might not have a path 
+                    // that Media can find them at
+                    echo "<link rel='stylesheet' href='" . $url->url() . "'>" . PHP_EOL;
+                } elseif (preg_match('/\/\*\.css$/', $url)) {
+                    // wildcard search
                     $url = new URL($url);
                     foreach (Media::search(preg_replace('/\.s?css$/', '.{scss,css}', $url->path())) as $file) {
                         $files[] = $url->directory() . basename($file);
                     }
                 } else {
-                    //normal single file
+                    // normal single file
                     $files[] = $url;
                 }
             }
@@ -674,7 +681,7 @@ class Theme
      */
     public static function head(): string
     {
-        $key = md5(serialize([
+        $key = md5(\Opis\Closure\serialize([
             static::$variables,
             static::$blockingThemeCss,
             static::$blockingPageCss,

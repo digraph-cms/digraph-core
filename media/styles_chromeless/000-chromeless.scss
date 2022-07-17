@@ -1,0 +1,19 @@
+body {
+  margin: $grid  !important;
+}
+
+#notifications {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+#notifications {
+  .notification {
+    margin: 0 !important;
+    margin-bottom: $border !important;
+  }
+
+  .notification:last-child {
+    margin-bottom: $grid  !important;
+  }
+}

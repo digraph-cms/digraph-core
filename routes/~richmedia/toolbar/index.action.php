@@ -8,6 +8,9 @@ use DigraphCMS\UI\Toolbars\ToolbarLink;
 use DigraphCMS\UI\Toolbars\ToolbarSeparator;
 use DigraphCMS\UI\Toolbars\ToolbarSpacer;
 use DigraphCMS\URL\URL;
+use DigraphCMS\Users\Permissions;
+
+Context::response()->template('chromeless.php');
 
 $page = Context::arg('uuid') ? Pages::get(Context::arg('uuid')) : null;
 $action = Context::arg('action');
@@ -38,7 +41,7 @@ if (!$only || in_array('format', $only)) {
             ->setShortcut('Ctrl-I'),
         (new ToolbarLink('Strike', 'strikethrough', 'markdownToggleStrikethrough'))
             ->setShortcut('Ctrl-Shift-S'),
-        (new ToolbarLink('Highlight', 'highlight','markdownToggleHighlight'))
+        (new ToolbarLink('Highlight', 'highlight', 'markdownToggleHighlight'))
             ->setShortcut('Ctrl-Shift-M'),
     ];
 }
@@ -60,8 +63,9 @@ if (!$only || in_array('insert', $only)) {
             ->setShortcut('Ctrl-Shift-K'),
         (new ToolbarLink('Link to a page', 'pages', null, new URL('&action=link')))
             ->setShortcut('Ctrl-K'),
-        (new ToolbarLink('Quick media insert', 'media', null, new URL('&action=media')))
-            ->setShortcut('Ctrl-M'),
+        Permissions::inMetaGroup('richmedia__edit')
+            ? (new ToolbarLink('Quick media insert', 'media', null, new URL('&action=media')))->setShortcut('Ctrl-M')
+            : false,
         // (new ToolbarLink('Link to a user', 'person', null, new URL('&action=user')))
         //     ->setShortcut('Ctrl-U'),
     ];
@@ -90,7 +94,7 @@ echo implode(
     new ToolbarSeparator,
     array_map(
         function ($bs) {
-            return implode('',$bs);
+            return implode('', array_filter($bs));
         },
         $buttons
     )

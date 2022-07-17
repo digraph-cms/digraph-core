@@ -9,6 +9,11 @@ use DigraphCMS\Digraph;
 use DigraphCMS\FS;
 use DigraphCMS\HTML\A;
 use DigraphCMS\HTML\DIV;
+use DigraphCMS\HTML\Forms\Field;
+use DigraphCMS\HTML\Forms\Fields\CheckboxListField;
+use DigraphCMS\HTML\Forms\FormWrapper;
+use DigraphCMS\HTML\Forms\OrderingInput;
+use DigraphCMS\HTML\Forms\UploadMulti;
 use DigraphCMS\Media\DeferredFile;
 use DigraphCMS\UI\Format;
 use DigraphCMS\URL\URL;
@@ -19,28 +24,95 @@ class ZipRichMedia extends AbstractRichMedia
 {
     protected $zipFile;
 
-    /**
-     * Generate a shortcode rendering of this media
-     *
-     * @param ShortcodeInterface $code
-     * @param self $media
-     * @return string|null
-     */
-    public static function shortCode(ShortcodeInterface $code, $media): ?string
+    public function prepareForm(FormWrapper $form, $create = false)
+    {
+        // name input
+        $name = (new Field('Name'))
+            ->setRequired(true)
+            ->setDefault($this->name())
+            ->addForm($form);
+
+        // existing files
+        if ($this->files()) {
+            $order = (new Field('Current files', new OrderingInput()))
+                ->addForm($form)
+                ->addTip('Drag and drop to reorder in web lists (order in downloaded zip file can\'t be controlled');
+            foreach ($this->files() as $file) {
+                $order->input()->addLabel($file->uuid(), $file->filename());
+            }
+            $order->setDefault($this['files']);
+            $order->input()->setAllowDeletion(true);
+        } else $order = null;
+
+        // upload field
+        $files = (new Field($create ? 'File' : 'Add files', new UploadMulti()))
+            ->addForm($form);
+        if ($create) $files->setRequired(true);
+
+        // options
+        $options = (new CheckboxListField(
+            'Options',
+            [
+                'single' => 'Allow listing and downloading individual files'
+            ]
+        ))
+            ->setDefault($this['options'] ?? [])
+            ->addForm($form);
+
+        // meta
+        $meta = (new CheckboxListField(
+            'Display metadata',
+            [
+                'uploader' => 'Update user',
+                'upload_date' => 'Update date',
+            ]
+        ))
+            ->setDefault($this['meta'] ?? [])
+            ->addForm($form);
+
+        // callback for taking in values
+        $form->addCallback(function () use ($name, $order, $files, $options, $meta) {
+            // set name
+            $this->name($name->value());
+            // set options
+            unset($this['options']);
+            $this['options'] = $options->value();
+            // set meta
+            unset($this['meta']);
+            $this['meta'] = $meta->value();
+            if ($order) {
+                // delete files
+                $deleted = array_diff($this['files'], $order->value());
+                foreach ($deleted as $f) {
+                    Filestore::get($f)->delete();
+                }
+                // set remaining file order
+                unset($this['files']);
+                $this['files'] = $order->value();
+            }
+            // add new files to list
+            $this['files'] = array_merge(
+                $this['files'] ?? [],
+                array_map(
+                    function (FilestoreFile $file): string {
+                        return $file->uuid();
+                    },
+                    $files->input()->filestore($this->uuid())
+                )
+            );
+        });
+    }
+
+    public function shortCode(ShortcodeInterface $code): ?string
     {
         if ($code->getParameter('inline') || $code->getContent()) {
             return (new A)
-                ->setAttribute('href', $media->zipFile()->url())
-                ->setAttribute('title', $media->zipFile()->filename())
-                ->addChild($code->getContent() ?? $media->zipFile()->filename());
+                ->setAttribute('href', $this->zipFile()->url())
+                ->setAttribute('title', $this->zipFile()->filename())
+                ->addChild($code->getContent() ?? $this->zipFile()->filename());
         } else {
-            return $media->card();
+            return $this->card();
         }
-    }
-
-    public static function class(): string
-    {
-        return 'zip';
     }
 
     public static function className(): string
@@ -162,7 +234,7 @@ class ZipRichMedia extends AbstractRichMedia
     {
         return array_map(
             Filestore::class . '::get',
-            $this['files']
+            $this['files'] ?? []
         );
     }
 }

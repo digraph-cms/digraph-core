@@ -3,13 +3,13 @@ page_types:
   page: \DigraphCMS\Content\Page
 
 rich_media_types:
+  aside: \DigraphCMS\RichMedia\Types\AsideRichMedia
   bookmark: \DigraphCMS\RichMedia\Types\BookmarkRichMedia
   content: \DigraphCMS\RichMedia\Types\ContentRichMedia
-  aside: \DigraphCMS\RichMedia\Types\AsideRichMedia
-  image: \DigraphCMS\RichMedia\Types\ImageRichMedia
   file: \DigraphCMS\RichMedia\Types\FileRichMedia
-  zip: \DigraphCMS\RichMedia\Types\ZipRichMedia
+  image: \DigraphCMS\RichMedia\Types\ImageRichMedia
   table: \DigraphCMS\RichMedia\Types\TableRichMedia
+  zip: \DigraphCMS\RichMedia\Types\ZipRichMedia
 
 search:
   response_index:
@@ -75,6 +75,8 @@ codemirror:
       - mode/css/css
       - mode/htmlmixed/htmlmixed
       - mode/clike/clike
+    mode/sass/sass:
+      - mode/css/css
   modealias:
     php: text/x-php
     phphtml: application/x-httpd-php

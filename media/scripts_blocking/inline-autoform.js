@@ -2,7 +2,8 @@
  * inline-autoforms display as one row, and the submit button doesn't appear until something is changed
  */
 document.addEventListener('DigraphDOMReady', (e) => {
-    var forms = Array.from(e.target.getElementsByClassName('inline-autoform'));
+    var forms = Array.from(e.target.getElementsByClassName('inline-autoform'))
+        .concat(Array.from(e.target.getElementsByClassName('autoform')));
     if (e.target.classList.contains('inline-autoform')) forms.push(e.target);
     forms.forEach(form => {
         if (form.classList.contains('inline-autoform--js')) return; // this one is already set up
@@ -11,6 +12,7 @@ document.addEventListener('DigraphDOMReady', (e) => {
         submit.style.display = 'none';
         form.addEventListener('change', e => submit.style.display = null);
         form.addEventListener('keyup', e => submit.style.display = null);
+        form.addEventListener('autocomplete-select', e => submit.style.display = null);
     });
 });
 

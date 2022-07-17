@@ -2,6 +2,7 @@ div[data-codemirror-mode="gfm"],
 div[data-codemirror-mode="markdown"] {
     .cm-s-digraph {
         font-family: $font-content;
+        line-height: 1.4em;
 
         .CodeMirror-lines {
             margin: $grid;
@@ -18,23 +19,23 @@ div[data-codemirror-mode="markdown"] {
     }
 
     .cm-header-5 {
-        font-size: 1.3em;
+        font-size: 1.2em;
     }
 
     .cm-header-4 {
-        font-size: 1.5em;
+        font-size: 1.3em;
     }
 
     .cm-header-3 {
-        font-size: 1.7em;
+        font-size: 1.5em;
     }
 
     .cm-header-2 {
-        font-size: 1.9em;
+        font-size: 1.7em;
     }
 
     .cm-header-1 {
-        font-size: 2.1em;
+        font-size: 1.9em;
     }
 
     .cm-comment,
