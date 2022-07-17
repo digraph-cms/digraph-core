@@ -34,6 +34,16 @@ class SearchForm extends FormWrapper
         }
     }
 
+    public function queryField(): INPUT
+    {
+        return $this->queryField;
+    }
+
+    public function modeField(): ?SELECT
+    {
+        return $this->modeField;
+    }
+
     public function queryMode(): ?string
     {
         // return mode field value if it exists
