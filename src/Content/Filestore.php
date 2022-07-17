@@ -119,11 +119,12 @@ class Filestore
     /**
      * Get the top result for a given UUID
      *
-     * @param string $uuid
+     * @param string|null $uuid
      * @return FilestoreFile|null
      */
-    public static function get(string $uuid): ?FilestoreFile
+    public static function get(?string $uuid): ?FilestoreFile
     {
+        if ($uuid === null) return null;
         if (!isset(static::$cache[$uuid])) {
             static::$cache[$uuid] = self::doGet($uuid);
         }

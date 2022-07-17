@@ -4,16 +4,14 @@ namespace DigraphCMS\RichMedia\Types;
 
 use DigraphCMS\Content\Pages;
 use DigraphCMS\HTML\A;
-use DigraphCMS\URL\WaybackMachine;
+use DigraphCMS\HTML\Forms\Field;
+use DigraphCMS\HTML\Forms\Fields\Autocomplete\PageField;
+use DigraphCMS\HTML\Forms\Fields\RadioListField;
+use DigraphCMS\HTML\Forms\FormWrapper;
 use Thunder\Shortcode\Shortcode\ShortcodeInterface;
 
 class BookmarkRichMedia extends AbstractRichMedia
 {
-    public static function class(): string
-    {
-        return 'bookmark';
-    }
-
     public static function className(): string
     {
         return 'Bookmark';
@@ -22,6 +20,92 @@ class BookmarkRichMedia extends AbstractRichMedia
     public static function description(): string
     {
         return 'Reusable link to either an internal page or an external URL';
+    }
+
+    public function prepareForm(FormWrapper $form, $create = false)
+    {
+        // name input
+        $name = (new Field('Name'))
+            ->setDefault($this->name())
+            ->setRequired(true)
+            ->addTip('May be used as link tooltip and/or link text if no text is specified when embedded')
+            ->addForm($form);
+
+        // mode input
+        $mode = (new RadioListField('What type of bookmark would you like to create?', [
+            'url' => 'Link to any URL on the web',
+            'page' => 'Bookmark a page on this site'
+        ]))
+            ->setRequired(true)
+            ->setDefault($this['mode'] ?? 'url')
+            ->addForm($form);
+
+        // url input
+        $url = (new Field('URL'))
+            ->setID('url-input')
+            ->setDefault($this['url'])
+            ->addForm($form);
+        $url->input()
+            ->setAttribute('placeholder', 'https://')
+            ->addValidator(function () use ($url) {
+                if ($url->value() && !filter_var($url->value(), FILTER_VALIDATE_URL)) {
+                    return "Please enter a valid URL";
+                } else return null;
+            });
+
+        // page input
+        $page = (new PageField('Page'))
+            ->setID('page-input')
+            ->setDefault($this['page'])
+            ->addForm($form);
+
+        // special validators to ensure the right url/page field is required based on mode
+        $url->addValidator(function () use ($url, $mode) {
+            if (!$url->value() && $mode->value() == 'url') {
+                return "This field is required";
+            } else return null;
+        });
+        $page->addValidator(function () use ($page, $mode) {
+            if (!$page->value() && $mode->value() == 'page') {
+                return "This field is required";
+            } else return null;
+        });
+
+        // special scripting for front end visibility
+        $form->__toString();
+        $url_mode_id = $mode->field('url')->input()->id();
+        $page_mode_id = $mode->field('page')->input()->id();
+        $url_id = $url->id();
+        $page_id = $page->id();
+        $form->addChild(<<<SCRIPT
+            <script>
+                (() => {
+                    // get elements
+                    var url = document.getElementById('$url_mode_id');
+                    var page = document.getElementById('$page_mode_id');
+                    var url_field = document.getElementById('$url_id');
+                    var page_field = document.getElementById('$page_id');
+                    // add event listeners
+                    url.addEventListener('change', checkStatus);
+                    page.addEventListener('change', checkStatus);
+                    // do initial check
+                    checkStatus();
+                    // status checking 
+                    function checkStatus() {
+                        url_field.style.display = url.checked ? null : 'none';
+                        page_field.style.display = page.checked ? null : 'none';
+                    }
+                })();
+            </script>
+            SCRIPT);
+
+        // callback for taking in values
+        $form->addCallback(function () use ($name, $mode, $url, $page) {
+            $this->name($name->value());
+            $this['mode'] = $mode->value();
+            $this['url'] = $url->value();
+            $this['page'] = $page->value();
+        });
     }
 
     /**
@@ -39,18 +123,6 @@ class BookmarkRichMedia extends AbstractRichMedia
             // arbitrary URL
             $url = $bookmark['url'];
             $link->setAttribute('href', $url);
-            if (!WaybackMachine::check($url)) {
-                if ($wb = WaybackMachine::get($url)) {
-                    // Wayback Machine says URL is broken and found an archived copy
-                    $link->setAttribute('href', $wb->helperURL())
-                        ->addClass('link--wayback')
-                        ->setAttribute('title', 'Wayback Machine: ' . $bookmark->name());
-                } else {
-                    // broken URL but no archived copy found
-                    $link->addClass('link--broken')
-                        ->setAttribute('title', 'Link may be broken');
-                }
-            }
         } elseif ($bookmark['mode'] == 'page') {
             // link to a page on this site
             if ($bookmark['page'] && $page = Pages::get($bookmark['page'])) {

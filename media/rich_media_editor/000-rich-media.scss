@@ -1,0 +1,59 @@
+#rich-media-editor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: var(--theme-neutral);
+  font-family: $font-ui;
+  display: grid;
+  grid-template-rows: min-content auto;
+}
+
+#rich-media-editor__interface {
+  grid-row-start: 2;
+  background-color: var(--background);
+  padding: $grid/2;
+  overflow: auto;
+}
+
+#rich-media-editor__buttons {
+  grid-row-start: 1;
+  background-color: var(--background-darker);
+  display: flex;
+  gap: $border;
+  align-items: flex-end;
+  justify-content: flex-end;
+  box-sizing: border-box;
+
+  >* {
+    border-radius: 0;
+  }
+
+  .button,
+  .submit-button {
+    padding: $grid/4 $grid;
+  }
+}
+
+#rich-media-deleter {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: var(--theme-neutral);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#rich-media-deleter__content {
+  background-color: var(--background);
+  padding: $grid;
+  box-shadow: $shadow;
+
+  h1 {
+    margin-top: 0 !important;
+  }
+}

@@ -2,11 +2,37 @@
 
 namespace DigraphCMS\RichMedia\Types;
 
+use DigraphCMS\Context;
+use DigraphCMS\HTML\Forms\Field;
+use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\RichContent\RichContent;
+use DigraphCMS\RichContent\RichContentField;
 use Thunder\Shortcode\Shortcode\ShortcodeInterface;
 
 class ContentRichMedia extends AbstractRichMedia
 {
+
+    public function prepareForm(FormWrapper $form, $create = false)
+    {
+        // name input
+        $name = (new Field('Name'))
+            ->setDefault($this->name())
+            ->setRequired(true)
+            ->addForm($form);
+
+        // content input
+        $content = (new RichContentField('Content', $this->uuid(), true))
+            ->setDefault($this->content())
+            ->setID('edit-content')
+            ->setRequired(true)
+            ->addForm($form);
+
+        // callback for taking in values
+        $form->addCallback(function () use ($name, $content) {
+            $this->name($name->value());
+            $this->content($content->value());
+        });
+    }
 
     public function content(RichContent $set = null): RichContent
     {
@@ -14,11 +40,6 @@ class ContentRichMedia extends AbstractRichMedia
             $this['content'] = $set->array();
         }
         return new RichContent($this['content']);
-    }
-
-    public static function class(): string
-    {
-        return 'content';
     }
 
     public static function className(): string
