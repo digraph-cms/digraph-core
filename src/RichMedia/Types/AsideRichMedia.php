@@ -2,7 +2,7 @@
 
 namespace DigraphCMS\RichMedia\Types;
 
-use DigraphCMS\Context;
+use DigraphCMS\HTML\ASIDE;
 use DigraphCMS\HTML\Forms\Field;
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\RichContent\RichContent;
