@@ -4,6 +4,7 @@ use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\HTTP\RedirectException;
+use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\RichMedia\RichMedia;
 use DigraphCMS\RichMedia\Types\AbstractRichMedia;
 use DigraphCMS\UI\CallbackLink;
@@ -73,6 +74,10 @@ else {
     $form = $media->editForm();
     // set button name
     $form->button()->setText('Save changes');
+    // callback to force a refresh to avoid double-submits and allow refreshing without resubmit prompts
+    $form->addCallback(function () {
+        throw new RefreshException();
+    });
 }
 
 // display form
