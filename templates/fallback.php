@@ -43,7 +43,7 @@ use DigraphCMS\UI\Theme;
     }
     echo '<main id="page-wrapper">';
     echo '<div id="content">';
-    echo '<div id="article">';
+    echo '<div id="article" class="page--' . Context::pageUUID() . '">';
     echo Context::response()->content();
     echo '</div>';
     echo '</div>';

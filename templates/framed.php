@@ -33,7 +33,7 @@ use DigraphCMS\UI\Sidebar\Sidebar;
         echo '<div id="content">';
         Breadcrumb::print();
         Notifications::printSection();
-        echo '<div id="article">';
+        echo '<div id="article" class="page--' . Context::pageUUID() . '">';
         echo Context::response()->content();
         echo '</div>';
         echo '</div>';

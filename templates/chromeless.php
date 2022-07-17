@@ -28,7 +28,7 @@ Theme::addInternalPageCss('/styles_chromeless/*.css');
 <body class='template-chromeless no-js <?php echo implode(' ', Theme::bodyClasses()); ?>'>
     <?php
     Notifications::printSection();
-    echo '<div id="article">';
+    echo '<div id="article" class="page--' . Context::pageUUID() . '">';
     echo Context::response()->content();
     echo '</div>';
     ?>
