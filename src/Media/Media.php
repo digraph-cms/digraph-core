@@ -121,7 +121,7 @@ class Media
                 function (DeferredFile $file) use ($path) {
                     file_put_contents(
                         $file->path(),
-                        CSS::scss(
+                        JS::js(
                             implode(
                                 PHP_EOL . PHP_EOL,
                                 array_map(
