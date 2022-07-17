@@ -108,24 +108,17 @@ class BookmarkRichMedia extends AbstractRichMedia
         });
     }
 
-    /**
-     * Generate a shortcode rendering of this media
-     *
-     * @param ShortcodeInterface $code
-     * @param self $bookmark
-     * @return string|null
-     */
-    public static function shortCode(ShortcodeInterface $code, $bookmark): ?string
+    public function shortCode(ShortcodeInterface $code): ?string
     {
         $link = (new A)
-            ->setAttribute('title', $bookmark->name());
-        if ($bookmark['mode'] == 'url') {
+            ->setAttribute('title', $this->name());
+        if ($this['mode'] == 'url') {
             // arbitrary URL
-            $url = $bookmark['url'];
+            $url = $this['url'];
             $link->setAttribute('href', $url);
-        } elseif ($bookmark['mode'] == 'page') {
+        } elseif ($this['mode'] == 'page') {
             // link to a page on this site
-            if ($bookmark['page'] && $page = Pages::get($bookmark['page'])) {
+            if ($this['page'] && $page = Pages::get($this['page'])) {
                 $link->setAttribute('href', $page->url())
                     ->setAttribute('title', $page->name());
             } else {
@@ -134,7 +127,7 @@ class BookmarkRichMedia extends AbstractRichMedia
             }
         }
         $link
-            ->addChild($code->getContent() ? $code->getContent() : $bookmark->name());
+            ->addChild($code->getContent() ? $code->getContent() : $this->name());
         return $link;
     }
 }

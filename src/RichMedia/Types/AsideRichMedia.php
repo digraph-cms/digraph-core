@@ -52,20 +52,13 @@ class AsideRichMedia extends AbstractRichMedia
         return 'A block of customizable content contained in a box';
     }
 
-    /**
-     * Generate a shortcode rendering of this media
-     *
-     * @param ShortcodeInterface $code
-     * @param self $media
-     * @return string|null
-     */
-    public static function shortCode(ShortcodeInterface $code, $media): ?string
+    public function shortCode(ShortcodeInterface $code): ?string
     {
         $aside = (new ASIDE)
-            ->addChild($media->content()->html())
+            ->addChild($this->content()->html())
             ->addClass('aside-media')
-            ->setID('aside-' . $media->uuid());
-        if ($code->getParameter('block','false') == 'true') {
+            ->setID('aside-' . $this->uuid());
+        if ($code->getParameter('block', 'false') == 'true') {
             $aside->addClass('aside--block');
         }
         return $aside;

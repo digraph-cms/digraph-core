@@ -64,22 +64,15 @@ class FileRichMedia extends AbstractRichMedia
         });
     }
 
-    /**
-     * Generate a shortcode rendering of this media
-     *
-     * @param ShortcodeInterface $code
-     * @param self $media
-     * @return string|null
-     */
-    public static function shortCode(ShortcodeInterface $code, $media): ?string
+    public function shortCode(ShortcodeInterface $code): ?string
     {
         if ($code->getParameter('inline') || $code->getContent()) {
             return (new A)
-                ->setAttribute('href', $media->file()->url())
-                ->setAttribute('title', $media->file()->filename() . ' (' . Format::filesize($media->file()->bytes()) . ')')
-                ->addChild($code->getContent() ?? $media->file()->filename());
+                ->setAttribute('href', $this->file()->url())
+                ->setAttribute('title', $this->file()->filename() . ' (' . Format::filesize($this->file()->bytes()) . ')')
+                ->addChild($code->getContent() ?? $this->file()->filename());
         } else {
-            return $media->card();
+            return $this->card();
         }
     }
 

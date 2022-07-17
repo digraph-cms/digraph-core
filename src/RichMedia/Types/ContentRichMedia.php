@@ -52,15 +52,8 @@ class ContentRichMedia extends AbstractRichMedia
         return 'A block of customizable content that is seamlessly embedded wherever it is placed';
     }
 
-    /**
-     * Generate a shortcode rendering of this media
-     *
-     * @param ShortcodeInterface $code
-     * @param self $media
-     * @return string|null
-     */
-    public static function shortCode(ShortcodeInterface $code, $media): ?string
+    public function shortCode(ShortcodeInterface $code): ?string
     {
-        return $media->content()->html();
+        return $this->content()->html();
     }
 }

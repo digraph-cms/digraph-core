@@ -29,7 +29,7 @@ class ImageRichMedia extends AbstractRichMedia
             } catch (\Throwable $th) {
             }
         }
-        
+
         // name input
         $name = (new Field('Name'))
             ->addTip('Leave blank to use the filename of the uploaded file')
@@ -66,19 +66,12 @@ class ImageRichMedia extends AbstractRichMedia
         });
     }
 
-    /**
-     * Generate a shortcode rendering of this media
-     *
-     * @param ShortcodeInterface $code
-     * @param self $media
-     * @return string|null
-     */
-    public static function shortCode(ShortcodeInterface $code, $media): ?string
+    public function shortCode(ShortcodeInterface $code): ?string
     {
         try {
             $image = new ResponsivePicture(
-                $media->file()->image(),
-                $media['alt']
+                $this->file()->image(),
+                $this['alt']
             );
         } catch (\Throwable $th) {
             return (new DIV)
@@ -87,11 +80,11 @@ class ImageRichMedia extends AbstractRichMedia
                 ->addChild('Exception occurred while rendering image')
                 ->toString();
         }
-        if ($media->caption()->source()) {
+        if ($this->caption()->source()) {
             $figure = (new FIGURE)
-                ->setAttribute('style', 'background-color:' . $media->file()->image()->color())
+                ->setAttribute('style', 'background-color:' . $this->file()->image()->color())
                 ->addChild($image)
-                ->addChild('<figcaption>' . $media->caption() . '</figcaption>');
+                ->addChild('<figcaption>' . $this->caption() . '</figcaption>');
             return $figure->toString();
         }
         return $image->toString();

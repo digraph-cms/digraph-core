@@ -5,8 +5,6 @@ namespace DigraphCMS\RichMedia\Types;
 use ArrayAccess;
 use DateTime;
 use DigraphCMS\Config;
-use DigraphCMS\Content\Filestore;
-use DigraphCMS\Content\FilestoreFile;
 use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Content\Pages;
 use DigraphCMS\Digraph;
@@ -31,7 +29,7 @@ abstract class AbstractRichMedia implements ArrayAccess
 
     abstract public static function className(): string;
     abstract public static function description(): string;
-    abstract public static function shortCode(ShortcodeInterface $code, $media): ?string;
+    abstract public function shortCode(ShortcodeInterface $code): ?string;
     abstract protected function prepareForm(FormWrapper $form, $create = false);
 
     public static function class(): string

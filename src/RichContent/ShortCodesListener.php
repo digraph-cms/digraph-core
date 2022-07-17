@@ -30,7 +30,7 @@ class ShortCodesListener
     {
         if ($class = Config::get('rich_media_types.' . $s->getName())) {
             if (($media = RichMedia::get($s->getBbCode())) instanceof $class) {
-                return $class::shortCode($s, $media);
+                return $media->shortCode($s);
             }
         }
         return null;

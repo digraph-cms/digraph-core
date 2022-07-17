@@ -103,22 +103,15 @@ class ZipRichMedia extends AbstractRichMedia
         });
     }
 
-    /**
-     * Generate a shortcode rendering of this media
-     *
-     * @param ShortcodeInterface $code
-     * @param self $media
-     * @return string|null
-     */
-    public static function shortCode(ShortcodeInterface $code, $media): ?string
+    public function shortCode(ShortcodeInterface $code): ?string
     {
         if ($code->getParameter('inline') || $code->getContent()) {
             return (new A)
-                ->setAttribute('href', $media->zipFile()->url())
-                ->setAttribute('title', $media->zipFile()->filename())
-                ->addChild($code->getContent() ?? $media->zipFile()->filename());
+                ->setAttribute('href', $this->zipFile()->url())
+                ->setAttribute('title', $this->zipFile()->filename())
+                ->addChild($code->getContent() ?? $this->zipFile()->filename());
         } else {
-            return $media->card();
+            return $this->card();
         }
     }
 

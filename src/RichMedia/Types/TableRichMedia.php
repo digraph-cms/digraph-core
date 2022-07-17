@@ -97,16 +97,9 @@ class TableRichMedia extends AbstractRichMedia
         });
     }
 
-    /**
-     * Generate a shortcode rendering of this media
-     *
-     * @param ShortcodeInterface $code
-     * @param self $table
-     * @return string|null
-     */
-    public static function shortCode(ShortcodeInterface $code, $table): ?string
+    public function shortCode(ShortcodeInterface $code): ?string
     {
-        return $table->render();
+        return $this->render();
     }
 
     public static function className(): string
