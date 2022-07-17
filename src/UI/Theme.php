@@ -449,29 +449,33 @@ class Theme
         /** @var File[] */
         $files = [];
         foreach ($urls_or_files as $url_or_file) {
-            if (basename($url_or_file) == '*.js') {
-                // search and recurse if the filename is *.js
-                $files = array_merge(
-                    $files,
-                    array_map(
-                        Media::class . '::get',
-                        Media::globToPaths($url_or_file)
-                    )
-                );
-            } else {
-                if (is_string($url_or_file)) {
-                    if (preg_match('@^(https?)?//@', $url_or_file)) {
-                        // embed external stuff immediately
-                        $url = $url_or_file;
-                    } else {
-                        // get media files for internal stuff so it can be bundled or embedded
-                        $r = $url_or_file;
-                        $url_or_file = Media::get($url_or_file);
-                        if (!$url_or_file) {
-                            throw new HttpError(500, 'JS file ' . $r . ' not found');
-                        }
-                        $files[] = $url_or_file;
+            if ($url_or_file instanceof File) {
+                $files[] = $url_or_file;
+            } elseif (is_string($url_or_file)) {
+                if (preg_match('@^(https?)?//@', $url_or_file)) {
+                    // embed external stuff immediately
+                    printf(
+                        '<script src="%s"%s></script>' . PHP_EOL,
+                        $url_or_file,
+                        $async ? ' async' : ''
+                    );
+                } elseif (basename($url_or_file) == '*.js') {
+                    // search and recurse if the filename is *.js
+                    $files = array_merge(
+                        $files,
+                        array_map(
+                            Media::class . '::get',
+                            Media::globToPaths($url_or_file)
+                        )
+                    );
+                } else {
+                    // get media files for internal stuff so it can be bundled or embedded
+                    $r = $url_or_file;
+                    $url_or_file = Media::get($url_or_file);
+                    if (!$url_or_file) {
+                        throw new HttpError(500, 'JS file ' . $r . ' not found');
                     }
+                    $files[] = $url_or_file;
                 }
             }
         }
@@ -483,11 +487,11 @@ class Theme
             echo "<!-- $name -->";
             foreach ($files as $file) {
                 // render script tag
-                echo "<script src='" . $file->url() . "'";
-                if ($async) {
-                    echo " async";
-                }
-                echo "></script>" . PHP_EOL;
+                printf(
+                    '<script src="%s"%s></script>' . PHP_EOL,
+                    $file->url(),
+                    $async ? ' async' : ''
+                );
             }
         } else {
             // bundle scripts
@@ -508,11 +512,11 @@ class Theme
                 )
             );
             $file->write();
-            echo "<script src='" . $file->url() . "'";
-            if ($async) {
-                echo " async";
-            }
-            echo "></script>" . PHP_EOL;
+            printf(
+                '<script src="%s"%s></script>' . PHP_EOL,
+                $file->url(),
+                $async ? ' async' : ''
+            );
         }
     }
 
