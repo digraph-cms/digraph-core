@@ -544,7 +544,9 @@ class Theme
         Config::set('files.css.sourcemap', false);
         $files = [];
         foreach (array_merge(static::$blockingThemeCss, static::$blockingPageCss) as $url) {
-            if (preg_match('/\/\*\.css$/', $url)) {
+            if ($url instanceof File) {
+                $files[] = $url;
+            } elseif (preg_match('/\/\*\.css$/', $url)) {
                 //wildcard search
                 foreach (Media::glob(preg_replace('/\.css$/', '.{scss,css}', $url)) as $file) {
                     $files[] = $file;
