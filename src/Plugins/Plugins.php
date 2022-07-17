@@ -134,7 +134,7 @@ class Plugins
                 // no match found, throw an exception
                 if (!$found) throw new \Exception("Failed to find a valid plugin in " . $pluginDirectory);
             },
-            function (CacheableState $state) use ($pluginDirectory) {
+            function (CacheableState $state) {
                 // require plugin file manually, it might not conform to autoloader
                 require_once $state['plugin_file'];
                 // configure autoloaders
