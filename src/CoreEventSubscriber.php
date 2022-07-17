@@ -351,7 +351,7 @@ abstract class CoreEventSubscriber
     }
 
     /**
-     * Limits access to ~admin routes to admin users
+     * Limits access to ~admin routes
      *
      * @param URL $url
      * @param User $user
@@ -360,6 +360,18 @@ abstract class CoreEventSubscriber
     public static function onStaticUrlPermissions_admin(URL $url, User $user): ?bool
     {
         return Permissions::inGroup('admins', $user);
+    }
+
+    /**
+     * Limits access to ~richmedia routes
+     *
+     * @param URL $url
+     * @param User $user
+     * @return boolean|null
+     */
+    public static function onStaticUrlPermissions_richmedia(URL $url, User $user): ?bool
+    {
+        return Permissions::inMetaGroup('richmedia__edit', $user);
     }
 
     /**

@@ -29,7 +29,7 @@ if ($form->ready()) {
     printf(
         '<script>Digraph.popup("%s","%s");</script>',
         new URL(sprintf(
-            '/~api/v1/rich-media/editor/?add=%s&frame=%s&parent=%s',
+            '/~richmedia/editor/?add=%s&frame=%s&parent=%s',
             $adder->value(),
             Context::arg('frame'),
             Context::arg('uuid')
@@ -50,7 +50,7 @@ else {
                 (new ToolbarLink('Edit', 'edit', null, null))
                     ->setAttribute('onclick', sprintf(
                         'Digraph.popup("%s")',
-                        new URL('/~api/v1/rich-media/editor/?frame=' . Context::arg('frame') . '&uuid=' . $media->uuid())
+                        new URL('/~richmedia/editor/?frame=' . Context::arg('frame') . '&uuid=' . $media->uuid())
                     ))
             ];
         },
