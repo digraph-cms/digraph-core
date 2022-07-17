@@ -56,7 +56,7 @@ class ZipRichMedia extends AbstractRichMedia
                 'single' => 'Allow listing and downloading individual files'
             ]
         ))
-            ->setDefault($media['options'] ?? [])
+            ->setDefault($this['options'] ?? [])
             ->addForm($form);
 
         // meta
@@ -67,7 +67,7 @@ class ZipRichMedia extends AbstractRichMedia
                 'upload_date' => 'Update date',
             ]
         ))
-            ->setDefault($media['meta'] ?? [])
+            ->setDefault($this['meta'] ?? [])
             ->addForm($form);
 
         // callback for taking in values
