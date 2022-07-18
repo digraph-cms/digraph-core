@@ -138,7 +138,7 @@ span.notification {
 
 #article {
     @include clearfix;
-    margin: 0;
+    margin: $grid 0;
     box-sizing: border-box;
 
     .action-menu+h1 {
@@ -154,7 +154,7 @@ span.notification {
 
     >* {
         &:first-child {
-            margin-top: 0;
+            margin-top: $grid;
         }
 
         &:last-child {

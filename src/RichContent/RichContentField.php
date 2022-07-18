@@ -6,6 +6,7 @@ use DigraphCMS\CodeMirror\CodeMirrorInput;
 use DigraphCMS\Digraph;
 use DigraphCMS\HTML\DIV;
 use DigraphCMS\HTML\Forms\Field;
+use DigraphCMS\UI\Sidebar\Sidebar;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Permissions;
 
@@ -27,6 +28,7 @@ class RichContentField extends Field
         $this->wrapper->addChild($this->contentEditor);
         // only add media editor if $hideMediaEditor is false
         if (!$hideMediaEditor || !Permissions::inMetaGroup('richmedia__edit')) {
+            Sidebar::setActive(false);
             $this->mediaEditor = (new DIV())
                 ->addClass('rich-content-editor__media-editor');
             $this->mediaEditorFrame = (new DIV())
