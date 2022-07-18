@@ -2,6 +2,7 @@
 
 use DigraphCMS\Context;
 use DigraphCMS\Digraph;
+use DigraphCMS\HTML\DIV;
 use DigraphCMS\HTML\Forms\Fields\Autocomplete\AutocompleteInput;
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\RichMedia\RichMedia;
@@ -46,7 +47,10 @@ else {
     $table = new PaginatedTable(
         $media,
         function (AbstractRichMedia $media): array {
-            $main = '<strong style="draggable:true;">' . $media->icon() . ' ' . $media->name() . '</strong>';
+            $main = (new DIV)
+                ->addChild('<strong>' . $media->icon() . ' ' . $media->name() . '</strong>')
+                ->setAttribute('draggable', 'true')
+                ->setData('drag-content', $media->defaultTag());
             return [
                 $main,
                 $media->hasTuner()
