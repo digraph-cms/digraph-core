@@ -73,7 +73,7 @@ class Search
         if (DB::driver() == 'mysql') {
             return [
                 'natural' => 'Natural language',
-                'boolean' => 'Boolean'
+                // 'boolean' => 'Boolean'
             ];
         }
         return [];
