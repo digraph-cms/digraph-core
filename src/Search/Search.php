@@ -23,7 +23,7 @@ class Search
                         'updated' => time()
                     ]
                 )
-                ->where('url=?', [$url->fullPathString()])
+                ->where('url = ?', [$url->fullPathString()])
                 ->execute();
         } else {
             // otherwise insert a fresh record
