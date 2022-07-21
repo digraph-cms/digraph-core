@@ -6,6 +6,7 @@ use DateInterval;
 use DateTime;
 use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
+use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\URL\URLs;
 use DigraphCMS\Users\Users;
 use donatj\UserAgent\UserAgentParser;
@@ -184,7 +185,9 @@ final class Session
                 $row['secret'],
                 $rememberme
             );
-            return static::$auth = new Authentication($row);
+            static::$auth = new Authentication($row);
+            Dispatcher::dispatchEvent('onAuthentication', [static::$auth]);
+            return static::$auth;
         }
     }
 
