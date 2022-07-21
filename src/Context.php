@@ -48,7 +48,8 @@ abstract class Context
      */
     public static function cache(string $section = null): CacheNamespace
     {
-        $namespace = 'context/' . substr(static::request()->hash(), 0, 2) . '/' . static::request()->hash();
+        if (static::request()) $namespace = 'context/' . substr(static::request()->hash(), 0, 2) . '/' . static::request()->hash();
+        else $namespace = 'context/none';
         if ($section) $namespace .= "/$section";
         return new CacheNamespace($namespace);
     }
