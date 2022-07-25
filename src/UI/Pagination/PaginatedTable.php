@@ -21,11 +21,15 @@ class PaginatedTable extends PaginatedSection
     {
         parent::__construct($source, $callback);
         $this->headers = array_map(function ($header) {
-            if (!($header instanceof ColumnHeader)) {
-                return new ColumnHeader($header);
-            }
+            if (!($header instanceof ColumnHeader)) return new ColumnHeader($header);
+            if ($header instanceof ColumnSortingHeader) $header->setTable($this);
             return $header;
         }, $headers);
+    }
+
+    public function source()
+    {
+        return $this->source;
     }
 
     public function body(): Tag

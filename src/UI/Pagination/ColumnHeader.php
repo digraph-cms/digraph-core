@@ -15,27 +15,20 @@ class ColumnHeader
         $this->myID = self::$id++;
         $this->label = $label;
         $this->sorter = $sorter;
-        if ($this->sorter) {
-            // is sortable
-            $order = Context::url()->arg('_sortorder');
-            $column = Context::url()->arg('_sortcolumn');
-            if ($column == $this->id()) {
-                if ($order == 'asc') {
-                    $this->order = 'asc';
-                    ($this->sorter)(true);
-                    $this->updateBreadcrumb($this->label, 'ascending');
-                } elseif ($order == 'desc') {
-                    $this->order = 'desc';
-                    ($this->sorter)(false);
-                    $this->updateBreadcrumb($this->label, 'descending');
-                } else {
-                    Context::url()->unsetArg('_sortorder');
-                    Context::url()->unsetArg('_sortcolumn');
-                }
+        // set up sorting state
+        $order = Context::url()->arg('_sortorder');
+        $column = Context::url()->arg('_sortcolumn');
+        if ($column == $this->id()) {
+            if ($order == 'asc') {
+                $this->order = 'asc';
+                $this->updateBreadcrumb($this->label, 'ascending');
+            } elseif ($order == 'desc') {
+                $this->order = 'desc';
+                $this->updateBreadcrumb($this->label, 'descending');
+            } else {
+                Context::url()->unsetArg('_sortorder');
+                Context::url()->unsetArg('_sortcolumn');
             }
-        } else {
-            // is not sortable
-            Context::url()->unsetArg($this->id());
         }
     }
 
@@ -74,6 +67,16 @@ class ColumnHeader
 
     public function __toString()
     {
+        // set up sorting
+        if ($this->sorter) {
+            // is sortable
+            if ($this->order == 'asc') {
+                ($this->sorter)(true);
+            } elseif ($this->order == 'desc') {
+                ($this->sorter)(false);
+            }
+        }
+        // output
         ob_start();
         echo "<th class='" . implode(' ', $this->classes()) . "'>";
         echo $this->label;
@@ -124,4 +127,3 @@ class ColumnHeader
         return 'c' . $this->myID;
     }
 }
-
