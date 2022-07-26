@@ -25,8 +25,15 @@ echo "<div class='navigation-frame navigation-frame--stateless' id='email-manage
 
 echo new PaginatedTable(
     array_reverse($user['emails'] ?? []),
-    function (int $i) use ($user): array {
-        $row = $user['emails'][$i];
+    function (array $row) use ($user): array {
+        $i = null;
+        foreach ($user['emails'] as $k => $r) {
+            if ($r == $row) {
+                $i = $k;
+                break;
+            }
+        }
+        if ($i === null) return [];
         return [
             $row['address']
                 . ($row['comment'] ? '<div><small>' . $row['comment'] . '</small></div>' : ''),
