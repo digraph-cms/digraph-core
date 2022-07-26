@@ -15,13 +15,13 @@ if (!$user) throw new HttpError(404);
 echo "<h1>User profile: " . $user->name() . "</h1>";
 
 printf(
-    "<p>Registered %s</p>",
+    "<p>Account registered %s</p>",
     Format::date($user->created())
 );
 
 Router::include('profile_top/*.php');
 
-if ($groups = $user->groups()) {
+if (($groups = $user->groups()) && count($groups) > 1) {
     echo "<section class='user-groups'>";
     echo "<h2>Member of</h2>";
     echo "<ul>" . implode(PHP_EOL, array_map(
