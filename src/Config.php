@@ -35,6 +35,10 @@ abstract class Config implements InitializedClassInterface
         return self::$data;
     }
 
+    public static function secret(): string {
+        return static::get('secret');
+    }
+
     public static function get(string $key = null)
     {
         return self::$data->get($key);
