@@ -35,8 +35,20 @@ abstract class Config implements InitializedClassInterface
         return self::$data;
     }
 
-    public static function secret(): string {
-        return static::get('secret');
+    public static function secret(): string
+    {
+        return static::get('secret') ?? static::generatedSecret();
+    }
+
+    protected static function generatedSecret(): string
+    {
+        static $cache;
+        if (!$cache) {
+            $file = static::get('paths.storage') . '/secret.txt';
+            if (!file_exists($file)) file_put_contents($file, bin2hex(random_bytes(32)));
+            $cache = file_get_contents($file);
+        }
+        return $cache;
     }
 
     public static function get(string $key = null)
