@@ -19,6 +19,11 @@ class CodeMirror
 
     public static function loadMode(string $mode)
     {
+        // load global addons
+        foreach (Config::get("codemirror.dependencies.all") ?? [] as $dep) {
+            static::load($dep);
+        }
+        // load mode
         static::load("mode/$mode/$mode");
     }
 

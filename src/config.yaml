@@ -64,6 +64,11 @@ email:
 
 codemirror:
   dependencies:
+    all:
+      - addon/search/search
+      - addon/search/searchcursor
+      - addon/search/jump-to-line
+      - addon/dialog/dialog
     mode/gfm/gfm:
       - addon/mode/overlay
       - mode/markdown/markdown

@@ -70,3 +70,51 @@
         color: var(--color) !important;
     }
 }
+
+/* Dialog styles */
+.CodeMirror-dialog {
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 15;
+    padding: .1em .8em;
+    overflow: hidden;
+    background: var(--background-bright);
+    color: var(--color);
+}
+
+.CodeMirror-dialog-top {
+    border-bottom: $border solid var(--theme-neutral);
+    top: 0;
+}
+
+.CodeMirror-dialog-bottom {
+    border-top: $border solid var(--theme-neutral);
+    bottom: 0;
+}
+
+.CodeMirror-dialog input {
+    border: none;
+    outline: none;
+    background: transparent;
+    width: 20em;
+    color: inherit;
+    font-family: monospace;
+}
+
+.CodeMirror-dialog button {
+    font-size: 70%;
+}
+
+.CodeMirror-search-match {
+    background: var(--theme-highlight-a80);
+    border-top: 1px solid var(--theme-highlight);
+    border-bottom: 1px solid var(--theme-highlight);
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    opacity: .5;
+}
+
+.cm-searching {
+    background-color: var(--theme-highlight-a50);
+}
