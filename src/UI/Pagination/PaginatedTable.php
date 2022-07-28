@@ -35,8 +35,7 @@ class PaginatedTable extends PaginatedSection
     public function body(): Tag
     {
         if (!$this->body) {
-            $items = $this->items();
-            if (!$items) return $this->body = (new DIV)->addClass('notification notification--notice')->addChild('Table is empty');
+            // prepare body wrapper and headers
             $this->body = new TABLE;
             $this->body->addClass('paginated-section__body');
             if ($this->headers) {
@@ -48,6 +47,9 @@ class PaginatedTable extends PaginatedSection
                 )) . '</colgroup>');
                 $this->body->addChild('<tr>' . implode(PHP_EOL, $this->headers) . '</tr>');
             }
+            // load items AFTER headers so that headers can modify the query for sorting columns
+            $items = $this->items();
+            if (!$items) return $this->body = (new DIV)->addClass('notification notification--notice')->addChild('Table is empty');
             foreach ($items as $item) {
                 $this->body->addChild('<tr>' . $item . '</tr>');
             }
