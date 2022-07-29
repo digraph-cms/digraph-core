@@ -29,7 +29,7 @@ $query = DB::query()
 $headers = [
     new ColumnHeader('Provider'),
     new ColumnHeader('ID'),
-    new ColumnSortingHeader('Added', 'created', $query)
+    new ColumnSortingHeader('Added', 'created')
 ];
 $count = $query->count();
 if ($count > 1) {

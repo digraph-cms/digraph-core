@@ -21,9 +21,9 @@ class PageTable extends PaginatedTable
                 ];
             },
             [
-                new ColumnSortingHeader('Name', 'name', $select),
-                new ColumnSortingHeader('Created', 'created', $select),
-                new ColumnSortingHeader('Modified', 'updated', $select),
+                new ColumnSortingHeader('Name', 'name'),
+                new ColumnSortingHeader('Created', 'created'),
+                new ColumnSortingHeader('Modified', 'updated'),
                 new ColumnHeader('Created by'),
                 new ColumnHeader('Modified by')
             ]

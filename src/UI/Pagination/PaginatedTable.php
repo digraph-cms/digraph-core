@@ -22,7 +22,7 @@ class PaginatedTable extends PaginatedSection
         parent::__construct($source, $callback);
         $this->headers = array_map(function ($header) {
             if (!($header instanceof ColumnHeader)) return new ColumnHeader($header);
-            if ($header instanceof ColumnSortingHeader) $header->setTable($this);
+            if ($header instanceof FilterToolInterface) $this->addFilterTool($header);
             return $header;
         }, $headers);
     }

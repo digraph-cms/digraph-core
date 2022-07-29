@@ -42,12 +42,12 @@ $table = new PaginatedTable(
         ];
     },
     [
-        new ColumnSortingHeader('Date', 'session.created', $query),
+        new ColumnSortingHeader('Date', 'session.created'),
         new ColumnHeader('Comment'),
         new ColumnHeader('IP'),
         new ColumnHeader('User agent'),
-        new ColumnSortingHeader('Expiration', 'session.expires', $query),
-        new ColumnSortingHeader('Deauthorized', 'session_expiration.date', $query),
+        new ColumnSortingHeader('Expiration', 'session.expires'),
+        new ColumnSortingHeader('Deauthorized', 'session_expiration.date'),
         new ColumnHeader('Deauthorization reason'),
     ]
 );

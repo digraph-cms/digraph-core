@@ -19,8 +19,8 @@ class UserTable extends PaginatedTable
                 ];
             },
             [
-                new ColumnSortingHeader('User', 'name', $select),
-                new ColumnSortingHeader('Registered', 'created', $select),
+                new ColumnSortingHeader('User', 'name'),
+                new ColumnSortingHeader('Registered', 'created'),
                 new ColumnHeader('Groups')
             ]
         );

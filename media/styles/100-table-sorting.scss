@@ -1,5 +1,4 @@
 .column-sorter {
-
   .column-sort {
     font-size: 0;
     display: none;
@@ -18,13 +17,13 @@
       vertical-align: middle;
     }
 
-    &.column-sort-asc {
+    &.column-sort--asc {
       &:after {
         content: 'north';
       }
     }
 
-    &.column-sort-clear {
+    &.column-sort--clear {
       &:after {
         content: 'clear';
       }
@@ -34,30 +33,30 @@
 
 th.unsorted {
 
-  .column-sort-asc,
-  .column-sort-desc {
+  .column-sort--asc,
+  .column-sort--desc {
     display: inline-block;
   }
 }
 
-th.sorted-asc {
+th.sorted--asc {
 
-  .column-sort-desc,
-  .column-sort-clear {
+  .column-sort--desc,
+  .column-sort--clear {
     display: inline-block;
   }
 }
 
-th.sorted-desc {
+th.sorted--desc {
 
-  .column-sort-asc,
-  .column-sort-clear {
+  .column-sort--asc,
+  .column-sort--clear {
     display: inline-block;
   }
 }
 
 col {
   &.sorted {
-      background: var(--cue-interactive-a10);
+    background: var(--cue-interactive-a10);
   }
 }

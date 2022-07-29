@@ -50,7 +50,7 @@ $fn = function () use ($tabs) {
         },
         [
             new ColumnHeader($mode == 'children' ? 'Child' : 'Parent'),
-            new ColumnSortingHeader('Type', 'page_link.type', $query),
+            new ColumnSortingHeader('Type', 'page_link.type'),
             new ColumnHeader('Remove link')
         ]
     );
