@@ -58,7 +58,7 @@ document.addEventListener('click', (e) => {
     }
     // determine if we should even use this link
     if (event_target.getAttribute('target') == '_blank' || event_target.getAttribute('target') == '_top') {
-        return
+        return;
     }
     if (!event_target.getAttribute('href')) {
         return;

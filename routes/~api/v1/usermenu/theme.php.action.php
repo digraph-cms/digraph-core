@@ -1,6 +1,5 @@
 <?php
 
-use DigraphCMS\Context;
 use DigraphCMS\UI\ButtonMenus\ButtonMenu;
 use DigraphCMS\UI\ButtonMenus\ButtonMenuButton;
 use DigraphCMS\UI\Theme;
@@ -46,7 +45,7 @@ $colorblind = new ButtonMenu('Colorblind mode', [
     )
 ]);
 
-echo "<div class='theme-menu'>";
+echo "<div class='theme-menu navigation-frame navigation-frame--stateless' id='theme-menu'>";
 echo "<h1>Color settings</h1>";
 echo "<h2>Dark/light mode</h2>";
 echo $mode;
