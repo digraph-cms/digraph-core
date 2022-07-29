@@ -1,0 +1,12 @@
+tr.paginated-table__noresults {
+    background-color: var(--background) !important;
+
+    td {
+        font-family: $font-ui;
+        color: var(--cue-warning) !important;
+        background-color: var(--cue-warning-a10) !important;
+        font-weight: bold;
+        font-style: italic;
+        text-align: center;
+    }
+}

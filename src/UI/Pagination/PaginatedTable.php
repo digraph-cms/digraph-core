@@ -49,7 +49,10 @@ class PaginatedTable extends PaginatedSection
             }
             // load items AFTER headers so that headers can modify the query for sorting columns
             $items = $this->items();
-            if (!$items) return $this->body = (new DIV)->addClass('notification notification--notice')->addChild('Table is empty');
+            if (!$items) $this->body->addChild(sprintf(
+                '<tr class="paginated-table__noresults"><td colspan="%s">Nothing to display</td></tr>',
+                $this->headers ? count($this->headers) : 1
+            ));
             foreach ($items as $item) {
                 $this->body->addChild('<tr>' . $item . '</tr>');
             }
