@@ -58,6 +58,10 @@ class RichContentField extends Field
             new URL('/~manual/editing/markdown.html'),
             new URL('/~manual/editing/shortcodes.html')
         ));
+        $this->addTip(sprintf(
+            'For advanced content editor tips, see the <a href="%s" target="_lightbox">Editor keyboard shortcuts reference</a>',
+            new URL('/~manual/editing/keyboard_shortcuts.html')
+        ));
     }
 
     public function id(): ?string
