@@ -140,6 +140,7 @@ class PaginatedSection extends Tag
                 || (is_object($this->source) && method_exists($this->source, 'offset') && method_exists($this->source, 'limit') && method_exists($this->source, 'fetchAll'))
             ) {
                 // clone source and do basic pagination
+                /** @var AbstractMappedSelect */
                 $source = clone $this->source;
                 $source->offset($this->paginator()->startItem());
                 $source->limit($this->paginator()->perPage());
@@ -155,8 +156,8 @@ class PaginatedSection extends Tag
                         $source->where($clause, $args);
                     }
                     if ($order) $source->order(null);
-                    foreach ($order as list($clause, $args)) {
-                        $source->order($clause, $args);
+                    foreach ($order as $clause) {
+                        $source->order($clause);
                     }
                 }
                 // turn filtered/paginated results into array for final displaying

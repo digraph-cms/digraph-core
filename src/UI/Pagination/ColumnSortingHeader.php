@@ -13,7 +13,7 @@ class ColumnSortingHeader extends ColumnHeader implements FilterToolInterface
     /**
      * @param string $label
      * @param string $column
-     * @param \DigraphCMS\DB\AbstractMappedSelect|\Envms\FluentPDO\Queries\Select|null $select
+     * @param string|null $id
      */
     public function __construct(string $label, string $column, string $id = null)
     {
@@ -70,13 +70,13 @@ class ColumnSortingHeader extends ColumnHeader implements FilterToolInterface
         $config = $this->paginator->getToolConfig($this->getFilterID());
         if ($config == 'ASC') {
             return [
-                ['CASE WHEN ' . $this->column . ' IS NULL THEN 0 ELSE 1 END'],
-                [$this->column . ' ASC']
+                'CASE WHEN ' . $this->column . ' IS NULL THEN 0 ELSE 1 END',
+                $this->column . ' ASC'
             ];
         } elseif ($config == 'DESC') {
             return [
-                ['CASE WHEN ' . $this->column . ' IS NULL THEN 1 ELSE 0 END'],
-                [$this->column . ' DESC']
+                'CASE WHEN ' . $this->column . ' IS NULL THEN 1 ELSE 0 END',
+                $this->column . ' DESC'
             ];
         } else {
             return [];

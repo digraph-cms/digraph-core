@@ -135,11 +135,12 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
      * Add a HAVING clause
      *
      * @param string $column
+     * @param array|mixed $parameters
      * @return $this
      */
-    public function having(string $column)
+    public function having(string $column, $parameters = [])
     {
-        $this->query->having($column);
+        $this->query->having($column, $parameters);
         return $this;
     }
 
