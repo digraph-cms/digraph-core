@@ -19,5 +19,5 @@ interface FilterToolInterface
      */
     public function getWhereClauses(): array;
     public function getFilterID(): string;
-    public function setPaginator(PaginatedSection $paginator);
+    public function setSection(PaginatedSection $section);
 }

@@ -3,93 +3,76 @@
 namespace DigraphCMS\UI\Pagination;
 
 use DigraphCMS\HTML\A;
+use DigraphCMS\HTML\Icon;
 
-class ColumnSortingHeader extends ColumnHeader implements FilterToolInterface
+class ColumnSortingHeader extends AbstractColumnFilteringHeader
 {
-    protected static $idCounter = 0;
-    protected $column;
-    protected $paginator;
+    protected $column, $ascText, $descText;
 
-    /**
-     * @param string $label
-     * @param string $column
-     * @param string|null $id
-     */
-    public function __construct(string $label, string $column, string $id = null)
-    {
+    public function __construct(
+        string $label,
+        string $column,
+        string $ascText = 'Sort ascending',
+        string $descText = 'Sort descending'
+    ) {
         parent::__construct($label);
-        // save ID and column to be used for sorting
+        // save config
         $this->column = $column;
-        $this->id = $id ?? 's' . self::$idCounter++;
+        $this->id = 's_' . crc32($column);
+        $this->ascText = $ascText;
+        $this->descText = $descText;
     }
 
-    protected function classes(): array
+    public function statusIcon(): string
     {
-        $config = $this->paginator->getToolConfig($this->getFilterID());
-        $classes = ['sortable'];
-        if ($config == 'ASC') {
-            $classes[] = 'sorted';
-            $classes[] = 'sorted--asc';
+        switch ($this->config()) {
+            case 'ASC':
+                return new Icon('sort', 'Sorted ascending');
+            case 'DESC':
+                return (new Icon('sort', 'Sorted descending'))
+                    ->setStyle('transform', 'scaleY(-1)');
+            default:
+                return '';
         }
-        if ($config == 'DESC') {
-            $classes[] = 'sorted';
-            $classes[] = 'sorted--desc';
-        }
-        if ($config === null) $classes[] = 'unsorted';
-        return $classes;
     }
 
-    protected function headerContent(): string
+    public function toolbox(): string
     {
-        return sprintf(
-            '%s<span class="column-sorter">%s%s%s</span>',
-            $this->label,
-            $this->link('ASC', '[a..z]', 'column-sort--asc'),
-            $this->link('DESC', '[z..a]', 'column-sort--desc'),
-            $this->link(null, '[x]', 'column-sort--clear')
-        );
+        return implode('<br>', [
+            $this->link('ASC', $this->ascText),
+            $this->link('DESC', $this->descText)
+        ]);
     }
 
-    protected function link(?string $order, $text, $class): A
+    protected function link(?string $order, $text): A
     {
-        $link = (new A($this->paginator->url($this->getFilterID(), $order)))
+        return (new A($this->section->url($this->getFilterID(), $order)))
             ->setData('target', '_frame')
             ->addClass('column-sort')
-            ->addClass($class)
+            ->setStyle('white-space', 'nowrap')
             ->addChild($text);
-        return $link;
-    }
-
-    public function setPaginator(PaginatedSection $paginator)
-    {
-        $this->paginator = $paginator;
     }
 
     public function getOrderClauses(): array
     {
-        $config = $this->paginator->getToolConfig($this->getFilterID());
-        if ($config == 'ASC') {
-            return [
-                'CASE WHEN ' . $this->column . ' IS NULL THEN 0 ELSE 1 END',
-                $this->column . ' ASC'
-            ];
-        } elseif ($config == 'DESC') {
-            return [
-                'CASE WHEN ' . $this->column . ' IS NULL THEN 1 ELSE 0 END',
-                $this->column . ' DESC'
-            ];
-        } else {
-            return [];
+        switch ($this->config()) {
+            case 'ASC':
+                return [
+                    'CASE WHEN ' . $this->column . ' IS NULL THEN 0 ELSE 1 END',
+                    $this->column . ' ASC'
+                ];
+            case 'DESC':
+                return [
+                    'CASE WHEN ' . $this->column . ' IS NULL THEN 1 ELSE 0 END',
+                    $this->column . ' DESC'
+                ];
+            default:
+                return [];
         }
     }
 
     public function getWhereClauses(): array
     {
         return [];
-    }
-
-    public function getFilterID(): string
-    {
-        return 'sort_' . $this->id;
     }
 }

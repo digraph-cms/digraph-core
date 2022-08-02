@@ -61,7 +61,7 @@ class PaginatedSection extends Tag
      */
     public function addFilterTool(FilterToolInterface $tool)
     {
-        $tool->setPaginator($this);
+        $tool->setSection($this);
         $this->filterTools[$tool->getFilterID()] = $tool;
         return $this;
     }
