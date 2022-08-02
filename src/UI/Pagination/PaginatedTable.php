@@ -35,6 +35,8 @@ class PaginatedTable extends PaginatedSection
     public function body(): Tag
     {
         if (!$this->body) {
+            // load items
+            $items = $this->items();
             // prepare body wrapper and headers
             $this->body = new TABLE;
             $this->body->addClass('paginated-section__body');
@@ -47,8 +49,7 @@ class PaginatedTable extends PaginatedSection
                 )) . '</colgroup>');
                 $this->body->addChild('<tr>' . implode(PHP_EOL, $this->headers) . '</tr>');
             }
-            // load items AFTER headers so that headers can modify the query for sorting columns
-            $items = $this->items();
+            // insert items
             if (!$items) $this->body->addChild(sprintf(
                 '<tr class="paginated-table__noresults"><td colspan="%s">Nothing to display</td></tr>',
                 $this->headers ? count($this->headers) : 1

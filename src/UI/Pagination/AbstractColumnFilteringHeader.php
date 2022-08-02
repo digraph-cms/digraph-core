@@ -31,7 +31,7 @@ abstract class AbstractColumnFilteringHeader extends ColumnHeader implements Fil
                         <a href="%s" class="column-filter__icon column-filter__toggle__close">%s</a>
                     </span>
                     <span class="column-filter__icon column-filter__status">%s</span>
-                    <a href="%s" class="column-filter__icon column-filter__clear">%s</a>
+                    <a href="%s" class="column-filter__icon column-filter__clear" data-target="_frame">%s</a>
                     <div class="column-filter__icon column-filter__toolbox">
                         %s
                     </div>
@@ -74,7 +74,6 @@ abstract class AbstractColumnFilteringHeader extends ColumnHeader implements Fil
 
     protected function classes(): array
     {
-
         if (!$this->isActive()) return [];
         else return ['filters-applied'];
     }
