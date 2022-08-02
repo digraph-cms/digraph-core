@@ -2,20 +2,37 @@
 
 namespace DigraphCMS\UI\Pagination;
 
+use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTML\Icon;
+use DigraphCMS\URL\URL;
 
 abstract class AbstractColumnFilteringHeader extends ColumnHeader implements FilterToolInterface
 {
     protected $id, $section;
 
-    abstract public function statusIcon(): string;
-    abstract public function toolbox(): string;
+    abstract public function toolbox();
+
+    public function statusIcon(): string
+    {
+        return $this->isActive()
+            ? new Icon('filter', 'Filters applied')
+            : '';
+    }
 
     public function __construct(string $label)
     {
         static $id = 0;
         $this->id = $id++;
         parent::__construct($label);
+    }
+
+    protected function form(): FormWrapper
+    {
+        $form = new FormWrapper('form-' . $this->id);
+        $form->addClass('form--small');
+        $form->setData('target', '_frame');
+        $form->button()->setText('Apply');
+        return $form;
     }
 
     protected function headerContent(): string
@@ -54,6 +71,14 @@ abstract class AbstractColumnFilteringHeader extends ColumnHeader implements Fil
             $this->clearIcon(),
 
             $this->toolbox()
+        );
+    }
+
+    protected function url($config): URL
+    {
+        return $this->section->url(
+            $this->getFilterID(),
+            $config
         );
     }
 

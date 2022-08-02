@@ -178,7 +178,7 @@ Digraph.state = {
     // post the given data to the given URL and replace frame contents
     post: (data, url, frame) => {
         Digraph.state.addXHRListeners(frame);
-        frame.stateUpdateRequest.open('POST', url, true);
+        frame.stateUpdateRequest.open('POST', url);
         frame.stateUpdateRequest.setRequestHeader('X-For-Navigation-Frame', 'y');
         frame.stateUpdateRequest.send(data);
     },

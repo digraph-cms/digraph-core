@@ -33,7 +33,7 @@ a.column-filter__icon {
   display: block;
   position: absolute;
   top: 100%;
-  left: 0;
+  right: 0;
   min-width: 100%;
   font-weight: normal;
   font-family: $font-ui;
@@ -91,5 +91,18 @@ td,
 th {
   &.filters-applied {
     border-top: $border solid var(--theme-highlight);
+  }
+}
+
+/* special styling for last cell */
+
+td,
+th {
+  &:first-child {
+    .column-filter__toolbox {
+      top: 100%;
+      left: 0;
+      right: auto;
+    }
   }
 }

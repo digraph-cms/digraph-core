@@ -36,7 +36,7 @@ class ColumnSortingHeader extends AbstractColumnFilteringHeader
         }
     }
 
-    public function toolbox(): string
+    public function toolbox()
     {
         return implode('<br>', [
             $this->link('ASC', $this->ascText),
