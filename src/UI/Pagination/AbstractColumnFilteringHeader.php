@@ -40,9 +40,9 @@ abstract class AbstractColumnFilteringHeader extends ColumnHeader implements Fil
         parent::__construct($label);
     }
 
-    protected function link(?bool $filter, $text): A
+    protected function link($config, $text): A
     {
-        return (new A($this->url($filter)))
+        return (new A($this->url($config)))
             ->setData('target', '_frame')
             ->setStyle('white-space', 'nowrap')
             ->addChild($text);
