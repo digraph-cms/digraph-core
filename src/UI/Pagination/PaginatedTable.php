@@ -2,7 +2,6 @@
 
 namespace DigraphCMS\UI\Pagination;
 
-use DigraphCMS\HTML\DIV;
 use DigraphCMS\HTML\TABLE;
 use DigraphCMS\HTML\Tag;
 
@@ -10,7 +9,7 @@ class PaginatedTable extends PaginatedSection
 {
     protected $headers;
     protected $tag = 'div';
-    protected $dl_button = 'Download table';
+    protected $dl_button = 'Download data';
 
     /**
      * @param mixed $source

@@ -160,7 +160,7 @@ class PaginatedSection extends Tag
                     $where = [];
                     $order = [];
                     foreach (array_keys(array_reverse($this->getFilterConfig())) as $tool) {
-                        $join = array_merge($where, $this->filterTools[$tool]->getJoinClauses());
+                        $join = array_merge($join, $this->filterTools[$tool]->getJoinClauses());
                         $where = array_merge($where, $this->filterTools[$tool]->getWhereClauses());
                         $order = array_merge($order, $this->filterTools[$tool]->getOrderClauses());
                     }
