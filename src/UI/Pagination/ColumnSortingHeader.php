@@ -42,15 +42,6 @@ class ColumnSortingHeader extends AbstractColumnFilteringHeader
         ]);
     }
 
-    protected function link(?string $order, $text): A
-    {
-        return (new A($this->section->url($this->getFilterID(), $order)))
-            ->setData('target', '_frame')
-            ->addClass('column-sort')
-            ->setStyle('white-space', 'nowrap')
-            ->addChild($text);
-    }
-
     public function getOrderClauses(): array
     {
         switch ($this->config()) {

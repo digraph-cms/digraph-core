@@ -3,19 +3,19 @@
 namespace DigraphCMS\UI\Pagination;
 
 use DigraphCMS\HTML\Forms\Field;
-use DigraphCMS\HTML\Forms\Fields\Autocomplete\UserField;
+use DigraphCMS\HTML\Forms\Fields\Autocomplete\PageField;
 use DigraphCMS\HTML\Forms\SELECT;
 use DigraphCMS\HTTP\RedirectException;
 
-class ColumnUserFilteringHeader extends AbstractColumnFilteringHeader
+class ColumnPageFilteringHeader extends AbstractColumnFilteringHeader
 {
     public function toolbox()
     {
         $form = $this->form();
 
-        $user = (new UserField('Pick user'))
-            ->setID('user')
-            ->setDefault($this->config('user'))
+        $page = (new PageField('Pick page'))
+            ->setID('page')
+            ->setDefault($this->config('page'))
             ->addForm($form);
 
         $sort = (new Field('Sorting', new SELECT([
@@ -27,9 +27,9 @@ class ColumnUserFilteringHeader extends AbstractColumnFilteringHeader
             ->setDefault($this->config('sort'))
             ->addForm($form);
 
-        $form->addCallback(function () use ($user, $sort) {
+        $form->addCallback(function () use ($page, $sort) {
             $config = [];
-            if ($user->value()) $config['user'] = $user->value();
+            if ($page->value()) $config['page'] = $page->value();
             if ($sort->value()) $config['sort'] = $sort->value();
             throw new RedirectException($this->url($config ? $config : null));
         });
@@ -41,7 +41,7 @@ class ColumnUserFilteringHeader extends AbstractColumnFilteringHeader
     {
         if ($this->config('sort')) {
             return [
-                'user on ' . $this->column() . ' = user.uuid'
+                'page on ' . $this->column() . ' = page.uuid'
             ];
         } else {
             return [];
@@ -54,13 +54,13 @@ class ColumnUserFilteringHeader extends AbstractColumnFilteringHeader
             switch ($this->config('sort')) {
                 case 'ASC':
                     return [
-                        'CASE WHEN user.name IS NULL THEN 0 ELSE 1 END',
-                        'user.name ASC'
+                        'CASE WHEN page.name IS NULL THEN 0 ELSE 1 END',
+                        'page.name ASC'
                     ];
                 case 'DESC':
                     return [
-                        'CASE WHEN user.name IS NULL THEN 1 ELSE 0 END',
-                        'user.name DESC'
+                        'CASE WHEN page.name IS NULL THEN 1 ELSE 0 END',
+                        'page.name DESC'
                     ];
                 default:
                     return [];
@@ -72,9 +72,9 @@ class ColumnUserFilteringHeader extends AbstractColumnFilteringHeader
 
     public function getWhereClauses(): array
     {
-        if ($this->config('user')) {
+        if ($this->config('page')) {
             return [
-                [$this->column(), $this->config('user')]
+                [$this->column(), $this->config('page')]
             ];
         } else return [];
     }
