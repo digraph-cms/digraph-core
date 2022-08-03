@@ -85,13 +85,8 @@ a.column-filter__icon {
 col {
   &.filters-applied {
     background: var(--theme-highlight-a10);
-  }
-}
-
-td,
-th {
-  &.filters-applied {
     border-top: $border solid var(--theme-highlight);
+    border-bottom: $border solid var(--theme-highlight);
   }
 }
 

@@ -2,6 +2,7 @@
 
 namespace DigraphCMS\UI\Pagination;
 
+use DigraphCMS\HTML\A;
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTML\Icon;
 use DigraphCMS\URL\URL;
@@ -37,6 +38,14 @@ abstract class AbstractColumnFilteringHeader extends ColumnHeader implements Fil
         $this->id = $id++;
         $this->column = $column;
         parent::__construct($label);
+    }
+
+    protected function link(?bool $filter, $text): A
+    {
+        return (new A($this->url($filter)))
+            ->setData('target', '_frame')
+            ->setStyle('white-space', 'nowrap')
+            ->addChild($text);
     }
 
     protected function form(): FormWrapper
