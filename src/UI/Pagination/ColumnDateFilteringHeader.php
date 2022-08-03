@@ -10,6 +10,14 @@ use DigraphCMS\UI\Format;
 
 class ColumnDateFilteringHeader extends AbstractColumnFilteringHeader
 {
+    protected $format;
+
+    public function __construct(string $label, string $column, string $format = null)
+    {
+        parent::__construct($label, $column);
+        $this->format = $format;
+    }
+
     public function toolbox()
     {
         $form = $this->form();
@@ -65,12 +73,19 @@ class ColumnDateFilteringHeader extends AbstractColumnFilteringHeader
     public function getWhereClauses(): array
     {
         $clauses = [];
-        if ($this->config()['start']) $clauses[] = [$this->column() . ' >= ?', [$this->config()['start']]];
-        if ($this->config()['end']) $clauses[] = [$this->column() . ' <= ?', [$this->config()['end']]];
+        if ($this->config('start')) $clauses[] = [$this->column() . ' >= ?', [$this->format($this->config('start'))]];
+        if ($this->config('end')) $clauses[] = [$this->column() . ' <= ?', [$this->format($this->config('end'))]];
         return $clauses;
     }
 
-    public function getJoinClauses(): array {
+    public function format(int $timestamp)
+    {
+        if (!$this->format) return $timestamp;
+        else return date($this->format, $timestamp);
+    }
+
+    public function getJoinClauses(): array
+    {
         return [];
     }
 }
