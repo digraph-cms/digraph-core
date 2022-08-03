@@ -21,14 +21,16 @@ class DB
 
     const NESTED_TRANSACTION_SUPPORT = [];
 
-    public static function onDbExpandJsonPath_sqlite(string $path, string $column): string
+    public static function onDbExpandJsonPath_sqlite(string $path, string $column, string $table): string
     {
-        return "JSON_VALUE(`$column`,'$.{$path}')";
+        $table = $table ? "`$table`." : '';
+        return "JSON_VALUE($table`$column`,'$.{$path}')";
     }
 
-    public static function onDbExpandJsonPath_mysql(string $path, string $column): string
+    public static function onDbExpandJsonPath_mysql(string $path, string $column, string $table): string
     {
-        return "JSON_UNQUOTE(JSON_EXTRACT(`$column`,'$.{$path}'))";
+        $table = $table ? "`$table`." : '';
+        return "JSON_UNQUOTE(JSON_EXTRACT($table`$column`,'$.{$path}'))";
     }
 
     public static function onException_PDOException(PDOException $exception)

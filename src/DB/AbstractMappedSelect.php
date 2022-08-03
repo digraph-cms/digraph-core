@@ -62,24 +62,24 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
         return $this;
     }
 
-    public function leftJoin(string $table)
+    public function leftJoin(string $statement)
     {
-        $this->query->leftJoin($table);
+        $this->query->leftJoin($this->parseJsonRefs($statement));
         return $this;
     }
 
-    protected function parseJsonRefs(?string $string): ?string
+    public static function parseJsonRefs(?string $string): ?string
     {
         if ($string === null) return null;
         return preg_replace_callback(
-            '/\$\{([^\.\}\\\]+)\.([^\}\\\]+)\}/',
+            '/\$\{((.+):)?([^\.\}\\\]+)\.([^\}\\\]+)\}/',
             function ($matches) {
                 return Cache::get(
                     'db/jsonref/' . md5($matches[0]),
                     function () use ($matches) {
                         return Dispatcher::firstValue(
                             'onDbExpandJsonPath_' . DB::driver(),
-                            [$matches[2], $matches[1]]
+                            [$matches[4], $matches[3], $matches[2]]
                         );
                     }
                 );
