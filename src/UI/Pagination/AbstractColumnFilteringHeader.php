@@ -8,7 +8,7 @@ use DigraphCMS\URL\URL;
 
 abstract class AbstractColumnFilteringHeader extends ColumnHeader implements FilterToolInterface
 {
-    protected $id, $section;
+    protected $id, $section, $column;
 
     abstract public function toolbox();
 
@@ -19,10 +19,23 @@ abstract class AbstractColumnFilteringHeader extends ColumnHeader implements Fil
             : '';
     }
 
-    public function __construct(string $label)
+    /**
+     * Column name, converted to a full table.column type string if possible.
+     *
+     * @return string
+     */
+    public function column(): string
+    {
+        if (strpos($this->column, '.')) return $this->column;
+        elseif ($this->section->tableName()) return $this->section->tableName() . '.' . $this->column;
+        else return $this->column;
+    }
+
+    public function __construct(string $label, string $column)
     {
         static $id = 0;
         $this->id = $id++;
+        $this->column = $column;
         parent::__construct($label);
     }
 
@@ -82,9 +95,10 @@ abstract class AbstractColumnFilteringHeader extends ColumnHeader implements Fil
         );
     }
 
-    protected function config()
+    protected function config(string $key = null)
     {
-        return $this->section->getToolConfig($this->getFilterID());
+        if ($key) return @$this->section->getToolConfig($this->getFilterID())[$key];
+        else return $this->section->getToolConfig($this->getFilterID());
     }
 
     public function setSection(PaginatedSection $section)

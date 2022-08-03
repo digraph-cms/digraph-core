@@ -34,7 +34,8 @@ a.column-filter__icon {
   position: absolute;
   top: 100%;
   right: 0;
-  min-width: 100%;
+  min-width: 10em;
+  max-width: 25em;
   font-weight: normal;
   font-family: $font-ui;
   background-color: var(--background-bright);

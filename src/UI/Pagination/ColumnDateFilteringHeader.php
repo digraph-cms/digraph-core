@@ -10,18 +10,6 @@ use DigraphCMS\UI\Format;
 
 class ColumnDateFilteringHeader extends AbstractColumnFilteringHeader
 {
-    protected $column;
-
-    public function __construct(
-        string $label,
-        string $column
-    ) {
-        parent::__construct($label);
-        // save config
-        $this->column = $column;
-        $this->id = 'd_' . crc32($column);
-    }
-
     public function toolbox()
     {
         $form = $this->form();
@@ -61,13 +49,13 @@ class ColumnDateFilteringHeader extends AbstractColumnFilteringHeader
         switch (@$this->config()['sort']) {
             case 'ASC':
                 return [
-                    'CASE WHEN ' . $this->column . ' IS NULL THEN 0 ELSE 1 END',
-                    $this->column . ' ASC'
+                    'CASE WHEN ' . $this->column() . ' IS NULL THEN 0 ELSE 1 END',
+                    $this->column() . ' ASC'
                 ];
             case 'DESC':
                 return [
-                    'CASE WHEN ' . $this->column . ' IS NULL THEN 1 ELSE 0 END',
-                    $this->column . ' DESC'
+                    'CASE WHEN ' . $this->column() . ' IS NULL THEN 1 ELSE 0 END',
+                    $this->column() . ' DESC'
                 ];
             default:
                 return [];
@@ -77,8 +65,12 @@ class ColumnDateFilteringHeader extends AbstractColumnFilteringHeader
     public function getWhereClauses(): array
     {
         $clauses = [];
-        if ($this->config()['start']) $clauses[] = [$this->column . ' >= ?', [$this->config()['start']]];
-        if ($this->config()['end']) $clauses[] = [$this->column . ' <= ?', [$this->config()['end']]];
+        if ($this->config()['start']) $clauses[] = [$this->column() . ' >= ?', [$this->config()['start']]];
+        if ($this->config()['end']) $clauses[] = [$this->column() . ' <= ?', [$this->config()['end']]];
         return $clauses;
+    }
+
+    public function getJoinClauses(): array {
+        return [];
     }
 }

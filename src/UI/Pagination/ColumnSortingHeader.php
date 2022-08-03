@@ -7,7 +7,7 @@ use DigraphCMS\HTML\Icon;
 
 class ColumnSortingHeader extends AbstractColumnFilteringHeader
 {
-    protected $column, $ascText, $descText;
+    protected $ascText, $descText;
 
     public function __construct(
         string $label,
@@ -15,10 +15,8 @@ class ColumnSortingHeader extends AbstractColumnFilteringHeader
         string $ascText = 'Sort ascending',
         string $descText = 'Sort descending'
     ) {
-        parent::__construct($label);
+        parent::__construct($label, $column);
         // save config
-        $this->column = $column;
-        $this->id = 's_' . crc32($column);
         $this->ascText = $ascText;
         $this->descText = $descText;
     }
@@ -58,13 +56,13 @@ class ColumnSortingHeader extends AbstractColumnFilteringHeader
         switch ($this->config()) {
             case 'ASC':
                 return [
-                    'CASE WHEN ' . $this->column . ' IS NULL THEN 0 ELSE 1 END',
-                    $this->column . ' ASC'
+                    'CASE WHEN ' . $this->column() . ' IS NULL THEN 0 ELSE 1 END',
+                    $this->column() . ' ASC'
                 ];
             case 'DESC':
                 return [
-                    'CASE WHEN ' . $this->column . ' IS NULL THEN 1 ELSE 0 END',
-                    $this->column . ' DESC'
+                    'CASE WHEN ' . $this->column() . ' IS NULL THEN 1 ELSE 0 END',
+                    $this->column() . ' DESC'
                 ];
             default:
                 return [];
@@ -73,6 +71,10 @@ class ColumnSortingHeader extends AbstractColumnFilteringHeader
 
     public function getWhereClauses(): array
     {
+        return [];
+    }
+
+    public function getJoinClauses(): array {
         return [];
     }
 }

@@ -37,6 +37,16 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
     }
 
     /**
+     * Get the name of the table this query is selecting from.
+     *
+     * @return string|null
+     */
+    public function getFromTable()
+    {
+        return $this->query->getFromTable();
+    }
+
+    /**
      * Specify which columns to select, optionally overriding defaults
      *
      * @param string $columns
