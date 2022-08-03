@@ -326,7 +326,7 @@ abstract class CoreEventSubscriber
             }
         }
         return [
-            'html' => '<div class="title">' . $name . '</div>',
+            'html' => '<div class="title">' . $name . '</div><small class="date">'.Format::date($user->created()).'</small>',
             'value' => $user->uuid(),
             'class' => 'user'
         ];
