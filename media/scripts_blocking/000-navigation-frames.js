@@ -119,7 +119,7 @@ document.addEventListener('submit', (e) => {
                 Digraph.state.getAndPush(url.toString(), parent);
             }
         } else {
-            Digraph.state.post(data, e.target.getAttribute('action'), parent);
+            Digraph.state.post(data, e.target.getAttribute('action'), parent, !Digraph.state.frameIsStateless(parent));
         }
         e.preventDefault();
     }
@@ -171,14 +171,14 @@ Digraph.state = {
     // only get the requested URL and replace frame contents
     get: (url, frame, pushState = false) => {
         Digraph.state.addXHRListeners(frame, pushState);
-        frame.stateUpdateRequest.open('GET', url);
+        frame.stateUpdateRequest.open('GET', url, true);
         frame.stateUpdateRequest.setRequestHeader('X-For-Navigation-Frame', 'y');
         frame.stateUpdateRequest.send();
     },
     // post the given data to the given URL and replace frame contents
-    post: (data, url, frame) => {
-        Digraph.state.addXHRListeners(frame);
-        frame.stateUpdateRequest.open('POST', url);
+    post: (data, url, frame, pushState = false) => {
+        Digraph.state.addXHRListeners(frame, pushState);
+        frame.stateUpdateRequest.open('POST', url, true);
         frame.stateUpdateRequest.setRequestHeader('X-For-Navigation-Frame', 'y');
         frame.stateUpdateRequest.send(data);
     },

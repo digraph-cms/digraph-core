@@ -33,7 +33,7 @@ a.column-filter__icon {
   display: block;
   position: absolute;
   top: 100%;
-  right: 0;
+  left: 0;
   min-width: 10em;
   max-width: 25em;
   font-weight: normal;
@@ -99,11 +99,11 @@ th {
 
 td,
 th {
-  &:first-child {
+  &:last-child {
     .column-filter__toolbox {
       top: 100%;
-      left: 0;
-      right: auto;
+      right: 0;
+      left: auto;
     }
   }
 }
