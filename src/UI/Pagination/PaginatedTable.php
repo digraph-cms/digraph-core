@@ -26,11 +26,6 @@ class PaginatedTable extends PaginatedSection
         }, $headers);
     }
 
-    public function source()
-    {
-        return $this->source;
-    }
-
     public function body(): Tag
     {
         if (!$this->body) {
