@@ -146,7 +146,7 @@ class PaginatedSection extends Tag
         ) {
             // clone source and do basic pagination
             /** @var AbstractMappedSelect */
-            $this->filteredSource = clone $this->source;
+            $source = clone $this->source;
             // apply filter tools
             $join = [];
             $where = [];
@@ -157,16 +157,16 @@ class PaginatedSection extends Tag
                 $order = array_merge($order, $this->filterTools[$tool]->getOrderClauses());
             }
             foreach ($join as $clause) {
-                $this->filteredSource->leftJoin($clause);
+                $source->leftJoin($clause);
             }
             foreach ($where as list($clause, $args)) {
-                $this->filteredSource->where($clause, $args);
+                $source->where($clause, $args);
             }
-            if ($order) $this->filteredSource->order(null);
+            if ($order) $source->order(null);
             foreach ($order as $clause) {
-                $this->filteredSource->order($clause);
+                $source->order($clause);
             }
-            return $this->filteredSource;
+            return $this->filteredSource = $source;
         } else return $this->filteredSource = $this->source;
     }
 
