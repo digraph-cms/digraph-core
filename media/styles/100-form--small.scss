@@ -5,7 +5,6 @@
   .form-field,
   fieldset {
     margin: $grid/4 0;
-    padding: $grid/4;
 
     &:first-child {
       margin-top: 0;
@@ -14,6 +13,10 @@
     &:last-child {
       margin-top: 0;
     }
+  }
+
+  fieldset {
+    padding: $grid/4;
   }
 
   input,
