@@ -66,6 +66,7 @@ button,
 input[type="button"],
 .button {
     @include button;
+
     &:after {
         display: inline-block;
         font-size: 1.5em;
@@ -83,13 +84,16 @@ input[type="radio"] {
     display: inline-flex;
     vertical-align: baseline;
     justify-items: center;
+    align-items: center;
     padding: $grid/8;
     margin: 0;
     color: inherit;
     text-align: center;
     width: auto;
-    font-size: 1rem;
+    font-size: 1em;
     height: 1.5em;
+    width: 1.5em;
+    box-sizing: border-box;
 
     +label {
         margin-left: $grid/2;
@@ -97,11 +101,12 @@ input[type="radio"] {
 
     &:before {
         @include material-icon;
-        display: inline-block;
+        display: block;
         content: "\00a0";
-        height: 1em;
-        width: 1em;
-        line-height: 1em;
+        line-height: 0;
+        text-align: center;
+        width: auto;
+        flex-grow: 1;
     }
 
     &:checked {

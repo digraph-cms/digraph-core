@@ -5,6 +5,7 @@
   .form-field,
   fieldset {
     margin: $grid/4 0;
+    padding: $grid/4;
 
     &:first-child {
       margin-top: 0;
@@ -22,5 +23,21 @@
   .button {
     font-size: inherit;
     padding: $grid/4;
+  }
+
+  input[type="checkbox"],
+  input[type="radio"] {
+    padding: 0;
+
+    +label {
+      margin-left: $grid/4;
+    }
+  }
+
+  .checkbox-list,
+  .radio-list {
+    >.form-field {
+      padding: 0;
+    }
   }
 }
