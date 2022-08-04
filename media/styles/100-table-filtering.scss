@@ -69,6 +69,7 @@ a.column-filter__icon {
 .column-filter:target {
   .column-filter__toolbox {
     display: block;
+    z-index: 100;
   }
 
   .column-filter__toggle {
@@ -95,10 +96,8 @@ col {
 td,
 th {
   &:last-child {
-    .column-filter__toolbox {
-      top: 100%;
-      right: 0;
-      left: auto;
+    .column-filter--open {
+      min-width: 10em;
     }
   }
 }

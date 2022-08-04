@@ -43,4 +43,14 @@
       padding: 0;
     }
   }
+
+  .autocomplete-selected-card {
+    .clear-selection {
+      padding: 0;
+
+      &:before {
+        font-size: 1.5em;
+      }
+    }
+  }
 }
