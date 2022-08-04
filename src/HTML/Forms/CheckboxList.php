@@ -165,7 +165,7 @@ class CheckboxList extends DIV implements InputInterface
     public function setDefault($default)
     {
         foreach ($this->fields as $f) {
-            if (in_array($f['value'], $default)) {
+            if (in_array($f['value'], $default ?? [])) {
                 $f['field']->setDefault(true);
             } else {
                 $f['field']->setDefault(false);
