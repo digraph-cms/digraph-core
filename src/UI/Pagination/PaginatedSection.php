@@ -139,10 +139,12 @@ class PaginatedSection extends Tag
     {
         if ($this->filteredSource !== null) return $this->filteredSource;
         elseif (
-            is_object($this->source)
-            && method_exists($this->source, 'where')
-            && method_exists($this->source, 'order')
-            && method_exists($this->source, 'leftJoin')
+            $this->source instanceof Select
+            || $this->source instanceof AbstractMappedSelect
+            || (is_object($this->source)
+                && method_exists($this->source, 'where')
+                && method_exists($this->source, 'order')
+                && method_exists($this->source, 'leftJoin'))
         ) {
             // clone source and do basic pagination
             /** @var AbstractMappedSelect */
