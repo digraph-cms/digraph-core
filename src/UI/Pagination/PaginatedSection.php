@@ -180,10 +180,12 @@ class PaginatedSection extends Tag
     {
         if ($this->items === null) {
             if (
-                is_object($this->source())
-                && method_exists($this->source(), 'offset')
-                && method_exists($this->source(), 'limit')
-                && method_exists($this->source(), 'fetchAll')
+                $this->source() instanceof Select
+                || $this->source() instanceof AbstractMappedSelect
+                || (is_object($this->source())
+                    && method_exists($this->source(), 'offset')
+                    && method_exists($this->source(), 'limit')
+                    && method_exists($this->source(), 'fetchAll'))
             ) {
                 // turn filtered/paginated results into array for final displaying
                 $source = clone $this->source();
