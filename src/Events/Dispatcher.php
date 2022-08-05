@@ -89,6 +89,24 @@ class Dispatcher
     }
 
     /**
+     * Execute all callbacks upon the given object. Each should receive an object
+     * and return either an object of the same time to continue processing, or
+     * null to end and return null for the entire chain.
+     *
+     * @param string $event
+     * @param object $object
+     * @return object|null
+     */
+    public static function chainEvents(string $event, object $object): ?object
+    {
+        foreach (self::$listeners[$event] ?? [] as $callback) {
+            $object = call_user_func($callback, $object);
+            if (!$object) return null;
+        }
+        return $object;
+    }
+
+    /**
      * Ensure that event names only contain characters that are valid function
      * names so that they can be called on listeners/subscribers.
      *

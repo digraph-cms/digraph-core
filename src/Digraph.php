@@ -165,14 +165,17 @@ abstract class Digraph
     public static function makeResponse(Request $request)
     {
         ob_start();
+        $request->url()->normalize();
         URLs::beginContext($request->url());
         Context::begin();
-        Context::url($request->url())->normalize();
+        Context::url($request->url());
         Context::request($request);
         Context::response(new Response());
+        // allow URL normalization hooks
+        Context::url(Dispatcher::chainEvents('onNormalizeUrl', $request->url()));
         // redirect if normalizing changed URL
-        if ($request->url()->__toString() != $request->originalUrl()->__toString()) {
-            Context::response()->redirect($request->url());
+        if (Context::url()->__toString() != $request->originalUrl()->__toString()) {
+            Context::response()->redirect($request->url(), true, true);
             return;
         }
         try {

@@ -190,6 +190,7 @@ class URL
         if (!preg_match('@(/|\.([a-z0-9]+))$@', $this->path)) {
             $this->path .= '/';
         }
+        return $this;
     }
 
     /**
