@@ -67,8 +67,7 @@ class DigraphRichContentEditor {
                 } else {
                     this.mediaWrapper.classList.remove('rich-content-editor__media-editor--wide-forced');
                 }
-                var cm = this.getDivByClass('CodeMirror').CodeMirror;
-                cm.refresh();
+                this.getDivByClass('CodeMirror').CodeMirror.refresh();
             });
         }
         // set up event listeners for toolbar
@@ -77,13 +76,17 @@ class DigraphRichContentEditor {
         // reset toolbar on escape key (only from inside toolbar itself)
         this.toolbar.addEventListener('keydown', (e) => {
             if (e.key == 'Escape' || e.key == 'Esc') {
+                // reset toolbar
                 this.toolbar.dispatchEvent(new Event('navigation-frame-reset', {
                     bubbles: false
                 }));
+                // put focus back into codemirror
+                this.getDivByClass('CodeMirror').CodeMirror.focus();
             }
         });
         // insert event listeners
         this.wrapper.addEventListener('rich-content-insert', (e) => {
+            // insert content
             var cm = this.getDivByClass('CodeMirror').CodeMirror;
             var content = cm.getSelection();
             if (content == '') {
@@ -91,6 +94,8 @@ class DigraphRichContentEditor {
             } else {
                 cm.replaceSelection(e.insertWithSelection.replace('{content}', content));
             }
+            // focus codemirror
+            cm.focus();
             e.stopPropagation();
         });
         // insert keyboard listeners
@@ -117,6 +122,8 @@ class DigraphRichContentEditor {
         if (target.dataset.command) {
             var cm = this.getDivByClass('CodeMirror').CodeMirror;
             cm.execCommand(target.dataset.command);
+            // refocus editor
+            this.getDivByClass('CodeMirror').CodeMirror.focus();
             e.stopPropagation();
         }
     }

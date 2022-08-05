@@ -48,6 +48,11 @@
             background: transparent;
         }
 
+        &:hover {
+            background: var(--cue-interactive-a10);
+            outline: 0;
+        }
+
         &:focus {
             background: var(--cue-interactive-a20);
             outline: 0;

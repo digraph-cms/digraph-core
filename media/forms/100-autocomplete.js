@@ -94,7 +94,6 @@ class DigraphAutocomplete {
         this.results.addEventListener('click', (e) => { this.resultSelectEvent(e); });
         this.results.addEventListener('select', (e) => { this.resultSelectEvent(e); });
         this.results.addEventListener('keypress', (e) => { this.resultKeyPressEvent(e); });
-        this.results.addEventListener('mouseover', (e) => { this.resultFocusEvent(e); });
         this.results.addEventListener('focusin', (e) => { this.resultFocusEvent(e); });
         this.results.addEventListener('focusout', (e) => { this.resultBlurEvent(e); });
         this.selectedCard.addEventListener('focusin', (e) => {
