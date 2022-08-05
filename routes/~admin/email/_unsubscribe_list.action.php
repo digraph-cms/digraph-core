@@ -4,7 +4,8 @@
 use DigraphCMS\DB\DB;
 use DigraphCMS\Email\Emails;
 use DigraphCMS\UI\Format;
-use DigraphCMS\UI\Pagination\ColumnHeader;
+use DigraphCMS\UI\Pagination\ColumnDateFilteringHeader;
+use DigraphCMS\UI\Pagination\ColumnStringFilteringHeader;
 use DigraphCMS\UI\Pagination\PaginatedTable;
 
 echo new PaginatedTable(
@@ -18,8 +19,8 @@ echo new PaginatedTable(
         ];
     },
     [
-        new ColumnHeader('Email address'),
-        new ColumnHeader('Category'),
-        new ColumnHeader('Date')
+        new ColumnStringFilteringHeader('Email address', 'email'),
+        'Category',
+        new ColumnDateFilteringHeader('Date', 'time')
     ]
 );

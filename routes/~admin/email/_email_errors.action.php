@@ -4,7 +4,8 @@
 use DigraphCMS\Email\Email;
 use DigraphCMS\Email\Emails;
 use DigraphCMS\UI\Format;
-use DigraphCMS\UI\Pagination\ColumnHeader;
+use DigraphCMS\UI\Pagination\ColumnDateFilteringHeader;
+use DigraphCMS\UI\Pagination\ColumnStringFilteringHeader;
 use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\URL\URL;
 
@@ -25,9 +26,9 @@ echo new PaginatedTable(
         ];
     },
     [
-        new ColumnHeader('Date'),
-        new ColumnHeader('Error'),
-        new ColumnHeader('Subject'),
-        new ColumnHeader('To')
+        new ColumnDateFilteringHeader('Date', 'time'),
+        new ColumnStringFilteringHeader('Error', 'error'),
+        new ColumnStringFilteringHeader('Subject', 'subject'),
+        new ColumnStringFilteringHeader('To', '`to`'),
     ]
 );

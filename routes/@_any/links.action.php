@@ -11,7 +11,8 @@ use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\UI\ButtonMenus\SingleButton;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\Pagination\ColumnHeader;
-use DigraphCMS\UI\Pagination\ColumnSortingHeader;
+use DigraphCMS\UI\Pagination\ColumnPageFilteringHeader;
+use DigraphCMS\UI\Pagination\ColumnStringFilteringHeader;
 use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\UI\TabInterface;
 
@@ -49,8 +50,11 @@ $fn = function () use ($tabs) {
             ];
         },
         [
-            new ColumnHeader($mode == 'children' ? 'Child' : 'Parent'),
-            new ColumnSortingHeader('Type', 'page_link.type'),
+            new ColumnPageFilteringHeader(
+                $mode == 'children' ? 'Child' : 'Parent',
+                $mode == 'children' ? 'link_end' : 'link_start'
+            ),
+            new ColumnStringFilteringHeader('Type', 'page_link.type'),
             new ColumnHeader('Remove link')
         ]
     );

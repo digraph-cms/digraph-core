@@ -11,7 +11,8 @@ use DigraphCMS\DB\DB;
 use DigraphCMS\Spreadsheets\CellWriters\DateTimeCell;
 use DigraphCMS\Spreadsheets\CellWriters\LinkCell;
 use DigraphCMS\UI\Format;
-use DigraphCMS\UI\Pagination\ColumnHeader;
+use DigraphCMS\UI\Pagination\ColumnDateFilteringHeader;
+use DigraphCMS\UI\Pagination\ColumnStringFilteringHeader;
 use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\URL\URL;
 
@@ -49,10 +50,10 @@ if ($errors->count()) {
             ];
         },
         [
-            new ColumnHeader('Job ID'),
-            new ColumnHeader('Group'),
-            new ColumnHeader('Time'),
-            new ColumnHeader('Message')
+            'Job ID',
+            'Group',
+            new ColumnDateFilteringHeader('Time', 'run'),
+            new ColumnStringFilteringHeader('Message', 'message')
         ]
     );
     $table->download(
@@ -68,8 +69,8 @@ if ($errors->count()) {
         [
             'Job ID',
             'Group',
-            'Time',
-            'Message'
+            new ColumnDateFilteringHeader('Time', 'run'),
+            new ColumnStringFilteringHeader('Message', 'message')
         ]
     );
     echo $table;
@@ -95,10 +96,10 @@ $table = new PaginatedTable(
         ];
     },
     [
-        new ColumnHeader('Job ID'),
-        new ColumnHeader('Group'),
-        new ColumnHeader('Time'),
-        new ColumnHeader('Message')
+        'Job ID',
+        'Group',
+        new ColumnDateFilteringHeader('Time', 'run'),
+        new ColumnStringFilteringHeader('Message', 'message')
     ]
 );
 $table->download(
@@ -114,8 +115,8 @@ $table->download(
     [
         'Job ID',
         'Group',
-        'Time',
-        'Message'
+        new ColumnDateFilteringHeader('Time', 'run'),
+        new ColumnStringFilteringHeader('Message', 'message')
     ]
 );
 echo $table;
@@ -138,8 +139,8 @@ $table = new PaginatedTable(
         ];
     },
     [
-        new ColumnHeader('Job ID'),
-        new ColumnHeader('Group')
+        'Job ID',
+        'Group'
     ]
 );
 $table->download(

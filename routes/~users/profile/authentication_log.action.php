@@ -9,8 +9,8 @@ use DigraphCMS\Spreadsheets\CellWriters\DateTimeCell;
 use DigraphCMS\Spreadsheets\CellWriters\LongTextCell;
 use DigraphCMS\Spreadsheets\CellWriters\UserCell;
 use DigraphCMS\UI\Format;
+use DigraphCMS\UI\Pagination\ColumnDateFilteringHeader;
 use DigraphCMS\UI\Pagination\ColumnHeader;
-use DigraphCMS\UI\Pagination\ColumnSortingHeader;
 use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\Users\Users;
 use donatj\UserAgent\UserAgentParser;
@@ -42,12 +42,12 @@ $table = new PaginatedTable(
         ];
     },
     [
-        new ColumnSortingHeader('Date', 'session.created'),
+        new ColumnDateFilteringHeader('Date', 'session.created'),
         new ColumnHeader('Comment'),
         new ColumnHeader('IP'),
         new ColumnHeader('User agent'),
-        new ColumnSortingHeader('Expiration', 'session.expires'),
-        new ColumnSortingHeader('Deauthorized', 'session_expiration.date'),
+        new ColumnDateFilteringHeader('Expiration', 'session.expires'),
+        new ColumnDateFilteringHeader('Deauthorized', 'session_expiration.date'),
         new ColumnHeader('Deauthorization reason'),
     ]
 );

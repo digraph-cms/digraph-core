@@ -9,6 +9,7 @@ use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\UI\ButtonMenus\SingleButton;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\Pagination\ColumnHeader;
+use DigraphCMS\UI\Pagination\ColumnStringFilteringHeader;
 use DigraphCMS\UI\Pagination\PaginatedTable;
 
 echo '<div class="navigation-frame" id="page-urls-form">';
@@ -30,7 +31,7 @@ $table = new PaginatedTable(
         ];
     },
     [
-        new ColumnHeader('URL path'),
+        new ColumnStringFilteringHeader('URL path', 'slug'),
         new ColumnHeader('Remove URL')
     ]
 );

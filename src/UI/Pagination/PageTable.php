@@ -21,11 +21,11 @@ class PageTable extends PaginatedTable
                 ];
             },
             [
-                new ColumnSortingHeader('Name', 'name'),
-                new ColumnSortingHeader('Created', 'created'),
-                new ColumnSortingHeader('Modified', 'updated'),
-                new ColumnHeader('Created by'),
-                new ColumnHeader('Modified by')
+                new ColumnStringFilteringHeader('Name', 'name'),
+                new ColumnDateFilteringHeader('Created', 'created'),
+                new ColumnDateFilteringHeader('Modified', 'updated'),
+                new ColumnUserFilteringHeader('Created by', 'created_by'),
+                new ColumnUserFilteringHeader('Modified by', 'updated_by')
             ]
         );
     }

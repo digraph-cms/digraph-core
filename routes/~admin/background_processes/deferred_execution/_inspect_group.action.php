@@ -6,7 +6,9 @@ use DigraphCMS\Cron\DeferredProgressBar;
 use DigraphCMS\DB\DB;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\UI\Format;
+use DigraphCMS\UI\Pagination\ColumnBooleanFilteringHeader;
 use DigraphCMS\UI\Pagination\ColumnHeader;
+use DigraphCMS\UI\Pagination\ColumnStringFilteringHeader;
 use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\URL\URL;
 
@@ -85,7 +87,7 @@ echo new PaginatedTable(
     [
         new ColumnHeader('Job ID'),
         new ColumnHeader('Time'),
-        new ColumnHeader('Message'),
-        new ColumnHeader('Error')
+        new ColumnStringFilteringHeader('Message', 'message'),
+        new ColumnBooleanFilteringHeader('Error', 'error')
     ]
 );

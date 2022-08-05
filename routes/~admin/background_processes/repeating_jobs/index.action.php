@@ -9,7 +9,8 @@
 
 use DigraphCMS\DB\DB;
 use DigraphCMS\UI\Format;
-use DigraphCMS\UI\Pagination\ColumnHeader;
+use DigraphCMS\UI\Pagination\ColumnDateFilteringHeader;
+use DigraphCMS\UI\Pagination\ColumnStringFilteringHeader;
 use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\UI\Toolbars\ToolbarLink;
 use DigraphCMS\URL\URL;
@@ -55,12 +56,12 @@ if ($errors->count()) {
             ];
         },
         [
-            new ColumnHeader(''),
-            new ColumnHeader('Job ID'),
-            new ColumnHeader('Time'),
-            new ColumnHeader('Error message'),
-            new ColumnHeader('Parent'),
-            new ColumnHeader('Name')
+            '',
+            'Job ID',
+            new ColumnDateFilteringHeader('Time', 'error_time'),
+            new ColumnStringFilteringHeader('Error message', 'error_message'),
+            new ColumnStringFilteringHeader('Parent', 'parent'),
+            new ColumnStringFilteringHeader('Name', 'name'),
         ]
     );
 }
@@ -81,10 +82,10 @@ echo new PaginatedTable(
         ];
     },
     [
-        new ColumnHeader('Job ID'),
-        new ColumnHeader('Time'),
-        new ColumnHeader('Parent'),
-        new ColumnHeader('Name')
+        'Job ID',
+        new ColumnDateFilteringHeader('Time', 'run_last'),
+        new ColumnStringFilteringHeader('Parent', 'parent'),
+        new ColumnStringFilteringHeader('Name', 'name'),
     ]
 );
 
@@ -104,9 +105,9 @@ echo new PaginatedTable(
         ];
     },
     [
-        new ColumnHeader('Job ID'),
-        new ColumnHeader('Scheduled time'),
-        new ColumnHeader('Parent'),
-        new ColumnHeader('Name')
+        'Job ID',
+        new ColumnDateFilteringHeader('Scheduled time', 'run_next'),
+        new ColumnStringFilteringHeader('Parent', 'parent'),
+        new ColumnStringFilteringHeader('Name', 'name'),
     ]
 );

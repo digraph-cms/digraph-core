@@ -11,8 +11,8 @@ use DigraphCMS\Session\Session;
 use DigraphCMS\UI\ButtonMenus\SingleButton;
 use DigraphCMS\UI\Format;
 use DigraphCMS\UI\Notifications;
+use DigraphCMS\UI\Pagination\ColumnDateFilteringHeader;
 use DigraphCMS\UI\Pagination\ColumnHeader;
-use DigraphCMS\UI\Pagination\ColumnSortingHeader;
 use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\Users\Users;
 
@@ -29,7 +29,7 @@ $query = DB::query()
 $headers = [
     new ColumnHeader('Provider'),
     new ColumnHeader('ID'),
-    new ColumnSortingHeader('Added', 'created')
+    new ColumnDateFilteringHeader('Added', 'created')
 ];
 $count = $query->count();
 if ($count > 1) {
