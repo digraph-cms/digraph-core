@@ -212,7 +212,10 @@ class PaginatedSection extends Tag
                 for ($i = 1; $i < $this->paginator()->startItem(); $i++) $source->next();
                 // grab perpage items
                 $this->items = [];
-                for ($i = 0; $i < $this->paginator()->perPage(); $i++) $this->items[] = $source->next();
+                for ($i = 0; $i < $this->paginator()->perPage(); $i++) {
+                    $this->items[] = $source->current() ?? false;
+                    $source->next();
+                }
             }
             // Try to hand off to Dispatcher so that we can extend this
             elseif ($this->items = Dispatcher::firstValue('onPaginatedList', [$this->source()])) {
