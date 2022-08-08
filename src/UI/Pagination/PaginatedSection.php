@@ -193,7 +193,7 @@ class PaginatedSection extends Tag
                 $source = clone $this->source();
                 $source->offset($this->paginator()->startItem());
                 $source->limit($this->paginator()->perPage());
-                $this->items = $this->source()->fetchAll();
+                $this->items = $source->fetchAll();
             }
             // Use built-in array_slice to cut out the requested section of an array
             elseif (is_array($this->source())) {
@@ -208,6 +208,11 @@ class PaginatedSection extends Tag
             elseif ($this->source() instanceof Iterator) {
                 $source = clone $this->source();
                 $this->source()->rewind();
+                // skip first items
+                for ($i = 1; $i < $this->paginator()->startItem(); $i++) $source->next();
+                // grab perpage items
+                $this->items = [];
+                for ($i = 0; $i < $this->paginator()->perPage(); $i++) $this->items[] = $source->next();
             }
             // Try to hand off to Dispatcher so that we can extend this
             elseif ($this->items = Dispatcher::firstValue('onPaginatedList', [$this->source()])) {
