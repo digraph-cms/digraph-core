@@ -42,41 +42,18 @@ class Search
         }
     }
 
-    public static function query(string $search, string $mode = null): AbstractSearchQuery
+    public static function query(string $search): AbstractSearchQuery
     {
-        $mode = $mode ?? $mode = static::defaultMode();
-        if ($mode && !in_array($mode, static::availableModes())) $mode = static::defaultMode();
-        switch ($mode) {
-            case 'natural':
+        switch (DB::driver() == 'mysql') {
+            case 'value':
                 $query = new NaturalSearchQuery($search);
-                break;
-            case 'boolean':
-                $query = new BooleanSearchQuery($search);
                 break;
             default:
                 $query = new CompatibleSearchQuery($search);
-        }
-        Dispatcher::dispatchEvent('onSearchQuery', [$query, $search, $mode]);
+                break;
+        } 
+        Dispatcher::dispatchEvent('onSearchQuery', [$query, $search]);
         return $query;
-    }
-
-    public static function defaultMode(): ?string
-    {
-        if (DB::driver() == 'mysql') {
-            return 'natural';
-        }
-        return null;
-    }
-
-    public static function availableModes(): array
-    {
-        if (DB::driver() == 'mysql') {
-            return [
-                'natural' => 'Natural language',
-                // 'boolean' => 'Boolean'
-            ];
-        }
-        return [];
     }
 
     public static function deleteURL(URL $url)

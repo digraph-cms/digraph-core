@@ -2,59 +2,26 @@
 
 namespace DigraphCMS\Search;
 
-use DigraphCMS\HTML\Forms\FormWrapper;
-use DigraphCMS\HTML\Forms\INPUT;
-use DigraphCMS\HTML\Forms\SELECT;
-use DigraphCMS\URL\URL;
+use DigraphCMS\HTML\DIV;
+use DigraphCMS\UI\Templates;
 
-class SearchForm extends FormWrapper
+class SearchForm extends DIV
 {
-    protected $queryField, $modeField;
-
-    public function __construct(bool $full = false)
+    public function __construct()
     {
-        parent::__construct('search');
-        $this->button()->setText('search');
-        $this->setAction(new URL('/~search/'));
-        $this->token()->setDoNotUse(true);
-        $this->addClass('search-form');
-        $this->setMethod('get');
-
-        $this->queryField = new INPUT('query');
-        $this->queryField->addClass('search-form__query');
-        $this->queryField->setAttribute('placeholder', 'Search this site');
-        $this->addChild($this->queryField);
-
-        if ($full && Search::availableModes()) {
-            $this->modeField = new SELECT(Search::availableModes());
-            $this->modeField->setID('mode');
-            $this->addClass('search-form--full');
-            $this->modeField->addClass('search-form__mode');
-            $this->addChild($this->modeField);
-        }
+        $this->addClass('search-form-wrapper');
     }
 
-    public function queryField(): INPUT
+    public function formHTML()
     {
-        return $this->queryField;
+        return Templates::render('search/form.php');
     }
 
-    public function modeField(): ?SELECT
+    public function children(): array
     {
-        return $this->modeField;
-    }
-
-    public function queryMode(): ?string
-    {
-        // return mode field value if it exists
-        if ($this->modeField) return $this->modeField->value(true);
-        // otherwise return either first available mode or null
-        elseif ($modes = Search::availableModes()) return key($modes);
-        else return null;
-    }
-
-    public function query(): string
-    {
-        return $this->queryField->value(true) ?? '';
+        return array_merge(
+            [$this->formHTML()],
+            parent::children()
+        );
     }
 }

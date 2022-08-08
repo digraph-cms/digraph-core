@@ -1,28 +1,30 @@
-<h1>Site search</h1>
 <?php
 
+use DigraphCMS\Context;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\Search\Search;
 use DigraphCMS\Search\SearchForm;
 use DigraphCMS\Search\SearchResult;
+use DigraphCMS\UI\Breadcrumb;
 use DigraphCMS\UI\Notifications;
-use DigraphCMS\UI\Pagination\PaginatedTable;
+use DigraphCMS\UI\Pagination\PaginatedSection;
+use DigraphCMS\UI\Templates;
 use DigraphCMS\URL\URL;
 
-$form = new SearchForm(true);
-echo $form;
+$query = trim(Context::arg('q'));
+if (!$query) {
+    echo '<h1>Site search</h1>';
+    echo new SearchForm();
+    return;
+}
 
-if ($form->queryMode() == 'boolean') Notifications::printNotice(
-    sprintf(
-        '<a href="%s">Boolean search syntax reference</a>',
-        new URL('_boolean_reference.html')
-    )
-);
-
-if (!$form->query()) return;
+echo '<h1>Search results</h1>';
+Breadcrumb::setTopName('Search results');
+Breadcrumb::parent(new URL('/~search/'));
+echo new SearchForm();
 
 ob_start();
-Dispatcher::dispatchEvent('onSearchHighlightSection', [$form->query(), $form->queryMode()]);
+Dispatcher::dispatchEvent('onSearchHighlightSection', [$query]);
 $highlighted = trim(ob_get_clean());
 if ($highlighted) {
     echo '<div class="card card--light card--search-results-highlight">';
@@ -30,20 +32,13 @@ if ($highlighted) {
     echo '</div>';
 }
 
-$query = Search::query($form->query(), $form->queryMode());
+$query = Search::query($query);
 
-$table = new PaginatedTable(
+$list = new PaginatedSection(
     $query,
-    function (SearchResult $result): array {
-        return [
-            implode(PHP_EOL, [
-                sprintf('<div class="search-results__title"><a href="%s">%s<a></div>', $result->url(), $result->title()),
-                sprintf('<div class="search-results__body">%s</div>', $result->snippet()),
-                sprintf('<div class="search-results__url">%s</div>', $result->url()),
-            ])
-        ];
-    },
-    []
+    function (SearchResult $result) {
+        return Templates::render('search/result.php', ['result' => $result]);
+    }
 );
 
 try {
@@ -52,8 +47,8 @@ try {
         return;
     }
     echo '<div class="search-results">';
-    Dispatcher::dispatchEvent('onDisplaySearchResults', [$form->query(), $form->queryMode()]);
-    echo $table;
+    Dispatcher::dispatchEvent('onDisplaySearchResults', [$query]);
+    echo $list;
     echo '</div>';
 } catch (\Throwable $th) {
     Notifications::printError('Error generating search results');

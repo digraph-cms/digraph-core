@@ -1,21 +1,20 @@
-.form-wrapper.search-form {
+form.search-form {
     display: flex;
     margin: $grid 0;
 
-    &:first-child {
-        margin-top: 0;
-    }
-
-    &:last-child {
-        margin-bottom: 0;
-    }
-
     >* {
-        border-radius: 0;
+        border-radius: 0 !important;
+        margin: 0;
 
         &:first-child {
-            border-top-left-radius: var(--border-radius);
-            border-bottom-left-radius: var(--border-radius);
+            border-top-left-radius: var(--border-radius) !important;
+            border-bottom-left-radius: var(--border-radius) !important;
+            border-right: 0;
+        }
+
+        &:last-child {
+            border-top-right-radius: var(--border-radius) !important;
+            border-bottom-right-radius: var(--border-radius) !important;
         }
     }
 
@@ -34,10 +33,5 @@
         -moz-osx-font-smoothing: grayscale;
         padding-left: $grid;
         padding-right: $grid;
-    }
-
-    >.search-form__mode {
-        border-left: 0;
-        max-width: 10em;
     }
 }
