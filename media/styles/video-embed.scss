@@ -1,5 +1,5 @@
 .video-embed {
-    margin: $grid auto;
+    margin: $grid 0;
     box-sizing: border-box;
     page-break-inside: avoid;
     line-height: 1.3em;
@@ -20,4 +20,5 @@
     left: 0;
     height: 100%;
     width: 100%;
+    outline: 0;
 }
