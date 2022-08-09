@@ -10,7 +10,7 @@ use DigraphCMS\URL\WaybackMachine;
 Context::response()->enableCache();
 Context::response()->headers()->set('X-Robots-Tag', 'noindex');
 
-if (!($result = WaybackMachine::getByUUID(Context::url()->action()))) {
+if (!($result = WaybackMachine::getByHash(Context::url()->action()))) {
     throw new HttpError(404);
 }
 

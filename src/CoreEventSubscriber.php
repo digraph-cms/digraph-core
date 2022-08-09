@@ -244,7 +244,7 @@ abstract class CoreEventSubscriber
                 } else {
                     // broken URL but no archived copy found
                     $node->setAttribute('data-link-broken', 'true');
-                    $node->setAttribute('title', 'Link may be broken');
+                    $node->setAttribute('title', 'This link may be broken');
                 }
             }
         }

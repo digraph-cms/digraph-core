@@ -4,20 +4,17 @@ namespace DigraphCMS\URL;
 
 use DateTime;
 use DateTimeZone;
-use DigraphCMS\Cache\Cache;
+use DigraphCMS\Cache\CacheNamespace;
 use DigraphCMS\Cache\Locking;
 use DigraphCMS\Config;
 use DigraphCMS\Context;
-use DigraphCMS\DB\DB;
 use DigraphCMS\Email\Email;
 use DigraphCMS\Email\Emails;
 use DigraphCMS\RichContent\RichContent;
 use DigraphCMS\UI\Templates;
-use Throwable;
 
 class WaybackMachine
 {
-    protected static $checksCount = 0;
     protected static $active = null;
 
     public static function activate()
@@ -38,69 +35,131 @@ class WaybackMachine
     /**
      * Check whether a given URL appears to be broken. Does so by making an
      * HTTP request to it and returning true/false depending on whether the
-     * response indicates an error. Cached according to config wayback.ttl
+     * response indicates an error.
      * 
-     * NOTE: May return true without checking if number of checks per pageview
-     * is surpassed. May also return and cache an incorrect true value if
-     * a timeout occurs.
+     * NOTE: May return true without checking if URL isn't parsed properly, if
+     * system is disabled, or if a check for the given URL is still pending.
      *
      * @param string $url
-     * @return boolean|null
+     * @return boolean
      */
-    public static function check(string $url): ?bool
+    public static function check(string $url): bool
     {
+        // active check
         if (!static::active()) return true;
-        static $cache = [];
-        // strip fragment portion of URL
-        $url = preg_replace('/#.*$/', '', $url);
-
-        // return from memory cache if available
-        if (isset($cache[$url])) {
-            return $cache[$url];
+        // normalize URL
+        $url = static::normalizeURL($url);
+        if (!$url) return true;
+        // call other method to actually check status
+        $context = Context::url()->__toString();
+        if (static::checkUrlStatus($url)) {
+            return true;
+        } else {
+            static::sendNotificationEmail($context, $url);
+            return false;
         }
+    }
 
-        // return true without checking if we've reached the per-request max of checks
-        if (static::$checksCount >= Config::get('wayback.max_checks')) {
-            return $cache[$url] = true;
-        }
-
-        // cache output
-        return $cache[$url] = Cache::get(
-            'wayback/check/' . md5($url),
+    protected static function checkUrlStatus($url): bool
+    {
+        return static::checkCache()->getDeferred(
+            md5($url),
             function () use ($url) {
-                try {
-                    static::$checksCount++; // increment check counter if we're actually running the check
-                    $ch = curl_init($url);
-                    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, Config::get('wayback.check_timeout'));
-                    curl_setopt($ch, CURLOPT_TIMEOUT, Config::get('wayback.check_timeout_connect'));
-                    curl_exec($ch);
-                    $code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
-                    $errno = curl_errno($ch);
-                    $errmsg = curl_error($ch);
-                    curl_close($ch);
-                    $success = $code >= 200 && $code < 400;
-                    if ($success) {
-                        return true;
-                    } elseif ($errno == 28) {
-                        return true;
-                    } else {
-                        static::sendNotificationEmail($url, $code, $errno, $errmsg);
-                        return false;
-                    }
-                } catch (Throwable $th) {
-                    return null;
-                }
-            },
-            Config::get('wayback.check_ttl')
+                return static::doCheckUrlStatus($url);
+            }
+        ) ?? true;
+    }
+
+    protected static function doCheckUrlStatus($url): bool
+    {
+        try {
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 6.2; WOW64; rv:17.0) Gecko/20100101 Firefox/17.0');
+            curl_setopt($ch, CURLOPT_REFERER, Context::url());
+            curl_exec($ch);
+            $code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+            $errno = curl_errno($ch);
+            curl_close($ch);
+            $success = $code >= 200 && $code < 400;
+            if ($success) {
+                return true;
+            } elseif ($errno == 28) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (\Throwable $th) {
+            return true;
+        }
+    }
+
+    public static function getByHash(string $hash): ?WaybackResult
+    {
+        return static::apiCache()->getDeferred($hash);
+    }
+
+    public static function get(string $url): ?WaybackResult
+    {
+        $url = static::normalizeURL($url);
+        return static::apiCache()->getDeferred(
+            md5($url),
+            function () use ($url) {
+                $found = static::apiCall($url);
+                if (!$found) return null;
+                else return new WaybackResult(
+                    $url,
+                    $found['wb_url'],
+                    $found['wb_time'],
+                );
+            }
         );
     }
 
-    protected static function sendNotificationEmail($url, $code, $errno, $error)
+    /**
+     * Make an API call to the wayback machine for the given URL, and return
+     * null if nothing is found, or an array containing wb_url and wb_time keys
+     * for the result.
+     *
+     * @param string $url normalized URL
+     * @return array|null
+     */
+    protected static function apiCall(string $url): ?array
     {
+        // build API request URL
+        $wb = sprintf(
+            'http://archive.org/wayback/available?url=%s',
+            urlencode($url)
+        );
+        // make API request with curl
+        $ch = curl_init($wb);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($ch);
+        $code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+        curl_close($ch);
+        if ($code == 200) {
+            $json = json_decode($response, true);
+            if ($json['archived_snapshots']) {
+                return [
+                    'wb_url' => $json['archived_snapshots']['closest']['url'],
+                    'wb_time' => DateTime::createFromFormat(
+                        'YmdHis',
+                        $json['archived_snapshots']['closest']['timestamp'],
+                        new DateTimeZone('UTC')
+                    )->getTimestamp()
+                ];
+            }
+        }
+        // no valid result returned
+        return null;
+    }
+
+    protected static function sendNotificationEmail($context, $url)
+    {
+        // this is now the only part that uses the database, and everything else uses the cache
         $lock = Locking::lock(
-            'wayback_notification_' . md5(Context::url() . $url),
+            'wayback_notification_' . md5($context . $url),
             true,
             Config::get('wayback.notify_frequency')
         );
@@ -109,15 +168,13 @@ class WaybackMachine
             $email = Email::newForEmail(
                 'wayback',
                 $addr,
-                'Broken link on ' . Context::url(),
+                'Broken link on ' . $context,
                 new RichContent(
                     Templates::render(
                         'email/wayback/broken-link.php',
                         [
                             'broken_url' => $url,
-                            'http_status' => $code,
-                            'curl_errno' => $errno,
-                            'curl_error' => $error
+                            'context_url' => $context,
                         ]
                     )
                 )
@@ -126,9 +183,10 @@ class WaybackMachine
         }
     }
 
-    protected static function normalizeURL(string $url): string
+    protected static function normalizeURL(string $url): ?string
     {
         $url = parse_url($url);
+        if (!$url) return null;
         $normal = $url['host'];
         if (@$url['port']) {
             $normal .= ':' . $url['port'];
@@ -138,128 +196,28 @@ class WaybackMachine
             $normal .= '?' . $url['query'];
         }
         $normal = preg_replace('/\/$/', '', $normal);
-        return $normal;
+        return $normal ? $normal : null;
     }
 
-    public static function getByUUID(string $uuid): ?WaybackResult
+    protected static function checkCache(): CacheNamespace
     {
-        static $cache = [];
-
-        // return from memory cache if available
-        if (isset($cache[$uuid])) {
-            return $cache[$uuid];
-        }
-
-        // try to retrieve from database
-        $query = DB::query()->from('wayback_machine')
-            ->where('uuid = ?', [$uuid])
-            ->limit(1);
-        if ($row = $query->fetch()) {
-            // return/cache null if wb_time is null, this means no result was found
-            if (!$row['wb_time']) {
-                return $cache[$uuid] = null;
-            }
-            // otherwise return/cache a result object
-            return $cache[$uuid] = new WaybackResult(
-                $row['url'],
-                $row['wb_url'],
-                $row['wb_time'],
-                $row['created']
+        static $cache;
+        return $cache
+            ?? $cache = new CacheNamespace(
+                'wayback/check',
+                Config::get('wayback.check_ttl'),
+                Config::get('wayback.check_ttl') * 10
             );
-        }
-        return $cache[$uuid] = null;
     }
 
-    public static function get(string $url): ?WaybackResult
+    protected static function apiCache(): CacheNamespace
     {
-        static $cache = [];
-
-        if (!static::active()) return null;
-        $url = static::normalizeURL($url);
-
-        // return from memory cache if available
-        if (isset($cache[$url])) return $cache[$url];
-
-        // try to retrieve from database
-        $query = DB::query()->from('wayback_machine')
-            ->where('url = ?', [$url])
-            ->order('wb_time desc')
-            ->limit(1);
-        if ($row = $query->fetch()) {
-                $result = new WaybackResult(
-                    $row['url'],
-                    $row['wb_url'],
-                    $row['wb_time'],
-                    $row['created']
-                );
-                // memory cache null for expired (might still regenerate below)
-                if ($result->expired()) $cache[$url] = null;
-                // unexpired but empty results memory cache and immediately return null
-                elseif (!$result->wbTime()) return $cache[$url] = null;
-                // unexpired non-empty results memory cache and immediately return themselves
-                else return $cache[$url] = $result;
-        }
-
-        // we might have to actually hit the API now
-
-        // cache null and return immediately if we've made our maximum api calls for this page
-        if (static::$checksCount >= Config::get('wayback.max_api_calls')) return $cache[$url] = null;
-
-        // use a lock to rate-limit each API call
-        if (!Locking::lock('wayback-api ' . $url, false, 3600)) return $cache[$url] = null;
-
-        // build API request URL
-        static::$checksCount++;
-        $wb = sprintf(
-            'http://archive.org/wayback/available?url=%s',
-            urlencode($url)
-        );
-
-        // make request with curl
-        $ch = curl_init($wb);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($ch);
-        $code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
-        curl_close($ch);
-        if ($code == 200) {
-            $json = json_decode($response, true);
-            if ($json['archived_snapshots']) {
-                $return = $result = new WaybackResult(
-                    $url,
-                    $json['archived_snapshots']['closest']['url'],
-                    DateTime::createFromFormat(
-                        'YmdHis',
-                        $json['archived_snapshots']['closest']['timestamp'],
-                        new DateTimeZone('UTC')
-                    )->getTimestamp()
-                );
-            } else {
-                $return = null;
-                $result = new WaybackResult(
-                    $url,
-                    null,
-                    null
-                );
-            }
-            // delete this result if it already exists in the database
-            DB::query()->deleteFrom('wayback_machine')
-                ->where('uuid = ?', [$result->uuid()])
-                ->execute();
-            // insert fresh result
-            DB::query()->insertInto(
-                'wayback_machine',
-                [
-                    'uuid' => $result->uuid(),
-                    'url' => $result->originalURL(),
-                    'wb_time' => $result->wbTime() ? $result->wbTime()->getTimestamp() : null,
-                    'wb_url' => $result->wbURL(),
-                    'created' => $result->created()->getTimestamp(),
-                ]
-            )->execute();
-            // return return value
-            return $cache[$url] = $return;
-        } else {
-            return $cache[$url] = null;
-        }
+        static $cache;
+        return $cache
+            ?? $cache = new CacheNamespace(
+                'wayback/api',
+                Config::get('wayback.api_ttl'),
+                Config::get('wayback.api_ttl') * 10
+            );
     }
 }
