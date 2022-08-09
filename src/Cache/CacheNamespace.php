@@ -4,12 +4,35 @@ namespace DigraphCMS\Cache;
 
 class CacheNamespace
 {
-    protected $name, $ttl;
+    protected $name, $ttl, $staleTTL;
 
-    public function __construct(string $name, int $ttl = null)
+    public function __construct(string $name, int $ttl = null, int $staleTTL = null)
     {
         $this->name = $name;
         $this->ttl = $ttl;
+        $this->staleTTL = $staleTTL;
+    }
+
+    /**
+     * Works the same as get(), but the callback is required and if the value is
+     * not already cached then the value will *not* be computed now. Instead a
+     * deferred execution job will be created to generate the value, and until
+     * it executes calls for the given $name will return null.
+     *
+     * @param string $name
+     * @param callable|null $callback
+     * @param integer|null $ttl
+     * @param integer|null $staleTTL
+     * @return mixed
+     */
+    public function getDeferred(string $name, callable $callback = null, int $ttl = null, int $staleTTL = null)
+    {
+        return Cache::getDeferred(
+            $this->name . '/' . $name,
+            $callback,
+            $ttl ?? $this->ttl,
+            $staleTTL ?? $this->staleTTL
+        );
     }
 
     /**
