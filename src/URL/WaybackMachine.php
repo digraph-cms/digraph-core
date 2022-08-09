@@ -65,7 +65,11 @@ class WaybackMachine
         return static::checkCache()->getDeferred(
             md5($url),
             function () use ($url) {
-                return static::doCheckUrlStatus($url);
+                $result = static::doCheckUrlStatus($url);
+                // if status is negative, presumptively make an API call so it
+                // gets in the deferred execution queue if necessary
+                if (!$result) static::get($url);
+                return $result;
             }
         ) ?? true;
     }
