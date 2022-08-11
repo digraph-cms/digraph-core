@@ -68,10 +68,10 @@ class Paginator extends ConditionalContainer
     public function page(): int
     {
         $page = Context::arg($this->arg());
-        if ($page === null) {
+        if ($page === null || $page < 1) {
             return 1;
-        } elseif ($page < 1 || $page > $this->pages()) {
-            throw new HttpError(404);
+        } elseif ($page > $this->pages()) {
+            return $this->pages();
         } else {
             return $page;
         }
