@@ -15,6 +15,7 @@ class FormWrapper extends Tag
     protected $token;
     protected $button;
     protected $form;
+    protected $displayChildren = true;
     protected $callbacks = [];
 
     const METHOD_POST = 'post';
@@ -64,10 +65,28 @@ class FormWrapper extends Tag
         return $valid;
     }
 
+    public function displayChildren(): bool
+    {
+        return $this->displayChildren;
+    }
+
+    /**
+     * Set whether or not children should be displayed here. Used to allow rendering
+     * inputs separately, such as in a table.
+     *
+     * @param boolean $set
+     * @return $this
+     */
+    public function setDisplayChildren(bool $set)
+    {
+        $this->displayChildren = $set;
+        return $this;
+    }
+
     public function children(): array
     {
         return array_merge(
-            parent::children(),
+            $this->displayChildren() ? parent::children() : [],
             [
                 $this->token(),
                 $this->button(),
