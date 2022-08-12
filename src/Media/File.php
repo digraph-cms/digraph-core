@@ -51,7 +51,7 @@ class File
     public function url(): string
     {
         $this->write();
-        return $this->url ?? $this->url = Media::fileUrl($this) . '?' . substr(md5(filemtime($this->path())), 0, 4);
+        return $this->url ?? $this->url = Media::fileUrl($this) . '?' . substr(md5_file($this->path()), 0, 4);
     }
 
     public function ttl(): int
