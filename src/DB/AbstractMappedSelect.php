@@ -16,8 +16,12 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
 {
     protected $query, $iterator;
     protected $returnDataObjects = true;
+    protected $returnObjectClass = null;
 
-    abstract protected function doRowToObject(array $row);
+    protected function doRowToObject(array $row)
+    {
+        return null;
+    }
 
     protected function rowToObject($row)
     {
@@ -34,6 +38,10 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
     {
         $this->query = $query;
         $this->query->disableSmartJoin();
+        if ($this->returnObjectClass) {
+            $this->returnDataObjects = false;
+            $this->query->asObject($this->returnObjectClass);
+        }
     }
 
     /**
@@ -212,7 +220,8 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
         if ($this->returnDataObjects) {
             return static::rowToObject($this->query->fetch());
         } else {
-            $this->query->fetch();
+            return ($out = $this->query->fetch())
+                ? $out : null;
         }
     }
 
