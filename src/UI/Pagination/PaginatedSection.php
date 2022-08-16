@@ -146,7 +146,7 @@ class PaginatedSection extends Tag
                 && method_exists($this->source, 'order')
                 && method_exists($this->source, 'leftJoin'))
         ) {
-            // clone source and do basic pagination
+            // clone source and do basic sorting and filtering
             /** @var AbstractMappedSelect */
             $source = clone $this->source;
             // apply filter tools
@@ -359,8 +359,23 @@ class PaginatedSection extends Tag
                 // write headers
                 if ($this->dl_headers) $writer->writeHeaders($this->dl_headers);
                 // loop through source and run callback to get cells
-                foreach ($this->source as $item) {
-                    $writer->writeRow($this->runDlCallback($item));
+                if (
+                    $this->source() instanceof Select
+                    || $this->source() instanceof AbstractMappedSelect
+                    || (is_object($this->source())
+                        && method_exists($this->source(), 'offset')
+                        && method_exists($this->source(), 'limit')
+                        && method_exists($this->source(), 'fetchAll'))
+                ) {
+                    $source = clone $this->source();
+                    while ($item = $source->fetch()) {
+                        $writer->writeRow($this->runDlCallback($item));
+                    }
+                } else {
+                    foreach ($this->source() as $item) {
+                        if (!$item) continue;
+                        $writer->writeRow($this->runDlCallback($item));
+                    }
                 }
                 // run finalization callback
                 if ($this->dl_finalize_callback) call_user_func($this->dl_finalize_callback, $writer);
