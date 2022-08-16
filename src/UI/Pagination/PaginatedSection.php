@@ -363,9 +363,7 @@ class PaginatedSection extends Tag
                     $this->source() instanceof Select
                     || $this->source() instanceof AbstractMappedSelect
                     || (is_object($this->source())
-                        && method_exists($this->source(), 'offset')
-                        && method_exists($this->source(), 'limit')
-                        && method_exists($this->source(), 'fetchAll'))
+                        && method_exists($this->source(), 'fetch'))
                 ) {
                     $source = clone $this->source();
                     while ($item = $source->fetch()) {
