@@ -38,7 +38,7 @@ abstract class CoreEventSubscriber
         new DeferredJob(
             function () {
                 $count = DB::query()->delete('defex')
-                    ->where('run is null')
+                    ->where('run is not null')
                     ->where('run < ?', [strtotime(Config::get('maintenance.expire_defex_records'))])
                     ->execute();
                 return "Expired $count deferred execution jobs";
