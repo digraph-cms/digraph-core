@@ -193,6 +193,16 @@ td,
 th {
     padding: 0.5rem;
     vertical-align: middle;
+
+    >* {
+        &:first-child {
+            margin-top: 0;
+        }
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
 }
 
 th,
