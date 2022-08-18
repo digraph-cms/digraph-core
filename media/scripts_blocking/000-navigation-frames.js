@@ -141,7 +141,7 @@ Digraph.submitForm = function (form) {
                 Digraph.state.getAndPush(url.toString(), parent);
             }
         } else {
-            Digraph.state.post(data, form.getAttribute('action'), parent);
+            Digraph.state.post(data, form.getAttribute('action'), parent, !Digraph.state.frameIsStateless(parent));
         }
     } else {
         // otherwise submit normally
