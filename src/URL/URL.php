@@ -384,10 +384,11 @@ class URL
      * Unset an argument from the query.
      *
      * @param string $name
-     * @return void
+     * @return $this
      */
     public function unsetArg(string $name)
     {
         unset($this->query[$name]);
+        return $this;
     }
 }
