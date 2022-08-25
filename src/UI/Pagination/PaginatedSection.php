@@ -360,17 +360,17 @@ class PaginatedSection extends Tag
                 if ($this->dl_headers) $writer->writeHeaders($this->dl_headers);
                 // loop through source and run callback to get cells
                 if (
-                    $this->source() instanceof Select
-                    || $this->source() instanceof AbstractMappedSelect
-                    || (is_object($this->source())
-                        && method_exists($this->source(), 'fetch'))
+                    $this->source instanceof Select
+                    || $this->source instanceof AbstractMappedSelect
+                    || (is_object($this->source)
+                        && method_exists($this->source, 'fetch'))
                 ) {
-                    $source = clone $this->source();
+                    $source = clone $this->source;
                     while ($item = $source->fetch()) {
                         $writer->writeRow($this->runDlCallback($item));
                     }
                 } else {
-                    foreach ($this->source() as $item) {
+                    foreach ($this->source as $item) {
                         if (!$item) continue;
                         $writer->writeRow($this->runDlCallback($item));
                     }
