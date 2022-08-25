@@ -36,8 +36,8 @@ class SELECT extends Tag implements InputInterface
                     return sprintf(
                         '<option value="%s"%s>%s</option>',
                         $key,
-                        ($this->value(true) === $opt['value'] || $this->valueString() === $key) 
-                            ? ' selected="true"' 
+                        ($this->value(true) === $opt['value'] || $this->valueString() === $key)
+                            ? ' selected="true"'
                             : '',
                         $opt['label']
                     );
@@ -85,7 +85,7 @@ class SELECT extends Tag implements InputInterface
      */
     public function setOption($value, string $label)
     {
-        if (is_string($value) || is_int($value)) $key = $value;
+        if (is_string($value) || is_int($value)) $key = $value = "$value";
         else $key = md5(serialize($value));
         $this->options[$key] = [
             'value' => $value,
@@ -142,6 +142,7 @@ class SELECT extends Tag implements InputInterface
      */
     public function setDefault($value)
     {
+        if (is_string($value) || is_int($value)) $value = "$value";
         $this->default = $value;
         return $this;
     }
@@ -155,6 +156,7 @@ class SELECT extends Tag implements InputInterface
      */
     public function setValue($value)
     {
+        if (is_string($value) || is_int($value)) $value = "$value";
         $this->value = $value;
         return $this;
     }
