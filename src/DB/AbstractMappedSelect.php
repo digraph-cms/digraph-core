@@ -44,7 +44,8 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
         }
     }
 
-    public function query(): Select {
+    public function query(): Select
+    {
         return $this->query;
     }
 
