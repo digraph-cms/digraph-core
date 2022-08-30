@@ -39,10 +39,14 @@ $table->paginator()->perPage(15);
 echo $table;
 
 // display form below table
-$pattern = (new Field('Set new URL pattern'))
+$pattern = (new Field('Set new URL/pattern'))
     ->setDefault(Context::page()->slugPattern())
     ->setRequired(true)
     ->addTip('Add a leading slash to make pattern relative to site root, otherwise it will be relative to the page\'s parent URL.');
+
+$save = (new CheckboxField('Save pattern'))
+    ->addTip('Check this box to save the above URL/pattern as the default pattern, and make it the new primary URL.')
+    ->addTip('If unchecked, the primary URL pattern will be kept the same, but may be updated if necessary.');
 
 $unique = (new CheckboxField('Force URL to be unique'))
     ->setDefault(Context::page()::DEFAULT_UNIQUE_SLUG)
@@ -52,8 +56,9 @@ $unique = (new CheckboxField('Force URL to be unique'))
 
 echo (new FormWrapper(Context::pageUUID() . '_urls'))
     ->addChild($pattern)
+    ->addChild($save)
     ->addChild($unique)
-    ->addCallback(function () use ($pattern, $unique) {
+    ->addCallback(function () use ($pattern, $save, $unique) {
         try {
             // set new slug from pattern
             Slugs::setFromPattern(
@@ -61,9 +66,19 @@ echo (new FormWrapper(Context::pageUUID() . '_urls'))
                 $pattern->value(),
                 $unique->value()
             );
-            // save pattern into page
             $page = Context::page();
-            $page->slugPattern($pattern->value());
+            // save pattern into page
+            if ($save->value()) {
+                $page->slugPattern($pattern->value());
+            }
+            // otherwise set pattern again from saved pattern so it stays at the top
+            else {
+                Slugs::setFromPattern(
+                    Context::page(),
+                    $page->slugPattern(),
+                    $unique->value()
+                );
+            }
             $page->update();
             Notifications::flashConfirmation('URL updated');
         } catch (\Throwable $th) {
