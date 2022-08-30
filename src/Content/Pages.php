@@ -220,7 +220,7 @@ class Pages
         DB::commit();
     }
 
-    public static function insert(AbstractPage $page, string $parent_uuid = null)
+    public static function insert(AbstractPage $page, string $parent_uuid = null, string $edge_type = null)
     {
         DB::beginTransaction();
         // pre-insert events
@@ -246,7 +246,7 @@ class Pages
             )
             ->execute();
         // insert link if specified
-        if ($parent_uuid) static::insertLink($parent_uuid, $page->uuid());
+        if ($parent_uuid) static::insertLink($parent_uuid, $page->uuid(), $edge_type);
         // post-insert events
         Dispatcher::dispatchEvent('onAfterPageInsert_' . $page->class(), [$page]);
         Dispatcher::dispatchEvent('onAfterPageInsert', [$page]);
