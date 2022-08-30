@@ -44,6 +44,10 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
         }
     }
 
+    public function query(): Select {
+        return $this->query;
+    }
+
     /**
      * Get the name of the table this query is selecting from.
      *
