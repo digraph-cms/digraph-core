@@ -6,6 +6,7 @@ use DateTimeZone;
 use DigraphCMS\Cache\Cache;
 use DigraphCMS\Config;
 use DigraphCMS\Digraph;
+use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\Media\CSS;
 use DigraphCMS\Media\DeferredFile;
@@ -713,6 +714,7 @@ class Theme
                 static::renderJs('theme_async', static::$asyncThemeJs, true);
                 static::renderJs('page_async', static::$asyncPageJs, true);
                 static::renderInlineJs(static::$inlinePageJs);
+                Dispatcher::dispatchEvent('onRenderHeadHtml');
                 return ob_get_clean();
             },
             Config::get('theme.head_cache_ttl')
