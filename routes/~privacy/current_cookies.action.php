@@ -18,14 +18,8 @@ use DigraphCMS\UI\Pagination\ColumnHeader;
 use DigraphCMS\UI\Pagination\PaginatedTable;
 
 $table = new PaginatedTable(
-    array_reverse($_COOKIE),
+    array_keys($_COOKIE),
     function (string $key) {
-        if ($value = json_decode($_COOKIE[$key], true)) {
-            $value = json_encode($value, JSON_PRETTY_PRINT);
-        } else {
-            $value = $_COOKIE[$key];
-        }
-        $value = htmlspecialchars($value);
         $button = new SingleButton(
             'Delete',
             function () use ($key) {
