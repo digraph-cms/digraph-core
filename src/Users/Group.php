@@ -7,7 +7,7 @@ use DigraphCMS\URL\URL;
 
 class Group
 {
-    protected $uuid, $name;
+    protected $uuid, $name, $url;
 
     public function __construct(string $uuid, string $name, URL $url = null)
     {
