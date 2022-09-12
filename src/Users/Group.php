@@ -9,10 +9,11 @@ class Group
 {
     protected $uuid, $name;
 
-    public function __construct(string $uuid, string $name)
+    public function __construct(string $uuid, string $name, URL $url = null)
     {
         $this->uuid = $uuid;
         $this->name = $name;
+        $this->url = $url;
     }
 
     public function uuid(): string
@@ -30,7 +31,7 @@ class Group
         if ($this->uuid == 'users') {
             return new URL('/~users/');
         }
-        return new URL('/~users/groups/' . $this->uuid() . '.html');
+        return $this->url ?? new URL('/~users/groups/' . $this->uuid() . '.html');
     }
 
     public function __toString()
