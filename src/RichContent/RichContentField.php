@@ -120,7 +120,7 @@ class RichContentField extends Field
         }
         $this->toolbarFrame
             ->setID("t$id")
-            ->setData('initial-source', new URL("/~richmedia/toolbar/?frame=t$id&uuid=$uuid"));
+            ->setData('initial-source', new URL("/~api/v1/toolbar/?frame=t$id&uuid=$uuid"));
         // return normally
         return parent::toString();
     }

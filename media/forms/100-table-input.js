@@ -273,7 +273,7 @@ class EditableTable {
         this.controls.innerHTML = [
             // start top controls
             '<div class="toolbar editable-table__controls__top">',
-            '<div class="toolbar navigation-frame navigation-frame--stateless" data-target="_frame" id="tb_' + this.id + '" data-initial-source="' + Digraph.config.url + '/~richmedia/toolbar/?frame=tb_' + this.id + '&only=insert">???</div>',
+            '<div class="toolbar navigation-frame navigation-frame--stateless" data-target="_frame" id="tb_' + this.id + '" data-initial-source="' + Digraph.config.url + '/~api/v1/toolbar/?frame=tb_' + this.id + '&only=insert">???</div>',
             '<span class="toolbar__spacer"></span>',
             '<a class="toolbar__button toolbar__button--add-row-above" data-command="addRowAbove"><i class="icon icon--material">add</i><div class="toolbar__button__tooltip">add row</div></a>',
             '</div>',
