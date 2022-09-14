@@ -27,17 +27,19 @@ class RichContentField extends Field
             ->addClass('rich-content-editor__content-editor');
         $this->wrapper->addChild($this->contentEditor);
         // only add media editor if $hideMediaEditor is false
-        if (!$hideMediaEditor || !Permissions::inMetaGroup('richmedia__edit')) {
-            Sidebar::setActive(false);
-            $this->mediaEditor = (new DIV())
-                ->addClass('rich-content-editor__media-editor');
-            $this->mediaEditorFrame = (new DIV())
-                ->addClass('rich-content-editor__media-editor-frame')
-                ->addClass('navigation-frame')
-                ->addClass('navigation-frame--stateless')
-                ->setData('target', '_frame');
-            $this->mediaEditor->addChild($this->mediaEditorFrame);
-            $this->wrapper->addChild($this->mediaEditor);
+        if (!$hideMediaEditor) {
+            if (Permissions::inMetaGroup('richmedia__edit')) {
+                Sidebar::setActive(false);
+                $this->mediaEditor = (new DIV())
+                    ->addClass('rich-content-editor__media-editor');
+                $this->mediaEditorFrame = (new DIV())
+                    ->addClass('rich-content-editor__media-editor-frame')
+                    ->addClass('navigation-frame')
+                    ->addClass('navigation-frame--stateless')
+                    ->setData('target', '_frame');
+                $this->mediaEditor->addChild($this->mediaEditorFrame);
+                $this->wrapper->addChild($this->mediaEditor);
+            }
         }
         // add toolbar
         $this->toolbarFrame = (new DIV())
