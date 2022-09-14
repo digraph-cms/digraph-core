@@ -53,9 +53,9 @@ class ImageFile extends DeferredFile
             'previewbg/' . $this->identifier(),
             function () {
                 $clone = clone $this;
-                $clone->width(200)
+                $clone->width(100)
                     ->blur(50)
-                    ->webp();
+                    ->jpg();
                 return $clone->url();
             }
         );
