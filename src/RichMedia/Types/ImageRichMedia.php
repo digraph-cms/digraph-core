@@ -86,11 +86,22 @@ class ImageRichMedia extends AbstractRichMedia
                 ->addChild('Exception occurred while rendering image')
                 ->toString();
         }
-        if ($this->caption()->source()) {
+        if ($code->getContent()) {
             $figure = (new FIGURE)
-                ->setAttribute('style', 'background-color:' . $this->file()->image()->color())
+                ->addChild($image)
+                ->addChild('<figcaption>' . $code->getContent() . '</figcaption>');
+        } elseif ($this->caption()->source()) {
+            $figure = (new FIGURE)
                 ->addChild($image)
                 ->addChild('<figcaption>' . $this->caption() . '</figcaption>');
+        }
+        if (isset($figure)) {
+            $figure->setAttribute('style', implode(';', [
+                'background-color:' . $this->file()->image()->color(),
+                'background-image:url("' . $this->file()->image()->previewBackgroundUrl() . '")',
+                'background-size:cover',
+                'background-position: center center',
+            ]));
             return $figure->toString();
         }
         return $image->toString();

@@ -1,9 +1,6 @@
 picture.fancyfit {
-    display: inline-block;
+    display: block;
     background: #999;
-    padding-top: 75%;
-    max-width: 100%;
-    box-shadow: var(--shadow);
 
     img {
         display: block;
@@ -16,16 +13,10 @@ figure {
     background-color: #999;
     font-family: $font-ui;
     box-shadow: var(--shadow);
-    display: inline-flex;
-    flex-direction: column;
-    margin: $grid 0;
-    align-items: center;
-    width: fit-content;
-    max-width: 100%;
 
     >picture {
-        display: block;
         box-shadow: none;
+        margin: 0 auto;
 
         >img {
             display: block;

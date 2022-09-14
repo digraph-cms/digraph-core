@@ -60,8 +60,7 @@ class ResponsivePicture extends Tag
             [
                 'style' => implode(';', [
                     'padding:0',
-                    'width:' . ($this->maxHeight * ($w / $h)) . 'vh',
-                    'max-width:100%',
+                    'max-width:' . ($this->maxHeight * ($w / $h)) . 'vh',
                     'background-color:' . $this->image()->color()
                 ])
             ]

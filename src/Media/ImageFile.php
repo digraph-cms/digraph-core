@@ -47,6 +47,20 @@ class ImageFile extends DeferredFile
         $this->cache = new CacheNamespace('image-file', $this->ttl());
     }
 
+    public function previewBackgroundUrl(): string
+    {
+        return $this->cache->get(
+            'previewbg/' . $this->identifier(),
+            function () {
+                $clone = clone $this;
+                $clone->width(200)
+                    ->blur(50)
+                    ->webp();
+                return $clone->url();
+            }
+        );
+    }
+
     public function color(): string
     {
         return $this->cache->get(
