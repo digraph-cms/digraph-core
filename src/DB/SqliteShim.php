@@ -8,7 +8,18 @@ class SqliteShim
 {
     public static function createFunctions(PDO $pdo)
     {
-        $pdo->sqliteCreateFunction('JSON_VALUE', self::class . '::JSON_VALUE', 2);
+        static::createFunction($pdo, 'JSON_VALUE', 2);
+        static::createFunction($pdo, 'CONCAT');
+    }
+
+    protected static function createFunction(PDO $pdo, string $name, int $args = -1, int $flags = 0)
+    {
+        $pdo->sqliteCreateFunction($name, self::class . '::' . $name, $args, $flags);
+    }
+
+    public static function CONCAT()
+    {
+        return implode('', func_get_args());
     }
 
     public static function JSON_VALUE(string $json, string $path)
