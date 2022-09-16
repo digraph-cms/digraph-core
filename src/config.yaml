@@ -54,6 +54,8 @@ cache:
 email:
   enabled: true
   from: null
+  service_categories:
+    service: true
   categories:
     service:
       label: Service Emails

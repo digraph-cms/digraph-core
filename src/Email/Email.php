@@ -122,6 +122,11 @@ class Email
         $this->error = $error;
     }
 
+    public function isService(): bool
+    {
+        return Config::get('email.service_categories.' . $this->category());
+    }
+
     protected static function generateFrom(): string
     {
         return 'noreply@' . parse_url(URLs::site(), PHP_URL_HOST);

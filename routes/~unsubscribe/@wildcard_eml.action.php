@@ -14,7 +14,7 @@ $addresses = [];
 // only allow access with valid email ID or by being signed in
 $email = Emails::get(Context::url()->actionSuffix());
 if (!$email) throw new HttpError(404);
-if ($email->category() == 'service') throw new HttpError(404);
+if ($email->isService()) throw new HttpError(404);
 if ($user = $email->toUser()) {
     $addresses = $user->emails();
 }

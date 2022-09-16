@@ -60,8 +60,8 @@ echo implode('', array_map(
 ));
 echo "</tr>";
 foreach ($categories as $category) {
-    if ($category == 'service') continue;
     $count = Emails::select()
+        ->where('time > ?', strtotime('-1 year'))
         ->where('category = ?', [$category])
         ->where(
             '('
@@ -77,11 +77,16 @@ foreach ($categories as $category) {
     if (!$count) continue;
     echo "<tr>";
     // email type information
-    echo "<th>";
+    echo "<td>";
     echo "<strong>" . Emails::categoryLabel($category) . "</strong>";
-    echo "<br><small>" . Emails::categoryDescription($category) . "</small>";
-    echo "<br><small>" . $count . " sent to you</small>";
-    echo "</th>";
+    echo "<p><small>" . Emails::categoryDescription($category) . "</small>";
+    echo "<br><small>" . $count . " sent to you in the last year</small></p>";
+    echo "</td>";
+    // don't show unsubscribe options for service categories
+    if (Config::get('email.service_categories.' . $category)) {
+        echo "<td><em>Necessary service emails<br>Cannot be unsubscribed</em></td>";
+        continue;
+    }
     // unsubscribe options
     foreach ($addresses as $address) {
         echo "<td>";

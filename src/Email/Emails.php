@@ -209,7 +209,7 @@ class Emails
      */
     public static function shouldBlock(Email $email)
     {
-        if ($email->category() == 'service') {
+        if ($email->isService()) {
             return false;
         }
         return !!DB::query()->from('email_unsubscribe')
