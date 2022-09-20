@@ -49,6 +49,16 @@ a.column-filter__icon {
   box-shadow: $shadow;
 }
 
+.navigation-frame {
+
+  &.loading,
+  &.error {
+    .column-filter__toolbox {
+      display: none;
+    }
+  }
+}
+
 .column-filter__toggle__close {
   display: none;
 }
@@ -85,9 +95,9 @@ a.column-filter__icon {
 
 col {
   &.filters-applied {
-    background: var(--theme-highlight-a10);
-    border-top: $border solid var(--theme-highlight);
-    border-bottom: $border solid var(--theme-highlight);
+    background: var(--cue-interactive-a10);
+    border-top: $border solid var(--cue-interactive);
+    border-bottom: $border solid var(--cue-interactive);
   }
 }
 
