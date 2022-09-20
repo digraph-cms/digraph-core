@@ -36,9 +36,9 @@ $pages = $pages + $query->fetchAll();
 $query = RichMedia::select();
 $query->order('updated desc');
 if ($phrase = trim(Context::arg('query'))) {
-    $query->whereOr('name like ?', "%$phrase%");
-    $query->whereOr('uuid like ?', "%$phrase%");
-    $query->whereOr('data like ?', "%$phrase%");
+    $query->like('name', $phrase, true, true, 'OR');
+    $query->like('uuid', $phrase, true, true, 'OR');
+    $query->like('data', $phrase, true, true, 'OR');
 }
 $query->limit(20);
 $pages = $pages + $query->fetchAll();
@@ -48,16 +48,16 @@ $query->order('updated desc');
 foreach (explode(' ', Context::arg('query')) as $word) {
     $word = strtolower(trim($word));
     if ($word) {
-        $query->whereOr('name like ?', "%$word%");
         $query->whereOr('class = ?', $word);
-        $query->whereOr('data like ?', "%$word%");
+        $query->like('name', $word, true, true, 'OR');
+        $query->like('data', $word, true, true, 'OR');
     }
 }
 $query->limit(10);
 $pages = $pages + $query->fetchAll();
 
 echo json_encode(
-    array_map( 
+    array_map(
         function (AbstractRichMedia $media) {
             return Dispatcher::firstValue('onRichMediaAutocompleteCard', [$media, Context::arg('query')]);
         },

@@ -23,7 +23,7 @@ $users = $users ? [$users] : [];
 // get stricter name matches
 $query = Users::select()->limit(100);
 foreach (preg_split('/ +/', Context::arg('query')) as $word) {
-    $query->where('name like ?', ['%' . $word . '%']);
+    $query->like('name', $word, true, true);
 }
 $users = array_merge(
     $users,
@@ -33,7 +33,7 @@ $users = array_merge(
 if (count($users) < 100) {
     $query = Users::select()->limit(100);
     foreach (preg_split('/ +/', Context::arg('query')) as $word) {
-        $query->where('name like ?', ['%' . $word . '%'], 'OR');
+        $query->like('name', $word, true, true, 'OR');
     }
     $users = array_merge(
         $users,

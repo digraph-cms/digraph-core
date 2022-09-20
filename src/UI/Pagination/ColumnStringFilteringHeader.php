@@ -2,6 +2,7 @@
 
 namespace DigraphCMS\UI\Pagination;
 
+use DigraphCMS\DB\AbstractMappedSelect;
 use DigraphCMS\HTML\Forms\Field;
 use DigraphCMS\HTML\Forms\SELECT;
 use DigraphCMS\HTTP\RedirectException;
@@ -73,7 +74,10 @@ class ColumnStringFilteringHeader extends AbstractColumnFilteringHeader
     {
         if ($this->config('q')) {
             return [
-                [$this->column() . ' LIKE ?', ['%' . $this->config('q') . '%']]
+                [
+                    $this->column() . ' LIKE ?',
+                    [AbstractMappedSelect::prepareLikePattern($this->config('q'))]
+                ]
             ];
         } else return [];
     }

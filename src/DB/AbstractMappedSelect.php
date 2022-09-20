@@ -117,6 +117,63 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
     }
 
     /**
+     * Automatically prepare a LIKE where clause
+     *
+     * @param string $column
+     * @param string $parameter
+     * @param boolean $wildCardBefore
+     * @param boolean $wildCardAfter
+     * @param string $separator
+     * @return $this
+     */
+    public function like(string $column, string $pattern, bool $wildCardBefore = true, bool $wildCardAfter = true, $separator = "AND")
+    {
+        return $this->where(
+            "$column LIKE ?",
+            [static::prepareLikePattern($pattern, $wildCardBefore, $wildCardAfter)],
+            $separator
+        );
+    }
+
+    /**
+     * Automatically prepare a NOT LIKE where clause
+     *
+     * @param string $column
+     * @param string $parameter
+     * @param boolean $wildCardBefore
+     * @param boolean $wildCardAfter
+     * @param string $separator
+     * @return $this
+     */
+    public function notLike(string $column, string $pattern, bool $wildCardBefore = true, bool $wildCardAfter = true, $separator = "AND")
+    {
+        return $this->where(
+            "$column NOT LIKE ?",
+            [static::prepareLikePattern($pattern, $wildCardBefore, $wildCardAfter)],
+            $separator
+        );
+    }
+
+    /**
+     * Escape % and _ characters and wrap pattern in % at front or back as needed.
+     *
+     * @param string $pattern
+     * @param boolean $wildCardBefore
+     * @param boolean $wildCardAfter
+     * @return string
+     */
+    public static function prepareLikePattern(string $pattern, bool $wildCardBefore = true, bool $wildCardAfter = true): string
+    {
+        $pattern = preg_replace('/^[^a-z0-9_\- ]+/i', '', $pattern);
+        $pattern = preg_replace('/[^a-z0-9_\- ]+$/i', '', $pattern);
+        return implode('', [
+            $wildCardBefore ? '%' : '',
+            preg_replace('/[%_]/', '\\$0', $pattern),
+            $wildCardAfter ? '%' : '',
+        ]);
+    }
+
+    /**
      * Shorthand to add WHERE with an "OR" separator
      *
      * @param string|array $condition

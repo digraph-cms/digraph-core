@@ -29,7 +29,7 @@ if (Context::arg('class')) {
 if (count($pages) < 100) {
     $query = Pages::select()->limit(100);
     foreach (preg_split('/ +/', Context::arg('query')) as $word) {
-        $query->where('name like ?', ['%' . $word . '%']);
+        $query->like('name', $word);
     }
     if (Context::arg('class')) {
         $query->where('class = ?', [Context::arg('class')]);
@@ -43,7 +43,7 @@ if (count($pages) < 100) {
 if (count($pages) < 100) {
     $query = Pages::select()->limit(100);
     foreach (preg_split('/ +/', Context::arg('query')) as $word) {
-        $query->where('name like ?', ['%' . $word . '%'], 'OR');
+        $query->like('name', $word, true, true, 'OR');
     }
     if (Context::arg('class')) {
         $query->where('class = ?', [Context::arg('class')]);
