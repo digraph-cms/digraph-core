@@ -120,7 +120,7 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
      * Automatically prepare a LIKE where clause
      *
      * @param string $column
-     * @param string $parameter
+     * @param string $pattern
      * @param boolean $wildCardBefore
      * @param boolean $wildCardAfter
      * @param string $separator
@@ -139,7 +139,7 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
      * Automatically prepare a NOT LIKE where clause
      *
      * @param string $column
-     * @param string $parameter
+     * @param string $pattern
      * @param boolean $wildCardBefore
      * @param boolean $wildCardAfter
      * @param string $separator
