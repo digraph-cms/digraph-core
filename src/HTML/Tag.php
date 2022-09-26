@@ -231,7 +231,7 @@ abstract class Tag extends Node
             foreach ($attributes as $name => $value) {
                 $html .= ' ' . $name;
                 if ($value !== null) {
-                    $html .= '="' . htmlentities(static::encodeValue($value)) . '"';
+                    $html .= '="' . static::escapeValue(static::encodeValue($value)) . '"';
                 }
             }
         }
@@ -246,5 +246,14 @@ abstract class Tag extends Node
             $html .= '</' . $this->tag . '>';
         }
         return $html;
+    }
+
+    public static function escapeValue(string $value): string
+    {
+        return str_replace(
+            ['<', '>', '&', '"'],
+            ['&lt;', '&gt;', '&amp;', '&quot;'],
+            $value
+        );
     }
 }

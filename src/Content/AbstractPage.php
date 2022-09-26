@@ -168,7 +168,7 @@ abstract class AbstractPage implements ArrayAccess
             case 'uuid':
                 return $this->uuid();
             case 'name':
-                return $this->name();
+                return $this->name(null, true);
             default:
                 return null;
         }

@@ -98,7 +98,6 @@ class Slugs
                     Dispatcher::firstValue('onSlugVariable', [$page, $m[1]]) ??
                     Dispatcher::firstValue('onSlugVariable_' . $m[1], [$page]) ??
                     $page->slugVariable($m[1]);
-                $value = preg_replace('@[^a-z0-9\-_\/]+@i', '_', $value);
                 return $value;
             },
             $pattern
@@ -107,6 +106,13 @@ class Slugs
         if (!$slug) {
             return null;
         }
+        // early cleanup
+        $slug = str_replace(
+            ['s\'s', '\'s', '\' '],
+            ['s', 's', ' '],
+            $slug
+        );
+        $slug = preg_replace('@[^a-z0-9\-_\/]+@i', '_', $slug);
         // prepend parent slug if necessary
         if (substr($slug, 0, 1) != '/' && $page->parent()) {
             $slug = $page->parent()->route() . '/' . $slug;

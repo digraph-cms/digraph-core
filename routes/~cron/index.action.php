@@ -18,7 +18,7 @@ $count = Cache::get(
         // set up time limit
         $timeLimit = Config::get('cron.time_limit') ?? 0;
         $endBy = $timeLimit ? time() + $timeLimit : null;
-        set_time_limit(ceil($timeLimit * 1.5));
+        set_time_limit(max(10, ceil($timeLimit * 1.5)));
         // run jobs
         return Cron::runJobs($endBy);
     },
