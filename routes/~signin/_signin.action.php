@@ -79,7 +79,6 @@ if ($user = $source->lookupUser($provider, $providerID)) {
     }
     // user is signed in, link this pair to their account
     Session::authenticate($user, 'Signed in with ' . $fullSourceTitle, Context::arg('rememberme') == 'y');
-    Notifications::flashConfirmation("Welcome back, " . Users::current());
 } else {
     // this provider/id pair is not tied to a user
     // either link it to the current user or create a new user
@@ -113,7 +112,6 @@ if ($user = $source->lookupUser($provider, $providerID)) {
         $source->authorizeUser($user->uuid(), $provider, $providerID);
         // sign in as new user
         Session::authenticate($user->uuid(), 'Signed up with ' . $fullSourceTitle, Context::arg('rememberme') == 'y');
-        Notifications::flashConfirmation("Welcome, " . Users::current());
         DB::commit();
     }
 }
