@@ -30,7 +30,6 @@ class Permissions
 
     protected  static function pageUrl(URL $url, User $user): bool
     {
-        // TODO: figure out how config works, it should take priority
         // try route class events
         foreach ($url->page()->routeClasses() as $class) {
             if (null !== $value = Dispatcher::firstValue("onPageUrlPermissions_$class", [$url, $user])) {
@@ -41,12 +40,11 @@ class Permissions
         return
             Dispatcher::firstValue("onPageUrlPermissions", [$url, $user]) ??
             $url->page()->permissions($url, $user) ??
-            true;
+            false;
     }
 
     protected  static function staticUrl(URL $url, User $user): bool
     {
-        // TODO: figure out how config works, it should take priority
         // try route-specific events, then generic events
         $route = explode('/', $url->route());
         $event = "onStaticUrlPermissions";

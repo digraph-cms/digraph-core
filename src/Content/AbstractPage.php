@@ -13,7 +13,6 @@ use DigraphCMS\Digraph;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\RichContent\RichContent;
 use DigraphCMS\RichMedia\RichMedia;
-use DigraphCMS\Search\Search;
 use DigraphCMS\Session\Session;
 use DigraphCMS\UI\Format;
 use DigraphCMS\UI\Theme;
@@ -35,6 +34,12 @@ abstract class AbstractPage implements ArrayAccess
     const DEFAULT_UNIQUE_SLUG = true;
     const ORDER_IGNORES_WEIGHT = false;
     const ORDER_USES_SORT_NAME = true;
+
+    const ACTIONS_DISABLED = [];
+    const ACTIONS_PUBLIC = ['index'];
+    const ACTIONS_USER = [];
+    const ACTIONS_EDITOR = [];
+    const ACTIONS_ADMIN = [];
 
     protected $uuid, $name, $sortName;
     protected $sortWeight = 0;
@@ -72,6 +77,75 @@ abstract class AbstractPage implements ArrayAccess
         } else {
             return null;
         }
+    }
+
+    protected function actionsPublic(): array
+    {
+        return static::ACTIONS_PUBLIC;
+    }
+
+    protected function actionsUser(): array
+    {
+        return static::ACTIONS_USER;
+    }
+
+    protected function actionsEditor(): array
+    {
+        return static::ACTIONS_EDITOR;
+    }
+
+    protected function actionsAdmin(): array
+    {
+        return static::ACTIONS_ADMIN;
+    }
+
+    protected function actionsDisabled(): array
+    {
+        return static::ACTIONS_DISABLED;
+    }
+
+    /**
+     * Pages may override all other permissions for their own URLs. By default
+     * they return null, which allows other permissions checks to be run.
+     *
+     * @param URL $url
+     * @param User|null $user
+     * @return boolean|null
+     */
+    public function permissions(URL $url, User $user = null): ?bool
+    {
+        if ($url->actionSuffix()) $action = '@' . $url->actionPrefix() . '_';
+        elseif (substr($url->action(), 0, 5) == '_add_') $action = '@add';
+        else $action = $url->action();
+        // first check for disabled verbs, as they're fast and easy
+        if (in_array($action, $this->actionsDisabled())) return false;
+        // public permissions first to avoid pulling any user data if possible
+        if (in_array($action, $this->actionsPublic())) return true;
+        // now we need the user's object
+        $user = $user ?? Users::current() ?? Users::guest();
+        // user verbs are accessible to any logged-in users
+        if (in_array($action, $this->actionsUser())) return Permissions::inGroup('users');
+        // all editor verbs are accessible to editors
+        if (in_array($action, $this->actionsEditor())) return $this->isEditor($user);
+        // all non-explicitly-admin verbs are also accessible to editors
+        if (!in_array($action, $this->actionsAdmin())) return $this->isEditor($user);
+        // all non-disabled verbs are accessible to admins
+        if ($this->isAdmin($user)) return true;
+        // returns null by default, which the Permissions class will treat as false
+        return null;
+    }
+
+    public function isEditor(User $user = null): ?bool
+    {
+        $user = $user ?? Users::current() ?? Users::guest();
+        return Permissions::inMetaGroups(['content__edit', 'content_' . $this->class() . '__edit'], $user)
+            || $this->isAdmin($user);
+    }
+
+    public function isAdmin(User $user = null): ?bool
+    {
+        $user = $user ?? Users::current() ?? Users::guest();
+        return Permissions::inMetaGroups(['content__admin', 'content_' . $this->class() . '__admin'], $user);
     }
 
     public function allRichContent(): array
@@ -214,24 +288,6 @@ abstract class AbstractPage implements ArrayAccess
         return $this->slug ?? $this->uuid;
     }
 
-    /**
-     * Pages may override all other permissions for their own URLs. By default
-     * they return null, which allows other permissions checks to be run.
-     *
-     * @param URL $url
-     * @param User|null $user
-     * @return boolean|null
-     */
-    public function permissions(URL $url, User $user = null): ?bool
-    {
-        if ($url->action() == 'index') {
-            return true;
-        } else {
-            return Permissions::inMetaGroup('content__edit', $user);
-        }
-        return null;
-    }
-
     public function slugCollisions(): bool
     {
         if ($this->slugCollisions === null) {
@@ -242,7 +298,7 @@ abstract class AbstractPage implements ArrayAccess
 
     public function routeClasses(): array
     {
-        return ['_any'];
+        return [$this->class(), '_any'];
     }
 
     public function class(): string

@@ -29,6 +29,6 @@ class Page extends AbstractPage
 
     public function routeClasses(): array
     {
-        return ['page', '_any'];
+        return array_unique([$this->class(), 'page', '_any']);
     }
 }
