@@ -149,19 +149,19 @@ class Permissions
         return static::inGroups(static::metaGroup($name), $user);
     }
 
-    public static function inMetaGroups(array $groups): bool
+    public static function inMetaGroups(array $groups, User $user = null): bool
     {
         foreach ($groups as $group) {
-            if (static::inMetaGroup($group)) {
+            if (static::inMetaGroup($group, $user)) {
                 return true;
             }
         }
         return false;
     }
 
-    public static function requireMetaGroups(array $groups)
+    public static function requireMetaGroups(array $groups, User $user = null)
     {
-        if (!static::inMetaGroups($groups)) {
+        if (!static::inMetaGroups($groups, $user)) {
             throw new HttpError(401);
         }
     }
