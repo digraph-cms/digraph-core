@@ -14,7 +14,18 @@ class ActionMenu extends MenuBar
     protected $url;
     protected $adderItem, $adderMenu;
     protected static $contextActions = [];
+    protected static $contextHide = false;
     protected $checkPermissions = true;
+
+    public static function hide()
+    {
+        static::$contextHide = true;
+    }
+
+    public static function isHidden(): bool
+    {
+        return static::$contextHide;
+    }
 
     public static function addContextAction(URL $url, string $name = null)
     {

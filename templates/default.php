@@ -44,7 +44,7 @@ use DigraphCMS\UI\UserMenu;
         <?php
         echo '<div id="content">';
         Breadcrumb::print();
-        echo new ActionMenu;
+        if (!ActionMenu::isHidden()) echo new ActionMenu;
         Notifications::printSection();
         echo '<div id="article" class="page--' . Context::pageUUID() . '">';
         echo Context::response()->content();
