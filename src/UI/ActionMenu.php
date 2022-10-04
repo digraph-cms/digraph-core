@@ -50,10 +50,7 @@ class ActionMenu extends MenuBar
             $this->addClass('menubar--actionmenu--page');
             $this->addClass('menubar--actionmenu--page--' . $page->class());
             // regular action links
-            foreach (Router::pageActions($page) as $url) {
-                if (substr($url->action(), 0, 1) == '_') {
-                    continue;
-                }
+            foreach (Router::pageActions($page, true) as $url) {
                 $this->addURL($url, $url->name(true))
                     ->addClass('menuitem--page-action')
                     ->addClass('menuitem--' . $url->action());
@@ -63,14 +60,7 @@ class ActionMenu extends MenuBar
             Dispatcher::dispatchEvent('onActionMenu_page_' . $page->class(), [$this, $page]);
         }
         // static actions
-        $actions = array_filter(
-            Router::staticActions($this->url->route()),
-            function (URL $url) {
-                return
-                    substr($url->action(), 0, 1) != '_'
-                    && $url->route() == $url->route();
-            }
-        );
+        $actions = Router::staticActions($this->url->route(), true);
         foreach ($actions as $url) {
             $this->addURL($url, $url->name(true))
                 ->addClass('menuitem--static-action')

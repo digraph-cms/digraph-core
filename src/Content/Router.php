@@ -14,12 +14,16 @@ class Router
     protected static $sources = [];
 
     /**
-     * Get a list of all the actions available for the given page
+     * Get a list of all the actions available for the given page, optionally filtering non-menu
+     * actions, which are by default those that begin with an underscore.
+     * 
+     * Actions are also always filtered by the current user's permissions.
      *
      * @param AbstractPage $page
-     * @return URL[]
+     * @param boolean $menuFilter
+     * @return array
      */
-    public static function pageActions(AbstractPage $page): array
+    public static function pageActions(AbstractPage $page, bool $menuFilter = false): array
     {
         $urls = [];
         foreach ($page->routeClasses() as $c) {
@@ -38,21 +42,20 @@ class Router
         foreach ($page->routeClasses() as $c) {
             Dispatcher::dispatchEvent('onPageActions_' . $c, [&$urls]);
         }
-        return array_unique(array_filter(
-            $urls,
-            function (URL $url) {
-                return $url->permissions();
-            }
-        ));
+        return static::filterActions($urls, $menuFilter);
     }
 
     /**
-     * Get a list of all the static actions available for the given route
+     * Get a list of all the static actions available for the given route, optionally filtering
+     * non-menu actions, which are by default those that begin with an underscore.
+     * 
+     * Actions are also always filtered by the current user's permissions.
      *
      * @param string $route
+     * @param boolean $menuFilter
      * @return URL[]
      */
-    public static function staticActions(string $route): array
+    public static function staticActions(string $route, bool $menuFilter = false): array
     {
         $urls = [];
         foreach (self::search("~$route/*/index.action.*") as $file) {
@@ -71,9 +74,27 @@ class Router
         }
         Dispatcher::dispatchEvent('onStaticActions', [&$urls]);
         Dispatcher::dispatchEvent('onStaticActions_' . $route, [&$urls]);
+        return static::filterActions($urls, $menuFilter);
+    }
+
+    /**
+     * Do the final filtering of a list of actions. This removes any non-menu actions. By default
+     * this is any with actions that begin with an underscore, but this is extensible with the
+     * Dispatcher event `onFilterActions(URL $url): ?bool`
+     *
+     * @param URL[] $urls
+     * @param boolean $menuFilter
+     * @return URL[]
+     */
+    protected static function filterActions(array $urls, bool $menuFilter): array
+    {
         return array_unique(array_filter(
             $urls,
-            function (URL $url) {
+            function (URL $url) use ($menuFilter) {
+                if ($menuFilter) {
+                    if (($result = Dispatcher::dispatchEvent('onFilterActions', [$url])) !== null) return $result;
+                    if (substr($url->action(), 0, 1) == '_') return false;
+                }
                 return $url->permissions();
             }
         ));
