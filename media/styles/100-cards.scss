@@ -1,9 +1,7 @@
 .card {
-    @include uncolored-links;
-
     box-sizing: border-box;
-    background: var(--theme-accent);
-    color: var(--theme-accent-inv);
+    background: var(--background-light);
+    color: var(--color);
     padding: $grid;
     font-family: $font-ui;
     margin: $grid 0;
@@ -11,13 +9,29 @@
     width: fit-content;
     max-width: 100%;
 
+    &.card--accent,
+    &.card--light,
+    &.card--dark,
+    &.card--neutral,
+    &.card--info,
+    &.card--confirmation,
+    &.card--warning,
+    &.card--error {
+        @include uncolored-links;
+    }
+
+    &.card--accent {
+        background: var(--theme-accent);
+        color: var(--theme-accent-inv);
+    }
+
     &.card--light {
-        background: var(--background-light);
+        background: var(--background-lighter);
         color: var(--color);
     }
 
     &.card--dark {
-        background: var(--background-dark);
+        background: var(--background-darker);
         color: var(--color);
     }
 
@@ -46,10 +60,11 @@
         color: var(--cue-danger-inv);
     }
 
-    > *:first-child {
+    >*:first-child {
         margin-top: 0;
     }
-    > *:last-child {
+
+    >*:last-child {
         margin-bottom: 0;
     }
 }
@@ -102,7 +117,7 @@ extra file card styling for multifile cards
         margin-top: $grid/2;
     }
 
-    .card__title + .multifile-card__list {
+    .card__title+.multifile-card__list {
         margin-top: 0;
     }
 }
