@@ -45,7 +45,7 @@ class CronJob
         }
     }
 
-    public function execute()
+    public function execute(int $deadlineTime = null)
     {
         if ($this->id() === null) return false;
         // try to get lock
@@ -62,7 +62,7 @@ class CronJob
         try {
             $error = false;
             if ($this->job()) {
-                call_user_func($this->job(), $this);
+                call_user_func($this->job(), $deadlineTime);
             }
         } catch (\Throwable $th) {
             $error = true;

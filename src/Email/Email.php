@@ -13,10 +13,10 @@ use DigraphCMS\Users\Users;
 
 class Email
 {
-    protected $uuid, $time, $category, $subject, $to, $to_uuid, $from, $cc, $bcc;
+    protected $uuid, $time, $sent, $category, $subject, $to, $to_uuid, $from, $cc, $bcc;
     protected $body_text, $body_html;
-    protected $blocked = false;
     protected $error = null;
+    protected $exists = false;
 
     public static function newForEmail(
         string $category,
@@ -104,8 +104,9 @@ class Email
         string $bcc = null,
         string $uuid = null,
         int $time = null,
-        bool $blocked = null,
-        string $error = null
+        int $sent = null,
+        string $error = null,
+        bool $exists = null
     ) {
         $this->category = $category;
         $this->subject = $subject;
@@ -118,8 +119,14 @@ class Email
         $this->bcc = $bcc ?? Config::get('email.bcc');
         $this->uuid = $uuid ?? Digraph::uuid();
         $this->time = $time ?? time();
-        $this->blocked = $blocked ?? Emails::shouldBlock($this);
+        $this->sent = $sent;
         $this->error = $error;
+        $this->exists = $exists ?? false;
+    }
+
+    public function exists(): bool
+    {
+        return $this->exists;
     }
 
     public function isService(): bool
@@ -144,12 +151,12 @@ class Email
 
     public function url_unsubscribe(): URL
     {
-        return new URL('/~unsubscribe/eml_' . $this->uuid() . '.html');
+        return new URL('/~email_options/unsubscribe_' . $this->uuid() . '.html');
     }
 
     public function url_manageSubscriptions(): URL
     {
-        return new URL('/~unsubscribe/?msg=' . $this->uuid());
+        return new URL('/~email_options/manage_' . $this->uuid());
     }
 
     public function uuid(): string
@@ -227,10 +234,5 @@ class Email
     public function categoryDescription(): string
     {
         return Emails::categoryDescription($this->category());
-    }
-
-    public function blocked(): ?bool
-    {
-        return $this->blocked;
     }
 }

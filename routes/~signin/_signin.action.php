@@ -99,7 +99,7 @@ if ($user = $source->lookupUser($provider, $providerID)) {
             ))
         );
         foreach ($emails as $email) {
-            Emails::send($email);
+            Emails::queue($email);
         }
     } else {
         // user is not signed in, create a new user and link pair to it

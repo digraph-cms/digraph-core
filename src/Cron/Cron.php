@@ -6,6 +6,7 @@ use DigraphCMS\Cache\Cache;
 use DigraphCMS\Config;
 use DigraphCMS\CoreEventSubscriber;
 use DigraphCMS\DB\DB;
+use DigraphCMS\Email\EmailCronSubscriber;
 use DigraphCMS\Plugins\Plugins;
 use DigraphCMS\URL\URL;
 
@@ -46,22 +47,23 @@ class Cron
             ->count();
     }
 
-    public static function runJobs(int $endByTime = null): int
+    public static function runJobs(int $deadlineTime = null): int
     {
         // count number of jobs run
         $count = 0;
-        // prepare jobs from core and plugins
+        // prepare jobs from core tools and plugins
         static::registerSubscriber(CoreEventSubscriber::class);
+        static::registerSubscriber(EmailCronSubscriber::class);
         foreach (Plugins::plugins() as $plugin) static::registerSubscriber($plugin);
         // proceed with jobs one at a time
-        while ((!$endByTime || time() < $endByTime) && $job = static::getNextJob()) {
+        while ((!$deadlineTime || time() < $deadlineTime) && $job = static::getNextJob()) {
             // don't make more than one attempt per job
             static::$skip[] = $job->id();
             // execute job
-            if ($job->execute()) $count++;
+            if ($job->execute($deadlineTime)) $count++;
         }
         // run Deferred jobs afterwards
-        $count += Deferred::runJobs(null, $endByTime);
+        $count += Deferred::runJobs(null, $deadlineTime);
         // return number of jobs run
         return $count;
     }

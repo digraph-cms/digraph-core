@@ -2,6 +2,8 @@
 
 namespace DigraphCMS\Email;
 
+use DateInterval;
+use DateTime;
 use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Media\Media;
@@ -51,40 +53,32 @@ class Emails
             ?? '<em>No email category description found</em>';
     }
 
-    public static function send(Email $email)
+    public static function existingCategories(): array
     {
-        // send email if it isn't blocked by unsubscribes
-        if (!$email->blocked()) {
-            if (Config::get('email.enabled')) {
-                // sending emails is enabled
-                try {
-                    $mailer = static::mail();
-                    $mailer->setFrom($email->from());
-                    $mailer->addAddress($email->to());
-                    if ($email->cc()) {
-                        $mailer->addCC($email->cc());
-                    }
-                    if ($email->bcc()) {
-                        $mailer->addBCC($email->bcc());
-                    }
-                    $mailer->Subject = $email->subject();
-                    $mailer->msgHTML(static::prepareBody_html($email));
-                    $mailer->AltBody = static::prepareBody_text($email);
-                    $mailer->send();
-                } catch (\Throwable $th) {
-                    $email->setError($th->getMessage() . ' (' . get_class($th) . ')');
-                }
-            } else {
-                // sending emails is disabled, record error in log
-                $email->setError("Sending emails is disabled by config email.enabled");
-            }
-        }
-        // insert record into database
+        return array_unique(array_merge(
+            array_keys(Config::get('email.categories')),
+            array_map(
+                function ($row) {
+                    return $row['category'];
+                },
+                DB::query()->from('email')
+                    ->select('DISTINCT category', true)
+                    ->fetchAll(0)
+            )
+        ));
+    }
+
+    public static function queue(Email $email)
+    {
+        // do nothing if email is blocked
+        if (Emails::shouldBlock($email)) return;
+        // save into database
         DB::query()->insertInto(
-            'email_log',
+            'email',
             [
                 'uuid' => $email->uuid(),
                 'time' => time(),
+                'sent' => null,
                 'category' => $email->category(),
                 'subject' => $email->subject(),
                 '`to`' => $email->to(),
@@ -94,10 +88,92 @@ class Emails
                 'bcc' => $email->bcc(),
                 'body_text' => $email->body_text(),
                 'body_html' => $email->body_html(),
-                'blocked' => $email->blocked(),
                 'error' => $email->error()
             ]
         )->execute();
+    }
+
+    public static function quotaReached(): bool
+    {
+        if (!Config::get('email.quota')) return false;
+        if (Config::get('email.quota.mode') == 'rolling') {
+            $interval = new DateInterval(Config::get('email.quota.interval'));
+            $start = (new DateTime)->sub($interval)->getTimestamp();
+            $count = static::select()
+                ->where('sent >= ?', [$start])
+                ->count();
+            return $count >= Config::get('email.quota.count');
+        }
+        return false;
+    }
+
+    public static function send(Email $email, bool $ignoreQuota = false)
+    {
+        // do nothing if email is blocked
+        if (Emails::shouldBlock($email)) return;
+        // send email if enabled, otherwise it gets an error so that we can test
+        // what emails would have been sent
+        if (Config::get('email.enabled')) {
+            // check if we should enqueue instead
+            if (!$ignoreQuota && static::quotaReached()) {
+                if (!$email->exists()) static::queue($email);
+                return;
+            }
+            // sending emails is enabled
+            try {
+                $mailer = static::mailer();
+                $mailer->setFrom($email->from());
+                $mailer->addAddress($email->to());
+                if ($email->cc()) {
+                    $mailer->addCC($email->cc());
+                }
+                if ($email->bcc()) {
+                    $mailer->addBCC($email->bcc());
+                }
+                $mailer->Subject = $email->subject();
+                $mailer->msgHTML(static::prepareBody_html($email));
+                $mailer->AltBody = static::prepareBody_text($email);
+                $mailer->send();
+            } catch (\Throwable $th) {
+                $email->setError($th->getMessage() . ' (' . get_class($th) . ')');
+            }
+        } else {
+            // sending emails is disabled, record error in log
+            $email->setError("Sending emails is disabled by config email.enabled");
+        }
+        // insert record into database, or update the sent/error results
+        if ($email->exists()) {
+            // update sent time and error message if message exists
+            DB::query()->update(
+                'email',
+                [
+                    'sent' => time(),
+                    'error' => $email->error(),
+                ]
+            )
+                ->where('uuid', $email->uuid())
+                ->execute();
+        } else {
+            // otherwise insert message
+            DB::query()->insertInto(
+                'email',
+                [
+                    'uuid' => $email->uuid(),
+                    'time' => time(),
+                    'sent' => time(),
+                    'category' => $email->category(),
+                    'subject' => $email->subject(),
+                    '`to`' => $email->to(),
+                    'to_uuid' => $email->toUUID(),
+                    '`from`' => $email->from(),
+                    'cc' => $email->cc(),
+                    'bcc' => $email->bcc(),
+                    'body_text' => $email->body_text(),
+                    'body_html' => $email->body_html(),
+                    'error' => $email->error()
+                ]
+            )->execute();
+        }
     }
 
     public static function get(?string $uuid): ?Email
@@ -111,7 +187,7 @@ class Emails
     public static function exists(?string $uuid): bool
     {
         if (!$uuid) return false;
-        return !!DB::query()->from('email_log')
+        return !!DB::query()->from('email')
             ->where('uuid = ?', [$uuid])
             ->count();
     }
@@ -119,7 +195,7 @@ class Emails
     public static function select(): EmailSelect
     {
         return new EmailSelect(
-            DB::query()->from('email_log')
+            DB::query()->from('email')
         );
     }
 
@@ -137,8 +213,9 @@ class Emails
             $row['bcc'],
             $row['uuid'],
             $row['time'],
-            $row['blocked'],
-            $row['error']
+            $row['sent'],
+            $row['error'],
+            true
         );
     }
 
@@ -181,10 +258,59 @@ class Emails
         }
     }
 
-    public static function mail(): PHPMailer
+    public static function beginBatch()
     {
-        $mail = new PHPMailer(true);
-        return $mail;
+        if (!static::mailer()->isSMTP()) return;
+        static::mailer()->SMTPKeepAlive = true;
+    }
+
+    public static function endBatch()
+    {
+        if (!static::mailer()->isSMTP()) return;
+        static::mailer()->smtpClose();
+        static::mailer()->SMTPKeepAlive = false;
+    }
+
+    protected static function mailer(): PHPMailer
+    {
+        static $mailer;
+        // set up and configure mailer
+        if (!$mailer) {
+            $mailer = new PHPMailer(true);
+            // set up smtp if configured
+            if (Config::get('email.use_smtp') && $smtp = Config::get('email.smtp')) {
+                $mailer->isSMTP();
+                $mailer->Host = $smtp['host'];
+                if ($smtp['auth']) {
+                    $mailer->SMTPAuth = true;
+                    $mailer->Username = $smtp['user'];
+                    $mailer->Password = $smtp['pass'];
+                    if ($smtp['security'] == 'TLS') {
+                        $mailer->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+                        $mailer->Port = $smtp['port'] ?? 465;
+                    } elseif ($smtp['security'] == 'STARTTLS') {
+                        $mailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                        $mailer->Port = $smtp['port'] ?? 587;
+                    } else {
+                        $mailer->Port = $smtp['port'] ?? 25;
+                    }
+                }
+                if ($smtp['options']) {
+                    $mailer->SMTPOptions = $smtp['options'];
+                }
+                $mailer->SMTPAutoTLS = $smtp['autotls'];
+            }
+        }
+        // reset mailer for sending a new email
+        $mailer->Body = '';
+        $mailer->AltBody = '';
+        $mailer->Subject = '';
+        $mailer->clearAllRecipients();
+        $mailer->clearAttachments();
+        $mailer->clearCustomHeaders();
+        $mailer->clearReplyTos();
+        // return mailer
+        return $mailer;
     }
 
     /**

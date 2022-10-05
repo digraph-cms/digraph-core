@@ -118,7 +118,7 @@ class User implements ArrayAccess
                 ))
             );
             foreach ($emails as $email) {
-                Emails::send($email);
+                Emails::queue($email);
             }
         }
     }
@@ -159,7 +159,7 @@ class User implements ArrayAccess
                 ))
             );
             foreach ($emails as $email) {
-                Emails::send($email);
+                Emails::queue($email);
             }
         }
     }
@@ -193,7 +193,7 @@ class User implements ArrayAccess
                     ))
                 );
                 foreach ($emails as $email) {
-                    Emails::send($email);
+                    Emails::queue($email);
                 }
             }
         }
@@ -230,7 +230,7 @@ class User implements ArrayAccess
                 ]
             ))
         );
-        Emails::send($email);
+        Emails::send($email, true);
         $this->update();
     }
 
@@ -261,7 +261,7 @@ class User implements ArrayAccess
                 ))
             );
             foreach ($emails as $email) {
-                Emails::send($email);
+                Emails::queue($email);
             }
         }
         // remove email from array

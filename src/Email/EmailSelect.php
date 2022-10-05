@@ -12,22 +12,55 @@ class EmailSelect extends AbstractMappedSelect
     }
 
     /**
-     * Add where clause to limit to blocked
+     * Return unsent and un-errored emails, ordered by least recently created
      *
-     * @return $this
+     * @return void
      */
-    public function blocked()
+    public function queue()
     {
-        return $this->where('`blocked` = 1');
+        return $this
+            ->notSent()
+            ->notErrored()
+            ->order('id ASC');
     }
 
     /**
-     * Add where clause to limit to non-blocked emails only
+     * Add where clause to limit to sent
      *
      * @return $this
      */
-    public function notBlocked()
+    public function sent()
     {
-        return $this->where('`blocked` = 0');
+        return $this->where('`error` is not null');
+    }
+
+    /**
+     * Add where clause to limit to non-sent emails only
+     *
+     * @return $this
+     */
+    public function notSent()
+    {
+        return $this->where('`error` is null');
+    }
+
+    /**
+     * Add where clause to limit to errored
+     *
+     * @return $this
+     */
+    public function errored()
+    {
+        return $this->where('`error` is not null');
+    }
+
+    /**
+     * Add where clause to limit to non-errored emails only
+     *
+     * @return $this
+     */
+    public function notErrored()
+    {
+        return $this->where('`error` is null');
     }
 }

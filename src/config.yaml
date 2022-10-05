@@ -54,6 +54,17 @@ cache:
 email:
   enabled: true
   from: null
+  cron_time: 30
+  use_smtp: false
+  smtp:
+    host: null
+    auth: false # whether to use username and password
+    user: null
+    pass: null
+    autotls: true
+    security: null # either TLS for implicit or STARTTLS for explicit
+    port: null # will be auto set most of the time
+    options: null # see PHPMailer docs for the available options here
   service_categories:
     service: true
   categories:

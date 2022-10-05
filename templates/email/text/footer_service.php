@@ -8,3 +8,7 @@ use DigraphCMS\URL\URL;
 $email = Context::fields()['email'];
 
 echo "This service-related email was sent to " . $email->to() . " by the website " . new URL('/') . PHP_EOL;
+echo PHP_EOL;
+echo PHP_EOL;
+echo "Manage your email settings at:" . PHP_EOL;
+echo $email->url_manageSubscriptions();

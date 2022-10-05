@@ -183,7 +183,7 @@ class WaybackMachine
                     )
                 )
             );
-            Emails::send($email);
+            Emails::queue($email);
         }
     }
 

@@ -1,4 +1,4 @@
-<h1>Sent email log</h1>
+<h1>Queued emails</h1>
 <?php
 
 use DigraphCMS\Email\Email;
@@ -10,9 +10,7 @@ use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\URL\URL;
 
 echo new PaginatedTable(
-    Emails::select()
-        ->where('error is null')
-        ->order('time desc'),
+    Emails::select()->queue(),
     function (Email $email) {
         return [
             Format::datetime($email->time()),
@@ -25,7 +23,7 @@ echo new PaginatedTable(
         ];
     },
     [
-        new ColumnDateFilteringHeader('Date', 'time'),
+        new ColumnDateFilteringHeader('Queued', 'time'),
         new ColumnStringFilteringHeader('Subject', 'subject'),
         new ColumnStringFilteringHeader('To', '`to`'),
     ]

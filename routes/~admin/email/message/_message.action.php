@@ -30,7 +30,6 @@ printf("<dt>%s</dt><dd>%s</dd>", 'To', $email->to());
 $email->cc() ? printf("<dt>%s</dt><dd>%s</dd>", 'CC', $email->cc()) : '';
 $email->bcc() ? printf("<dt>%s</dt><dd>%s</dd>", 'BCC', $email->bcc()) : '';
 printf("<dt>%s</dt><dd>%s</dd>", 'From', $email->from());
-printf("<dt>%s</dt><dd>%s</dd>", 'Blocked by unsubscription', $email->blocked() ? 'Yes' : 'No');
 printf("<dt>%s</dt><dd>%s</dd>", 'Category', $email->categoryLabel());
 $email->toUser() ? printf("<dt>%s</dt><dd>%s</dd>", 'Recipient user', $email->toUser()) : '';
 echo "</dl>";

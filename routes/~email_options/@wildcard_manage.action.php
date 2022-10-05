@@ -5,8 +5,10 @@ use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Email\Emails;
 use DigraphCMS\HTTP\HttpError;
+use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\ToggleButton;
+use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\Users;
 
@@ -14,16 +16,15 @@ use DigraphCMS\Users\Users;
 $addresses = [];
 
 // only allow access with valid email ID or by being signed in
-if (Context::arg('msg')) {
-    $email = Emails::get(Context::arg('msg'));
+if ($email = Emails::get(Context::url()->actionSuffix())) {
     if (!$email) throw new HttpError(404);
     if ($user = $email->toUser()) {
         $addresses = $user->emails();
     }
     $addresses[] = $email->to();
+    $usr = $email->toUser();
 } else {
-    Permissions::requireGroup('users');
-    $addresses = Users::current()->emails();
+    throw new RedirectException(new URL('./'));
 }
 
 // print page title
@@ -37,18 +38,7 @@ if (!$addresses) {
 }
 
 // display form
-$categories = array_keys(Config::get('email.categories'));
-$categories = array_unique(array_merge(
-    array_keys(Config::get('email.categories')),
-    array_map(
-        function ($row) {
-            return $row['category'];
-        },
-        DB::query()->from('email_log')
-            ->select('DISTINCT category', true)
-            ->fetchAll(0)
-    )
-));
+$categories = Emails::existingCategories();
 
 echo "<table>";
 echo "<tr><th></th>";
@@ -61,6 +51,7 @@ echo implode('', array_map(
 echo "</tr>";
 foreach ($categories as $category) {
     $count = Emails::select()
+        ->notErrored()
         ->where('time > ?', strtotime('-1 year'))
         ->where('category = ?', [$category])
         ->where(
@@ -84,7 +75,7 @@ foreach ($categories as $category) {
     echo "</td>";
     // don't show unsubscribe options for service categories
     if (Config::get('email.service_categories.' . $category)) {
-        echo "<td><em>Necessary service emails<br>Cannot be unsubscribed</em></td>";
+        echo "<td><em>This category cannot be unsubscribed</em></td>";
         continue;
     }
     // unsubscribe options
