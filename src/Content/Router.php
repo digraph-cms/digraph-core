@@ -92,7 +92,7 @@ class Router
             $urls,
             function (URL $url) use ($menuFilter) {
                 if ($menuFilter) {
-                    if (($result = Dispatcher::dispatchEvent('onFilterActions', [$url])) !== null) return $result;
+                    if (($result = Dispatcher::firstValue('onFilterActions', [$url])) !== null) return $result;
                     if (substr($url->action(), 0, 1) == '_') return false;
                 }
                 return $url->permissions();

@@ -14,7 +14,7 @@ class EmailSelect extends AbstractMappedSelect
     /**
      * Return unsent and un-errored emails, ordered by least recently created
      *
-     * @return void
+     * @return $this
      */
     public function queue()
     {
