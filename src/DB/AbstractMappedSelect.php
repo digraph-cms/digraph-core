@@ -23,6 +23,32 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
         return null;
     }
 
+    /**
+     * Group this query by the given query, and return an array of copies of it
+     * that each have an added subquery for each unique value in $column
+     *
+     * @param string $column
+     * @return SubQuery[]
+     */
+    public function subqueries(string $column): array
+    {
+        $column = static::parseJsonRefs($column);
+        $q = clone $this->query();
+        $q->group($column)->select("$column as v");
+        $class = get_called_class();
+        return array_map(
+            function (array $row) use ($class, $column): SubQuery {
+                return new SubQuery(
+                    $row['v'],
+                    /** @phpstan-ignore-next-line */
+                    (new $class(clone $this->query()))
+                        ->where($column, $row['v'])
+                );
+            },
+            $q->fetchAll()
+        );
+    }
+
     protected function rowToObject($row)
     {
         return is_array($row) ? $this->doRowToObject($row) : null;
