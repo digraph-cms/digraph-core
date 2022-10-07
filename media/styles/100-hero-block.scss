@@ -1,0 +1,41 @@
+.hero-block {
+    @include uncolored-links;
+    background-color: var(--theme-highlight);
+    color: var(--theme-highlight-inv);
+    display: block;
+    width: auto;
+    margin-top: 0;
+    margin-bottom: $grid*2;
+    padding: $grid;
+
+    &+.hero-block {
+        margin-top: -$grid*2;
+    }
+
+    &:first-child {
+        margin-top: 0;
+    }
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+
+    &>* {
+        &:first-child {
+            margin-top: 0;
+        }
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}
+
+#page-wrapper>#content>#article>.hero-block {
+    margin-left: -$grid;
+    margin-right: -$grid;
+
+    &:first-child {
+        margin-top: 0;
+    }
+}

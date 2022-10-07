@@ -32,6 +32,7 @@ class Icon extends Tag
         'edit' => ['string' => 'edit'],
         'expand-more' => ['string' => 'expand_more'],
         'expand-less' => ['string' => 'expand_less'],
+        'facebook' => ['string' => '&#xed37;', 'type' => 'icofont'],
         'filter' => ['string' => 'filter_alt'],
         'heading' => ['string' => 'title'],
         'hide' => ['string' => 'visibility_off'],
@@ -40,6 +41,7 @@ class Icon extends Tag
         'image' => ['string' => 'image'],
         'inbox' => ['string' => 'inbox'],
         'insert-chart' => ['string' => 'insert_chart'],
+        'instagram' => ['string' => '&#xed46;', 'type' => 'icofont'],
         'italic' => ['string' => 'format_italic'],
         'link' => ['string' => 'link'],
         'list-bullet' => ['string' => 'format_list_bulleted'],
@@ -69,10 +71,12 @@ class Icon extends Tag
         'template' => ['string' => 'snippet_folder'],
         'toc' => ['string' => 'toc'],
         'tune' => ['string' => 'tune'],
+        'twitter' => ['string' => '&#xed7a;', 'type' => 'icofont'],
         'widgets' => ['string' => 'widgets'],
         'undo' => ['string' => 'undo'],
         'url' => ['string' => 'link'],
         'user-search' => ['string' => 'person_search'],
+        'youtube' => ['string' => '&#xed8b;', 'type' => 'icofont'],
         'zip' => ['string' => 'archive'],
     ];
 
