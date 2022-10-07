@@ -39,10 +39,15 @@ class Response
      * Set whether this response should have its content added to the search index
      *
      * @param boolean $indexResponse
-     * @return $this
+     * @param boolean $allowQueries
+     * @return void
      */
-    public function setSearchIndex(bool $indexResponse)
+    public function setSearchIndex(bool $indexResponse, bool $allowQueries = false)
     {
+        if (Context::request()->post()) $indexResponse = false;
+        if (!$allowQueries) {
+            if (Context::request()->url()->query()) $indexResponse = false;
+        }
         $this->searchIndex = $indexResponse;
         return $this;
     }

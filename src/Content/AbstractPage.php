@@ -301,14 +301,14 @@ abstract class AbstractPage implements ArrayAccess
         return [$this->class(), '_any'];
     }
 
-    public function class(): string
+    public static function class(): string
     {
         static $classes = [];
-        $class = get_class($this);
+        $class = get_called_class();
         return @$classes[$class] ?? $classes[$class] = static::getClass($class);
     }
 
-    protected function getClass(string $thisClass): string
+    protected static function getClass(string $thisClass): string
     {
         $thisClass = preg_replace('/^[^\\\]/', '\\\$0', $thisClass);
         foreach (Config::get('page_types') as $name => $class) {
