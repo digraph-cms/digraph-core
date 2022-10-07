@@ -1,21 +1,12 @@
-.search-results {
-    table {
-        background: transparent;
-        color: inherit;
-        border: 0;
+.search-results__item {
+    margin: $grid 0;
 
-        tr,
-        td {
-            background: transparent;
-        }
+    &:first-child {
+        margin-top: 0;
+    }
 
-        td:first-child {
-            padding-left: 0;
-        }
-
-        td:last-child {
-            padding-right: 0;
-        }
+    &:last-child {
+        margin-bottom: 0;
     }
 }
 
