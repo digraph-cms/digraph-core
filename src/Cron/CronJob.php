@@ -62,7 +62,7 @@ class CronJob
         try {
             $error = false;
             if ($this->job()) {
-                call_user_func($this->job(), $deadlineTime);
+                call_user_func($this->job(), $this, $deadlineTime);
             }
         } catch (\Throwable $th) {
             $error = true;

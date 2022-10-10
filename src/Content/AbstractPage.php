@@ -463,8 +463,8 @@ abstract class AbstractPage implements ArrayAccess
                 new CronJob(
                     "Page $uuid",
                     "$method",
-                    function (CronJob $job) use ($uuid, $method) {
-                        static::runCronJob($job, $uuid, $method);
+                    function (CronJob $job, int $deadline = null) use ($uuid, $method) {
+                        static::runCronJob($job, $deadline, $uuid, $method);
                     },
                     $interval
                 );
@@ -473,13 +473,13 @@ abstract class AbstractPage implements ArrayAccess
         return $count;
     }
 
-    protected static function runCronJob(CronJob $job, string $uuid, string $method)
+    protected static function runCronJob(CronJob $job, int $deadline = null, string $uuid, string $method)
     {
         // pull page and delete the job if page or method one no longer exists
         $page = Pages::get($uuid);
         if (!$page || !is_callable([$page, $method])) $job->delete();
         // run method
-        call_user_func([$page, $method], $job);
+        call_user_func([$page, $method], $job, $deadline);
     }
 
     public function insert(string $parent_uuid = null)

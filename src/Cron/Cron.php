@@ -78,18 +78,18 @@ class Cron
             new CronJob(
                 'CronSubscriber',
                 "$class::$method",
-                function (CronJob $job) use ($class, $method) {
-                    static::runSubscriberJob($job, $class, $method);
+                function (int $deadline = null, CronJob $job) use ($class, $method) {
+                    static::runSubscriberJob($job, $deadline, $class, $method);
                 },
                 substr($method, 8)
             );
         }
     }
 
-    protected static function runSubscriberJob(CronJob $job, $class, $method)
+    protected static function runSubscriberJob(CronJob $job, ?int $deadline, $class, $method)
     {
         if (!method_exists($class, $method)) $job->delete();
-        call_user_func([$class, $method], $job);
+        call_user_func([$class, $method], $job, $deadline);
     }
 
     /**
