@@ -156,7 +156,7 @@ class Router
             if (trim($output ?? '')) return $output;
         }
         // check if there's a prefix
-        if ($pos = strpos($action, '_')) {
+        if ($pos = strpos($action, ':')) {
             $prefix = substr($action, 0, $pos);
             // try prefix wildcard route
             foreach ($page->routeClasses() as $c) {
@@ -205,7 +205,7 @@ class Router
             return $output;
         }
         // check if there's a prefix
-        if ($pos = strpos($action, '_')) {
+        if ($pos = strpos($action, ':')) {
             $prefix = substr($action, 0, $pos);
             // try prefix wildcard route
             $output = self::tryRoute("~$route/@wildcard_$prefix");

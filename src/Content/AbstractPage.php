@@ -423,7 +423,7 @@ abstract class AbstractPage implements ArrayAccess
 
     public function url(string $action = null, array $args = null, bool $uuid = null): URL
     {
-        if ($action && !preg_match('/\.[a-z0-9]+$/', $action)) {
+        if ($action && !strpos($action, ':') && !preg_match('/\.[a-z0-9]+$/', $action)) {
             $action .= '.html';
         }
         if ($action == 'urls.html' || $action == 'links.html') {

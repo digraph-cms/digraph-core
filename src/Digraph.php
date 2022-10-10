@@ -37,6 +37,7 @@ abstract class Digraph
      */
     const UUIDCHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     const UUIDPATTERN = '000000';
+    const LONGUUIDPATTERN = '0000000000000000';
 
     /**
      * Generate a response from an automatically-loaded request and render it.
@@ -107,6 +108,39 @@ abstract class Digraph
             );
     }
 
+    /**
+     * Generate a random long UUID. Can also be seeded with a string to use MD5 for
+     * generating the result. This isn't something you should rely on as a
+     * secure hash, but can be useful if for some reason you need to generate
+     * UUIDs in a deterministic way.
+     * 
+     * Note that Digraph's UUIDs are not compatible with the GUID spec, as they
+     * use characters a-z and A-Z, and not just a-f. This gives us more entropy, 
+     * and has no performance implications as they are saved in the database as
+     * strings anyway, and no binary/numeric operations are ever needed.
+     *
+     * @param string|null $prefix
+     * @param string|null $seed
+     * @return string
+     */
+    public static function longUUID(string $prefix = null, string $seed = null): string
+    {
+        if ($seed !== null) {
+            mt_srand(crc32($seed));
+            $fn = 'mt_rand';
+        } else {
+            $fn = 'random_int';
+        }
+        return ($prefix ? $prefix . '_' : '')
+            . preg_replace_callback(
+                '/0/',
+                function () use ($fn) {
+                    return substr(static::uuidChars(), $fn(0, strlen(static::uuidChars()) - 1), 1);
+                },
+                static::longUuidPattern()
+            );
+    }
+
     public static function uuidChars(): string
     {
         return Config::get('uuid.chars') ?? static::UUIDCHARS;
@@ -115,6 +149,11 @@ abstract class Digraph
     public static function uuidPattern(): string
     {
         return Config::get('uuid.pattern') ?? static::UUIDPATTERN;
+    }
+
+    public static function longUuidPattern(): string
+    {
+        return Config::get('uuid.longpattern') ?? static::LONGUUIDPATTERN;
     }
 
     /**

@@ -38,7 +38,7 @@ class URLs
             }
         }
         $path = preg_replace('/\.[a-z0-9]+$/i', '', $path);
-        $path = trim(preg_replace('@[~_.\/]+@', ' ', $path));
+        $path = trim(preg_replace('@[~_.\/\:]+@', ' ', $path));
         return ucfirst($path);
     }
 

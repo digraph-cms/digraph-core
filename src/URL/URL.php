@@ -187,7 +187,7 @@ class URL
         // strip trailing index.html
         $this->path = preg_replace('@/index\.html$@', '/', $this->path);
         // ensure path ends in either a slash or file extension
-        if (!preg_match('@(/|\.([a-z0-9]+))$@', $this->path)) {
+        if (!preg_match('@(/|\.([a-z0-9]+))$@', $this->path) && !strpos($this->file(), ':')) {
             $this->path .= '/';
         }
         return $this;
@@ -266,7 +266,7 @@ class URL
     public function actionPrefix(): ?string
     {
         $action = $this->action();
-        if ($pos = strpos($action, '_')) {
+        if ($pos = strpos($action, ':')) {
             return substr($action, 0, $pos);
         }
         return null;
@@ -275,7 +275,7 @@ class URL
     public function actionSuffix(): ?string
     {
         $action = $this->action();
-        if ($pos = strpos($action, '_')) {
+        if ($pos = strpos($action, ':')) {
             return substr($action, $pos + 1);
         }
         return null;
