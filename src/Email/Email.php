@@ -151,7 +151,7 @@ class Email
 
     public function url_unsubscribe(): URL
     {
-        return new URL('/~email_options/unsubscribe:' . $this->uuid() . '.html');
+        return new URL('/~email_options/unsubscribe:' . $this->uuid());
     }
 
     public function url_manageSubscriptions(): URL
