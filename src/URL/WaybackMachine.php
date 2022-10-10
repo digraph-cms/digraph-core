@@ -190,7 +190,7 @@ class WaybackMachine
     protected static function normalizeURL(string $url): ?string
     {
         $url = parse_url($url);
-        if (!$url) return null;
+        if (!$url || !@$url['host']) return null;
         $normal = $url['host'];
         if (@$url['port']) {
             $normal .= ':' . $url['port'];
