@@ -211,6 +211,12 @@ class Email
         return $this->body_text;
     }
 
+    public function sent(): ?DateTime
+    {
+        if ($this->sent) return (new DateTime)->setTimestamp($this->sent);
+        else return null;
+    }
+
     public function time(): DateTime
     {
         return (new DateTime)->setTimestamp($this->time);
