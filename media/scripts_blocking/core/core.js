@@ -23,6 +23,11 @@ const Digraph = {
                 const r = parseInt(Math.random() * (Digraph.config.uuidChars.length - 1), 10);
                 return Digraph.config.uuidChars.substring(r, r + 1);
             });
+    },
+    decodeHTML: (html) => {
+        var txt = document.createElement('textarea');
+        txt.innerHTML = html;
+        return txt.value;
     }
 };
 

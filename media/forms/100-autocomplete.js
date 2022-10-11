@@ -68,7 +68,7 @@ class DigraphAutocomplete {
         if (this.input.dataset.value) {
             const value = JSON.parse(this.input.dataset.value);
             this.selectedCard.tabIndex = 0;
-            this.selectedCard.innerHTML = '<div class="result-html"><div class="after-icon">' + value.html + "</div></div>"
+            this.selectedCard.innerHTML = '<div class="result-html"><div class="after-icon">' + Digraph.decodeHTML(value.html) + "</div></div>"
             if (value.class) {
                 this.selectedCard.firstChild.classList.add(value.class);
             }
