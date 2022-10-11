@@ -78,7 +78,7 @@ class Cron
             new CronJob(
                 'CronSubscriber',
                 "$class::$method",
-                function (int $deadline = null, CronJob $job) use ($class, $method) {
+                function (CronJob $job, int $deadline = null) use ($class, $method) {
                     static::runSubscriberJob($job, $deadline, $class, $method);
                 },
                 substr($method, 8)
