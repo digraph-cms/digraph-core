@@ -3,6 +3,7 @@
 namespace DigraphCMS\Email;
 
 use DigraphCMS\Config;
+use DigraphCMS\Cron\CronJob;
 
 class EmailCronSubscriber
 {
@@ -15,10 +16,11 @@ class EmailCronSubscriber
      * because many can be sent at a time through cron reusing a single 
      * connection, instead of having SMTP connection overhead for every message.
      * 
+     * @param CronJob $job
      * @param integer|null $deadlineTime
      * @return void
      */
-    public static function cronJob_frequent(int $deadlineTime = null)
+    public static function cronJob_frequent(CronJob $job, int $deadlineTime = null)
     {
         $deadlineTime = $deadlineTime ?? (Config::get('email.cron_time') + time());
         $queue = Emails::select()->queue();
