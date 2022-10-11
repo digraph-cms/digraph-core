@@ -7,7 +7,10 @@
 
 <?php
 
+use DigraphCMS\UI\ActionMenu;
 use DigraphCMS\UI\Templates;
+
+ActionMenu::hide();
 
 echo Templates::render(
     'content/toc.php',

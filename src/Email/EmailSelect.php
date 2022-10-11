@@ -31,7 +31,7 @@ class EmailSelect extends AbstractMappedSelect
      */
     public function sent()
     {
-        return $this->where('`error` is not null');
+        return $this->where('`sent` is not null');
     }
 
     /**
@@ -41,7 +41,7 @@ class EmailSelect extends AbstractMappedSelect
      */
     public function notSent()
     {
-        return $this->where('`error` is null');
+        return $this->where('`sent` is null');
     }
 
     /**

@@ -68,8 +68,19 @@ class Emails
         ));
     }
 
-    public static function queue(Email $email)
+    /**
+     * Enqueue an Email or array of Emails to be sent later.
+     *
+     * @param Email|Email[] $email
+     * @return void
+     */
+    public static function queue($email)
     {
+        // recurse into arrays
+        if (is_array($email)) {
+            foreach ($email as $msg) static::queue($msg);
+            return;
+        }
         // do nothing if email is blocked
         if (Emails::shouldBlock($email)) return;
         // save into database
@@ -107,13 +118,26 @@ class Emails
         return false;
     }
 
-    public static function send(Email $email, bool $ignoreQuota = false)
+    /**
+     * Send an Email or array of Emails now if possible, or queue for later if
+     * quota is reached. Optionally ignore the quota check.
+     *
+     * @param Email|Email[] $email
+     * @param boolean $ignoreQuota
+     * @return void
+     */
+    public static function send($email, bool $ignoreQuota = false)
     {
+        // recurse into arrays
+        if (is_array($email)) {
+            foreach ($email as $msg) static::send($msg, $ignoreQuota);
+            return;
+        }
         // do nothing if email is blocked
         if (Emails::shouldBlock($email)) return;
         // send email if enabled, otherwise it gets an error so that we can test
         // what emails would have been sent
-        if (Config::get('email.enabled')) {
+        if (Config::get('email.enabled') && !in_array($email->to(), Config::get('email.enabled_for'))) {
             // check if we should enqueue instead
             if (!$ignoreQuota && static::quotaReached()) {
                 if (!$email->exists()) static::queue($email);

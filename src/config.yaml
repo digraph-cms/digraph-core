@@ -25,6 +25,7 @@ cron:
   intervals:
     default: 12 hours
     frequent: 5 minutes
+    email: 5 minutes
     halfhourly: 30 minutes
     hourly: 1 hour
     daily: 1 day
@@ -53,6 +54,7 @@ cache:
 
 email:
   enabled: true
+  enabled_for: []
   from: null
   cron_time: 30
   use_smtp: false

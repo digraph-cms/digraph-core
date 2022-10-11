@@ -20,7 +20,7 @@ class EmailCronSubscriber
      * @param integer|null $deadlineTime
      * @return void
      */
-    public static function cronJob_frequent(CronJob $job, int $deadlineTime = null)
+    public static function cronJob_email(CronJob $job, int $deadlineTime = null)
     {
         $deadlineTime = $deadlineTime ?? (Config::get('email.cron_time') + time());
         $queue = Emails::select()->queue();
