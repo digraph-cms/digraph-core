@@ -137,7 +137,7 @@ class Emails
         if (Emails::shouldBlock($email)) return;
         // send email if enabled, otherwise it gets an error so that we can test
         // what emails would have been sent
-        if (Config::get('email.enabled') && !in_array($email->to(), Config::get('email.enabled_for'))) {
+        if (Config::get('email.enabled') || in_array($email->to(), Config::get('email.enabled_for'))) {
             // check if we should enqueue instead
             if (!$ignoreQuota && static::quotaReached()) {
                 if (!$email->exists()) static::queue($email);
