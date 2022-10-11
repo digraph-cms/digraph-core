@@ -284,15 +284,20 @@ class Emails
 
     public static function beginBatch()
     {
-        if (!static::mailer()->isSMTP()) return;
+        if (!static::useSMTP()) return;
         static::mailer()->SMTPKeepAlive = true;
     }
 
     public static function endBatch()
     {
-        if (!static::mailer()->isSMTP()) return;
+        if (!static::useSMTP()) return;
         static::mailer()->smtpClose();
         static::mailer()->SMTPKeepAlive = false;
+    }
+
+    protected static function useSMTP(): bool
+    {
+        return Config::get('email.use_smtp') && Config::get('email.smtp');
     }
 
     protected static function mailer(): PHPMailer
@@ -302,7 +307,8 @@ class Emails
         if (!$mailer) {
             $mailer = new PHPMailer(true);
             // set up smtp if configured
-            if (Config::get('email.use_smtp') && $smtp = Config::get('email.smtp')) {
+            if (static::useSMTP()) {
+                $smtp = Config::get('email.smtp');
                 $mailer->isSMTP();
                 $mailer->Host = $smtp['host'];
                 if ($smtp['auth']) {
@@ -323,6 +329,10 @@ class Emails
                     $mailer->SMTPOptions = $smtp['options'];
                 }
                 $mailer->SMTPAutoTLS = $smtp['autotls'];
+            }
+            // otherwise explicitly set issendmail
+            else {
+                $mailer->isSendmail();
             }
         }
         // reset mailer for sending a new email
