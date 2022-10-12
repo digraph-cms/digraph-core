@@ -1,6 +1,7 @@
 #bodyTable {
     background-color: $background-darker;
     color: $color;
+
     td,
     th {
         padding: 0;
@@ -11,6 +12,10 @@
     background-color: $background;
     color: $color;
     border: $border solid $theme-neutral;
+
+    td {
+        color: $color;
+    }
 }
 
 #headerTable {
@@ -18,14 +23,19 @@
     color: $theme-accent-inv;
     font-family: $font-ui;
 
+    td {
+        color: $theme-accent-inv;
+    }
+
     a {
         color: inherit;
     }
 
-    > tr > td > * {
+    >tr>td>* {
         &:first-child {
             margin-top: 0;
         }
+
         &:last-child {
             margin-bottom: 0;
         }
@@ -43,6 +53,7 @@
     a {
         color: $link-normal;
     }
+
     h1,
     h2,
     h3,
@@ -51,10 +62,12 @@
     h6 {
         font-family: $font-header;
     }
-    > tr > td > * {
+
+    >tr>td>* {
         &:first-child {
             margin-top: 0;
         }
+
         &:last-child {
             margin-bottom: 0;
         }
@@ -70,16 +83,18 @@
 
     td {
         padding: 10px 20px;
+        color: $theme-neutral-inv;
     }
 
     a {
         color: inherit;
     }
 
-    > tr > td > * {
+    >tr>td>* {
         &:first-child {
             margin-top: 0;
         }
+
         &:last-child {
             margin-bottom: 0;
         }
