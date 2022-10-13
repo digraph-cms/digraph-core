@@ -11,6 +11,10 @@ rich_media_types:
   table: \DigraphCMS\RichMedia\Types\TableRichMedia
   zip: \DigraphCMS\RichMedia\Types\ZipRichMedia
 
+curl:
+  fallback_cafile: null # Allow a specific fallback CA file to be used
+  use_fallback_cafile: false # Use built-in fallback CA file instead of relying on server's config
+
 search:
   response_index:
     interval: 86400

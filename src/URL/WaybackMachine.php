@@ -8,6 +8,7 @@ use DigraphCMS\Cache\CacheNamespace;
 use DigraphCMS\Cache\Locking;
 use DigraphCMS\Config;
 use DigraphCMS\Context;
+use DigraphCMS\Curl\CurlHelper;
 use DigraphCMS\Email\Email;
 use DigraphCMS\Email\Emails;
 use DigraphCMS\RichContent\RichContent;
@@ -77,11 +78,12 @@ class WaybackMachine
     protected static function doCheckUrlStatus($url): bool
     {
         try {
-            $ch = curl_init($url);
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            $ch = CurlHelper::init($url);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Wayback isn't in the business of verifying everyone's SSL config
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // follow redirects
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 6.2; WOW64; rv:17.0) Gecko/20100101 Firefox/17.0');
-            curl_setopt($ch, CURLOPT_REFERER, Context::url());
+            curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 6.2; WOW64; rv:17.0) Gecko/20100101 Firefox/17.0'); // pretend to be a browser
+            curl_setopt($ch, CURLOPT_REFERER, Context::url()); // give current page as referer
             curl_exec($ch);
             $code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
             $errno = curl_errno($ch);
