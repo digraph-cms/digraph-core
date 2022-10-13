@@ -53,9 +53,9 @@ class CurlHelper
 
     /**
      * @param string $url
-     * @return CurlHandle|null
+     * @return CurlHandle|resource|null
      */
-    public static function init(string $url): ?CurlHandle
+    public static function init(string $url)
     {
         // set up handle
         $handle = curl_init($url);
