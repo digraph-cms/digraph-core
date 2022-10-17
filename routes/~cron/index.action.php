@@ -6,6 +6,8 @@ use DigraphCMS\Context;
 use DigraphCMS\Cron\Cron;
 use DigraphCMS\HTTP\HttpError;
 
+error_reporting(0);
+
 // route or poor man's cron must be enabled
 if (!(Config::get('cron.route_enabled') || Config::get('cron.poor_mans_cron'))) {
     throw new HttpError(403, "Cron route is disabled by configuration.");

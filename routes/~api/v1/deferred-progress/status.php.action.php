@@ -5,6 +5,8 @@ use DigraphCMS\Cron\Deferred;
 use DigraphCMS\DB\DB;
 use DigraphCMS\HTTP\HttpError;
 
+error_reporting(0);
+
 $group = Context::arg('group');
 if (!$group || !Deferred::groupCount($group)) throw new HttpError(400);
 $justRan = Deferred::runJobs($group, time() + 1);
