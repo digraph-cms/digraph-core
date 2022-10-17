@@ -8,6 +8,8 @@ use DigraphCMS\UI\ButtonMenus\SingleButton;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\URL\URL;
 
+Breadcrumb::setTopName('Email unsubscribe');
+
 /** @var array email addresses to be managed with this form */
 $addresses = [];
 

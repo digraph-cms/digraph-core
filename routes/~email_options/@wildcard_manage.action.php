@@ -2,15 +2,15 @@
 
 use DigraphCMS\Config;
 use DigraphCMS\Context;
-use DigraphCMS\DB\DB;
 use DigraphCMS\Email\Emails;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\HTTP\RedirectException;
+use DigraphCMS\UI\Breadcrumb;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\ToggleButton;
 use DigraphCMS\URL\URL;
-use DigraphCMS\Users\Permissions;
-use DigraphCMS\Users\Users;
+
+Breadcrumb::setTopName('Manage email preferences');
 
 /** @var array email addresses to be managed with this form */
 $addresses = [];
