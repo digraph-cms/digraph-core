@@ -1,0 +1,258 @@
+.card {
+  box-sizing: border-box;
+  background: var(--background-light);
+  color: var(--color);
+  padding: $grid;
+  font-family: $font-ui;
+  margin: $grid 0;
+  box-shadow: var(--shadow);
+  width: fit-content;
+  max-width: 100%;
+
+  &.card--accent,
+  &.card--light,
+  &.card--dark,
+  &.card--neutral,
+  &.card--info,
+  &.card--confirmation,
+  &.card--warning,
+  &.card--error {
+      @include uncolored-links;
+  }
+
+  &.card--accent {
+      background: var(--theme-accent);
+      color: var(--theme-accent-inv);
+  }
+
+  &.card--light {
+      background: var(--background-lighter);
+      color: var(--color);
+  }
+
+  &.card--dark {
+      background: var(--background-darker);
+      color: var(--color);
+  }
+
+  &.card--neutral {
+      background: var(--theme-neutral);
+      color: var(--theme-neutral-inv);
+  }
+
+  &.card--info {
+      background: var(--cue-information);
+      color: var(--cue-information-inv);
+  }
+
+  &.card--confirmation {
+      background: var(--cue-safe);
+      color: var(--cue-safe-inv);
+  }
+
+  &.card--warning {
+      background: var(--cue-warning);
+      color: var(--cue-warning-inv);
+  }
+
+  &.card--error {
+      background: var(--cue-danger);
+      color: var(--cue-danger-inv);
+  }
+
+  >*:first-child {
+      margin-top: 0;
+  }
+
+  >*:last-child {
+      margin-bottom: 0;
+  }
+}
+
+.card__title {
+  font-weight: bold;
+  font-size: larger;
+  margin-bottom: $grid/2;
+}
+
+/*
+file cards include an icon
+*/
+.file-card {
+  background: var(--cue-interactive);
+  color: var(--cue-interactive-inv);
+  display: grid;
+  grid-template-columns: 3.5em auto;
+  grid-template-rows: auto auto;
+  padding: $grid/2;
+  border: $border;
+  box-shadow: var(--shadow);
+
+  &:before {
+      @include icofont;
+      display: block;
+      content: "\eb12";
+      grid-row-start: 1;
+      grid-row-end: -1;
+      font-size: 3em;
+      text-align: left;
+      line-height: 1.2;
+  }
+
+  * {
+      grid-column-start: 2;
+  }
+}
+
+.file-card__meta {
+  font-size: smaller;
+  font-style: italic;
+}
+
+/*
+extra file card styling for multifile cards
+*/
+.multifile-card {
+  .multifile-card__list {
+      margin-top: $grid/2;
+  }
+
+  .card__title+.multifile-card__list {
+      margin-top: 0;
+  }
+}
+
+.multifile-card__list {
+  font-size: smaller;
+
+  ul {
+      margin: 0;
+      margin-bottom: $grid/2;
+      list-style-position: inside;
+      padding-left: 0;
+  }
+}
+
+/*
+File card icons for extensions
+*/
+
+/* spreadsheets */
+.file-card--extension-xlsx,
+.file-card--extension-csv,
+.file-card--extension-tsv,
+.file-card--extension-xls,
+.file-card--extension-ods,
+.file-card--extension-sxc,
+.file-card--extension-dif,
+.file-card--extension-gnumeric,
+.file-card--extension-dex,
+.file-card--extension-123,
+.file-card--extension-numbers-tef,
+.file-card--extension-sxc,
+.file-card--extension-xltm,
+.file-card--extension-xlsb,
+.file-card--extension-ots,
+.file-card--extension-sdc,
+.file-card--extension-xlshtml,
+.file-card--extension-xltx,
+.file-card--extension-gsheet,
+.file-card--extension-qpw,
+.file-card--extension-wks,
+.file-card--extension-gnm,
+.file-card--extension-ogw,
+.file-card--extension-ess,
+.file-card--extension-xlhtml {
+  background: #49a94d;
+  color: white;
+
+  &:before {
+      content: "\eb27";
+  }
+}
+
+/* avi/mp4 only */
+.file-card--extension-avi,
+.file-card--extension-mp4 {
+  background: #3e93ac;
+
+  &:before {
+      content: "\eb0a";
+  }
+}
+
+/* bitmaps */
+.file-card--extension-bmp,
+.file-card--extension-dib,
+.file-card--extension-wbmp {
+  background: #649fab;
+
+  &:before {
+      content: "\eb0b";
+  }
+}
+
+/* zip/archives */
+.file-card--extension-mint,
+.file-card--extension-ice,
+.file-card--extension-rar,
+.file-card--extension-pup,
+.file-card--extension-b6z,
+.file-card--extension-gzip,
+.file-card--extension-sy_,
+.file-card--extension-xz,
+.file-card--extension-deb,
+.file-card--extension-sit,
+.file-card--extension-tbz,
+.file-card--extension-7z,
+.file-card--extension-dz,
+.file-card--extension-zpi,
+.file-card--extension-bz2,
+.file-card--extension-pkg,
+.file-card--extension-bndl,
+.file-card--extension-dar,
+.file-card--extension-lz4,
+.file-card--extension-zst,
+.file-card--extension-pa,
+.file-card--extension-wa,
+.file-card--extension-uzip,
+.file-card--extension-gza,
+.file-card--extension-uha,
+.file-card--extension-zip,
+.file-card--extension-z03,
+.file-card--extension-rev,
+.file-card--extension-taz,
+.file-card--extension-pak,
+.file-card--extension-kgb,
+.file-card--extension-archiver,
+.file-card--extension-pit,
+.file-card--extension-rpm,
+.file-card--extension-xip,
+.file-card--extension-tbz2,
+.file-card--extension-zl,
+.file-card--extension-lzma,
+.file-card--extension-pack,
+.file-card--extension-ari,
+.file-card--extension-s7z,
+.file-card--extension-gz,
+.file-card--extension-tx_,
+.file-card--extension-czip,
+.file-card--extension-bz,
+.file-card--extension-sfs,
+.file-card--extension-ace,
+.file-card--extension-alz,
+.file-card--extension-pea,
+.file-card--extension-xz,
+.file-card--extension-tgz,
+.file-card--extension-zipx,
+.file-card--extension-rz,
+.file-card--extension-yz,
+.file-card--extension-gzi,
+.file-card--extension-lzh,
+.file-card--extension-zz {
+  background: #efab01;
+
+  &:before {
+      content: "\eb30";
+  }
+}

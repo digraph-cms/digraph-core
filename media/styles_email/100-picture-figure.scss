@@ -1,0 +1,43 @@
+picture.fancyfit {
+  display: block;
+  background: #999;
+
+  img {
+      display: block;
+      width: 100%;
+      height: auto;
+  }
+}
+
+figure {
+  background-color: #999;
+  font-family: $font-ui;
+  box-shadow: var(--shadow);
+
+  >picture {
+      box-shadow: none;
+      margin: 0 auto;
+
+      >img {
+          display: block;
+      }
+  }
+}
+
+figcaption {
+  display: block;
+  font-size: smaller;
+  padding: $grid/2;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: var(--background-a80);
+  color: var(--color);
+
+  >*:first-child {
+      margin-top: 0;
+  }
+
+  >*:last-child {
+      margin-bottom: 0;
+  }
+}

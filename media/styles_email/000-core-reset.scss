@@ -1,0 +1,45 @@
+body {
+  background-color: var(--background);
+  color: var(--color);
+  -webkit-text-size-adjust: 100%;
+}
+
+a,
+a:link,
+a[onclick],
+a[javascript] {
+  cursor: pointer;
+  color: var(--link-normal);
+}
+
+.button-menu,
+.button-menu__buttons {
+  display: flex;
+  width: auto;
+}
+
+.button-menu {
+
+  .button,
+  button,
+  input[type="button"],
+  input[type="submit"] {
+      border-radius: 0;
+      white-space: normal;
+
+      &:first-child {
+          border-top-left-radius: $border-radius;
+          border-bottom-left-radius: $border-radius;
+      }
+
+      &:last-child {
+          border-top-right-radius: $border-radius;
+          border-bottom-right-radius: $border-radius;
+      }
+  }
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
