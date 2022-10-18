@@ -2,7 +2,6 @@
 
 namespace DigraphCMS\Curl;
 
-use CurlHandle;
 use DigraphCMS\Config;
 
 /**
@@ -53,7 +52,7 @@ class CurlHelper
 
     /**
      * @param string $url
-     * @return CurlHandle|resource|null
+     * @return resource|null
      */
     public static function init(string $url)
     {
