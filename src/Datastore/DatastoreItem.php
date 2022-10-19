@@ -20,10 +20,10 @@ class DatastoreItem
         return !!DB::query()->update(
             'datastore',
             [
-                'value' => $this->value(),
-                'data' => json_encode($this->data()->get()),
-                'updated' => time(),
-                'updated_by' => Session::uuid(),
+                '`value`' => $this->value(),
+                '`data`' => json_encode($this->data()->get()),
+                '`updated`' => time(),
+                '`updated_by`' => Session::uuid(),
             ],
             $this->id()
         )->execute();

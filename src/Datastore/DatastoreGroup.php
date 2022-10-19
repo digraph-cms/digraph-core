@@ -54,6 +54,6 @@ class DatastoreGroup
     public function select(): DatastoreSelect
     {
         return $this->namespace()->select()
-            ->where('grp', $this->name);
+            ->where('`grp`', $this->name);
     }
 }

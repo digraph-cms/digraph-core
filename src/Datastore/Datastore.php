@@ -17,9 +17,9 @@ class Datastore
     public static function exists(string $namespace, string $group, string $key): bool
     {
         return !!DB::query()->from('datastore')
-            ->where('ns', $namespace)
-            ->where('grp', $group)
-            ->where('key', $key)
+            ->where('`ns`', $namespace)
+            ->where('`grp`', $group)
+            ->where('`key`', $key)
             ->count();
     }
 
@@ -35,9 +35,9 @@ class Datastore
     public static function value(string $namespace, string $group, string $key)
     {
         $value = DB::query()->from('datastore')
-            ->where('ns', $namespace)
-            ->where('grp', $group)
-            ->where('key', $key)
+            ->where('`ns`', $namespace)
+            ->where('`grp`', $group)
+            ->where('`key`', $key)
             ->fetch();
         if (!$value) return false;
         else return $value['value'];
@@ -52,9 +52,9 @@ class Datastore
     public static function delete(string $namespace, string $group, string $key): bool
     {
         return !!DB::query()->delete('datastore')
-            ->where('ns', $namespace)
-            ->where('grp', $group)
-            ->where('key', $key)
+            ->where('`ns`', $namespace)
+            ->where('`grp`', $group)
+            ->where('`key`', $key)
             ->execute();
     }
 
@@ -67,9 +67,9 @@ class Datastore
     public static function get(string $namespace, string $group, string $key): ?DatastoreItem
     {
         return (new DatastoreSelect)
-            ->where('ns', $namespace)
-            ->where('grp', $group)
-            ->where('key', $key)
+            ->where('`ns`', $namespace)
+            ->where('`grp`', $group)
+            ->where('`key`', $key)
             ->fetch();
     }
 
@@ -121,30 +121,30 @@ class Datastore
             DB::query()->update(
                 'datastore',
                 [
-                    'value' => $value,
-                    'data' => json_encode($data),
-                    'updated' => time(),
-                    'updated_by' => Session::uuid(),
+                    '`value`' => $value,
+                    '`data`' => json_encode($data),
+                    '`updated`' => time(),
+                    '`updated_by`' => Session::uuid(),
                 ]
             )
-                ->where('ns', $namespace)
-                ->where('grp', $group)
-                ->where('key', $key)
+                ->where('`ns`', $namespace)
+                ->where('`grp`', $group)
+                ->where('`key`', $key)
                 ->execute();
         } else {
             // insert new value
             DB::query()->insertInto(
                 'datastore',
                 [
-                    'ns' => $namespace,
-                    'grp' => $group,
-                    'key' => $key,
-                    'value' => $value,
-                    'data' => json_encode($data),
-                    'updated' => time(),
-                    'updated_by' => Session::uuid(),
-                    'created' => time(),
-                    'created_by' => Session::uuid(),
+                    '`ns`' => $namespace,
+                    '`grp`' => $group,
+                    '`key`' => $key,
+                    '`value`' => $value,
+                    '`data`' => json_encode($data),
+                    '`updated`' => time(),
+                    '`updated_by`' => Session::uuid(),
+                    '`created`' => time(),
+                    '`created_by`' => Session::uuid(),
                 ]
             )->execute();
         }
