@@ -109,6 +109,7 @@ class WaybackMachine
     public static function get(string $url): ?WaybackResult
     {
         $url = static::normalizeURL($url);
+        if (!$url) return null;
         return static::apiCache()->getDeferred(
             md5($url),
             function () use ($url) {
