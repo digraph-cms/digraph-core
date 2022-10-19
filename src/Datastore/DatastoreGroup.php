@@ -2,6 +2,8 @@
 
 namespace DigraphCMS\Datastore;
 
+use Flatrr\FlatArray;
+
 class DatastoreGroup
 {
     protected $namespace;

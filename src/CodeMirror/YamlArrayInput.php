@@ -16,14 +16,14 @@ class YamlArrayInput extends CodeMirrorInput
     {
         if ($value instanceof FlatArray) $value = $value->get();
         if (is_array($value)) $value = static::yamlDump($value);
-        parent::setDefault($value);
+        return parent::setDefault($value);
     }
 
     public function setValue($value)
     {
         if ($value instanceof FlatArray) $value = $value->get();
         if (is_array($value)) $value = static::yamlDump($value);
-        parent::setValue($value);
+        return parent::setValue($value);
     }
 
     public function default(): array

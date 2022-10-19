@@ -2,6 +2,8 @@
 
 namespace DigraphCMS\Datastore;
 
+use Flatrr\FlatArray;
+
 class DatastoreNamespace
 {
     protected $name;
@@ -21,7 +23,6 @@ class DatastoreNamespace
      */
     public function set(string $group, string $key, ?string $value, $data = null): DatastoreItem
     {
-        var_dump($this->name, $group, $key, $value, $data);
         return Datastore::set($this->name, $group, $key, $value, $data);
     }
 

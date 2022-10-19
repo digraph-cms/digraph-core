@@ -15,6 +15,6 @@ class DatastoreSelect extends AbstractMappedSelect
 
     public function __construct()
     {
-        return parent::__construct(DB::query()->from('datastore'));
+        parent::__construct(DB::query()->from('datastore'));
     }
 }
