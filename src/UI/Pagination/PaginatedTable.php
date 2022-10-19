@@ -16,8 +16,11 @@ class PaginatedTable extends PaginatedSection
      * @param callable|null $callback
      * @param array $headers
      */
-    public function __construct($source, ?callable $callback, array $headers = [])
+    public function __construct($source, ?callable $callback = null, array $headers = [])
     {
+        if (!$callback) $callback = function (array $row): array {
+            return $row;
+        };
         parent::__construct($source, $callback);
         $this->headers = array_map(function ($header) {
             if (!($header instanceof ColumnHeader)) return new ColumnHeader($header);

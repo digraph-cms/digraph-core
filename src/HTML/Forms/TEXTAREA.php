@@ -130,7 +130,7 @@ class TEXTAREA extends Tag implements InputInterface
         }
     }
 
-    public function default(): ?string
+    public function default()
     {
         return $this->default;
     }
@@ -146,7 +146,7 @@ class TEXTAREA extends Tag implements InputInterface
         }
     }
 
-    public function value($useDefault = false): ?string
+    public function value($useDefault = false)
     {
         if ($this->value) {
             return $this->value;

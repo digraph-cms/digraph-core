@@ -35,8 +35,8 @@ document.addEventListener('DigraphDOMReady', (e) => {
         const div = divs[i];
         if (div.classList.contains('codemirror-input-wrapper') && !div.classList.contains('codemirror-input-wrapper--active')) {
             div.classList.add('codemirror-input-wrapper--active');
-            if (div.dataset.codeMirrorConfig) {
-                var config = JSON.parse(div.dataset.codeMirrorConfig);
+            if (div.dataset.codemirrorConfig) {
+                var config = JSON.parse(div.dataset.codemirrorConfig);
             } else {
                 var config = {};
             }
@@ -547,7 +547,7 @@ document.addEventListener('DigraphDOMReady', (e) => {
                 text = text.split("_").join("");
             } else if (type == "strikethrough") {
                 text = text.split("~~").join("");
-            }else if (type == "highlight") {
+            } else if (type == "highlight") {
                 text = text.split("==").join("");
             }
             cm.replaceSelection(start + text + end);

@@ -110,6 +110,8 @@ codemirror:
     gfm:
       gitHubSpice: false
       taskLists: false
+    yaml:
+      tabSize: 2
 
 theme:
   bundle_css: true
