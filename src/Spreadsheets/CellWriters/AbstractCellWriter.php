@@ -9,6 +9,7 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 abstract class AbstractCellWriter
 {
     protected $value;
+    protected $fill;
 
     abstract public function transformCell(Cell $style);
 
@@ -25,7 +26,18 @@ abstract class AbstractCellWriter
 
     public function fill(): ?string
     {
-        return null;
+        return $this->fill;
+    }
+
+    public function setFill(?string $fill)
+    {
+        if (!$fill) $this->fill = null;
+        else {
+            $fill = strtoupper($fill);
+            if (!preg_match('/[0-9A-F]{8}/', $fill)) throw new \Exception("Fill must be 8 hex digits i.e. FFCCCCCC");
+            $this->fill = $fill;
+        }
+        return $this;
     }
 
     protected static function hyperlink(Cell $cell, $url, $style = true)

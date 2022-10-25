@@ -89,12 +89,12 @@ class SpreadsheetWriter
                 );
             }
             // set fill
-            $cell = $this->spreadsheet->getActiveSheet()->getCellByColumnAndRow($i + 1, $row);
-            $cell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID);
+            $style = $this->spreadsheet->getActiveSheet()->getCellByColumnAndRow($i + 1, $row)->getStyle();
+            $style->getFill()->setFillType(Fill::FILL_SOLID);
             if ($cell instanceof AbstractCellWriter && $fill = $cell->fill()) {
-                $cell->getStyle()->getFill()->setStartColor(new Color($fill));
+                $style->getFill()->setStartColor(new Color($fill));
             } else {
-                $cell->getStyle()->getFill()->setStartColor(new Color($row % 2 ? 'FFEEEEEE' : 'FFFFFFFF'));
+                $style->getFill()->setStartColor(new Color($row % 2 ? 'FFEEEEEE' : 'FFFFFFFF'));
             }
         }
     }
