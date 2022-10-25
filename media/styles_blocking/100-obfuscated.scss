@@ -1,0 +1,11 @@
+.obfuscated__data {
+  display: none;
+}
+
+.obfuscated__message {
+  display: inline-block;
+  background-color: var(--cue-danger);
+  color: var(--cue-danger-inv);
+  border-radius: $border-radius;
+  padding: 0 0.25em;
+}

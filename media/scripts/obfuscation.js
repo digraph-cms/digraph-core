@@ -6,11 +6,11 @@
     });
 
     function unobfuscate(target) {
-        Array.from(target.getElementsByClassName('base64-obfuscated'))
+        Array.from(target.getElementsByClassName('obfuscated--base64'))
             .forEach(element => {
                 element.innerHTML = atob(element.firstChild.innerHTML);
-                element.classList.remove('base64-obfuscated');
-                element.classList.add('base64-obfuscated--decoded');
+                element.classList.remove('obfuscated--base64');
+                element.classList.add('obfuscated--decoded');
                 element.dispatchEvent(
                     new Event('DigraphDOMReady', {
                         bubbles: true,

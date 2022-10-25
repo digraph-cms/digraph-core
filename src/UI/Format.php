@@ -136,7 +136,7 @@ class Format
     public static function base64obfuscate(string $string, string $message = 'javascript required to view')
     {
         return sprintf(
-            '<span class="base64-obfuscated"><span class="base64-obfuscated__data">%s</span><span class="base64-obfuscated__message">%s</span></span>',
+            '<span class="obfuscated obfuscated--base64"><span class="obfuscated__data">%s</span><span class="obfuscated__message">%s</span></span>',
             base64_encode($string),
             $message
         );
