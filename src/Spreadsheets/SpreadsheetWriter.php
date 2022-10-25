@@ -78,6 +78,7 @@ class SpreadsheetWriter
         $this->spreadsheet->setActiveSheetIndex(0);
         $row = $this->spreadsheet->getActiveSheet()->getHighestDataRow() + 1;
         foreach (array_values($cells) as $i => $cell) {
+            // set value
             if ($cell instanceof AbstractCellWriter) {
                 $cell->write($this->spreadsheet->getActiveSheet(), $i + 1, $row);
             } else {
@@ -86,6 +87,14 @@ class SpreadsheetWriter
                     $row,
                     $cell
                 );
+            }
+            // set fill
+            $cell = $this->spreadsheet->getActiveSheet()->getCellByColumnAndRow($i + 1, $row);
+            $cell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID);
+            if ($cell instanceof AbstractCellWriter && $fill = $cell->fill()) {
+                $cell->getStyle()->getFill()->setStartColor(new Color($fill));
+            } else {
+                $cell->getStyle()->getFill()->setStartColor(new Color($row % 2 ? 'FFEEEEEE' : 'FFFFFFFF'));
             }
         }
     }

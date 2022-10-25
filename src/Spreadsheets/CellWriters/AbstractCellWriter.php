@@ -23,6 +23,11 @@ abstract class AbstractCellWriter
         $this->transformCell($sheet->getCellByColumnAndRow($column, $row));
     }
 
+    public function fill(): ?string
+    {
+        return null;
+    }
+
     protected static function hyperlink(Cell $cell, $url, $style = true)
     {
         $cell->getHyperlink()->setUrl($url);
