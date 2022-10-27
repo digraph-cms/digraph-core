@@ -1,12 +1,11 @@
 <?php
 
-use DigraphCMS\Content\Pages;
 use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
+use DigraphCMS\Digraph;
 use DigraphCMS\HTTP\HttpError;
-use DigraphCMS\UI\Format;
-use DigraphCMS\UI\Pagination\PageTable;
-use DigraphCMS\Users\Group;
+use DigraphCMS\UI\TabInterface;
+use DigraphCMS\URL\URLs;
 use DigraphCMS\Users\Users;
 
 $user = Users::get(Context::arg('id')) ?? Users::current();
@@ -14,33 +13,25 @@ if (!$user) throw new HttpError(404);
 
 echo "<h1>User profile: " . $user->name() . "</h1>";
 
-printf(
-    "<p>Account registered %s</p>",
-    Format::date($user->created())
-);
+$tabs = Router::search('~users/profile/@tabs/*.php');
+usort($tabs, function ($a, $b) {
+    return strncasecmp(basename($a), basename($b), 250);
+});
 
-Router::include('profile_top/*.php');
+$tabInterface = new TabInterface('profile');
 
-if (($groups = $user->groups()) && count($groups) > 1) {
-    echo "<section class='user-groups'>";
-    echo "<h2>Member of</h2>";
-    echo "<ul>" . implode(PHP_EOL, array_map(
-        function (Group $group) {
-            return "<li>$group</li>";
-        },
-        $user->groups()
-    )) . "</ul>";
-    echo "</section>";
+foreach ($tabs as $file) {
+    ob_start();
+    include $file;
+    $contents = ob_get_clean();
+    if (!$contents) continue;
+    $tabInterface->addTab(
+        Digraph::uuid(null, $file),
+        URLs::pathToName(basename($file)),
+        function () use ($contents) {
+            echo $contents;
+        }
+    );
 }
 
-$pages = Pages::select()
-    ->where('created_by = ? OR updated_by = ?', [$user->uuid(), $user->uuid()])
-    ->order('updated DESC');
-if ($pages->count()) {
-    echo "<section class='user-pages'>";
-    echo "<h2>Pages created/modified</h2>";
-    echo new PageTable($pages);
-    echo "</section>";
-}
-
-Router::include('profile_bottom/*.php');
+echo $tabInterface;
