@@ -139,7 +139,7 @@ db:
 # settings for automatic wayback machine tools
 wayback:
   # default wayback status
-  active: true
+  active: false
   # enter a list of emails that will be notified when a broken link is found
   notify_emails: []
   # maximum notification frequency per context URL
