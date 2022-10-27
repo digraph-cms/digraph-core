@@ -23,7 +23,7 @@ if (!$user) {
 
 $query = DB::query()
     ->from('user_source')
-    ->where('user_uuid = ?', [Session::user()])
+    ->where('user_uuid = ?', [$user->uuid()])
     ->order('created DESC');
 
 $headers = [
@@ -70,7 +70,7 @@ $table = new PaginatedTable(
 echo $table;
 
 echo "<h2>Add login method</h2>";
-if ($user->uuid() == Session::user()) {
+if ($user->uuid() == $user->uuid()) {
     echo "<ul class='signin-options'>";
     foreach (Users::allSigninURLs(Context::url()) as $k => $url) {
         echo "<li class='signin-source type-" . preg_replace('/_.+$/', '', $k) . " $k'>";
