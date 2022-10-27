@@ -323,9 +323,10 @@ class PaginatedSection extends Tag
         } else {
             // link to initialize
             $out .= sprintf(
-                '<a href="%s" class="button">%s</a>',
+                '<a href="%s" class="button">%s%s</a>',
                 new URL('&' . $arg . '=true'),
-                $this->dl_button
+                $this->dl_button,
+                $this->getFilterConfig() ? ' (filtered)' : '',
             );
         }
         $out .= "</div>";
@@ -352,25 +353,26 @@ class PaginatedSection extends Tag
     protected function downloadFile(): File
     {
         return new DeferredFile(
-            $this->dl_filename . '.xlsx',
+            $this->dl_filename . ($this->getFilterConfig() ? ' (filtered)' : '') . '.xlsx',
             function (DeferredFile $file) {
                 FS::touch($file->path());
                 $writer = new SpreadsheetWriter();
                 // write headers
                 if ($this->dl_headers) $writer->writeHeaders($this->dl_headers);
                 // loop through source and run callback to get cells
+                $source = $this->source();
                 if (
-                    $this->source instanceof Select
-                    || $this->source instanceof AbstractMappedSelect
-                    || (is_object($this->source)
-                        && method_exists($this->source, 'fetch'))
+                    $source instanceof Select
+                    || $source instanceof AbstractMappedSelect
+                    || (is_object($source)
+                        && method_exists($source, 'fetch'))
                 ) {
-                    $source = clone $this->source;
+                    $source = clone $source;
                     while ($item = $source->fetch()) {
                         $writer->writeRow($this->runDlCallback($item));
                     }
                 } else {
-                    foreach ($this->source as $item) {
+                    foreach ($source as $item) {
                         if (!$item) continue;
                         $writer->writeRow($this->runDlCallback($item));
                     }
@@ -396,7 +398,8 @@ class PaginatedSection extends Tag
     {
         return md5(serialize([
             Context::url()->path(),
-            $this->id()
+            $this->id(),
+            $this->getFilterConfig()
         ]));
     }
 }
