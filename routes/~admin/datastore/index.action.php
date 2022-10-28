@@ -15,7 +15,7 @@ use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\URL\URL;
 
 $datastore = (new DatastoreSelect)
-    ->order('id DESC');
+    ->order('updated DESC');
 
 $table = new PaginatedTable(
     $datastore,
