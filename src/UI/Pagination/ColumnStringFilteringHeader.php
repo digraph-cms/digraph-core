@@ -39,13 +39,7 @@ class ColumnStringFilteringHeader extends AbstractColumnFilteringHeader
 
     public function getJoinClauses(): array
     {
-        if ($this->config('sort')) {
-            return [
-                'page on ' . $this->column() . ' = page.uuid'
-            ];
-        } else {
-            return [];
-        }
+        return [];
     }
 
     public function getOrderClauses(): array
