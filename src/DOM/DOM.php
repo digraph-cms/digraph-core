@@ -5,7 +5,6 @@ namespace DigraphCMS\DOM;
 use DigraphCMS\Cache\Cache;
 use DigraphCMS\Config;
 use DigraphCMS\Events\Dispatcher;
-use DOMElement;
 use DOMNode;
 use Masterminds\HTML5;
 
@@ -23,19 +22,18 @@ class DOM
         return Cache::get(
             'dom/html/' . md5($html),
             function () use ($html, $fragment) {
-                // set up DOMDocument
-                $dom = static::html5()->loadHTML($html);
-                // dispatch events
-                static::dispatchEvents($dom, $fragment ? 'fragment' : 'full');
-                //normalize and output to HTML
-                $dom->normalizeDocument();
-                if (!$fragment) {
+                // parse fragment
+                if ($fragment) {
+                    $dom = static::html5()->parseFragment($html);
+                    static::dispatchEvents($dom, 'fragment');
+                    $html = $dom->ownerDocument->saveHTML($dom);
+                }
+                // parse full document
+                else {
+                    $dom = static::html5()->loadHTML($html);
+                    static::dispatchEvents($dom, 'full');
+                    $dom->normalizeDocument();
                     $html = $dom->saveHTML();
-                } else {
-                    $html = static::bodyOnly($dom);
-                    if ($html === null) {
-                        $html = $dom->saveHTML();
-                    }
                 }
                 // fix oddities
                 $html = str_ireplace(
@@ -54,25 +52,6 @@ class DOM
     {
         static $html5;
         return $html5 ?? $html5 = new HTML5();
-    }
-
-    protected static function bodyOnly(DOMNode $dom): ?string
-    {
-        if ($dom instanceof DOMElement) {
-            if ($dom->tagName == 'body') {
-                $out = '';
-                foreach ($dom->childNodes as $c) {
-                    $out .= $dom->ownerDocument->saveHTML($c);
-                }
-                return $out;
-            }
-        }
-        foreach ($dom->childNodes ?? [] as $c) {
-            if ($out = static::bodyOnly($c)) {
-                return $out;
-            }
-        }
-        return null;
     }
 
     /**
