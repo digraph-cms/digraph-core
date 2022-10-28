@@ -4,7 +4,7 @@ use DigraphCMS\Content\Pages;
 use DigraphCMS\UI\Pagination\PageTable;
 
 $pages = Pages::select()
-    ->where('(created_by = ? OR updated_by = ?)', [$user->uuid(), $user->uuid()])
+    ->where('(page.created_by = ? OR page.updated_by = ?)', [$user->uuid(), $user->uuid()])
     ->order('updated DESC');
 
 if ($pages->count()) {
