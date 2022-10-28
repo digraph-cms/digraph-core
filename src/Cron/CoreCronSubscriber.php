@@ -11,6 +11,7 @@ use DigraphCMS\URL\WaybackMachine;
 
 class CoreCronSubscriber
 {
+
     public static function cronJob_maintenance()
     {
         // expire deferred execution jobs
@@ -59,6 +60,10 @@ class CoreCronSubscriber
             },
             'core_maintenance'
         );
+    }
+
+    public static function cronJob_wayback()
+    {
         // check status of wayback machine URLs
         new DeferredJob(
             function (DeferredJob $job) {
@@ -164,4 +169,5 @@ class CoreCronSubscriber
             'core_maintenance_heavy'
         );
     }
+
 }

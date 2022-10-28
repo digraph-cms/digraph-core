@@ -40,6 +40,7 @@ cron:
     index_plugins: 1 day
     maintenance: 4 hours
     maintenance_heavy: 1 day
+    wayback: 30 minutes
 
 maintenance:
   expire_locking_records: -7 days
