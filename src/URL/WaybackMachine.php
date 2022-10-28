@@ -81,7 +81,6 @@ class WaybackMachine
     public static function actualUrlStatus($url): bool
     {
         try {
-            /** @var CurlHandle|resource */
             $ch = CurlHelper::init($url);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Wayback isn't in the business of verifying everyone's SSL config
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // follow redirects
