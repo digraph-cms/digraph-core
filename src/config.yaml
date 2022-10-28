@@ -143,7 +143,7 @@ wayback:
   # enter a list of emails that will be notified when a broken link is found
   notify_emails: []
   # maximum notification frequency per context URL
-  notify_frequency: 604800 # 7 days
+  notify_frequency: 2592000 # 30 days
   # how long to cache API call results
   api_ttl: 2592000 # 30 days
   # how long to cache notfound API call results

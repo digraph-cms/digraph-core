@@ -172,7 +172,7 @@ class WaybackMachine
                         new DateTimeZone('UTC')
                     )->getTimestamp()
                 ];
-            }else {
+            } else {
                 return null;
             }
         }
@@ -182,14 +182,15 @@ class WaybackMachine
 
     protected static function sendNotificationEmail($context, $url)
     {
-        // this is now the only part that uses the database, and everything else uses the cache
-        $lock = Locking::lock(
-            'wayback_notification_' . md5($context . $url),
-            true,
-            Config::get('wayback.notify_frequency')
-        );
-        if (!$lock) return;
         foreach (Config::get('wayback.notify_emails') as $addr) {
+            // lock per-recipient
+            $lock = Locking::lock(
+                'wayback_notification_' . md5(serialize([$context, $url, $addr])),
+                false,
+                Config::get('wayback.notify_frequency')
+            );
+            if (!$lock) continue;
+            // queue email
             $email = Email::newForEmail(
                 'wayback',
                 $addr,
