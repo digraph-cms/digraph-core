@@ -139,15 +139,19 @@ db:
 # settings for automatic wayback machine tools
 wayback:
   # default wayback status
-  active: false
+  active: true
   # enter a list of emails that will be notified when a broken link is found
   notify_emails: []
   # maximum notification frequency per context URL
   notify_frequency: 604800 # 7 days
   # how long to cache API call results
   api_ttl: 2592000 # 30 days
+  # how long to cache notfound API call results
+  api_notfound: 7776000 # 90 days
+  # how frequently to retry failed API calls
+  api_retry: 3600 # hourly
   # how long to cache URL status checks
-  check_ttl: 3600 # 1 hour
+  check_ttl: 86400 # 1 day
 
 # optionally enable using PHP session for holding authentication
 # by default a custom cookie is used

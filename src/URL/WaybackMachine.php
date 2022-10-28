@@ -2,13 +2,14 @@
 
 namespace DigraphCMS\URL;
 
+use CurlHandle;
 use DateTime;
 use DateTimeZone;
-use DigraphCMS\Cache\CacheNamespace;
 use DigraphCMS\Cache\Locking;
 use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\Curl\CurlHelper;
+use DigraphCMS\Datastore\DatastoreGroup;
 use DigraphCMS\Email\Email;
 use DigraphCMS\Email\Emails;
 use DigraphCMS\RichContent\RichContent;
@@ -52,32 +53,35 @@ class WaybackMachine
         $url = static::normalizeURL($url);
         if (!$url) return true;
         // call other method to actually check status
-        $context = Context::url()->__toString();
-        if (static::checkUrlStatus($url)) {
-            return true;
-        } else {
-            static::sendNotificationEmail($context, $url);
+        if (static::isLinkBroken($url)) {
+            static::sendNotificationEmail(Context::url()->__toString(), $url);
             return false;
+        } else {
+            return true;
         }
     }
 
-    protected static function checkUrlStatus($url): bool
+    protected static function isLinkBroken($normalizedUrl): ?bool
     {
-        return static::checkCache()->getDeferred(
-            md5($url),
-            function () use ($url) {
-                $result = static::doCheckUrlStatus($url);
-                // if status is negative, presumptively make an API call so it
-                // gets in the deferred execution queue if necessary
-                if (!$result) static::get($url);
-                return $result;
-            }
-        ) ?? true;
+        $hash = md5($normalizedUrl);
+        $status = static::statusStorage()->value($hash);
+        // if status is false, this URL has never been checked, add it to the queue and optimistically return a null value to show it's not broken
+        if ($status === false) {
+            static::statusStorage()->set($hash, 'pending', ['url' => $normalizedUrl]);;
+            return null;
+        }
+        // if it's "pending" then it's still pending a check, and we should optimistically return null (falsey, not broken) until then
+        elseif ($status == 'pending') return null;
+        // if it's "ok" then it's ok
+        elseif ($status == 'ok') return false;
+        // otherwise it's an error, return true because this link is broken
+        else return true;
     }
 
-    protected static function doCheckUrlStatus($url): bool
+    public static function actualUrlStatus($url): bool
     {
         try {
+            /** @var CurlHandle|resource */
             $ch = CurlHelper::init($url);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Wayback isn't in the business of verifying everyone's SSL config
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // follow redirects
@@ -103,36 +107,49 @@ class WaybackMachine
 
     public static function getByHash(string $hash): ?WaybackResult
     {
-        return static::apiCache()->getDeferred($hash);
+        $data = static::statusStorage()->get($hash);
+        if (!$data) return null;
+        if ($data->value() == 'pending') return null;
+        if ($data->value() == 'ok') return null;
+        $apiResult = static::apiStorage()->get($hash);
+        // there is no API result, add it as pending so it will be made later
+        if (!$apiResult) {
+            // add result as pending
+            static::apiStorage()->set($hash, 'pending', ['url' => $data->data()['url']]);
+            // return no result
+            return null;
+        }
+        // there is an API result, but it doesn't have the necessary info
+        elseif (!$apiResult->data()['url'] || !$apiResult->data()['time']) {
+            return null;
+        }
+        // there is an API result, return that
+        else return new WaybackResult(
+            $data->data()['url'],
+            $apiResult->data()['url'],
+            $apiResult->data()['time']
+        );
     }
 
     public static function get(string $url): ?WaybackResult
     {
         $url = static::normalizeURL($url);
         if (!$url) return null;
-        return static::apiCache()->getDeferred(
-            md5($url),
-            function () use ($url) {
-                $found = static::apiCall($url);
-                if (!$found) return null;
-                else return new WaybackResult(
-                    $url,
-                    $found['wb_url'],
-                    $found['wb_time'],
-                );
-            }
-        );
+        $hash = md5($url);
+        return static::getByHash($hash);
     }
 
     /**
      * Make an API call to the wayback machine for the given URL, and return
-     * null if nothing is found, or an array containing wb_url and wb_time keys
+     * null if nothing is found, or an array containing url and time keys
      * for the result.
+     * 
+     * Returns null if there are no snapshots, false if there was an error.
      *
      * @param string $url normalized URL
-     * @return array|null
+     * @return array|false|null
      */
-    protected static function apiCall(string $url): ?array
+    public static function actualApiCall(string $url)
     {
         // build API request URL
         $wb = sprintf(
@@ -149,17 +166,19 @@ class WaybackMachine
             $json = json_decode($response, true);
             if ($json['archived_snapshots']) {
                 return [
-                    'wb_url' => $json['archived_snapshots']['closest']['url'],
-                    'wb_time' => DateTime::createFromFormat(
+                    'url' => $json['archived_snapshots']['closest']['url'],
+                    'time' => DateTime::createFromFormat(
                         'YmdHis',
                         $json['archived_snapshots']['closest']['timestamp'],
                         new DateTimeZone('UTC')
                     )->getTimestamp()
                 ];
+            }else {
+                return null;
             }
         }
         // no valid result returned
-        return null;
+        return false;
     }
 
     protected static function sendNotificationEmail($context, $url)
@@ -206,25 +225,15 @@ class WaybackMachine
         return $normal ? $normal : null;
     }
 
-    protected static function checkCache(): CacheNamespace
+    protected static function statusStorage(): DatastoreGroup
     {
-        static $cache;
-        return $cache
-            ?? $cache = new CacheNamespace(
-                'wayback/check',
-                Config::get('wayback.check_ttl'),
-                Config::get('wayback.check_ttl') * 10
-            );
+        static $group;
+        return $group ?? $group = new DatastoreGroup('wayback', 'status');
     }
 
-    protected static function apiCache(): CacheNamespace
+    protected static function apiStorage(): DatastoreGroup
     {
-        static $cache;
-        return $cache
-            ?? $cache = new CacheNamespace(
-                'wayback/api',
-                Config::get('wayback.api_ttl'),
-                Config::get('wayback.api_ttl') * 10
-            );
+        static $group;
+        return $group ?? $group = new DatastoreGroup('wayback', 'api');
     }
 }

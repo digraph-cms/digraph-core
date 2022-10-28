@@ -6,9 +6,6 @@ use DigraphCMS\Content\Filestore;
 use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Content\Pages;
 use DigraphCMS\Content\Slugs;
-use DigraphCMS\Cron\DeferredJob;
-use DigraphCMS\Cron\RecursivePageJob;
-use DigraphCMS\DB\DB;
 use DigraphCMS\DOM\CodeHighlighter;
 use DigraphCMS\DOM\DOM;
 use DigraphCMS\DOM\DOMEvent;
@@ -31,95 +28,6 @@ use function DigraphCMS\Content\require_file;
 
 abstract class CoreEventSubscriber
 {
-
-    public static function cronJob_maintenance()
-    {
-        // expire deferred execution jobs
-        new DeferredJob(
-            function () {
-                $count = DB::query()->delete('defex')
-                    ->where('run is not null')
-                    ->where('run < ?', [strtotime(Config::get('maintenance.expire_defex_records'))])
-                    ->execute();
-                return "Expired $count deferred execution jobs";
-            },
-            'core_maintenance'
-        );
-        // expire locking records
-        new DeferredJob(
-            function () {
-                $count = DB::query()->delete('locking')
-                    ->where('expires < ?', [strtotime(Config::get('maintenance.expire_locking_records'))])
-                    ->execute();
-                return "Expired $count locking records";
-            },
-            'core_maintenance'
-        );
-        // expire cron errors
-        new DeferredJob(
-            function () {
-                $count = DB::query()
-                    ->update('cron', [
-                        'error_time' => null,
-                        'error_message' => null,
-                    ])
-                    ->where('error_time is not null')
-                    ->where('error_time < ?', [strtotime(Config::get('maintenance.expire_cron_errors'))])
-                    ->execute();
-                return "Expired $count cron error messages";
-            },
-            'core_maintenance'
-        );
-        // expire search index records
-        new DeferredJob(
-            function () {
-                $count = DB::query()->delete('search_index')
-                    ->where('updated < ?', [strtotime(Config::get('maintenance.expire_search_index'))])
-                    ->execute();
-                return "Expired $count search index records";
-            },
-            'core_maintenance'
-        );
-    }
-
-    public static function cronJob_maintenance_heavy()
-    {
-        // do periodic maintenance on all pages
-        new DeferredJob(
-            function (DeferredJob $job) {
-                $pages = DB::query()
-                    ->from('page')
-                    ->leftJoin('page_link on end_page = page.uuid')
-                    ->where('page_link.id is null');
-                while ($page = $pages->fetch()) {
-                    $uuid = $page['uuid'];
-                    // recursive job to prepare cron jobs
-                    new RecursivePageJob(
-                        $uuid,
-                        function (DeferredJob $job, AbstractPage $page) {
-                            $count = $page->prepareCronJobs();
-                            return sprintf("Prepared %s cron jobs for %s (%s)", $count, $page->name(), $page->uuid());
-                        },
-                        false,
-                        $job->group()
-                    );
-                    // recursive job to refresh all slugs
-                    new RecursivePageJob(
-                        $uuid,
-                        function (DeferredJob $job, AbstractPage $page) {
-                            if (!$page->slugPattern()) return $page->uuid() . ": No slug pattern";
-                            Slugs::setFromPattern($page, $page->slugPattern(), $page::DEFAULT_UNIQUE_SLUG);
-                            return $page->uuid() . " slug set to " . $page->slug();
-                        },
-                        false,
-                        $job->group()
-                    );
-                }
-                return "Spawned page heavy maintenance jobs";
-            },
-            'core_maintenance_heavy'
-        );
-    }
 
     /**
      * Preserve/enforce "id" argument in actions across the users/profile route

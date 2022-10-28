@@ -46,6 +46,11 @@ class DatastoreGroup
         return $this->namespace()->value($this->name, $key);
     }
 
+    public function get(string $key): ?DatastoreItem
+    {
+        return $this->select()->where('`key`', $key)->fetch();
+    }
+
     public function namespace(): DatastoreNamespace
     {
         return $this->namespace;

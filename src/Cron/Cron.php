@@ -4,7 +4,6 @@ namespace DigraphCMS\Cron;
 
 use DigraphCMS\Cache\Cache;
 use DigraphCMS\Config;
-use DigraphCMS\CoreEventSubscriber;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Email\EmailCronSubscriber;
 use DigraphCMS\Plugins\Plugins;
@@ -52,7 +51,7 @@ class Cron
         // count number of jobs run
         $count = 0;
         // prepare jobs from core tools and plugins
-        static::registerSubscriber(CoreEventSubscriber::class);
+        static::registerSubscriber(CoreCronSubscriber::class);
         static::registerSubscriber(EmailCronSubscriber::class);
         foreach (Plugins::plugins() as $plugin) static::registerSubscriber($plugin);
         // proceed with jobs one at a time
