@@ -43,9 +43,10 @@ class WaybackMachine
      * system is disabled, or if a check for the given URL is still pending.
      *
      * @param string $url
+     * @param boolean $skipNotification
      * @return boolean
      */
-    public static function check(string $url): bool
+    public static function check(string $url, bool $skipNotification = false): bool
     {
         // active check
         if (!static::active()) return true;
@@ -54,7 +55,7 @@ class WaybackMachine
         if (!$url) return true;
         // call other method to actually check status
         if (static::isLinkBroken($url)) {
-            static::sendNotificationEmail(Context::url(), $url);
+            if (!$skipNotification) static::sendNotificationEmail(Context::url(), $url);
             return false;
         } else {
             return true;
