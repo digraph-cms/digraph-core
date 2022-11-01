@@ -68,8 +68,10 @@ class CoreCronSubscriber
         new DeferredJob(
             function (DeferredJob $job) {
                 $records = (new DatastoreGroup('wayback', 'status'))->select()
-                    ->where('updated < ? OR `value` = ?', [time() - Config::get('wayback.check_ttl'), 'pending'])
-                    ->order('updated DESC');
+                    ->where('`value`', 'pending') // pending records
+                    ->whereOr('updated < ?', [time() - Config::get('wayback.check_ttl')]) // normal expiration
+                    ->whereOr('(`value` = ? AND updated < ?)', ['down', time() - Config::get('wayback.check_notfound_ttl')]) // faster down URL checks
+                    ->order('updated ASC');
                 while ($statusData = $records->fetch()) {
                     $job->spawn(function () use ($statusData) {
                         $status = WaybackMachine::actualUrlStatus('http://' . $statusData->data()['url'])
@@ -95,9 +97,9 @@ class CoreCronSubscriber
                 $records = (new DatastoreGroup('wayback', 'api'))->select()
                     ->where('`value`', 'pending') // pending records
                     ->whereOr('(`value` = ? AND updated < ?)', ['found', time() - Config::get('wayback.api_ttl')]) // expired found records
-                    ->whereOr('(`value` = ? AND updated < ?)', ['error', time() - Config::get('wayback.error_ttl')]) // expired error records
-                    ->whereOr('(`value` = ? AND updated < ?)', ['notfound', time() - Config::get('wayback.notfound_ttl')]) // expired notfound records
-                    ->order('updated DESC');
+                    ->whereOr('(`value` = ? AND updated < ?)', ['error', time() - Config::get('wayback.api_error_ttl')]) // expired error records
+                    ->whereOr('(`value` = ? AND updated < ?)', ['notfound', time() - Config::get('wayback.api_notfound_ttl')]) // expired notfound records
+                    ->order('updated ASC');
                 while ($apiData = $records->fetch()) {
                     $job->spawn(function () use ($apiData) {
                         $url = $apiData->data()['url'];
@@ -169,5 +171,4 @@ class CoreCronSubscriber
             'core_maintenance_heavy'
         );
     }
-
 }

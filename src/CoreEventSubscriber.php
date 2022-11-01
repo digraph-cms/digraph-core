@@ -234,7 +234,7 @@ abstract class CoreEventSubscriber
             }
         }
         return [
-            'html' => '<div class="title">' . $name . '</div><small class="date">'.Format::date($user->created()).'</small>',
+            'html' => '<div class="title">' . $name . '</div><small class="date">' . Format::date($user->created()) . '</small>',
             'value' => $user->uuid(),
             'class' => 'user'
         ];
@@ -256,6 +256,19 @@ abstract class CoreEventSubscriber
         }
         $score += similar_text(metaphone($query), metaphone($page->name()));
         return $score;
+    }
+
+    /**
+     * Limits access to non-wildcard wayback routes
+     *
+     * @param URL $url
+     * @param User $user
+     * @return boolean|null
+     */
+    public static function onStaticUrlPermissions_wayback(URL $url, User $user): ?bool
+    {
+        if ($url->actionPrefix() == 'page') return true;
+        else return Permissions::inMetaGroup('wayback__edit', $user);
     }
 
     /**
@@ -386,7 +399,8 @@ abstract class CoreEventSubscriber
      */
     public static function onStaticUrlName_wayback(URL $url, bool $inPageContext): ?string
     {
-        return 'Wayback Machine';
+        if ($url->actionPrefix() == 'page') return 'Wayback link';
+        else return null;
     }
 
     /**

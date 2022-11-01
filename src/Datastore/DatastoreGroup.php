@@ -56,6 +56,11 @@ class DatastoreGroup
         return $this->namespace;
     }
 
+    public function name(): string
+    {
+        return $this->name;
+    }
+
     public function select(): DatastoreSelect
     {
         return $this->namespace()->select()

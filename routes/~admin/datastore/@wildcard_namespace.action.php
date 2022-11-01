@@ -12,8 +12,8 @@ use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\URL\URL;
 
 $query = (new DatastoreSelect)
-    ->order('id DESC');
-$query->where('ns', Context::url()->actionSuffix());
+    ->order('updated DESC')
+    ->where('ns', Context::url()->actionSuffix());
 
 if (Context::arg('grp')) {
     $query->where('grp', Context::arg('grp'));

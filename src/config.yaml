@@ -40,7 +40,7 @@ cron:
     index_plugins: 1 day
     maintenance: 4 hours
     maintenance_heavy: 1 day
-    wayback: 30 minutes
+    wayback: 15 minutes
 
 maintenance:
   expire_locking_records: -7 days
@@ -148,11 +148,13 @@ wayback:
   # how long to cache API call results
   api_ttl: 2592000 # 30 days
   # how long to cache notfound API call results
-  api_notfound: 7776000 # 90 days
+  api_notfound_ttl: 7776000 # 90 days
   # how frequently to retry failed API calls
-  api_retry: 3600 # hourly
+  api_error_ttl: 3600 # hourly
   # how long to cache URL status checks
   check_ttl: 86400 # 1 day
+  # how long to cache status checks when the URL is down
+  check_notfound_ttl: 3600 # hourly
 
 # optionally enable using PHP session for holding authentication
 # by default a custom cookie is used

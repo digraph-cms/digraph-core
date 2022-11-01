@@ -4,6 +4,7 @@ namespace DigraphCMS\URL;
 
 use DateTime;
 use DigraphCMS\Context;
+use DigraphCMS\Datastore\Datastore;
 
 class WaybackResult
 {
@@ -19,9 +20,18 @@ class WaybackResult
 
     public function helperURL(URL $context = null): URL
     {
-        $url = new URL('/~wayback/' . md5($this->originalURL) . '.html');
-        $url->arg('context', $context ?? Context::url());
-        return $url;
+        $context = $context ?? Context::url();
+        $hash = md5($this->originalURL);
+        $hash = md5($hash . $context->pathString());
+        if (!Datastore::exists('wayback', 'page', $hash)) {
+            Datastore::set('wayback', 'page', $hash, null, [
+                'original_url' => $this->originalURL(),
+                'wb_url' => $this->wbURL(),
+                'wb_time' => $this->wbTime()->getTimestamp(),
+                'context' => $context->pathString()
+            ]);
+        }
+        return new URL('/wayback/page:' . $hash);
     }
 
     public function originalURL(): string

@@ -2,13 +2,13 @@
 
 namespace DigraphCMS\URL;
 
-use CurlHandle;
 use DateTime;
 use DateTimeZone;
 use DigraphCMS\Cache\Locking;
 use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\Curl\CurlHelper;
+use DigraphCMS\Datastore\Datastore;
 use DigraphCMS\Datastore\DatastoreGroup;
 use DigraphCMS\Email\Email;
 use DigraphCMS\Email\Emails;
@@ -54,7 +54,7 @@ class WaybackMachine
         if (!$url) return true;
         // call other method to actually check status
         if (static::isLinkBroken($url)) {
-            static::sendNotificationEmail(Context::url()->__toString(), $url);
+            static::sendNotificationEmail(Context::url(), $url);
             return false;
         } else {
             return true;
@@ -180,12 +180,31 @@ class WaybackMachine
         return false;
     }
 
-    protected static function sendNotificationEmail($context, $url)
+    public static function setNoNotifyFlag($url, ?URL $context, bool $flag)
     {
+        if ($flag) {
+            if ($context) Datastore::set('wayback', 'no_notify', md5(serialize([$url, $context->pathString()])), 'blocked', ['url' => $url, 'context' => $context->pathString()]);
+            else Datastore::set('wayback', 'no_notify', md5($url), 'blocked', ['url' => $url]);
+        } else {
+            if ($context) Datastore::delete('wayback', 'no_notify', md5(serialize([$url, $context->pathString()])));
+            else Datastore::delete('wayback', 'no_notify', md5($url));
+        }
+    }
+
+    public static function noNotifyFlag($normalizedUrl, URL $context = null): bool
+    {
+        if (Datastore::exists('wayback', 'no_notify', md5($normalizedUrl))) return true;
+        elseif ($context && Datastore::exists('wayback', 'no_notify', md5(serialize([$normalizedUrl, $context->pathString()])))) return true;
+        else return false;
+    }
+
+    protected static function sendNotificationEmail(URL $context, $url)
+    {
+        if (static::noNotifyFlag($url, $context)) return;
         foreach (Config::get('wayback.notify_emails') as $addr) {
             // lock per-recipient
             $lock = Locking::lock(
-                'wayback_notification_' . md5(serialize([$context, $url, $addr])),
+                'wayback_notification_' . md5(serialize([$context->pathString(), $url, $addr])),
                 false,
                 Config::get('wayback.notify_frequency')
             );
