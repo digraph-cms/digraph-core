@@ -20,5 +20,6 @@ use DigraphCMS\URL\URL;
                 $url = new URL('/wayback/_manage.html');
                 $url->arg('url', Context::fields()['broken_url']);
                 $url->arg('context', Context::url()->pathString());
+                echo $url;
                 ?>">Manage settings for this link/page combination</a>
 </p>
