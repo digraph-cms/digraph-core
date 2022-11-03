@@ -5,6 +5,7 @@ use DigraphCMS\Context;
 use DigraphCMS\HTML\Forms\Field;
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTTP\RedirectException;
+use DigraphCMS\URL\URL;
 
 // display individual provider
 $provider = Context::arg('_provider');
@@ -36,11 +37,13 @@ if (!@$config['mock_cas_user']) {
         default:
             $version = CAS_VERSION_2_0;
     }
+
     phpCAS::client(
         CAS_VERSION_2_0,
         $config['server'],
         intval($config['port']),
-        $config['context']
+        $config['context'],
+        new URL('/')
     );
 
     //set up configured config calls
