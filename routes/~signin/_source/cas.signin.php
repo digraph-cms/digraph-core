@@ -43,7 +43,7 @@ if (!@$config['mock_cas_user']) {
         $config['server'],
         intval($config['port']),
         $config['context'],
-        new URL('/')
+        (new URL('/'))->__toString()
     );
 
     //set up configured config calls
