@@ -4,8 +4,11 @@ namespace DigraphCMS\UI;
 
 use DigraphCMS\Config;
 use DigraphCMS\Context;
+use DigraphCMS\DB\DBConnectionException;
+use DigraphCMS\Digraph;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTTP\Response;
+use Throwable;
 
 // Always add the default system templates directory
 Templates::addSource(__DIR__ . '/../../templates');
@@ -60,6 +63,30 @@ class Templates
         }
         // throw exception if we haven't returned anything yet
         throw new \Exception("Nothing could handle a .$extension template");
+    }
+
+    /**
+     * Generate and return a fallback error page, skipping most non-Template
+     * steps to avoid generating further errors
+     *
+     * @param Throwable $th
+     * @return string
+     */
+    public static function fallbackError(Throwable $th): string
+    {
+        Context::begin();
+        Context::thrown($th);
+        try {
+            Context::response(new Response(500));
+            if ($th instanceof DBConnectionException) Digraph::buildErrorContent(500.2);
+            else Digraph::buildErrorContent(500.1);
+            $out = static::render('fallback.php');
+            Context::end();
+            return $out;
+        } catch (\Throwable $th) {
+            Context::end();
+            return '<h1>Unhandled error</h1><p>Additionally, an error occurred when generating the fallback error page.</p>';
+        }
     }
 
     public static function wrapResponse(Response $response)

@@ -48,11 +48,18 @@ abstract class Digraph
      */
     public static function renderActualRequest(): void
     {
-        static::makeResponse(static::actualRequest());
-        Context::response()->renderHeaders();
-        header('Content-Type: ' . static::inferMime());
-        header('Content-Disposition: filename="' . static::inferFilename() . '"');
-        Context::response()->renderContent();
+        try {
+            static::makeResponse(static::actualRequest());
+            Context::response()->renderHeaders();
+            header('Content-Type: ' . static::inferMime());
+            header('Content-Disposition: filename="' . static::inferFilename() . '"');
+            Context::response()->renderContent();
+        }
+        // last resort error message
+        catch (\Throwable $th) {
+            http_response_code(500);
+            echo Templates::fallbackError($th);
+        }
     }
 
     public static function inferMime(Response $response = null): string
