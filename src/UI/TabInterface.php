@@ -11,6 +11,7 @@ class TabInterface
     protected $defaultTab;
     protected $id;
     protected $arg;
+    protected $vertical;
 
     public function __construct(string $id = null)
     {
@@ -42,10 +43,9 @@ class TabInterface
         );
     }
 
-    public function arg(string $set = null): string {
-        if ($set !== null) {
-            $this->arg = $set;
-        }
+    public function arg(string $set = null): string
+    {
+        if ($set !== null) $this->arg = $set;
         return $this->arg ?? '_tab_' . $this->id();
     }
 
@@ -74,6 +74,27 @@ class TabInterface
         return $url;
     }
 
+    public function vertical(): bool
+    {
+        if ($this->vertical !== null) return $this->vertical;
+        if (count($this->tabs) > 7) return true;
+        $words = 0;
+        foreach ($this->tabs as $tab) $words += str_word_count($tab[0]);
+        return $words > 20;
+    }
+
+    /**
+     * Set whether tabs should be vertical on the side instead of across the top
+     *
+     * @param boolean|null $vertical null indicates automatic
+     * @return void
+     */
+    public function setVertical(?bool $vertical)
+    {
+        $this->vertical = $vertical;
+        return $this;
+    }
+
     public function __toString()
     {
         ob_start();
@@ -81,7 +102,7 @@ class TabInterface
             Notifications::printError('No tabs defined');
             return ob_get_clean();
         };
-        echo '<div class="tab-interface navigation-frame" data-target="_top" id="tab-interface-' . $this->id . '">' . PHP_EOL;
+        echo '<div class="tab-interface' . ($this->vertical() ? ' tab-interface--vertical' : '') . ' navigation-frame" data-target="_top" id="tab-interface-' . $this->id . '">' . PHP_EOL;
         if (count($this->tabs) > 1) {
             echo '<nav class="tab-interface-tabs">' . PHP_EOL;
             foreach ($this->tabs as $id => $tab) {

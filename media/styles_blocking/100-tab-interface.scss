@@ -94,3 +94,48 @@
         }
     }
 }
+
+.tab-interface.tab-interface--vertical {
+    flex-direction: row;
+
+    .tab-interface-tabs {
+        flex-direction: column;
+
+        a {
+            width: 12em;
+            display: block;
+
+            &.current-tab {
+                margin-right: 0;
+                background-color: var(--background);
+                color: var(--color);
+                border: $border solid var(--theme-accent);
+                border-radius: 0;
+                border-top-left-radius: $border-radius;
+                border-bottom-left-radius: $border-radius;
+                border-right: 0;
+                position: relative;
+
+                &:after {
+                    background-color: var(--background);
+                    content: "";
+                    display: block;
+                    position: absolute;
+                    left: 100%;
+                    top: 0;
+                    bottom: 0;
+                    width: $border;
+                    height: 100%;
+                }
+
+                &:first-child {
+                    margin-top: 0;
+                }
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+            }
+        }
+    }
+}
