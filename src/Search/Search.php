@@ -11,6 +11,7 @@ class Search
     public static function indexURL(string $owner, URL $url, string $title, string $content)
     {
         $title = strip_tags($title);
+        $pathString = preg_replace('/$\/~/', '/', $url->fullPathString());
         if (DB::query()->from('search_index')->where('url = ?', [$url->fullPathString()])->count()) {
             // update existing record if it exists
             DB::query()
@@ -23,7 +24,7 @@ class Search
                         'updated' => time()
                     ]
                 )
-                ->where('url = ?', [$url->fullPathString()])
+                ->where('url', $pathString)
                 ->execute();
         } else {
             // otherwise insert a fresh record
@@ -32,7 +33,7 @@ class Search
                     'search_index',
                     [
                         'owner' => $owner,
-                        'url' => $url->fullPathString(),
+                        'url' => $pathString,
                         'title' => $title,
                         'body' => static::cleanBody($content),
                         'updated' => time()
@@ -51,7 +52,7 @@ class Search
             default:
                 $query = new CompatibleSearchQuery($search);
                 break;
-        } 
+        }
         Dispatcher::dispatchEvent('onSearchQuery', [$query, $search]);
         return $query;
     }
