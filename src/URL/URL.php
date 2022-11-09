@@ -42,8 +42,15 @@ class URL
             $url = URLs::context()->directory();
         }
         // prefix with context for empty or query-only strings
-        if (!$url || $url[0] == '?') {
-            $url = URLs::context() . $url;
+        if (!$url) {
+            $url = URLs::context()->__toString();
+        }
+        // set query for query-only string
+        if ($url[0] == '?') {
+            parse_str(substr($url, 1), $query);
+            $url = clone URLs::context();
+            $url->query($query);
+            $url = $url->__toString();
         }
         // merge in query for partial query strings
         if ($url[0] == '&') {
