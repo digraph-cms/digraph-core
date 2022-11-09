@@ -28,6 +28,18 @@ class ButtonMenu
         }
     }
 
+    /**
+     * Set the data-target attribute
+     *
+     * @param string $target
+     * @return $this
+     */
+    public function setTarget(string $target)
+    {
+        $this->target = $target;
+        return $this;
+    }
+
     public function addButton(ButtonMenuButton $button)
     {
         $this->buttons[] = $button;
