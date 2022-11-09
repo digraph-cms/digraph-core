@@ -15,18 +15,6 @@ class Page extends AbstractPage
         if ($body) Search::indexURL($this->uuid(), $this->url(), $this->name(), $body->html());
     }
 
-    public static function onRecursiveDelete(DeferredJob $job, AbstractPage $page)
-    {
-        $uuid = $page->uuid();
-        $job->spawn(function () use ($uuid) {
-            $n = DB::query()
-                ->delete('search_index')
-                ->where('owner = ?', [$uuid])
-                ->execute();
-            return "Deleted search indexes created by page $uuid ($n)";
-        });
-    }
-
     public function routeClasses(): array
     {
         return array_unique([$this->class(), 'page', '_any']);

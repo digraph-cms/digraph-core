@@ -518,6 +518,14 @@ abstract class AbstractPage implements ArrayAccess
                         }
                     );
                 }
+                // queue deletion of all search indexes
+                $job->spawn(function () use ($uuid) {
+                    $n = DB::query()
+                        ->delete('search_index')
+                        ->where('owner = ?', [$uuid])
+                        ->execute();
+                    return "Deleted search indexes created by page $uuid ($n)";
+                });
                 // queue deletion of this page last
                 $job->spawn(
                     function () use ($uuid) {
