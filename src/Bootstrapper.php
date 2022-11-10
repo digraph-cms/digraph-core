@@ -1,5 +1,6 @@
 <?php
 /* Digraph Core | https://github.com/digraph-cms/digraph-core | MIT License */
+
 namespace Digraph;
 
 use Destructr\DriverFactory;
@@ -18,7 +19,7 @@ class Bootstrapper
      */
     public static function url()
     {
-        if (!($url = @$_GET['digraph_url'])) {
+        if (!($url = @$_GET['digraph_url'] ?? $_SERVER['REQUEST_URI'])) {
             $url = '';
         }
         $q = [];
