@@ -995,7 +995,7 @@
                     "class": "\\Symfony\\Component\\Cache\\Adapter\\FilesystemAdapter",
                     "args": {
                         "namespace": "default",
-                        "defaultlifetime": 60,
+                        "defaultLifetime": 60,
                         "directory": "${paths.cache}/defaultcache"
                     }
                 },
