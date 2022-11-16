@@ -43,7 +43,6 @@ class SafeBBCode
     {
         $string = Sanitizer::full($string);
         $string = static::parser()->process($string);
-        $string = nl2br($string);
         $string = "<div class='safe-bbcode-content'>$string</div>";
         return $string;
     }

@@ -1,3 +1,25 @@
 .safe-bbcode-content {
   max-width: $line-length;
+  white-space: pre-wrap;
+
+  ul,
+  ol,
+  blockquote,
+  .video-embed {
+    margin-bottom: 0;
+  }
+
+  .video-embed {
+    margin-top: 0;
+  }
+
+  >* {
+    white-space: normal;
+  }
+
+  del,
+  ins {
+    background: transparent;
+    color: inherit;
+  }
 }

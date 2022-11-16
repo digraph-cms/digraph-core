@@ -36,8 +36,7 @@
         "caxy/php-htmldiff": "^0.1.10",
         "phpoffice/phpspreadsheet": "^1.23",
         "masterminds/html5": "^2.7",
-        "ezyang/htmlpurifier": "^4.16",
-        "s9e/text-formatter": "^2.12"
+        "ezyang/htmlpurifier": "^4.16"
     },
     "suggest": {
         "league/oauth2-github": "Needed to support OAuth sign-ins using GitHub",
