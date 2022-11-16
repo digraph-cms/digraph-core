@@ -1,7 +1,9 @@
 document.addEventListener('DigraphDOMReady', (e) => {
   const target = e.target;
+  // set up sceditor objects
   Array.from(target.getElementsByClassName('safe-bbcode-input--nojs'))
     .forEach(ta => {
+      ta.classList.remove('safe-bbcode-input--nojs');
       sceditor.create(
         ta,
         {
@@ -14,5 +16,10 @@ document.addEventListener('DigraphDOMReady', (e) => {
           plugins: 'plaintext,autosave,autoyoutube',
         }
       );
+    });
+  // set up field wrappers
+  Array.from(target.getElementsByClassName('safe-bbcode-field--nojs'))
+    .forEach(ta => {
+      ta.classList.remove('safe-bbcode-field--nojs');
     });
 });

@@ -28,7 +28,9 @@ class SafeBBCode
 
     public static function parse(string $string): string
     {
-        return static::parser()->process($string);
+        $string = Sanitizer::full($string);
+        $string = static::parser()->process($string);
+        return $string;
     }
 
     protected static function parser(): Processor
