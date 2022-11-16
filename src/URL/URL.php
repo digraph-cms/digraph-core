@@ -8,6 +8,7 @@ use DigraphCMS\Content\Pages;
 use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
 use DigraphCMS\Events\Dispatcher;
+use DigraphCMS\SafeContent\Sanitizer;
 use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\User;
 
@@ -141,7 +142,7 @@ class URL
         if ($target) {
             $target = ' data-target="' . $target . '"';
         }
-        return "<a href=\"$normalized\"$class$target>" . $normalized->name($inPageContext) . "</a>";
+        return "<a href=\"$normalized\"$class$target>" . Sanitizer::full($normalized->name($inPageContext)) . "</a>";
     }
 
     public function page(): ?AbstractPage

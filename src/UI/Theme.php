@@ -652,7 +652,8 @@ class Theme
             'url' => URLs::site(),
             'origin' => $origin,
             'uuidChars' => Digraph::uuidChars(),
-            'uuidPattern' => Digraph::uuidPattern()
+            'uuidPattern' => Digraph::uuidPattern(),
+            'SCEditorStyle' => Media::get('/sceditor_editor_styles.css')->url(),
         ];
         return $config;
     }
