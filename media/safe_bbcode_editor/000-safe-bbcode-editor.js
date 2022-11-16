@@ -1,3 +1,6 @@
+sceditor.formats.bbcode.get('url').quoteType = 1;
+sceditor.formats.bbcode.get('email').quoteType = 1;
+
 document.addEventListener('DigraphDOMReady', (e) => {
   const target = e.target;
   // set up sceditor objects
@@ -8,12 +11,14 @@ document.addEventListener('DigraphDOMReady', (e) => {
         ta,
         {
           format: 'bbcode',
-          toolbar: 'bold,italic,strike,underline|bulletlist,orderedlist,quote|email,link,unlink|youtube,date,time|removeformat|source',
+          toolbar: 'bold,italic,strike,underline|bulletlist,orderedlist,quote|link,unlink,email,youtube|removeformat|source',
           emoticonsEnabled: false,
           resizeHeight: true,
+          resizeWidth: false,
           enablePasteFiltering: true,
           autoUpdate: true,
-          plugins: 'plaintext,autosave,autoyoutube',
+          plugins: 'plaintext,autoyoutube',
+          style: Digraph.config.SCEditorStyle
         }
       );
     });
