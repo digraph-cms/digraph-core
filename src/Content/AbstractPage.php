@@ -114,7 +114,7 @@ abstract class AbstractPage implements ArrayAccess
      */
     public function permissions(URL $url, User $user = null): ?bool
     {
-        if ($url->actionSuffix()) $action = '@' . $url->actionPrefix() . '_';
+        if ($url->actionSuffix()) $action = $url->actionPrefix() . ':';
         elseif (substr($url->action(), 0, 5) == '_add_') $action = '@add';
         else $action = $url->action();
         // first check for disabled verbs, as they're fast and easy
