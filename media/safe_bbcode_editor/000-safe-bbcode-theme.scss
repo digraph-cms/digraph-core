@@ -277,7 +277,8 @@
   font-weight: 700;
   height: 250px;
   border-radius: 4px;
-  background-clip: padding-box
+  background-clip: padding-box;
+  width: 100% !important;
 }
 
 .sceditor-container *,
