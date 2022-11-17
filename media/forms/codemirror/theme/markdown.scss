@@ -4,8 +4,8 @@ div[data-codemirror-mode="markdown"] {
         font-family: $font-content;
         line-height: 1.4em;
 
-        .CodeMirror-lines {
-            margin: $grid;
+        &.CodeMirror-wrap {
+            padding: $grid/2;
         }
     }
 

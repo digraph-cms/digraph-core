@@ -1,8 +1,8 @@
 .rich-content-editor__dynamic-editor {
-    display: grid;
-    grid-template-columns: auto 18em;
+    padding-right: 18em;
     border: $border solid var(--theme-neutral);
     border-radius: $border-radius;
+    position: relative;
 
     .CodeMirror {
         border-radius: 0;
@@ -10,8 +10,7 @@
         border-left: 0;
         border-bottom: 0;
         border-right: 0;
-        height: 50vh;
-        min-height: 20em;
+        height: 70vh;
     }
 }
 
@@ -41,9 +40,26 @@
     border-left: $border solid var(--theme-neutral);
     border-top-right-radius: $border-radius;
     border-bottom-right-radius: $border-radius;
+    overflow: auto;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 18em;
 
     .rich-content-editor__media-editor-frame {
+        display: flex;
+        flex-direction: column;
+        gap: $grid/2;
         padding: $grid/2;
+
+        .rich-content-editor__media-list {
+            margin: 0;
+
+            table {
+                margin: 0;
+            }
+        }
 
         >h1 {
             font-size: 1em;

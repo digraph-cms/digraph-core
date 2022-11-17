@@ -70,6 +70,7 @@ else {
             ];
         },
     );
+    $table->addClass('rich-content-editor__media-list');
     $table->paginator()->perPage(10);
     echo $table;
 }
