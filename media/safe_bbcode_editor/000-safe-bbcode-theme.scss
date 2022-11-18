@@ -1,0 +1,644 @@
+.sceditor-button {
+  float: left;
+  cursor: pointer;
+  width: $grid*2;
+  height: $grid*2;
+  border-radius: $border-radius;
+  background-clip: padding-box;
+  position: relative;
+
+  &:after {
+    @include material-icon;
+    font-size: $grid;
+    position: absolute;
+    top: 0;
+    line-height: $grid*2;
+    left: 0;
+    right: 0;
+    text-align: center;
+  }
+}
+
+.sceditor-button-youtube {
+  &:after {
+    content: '\e02c';
+  }
+}
+
+.sceditor-button-link {
+  &:after {
+    content: '\e157';
+  }
+}
+
+.sceditor-button-unlink {
+  &:after {
+    content: '\e16f';
+  }
+}
+
+.sceditor-button-underline {
+  &:after {
+    content: '\e249';
+  }
+}
+
+.sceditor-button-time {
+  &:after {
+    content: '\e8b5';
+  }
+}
+
+.sceditor-button-table {
+  &:after {
+    content: '\f191';
+  }
+}
+
+.sceditor-button-superscript {
+  &:after {
+    content: '\f112';
+  }
+}
+
+.sceditor-button-subscript {
+  &:after {
+    content: '\f111';
+  }
+}
+
+.sceditor-button-strike {
+  &:after {
+    content: '\e257';
+  }
+}
+
+.sceditor-button-source {
+  &:after {
+    content: '\e86f';
+  }
+}
+
+.sceditor-button-size {
+  &:after {
+    content: '\e245';
+  }
+}
+
+.sceditor-button-rtl {
+  &:after {
+    content: '\e248';
+  }
+}
+
+.sceditor-button-right {
+  &:after {
+    content: '\e237';
+  }
+}
+
+.sceditor-button-removeformat {
+  &:after {
+    content: '\e239';
+  }
+}
+
+.sceditor-button-quote {
+  &:after {
+    content: '\e244';
+  }
+}
+
+.sceditor-button-print {
+  &:after {
+    content: '\e8ad';
+  }
+}
+
+.sceditor-button-pastetext {
+  &:after {
+    content: '\e14f';
+  }
+}
+
+.sceditor-button-paste {
+  &:after {
+    content: '\e14f';
+  }
+}
+
+.sceditor-button-outdent {
+  &:after {
+    content: '\e23d';
+  }
+}
+
+.sceditor-button-orderedlist {
+  &:after {
+    content: '\e242';
+  }
+}
+
+.sceditor-button-maximize {
+  &:after {
+    content: '\f1ce';
+  }
+}
+
+.sceditor-button-ltr {
+  &:after {
+    content: '\e247';
+  }
+}
+
+.sceditor-button-left {
+  &:after {
+    content: '\e236';
+  }
+}
+
+.sceditor-button-justify {
+  &:after {
+    content: '\e235';
+  }
+}
+
+.sceditor-button-italic {
+  &:after {
+    content: '\e23f';
+  }
+}
+
+.sceditor-button-indent {
+  &:after {
+    content: '\e23e';
+  }
+}
+
+.sceditor-button-image {
+  &:after {
+    content: '\e3f4';
+  }
+}
+
+.sceditor-button-horizontalrule {
+  &:after {
+    content: '\f108';
+  }
+}
+
+.sceditor-button-format {
+  &:after {
+    content: '\e165';
+  }
+}
+
+.sceditor-button-font {
+  &:after {
+    content: '\e262';
+  }
+}
+
+.sceditor-button-emoticon {
+  &:after {
+    content: '\e813';
+  }
+}
+
+.sceditor-button-email {
+  &:after {
+    content: '\e158';
+  }
+}
+
+.sceditor-button-date {
+  &:after {
+    content: '\e935';
+  }
+}
+
+.sceditor-button-cut {
+  &:after {
+    content: '\f08b';
+  }
+}
+
+.sceditor-button-copy {
+  &:after {
+    content: '\e14d';
+  }
+}
+
+.sceditor-button-color {
+  &:after {
+    content: '\e23c';
+  }
+}
+
+.sceditor-button-code {
+  &:after {
+    content: '\f84d';
+  }
+}
+
+.sceditor-button-center {
+  &:after {
+    content: '\e234';
+  }
+}
+
+.sceditor-button-bulletlist {
+  &:after {
+    content: '\e241';
+  }
+}
+
+.sceditor-button-bold {
+  &:after {
+    content: '\e238';
+  }
+}
+
+.sceditor-container {
+  display: -ms-flexbox;
+  display: -webkit-box;
+  display: flex;
+  -ms-flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  flex-direction: column;
+  position: relative;
+  background: var(--background-bright);
+  border: 1px solid var(--theme-neutral);
+  font-size: 1rem;
+  font-family: $font-ui;
+  color: var(--color);
+  line-height: 1;
+  font-weight: 700;
+  height: 250px;
+  border-radius: 4px;
+  background-clip: padding-box;
+  width: 100% !important;
+}
+
+.sceditor-container *,
+.sceditor-container :after,
+.sceditor-container :before {
+  -webkit-box-sizing: content-box;
+  box-sizing: content-box
+}
+
+.sceditor-container,
+.sceditor-container div,
+div.sceditor-dropdown,
+div.sceditor-dropdown div {
+  padding: 0;
+  margin: 0;
+  z-index: 3
+}
+
+.sceditor-container iframe,
+.sceditor-container textarea {
+  display: block;
+  -ms-flex: 1 1 0%;
+  -webkit-box-flex: 1;
+  flex: 1 1 0%;
+  line-height: 1.25;
+  border: 0;
+  outline: none;
+  font-family: $font-content;
+  font-size: 1rem;
+  color: #000;
+  padding: 0;
+  margin: 0;
+  resize: none;
+  background: #fafafa;
+  height: auto !important;
+  min-height: 1px;
+}
+
+.sceditor-container textarea {
+  margin: 0;
+  padding: $grid/2;
+  width: 100%;
+  box-sizing: border-box;
+  display: block;
+  border-radius: 0;
+}
+
+div.sceditor-dnd-cover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: hsla(0, 0%, 100%, .2);
+  border: 5px dashed #aaa;
+  z-index: 200;
+  font-size: 2em;
+  text-align: center;
+  color: #aaa
+}
+
+div.sceditor-dnd-cover p {
+  position: relative;
+  top: 45%;
+  pointer-events: none
+}
+
+div.sceditor-resize-cover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: #000;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  opacity: .3
+}
+
+div.sceditor-grip {
+  overflow: hidden;
+  width: $grid*2;
+  height: $grid;
+  cursor: pointer;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 3;
+  line-height: $grid;
+  text-align: center;
+  background: var(--cue-interactive-a10);
+  color: var(--cue-interactive);
+
+  &:hover {
+    color: var(--cue-interactive-inv);
+    background: var(--cue-interactive);
+  }
+
+  &:after {
+    @include material-icon;
+    content: '\e25d';
+  }
+}
+
+div.sceditor-grip.has-icon {
+  background-image: none
+}
+
+.sceditor-maximize {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100% !important;
+  width: 100% !important;
+  border-radius: 0;
+  background-clip: padding-box;
+  z-index: 2000
+}
+
+body.sceditor-maximize,
+html.sceditor-maximize {
+  height: 100%;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  overflow: hidden
+}
+
+.sceditor-maximize div.sceditor-grip {
+  display: none
+}
+
+.sceditor-maximize div.sceditor-toolbar {
+  border-radius: 0;
+  background-clip: padding-box
+}
+
+div.sceditor-dropdown {
+  position: absolute;
+  border: 1px solid var(--theme-neutral);
+  background: var(--background);
+  color: var(--color);
+  z-index: 4000;
+  padding: $grid/2;
+  font-weight: 400;
+  font-size: 1rem;
+  border-radius: $border-radius;
+  background-clip: padding-box;
+  box-shadow: $shadow;
+}
+
+div.sceditor-dropdown *,
+div.sceditor-dropdown :after,
+div.sceditor-dropdown :before {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box
+}
+
+div.sceditor-dropdown a,
+div.sceditor-dropdown a:link {
+  color: #333
+}
+
+div.sceditor-dropdown form {
+  margin: 0
+}
+
+div.sceditor-dropdown label {
+  display: block;
+  font-weight: 700;
+}
+
+div.sceditor-font-picker,
+div.sceditor-fontsize-picker,
+div.sceditor-format {
+  padding: 6px 0
+}
+
+div.sceditor-color-picker {
+  padding: 4px
+}
+
+div.sceditor-emoticons,
+div.sceditor-more-emoticons {
+  padding: 0
+}
+
+.sceditor-pastetext textarea {
+  border: 1px solid #bbb;
+  width: 20em
+}
+
+.sceditor-emoticons img,
+.sceditor-more-emoticons img {
+  padding: 0;
+  cursor: pointer;
+  margin: 2px
+}
+
+.sceditor-more {
+  border-top: 1px solid #bbb;
+  display: block;
+  text-align: center;
+  cursor: pointer;
+  font-weight: 700;
+  padding: 6px 0
+}
+
+.sceditor-dropdown a:hover {
+  background: #eee
+}
+
+.sceditor-font-option,
+.sceditor-fontsize-option,
+.sceditor-format a {
+  display: block;
+  padding: 7px 10px;
+  cursor: pointer;
+  text-decoration: none;
+  color: #222
+}
+
+.sceditor-fontsize-option {
+  padding: 7px 13px
+}
+
+.sceditor-color-column {
+  float: left
+}
+
+.sceditor-color-option {
+  display: block;
+  border: 2px solid #fff;
+  height: 18px;
+  width: 18px;
+  overflow: hidden
+}
+
+.sceditor-color-option:hover {
+  border: 1px solid #aaa
+}
+
+div.sceditor-toolbar {
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  overflow: hidden;
+  padding: $grid/4;
+  background: var(--background-lighter);
+  line-height: 0;
+  text-align: left;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  border-radius: $border-radius $border-radius 0 0;
+  background-clip: padding-box
+}
+
+div.sceditor-group {
+  display: inline-block;
+  background: var(--cue-interactive-a20);
+  margin: 0 $grid 0 0;
+  border-radius: $border-radius;
+  background-clip: padding-box
+}
+
+.sceditor-button.active,
+.sceditor-button:active,
+.sceditor-button:hover {
+  background: var(--cue-interactive);
+  color: var(--cue-interactive-inv);
+}
+
+.sceditor-button.disabled:hover {
+  background: inherit;
+  cursor: default;
+  -webkit-box-shadow: none;
+  box-shadow: none
+}
+
+.sceditor-button,
+.sceditor-button div {
+  display: block
+}
+
+.sceditor-button svg {
+  display: inline-block;
+  height: 16px;
+  width: 16px;
+  margin: 2px 0;
+  fill: var(--color);
+  text-decoration: none;
+  pointer-events: none;
+  line-height: 1
+}
+
+.sceditor-button.disabled svg {
+  fill: var(--theme-neutral);
+}
+
+.sceditor-button div {
+  display: inline-block;
+  margin: 2px 0;
+  padding: 0;
+  overflow: hidden;
+  line-height: 0;
+  font-size: 0;
+  color: rgba(0, 0, 0, 0)
+}
+
+.sceditor-button.has-icon div {
+  display: none
+}
+
+.sceditor-button.disabled div {
+  opacity: .3
+}
+
+.sceditor-button.text,
+.sceditor-button.text-icon,
+.sceditor-button.text-icon div,
+.sceditor-button.text div,
+.text-icon .sceditor-button,
+.text-icon .sceditor-button div,
+.text .sceditor-button,
+.text .sceditor-button div {
+  display: inline-block;
+  width: auto;
+  line-height: 16px;
+  font-size: 1em;
+  color: inherit;
+  text-indent: 0
+}
+
+.sceditor-button.has-icon div,
+.sceditor-button.text div,
+.text-icon .sceditor-button.has-icon div,
+.text .sceditor-button div {
+  padding: 0 2px;
+  background: none
+}
+
+.sceditor-button.text svg,
+.text .sceditor-button svg {
+  display: none
+}
+
+.sceditor-button.text-icon div,
+.text-icon .sceditor-button div {
+  padding: 0 2px 0 20px
+}
+
+.rtl div.sceditor-toolbar {
+  text-align: right
+}
+
+.rtl .sceditor-button {
+  float: right
+}
+
+.rtl div.sceditor-grip {
+  right: auto;
+  left: 0
+}

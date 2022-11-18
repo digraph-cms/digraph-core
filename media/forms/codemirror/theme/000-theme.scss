@@ -3,13 +3,13 @@
     color: var(--color);
     line-height: 1.4em;
 
+    &.CodeMirror-wrap {
+        padding: $grid/2;
+    }
+
     .CodeMirror-scroll {
         background: var(--background);
         color: var(--color);
-    }
-
-    .CodeMirror-lines {
-        margin: $grid/2;
     }
 
     .CodeMirror-cursor {

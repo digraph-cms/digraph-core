@@ -34,7 +34,7 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
     {
         $column = static::parseJsonRefs($column);
         $q = clone $this->query();
-        $q->group($column)->select("$column as v");
+        $q->asObject(false)->group($column)->select("$column as v");
         $class = get_called_class();
         return array_map(
             function (array $row) use ($class, $column): SubQuery {
