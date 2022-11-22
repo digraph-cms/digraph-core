@@ -30,6 +30,7 @@ class RichContentField extends Field
         if (!$hideMediaEditor) {
             if (Permissions::inMetaGroup('richmedia__edit')) {
                 Sidebar::setActive(false);
+                $this->wrapper->addClass('rich-content-editor__dynamic-editor--richmedia');
                 $this->mediaEditor = (new DIV())
                     ->addClass('rich-content-editor__media-editor');
                 $this->mediaEditorFrame = (new DIV())

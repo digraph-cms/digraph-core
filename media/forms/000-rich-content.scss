@@ -1,8 +1,11 @@
 .rich-content-editor__dynamic-editor {
-    padding-right: 18em;
     border: $border solid var(--theme-neutral);
     border-radius: $border-radius;
     position: relative;
+
+    &.rich-content-editor__dynamic-editor--richmedia {
+        padding-right: 18em;
+    }
 
     .CodeMirror {
         border-radius: 0;
