@@ -11,3 +11,11 @@ body {
 p {
   margin: 0;
 }
+
+a,
+a:link,
+a[onclick],
+a[javascript] {
+  color: $link-normal;
+  text-decoration: underline;
+}
