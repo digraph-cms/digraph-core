@@ -28,6 +28,14 @@ aside {
             margin-bottom: 0;
         }
     }
+
+    &.aside--floated {
+        max-width: 50%;
+        float: right;
+        margin-left: $grid;
+        margin-bottom: $grid;
+        margin-top: $grid;
+    }
 }
 
 @media (min-width: 1.75*$line-length) {

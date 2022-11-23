@@ -22,6 +22,14 @@ figure {
             display: block;
         }
     }
+
+    &.figure--floated {
+        max-width: 50%;
+        float: right;
+        margin-left: $grid;
+        margin-bottom: $grid;
+        margin-top: $grid;
+    }
 }
 
 figcaption {
