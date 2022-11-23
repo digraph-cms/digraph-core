@@ -30,7 +30,8 @@ aside {
     }
 
     &.aside--floated {
-        max-width: 50%;
+        width: 50%;
+        max-width: $line-length;
         float: right;
         margin-left: $grid;
         margin-bottom: $grid;
