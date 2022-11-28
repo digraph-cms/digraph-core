@@ -28,7 +28,7 @@ EOT;
         'CREATE INDEX IF NOT EXISTS digraph_mail_created_IDX ON digraph_mail (mail_created);',
         'CREATE INDEX IF NOT EXISTS digraph_mail_sendafter_IDX ON digraph_mail (mail_sendafter);',
         'CREATE INDEX IF NOT EXISTS digraph_mail_sent_IDX ON digraph_mail (mail_sent);',
-        'CREATE INDEX IF NOT EXISTS digraph_mail_error_IDX ON digraph_mail (data_error);',
+        'CREATE INDEX IF NOT EXISTS digraph_mail_error_IDX ON digraph_mail (mail_error);',
     ];
 
     public function errors(int $offset=null, int $limit=null)
