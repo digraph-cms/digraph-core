@@ -157,7 +157,7 @@ Digraph.setFormSubmittingClass = function (form) {
 
 // popstate handler for back button
 window.addEventListener('popstate', (e) => {
-    if (e.state.url && e.state.frame) {
+    if (e.state && e.state.url && e.state.frame) {
         Digraph.state.get(e.state.url, document.getElementById(e.state.frame));
     };
 });
