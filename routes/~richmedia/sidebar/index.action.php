@@ -16,12 +16,15 @@ Context::response()->template('chromeless.php');
 echo '<div id="' . Context::arg('frame') . '">';
 
 // fancy autocomplete search form
-$form = (new FormWrapper())->addClass('autoform');
+$form = (new FormWrapper())
+    ->addClass('autoform')
+    ->setID(Context::arg('frame') . '_adder');
 $form->button()->setText('Add');
 $adder = (new AutocompleteInput('rich-media-type-search', new URL('/~api/v1/autocomplete/rich-media-type.php')))
     ->addClass('autocomplete-input--autopopulate')
     ->addClass('autocomplete-input--autosubmit')
-    ->setAttribute('placeholder', 'create rich media');
+    ->setAttribute('placeholder', 'create rich media')
+    ->setID('adder');
 $form->addChild($adder);
 echo $form;
 
