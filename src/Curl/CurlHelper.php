@@ -25,7 +25,7 @@ class CurlHelper
         curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
         // execute and return data, store errors if necessary
         $data = curl_exec($handle);
-        if ($data === false) {
+        if ($data === false || curl_getinfo($handle, CURLINFO_HTTP_CODE) != 200) {
             static::$lastError = curl_error($handle);
             static::$lastErrorNumber = curl_errno($handle);
             curl_close($handle);
