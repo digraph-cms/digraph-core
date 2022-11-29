@@ -9,17 +9,6 @@
   width: fit-content;
   max-width: 100%;
 
-  &.card--accent,
-  &.card--light,
-  &.card--dark,
-  &.card--neutral,
-  &.card--info,
-  &.card--confirmation,
-  &.card--warning,
-  &.card--error {
-      @include uncolored-links;
-  }
-
   &.card--accent {
       background: var(--theme-accent);
       color: var(--theme-accent-inv);
@@ -73,6 +62,19 @@
   font-weight: bold;
   font-size: larger;
   margin-bottom: $grid/2;
+}
+
+.file-card,
+.multifile-card,
+.card--accent,
+.card--light,
+.card--dark,
+.card--neutral,
+.card--info,
+.card--confirmation,
+.card--warning,
+.card--error {
+    @include uncolored-links;
 }
 
 /*
