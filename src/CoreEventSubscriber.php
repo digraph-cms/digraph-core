@@ -22,6 +22,7 @@ use DigraphCMS\URL\WaybackMachine;
 use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
+use DOMComment;
 use DOMElement;
 
 use function DigraphCMS\Content\require_file;
@@ -129,6 +130,26 @@ abstract class CoreEventSubscriber
         $response->content(
             DOM::html($response->content())
         );
+    }
+
+    public static function onDOMComment(DOMEvent $e)
+    {
+        /** @var DOMComment */
+        $comment = trim($e->getNode()->textContent);
+        switch ($comment) {
+            case 'wayback-disable-notifications':
+                WaybackMachine::disableNotifications();
+                break;
+            case 'wayback-enable-notifications':
+                WaybackMachine::enableNotifications();
+                break;
+            case 'wayback-disable':
+                WaybackMachine::deactivate();
+                break;
+            case 'wayback-enable':
+                WaybackMachine::activate();
+                break;
+        }
     }
 
     public static function onDOMElement_a(DOMEvent $e)

@@ -18,6 +18,7 @@ use DigraphCMS\UI\Templates;
 class WaybackMachine
 {
     protected static $active = null;
+    protected static $notifications = true;
 
     public static function activate()
     {
@@ -32,6 +33,21 @@ class WaybackMachine
     public static function active(): bool
     {
         return static::$active ?? Config::get('wayback.active');
+    }
+
+    public static function enableNotifications()
+    {
+        static::$notifications = true;
+    }
+
+    public static function disableNotifications()
+    {
+        static::$notifications = false;
+    }
+
+    public static function notifications(): bool
+    {
+        return static::$notifications;
     }
 
     /**
@@ -201,6 +217,7 @@ class WaybackMachine
 
     protected static function sendNotificationEmail(URL $context, $url)
     {
+        if (!static::notifications()) return;
         if (static::noNotifyFlag($url, $context)) return;
         foreach (Config::get('wayback.notify_emails') as $addr) {
             // lock per-recipient
