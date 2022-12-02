@@ -9,8 +9,8 @@ a[data-link-broken] {
 }
 
 a[data-link-wayback] {
-    background-color: var(--cue-warning);
-    color: var(--cue-warning-inv);
+    background-color: var(--cue-danger);
+    color: var(--cue-danger-inv);
 
     &:after {
         content: "history";
