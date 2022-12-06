@@ -33,7 +33,7 @@ $slug = (new Field('URL pattern'))
 $form->addChild($slug);
 
 $name = (new Field('Name'))
-    ->setDefault(Context::page()->name() . ' copy')
+    ->setDefault(Context::page()->name())
     ->setRequired(true);
 $form->addChild($name);
 
@@ -61,9 +61,10 @@ $form->addCallback(function () use ($clones, $parent, $slug, $name) {
     $clonedMedia = [];
     foreach ($clones as $uuid => $field) {
         if ($field->value()) {
+            /** @var AbstractRichMedia */
             $clonedMedia[$uuid] = clone RichMedia::get($uuid);
             $clonedMedia[$uuid]->setUUID(Digraph::uuid());
-            $clonedMedia[$uuid]->setPageUUID($newPage->uuid());
+            $clonedMedia[$uuid]->setParent($newPage->uuid());
             $clonedMedia[$uuid]->insert();
         }
     }
