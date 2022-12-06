@@ -1,0 +1,13 @@
+img.floated,
+picture.floated,
+div.floated,
+aside.floated,
+figure.floated {
+  @media(min-width: $line-length) {
+    float: right;
+    width: $line-length;
+    max-width: 50%;
+    margin: $grid;
+    margin-right: 0;
+  }
+}

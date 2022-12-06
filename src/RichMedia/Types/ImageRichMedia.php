@@ -10,6 +10,7 @@ use DigraphCMS\HTML\Forms\Field;
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTML\Forms\UploadSingle;
 use DigraphCMS\HTML\Icon;
+use DigraphCMS\HTML\IMG;
 use DigraphCMS\HTML\ResponsivePicture;
 use DigraphCMS\RichContent\RichContent;
 use DigraphCMS\RichContent\RichContentField;
@@ -74,6 +75,16 @@ class ImageRichMedia extends AbstractRichMedia
 
     public function shortCode(ShortcodeInterface $code): ?string
     {
+        // if this is a plain image, just return a straight image
+        if ($code->getParameter('plain', 'no') !== 'no') {
+            $file = $this->file()->image();
+            $image = new IMG($file->url(), $this['alt']);
+            if ($code->getParameter('floated', 'no') !== 'no') {
+                $image->addClass('floated');
+            }
+            return $image->__toString();
+        }
+        // try to render responsive picture
         try {
             $image = new ResponsivePicture(
                 $this->file()->image(),
@@ -86,6 +97,7 @@ class ImageRichMedia extends AbstractRichMedia
                 ->addChild('Exception occurred while rendering image')
                 ->toString();
         }
+        // wrap in a figure tag if necessary
         if ($code->getContent()) {
             $figure = (new FIGURE)
                 ->addChild($image)
@@ -102,9 +114,16 @@ class ImageRichMedia extends AbstractRichMedia
                 'background-size:cover',
                 'background-position: center center',
             ]));
-            return $figure->toString();
+            $out = $figure;
+        } else {
+            $out = $image;
         }
-        return $image->toString();
+        // set to float if specified
+        if ($code->getParameter('floated', 'no') !== 'no') {
+            $out->addClass('floated');
+        }
+        // return string
+        return $out->__toString();
     }
 
     public function setCaption(RichContent $caption = null)
