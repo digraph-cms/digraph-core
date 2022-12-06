@@ -21,8 +21,10 @@ class VideoEmbed extends DIV
 
     public static function onVideoEmbed(array $url): ?VideoEmbed
     {
-        if ($url['host'] == 'www.youtube.com' && $url['path'] == '/watch') {
+        if (in_array($url['host'], ['www.youtube.com', 'youtube.com']) && $url['path'] == '/watch') {
             return new YouTubeVideo($url['query']['v']);
+        } elseif (in_array($url['host'], ['www.youtube.com', 'youtube.com']) && $url['path'] == '/playlist') {
+            return new YouTubePlaylist($url['query']['list']);
         } elseif ($url['host'] == 'youtu.be') {
             return new YouTubeVideo(substr($url['path'], 1));
         }
