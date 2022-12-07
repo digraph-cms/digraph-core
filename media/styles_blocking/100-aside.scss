@@ -29,9 +29,10 @@ aside {
             margin-bottom: 0;
         }
     }
+}
 
-    &.aside--block {
-        float: none !important;
-        margin: ($grid * 3) 0 !important;
-    }
+#article>aside:last-child,
+aside.aside--block {
+    float: none !important;
+    margin: ($grid * 3) 0 !important;
 }
