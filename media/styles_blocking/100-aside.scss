@@ -3,7 +3,6 @@ aside {
     padding: $grid;
     box-shadow: var(--shadow);
     box-sizing: border-box;
-    width: fit-content;
     max-width: $line-length;
     border-left: $border solid var(--theme-neutral);
     margin: ($grid * 3) 0;
@@ -35,4 +34,5 @@ aside {
 aside.aside--block {
     float: none !important;
     margin: ($grid * 3) 0 !important;
+    width: auto;
 }
