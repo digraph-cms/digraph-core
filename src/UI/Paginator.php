@@ -30,9 +30,9 @@ class Paginator extends ConditionalContainer
      * to avoid an aesthetically displeasing situation where adding paginators
      * takes up more room than just including a few more items on page one.
      * 
-     * @return int 
+     * @return $this 
      */
-    public function setFudgeFactor(int $factor): static
+    public function setFudgeFactor(int $factor)
     {
         $this->fudgeFactor = $factor;
         return $this;
