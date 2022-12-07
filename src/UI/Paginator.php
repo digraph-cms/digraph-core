@@ -4,13 +4,14 @@ namespace DigraphCMS\UI;
 
 use DigraphCMS\Context;
 use DigraphCMS\HTML\ConditionalContainer;
-use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\URL\URL;
 
 class Paginator extends ConditionalContainer
 {
     protected static $counter = 0;
     protected $myID, $count, $perPage, $groupPages, $breadcrumbUpdated, $pages;
+    /** @var int */
+    protected $fudgeFactor = 2;
 
     public function __construct(?int $itemCount, int $perPage = 10, int $groupPages = 10)
     {
@@ -19,6 +20,35 @@ class Paginator extends ConditionalContainer
         $this->perPage = $perPage;
         $this->groupPages = $groupPages;
         $this->addClass('paginator');
+    }
+
+    /**
+     * Set the "fudge factor" for pagination.
+     * 
+     * If there are only two pages with the set number of items per page, and
+     * fewer than this many items on page two, display will collapse to one page
+     * to avoid an aesthetically displeasing situation where adding paginators
+     * takes up more room than just including a few more items on page one.
+     * 
+     * @return int 
+     */
+    public function setFudgeFactor(int $factor): static
+    {
+        $this->fudgeFactor = $factor;
+        return $this;
+    }
+
+    /**
+     * If there are only two pages with the set number of items per page, and
+     * fewer than this many items on page two, display will collapse to one page
+     * to avoid an aesthetically displeasing situation where adding paginators
+     * takes up more room than just including a few more items on page one.
+     * 
+     * @return int 
+     */
+    public function fudgeFactor(): int
+    {
+        return $this->fudgeFactor;
     }
 
     public function children(): array
@@ -177,6 +207,11 @@ class Paginator extends ConditionalContainer
         if ($perPage) {
             $this->perPage = $perPage;
         }
+        if ($this->count()) {
+            if ($this->count() <= $this->perPage + $this->fudgeFactor()) {
+                return $this->perPage + $this->fudgeFactor();
+            }
+        }
         return $this->perPage;
     }
 
@@ -199,7 +234,7 @@ class Paginator extends ConditionalContainer
     public function pages(): float
     {
         if ($this->pages !== null) return $this->pages;
-        elseif ($this->count !== null) return ceil($this->count / $this->perPage);
+        elseif ($this->count !== null) return ceil($this->count / $this->perPage());
         else return INF;
     }
 
