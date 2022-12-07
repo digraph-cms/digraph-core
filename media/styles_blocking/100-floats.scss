@@ -2,12 +2,14 @@ img.floated,
 picture.floated,
 div.floated,
 aside.floated,
-figure.floated {
-  @media(min-width: $line-length) {
+figure.floated,
+#article aside {
+  @media(min-width: ($line-length*1.5)) {
     float: right;
-    width: $line-length;
-    max-width: 50%;
-    margin: $grid;
-    margin-right: 0;
+    width: 50%;
+    max-width: $line-length;
+    margin: 0;
+    margin-bottom: $grid * 3;
+    margin-left: $grid * 3;
   }
 }
