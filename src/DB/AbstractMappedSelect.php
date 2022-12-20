@@ -131,7 +131,7 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
      * Add to the WHERE clause, defaulting to appending with "AND"
      *
      * @param string|array $condition
-     * @param array $parameters
+     * @param mixed $parameters
      * @param string $separator
      * @return $this
      */
