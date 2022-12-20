@@ -135,6 +135,9 @@ class Permissions
             $groups = array_merge($groups, static::metaGroup($activity . '__admin'));
             // matching editor level metagroup is also part of all level-specified metagroups
             $groups = array_merge($groups, static::metaGroup($activity . '__edit'));
+        } else {
+            // if there is no level specified, just look for the activity as a group id
+            $groups[] = $activity;
         }
         return array_unique($groups);
     }

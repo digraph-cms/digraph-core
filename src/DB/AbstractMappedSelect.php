@@ -130,7 +130,7 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
     /**
      * Add to the WHERE clause, defaulting to appending with "AND"
      *
-     * @param string|array $condition
+     * @param string|array<mixed,string> $condition
      * @param mixed $parameters
      * @param string $separator
      * @return $this
@@ -202,8 +202,8 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
     /**
      * Shorthand to add WHERE with an "OR" separator
      *
-     * @param string|array $condition
-     * @param array $parameters
+     * @param string|array<mixed,string> $condition
+     * @param mixed $parameters
      * @param string $separator
      * @return $this
      */
