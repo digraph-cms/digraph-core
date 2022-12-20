@@ -11,7 +11,6 @@ use DigraphCMS\RichContent\RichContent;
 use DigraphCMS\Session\Cookies;
 use DigraphCMS\Session\Session;
 use DigraphCMS\UI\Breadcrumb;
-use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\Templates;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\User;
