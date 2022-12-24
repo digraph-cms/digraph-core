@@ -90,10 +90,10 @@ final class Session
     {
         static::$auth = $auth;
         // check for different IP address
-        if ($auth->ip() != $_SERVER['REMOTE_ADDR']) {
-            static::deauthenticate("IP address changed (" . $_SERVER['REMOTE_ADDR'] . ")");
-            return;
-        }
+        // if ($auth->ip() != $_SERVER['REMOTE_ADDR']) {
+        //     static::deauthenticate("IP address changed (" . $_SERVER['REMOTE_ADDR'] . ")");
+        //     return;
+        // }
         // check for different user agent
         if (static::browserPlatform($auth->ua()) != static::browserPlatform()) {
             static::deauthenticate("Browser/OS changed (" . static::fullBrowser() . ")");
