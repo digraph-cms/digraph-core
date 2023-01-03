@@ -2,6 +2,9 @@
 
 use DigraphCMS\UI\Format;
 use DigraphCMS\Users\Group;
+use DigraphCMS\Users\User;
+
+/** @var User $user */
 
 printf(
     "<p>Account registered %s</p>",

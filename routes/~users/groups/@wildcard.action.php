@@ -4,7 +4,6 @@ use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\UI\Pagination\UserTable;
-use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
 use DigraphCMS\Users\UserSelect;
 
@@ -25,12 +24,5 @@ $users = new UserSelect(
 
 echo "<h1>" . ucfirst($group->name()) . "</h1>";
 
-$table = new UserTable(
-    $users,
-    function (User $user) {
-        return [
-            $user->uuid()
-        ];
-    }
-);
+$table = new UserTable($users);
 echo $table;

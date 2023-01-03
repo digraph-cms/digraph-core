@@ -7,12 +7,13 @@ use DigraphCMS\Cache\Cache;
 use DigraphCMS\Events\Dispatcher;
 use Envms\FluentPDO\Queries\Select;
 use PDOStatement;
+use Traversable;
 
 /**
  * Wraps an FPDO Select object in an analogous interface, but converts results
  * into objects on the fly.
  */
-abstract class AbstractMappedSelect implements \Countable, \Iterator
+abstract class AbstractMappedSelect implements \Countable, \IteratorAggregate
 {
     protected $query, $iterator;
     protected $returnDataObjects = true;
@@ -90,7 +91,7 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
      *
      * @param string $columns
      * @param boolean $overrideDefault
-     * @return $this
+     * @return static
      */
     public function select($columns, bool $overrideDefault = false)
     {
@@ -133,12 +134,12 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
      * @param string|array<mixed,string> $condition
      * @param mixed $parameters
      * @param string $separator
-     * @return $this
+     * @return static
      */
-    public function where($condition, $parameters = [], $separator = "AND")
+    public function where($condition, $parameters = null, $separator = "AND")
     {
         $condition = $this->parseJsonRefs($condition);
-        $this->query->where($condition, $parameters, $separator);
+        $this->query->where($condition, $parameters ?? [], $separator);
         return $this;
     }
 
@@ -150,7 +151,7 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
      * @param boolean $wildCardBefore
      * @param boolean $wildCardAfter
      * @param string $separator
-     * @return $this
+     * @return static
      */
     public function like(string $column, string $pattern, bool $wildCardBefore = true, bool $wildCardAfter = true, $separator = "AND")
     {
@@ -169,7 +170,7 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
      * @param boolean $wildCardBefore
      * @param boolean $wildCardAfter
      * @param string $separator
-     * @return $this
+     * @return static
      */
     public function notLike(string $column, string $pattern, bool $wildCardBefore = true, bool $wildCardAfter = true, $separator = "AND")
     {
@@ -205,7 +206,7 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
      * @param string|array<mixed,string> $condition
      * @param mixed $parameters
      * @param string $separator
-     * @return $this
+     * @return static
      */
     public function whereOr($condition, $parameters = [], $separator = "AND")
     {
@@ -228,7 +229,7 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
      * Add an ORDER BY clause. Pass null to reset.
      *
      * @param ?string $column
-     * @return $this
+     * @return static
      */
     public function order(?string $column)
     {
@@ -242,7 +243,7 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
      *
      * @param string $column
      * @param array|mixed $parameters
-     * @return $this
+     * @return static
      */
     public function having(string $column, $parameters = [])
     {
@@ -254,7 +255,7 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
      * Add a LIMIT clause
      *
      * @param integer $column
-     * @return $this
+     * @return static
      */
     public function limit(int $column)
     {
@@ -266,7 +267,7 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
      * Add an OFFSET clause
      *
      * @param integer $column
-     * @return $this
+     * @return static
      */
     public function offset(int $column)
     {
@@ -278,7 +279,7 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
      * Add a GROUP BY clause
      *
      * @param string $column
-     * @return $this
+     * @return static
      */
     public function group(string $column)
     {
@@ -350,9 +351,9 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
      * Build an iterator to use for passing through calls to \Iterable
      * interface methods
      *
-     * @return \ArrayIterator|\PDOStatement
+     * @return \ArrayIterator<int,object|array<mixed>>|\PDOStatement
      */
-    protected function getIterator()
+    public function getIterator(): Traversable
     {
         if ($this->iterator === null) {
             $this->iterator = $this->query->getIterator();
@@ -369,48 +370,5 @@ abstract class AbstractMappedSelect implements \Countable, \Iterator
     public function count(): int
     {
         return $this->query->count();
-    }
-
-    public function current()
-    {
-        if ($this->returnDataObjects) {
-            return static::rowToObject($this->getIterator()->current());
-        } else {
-            $this->getIterator()->current();
-        }
-    }
-
-    public function key()
-    {
-        return $this->getIterator()->key();
-    }
-
-    public function next(): void
-    {
-        $this->getIterator()->next();
-    }
-
-    /**
-     * rewinding will work in the full-performance way if everything supports it
-     * otherwise it will call fetchAll and convert the internal iterator into
-     * an ArrayIterator.
-     * 
-     * This kinda gets the best of both worlds, by allowing maximum performance
-     * when rewind isn't needed, but minimum memory usage when it isn't.
-     *
-     * @return void
-     */
-    public function rewind(): void
-    {
-        if (method_exists($this->getIterator(), 'rewind')) {
-            $this->getIterator()->rewind();
-        } else {
-            $this->iterator = new ArrayIterator($this->getIterator()->fetchAll());
-        }
-    }
-
-    public function valid(): bool
-    {
-        return $this->getIterator()->valid();
     }
 }

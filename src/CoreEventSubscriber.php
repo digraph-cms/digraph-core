@@ -4,6 +4,7 @@ namespace DigraphCMS;
 
 use DigraphCMS\Content\Filestore;
 use DigraphCMS\Content\AbstractPage;
+use DigraphCMS\Content\FilestoreFile;
 use DigraphCMS\Content\Pages;
 use DigraphCMS\Content\Slugs;
 use DigraphCMS\DOM\CodeHighlighter;
@@ -86,6 +87,7 @@ abstract class CoreEventSubscriber
             'parent = ?',
             [$media->uuid()]
         );
+        /** @var FilestoreFile $file */
         foreach ($files as $file) {
             $file->delete();
         }

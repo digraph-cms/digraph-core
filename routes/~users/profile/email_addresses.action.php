@@ -105,7 +105,7 @@ function controlsCell(User $user, int $i, array $row)
     $controls = '';
     // make primary button for non-primary verified emails
     if (!@$row['primary'] && !@$row['verification']) {
-        $controls .= new ToolbarLink('Make primary', 'star', function () use ($user, $i, $row) {
+        $controls .= new ToolbarLink('Make primary', 'star', function () use ($user, $row) {
             $user->setPrimaryEmail($row['address']);
             $user->update();
             Notifications::flashConfirmation('Primary email set: ' . $row['address']);

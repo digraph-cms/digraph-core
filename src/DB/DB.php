@@ -7,6 +7,7 @@ use DigraphCMS\Digraph;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\Users\Permissions;
 use Envms\FluentPDO\Query;
+use Exception;
 use PDO;
 use PDOException;
 
@@ -129,7 +130,11 @@ class DB
                         break;
                 }
             } catch (\Throwable $th) {
-                throw new DBConnectionException("Error setting up PDO: " . $th->getMessage());
+                if ($th instanceof Exception) {
+                    throw new DBConnectionException("Error setting up PDO: " . $th->getMessage());
+                } else {
+                    throw new DBConnectionException("Error setting up PDO: " . get_class($th));
+                }
             }
             // throw exceptions on PDO errors
             self::$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

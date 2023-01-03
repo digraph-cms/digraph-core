@@ -82,7 +82,11 @@ echo (new FormWrapper(Context::pageUUID() . '_urls'))
             $page->update();
             Notifications::flashConfirmation('URL updated');
         } catch (\Throwable $th) {
-            Notifications::flashError($th->getMessage());
+            if ($th instanceof Exception) {
+                Notifications::flashError($th->getMessage());
+            } else {
+                Notifications::flashError(get_class($th));
+            }
         }
         // refresh page
         throw new RefreshException();

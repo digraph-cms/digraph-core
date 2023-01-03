@@ -8,6 +8,7 @@ use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Media\Media;
 use DigraphCMS\UI\Templates;
+use Exception;
 use Html2Text\Html2Text;
 use PHPMailer\PHPMailer\PHPMailer;
 use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
@@ -159,7 +160,11 @@ class Emails
                 $mailer->AltBody = static::prepareBody_text($email);
                 $mailer->send();
             } catch (\Throwable $th) {
-                $email->setError($th->getMessage() . ' (' . get_class($th) . ')');
+                if ($th instanceof Exception) {
+                    $email->setError($th->getMessage() . ' (' . get_class($th) . ')');
+                } else {
+                    $email->setError(get_class($th));
+                }
             }
         } else {
             // sending emails is disabled, record error in log

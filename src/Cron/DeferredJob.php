@@ -7,6 +7,7 @@ use DigraphCMS\Cache\Locking;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Digraph;
 use DigraphCMS\Session\Session;
+use Exception;
 
 class DeferredJob
 {
@@ -49,7 +50,11 @@ class DeferredJob
             $message = strval(call_user_func($this->job, $this));
             $error = false;
         } catch (\Throwable $th) {
-            $message = get_class($th) . ': ' . $th->getMessage();
+            if ($th instanceof Exception) {
+                $message = get_class($th) . ': ' . $th->getMessage();
+            } else {
+                $message = get_class($th);
+            }
             $error = true;
         }
         // write result to db

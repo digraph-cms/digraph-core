@@ -13,7 +13,6 @@ use DigraphCMS\UI\Pagination\ColumnDateFilteringHeader;
 use DigraphCMS\UI\Pagination\ColumnHeader;
 use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\Users\Users;
-use donatj\UserAgent\UserAgentParser;
 
 $user = Users::get(Context::arg('id') ?? Session::user());
 if (!$user) {
@@ -27,10 +26,9 @@ $query = DB::query()
     ->where('session.user_uuid = ?', [$user->uuid()])
     ->order('session.created desc');
 
-$parser = new UserAgentParser();
 $table = new PaginatedTable(
     $query,
-    function (array $row) use ($parser) {
+    function (array $row) {
         return [
             Format::date($row['created']),
             $row['comment'],

@@ -8,9 +8,13 @@
 use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
 use DigraphCMS\HTTP\RefreshException;
+use DigraphCMS\Session\CookieRequiredError;
 use DigraphCMS\Session\Cookies;
 
-echo $form = Cookies::form(Context::thrown()->cookieTypes(), true, true);
+/** @var CookieRequiredError */
+$thrown = Context::thrown();
+
+echo $form = Cookies::form($thrown->cookieTypes(), true, true);
 if ($form->ready()) {
     throw new RefreshException();
 }

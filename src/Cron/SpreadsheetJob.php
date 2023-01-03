@@ -62,7 +62,11 @@ class SpreadsheetJob extends DeferredJob
             return "Set up $count spreadsheet processing jobs";
         } catch (Throwable $th) {
             DB::rollback();
-            throw new Exception("Error processing spreadsheet $file: " . get_class($th) . ":" . $th->getMessage());
+            if ($th instanceof Exception) {
+                throw new Exception("Error processing spreadsheet $file: " . get_class($th) . ': ' . $th->getMessage());
+            } else {
+                throw new Exception("Error processing spreadsheet $file: " . get_class($th));
+            }
         }
     }
 }

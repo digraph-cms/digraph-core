@@ -20,10 +20,11 @@ use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
+use Flatrr\FlatArrayInterface;
 use Flatrr\FlatArrayTrait;
 use Throwable;
 
-abstract class AbstractPage implements ArrayAccess
+abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
 {
     use FlatArrayTrait {
         set as protected rawSet;

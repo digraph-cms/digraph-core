@@ -7,6 +7,7 @@ use DigraphCMS\Cache\Locking;
 use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Session\Session;
+use Exception;
 
 class CronJob
 {
@@ -67,7 +68,11 @@ class CronJob
         } catch (\Throwable $th) {
             $error = true;
             $row['error_time'] = time();
-            $row['error_message'] = get_class($th) . ': ' . $th->getMessage();
+            if ($th instanceof Exception) {
+                $row['error_message'] = get_class($th) . ': ' . $th->getMessage();
+            } else {
+                $row['error_message'] = get_class($th);
+            }
         }
         // save results to db
         DB::query()

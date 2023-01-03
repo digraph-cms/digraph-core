@@ -18,7 +18,9 @@ if (Config::get('errors.display_trace')) {
     echo "<section class='stack-trace'>";
     echo "<h1>Stack trace:<br>" . get_class($thrown) . "</h1>";
     echo "<div class='error'>";
-    echo "<strong>" . htmlentities($thrown->getMessage()) . "</strong>";
+    if ($thrown instanceof Exception) {
+        echo "<strong>" . htmlentities($thrown->getMessage()) . "</strong>";
+    }
     echo '<br>';
     echo $trim($thrown->getFile()) . ':' . $thrown->getLine();
     echo "</div>";

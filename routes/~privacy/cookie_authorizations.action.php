@@ -14,7 +14,7 @@ Context::response()->private(true);
     The current browser session has authorized the following cookies to be stored or updated on this computer.
     <?php
     if (Cookies::get('system', 'cookierules')) {
-        if ($expiration = Cookies::expiration('system', 'cookierules')) {
+        if ($expiration = Cookies::expiration('system')) {
             echo "These selections will automatically expire after $expiration, but any already-set cookies may persist longer than that.";
         } else {
             echo "These selections will automatically expire when you close your  browser, but any already-set cookies may persist longer than that.";

@@ -2,6 +2,9 @@
 
 use DigraphCMS\Content\Pages;
 use DigraphCMS\UI\Pagination\PageTable;
+use DigraphCMS\Users\User;
+
+/** @var User $user */
 
 $pages = Pages::select()
     ->where('(page.created_by = ? OR page.updated_by = ?)', [$user->uuid(), $user->uuid()])

@@ -78,7 +78,11 @@ $fn = function () use ($tabs) {
                 Pages::insertLink($target->value(), Context::pageUUID(), $type->value());
             }
         } catch (\Throwable $th) {
-            Notifications::flashError($th->getMessage());
+            if ($th instanceof Exception) {
+                Notifications::flashError($th->getMessage());
+            } else {
+                Notifications::flashError(get_class($th));
+            }
         }
         throw new RefreshException();
     });
