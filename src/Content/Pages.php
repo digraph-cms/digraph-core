@@ -140,10 +140,13 @@ class Pages
      * match will take precedence, followed by the oldest creation date primary 
      * slug match, followed by the oldest alternate slug match.
      *
+     * @template T of AbstractPage
+     * 
      * @param string|null $uuid_or_slug
-     * @return AbstractPage|null
+     * @param class-string<T> $class
+     * @return T|null
      */
-    public static function get(?string $uuid_or_slug): ?AbstractPage
+    public static function get(?string $uuid_or_slug, string $class = AbstractPage::class): ?AbstractPage
     {
         if (!$uuid_or_slug) return null;
         if (!isset(static::$cache[$uuid_or_slug])) {
@@ -151,7 +154,12 @@ class Pages
                 self::doGetByUUID($uuid_or_slug) ??
                 self::doGetBySlug($uuid_or_slug);
         }
-        return static::$cache[$uuid_or_slug];
+        if (static::$cache[$uuid_or_slug]) {
+            if (static::$cache[$uuid_or_slug] instanceof $class) {
+                return static::$cache[$uuid_or_slug];
+            }
+        }
+        return null;
     }
 
     protected static function doGetByUUID(string $uuid_or_slug): ?AbstractPage
