@@ -1,5 +1,6 @@
 <?php
 /* Digraph Core | https://github.com/digraph-cms/digraph-core | MIT License */
+
 namespace Digraph;
 
 use Destructr\Drivers\AbstractDriver;
@@ -111,6 +112,12 @@ class CMS
                 $qids = array_unique($qids);
             }
             $qids = array_map([$search, 'quote'], $qids);
+            $qids = array_filter($qids, function ($e) {
+                return !preg_match(
+                    '/[^a-z0-9\/' . preg_quote($this->helper('slugs')::CHARS) . ']/i',
+                    $e
+                );
+            });
             $search->where('${dso.id} in (' . implode(",", $qids) . ')');
             $result = $search->execute();
             if ($result) {
@@ -139,6 +146,12 @@ class CMS
                 $qids = array_unique($qids);
             }
             $qids = array_map([$search, 'quote'], $qids);
+            $qids = array_filter($qids, function ($e) {
+                return !preg_match(
+                    '/[^a-z0-9\/' . preg_quote($this->helper('slugs')::CHARS) . ']/i',
+                    $e
+                );
+            });
             $search->where('${dso.id} in (' . implode(",", $qids) . ')');
             $result = @array_shift($search->execute());
             if ($result) {
