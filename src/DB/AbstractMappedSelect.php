@@ -139,7 +139,7 @@ abstract class AbstractMappedSelect implements Iterator, Countable
      * @param string $separator
      * @return static
      */
-    public function where($condition, $parameters = [], $separator = "AND")
+    public function where(mixed $condition, mixed $parameters = null, string $separator = "AND")
     {
         $condition = $this->parseJsonRefs($condition);
         $this->query->where($condition, $parameters, $separator);
@@ -207,14 +207,13 @@ abstract class AbstractMappedSelect implements Iterator, Countable
      * Shorthand to add WHERE with an "OR" separator
      *
      * @param string|array<mixed,string> $condition
-     * @param mixed $parameters
-     * @param string $separator
+     * @param string|int|float|array<int|string,string|int|float> $parameters
      * @return static
      */
-    public function whereOr($condition, $parameters = [], $separator = "AND")
+    public function whereOr(mixed $condition, mixed $parameters = null)
     {
         $condition = $this->parseJsonRefs($condition);
-        $this->query->whereOr($condition, $parameters, $separator);
+        $this->query->whereOr($condition, $parameters);
         return $this;
     }
 
