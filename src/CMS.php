@@ -101,6 +101,12 @@ class CMS
             return [];
         }
         $q = trim($q, "/ \t\n\r\0\x0B");
+        if (preg_match(
+            '/[^a-z0-9\/' . preg_quote($this->helper('slugs')::CHARS) . ']/i',
+            $q
+        )) {
+            return null;
+        }
         $id = md5(serialize(['locate', $q, $slugs]));
         if ($recache || !isset($this->readCache[$id])) {
             $search = $this->factory()->search();
@@ -112,12 +118,6 @@ class CMS
                 $qids = array_unique($qids);
             }
             $qids = array_map([$search, 'quote'], $qids);
-            $qids = array_filter($qids, function ($e) {
-                return !preg_match(
-                    '/[^a-z0-9\/' . preg_quote($this->helper('slugs')::CHARS) . ']/i',
-                    $e
-                );
-            });
             $search->where('${dso.id} in (' . implode(",", $qids) . ')');
             $result = $search->execute();
             if ($result) {
@@ -135,10 +135,16 @@ class CMS
             return null;
         }
         $q = trim($q, "/ \t\n\r\0\x0B");
+        if (preg_match(
+            '/[^a-z0-9\/' . preg_quote($this->helper('slugs')::CHARS) . ']/i',
+            $q
+        )) {
+            return null;
+        }
         $id = md5(serialize(['read', $q, $slugs]));
         if ($recache || !isset($this->readCache[$id])) {
             $search = $this->factory()->search();
-            $qids = [$q];
+            $qids = [];
             if ($slugs) {
                 foreach ($this->helper('slugs')->nouns($q) as $sid) {
                     $qids[] = $sid;
@@ -146,12 +152,6 @@ class CMS
                 $qids = array_unique($qids);
             }
             $qids = array_map([$search, 'quote'], $qids);
-            $qids = array_filter($qids, function ($e) {
-                return !preg_match(
-                    '/[^a-z0-9\/' . preg_quote($this->helper('slugs')::CHARS) . ']/i',
-                    $e
-                );
-            });
             $search->where('${dso.id} in (' . implode(",", $qids) . ')');
             $result = @array_shift($search->execute());
             if ($result) {
