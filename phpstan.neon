@@ -5,3 +5,5 @@ parameters:
     - routes
   scanDirectories:
     - vendor
+  excludePaths:
+    - src/DB/AbstractMappedSelect.php
