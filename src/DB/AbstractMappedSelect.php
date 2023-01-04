@@ -139,7 +139,7 @@ abstract class AbstractMappedSelect implements Iterator, Countable
      * @param string $separator
      * @return static
      */
-    public function where(mixed $condition, mixed $parameters = null, string $separator = "AND")
+    public function where($condition, $parameters = null, string $separator = "AND")
     {
         $condition = $this->parseJsonRefs($condition);
         $this->query->where($condition, $parameters, $separator);
@@ -210,7 +210,7 @@ abstract class AbstractMappedSelect implements Iterator, Countable
      * @param string|int|float|array<int|string,string|int|float> $parameters
      * @return static
      */
-    public function whereOr(mixed $condition, mixed $parameters = null)
+    public function whereOr($condition, $parameters = null)
     {
         $condition = $this->parseJsonRefs($condition);
         $this->query->whereOr($condition, $parameters);
