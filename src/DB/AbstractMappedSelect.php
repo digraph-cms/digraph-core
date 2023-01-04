@@ -94,7 +94,7 @@ abstract class AbstractMappedSelect implements Iterator, Countable
      *
      * @param string $columns
      * @param boolean $overrideDefault
-     * @return $this
+     * @return static
      */
     public function select($columns, bool $overrideDefault = false)
     {
@@ -135,9 +135,9 @@ abstract class AbstractMappedSelect implements Iterator, Countable
      * Add to the WHERE clause, defaulting to appending with "AND"
      *
      * @param string|array<mixed,string> $condition
-     * @param mixed $parameters
+     * @param string|int|float|array<int|string,string|int|float> $parameters
      * @param string $separator
-     * @return $this
+     * @return static
      */
     public function where($condition, $parameters = [], $separator = "AND")
     {
@@ -154,7 +154,7 @@ abstract class AbstractMappedSelect implements Iterator, Countable
      * @param boolean $wildCardBefore
      * @param boolean $wildCardAfter
      * @param string $separator
-     * @return $this
+     * @return static
      */
     public function like(string $column, string $pattern, bool $wildCardBefore = true, bool $wildCardAfter = true, $separator = "AND")
     {
@@ -173,7 +173,7 @@ abstract class AbstractMappedSelect implements Iterator, Countable
      * @param boolean $wildCardBefore
      * @param boolean $wildCardAfter
      * @param string $separator
-     * @return $this
+     * @return static
      */
     public function notLike(string $column, string $pattern, bool $wildCardBefore = true, bool $wildCardAfter = true, $separator = "AND")
     {
@@ -209,7 +209,7 @@ abstract class AbstractMappedSelect implements Iterator, Countable
      * @param string|array<mixed,string> $condition
      * @param mixed $parameters
      * @param string $separator
-     * @return $this
+     * @return static
      */
     public function whereOr($condition, $parameters = [], $separator = "AND")
     {
@@ -232,7 +232,7 @@ abstract class AbstractMappedSelect implements Iterator, Countable
      * Add an ORDER BY clause. Pass null to reset.
      *
      * @param ?string $column
-     * @return $this
+     * @return static
      */
     public function order(?string $column)
     {
@@ -246,7 +246,7 @@ abstract class AbstractMappedSelect implements Iterator, Countable
      *
      * @param string $column
      * @param array|mixed $parameters
-     * @return $this
+     * @return static
      */
     public function having(string $column, $parameters = [])
     {
@@ -258,7 +258,7 @@ abstract class AbstractMappedSelect implements Iterator, Countable
      * Add a LIMIT clause
      *
      * @param integer $column
-     * @return $this
+     * @return static
      */
     public function limit(int $column)
     {
@@ -270,7 +270,7 @@ abstract class AbstractMappedSelect implements Iterator, Countable
      * Add an OFFSET clause
      *
      * @param integer $column
-     * @return $this
+     * @return static
      */
     public function offset(int $column)
     {
@@ -282,7 +282,7 @@ abstract class AbstractMappedSelect implements Iterator, Countable
      * Add a GROUP BY clause
      *
      * @param string $column
-     * @return $this
+     * @return static
      */
     public function group(string $column)
     {
@@ -354,7 +354,7 @@ abstract class AbstractMappedSelect implements Iterator, Countable
      * Build an iterator to use for passing through calls to \Iterable
      * interface methods
      *
-     * @return \ArrayIterator|\PDOStatement
+     * @return \ArrayIterator<int,array|object>|\PDOStatement
      */
     protected function getIterator()
     {
@@ -375,7 +375,7 @@ abstract class AbstractMappedSelect implements Iterator, Countable
         return $this->query->count();
     }
 
-    public function current()
+    public function current(): mixed
     {
         if ($this->returnDataObjects) {
             return static::rowToObject($this->getIterator()->current());
@@ -384,7 +384,7 @@ abstract class AbstractMappedSelect implements Iterator, Countable
         }
     }
 
-    public function key()
+    public function key(): mixed
     {
         return $this->getIterator()->key();
     }
