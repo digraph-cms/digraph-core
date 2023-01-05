@@ -57,6 +57,7 @@ abstract class Digraph
         }
         // last resort error message
         catch (\Throwable $th) {
+            ExceptionLog::log($th);
             http_response_code(500);
             echo Templates::fallbackError($th);
         }
@@ -284,6 +285,7 @@ abstract class Digraph
                 Templates::wrapResponse(Context::response());
             }
         } catch (DBConnectionException $ex) {
+            ExceptionLog::log($th);
             // generate a fallback error page for DB connection errors, we use the fallback template because a
             // broken db connection breaks a LOT of things
             Context::response()->template('fallback.php');
@@ -311,6 +313,9 @@ abstract class Digraph
             } catch (HttpError $error) {
                 // generate exception-handling page
                 try {
+                    if ($error->status() >= 500) {
+                        ExceptionLog::log($error);
+                    }
                     static::buildErrorContent($error->status(), $error->getMessage());
                     Templates::wrapResponse(Context::response());
                 } catch (RedirectException $r) {
@@ -322,6 +327,7 @@ abstract class Digraph
                     // generate a fallback exception handling error page
                     if (!Dispatcher::firstValue('onException_' . substr(get_class($th), (strrpos(get_class($th), '\\') ?: -1) + 1), [$th])) {
                         if (!Dispatcher::firstValue('onException', [$th])) {
+                            ExceptionLog::log($th);
                             static::buildErrorContent(500.1);
                         }
                     }

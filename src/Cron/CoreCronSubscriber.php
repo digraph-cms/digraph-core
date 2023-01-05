@@ -145,6 +145,26 @@ class CoreCronSubscriber
 
     public static function cronJob_maintenance_heavy()
     {
+        // expire old exception logs
+        new DeferredJob(
+            function () {
+                $path = Config::get('paths.storage') . '/exception_log';
+                $dayDirs = array_reverse(glob("$path/" . str_repeat('[0123456789]', 8), GLOB_ONLYDIR | GLOB_NOSORT));
+                $expires = intval(date('Ymd', time() - (86400 * 30)));
+                $count = 0;
+                foreach ($dayDirs as $dayDir) {
+                    if (intval(basename($dayDir)) < $expires) {
+                        foreach (glob("$dayDir/*") as $file) {
+                            unlink($file);
+                            $count++;
+                        }
+                        rmdir($dayDir);
+                    }
+                }
+                return "Expired $count old exception logs";
+            },
+            'core_maintenance_heavy'
+        );
         // do periodic maintenance on all pages
         new DeferredJob(
             function (DeferredJob $job) {

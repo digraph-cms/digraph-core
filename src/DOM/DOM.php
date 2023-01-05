@@ -20,7 +20,7 @@ class DOM
         $fragment = $fragment ?? strpos($html, '<html') === false;
 
         return Cache::get(
-            'dom/html/' . md5($html),
+            'dom/html/' . md5(serialize([$html,$fragment])),
             function () use ($html, $fragment) {
                 // parse fragment
                 if ($fragment) {
