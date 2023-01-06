@@ -5,9 +5,11 @@ namespace DigraphCMS;
 use DigraphCMS\Cache\Locking;
 use DigraphCMS\Email\Email;
 use DigraphCMS\Email\Emails;
+use DigraphCMS\RichContent\RichContent;
 use DigraphCMS\Session\Session;
 use DigraphCMS\UI\Format;
 use DigraphCMS\URL\URL;
+use Exception;
 use Throwable;
 use ZipArchive;
 
@@ -54,19 +56,34 @@ class ExceptionLog
                         method_exists($th, 'getMessage') ? $th->getMessage() : 'No message: ' . get_class($th)
                     ),
                     sprintf(
-                        'As of %s there have been %s other errors logged today',
+                        'As of %s there have been <a href="%s">%s other errors logged today</a>',
                         Format::time(time()),
+                        new URL('/~admin/exception_log/'),
                         count(glob("$path/*.json"))
                     )
                 ]);
+                $sent = false;
                 try {
                     // try to send mail using proper system
                     Emails::send(
-                        Email::newForEmail('service', $address, $subject, $body)
+                        $msg = Email::newForEmail('service', $address, $subject, new RichContent($body))
                     );
+                    if ($msg->error()) {
+                        $body .= '<br>Additional email system error: ' . $msg->error();
+                        $sent = false;
+                    }else {
+                        $sent = true;
+                    }
                 } catch (\Throwable $th) {
-                    // fall back to trying to use mail() function
-                    mail($address, $subject, $body);
+                    $sent = false;
+                    $body .= '<br>Additional email system error: ' . get_class($th);
+                    if (method_exists($th, 'getMessage')) $body .= '<br>Message: ' . $th->getMessage();
+                }
+                // fall back to trying to use mail() function
+                if (!$sent) {
+                    $headers = "MIME-Version: 1.0" . "\r\n";
+                    $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+                    mail($address, $subject, $body, $headers);
                 }
             }
         }
@@ -103,7 +120,7 @@ class ExceptionLog
             method_exists($th, 'getMessage') ? $th->getMessage() : null,
         ]));
         try {
-            return false !== Locking::lock('exception_log/' . $hash, false, Config::get('exception_log.notify_frequency'));
+            return !!Locking::lock('exception_log/' . $hash, false, Config::get('exception_log.notify_frequency'));
         } catch (\Throwable $th) {
             return true;
         }
@@ -125,7 +142,7 @@ class ExceptionLog
                     }
                     return $e;
                 },
-                method_exists($th,'getTrace') ? $th->getTrace() : []
+                method_exists($th, 'getTrace') ? $th->getTrace() : []
             ),
             'previous' => method_exists($th, 'getPrevious') ? static::throwableArray($th->getPrevious()) : null,
         ];
@@ -133,6 +150,11 @@ class ExceptionLog
 
     protected static function shortenPath(string $path): string
     {
-        return preg_replace('/^' . preg_quote(dirname(Config::get('paths.base'))) . '/i', '', $path);
+        $base = dirname(Config::get('paths.base'));
+        if (substr($path, 0, strlen($base)) == $base) {
+            return substr($path, strlen($base));
+        } else {
+            return $path;
+        }
     }
 }

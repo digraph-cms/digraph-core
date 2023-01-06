@@ -35,7 +35,7 @@ echo "<h2>Error message and trace</h2>";
 displayThrownLogData($data['thrown']);
 
 echo "<h2>User info</h2>";
-if (false && $data['user'] !== 'guest') {
+if ($data['user'] !== 'guest') {
     $user = Users::user($data['user']);
     echo "<p>User: $user</p>";
     $query = DB::query()
