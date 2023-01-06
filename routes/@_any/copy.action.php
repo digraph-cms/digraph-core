@@ -11,6 +11,7 @@ use DigraphCMS\HTML\Forms\FIELDSET;
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\RichMedia\RichMedia;
+use DigraphCMS\RichMedia\Types\AbstractRichMedia;
 use DigraphCMS\UI\Notifications;
 
 $form = new FormWrapper('copy-' . Context::pageUUID());
@@ -42,6 +43,7 @@ $clones = [];
 if ($media->count() && Context::page()->allRichContent()) {
     $group = new FIELDSET('Create new copies of rich media');
     $group->addChild('<p><small>By default rich media is not copied, and the new page will continue to reference the rich media attached to the original page. Check any rich media you would like to clone a copy of for the new page instead. The system will attempt to automatically update any embed tags to point to the new cloned media, but you should double check them.</small></p>');
+    /** @var AbstractRichMedia $m */
     foreach ($media as $m) {
         $group->addChild(
             $clones[$m->uuid()] = new CheckboxField($m->name())

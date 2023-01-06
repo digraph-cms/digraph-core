@@ -285,7 +285,7 @@ abstract class Digraph
                 Templates::wrapResponse(Context::response());
             }
         } catch (DBConnectionException $ex) {
-            ExceptionLog::log($th);
+            ExceptionLog::log($ex);
             // generate a fallback error page for DB connection errors, we use the fallback template because a
             // broken db connection breaks a LOT of things
             Context::response()->template('fallback.php');

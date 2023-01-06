@@ -11,6 +11,10 @@ rich_media_types:
   table: \DigraphCMS\RichMedia\Types\TableRichMedia
   zip: \DigraphCMS\RichMedia\Types\ZipRichMedia
 
+exception_log:
+  notify_emails: []
+  notify_frequency: 3600
+  
 curl:
   fallback_cafile: null # Allow a specific fallback CA file to be used
   use_fallback_cafile: false # Use built-in fallback CA file instead of relying on server's config

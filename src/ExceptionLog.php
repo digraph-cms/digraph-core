@@ -2,7 +2,12 @@
 
 namespace DigraphCMS;
 
+use DigraphCMS\Cache\Locking;
+use DigraphCMS\Email\Email;
+use DigraphCMS\Email\Emails;
 use DigraphCMS\Session\Session;
+use DigraphCMS\UI\Format;
+use DigraphCMS\URL\URL;
 use Throwable;
 use ZipArchive;
 
@@ -29,6 +34,42 @@ class ExceptionLog
             '_FILES' => $_FILES,
             'thrown' => static::throwableArray($th)
         ];
+        // send email if lock isn't exceeded
+        if (static::shouldSendMail($th)) {
+            foreach (Config::get('exception_log.notify_emails') as $address) {
+                $subject = implode(' ', [
+                    'Site Error:',
+                    method_exists($th, 'getMessage') ? $th->getMessage() : get_class($th),
+                    Context::url(),
+                ]);
+                $body = implode('<br>', [
+                    sprintf(
+                        '<a href="%s">A new error</a> has been logged at <a href="%s">%s</a>',
+                        new URL("/~admin/exception_log/log:$time $uuid"),
+                        Context::url(),
+                        Context::url()
+                    ),
+                    sprintf(
+                        'Error message: %s',
+                        method_exists($th, 'getMessage') ? $th->getMessage() : 'No message: ' . get_class($th)
+                    ),
+                    sprintf(
+                        'As of %s there have been %s other errors logged today',
+                        Format::time(time()),
+                        count(glob("$path/*.json"))
+                    )
+                ]);
+                try {
+                    // try to send mail using proper system
+                    Emails::send(
+                        Email::newForEmail('service', $address, $subject, $body)
+                    );
+                } catch (\Throwable $th) {
+                    // fall back to trying to use mail() function
+                    mail($address, $subject, $body);
+                }
+            }
+        }
         // save data
         FS::touch($file);
         file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT));
@@ -45,15 +86,38 @@ class ExceptionLog
         }
     }
 
+    /**
+     * Determine whether an email should be sent about this error. Tries to use locking database,
+     * but will return true every time if that fails for some reason.
+     *
+     * @param Throwable $th
+     * @return boolean
+     */
+    protected static function shouldSendMail(Throwable $th): bool
+    {
+        $hash = md5(serialize([
+            get_class($th),
+            method_exists($th, 'getCode') ? $th->getCode() : null,
+            method_exists($th, 'getFile') ? $th->getFile() : null,
+            method_exists($th, 'getLine') ? $th->getLine() : null,
+            method_exists($th, 'getMessage') ? $th->getMessage() : null,
+        ]));
+        try {
+            return false !== Locking::lock('exception_log/' . $hash, false, Config::get('exception_log.notify_frequency'));
+        } catch (\Throwable $th) {
+            return true;
+        }
+    }
+
     protected static function throwableArray(?Throwable $th): ?array
     {
         if (!$th) return null;
         return [
             'class' => get_class($th),
-            'code' => $th->getCode(),
-            'message' => $th->getMessage(),
-            'file' => static::shortenPath($th->getFile()),
-            'line' => $th->getLine(),
+            'code' => method_exists($th, 'getCode') ? $th->getCode() : null,
+            'message' => method_exists($th, 'getMessage') ? $th->getMessage() : null,
+            'file' => method_exists($th, 'getFile') ? static::shortenPath($th->getFile()) : null,
+            'line' => method_exists($th, 'getLine') ? $th->getLine() : null,
             'trace' => array_map(
                 function (array $e): array {
                     if (@$e['file']) {
@@ -61,9 +125,9 @@ class ExceptionLog
                     }
                     return $e;
                 },
-                $th->getTrace()
+                method_exists($th,'getTrace') ? $th->getTrace() : []
             ),
-            'previous' => static::throwableArray($th->getPrevious()),
+            'previous' => method_exists($th, 'getPrevious') ? static::throwableArray($th->getPrevious()) : null,
         ];
     }
 
