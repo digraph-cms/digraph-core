@@ -1,10 +1,14 @@
 picture.fancyfit {
     display: block;
     background: #999;
+    box-shadow: var(--shadow);
+    border: $border solid var(--theme-neutral-a50);
+    width: fit-content;
 
     img {
         display: block;
-        width: 100%;
+        width: auto;
+        max-width: 100%;
         height: auto;
     }
 }
@@ -13,14 +17,15 @@ figure {
     background-color: #999;
     font-family: $font-ui;
     box-shadow: var(--shadow);
+    max-width: $line-length*1.5;
+
+    >* {
+        border: $border solid var(--theme-neutral);
+    }
 
     >picture {
         box-shadow: none;
         margin: 0 auto;
-
-        >img {
-            display: block;
-        }
     }
 
     &.figure--floated {
@@ -41,6 +46,7 @@ figcaption {
     box-sizing: border-box;
     background-color: var(--background-a80);
     color: var(--color);
+    border: 0;
 
     >*:first-child {
         margin-top: 0;

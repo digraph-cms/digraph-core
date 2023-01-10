@@ -1,11 +1,15 @@
 picture.fancyfit {
   display: block;
   background: #999;
+  box-shadow: var(--shadow);
+  border: $border solid var(--theme-neutral-a50);
+  width: fit-content;
 
   img {
-      display: block;
-      width: 100%;
-      height: auto;
+    display: block;
+    width: auto;
+    max-width: 100%;
+    height: auto;
   }
 }
 
@@ -13,14 +17,24 @@ figure {
   background-color: #999;
   font-family: $font-ui;
   box-shadow: var(--shadow);
+  max-width: $line-length*1.5;
+
+  >* {
+    border: $border solid var(--theme-neutral);
+  }
 
   >picture {
-      box-shadow: none;
-      margin: 0 auto;
+    box-shadow: none;
+    margin: 0 auto;
+  }
 
-      >img {
-          display: block;
-      }
+  &.figure--floated {
+    width: 50%;
+    max-width: $line-length;
+    float: right;
+    margin-left: $grid;
+    margin-bottom: $grid;
+    margin-top: $grid;
   }
 }
 
@@ -32,12 +46,13 @@ figcaption {
   box-sizing: border-box;
   background-color: var(--background-a80);
   color: var(--color);
+  border: 0;
 
   >*:first-child {
-      margin-top: 0;
+    margin-top: 0;
   }
 
   >*:last-child {
-      margin-bottom: 0;
+    margin-bottom: 0;
   }
 }
