@@ -6,8 +6,8 @@ figure.floated,
 #article aside {
   @media(min-width: ($line-length*1.5)) {
     float: right;
-    width: 50%;
-    max-width: $line-length;
+    width: 50% !important;
+    max-width: $line-length !important;
     margin: 0;
     margin-bottom: $grid * 3;
     margin-left: $grid * 3;
