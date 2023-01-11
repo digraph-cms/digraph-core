@@ -24,9 +24,9 @@ $variables = Theme::variables('light');
             <td align="center" valign="top">
                 <table border="0" cellpadding="0" cellspacing="0" width="600" id="emailTable">
                     <?php
-                    if (Templates::exists('/email/html/header_' . $email->category())) {
+                    if (Templates::exists('/email/html/header_' . $email->category() . '.php')) {
                         echo '<tr><td align="center" valign="top" style="background:' . $variables['background-darker'] . ';border-bottom: 1px solid ' . $variables['theme-neutral'] . ';font-family:' . $variables['font-ui'] . '">';
-                        echo Templates::render('/email/html/header_' . $email->category());
+                        echo Templates::render('/email/html/header_' . $email->category() . '.php');
                         echo "</td></tr>";
                     }
                     ?>
