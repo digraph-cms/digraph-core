@@ -25,7 +25,11 @@ foreach ($dayDirs as $dayDir) {
             $name = basename($path);
             $time = intval(explode(' ', $name)[0]);
             $data = json_decode(file_get_contents($path), true);
-            $url = new URL($data['url']);
+            try {
+                $url = new URL($data['url']);
+            } catch (\Throwable $th) {
+                $url = $data['url'];
+            }
             return [
                 Format::time($time),
                 sprintf(
@@ -33,7 +37,7 @@ foreach ($dayDirs as $dayDir) {
                     new URL('log:' . explode('.', basename($path))[0]),
                     $data['thrown']['message']
                 ),
-                $url->fullPathString(),
+                $url instanceof URL ? $url->fullPathString() : "<em>$url</em>",
                 $data['_SERVER']['REMOTE_ADDR'],
                 Users::user($data['user']),
             ];
