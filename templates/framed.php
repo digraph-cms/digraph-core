@@ -7,6 +7,7 @@ use DigraphCMS\Context;
 use DigraphCMS\UI\Breadcrumb;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\Sidebar\Sidebar;
+use DigraphCMS\UI\Templates;
 
 ?>
 <!DOCTYPE html>

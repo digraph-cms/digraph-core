@@ -6,6 +6,7 @@ largely used for things like popup UI windows, rich media editors, and the like
 
 use DigraphCMS\Context;
 use DigraphCMS\UI\Notifications;
+use DigraphCMS\UI\Templates;
 use DigraphCMS\UI\Theme;
 
 Theme::addInternalPageCss('/styles_chromeless/*.css');
