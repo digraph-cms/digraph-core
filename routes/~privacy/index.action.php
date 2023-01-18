@@ -11,12 +11,6 @@ use DigraphCMS\URL\URL;
 <h2>Data collected by the content management system</h2>
 
 <p>
-    This site's content management system respects your privacy, and strives to be transparent regarding its use of cookies, personal data, and third-party integrations or analytics.
-</p>
-
-<h3>Content management system cookies</h3>
-
-<p>
     All potentially personally-identifying cookies are opt-in, and you may view and delete your cookies on the <a href="<?php echo new URL('current_cookies.html'); ?>">current cookies page</a>.
     You can also adjust your cookie settings on the <a href="<?php echo new URL('cookie_authorizations.html'); ?>">cookie authorizations page</a>.
 </p>
@@ -41,6 +35,12 @@ use DigraphCMS\URL\URL;
     }
     ?>
 </table>
+
+<h2>Third-party analytics</h2>
+
+<p>
+    Site traffic data and anonymous tracking information may be shared with third-party analytics software.
+</p>
 
 <?php
 Router::include('info_cms/*.php');

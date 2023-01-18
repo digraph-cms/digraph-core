@@ -204,7 +204,6 @@ class Cookies
         if (!$name) {
             switch ($type) {
                 case 'csrf':
-                    $url = new URL('/~privacy/current_cookies.html');
                     return
                         "These cookies are necessary for the security of some site features. " .
                         "They store temporary tokens that are used in security checks that prevent attackers from executing actions on your behalf or tricking you into performing unintended actions, or to prevent forms from being submitted more than once.";
