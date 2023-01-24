@@ -135,6 +135,11 @@ class PaginatedSection extends Tag
         } else return null;
     }
 
+    public function rawSource()
+    {
+        return $this->source;
+    }
+
     public function source()
     {
         if ($this->filteredSource !== null) return $this->filteredSource;

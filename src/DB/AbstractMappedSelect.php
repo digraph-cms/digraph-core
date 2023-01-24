@@ -74,6 +74,13 @@ abstract class AbstractMappedSelect implements Iterator, Countable
         }
     }
 
+    public function __clone()
+    {
+        if (is_object($this->query)) {
+            $this->query = clone $this->query;
+        }
+    }
+
     public function query(): Select
     {
         return $this->query;
