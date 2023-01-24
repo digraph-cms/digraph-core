@@ -11,7 +11,7 @@
         "php": ">=7.1",
         "byjoby/destructr": "^1.5",
         "byjoby/formward": "^0.4",
-        "byjoby/html-object-strings": "dev-main",
+        "byjoby/html-object-strings": "~1",
         "byjoby/sesh": "^0.1.0",
         "css-crush/css-crush": "^2.4",
         "digraphcms/digraph-core-themes": "dev-main",
