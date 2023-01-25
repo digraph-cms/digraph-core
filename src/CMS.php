@@ -144,7 +144,7 @@ class CMS
         $id = md5(serialize(['read', $q, $slugs]));
         if ($recache || !isset($this->readCache[$id])) {
             $search = $this->factory()->search();
-            $qids = [];
+            $qids = [$q];
             if ($slugs) {
                 foreach ($this->helper('slugs')->nouns($q) as $sid) {
                     $qids[] = $sid;
