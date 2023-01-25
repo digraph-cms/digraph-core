@@ -3,14 +3,16 @@
     "description": "Source and API version of a CMS that emphasizes flexibility and content permanence. Generally this package is only used for development.",
     "type": "digraph-core",
     "license": "MIT",
-    "authors": [{
-        "name": "Joby Elliott",
-        "email": "joby@byjoby.com"
-    }],
+    "authors": [
+        {
+            "name": "Joby Elliott",
+            "email": "joby@byjoby.com"
+        }
+    ],
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "php": ">=7.1",
+        "php": ">=7.4",
         "ext-gd": "*",
         "ext-xml": "*",
         "ext-mbstring": "*",
@@ -37,6 +39,9 @@
         "phpoffice/phpspreadsheet": "^1.23",
         "masterminds/html5": "^2.7",
         "ezyang/htmlpurifier": "^4.16"
+    },
+    "conflict": {
+        "jasig/phpcas": "<1.6"
     },
     "suggest": {
         "league/oauth2-github": "Needed to support OAuth sign-ins using GitHub",
