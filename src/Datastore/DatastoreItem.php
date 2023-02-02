@@ -44,7 +44,7 @@ class DatastoreItem
 
     /**
      * @param string|null $value
-     * @return $this
+     * @return static
      */
     public function setValue(?string $value)
     {
@@ -55,7 +55,7 @@ class DatastoreItem
 
     /**
      * @param array|FlatArray|null $data
-     * @return $this
+     * @return static
      */
     public function setData($data)
     {

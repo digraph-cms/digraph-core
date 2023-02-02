@@ -371,7 +371,7 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
      * used elsewhere are "extra sticky" = -200, "sticky" = -100, and "heavy" = 100
      *
      * @param integer|null $weight
-     * @return void
+     * @return static
      */
     public function setSortWeight(?int $weight)
     {

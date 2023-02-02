@@ -62,7 +62,7 @@ class SELECT extends Tag implements InputInterface
      * Set options from an array of values/labels
      *
      * @param array|null $options
-     * @return void
+     * @return static
      */
     public function setOptions(array $options = null)
     {
@@ -81,7 +81,7 @@ class SELECT extends Tag implements InputInterface
      *
      * @param mixed $value
      * @param string $label
-     * @return $this
+     * @return static
      */
     public function setOption($value, string $label)
     {
@@ -113,7 +113,7 @@ class SELECT extends Tag implements InputInterface
      * error message if invalid, or otherwise null.
      *
      * @param callable $validator
-     * @return $this
+     * @return static
      */
     public function addValidator(callable $validator)
     {
@@ -138,7 +138,7 @@ class SELECT extends Tag implements InputInterface
      * submitted in the get/post values.
      *
      * @param string|int|null $value
-     * @return $this
+     * @return static
      */
     public function setDefault($value)
     {
@@ -152,7 +152,7 @@ class SELECT extends Tag implements InputInterface
      * different submitted values from this point onward.
      *
      * @param string|int|null $value
-     * @return $this
+     * @return static
      */
     public function setValue($value)
     {

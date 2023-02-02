@@ -55,7 +55,7 @@ class CheckboxList extends DIV implements InputInterface
 
     /**
      * @param FormWrapper $form
-     * @return $this
+     * @return static
      */
     public function setForm(FormWrapper $form)
     {
@@ -104,7 +104,7 @@ class CheckboxList extends DIV implements InputInterface
      * error message if invalid, or otherwise null.
      *
      * @param callable $validator
-     * @return $this
+     * @return static
      */
     public function addValidator(callable $validator)
     {
@@ -149,7 +149,7 @@ class CheckboxList extends DIV implements InputInterface
     /**
      * @param bool $required
      * @param string|null $message
-     * @return $this
+     * @return static
      */
     public function setRequired(bool $required, string $message = null)
     {
@@ -160,7 +160,7 @@ class CheckboxList extends DIV implements InputInterface
 
     /**
      * @param array|null $default
-     * @return $this
+     * @return static
      */
     public function setDefault($default)
     {
@@ -176,7 +176,7 @@ class CheckboxList extends DIV implements InputInterface
 
     /**
      * @param array|null $value
-     * @return $this
+     * @return static
      */
     public function setValue($value)
     {

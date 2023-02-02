@@ -30,7 +30,7 @@ class Paginator extends ConditionalContainer
      * to avoid an aesthetically displeasing situation where adding paginators
      * takes up more room than just including a few more items on page one.
      * 
-     * @return $this 
+     * @return static 
      */
     public function setFudgeFactor(int $factor)
     {
@@ -101,7 +101,7 @@ class Paginator extends ConditionalContainer
         if (!$page || $page < 1) {
             return 1;
         } elseif ($page > $this->pages()) {
-            return $this->pages();
+            return intval($this->pages());
         } else {
             return $page;
         }
@@ -109,7 +109,7 @@ class Paginator extends ConditionalContainer
 
     public function group(): int
     {
-        return floor(($this->page() - 1) / $this->groupPages);
+        return intval(floor(($this->page() - 1) / $this->groupPages));
     }
 
     public function groupCount(): float
@@ -127,7 +127,7 @@ class Paginator extends ConditionalContainer
         $pages = $this->pages();
         $last = $this->groupStartPage() + $this->groupPages - 1;
         if ($last > $pages) {
-            return $pages;
+            return intval($pages);
         } else {
             return $last;
         }

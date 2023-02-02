@@ -19,7 +19,7 @@ class LEGEND extends Tag
      * Set text of label
      *
      * @param string $text
-     * @return $this
+     * @return static
      */
     public function setText(string $text)
     {

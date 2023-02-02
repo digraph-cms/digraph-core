@@ -34,7 +34,7 @@ class FormWrapper extends Tag
      * when the form is printed by default.
      * 
      * @param callable $callback
-     * @return $this
+     * @return static
      */
     public function addCallback(callable $callback)
     {
@@ -75,7 +75,7 @@ class FormWrapper extends Tag
      * inputs separately, such as in a table.
      *
      * @param boolean $set
-     * @return $this
+     * @return static
      */
     public function setDisplayChildren(bool $set)
     {
@@ -140,7 +140,7 @@ class FormWrapper extends Tag
      * FormWrapper::METHOD_GET and FormWrapper::METHOD_POST
      *
      * @param string $method
-     * @return $this
+     * @return static
      */
     public function setMethod(string $method)
     {
@@ -152,7 +152,7 @@ class FormWrapper extends Tag
      * Set the URL this form should direct to
      *
      * @param URL|null $action
-     * @return $this
+     * @return static
      */
     public function setAction(?URL $action)
     {

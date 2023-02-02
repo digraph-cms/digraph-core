@@ -85,7 +85,7 @@ class RichContentField extends Field
      * Undocumented function
      *
      * @param string|null $pageUuid
-     * @return $this
+     * @return static
      */
     public function setPageUuid(?string $pageUuid)
     {

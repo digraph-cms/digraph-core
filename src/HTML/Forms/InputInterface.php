@@ -6,7 +6,7 @@ interface InputInterface
 {
     /**
      * @param FormWrapper $form
-     * @return $this
+     * @return static
      */
     public function setForm(FormWrapper $form);
     public function form(): ?FormWrapper;
@@ -23,19 +23,19 @@ interface InputInterface
     /**
      * @param bool $required
      * @param string|null $message
-     * @return $this
+     * @return static
      */
     public function setRequired(bool $required, string $message = null);
 
     /**
      * @param mixed $default
-     * @return $this
+     * @return static
      */
     public function setDefault($default);
 
     /**
      * @param mixed $value
-     * @return $this
+     * @return static
      */
     public function setValue($value);
 }

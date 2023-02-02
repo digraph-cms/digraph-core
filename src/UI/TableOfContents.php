@@ -71,7 +71,7 @@ class TableOfContents extends Tag
     {
         $count = $this->page->children()->count();
         if ($count <= $this->firstPage) return 1;
-        else return ceil(($count - $this->firstPage) / $this->perPage) + 1;
+        else return intval(ceil(($count - $this->firstPage) / $this->perPage) + 1);
     }
 
     public function generateMoreLink(): string

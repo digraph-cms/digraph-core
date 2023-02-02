@@ -9,7 +9,7 @@ use DigraphCMS\URL\URLs;
 
 class CachedInitializer
 {
-    /** @var StatelessOpCache */
+    /** @var StatelessOpCache|null */
     protected static $cache;
 
     protected static $cacheDir = null;

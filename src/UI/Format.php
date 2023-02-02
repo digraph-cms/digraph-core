@@ -234,7 +234,7 @@ class Format
             $input = preg_replace("/[\\\"]/", "\\$0", $input);
             return "\"$input\"";
         } elseif (is_numeric($input)) {
-            return $input;
+            return strval($input);
         } elseif (is_object($input)) {
             if (method_exists($input, '__toString')) {
                 return static::js_encode_object($input->__toString());

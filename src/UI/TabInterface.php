@@ -87,7 +87,7 @@ class TabInterface
      * Set whether tabs should be vertical on the side instead of across the top
      *
      * @param boolean|null $vertical null indicates automatic
-     * @return void
+     * @return static
      */
     public function setVertical(?bool $vertical)
     {

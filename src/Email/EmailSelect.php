@@ -14,7 +14,7 @@ class EmailSelect extends AbstractMappedSelect
     /**
      * Return unsent and un-errored emails, ordered by least recently created
      *
-     * @return $this
+     * @return static
      */
     public function queue()
     {
@@ -27,7 +27,7 @@ class EmailSelect extends AbstractMappedSelect
     /**
      * Add where clause to limit to sent
      *
-     * @return $this
+     * @return static
      */
     public function sent()
     {
@@ -37,7 +37,7 @@ class EmailSelect extends AbstractMappedSelect
     /**
      * Add where clause to limit to non-sent emails only
      *
-     * @return $this
+     * @return static
      */
     public function notSent()
     {
@@ -47,7 +47,7 @@ class EmailSelect extends AbstractMappedSelect
     /**
      * Add where clause to limit to errored
      *
-     * @return $this
+     * @return static
      */
     public function errored()
     {
@@ -57,7 +57,7 @@ class EmailSelect extends AbstractMappedSelect
     /**
      * Add where clause to limit to non-errored emails only
      *
-     * @return $this
+     * @return static
      */
     public function notErrored()
     {

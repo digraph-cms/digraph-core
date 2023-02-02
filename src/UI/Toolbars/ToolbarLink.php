@@ -87,7 +87,7 @@ class ToolbarLink extends Tag
      * similar to a ButtonMenu.
      *
      * @param null|string|callable $command
-     * @return void
+     * @return static
      */
     public function setCommand($command)
     {

@@ -93,7 +93,7 @@ class Cookies
      * Handle cookie required exceptions by delivering a 409 error, to indicate
      * that there is a conflict that must be resolved.
      *
-     * @return void
+     * @return bool
      */
     public static function onException_CookieRequiredError()
     {

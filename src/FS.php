@@ -95,7 +95,6 @@ abstract class FS
             mkdir($path);
             umask($umask);
         }
-        return is_dir($path);
     }
 
     /**

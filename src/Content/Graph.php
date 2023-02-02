@@ -96,7 +96,7 @@ class Graph
      */
     public static function insertLink(string $start, string $end, string $type = null)
     {
-        return DB::query()->insertInto(
+        DB::query()->insertInto(
             'page_link',
             [
                 'start_page' => $start,
@@ -123,6 +123,6 @@ class Graph
         if ($type) {
             $query->where('type = ?', [$type]);
         }
-        return $query->execute();
+        $query->execute();
     }
 }

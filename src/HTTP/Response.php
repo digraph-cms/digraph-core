@@ -40,7 +40,7 @@ class Response
      *
      * @param boolean $indexResponse
      * @param boolean $allowQueries
-     * @return void
+     * @return static
      */
     public function setSearchIndex(bool $indexResponse, bool $allowQueries = false)
     {

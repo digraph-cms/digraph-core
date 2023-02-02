@@ -40,7 +40,7 @@ class IMG extends Tag
      * Set the source to a string or URL
      *
      * @param string|URL $src
-     * @return $this
+     * @return static
      */
     public function setSrc($src) {
         $this->src = $src;

@@ -44,7 +44,7 @@ class Radio extends Tag implements InputInterface
      * error message if invalid, or otherwise null.
      *
      * @param callable $validator
-     * @return $this
+     * @return static
      */
     public function addValidator(callable $validator)
     {
@@ -87,7 +87,7 @@ class Radio extends Tag implements InputInterface
      * submitted in the get/post values.
      *
      * @param string|int $value
-     * @return $this
+     * @return static
      */
     public function setDefault($value)
     {
@@ -100,7 +100,7 @@ class Radio extends Tag implements InputInterface
      * different submitted values from this point onward.
      *
      * @param string|int $value
-     * @return $this
+     * @return static
      */
     public function setValue($value)
     {

@@ -18,7 +18,7 @@ class MenuBar extends DIV
      * amount of time.
      *
      * @param boolean $check
-     * @return $this
+     * @return static
      */
     public function setCheckPermissions(bool $check)
     {

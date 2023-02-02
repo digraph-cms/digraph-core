@@ -67,7 +67,7 @@ class A extends Tag
      * Set the href of this link
      *
      * @param string|URL|null $href
-     * @return $this
+     * @return static
      */
     public function setHref($href=null) {
         $this->href = $href;
@@ -78,7 +78,7 @@ class A extends Tag
      * Set the target of this link
      *
      * @param string|null $target
-     * @return $this
+     * @return static
      */
     public function setTarget($target=null) {
         $this->target = $target;
@@ -89,7 +89,7 @@ class A extends Tag
      * Set the navigation frame target of this link
      *
      * @param string|null $target
-     * @return $this
+     * @return static
      */
     public function setFrameTarget($target=null) {
         $this->frameTarget = $target;

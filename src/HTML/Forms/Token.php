@@ -28,7 +28,7 @@ class Token extends INPUT
      * forms.
      *
      * @param boolean $doNotUse
-     * @return void
+     * @return static
      */
     public function setDoNotUse(bool $doNotUse)
     {
@@ -61,7 +61,7 @@ class Token extends INPUT
      * value will be generated from some basic user fingerprint information.
      *
      * @param boolean $useCSRF
-     * @return $this
+     * @return static
      */
     public function setCSRF(bool $useCSRF)
     {
@@ -74,7 +74,7 @@ class Token extends INPUT
      * validation. Use this to create forms that cannot be double-submitted.
      *
      * @param boolean $oneTimeTokens
-     * @return $this
+     * @return static
      */
     public function setUniqueCSRF(bool $oneTimeTokens)
     {

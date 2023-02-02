@@ -57,7 +57,7 @@ class PaginatedSection extends Tag
      * that they can use it to get config and URLs.
      *
      * @param FilterToolInterface $tool
-     * @return $this
+     * @return static
      */
     public function addFilterTool(FilterToolInterface $tool)
     {
@@ -343,7 +343,7 @@ class PaginatedSection extends Tag
      * @param callable $callback
      * @param array $headers
      * @param callable|null $finalizeCallback
-     * @return $this
+     * @return static
      */
     public function download(string $filename, callable $callback, array $headers = [], callable $finalizeCallback = null, string $buttonText = null)
     {

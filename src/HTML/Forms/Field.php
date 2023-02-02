@@ -40,7 +40,7 @@ class Field extends DIV implements InputInterface
      * error message if invalid, or otherwise null.
      *
      * @param callable $validator
-     * @return $this
+     * @return static
      */
     public function addValidator(callable $validator)
     {
@@ -120,7 +120,7 @@ class Field extends DIV implements InputInterface
 
     /**
      * @param string $tip
-     * @return $this
+     * @return static
      */
     public function addTip(string $tip)
     {

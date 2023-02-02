@@ -47,7 +47,7 @@ class SpreadsheetWriter
      * Set how many columns should be frozen
      *
      * @param integer $columns
-     * @return $this
+     * @return static
      */
     public function setFreezeColumns(int $columns)
     {

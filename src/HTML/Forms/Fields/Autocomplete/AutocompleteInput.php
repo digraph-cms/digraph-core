@@ -40,7 +40,7 @@ class AutocompleteInput extends INPUT
 
     /**
      * @param URL $endpoint
-     * @return $this
+     * @return static
      */
     protected function setEndpoint(URL $endpoint)
     {

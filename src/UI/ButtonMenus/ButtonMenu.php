@@ -32,7 +32,7 @@ class ButtonMenu
      * Set the data-target attribute
      *
      * @param string $target
-     * @return $this
+     * @return static
      */
     public function setTarget(string $target)
     {

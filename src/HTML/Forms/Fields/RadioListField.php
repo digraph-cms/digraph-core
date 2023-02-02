@@ -6,6 +6,9 @@ use DigraphCMS\HTML\Forms\RadioList;
 use DigraphCMS\HTML\Forms\Field;
 use DigraphCMS\HTML\Tag;
 
+/**
+ * @method RadioList input()
+ */
 class RadioListField extends Field
 {
     protected $tag = 'fieldset';
@@ -14,11 +17,6 @@ class RadioListField extends Field
     {
         parent::__construct($label, new RadioList($options));
         $this->addClass('radio-list-field');
-    }
-
-    public function input(): RadioList
-    {
-        return parent::input();
     }
 
     public function field(string $key): ?RadioField

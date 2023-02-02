@@ -54,7 +54,7 @@ class RadioList extends DIV implements InputInterface
 
     /**
      * @param FormWrapper $form
-     * @return $this
+     * @return static
      */
     public function setForm(FormWrapper $form)
     {
@@ -103,7 +103,7 @@ class RadioList extends DIV implements InputInterface
      * error message if invalid, or otherwise null.
      *
      * @param callable $validator
-     * @return $this
+     * @return static
      */
     public function addValidator(callable $validator)
     {
@@ -139,7 +139,7 @@ class RadioList extends DIV implements InputInterface
     /**
      * @param bool $required
      * @param string|null $message
-     * @return $this
+     * @return static
      */
     public function setRequired(bool $required, string $message = null)
     {
@@ -150,7 +150,7 @@ class RadioList extends DIV implements InputInterface
 
     /**
      * @param string|null $default
-     * @return $this
+     * @return static
      */
     public function setDefault($default)
     {
@@ -166,7 +166,7 @@ class RadioList extends DIV implements InputInterface
 
     /**
      * @param array|null $value
-     * @return $this
+     * @return static
      */
     public function setValue($value)
     {

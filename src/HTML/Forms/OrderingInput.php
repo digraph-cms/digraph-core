@@ -42,7 +42,7 @@ class OrderingInput extends INPUT
      * Undocumented function
      *
      * @param boolean $allowAdding
-     * @return $this
+     * @return static
      */
     public function setAllowAdding(bool $allowAdding)
     {
@@ -59,7 +59,7 @@ class OrderingInput extends INPUT
      * Undocumented function
      *
      * @param boolean $allowDeletion
-     * @return $this
+     * @return static
      */
     public function setAllowDeletion(bool $allowDeletion)
     {
@@ -76,7 +76,7 @@ class OrderingInput extends INPUT
      * Undocumented function
      *
      * @param array $labels
-     * @return $this
+     * @return static
      */
     public function setLabels(array $labels)
     {
@@ -89,7 +89,7 @@ class OrderingInput extends INPUT
      *
      * @param string $value
      * @param string $label
-     * @return $this
+     * @return static
      */
     public function addLabel(string $value, string $label)
     {

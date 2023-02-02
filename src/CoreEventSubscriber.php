@@ -59,7 +59,7 @@ abstract class CoreEventSubscriber
      *
      * @param AbstractRichMedia $media
      * @param string $query
-     * @return void
+     * @return array<string,mixed>
      */
     public static function onRichMediaAutocompleteCard(AbstractRichMedia $media, string $query)
     {
@@ -99,7 +99,7 @@ abstract class CoreEventSubscriber
      *
      * @param string $file
      * @param string $route
-     * @return void
+     * @return string
      */
     public static function onRenderRoute_php(string $file, string $route)
     {
@@ -112,7 +112,7 @@ abstract class CoreEventSubscriber
      *
      * @param string $file
      * @param string $route
-     * @return void
+     * @return string
      */
     public static function onRenderRoute_md(string $file, string $route)
     {
@@ -268,7 +268,7 @@ abstract class CoreEventSubscriber
      *
      * @param AbstractPage $page
      * @param string $query
-     * @return void
+     * @return int
      */
     public static function onScorePageResult(AbstractPage $page, string $query)
     {

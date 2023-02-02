@@ -24,7 +24,7 @@ abstract class Tag extends Node
      *
      * @param string $key
      * @param string|null $value
-     * @return $this
+     * @return static
      */
     public function setStyle(string $key, ?string $value)
     {
@@ -55,7 +55,7 @@ abstract class Tag extends Node
      * Set the ID of this object
      *
      * @param string $id
-     * @return $this
+     * @return static
      */
     public function setID(string $id)
     {
@@ -67,7 +67,7 @@ abstract class Tag extends Node
      * Add a class to the class list
      *
      * @param string $class
-     * @return $this
+     * @return static
      */
     public function addClass(string $class)
     {
@@ -80,7 +80,7 @@ abstract class Tag extends Node
      * Remove a class to the class list
      *
      * @param string $class
-     * @return $this
+     * @return static
      */
     public function removeClass(string $class)
     {
@@ -98,7 +98,7 @@ abstract class Tag extends Node
      *
      * @param string $key
      * @param mixed $value
-     * @return $this
+     * @return static
      */
     public function setData(string $key, $value)
     {
@@ -110,7 +110,7 @@ abstract class Tag extends Node
      * Unset a data value
      *
      * @param string $key
-     * @return $this
+     * @return static
      */
     public function unsetData(string $key)
     {
@@ -123,7 +123,7 @@ abstract class Tag extends Node
      *
      * @param string $key
      * @param mixed $value
-     * @return $this
+     * @return static
      */
     public function setAttribute(string $key, $value = null)
     {
@@ -135,7 +135,7 @@ abstract class Tag extends Node
      * Unset an attribute value
      *
      * @param string $key
-     * @return $this
+     * @return static
      */
     public function unsetAttribute(string $key)
     {
@@ -147,7 +147,7 @@ abstract class Tag extends Node
      * Add a child object
      *
      * @param string|Node $child
-     * @return $this
+     * @return static
      */
     public function addChild($child)
     {
@@ -162,7 +162,7 @@ abstract class Tag extends Node
      * Remove a child object
      *
      * @param string|Node $child
-     * @return $this
+     * @return static
      */
     public function removeChild($child)
     {

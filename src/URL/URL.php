@@ -392,7 +392,7 @@ class URL
      * Unset an argument from the query.
      *
      * @param string $name
-     * @return $this
+     * @return static
      */
     public function unsetArg(string $name)
     {

@@ -25,7 +25,7 @@ class SubmitButton extends Tag
      * Change the text displayed on button
      *
      * @param string $text
-     * @return $this
+     * @return static
      */
     public function setText(string $text)
     {

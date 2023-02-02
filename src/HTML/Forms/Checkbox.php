@@ -44,7 +44,7 @@ class Checkbox extends Tag implements InputInterface
      * error message if invalid, or otherwise null.
      *
      * @param callable $validator
-     * @return $this
+     * @return static
      */
     public function addValidator(callable $validator)
     {
@@ -85,7 +85,7 @@ class Checkbox extends Tag implements InputInterface
      * submitted in the get/post values.
      *
      * @param mixed $value
-     * @return $this
+     * @return static
      */
     public function setDefault($value)
     {
@@ -98,7 +98,7 @@ class Checkbox extends Tag implements InputInterface
      * different submitted values from this point onward.
      *
      * @param mixed $value
-     * @return $this
+     * @return static
      */
     public function setValue($value)
     {

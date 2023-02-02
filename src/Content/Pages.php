@@ -50,7 +50,7 @@ class Pages
      */
     public static function insertLink(string $start, string $end, string $type = null)
     {
-        return DB::query()->insertInto(
+        DB::query()->insertInto(
             'page_link',
             [
                 'start_page' => $start,
@@ -77,7 +77,7 @@ class Pages
         if ($type) {
             $query->where('type = ?', [$type]);
         }
-        return $query->execute();
+        $query->execute();
     }
 
     /**

@@ -145,7 +145,7 @@ class ImageFile extends DeferredFile
     /**
      * Make into a jpg file
      *
-     * @return $this
+     * @return static
      */
     public function jpg()
     {
@@ -156,7 +156,7 @@ class ImageFile extends DeferredFile
     /**
      * Make into a PNG file
      *
-     * @return $this
+     * @return static
      */
     public function png()
     {
@@ -167,7 +167,7 @@ class ImageFile extends DeferredFile
     /**
      * Make into a GIF file
      *
-     * @return $this
+     * @return static
      */
     public function gif()
     {
@@ -178,7 +178,7 @@ class ImageFile extends DeferredFile
     /**
      * Make into a webp file
      *
-     * @return $this
+     * @return static
      */
     public function webp()
     {
@@ -219,7 +219,7 @@ class ImageFile extends DeferredFile
 
     /**
      * @param string|File $watermark
-     * @return $this
+     * @return static
      */
     public function watermark($watermark)
     {
@@ -234,7 +234,7 @@ class ImageFile extends DeferredFile
      * Set opacity of watermark
      *
      * @param integer $watermarkOpacity value from 0 to 100
-     * @return $this
+     * @return static
      */
     public function watermarkOpacity(int $watermarkOpacity)
     {
@@ -246,7 +246,7 @@ class ImageFile extends DeferredFile
      * Use class constants like ::POSITION_CENTER, ::POSITION_BOTTOM_RIGHT, etc
      *
      * @param string $watermarkPosition
-     * @return $this
+     * @return static
      */
     public function watermarkPosition(string $watermarkPosition)
     {
@@ -260,7 +260,7 @@ class ImageFile extends DeferredFile
      * @param integer $xPadding left/right padding
      * @param integer $yPadding top/bottom padding
      * @param string $unit class constant UNIT_PIXELS or UNIT_PERCENT
-     * @return $this
+     * @return static
      */
     public function watermarkPadding(int $xPadding, int $yPadding, string $unit = 'px')
     {
@@ -273,7 +273,7 @@ class ImageFile extends DeferredFile
      *
      * @param integer $width
      * @param string $unit class constant UNIT_PIXELS or UNIT_PERCENT
-     * @return $this
+     * @return static
      */
     public function watermarkWidth(int $width, string $unit = '%')
     {
@@ -286,7 +286,7 @@ class ImageFile extends DeferredFile
      *
      * @param integer $height
      * @param string $unit class constant UNIT_PIXELS or UNIT_PERCENT
-     * @return $this
+     * @return static
      */
     public function watermarkHeight(int $height, string $unit = '%')
     {
@@ -298,7 +298,7 @@ class ImageFile extends DeferredFile
      * Use class constants like FIT_CONTAIN, FIT_CROP etc
      *
      * @param string $watermarkFit
-     * @return $this
+     * @return static
      */
     public function watermarkFit(string $watermarkFit)
     {
@@ -310,7 +310,7 @@ class ImageFile extends DeferredFile
      * Accepts hex colors (without the leading #) and color names
      * 
      * @param string $background
-     * @return $this
+     * @return static
      */
     public function background(string $background)
     {
@@ -340,7 +340,7 @@ class ImageFile extends DeferredFile
      * @param integer $width
      * @param string $color
      * @param string $borderType class constant like BORDER_SHRINK, BORDER_EXPAND
-     * @return $this
+     * @return static
      */
     public function border(int $width, string $color, string $borderType = 'overlay')
     {
@@ -356,7 +356,7 @@ class ImageFile extends DeferredFile
      * Accepts class constants ORIENTATION_90, ORIENTATION_180, ORIENTATION_270
      *
      * @param string $orientation
-     * @return $this
+     * @return static
      */
     public function orientation(string $orientation)
     {
@@ -372,7 +372,7 @@ class ImageFile extends DeferredFile
      * Accepts class constants FLIP_HORIZONTALLY, FLIP_VERTICALLY, FLIP_BOTH
      *
      * @param string $flip
-     * @return $this
+     * @return static
      */
     public function flip(string $flip)
     {
@@ -384,7 +384,7 @@ class ImageFile extends DeferredFile
      * Resize to a given width in pixels
      *
      * @param integer $width
-     * @return $this
+     * @return static
      */
     public function width(int $width)
     {
@@ -396,7 +396,7 @@ class ImageFile extends DeferredFile
      * Resize to a given height in pixels
      *
      * @param integer $height
-     * @return $this
+     * @return static
      */
     public function height(int $height)
     {
@@ -443,7 +443,7 @@ class ImageFile extends DeferredFile
      * @param integer $width
      * @param integer $height
      * @param string $fitMethod
-     * @return $this
+     * @return static
      */
     public function fit(int $width, int $height, string $fitMethod = 'contain')
     {
@@ -458,7 +458,7 @@ class ImageFile extends DeferredFile
      * @param integer $width
      * @param integer $height
      * @param boolean $upscale
-     * @return $this
+     * @return static
      */
     public function cover(int $width, int $height, $upscale = false)
     {
@@ -487,7 +487,7 @@ class ImageFile extends DeferredFile
      * @param integer $width
      * @param integer $height
      * @param string $cropMethod
-     * @return $this
+     * @return static
      */
     public function crop(int $width, int $height, string $cropMethod = 'crop-center')
     {
@@ -504,7 +504,7 @@ class ImageFile extends DeferredFile
      * @param integer $focalX
      * @param integer $focalY
      * @param float $zoom
-     * @return $this
+     * @return static
      */
     public function focalCrop(int $width, int $height, int $focalX, int $focalY, float $zoom = 1)
     {
@@ -520,7 +520,7 @@ class ImageFile extends DeferredFile
      * @param integer $height
      * @param integer $x
      * @param integer $y
-     * @return $this
+     * @return static
      */
     public function manualCrop(int $width, int $height, int $x, int $y)
     {
@@ -530,7 +530,7 @@ class ImageFile extends DeferredFile
 
     /**
      * @param integer $brightness -100 to 100
-     * @return $this
+     * @return static
      */
     public function brightness(int $brightness)
     {
@@ -540,7 +540,7 @@ class ImageFile extends DeferredFile
 
     /**
      * @param integer $contrast -100 to 100
-     * @return $this
+     * @return static
      */
     public function contrast(int $contrast)
     {
@@ -550,7 +550,7 @@ class ImageFile extends DeferredFile
 
     /**
      * @param float $gamma 0.1 to 9.99
-     * @return $this
+     * @return static
      */
     public function gamma(float $gamma)
     {
@@ -561,7 +561,7 @@ class ImageFile extends DeferredFile
     /**
      * Optimize file size
      *
-     * @return $this
+     * @return static
      */
     public function optimize()
     {
@@ -571,7 +571,7 @@ class ImageFile extends DeferredFile
 
     /**
      * @param integer $blur 0 to 100
-     * @return $this
+     * @return static
      */
     public function blur(int $blur)
     {
@@ -581,7 +581,7 @@ class ImageFile extends DeferredFile
 
     /**
      * @param integer $pixelate 0 to 100
-     * @return $this
+     * @return static
      */
     public function pixelate(int $pixelate)
     {
@@ -592,7 +592,7 @@ class ImageFile extends DeferredFile
     /**
      * Convert to greyscale
      *
-     * @return $this
+     * @return static
      */
     public function greyscale()
     {
@@ -603,7 +603,7 @@ class ImageFile extends DeferredFile
     /**
      * Convert to sepia
      *
-     * @return $this
+     * @return static
      */
     public function sepia()
     {
@@ -613,7 +613,7 @@ class ImageFile extends DeferredFile
 
     /**
      * @param integer $sharpen 0 to 100
-     * @return $this
+     * @return static
      */
     public function sharpen(int $sharpen)
     {

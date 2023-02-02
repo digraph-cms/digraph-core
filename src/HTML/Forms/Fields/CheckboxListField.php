@@ -6,6 +6,9 @@ use DigraphCMS\HTML\Forms\CheckboxList;
 use DigraphCMS\HTML\Forms\Field;
 use DigraphCMS\HTML\Tag;
 
+/**
+ * @method CheckboxList input()
+ */
 class CheckboxListField extends Field
 {
     protected $tag = 'fieldset';
@@ -14,11 +17,6 @@ class CheckboxListField extends Field
     {
         parent::__construct($label, new CheckboxList($options));
         $this->addClass('checkbox-list-field');
-    }
-
-    public function input(): CheckboxList
-    {
-        return parent::input();
     }
 
     public function field(string $key): ?CheckboxField

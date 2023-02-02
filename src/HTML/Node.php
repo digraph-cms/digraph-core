@@ -22,7 +22,7 @@ abstract class Node {
 
     /**
      * @param boolean $hidden
-     * @return $this
+     * @return static
      */
     public function setHidden(bool $hidden)
     {

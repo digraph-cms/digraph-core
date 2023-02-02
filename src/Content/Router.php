@@ -261,7 +261,7 @@ class Router
     }
 }
 
-function require_file(string $file)
+function require_file(string $file): string
 {
     ob_start();
     try {
