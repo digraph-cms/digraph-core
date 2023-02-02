@@ -81,7 +81,7 @@ class DeferredJob
         try {
             return serialize($this->job);
         } catch (\Throwable $th) {
-            return \Opis\Closure\serialize($this->job);
+            return @\Opis\Closure\serialize($this->job);
         }
     }
 

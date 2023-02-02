@@ -683,7 +683,7 @@ class Theme
      */
     public static function head(): string
     {
-        $key = md5(\Opis\Closure\serialize([
+        $key = md5(@\Opis\Closure\serialize([
             static::$variables,
             static::$blockingThemeCss,
             static::$blockingPageCss,

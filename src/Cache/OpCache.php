@@ -179,7 +179,7 @@ class OpCache extends AbstractCacheDriver
         } catch (\Throwable $th) {
             return sprintf(
                 '\\unserialize(\'%s\')',
-                str_replace("'", "\\'", \Opis\Closure\serialize($value))
+                str_replace("'", "\\'", @\Opis\Closure\serialize($value))
             );
         }
     }
