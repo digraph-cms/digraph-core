@@ -362,7 +362,7 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
 
     public function setSortName(?string $name)
     {
-        $this->sortName = strip_tags($name);
+        $this->sortName = $name !== null ? strip_tags($name) : null;
         return $this;
     }
 
