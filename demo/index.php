@@ -6,6 +6,11 @@ use DigraphCMS\Cache\CachedInitializer;
 use DigraphCMS\Config;
 use DigraphCMS\URL\URLs;
 
+// display all errors in demo site, for development purposes
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 // autoload and CacheInitializer::configureCache must be called absolutely first
 // if you want Config to be able to cache its setup process
 require_once __DIR__ . "/../vendor/autoload.php";

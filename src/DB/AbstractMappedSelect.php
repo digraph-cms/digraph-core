@@ -381,7 +381,7 @@ abstract class AbstractMappedSelect implements Iterator, Countable
         return $this->query->count();
     }
 
-    public function current()
+    public function current(): mixed
     {
         if ($this->returnDataObjects) {
             return static::rowToObject($this->getIterator()->current());
@@ -390,7 +390,7 @@ abstract class AbstractMappedSelect implements Iterator, Countable
         }
     }
 
-    public function key()
+    public function key(): mixed
     {
         return $this->getIterator()->key();
     }
