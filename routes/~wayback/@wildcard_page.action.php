@@ -21,7 +21,6 @@ if (!$result) throw new HttpError(404);
 // bounce straight to URL if it's actually up now
 if (WaybackMachine::check('http://' . $result->data()['original_url'], true)) {
     throw new ArbitraryRedirectException('http://' . $result->data()['original_url']);
-    return;
 }
 
 // add context to breadcrumb

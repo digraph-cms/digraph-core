@@ -167,7 +167,7 @@ class TEXTAREA extends Tag implements InputInterface
     public function children(): array
     {
         return [
-            new Text(htmlentities($this->value(true)))
+            new Text(htmlentities($this->value(true) ?? ''))
         ];
     }
 }

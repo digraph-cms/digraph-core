@@ -31,7 +31,6 @@ if (Context::arg('error')) {
     ]);
     Cookies::set('csrf', 'oauth2state', $provider->getState());
     throw new ArbitraryRedirectException($authURL);
-    return;
 } elseif (!Context::arg('state') || Context::arg('state') !== Cookies::get('csrf', 'oauth2state')) {
     // State is invalid, possible CSRF attack
     // Cookies::unset('csrf', 'oauth2state');

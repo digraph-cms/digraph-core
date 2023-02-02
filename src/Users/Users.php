@@ -154,7 +154,7 @@ abstract class Users
     public static function signoutUrl(URL $bounce = null): URL
     {
         $bounce = $bounce ?? Context::url();
-        if ($bounce && $bounce->path() == '~signin') {
+        if ($bounce->path() == '~signin') {
             $bounce = null;
         }
         $url = new URL('/~signout/');
@@ -326,7 +326,7 @@ abstract class Users
         $query = DB::query()->from('user')
             ->where('uuid = ?', [$uuid]);
         $result = $query->execute();
-        if ($result && $result = $result->fetch()) {
+        if ($result = $result->fetch()) {
             return static::resultToUser($result);
         } else {
             return null;
@@ -373,6 +373,10 @@ abstract class Users
         );
     }
 
+    /**
+     * @param string $name
+     * @return AbstractUserSource|null
+     */
     public static function source(string $name): ?AbstractUserSource
     {
         if (!isset(static::$sources[$name])) {

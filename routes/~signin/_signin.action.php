@@ -26,11 +26,13 @@ if (!Context::arg('_provider') || !Context::arg('_source')) {
 
 // source and provider must exist
 $sourceName = Context::arg('_source');
-/** @var \DigraphCMS\Users\AbstractUserSource */
 $source = Users::source(Context::arg('_source'));
+if (!$source) {
+    throw new HttpError(404);
+}
 /** @var string */
 $provider = Context::arg('_provider');
-if (!$source || !$source->providerActive($provider)) {
+if (!$source->providerActive($provider)) {
     throw new HttpError(404);
 }
 

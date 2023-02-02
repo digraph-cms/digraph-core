@@ -89,11 +89,6 @@ final class Session
     protected static function setAuth(Authentication $auth)
     {
         static::$auth = $auth;
-        // check for different IP address
-        // if ($auth->ip() != $_SERVER['REMOTE_ADDR']) {
-        //     static::deauthenticate("IP address changed (" . $_SERVER['REMOTE_ADDR'] . ")");
-        //     return;
-        // }
         // check for different user agent
         if (static::browserPlatform($auth->ua()) != static::browserPlatform()) {
             static::deauthenticate("Browser/OS changed (" . static::fullBrowser() . ")");
@@ -105,44 +100,28 @@ final class Session
     {
         $parser = new UserAgentParser();
         $ua = $parser->parse($ua);
-        if ($ua) {
-            return $ua->browser() . ' on ' . $ua->platform();
-        } else {
-            return 'unknown';
-        }
+        return $ua->browser() . ' on ' . $ua->platform();
     }
 
     public static function browser(string $ua = null): string
     {
         $parser = new UserAgentParser();
         $ua = $parser->parse($ua);
-        if ($ua) {
-            return $ua->browser();
-        } else {
-            return 'unknown';
-        }
+        return $ua->browser();
     }
 
     public static function platform(string $ua = null): string
     {
         $parser = new UserAgentParser();
         $ua = $parser->parse($ua);
-        if ($ua) {
-            return $ua->platform();
-        } else {
-            return 'unknown';
-        }
+        return $ua->platform();
     }
 
     public static function fullBrowser(string $ua = null): string
     {
         $parser = new UserAgentParser();
         $ua = $parser->parse($ua);
-        if ($ua) {
-            return $ua->browser() . ' ' . $ua->browserVersion() . ' on ' . $ua->platform();
-        } else {
-            return 'unknown';
-        }
+        return $ua->browser() . ' ' . $ua->browserVersion() . ' on ' . $ua->platform();
     }
 
     public static function authenticate(string $user, string $comment, bool $rememberme): Authentication

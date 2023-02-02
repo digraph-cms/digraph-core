@@ -18,7 +18,7 @@ class CodeHighlighter
         // get node and classes
         /** @var DOMElement */
         $node = $event->getNode();
-        $classes = array_filter(explode(' ', $node->getAttribute('class') ?? ''));
+        $classes = array_filter(explode(' ', $node->getAttribute('class')));
         // abort if class nohighlight is found
         if (in_array('nohighlight', $classes)) {
             return;

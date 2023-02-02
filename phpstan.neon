@@ -1,5 +1,5 @@
 parameters:
-  level: 3
+  level: 4
   paths:
     - src
     - routes
@@ -7,3 +7,4 @@ parameters:
     - vendor
   excludePaths:
     - src/DB/AbstractMappedSelect.php
+    - demo/

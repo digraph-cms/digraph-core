@@ -150,7 +150,7 @@ class INPUT extends Tag implements InputInterface
     {
         if ($this->value) {
             return $this->value;
-        } elseif (($value = trim($this->submittedValue() || "")) || $this->submitted()) {
+        } elseif (($value = trim($this->submittedValue() ?? "")) || $this->submitted()) {
             return $value ? $value : null;
         } elseif ($useDefault) {
             return $this->default();

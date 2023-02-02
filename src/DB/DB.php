@@ -127,7 +127,6 @@ class DB
                         break;
                     default:
                         throw new \Exception("Unsupported DB adapter " . Config::get('db.adapter'));
-                        break;
                 }
             } catch (\Throwable $th) {
                 if ($th instanceof Exception) {
@@ -149,7 +148,6 @@ class DB
         switch (Config::get('db.adapter')) {
             case 'sqlite':
                 return 'sqlite:' . Config::get('db.name') . '.sqlite3';
-                break;
             default:
                 return (Config::get('db.adapter_dsn') ?? Config::get('db.adapter')) . ':' .
                     implode(';', array_filter([
@@ -158,7 +156,6 @@ class DB
                         Config::get('db.name') ? 'dbname=' . Config::get('db.name') : false,
                         Config::get('db.charset') ? 'charset=' . Config::get('db.charset') : false
                     ]));
-                break;
         }
     }
 

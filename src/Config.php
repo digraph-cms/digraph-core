@@ -10,7 +10,7 @@ use Spyc;
 
 abstract class Config implements InitializedClassInterface
 {
-    /** @var SelfReferencingFlatArray */
+    /** @var SelfReferencingFlatArray|null */
     protected static $data;
 
     public static function initialize_preCache(CacheableState $state)

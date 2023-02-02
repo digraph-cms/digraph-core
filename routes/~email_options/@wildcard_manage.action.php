@@ -3,7 +3,6 @@
 use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\Email\Emails;
-use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\UI\Breadcrumb;
 use DigraphCMS\UI\Notifications;
@@ -17,7 +16,6 @@ $addresses = [];
 
 // only allow access with valid email ID or by being signed in
 if ($email = Emails::get(Context::url()->actionSuffix())) {
-    if (!$email) throw new HttpError(404);
     if ($user = $email->toUser()) {
         $addresses = $user->emails();
     }
@@ -30,12 +28,8 @@ if ($email = Emails::get(Context::url()->actionSuffix())) {
 // print page title
 echo "<h1>Email preferences</h1>";
 
-// print list of addresses being managed
+// list of addresses being managed
 $addresses = array_unique($addresses);
-if (!$addresses) {
-    Notifications::printError('No email addresses found. You may not have any email addresses associated with your account.');
-    return;
-}
 
 // display form
 $categories = Emails::existingCategories();

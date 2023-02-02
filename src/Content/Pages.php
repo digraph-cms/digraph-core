@@ -164,12 +164,11 @@ class Pages
 
     protected static function doGetByUUID(string $uuid_or_slug): ?AbstractPage
     {
-        $result = DB::query()->from('page')
+        $query = DB::query()->from('page')
             ->where('uuid = ?', [$uuid_or_slug])
             ->order('created ASC')
-            ->limit(1)
-            ->execute();
-        if ($result && $result = $result->fetch()) {
+            ->limit(1);
+        if ($result = $query->execute()->fetch()) {
             return static::resultToPage($result);
         } else {
             return null;
@@ -178,14 +177,13 @@ class Pages
 
     protected static function doGetBySlug(string $slug): ?AbstractPage
     {
-        $result = DB::query()->from('page_slug')
+        $query = DB::query()->from('page_slug')
             ->select('page.*')
             ->leftJoin('page ON page_uuid = page.uuid')
             ->where('url = ?', [$slug])
             ->order('page.created ASC')
-            ->limit(1)
-            ->execute();
-        if ($result && $result = $result->fetch()) {
+            ->limit(1);
+        if ($result = $query->execute()->fetch()) {
             return static::resultToPage($result);
         } else {
             return null;

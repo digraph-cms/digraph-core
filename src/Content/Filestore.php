@@ -136,8 +136,7 @@ class Filestore
     {
         $query = DB::query()->from('filestore')
             ->where('uuid = ?', [$uuid]);
-        $result = $query->execute();
-        if ($result && $result = $result->fetch()) {
+        if ($result = $query->execute()->fetch()) {
             return static::resultToFile($result);
         } else {
             return null;

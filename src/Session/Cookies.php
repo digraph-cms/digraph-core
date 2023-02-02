@@ -473,8 +473,8 @@ class Cookies
         return preg_replace('/:.*$/', '', URLs::siteHost());
     }
 
-    protected static function cookieSecure(): ?bool
+    protected static function cookieSecure(): bool
     {
-        return null;
+        return false;
     }
 }

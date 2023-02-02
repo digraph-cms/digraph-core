@@ -30,10 +30,6 @@ echo "<h1>Email unsubscribe</h1>";
 
 // print list of addresses being managed
 $addresses = array_unique($addresses);
-if (!$addresses) {
-    Notifications::printError('No email addresses found. You may not have any email addresses associated with your account.');
-    return;
-}
 Notifications::printNotice(
     sprintf(
         'Email unsubscribe form for: %s',

@@ -14,7 +14,8 @@ class SpreadsheetJob extends DeferredJob
     public function __construct(string $srcFile, callable $rowFn = null, string $ext = null, string $group = null, callable $setupFn = null, callable $teardownFn = null)
     {
         $group = $group ?? parent::uuid();
-        $ext = strtolower($ext ?? pathinfo($srcFile, PATHINFO_EXTENSION) ?? '.xlsx');
+        $ext = strtolower($ext ?? pathinfo($srcFile, PATHINFO_EXTENSION));
+        if (!$ext) $ext = 'xlsx';
         $cacheFile = Config::get('cache.path') . '/spreadsheet_jobs/' . $group . '.' . $ext;
         FS::touch($cacheFile);
         FS::copy($srcFile, $cacheFile, false, true);

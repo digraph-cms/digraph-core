@@ -46,7 +46,8 @@ class Deferred
         if (static::$skip) {
             $query->where('id NOT IN (?)', [static::$skip]);
         }
-        if (@$query->execute() && $result = $query->getResult()) {
+        $query->execute();
+        if ($result = $query->getResult()) {
             if ($result = $result->fetchObject(DeferredJob::class)) {
                 return $result;
             }

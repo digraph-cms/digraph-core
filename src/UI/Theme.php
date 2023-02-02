@@ -643,7 +643,7 @@ class Theme
     {
         $origin = parse_url(URLs::site());
         $origin = implode('', [
-            @$origin['scheme'] ?? 'http',
+            @$origin['scheme'] ? $origin['scheme'] : 'http',
             '://',
             @$origin['host'],
             @$origin['port'] ? ':' . $origin['port'] : ''

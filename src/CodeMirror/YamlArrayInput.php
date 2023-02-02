@@ -12,6 +12,10 @@ class YamlArrayInput extends CodeMirrorInput
         $this->mode = 'yaml';
     }
 
+    /**
+     * @param string|array|FlatArray $value
+     * @return static
+     */
     public function setDefault($value)
     {
         if ($value instanceof FlatArray) $value = $value->get();
@@ -19,6 +23,10 @@ class YamlArrayInput extends CodeMirrorInput
         return parent::setDefault($value);
     }
 
+    /**
+     * @param string|array|FlatArray $value
+     * @return static
+     */
     public function setValue($value)
     {
         if ($value instanceof FlatArray) $value = $value->get();

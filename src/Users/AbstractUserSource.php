@@ -86,7 +86,7 @@ abstract class AbstractUserSource
                 'source = ? AND provider = ? AND provider_id = ?',
                 [$this->name, $provider, $id]
             );
-        if ($result && $result = $result->fetch()) {
+        if ($result = $result->fetch()) {
             return $result['user_uuid'];
         } else {
             return null;

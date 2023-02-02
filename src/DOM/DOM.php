@@ -98,7 +98,7 @@ class DOM
             }
         }
         //recurse into children if found
-        if ($node && $node->hasChildNodes()) {
+        if ($node->hasChildNodes()) {
             //build an array of children, disconnected from childNodes object
             //we need to do this so we can replace them without breaking the
             //order and total coverage of looping through them

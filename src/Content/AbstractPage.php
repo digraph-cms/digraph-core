@@ -436,7 +436,7 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
             $slug = $this->slug();
         } else {
             $slug =
-                ($this->slugCollisions() ?? Router::staticRouteExists($this->slug(), $action))
+                ($this->slugCollisions() || ($this->slug() && Router::staticRouteExists($this->slug(), $action ?? 'index')))
                 ? $this->uuid()
                 : $this->slug();
         }

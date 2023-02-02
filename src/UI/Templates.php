@@ -111,7 +111,7 @@ class Templates
             function () use ($response) {
                 return static::render($response->template());
             },
-            $response->cacheTTL() ?? Config::get('cache.template_ttl')
+            $response->cacheTTL()
         ));
     }
 

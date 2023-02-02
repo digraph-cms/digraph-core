@@ -4,7 +4,6 @@ use DigraphCMS\Content\Page;
 use DigraphCMS\Content\Pages;
 use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
-use DigraphCMS\Digraph;
 use DigraphCMS\HTML\Forms\Field;
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTTP\RedirectException;
@@ -13,29 +12,7 @@ use DigraphCMS\Session\Cookies;
 use DigraphCMS\UI\Notifications;
 
 Cookies::required(['system', 'csrf']);
-
-// ensure we have a UUID in the parameters
-if (!Context::arg('uuid')) {
-    $url = Context::url();
-    $url->arg('uuid', Digraph::uuid());
-    throw new RedirectException($url);
-}
-
-// validate parameter UUID
-if (!Digraph::validateUUID(Context::arg('uuid') ?? '')) {
-    $url = Context::url();
-    $url->arg('uuid', Digraph::uuid());
-    throw new RedirectException($url);
-}
-
-// ensure parameter UUID doesn't already exist
-if (Pages::exists(Context::arg('uuid'))) {
-    $url = Context::url();
-    $url->arg('uuid', Digraph::uuid());
-    throw new RedirectException($url);
-}
-
-Cookies::required(['system', 'csrf']);
+Context::ensureUUIDArg(Pages::class);
 
 echo "<h1>Add disconnected page</h1>";
 echo "<p>This form creates a page that does not have a parent. It is meant for creating pages that are disconnected from the main site map.</p>";

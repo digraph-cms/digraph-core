@@ -221,7 +221,7 @@ class SELECT extends Tag implements InputInterface
     {
         if ($this->value) {
             return $this->value;
-        } elseif (($value = trim($this->submittedValue() || "")) || $this->submitted()) {
+        } elseif (($value = trim($this->submittedValue() ?? "")) || $this->submitted()) {
             return $value ? $value : null;
         } else {
             return null;
