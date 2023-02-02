@@ -64,7 +64,7 @@ class TabInterface
         if ($set) {
             $this->defaultTab = $set;
         }
-        return $this->defaultTab ?? @array_shift(array_keys($this->tabs));
+        return $this->defaultTab ?? array_keys($this->tabs)[0];
     }
 
     public function url(string $id): URL

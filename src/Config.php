@@ -91,7 +91,7 @@ abstract class Config implements InitializedClassInterface
     {
         return Spyc::YAMLDump(
             $data,
-            false,
+            2,
             80,
             true
         );

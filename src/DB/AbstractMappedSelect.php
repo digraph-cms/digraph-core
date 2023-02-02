@@ -141,7 +141,7 @@ abstract class AbstractMappedSelect implements Iterator, Countable
     /**
      * Add to the WHERE clause, defaulting to appending with "AND"
      *
-     * @param string|array<mixed,string> $condition
+     * @param string|array<mixed,string>|null $condition
      * @param string|int|float|array<int|string,string|int|float> $parameters
      * @param string $separator
      * @return static

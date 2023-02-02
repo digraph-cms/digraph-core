@@ -45,7 +45,7 @@ class ShortCodesListener
     {
         $page = Pages::get($s->getBbCode() ?? Context::pageUUID());
         if (!$page) return null;
-        $toc = new TableOfContents($page, intval($s->getParameter('depth', 1)));
+        $toc = new TableOfContents($page, intval($s->getParameter('depth', '1')));
         return $toc->__toString();
     }
 

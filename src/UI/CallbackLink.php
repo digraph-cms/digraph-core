@@ -21,7 +21,7 @@ class CallbackLink extends A
      */
     public function __construct(callable $callback, $href = null, string $target = null, string $frameTarget = null)
     {
-        parent::__construct($href, $target < $frameTarget);
+        parent::__construct($href, $target, $frameTarget);
         $this->callback = $callback;
         $this->setID('callback-link-' . static::$idCounter++);
     }

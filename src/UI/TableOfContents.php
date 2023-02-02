@@ -77,7 +77,7 @@ class TableOfContents extends Tag
     public function generateMoreLink(): string
     {
         $url = Context::url();
-        $url->arg($this->arg(), $this->page() + 1);
+        $url->arg($this->arg(), strval($this->page() + 1));
         return sprintf(
             '<li class="table-of-contents__load-more"><a href="%s" data-target="_frame">-- load more --</a></li>',
             $url,

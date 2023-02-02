@@ -73,6 +73,6 @@ $accessToken = $provider->getAccessToken('authorization_code', [
 Cookies::unset('csrf', 'oauth2state');
 
 // get user from provider and save ID into Context
-$resourceOwner = $provider->getResourceOwner($accessToken);
+$resourceOwner = $provider->getResourceOwner($accessToken); //@phpstan-ignore-line this one is out of my control
 Context::data('oauth_resource_owner', $resourceOwner);
 Context::data('signin_provider_id', $resourceOwner->getID());

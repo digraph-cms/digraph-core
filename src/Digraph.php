@@ -402,11 +402,11 @@ abstract class Digraph
     public static function buildErrorContent(float $status, string $message = null): bool
     {
         Context::data('error_message', $message);
-        Context::response()->status(floor($status));
-        Context::response()->filename(floor($status) . '.html');
+        Context::response()->status(intval(floor($status)));
+        Context::response()->filename(intval(floor($status)) . '.html');
         $built =
-            static::doStaticRoute('error', $status) ??
-            static::doStaticRoute('error', round($status)) ??
+            static::doStaticRoute('error', strval($status)) ??
+            static::doStaticRoute('error', strval(round($status))) ??
             static::doStaticRoute('error', floor($status / 100) . 'xx') ??
             static::doStaticRoute('error', 'xxx');
         if (!$built) {

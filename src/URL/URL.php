@@ -376,13 +376,13 @@ class URL
      * of query arguments.
      *
      * @param string $name
-     * @param string $value
+     * @param mixed $value
      * @return string|null
      */
-    public function arg(string $name, string $value = null): ?string
+    public function arg(string $name, mixed $value = null): ?string
     {
         if ($value !== null) {
-            $this->query[$name] = $value;
+            $this->query[$name] = strval($value);
             ksort($this->query);
         }
         return @$this->query[$name];

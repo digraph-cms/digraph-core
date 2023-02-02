@@ -166,7 +166,7 @@ class Paginator extends ConditionalContainer
         }
         // link to last page
         if ($this->groupCount() !== INF && $this->group() < $this->groupCount() - 1) {
-            $links[] = $this->link($this->pages(), 'last', 'lastpage');
+            $links[] = $this->link(intval($this->pages()), 'last', 'lastpage');
         }
         // link to next page
         if ($this->page() < $this->pages()) {

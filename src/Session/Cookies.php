@@ -423,7 +423,7 @@ class Cookies
         unset($_COOKIE[$key]);
         setcookie(
             $key,
-            null,
+            "",
             1,
             static::cookiePath($localScope),
             static::cookieDomain(),
@@ -436,7 +436,7 @@ class Cookies
         unset($_COOKIE[$key]);
         setcookie(
             $key,
-            null,
+            "",
             1,
             static::cookiePath(false),
             static::cookieDomain(),
@@ -444,7 +444,7 @@ class Cookies
         );
         setcookie(
             $key,
-            null,
+            "",
             1
         );
     }

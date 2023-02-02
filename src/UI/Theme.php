@@ -308,11 +308,11 @@ class Theme
             ];
         }
         // add alpha colors
-        $colors['a90'] = (new Hex($color))->toRgba()->alpha(0.9);
-        $colors['a80'] = (new Hex($color))->toRgba()->alpha(0.8);
-        $colors['a50'] = (new Hex($color))->toRgba()->alpha(0.5);
-        $colors['a20'] = (new Hex($color))->toRgba()->alpha(0.2);
-        $colors['a10'] = (new Hex($color))->toRgba()->alpha(0.1);
+        $colors['a90'] = (new Hex($color))->toRgba()->alpha(0.9);//@phpstan-ignore-line
+        $colors['a80'] = (new Hex($color))->toRgba()->alpha(0.8);//@phpstan-ignore-line
+        $colors['a50'] = (new Hex($color))->toRgba()->alpha(0.5);//@phpstan-ignore-line
+        $colors['a20'] = (new Hex($color))->toRgba()->alpha(0.2);//@phpstan-ignore-line
+        $colors['a10'] = (new Hex($color))->toRgba()->alpha(0.1);//@phpstan-ignore-line
         return $colors;
     }
 

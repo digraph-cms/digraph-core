@@ -15,7 +15,7 @@ use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\URL\URL;
 
-$item = Datastore::getByID(Context::url()->actionSuffix());
+$item = Datastore::getByID(intval(Context::url()->actionSuffix()));
 
 Breadcrumb::parents(
     [

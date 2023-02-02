@@ -137,7 +137,7 @@ class ResponsivePicture extends Tag
         $set = [$image->url()];
         $originalWidth = $image->originalWidth();
         foreach ([1.5, 2, 3] as $x) {
-            $newWidth = $x * $width;
+            $newWidth = intval($x * $width);
             if ($originalWidth >= $newWidth) {
                 $resized = (clone $image)
                     ->width($newWidth);

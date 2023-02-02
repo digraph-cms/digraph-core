@@ -64,7 +64,7 @@ class Emails
                 },
                 DB::query()->from('email')
                     ->select('DISTINCT category', true)
-                    ->fetchAll(0)
+                    ->fetchAll(0)//@phpstan-ignore-line
             )
         ));
     }
