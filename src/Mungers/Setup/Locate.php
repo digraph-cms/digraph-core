@@ -36,7 +36,7 @@ class Locate extends AbstractMunger
             $opts = [];
             foreach ($slugs as $slug) {
                 list($slug, $verb) = $slug;
-                foreach ($package->cms()->locate($slug) as $dso) {
+                foreach ($package->cms()->locate($slug) ?? [] as $dso) {
                     $opts[] = [$dso,$verb];
                 }
                 //break when a result is found, so that slugs that are a prefix
