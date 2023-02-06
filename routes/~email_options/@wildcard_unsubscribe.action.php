@@ -10,7 +10,7 @@ use DigraphCMS\URL\URL;
 
 Breadcrumb::setTopName('Email unsubscribe');
 
-/** @var array email addresses to be managed with this form */
+/** @var array<int,string> email addresses to be managed with this form */
 $addresses = [];
 
 // only allow access with valid email ID or by being signed in

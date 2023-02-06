@@ -18,11 +18,20 @@ use PDOStatement;
  */
 abstract class AbstractMappedSelect implements Iterator, Countable
 {
-    protected $query, $iterator;
+    /** @var Select */
+    protected $query;
+    /** @var \ArrayIterator<int,array<string,mixed>|object>|\PDOStatement */
+    protected $iterator;
+    /** @var bool */
     protected $returnDataObjects = true;
+    /** @var string|null */
     protected $returnObjectClass = null;
 
-    protected function doRowToObject(array $row)
+    /**
+     * @param array<string,mixed> $row
+     * @return object|null
+     */
+    protected function doRowToObject(array $row): ?object
     {
         return null;
     }
@@ -53,7 +62,11 @@ abstract class AbstractMappedSelect implements Iterator, Countable
         );
     }
 
-    protected function rowToObject($row)
+    /**
+     * @param mixed $row
+     * @return object|null
+     */
+    protected function rowToObject($row): ?object
     {
         return is_array($row) ? $this->doRowToObject($row) : null;
     }
@@ -70,7 +83,7 @@ abstract class AbstractMappedSelect implements Iterator, Countable
         $this->query->disableSmartJoin();
         if ($this->returnObjectClass) {
             $this->returnDataObjects = false;
-            $this->query->asObject($this->returnObjectClass);
+            $this->query->asObject($this->returnObjectClass); //@phpstan-ignore-line
         }
     }
 
@@ -112,6 +125,10 @@ abstract class AbstractMappedSelect implements Iterator, Countable
         return $this;
     }
 
+    /**
+     * @param string $statement
+     * @return static
+     */
     public function leftJoin(string $statement)
     {
         $this->query->leftJoin($this->parseJsonRefs($statement));
@@ -251,12 +268,11 @@ abstract class AbstractMappedSelect implements Iterator, Countable
      * Add a HAVING clause
      *
      * @param string $column
-     * @param array|mixed $parameters
      * @return static
      */
-    public function having(string $column, $parameters = [])
+    public function having(string $column)
     {
-        $this->query->having($column, $parameters);
+        $this->query->having($column);
         return $this;
     }
 
@@ -324,11 +340,11 @@ abstract class AbstractMappedSelect implements Iterator, Countable
     }
 
     /**
-     * Fetch all DataObjects, or raw rows if returnDataObjects
+     * Fetch all DataObjects, or raw rows if returnDataObjects is false
      *
      * @param string $index
      * @param string $selectOnly
-     * @return array
+     * @return array<int,array<string,mixed>>|array<int,object>
      */
     public function fetchAll($index = '', $selectOnly = '')
     {
@@ -348,10 +364,10 @@ abstract class AbstractMappedSelect implements Iterator, Countable
      *
      * @param string $key
      * @param string $value
-     * @param boolean $object
-     * @return array|\PDOStatement
+     * @param bool $object
+     * @return array<string,mixed>|\PDOStatement
      */
-    public function fetchPairs($key, $value, $object = false)
+    public function fetchPairs(string $key, string $value, bool $object = false)
     {
         return $this->query->fetchPairs($key, $value, $object);
     }
@@ -360,7 +376,7 @@ abstract class AbstractMappedSelect implements Iterator, Countable
      * Build an iterator to use for passing through calls to \Iterable
      * interface methods
      *
-     * @return \ArrayIterator<int,array|object>|\PDOStatement
+     * @return \ArrayIterator<int,array<string,mixed>|object>|\PDOStatement
      */
     protected function getIterator()
     {
@@ -381,6 +397,9 @@ abstract class AbstractMappedSelect implements Iterator, Countable
         return $this->query->count();
     }
 
+    /**
+     * @return mixed
+     */
     public function current(): mixed
     {
         if ($this->returnDataObjects) {

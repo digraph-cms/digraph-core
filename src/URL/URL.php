@@ -19,8 +19,11 @@ use DigraphCMS\Users\User;
  */
 class URL
 {
+    /** @var string|null */
     protected $name;
+    /** @var string */
     protected $path = '';
+    /** @var array<string,string> */
     protected $query = [];
 
     /**
@@ -127,6 +130,12 @@ class URL
         return null;
     }
 
+    /**
+     * @param array<mixed,string> $class
+     * @param boolean $inPageContext
+     * @param string|null $target
+     * @return string
+     */
     public function html(array $class = [], bool $inPageContext = false, string $target = null): string
     {
         $normalized = clone ($this);
@@ -154,7 +163,7 @@ class URL
         }
     }
 
-    public function setName(string $name = null)
+    public function setName(string $name = null): static
     {
         $this->name = $name;
         return $this;
@@ -188,7 +197,7 @@ class URL
         }
     }
 
-    public function normalize()
+    public function normalize(): static
     {
         // key sort query arguments
         ksort($this->query);
@@ -360,8 +369,8 @@ class URL
     /**
      * Get or set the entire query string as an array
      *
-     * @param array $query
-     * @return array
+     * @param array<string,string> $query
+     * @return array<string,string>
      */
     public function query(array $query = null): array
     {

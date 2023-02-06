@@ -209,7 +209,7 @@ abstract class Digraph
         );
     }
 
-    public static function makeResponse(Request $request)
+    public static function makeResponse(Request $request): void
     {
         ob_start();
         $request->url()->normalize();
@@ -350,7 +350,7 @@ abstract class Digraph
         URLs::endContext();
     }
 
-    protected static function buildResponseContent()
+    protected static function buildResponseContent(): void
     {
         if ($response = Context::cache()->get('content_cache')) {
             Context::response($response);

@@ -17,15 +17,17 @@ use DigraphCMS\UI\Templates;
 
 class WaybackMachine
 {
+    /** @var bool|null */
     protected static $active = null;
+    /** @var bool */
     protected static $notifications = true;
 
-    public static function activate()
+    public static function activate(): void
     {
         if (static::active() === false) static::$active = true;
     }
 
-    public static function deactivate()
+    public static function deactivate(): void
     {
         if (static::active() === true) static::$active = false;
     }
@@ -35,12 +37,12 @@ class WaybackMachine
         return static::$active ?? Config::get('wayback.active');
     }
 
-    public static function enableNotifications()
+    public static function enableNotifications(): void
     {
         static::$notifications = true;
     }
 
-    public static function disableNotifications()
+    public static function disableNotifications(): void
     {
         static::$notifications = false;
     }
@@ -78,7 +80,7 @@ class WaybackMachine
         }
     }
 
-    protected static function isLinkBroken($normalizedUrl): ?bool
+    protected static function isLinkBroken(string $normalizedUrl): ?bool
     {
         $hash = md5($normalizedUrl);
         $status = static::statusStorage()->value($hash);
@@ -95,7 +97,7 @@ class WaybackMachine
         else return true;
     }
 
-    public static function actualUrlStatus($url): bool
+    public static function actualUrlStatus(string $url): bool
     {
         try {
             $ch = CurlHelper::init($url);
@@ -163,7 +165,7 @@ class WaybackMachine
      * Returns null if there are no snapshots, false if there was an error.
      *
      * @param string $url normalized URL
-     * @return array|false|null
+     * @return array<string,mixed>|false|null
      */
     public static function actualApiCall(string $url)
     {
@@ -197,7 +199,7 @@ class WaybackMachine
         return false;
     }
 
-    public static function setNoNotifyFlag($url, ?URL $context, bool $flag)
+    public static function setNoNotifyFlag(string $url, ?URL $context, bool $flag): void
     {
         if ($flag) {
             if ($context) Datastore::set('wayback', 'no_notify', md5(serialize([$url, $context->pathString()])), 'blocked', ['url' => $url, 'context' => $context->pathString()]);
@@ -208,14 +210,14 @@ class WaybackMachine
         }
     }
 
-    public static function noNotifyFlag($normalizedUrl, URL $context = null): bool
+    public static function noNotifyFlag(string $normalizedUrl, URL $context = null): bool
     {
         if (Datastore::exists('wayback', 'no_notify', md5($normalizedUrl))) return true;
         elseif ($context && Datastore::exists('wayback', 'no_notify', md5(serialize([$normalizedUrl, $context->pathString()])))) return true;
         else return false;
     }
 
-    protected static function sendNotificationEmail(URL $context, $url)
+    protected static function sendNotificationEmail(URL $context, string $url): void
     {
         if (!static::notifications()) return;
         if (static::noNotifyFlag($url, $context)) return;

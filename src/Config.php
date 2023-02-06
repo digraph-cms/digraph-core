@@ -13,13 +13,13 @@ abstract class Config implements InitializedClassInterface
     /** @var SelfReferencingFlatArray|null */
     protected static $data;
 
-    public static function initialize_preCache(CacheableState $state)
+    public static function initialize_preCache(CacheableState $state): void
     {
         $state->merge(static::parseJsonFile(__DIR__ . '/config.json'), null, true);
         $state->merge(static::parseYamlFile(__DIR__ . '/config.yaml'), null, true);
     }
 
-    public static function initialize_postCache(CacheableState $state)
+    public static function initialize_postCache(CacheableState $state): void
     {
         static::$data = clone $state;
     }
@@ -51,21 +51,25 @@ abstract class Config implements InitializedClassInterface
         return $cache;
     }
 
-    public static function get(string $key = null)
+    public static function get(string $key = null): mixed
     {
         return self::$data->get($key);
     }
 
-    public static function set(?string $key, $value)
+    public static function set(?string $key, mixed $value): mixed
     {
         return self::$data->set($key, $value);
     }
 
-    public static function merge($value, $name = null, $overwrite = true)
+    public static function merge(mixed $value, string $name = null, bool $overwrite = true): void
     {
         self::$data->merge($value, $name, $overwrite);
     }
 
+    /**
+     * @param string $file
+     * @return array<mixed,mixed>
+     */
     public static function parseYamlFile(string $file): array
     {
         if (!is_file($file)) {
@@ -74,7 +78,11 @@ abstract class Config implements InitializedClassInterface
         return Spyc::YAMLLoadString(file_get_contents($file));
     }
 
-    public static function parseJsonFile(string $file)
+    /**
+     * @param string $file
+     * @return array<mixed,mixed>
+     */
+    public static function parseJsonFile(string $file): array
     {
         if (!is_file($file)) {
             return [];
@@ -82,11 +90,20 @@ abstract class Config implements InitializedClassInterface
         return json_decode(file_get_contents($file), true);
     }
 
-    public static function dumpJson(array $data, $minify = false): string
+    /**
+     * @param array<mixed,mixed> $data
+     * @param bool $minify
+     * @return string
+     */
+    public static function dumpJson(array $data, bool $minify = false): string
     {
         return json_encode($data, $minify ? JSON_PRETTY_PRINT : null);
     }
 
+    /**
+     * @param array<mixed,mixed> $data
+     * @return string
+     */
     public static function dumpYaml(array $data): string
     {
         return Spyc::YAMLDump(

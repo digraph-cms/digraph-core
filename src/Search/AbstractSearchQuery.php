@@ -17,7 +17,7 @@ abstract class AbstractSearchQuery extends AbstractMappedSelect
      * @return void
      */
     abstract protected function buildQuery();
-    
+
     public function __construct(string $search)
     {
         parent::__construct(DB::query()->from('search_index'));
@@ -34,9 +34,9 @@ abstract class AbstractSearchQuery extends AbstractMappedSelect
 
     /**
      * @param array $row
-     * @return SearchResult
+     * @return SearchResult|null
      */
-    protected function doRowToObject(array $row)
+    function doRowToObject(array $row): ?object
     {
         return new SearchResult(
             $row['title'],

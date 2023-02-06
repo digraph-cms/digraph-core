@@ -71,7 +71,7 @@ class ExceptionLog
                     if ($msg->error()) {
                         $body .= '<br>Additional email system error: ' . $msg->error();
                         $sent = false;
-                    }else {
+                    } else {
                         $sent = true;
                     }
                 } catch (\Throwable $th) {
@@ -126,6 +126,10 @@ class ExceptionLog
         }
     }
 
+    /**
+     * @param Throwable|null $th
+     * @return array<string,mixed>|null
+     */
     protected static function throwableArray(?Throwable $th): ?array
     {
         if (!$th) return null;

@@ -7,7 +7,7 @@ use DigraphCMS\DB\DB;
 class LockingDriverDB implements LockingDriver
 {
 
-    public function release(int $id)
+    public function release(int $id): void
     {
         DB::query()
             ->delete('locking', $id)

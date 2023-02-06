@@ -268,7 +268,7 @@ abstract class Users
         return $guest;
     }
 
-    public static function null($uuid): NullUser
+    public static function null(string $uuid): NullUser
     {
         if ($uuid == 'guest') return static::guest();
         elseif ($uuid == 'system') return static::system();
@@ -281,7 +281,7 @@ abstract class Users
         return static::$null[$uuid];
     }
 
-    public static function insert(User $user)
+    public static function insert(User $user): void
     {
         // insert value
         DB::query()
@@ -300,7 +300,7 @@ abstract class Users
             ->execute();
     }
 
-    public static function update(User $user)
+    public static function update(User $user): void
     {
         // update values
         DB::query()

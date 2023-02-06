@@ -4,7 +4,7 @@ use DigraphCMS\Context;
 use DigraphCMS\URL\URL;
 
 $url = new URL('/~search/');
-$value = htmlentities(strip_tags(Context::arg('q')));
+$value = htmlentities(strip_tags(Context::arg('q') ?? ''));
 
 ?>
 <form class="search-form" method="get" action="<?php echo $url; ?>">

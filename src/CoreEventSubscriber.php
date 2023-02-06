@@ -134,7 +134,7 @@ abstract class CoreEventSubscriber
         );
     }
 
-    public static function onDOMComment(DOMEvent $e)
+    public static function onDOMComment(DOMEvent $e): void
     {
         /** @var DOMComment */
         $comment = trim($e->getNode()->textContent);
@@ -154,7 +154,7 @@ abstract class CoreEventSubscriber
         }
     }
 
-    public static function onDOMElement_a(DOMEvent $e)
+    public static function onDOMElement_a(DOMEvent $e): void
     {
         static $site;
         $site = $site ?? preg_replace('@^(https?:)?//@', '//', URLs::site());
@@ -219,7 +219,7 @@ abstract class CoreEventSubscriber
      *
      * @param AbstractPage $page
      * @param string|null $query
-     * @return array
+     * @return array<string,string>
      */
     public static function onPageAutocompleteCard(AbstractPage $page, string $query = null): array
     {
@@ -244,7 +244,7 @@ abstract class CoreEventSubscriber
      *
      * @param User $user
      * @param string|null $query
-     * @return array
+     * @return array<string,string>
      */
     public static function onUserAutoCompleteCard(User $user, string $query = null): array
     {

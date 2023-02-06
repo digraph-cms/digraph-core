@@ -74,7 +74,13 @@ echo $form;
 
 echo "</div>";
 
-function statusCell(User $user, int $i, array $row)
+/**
+ * @param User $user
+ * @param integer $i
+ * @param array<string,mixed> $row
+ * @return string
+ */
+function statusCell(User $user, int $i, array $row): string
 {
     $out = '';
     if (@$row['verification']) {
@@ -100,7 +106,13 @@ function statusCell(User $user, int $i, array $row)
     return $out;
 }
 
-function controlsCell(User $user, int $i, array $row)
+/**
+ * @param User $user
+ * @param integer $i
+ * @param array<string,mixed> $row
+ * @return string
+ */
+function controlsCell(User $user, int $i, array $row): string
 {
     $controls = '';
     // make primary button for non-primary verified emails

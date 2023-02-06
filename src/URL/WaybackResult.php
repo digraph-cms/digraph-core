@@ -8,8 +8,12 @@ use DigraphCMS\Datastore\Datastore;
 
 class WaybackResult
 {
-
-    protected $originalURL, $wbURL, $wbTime;
+    /** @var string */
+    protected $originalURL;
+    /** @var string|null */
+    protected $wbURL;
+    /** @var int|null */
+    protected $wbTime;
 
     public function __construct(string $originalURL, ?string $wbURL, ?int $wbTime)
     {
@@ -49,6 +53,6 @@ class WaybackResult
         if (!$this->wbTime) {
             return null;
         }
-        return DateTime::createFromFormat('U', $this->wbTime);
+        return DateTime::createFromFormat('U', strval($this->wbTime));
     }
 }

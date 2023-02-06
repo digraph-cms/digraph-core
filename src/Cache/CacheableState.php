@@ -7,7 +7,9 @@ use Flatrr\SelfReferencingFlatArray;
 
 class CacheableState extends SelfReferencingFlatArray
 {
+    /** @var SelfReferencingFlatArray */
     protected $configData;
+    /** @var bool */
     protected $configUpdated = false;
 
     public function __construct()
@@ -20,7 +22,7 @@ class CacheableState extends SelfReferencingFlatArray
         return $this->configUpdated ? $this->configData : null;
     }
 
-    public function config(string $key, $value = null)
+    public function config(string $key, mixed $value = null): mixed
     {
         if ($value !== null) {
             $this->configData[$key] = $value;
@@ -29,7 +31,12 @@ class CacheableState extends SelfReferencingFlatArray
         return $this->configData[$key];
     }
 
-    public function mergeConfig(array $data, $overwrite = false)
+    /**
+     * @param array<mixed,mixed> $data
+     * @param boolean $overwrite
+     * @return void
+     */
+    public function mergeConfig(array $data, bool $overwrite = false)
     {
         $this->configData->merge($data, null, $overwrite);
         $this->configUpdated = true;

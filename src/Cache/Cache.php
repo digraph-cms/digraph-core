@@ -26,7 +26,7 @@ class Cache
     /** @var AbstractCacheDriver */
     protected static $driver;
 
-    public static function _init()
+    public static function _init(): void
     {
         $class = Config::get('cache.driver');
         static::$driver = new $class;
@@ -42,7 +42,7 @@ class Cache
         return static::$driver->expired($name);
     }
 
-    public static function set(string $name, $value, int $ttl = null)
+    public static function set(string $name, mixed $value, int $ttl = null): mixed
     {
         return static::$driver->set($name, $value, $ttl);
     }
@@ -69,7 +69,7 @@ class Cache
         }
     }
 
-    public static function invalidate(string $glob)
+    public static function invalidate(string $glob): void
     {
         static::$driver->invalidate($glob);
     }

@@ -11,7 +11,7 @@ use DigraphCMS\RichMedia\Types\AbstractRichMedia;
  */
 class RichMediaSelect extends AbstractMappedSelect
 {
-    protected function doRowToObject(array $row)
+    protected function doRowToObject(array $row): ?object
     {
         return RichMedia::resultToMedia($row);
     }

@@ -12,10 +12,12 @@ class CachedInitializer
     /** @var StatelessOpCache|null */
     protected static $cache;
 
+    /** @var string|null */
     protected static $cacheDir = null;
+    /** @var int */
     protected static $ttl = 60;
 
-    public static function configureCache(string $cacheDir = null, int $ttl = 60)
+    public static function configureCache(string $cacheDir = null, int $ttl = 60): void
     {
         static::$cacheDir = $cacheDir;
         static::$ttl = $ttl;
@@ -85,7 +87,7 @@ class CachedInitializer
         }
     }
 
-    public static function runClass(string $class)
+    public static function runClass(string $class): void
     {
         $key = preg_replace('/[^a-z0-9\-\_]+/', '/', strtolower($class)) . '_' . md5($class);
         static::run(

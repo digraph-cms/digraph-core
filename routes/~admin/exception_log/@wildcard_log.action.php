@@ -123,7 +123,11 @@ if (file_exists($files)) {
     );
 }
 
-function displayThrownLogData(array $th)
+/**
+ * @param array<string,mixed> $th
+ * @return void
+ */
+function displayThrownLogData(array $th): void
 {
     echo "<section class='stack-trace'>";
     // error message

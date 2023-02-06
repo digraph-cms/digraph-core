@@ -4,7 +4,10 @@ namespace DigraphCMS\Cache;
 
 class CacheNamespace
 {
-    protected $name, $ttl, $staleTTL;
+    /** @var string */
+    protected $name;
+    /** @var int|null */
+    protected $ttl, $staleTTL;
 
     public function __construct(string $name, int $ttl = null, int $staleTTL = null)
     {
@@ -38,7 +41,7 @@ class CacheNamespace
         return Cache::expired($this->name . '/' . $name);
     }
 
-    public function set(string $name, $value, int $ttl = null)
+    public function set(string $name, mixed $value, int $ttl = null): mixed
     {
         return Cache::set($this->name . '/' . $name, $value, $ttl ?? $this->ttl);
     }

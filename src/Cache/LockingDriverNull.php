@@ -5,7 +5,7 @@ namespace DigraphCMS\Cache;
 class LockingDriverNull implements LockingDriver
 {
 
-    public function release(int $id)
+    public function release(int $id): void
     {
         // does nothing
     }

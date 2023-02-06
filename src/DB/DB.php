@@ -16,8 +16,15 @@ Dispatcher::addSubscriber(DB::class);
 
 class DB
 {
-    protected static $pdo, $driver, $query;
+    /** @var PDO|null */
+    protected static $pdo;
+    /** @var string|null */
+    protected static $driver;
+    /** @var Query|null */
+    protected static $query;
+    /** @var array<int,string> */
     protected static $phinxPaths = [];
+    /** @var int */
     protected static $transactions = 0;
 
     const NESTED_TRANSACTION_SUPPORT = [];
@@ -34,7 +41,7 @@ class DB
         return "JSON_UNQUOTE(JSON_EXTRACT($table`$column`,'$.{$path}'))";
     }
 
-    public static function onException_PDOException(PDOException $exception)
+    public static function onException_PDOException(PDOException $exception): ?bool
     {
         switch ($exception->getMessage()) {
             case 'SQLSTATE[HY000]: General error: 5 database is locked':
@@ -47,7 +54,7 @@ class DB
         }
     }
 
-    public static function beginTransaction()
+    public static function beginTransaction(): void
     {
         static::$transactions++;
         if (in_array(Config::get('db.adapter'), static::NESTED_TRANSACTION_SUPPORT) || !static::pdo()->inTransaction()) {
@@ -55,7 +62,7 @@ class DB
         }
     }
 
-    public static function commit()
+    public static function commit(): void
     {
         static::$transactions--;
         if (in_array(Config::get('db.adapter'), static::NESTED_TRANSACTION_SUPPORT) || (static::$transactions == 0 && static::pdo()->inTransaction())) {
@@ -63,7 +70,7 @@ class DB
         }
     }
 
-    public static function rollback()
+    public static function rollback(): void
     {
         static::$transactions--;
         if (in_array(Config::get('db.adapter'), static::NESTED_TRANSACTION_SUPPORT) || (static::$transactions == 0 && static::pdo()->inTransaction())) {
@@ -71,6 +78,9 @@ class DB
         }
     }
 
+    /**
+     * @return array<int,string>
+     */
     public static function migrationPaths(): array
     {
         return array_filter(array_map(
@@ -81,6 +91,9 @@ class DB
         ));
     }
 
+    /**
+     * @return array<int,string>
+     */
     public static function seedPaths(): array
     {
         return array_filter(array_map(
@@ -91,7 +104,7 @@ class DB
         ));
     }
 
-    public static function addPhinxPath(string $path)
+    public static function addPhinxPath(string $path): void
     {
         array_unshift(self::$phinxPaths, $path);
     }

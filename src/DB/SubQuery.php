@@ -4,14 +4,18 @@ namespace DigraphCMS\DB;
 
 class SubQuery
 {
-    protected $value, $select;
-    public function __construct($value, AbstractMappedSelect $select)
+    /** @var string */
+    protected $value;
+    /** @var AbstractMappedSelect */
+    protected $select;
+
+    public function __construct(string $value, AbstractMappedSelect $select)
     {
         $this->value = $value;
         $this->select = $select;
     }
 
-    public function value()
+    public function value(): string
     {
         return $this->value;
     }

@@ -8,7 +8,9 @@ URLs::_init($_SERVER);
 
 class URLs
 {
+    /** @var string|null */
     public static $siteProtocol, $siteHost, $sitePath;
+    /** @var array<int,URL> */
     public static $context = [];
 
     /**
@@ -16,7 +18,7 @@ class URLs
      * but can also be called manually using a fake array containing your own
      * values for HTTP_HOST and SCRIPT_NAME.
      *
-     * @param array $SERVER
+     * @param array<string,mixed> $SERVER
      * @return void
      */
     public static function _init(array $SERVER)
@@ -145,6 +147,10 @@ class URLs
         return static::$siteProtocol;
     }
 
+    /**
+     * @param array<string,mixed>|null $SERVER
+     * @return boolean
+     */
     protected static function isHTTPS(array $SERVER = null)
     {
         $SERVER = $SERVER ?? $_SERVER;

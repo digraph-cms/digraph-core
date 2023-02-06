@@ -7,6 +7,7 @@ use DigraphCMS\DB\DB;
 
 class Locking
 {
+    /** @var LockingDriver|null */
     protected static $driver;
 
     public static function share(string $name, bool $blocking = false, int $ttl = 5): ?int
@@ -27,7 +28,7 @@ class Locking
         return $id;
     }
 
-    public static function release(int $id)
+    public static function release(int $id): void
     {
         static::driver()->release($id);
     }

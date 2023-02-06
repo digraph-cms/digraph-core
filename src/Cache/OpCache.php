@@ -7,10 +7,15 @@ use DigraphCMS\FS;
 
 class OpCache extends AbstractCacheDriver
 {
+    /** @var string */
     protected $dir;
+    /** @var array<string,mixed> */
     protected $cache = [];
+    /** @var array<string,mixed> */
     protected $lockHandles = [];
+    /** @var int */
     protected $fuzz;
+    /** @var int */
     protected $ttl;
 
     public function __construct()
@@ -25,7 +30,11 @@ class OpCache extends AbstractCacheDriver
         return $this->dir . "/" . $name . ".opcache";
     }
 
-    protected function handle(string $filename)
+    /**
+     * @param string $filename
+     * @return mixed
+     */
+    protected function handle(string $filename): mixed
     {
         if (!isset($this->lockHandles[$filename]) && is_file($filename)) {
             $this->lockHandles[$filename] = fopen($filename, 'c');
@@ -33,7 +42,7 @@ class OpCache extends AbstractCacheDriver
         return @$this->lockHandles[$filename];
     }
 
-    protected function closeHandle(string $filename)
+    protected function closeHandle(string $filename): void
     {
         if (isset($this->lockHandles[$filename])) {
             fclose($this->lockHandles[$filename]);
@@ -64,13 +73,13 @@ class OpCache extends AbstractCacheDriver
         return time() > intval($exp);
     }
 
-    public function get(string $name)
+    public function get(string $name): mixed
     {
         $this->readInternally($name);
         return @$this->cache[$name][1];
     }
 
-    protected function readInternally(string $name, bool $force = false)
+    protected function readInternally(string $name, bool $force = false): void
     {
         if ($force || !isset($this->cache[$name])) {
             static::checkName($name);
@@ -106,7 +115,7 @@ class OpCache extends AbstractCacheDriver
         }
     }
 
-    public function invalidate(string $glob)
+    public function invalidate(string $glob): void
     {
         static::checkGlob($glob);
         $glob = $this->filename($glob);
@@ -150,7 +159,7 @@ class OpCache extends AbstractCacheDriver
         }
     }
 
-    protected static function serialize($value): string
+    protected static function serialize(mixed $value): string
     {
         if ($value === null) {
             return 'null';
@@ -169,7 +178,7 @@ class OpCache extends AbstractCacheDriver
         }
     }
 
-    protected static function serialize_object($value): string
+    protected static function serialize_object(mixed $value): string
     {
         try {
             return sprintf(
@@ -184,21 +193,21 @@ class OpCache extends AbstractCacheDriver
         }
     }
 
-    protected function lockWrite(string $filename)
+    protected function lockWrite(string $filename): void
     {
         while (!flock($this->handle($filename), LOCK_EX)) {
             usleep(random_int(1, 100));
         }
     }
 
-    protected function lockRead(string $filename)
+    protected function lockRead(string $filename): void
     {
         while (!flock($this->handle($filename), LOCK_SH)) {
             usleep(random_int(1, 100));
         }
     }
 
-    protected function unlock(string $filename)
+    protected function unlock(string $filename): void
     {
         flock($this->handle($filename), LOCK_UN);
         $this->closeHandle($filename);

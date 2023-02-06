@@ -14,6 +14,7 @@ use DigraphCMS\UI\Templates;
 use DigraphCMS\URL\URL;
 use Flatrr\FlatArrayTrait;
 
+/** @implements ArrayAccess<string,mixed> */
 class User implements ArrayAccess
 {
     use FlatArrayTrait {
@@ -21,16 +22,25 @@ class User implements ArrayAccess
         unset as protected rawUnset;
     }
 
+    /** @var string */
     protected $uuid, $name;
-    protected $created, $created_by;
-    protected $updated, $updated_by;
+    /** @var DateTime */
+    protected $created, $updated;
+    /** @var string */
+    protected $created_by, $updated_by;
+    /** @var DateTime */
     protected $updated_last;
+    /** @var array<int,Group> */
     protected $groups;
 
     const DEFAULT_DATA = [
         'name_explicitly_set' => false
     ];
 
+    /**
+     * @param array<string,mixed> $data
+     * @param array<string,mixed> $metadata
+     */
     public function __construct(array $data = [], array $metadata = [])
     {
         $this->uuid = @$metadata['uuid'] ?? Digraph::uuid();
@@ -92,7 +102,7 @@ class User implements ArrayAccess
             'comment' => $comment
         ];
         foreach ($this['emails'] ?? [] as $k => $existing) {
-            if ($existing[0] == $email) {
+            if (@$existing[0] == $email) {
                 unset($this['emails.' . $k]);
                 $this['emails.' . $k] = $value;
                 return;
@@ -278,7 +288,7 @@ class User implements ArrayAccess
     /**
      * Return a list of all verified emails attached to this account.
      *
-     * @return array
+     * @return array<int,string>
      */
     public function emails(): array
     {
@@ -323,14 +333,14 @@ class User implements ArrayAccess
         return new URL('/~users/profile/?id=' . $this->uuid());
     }
 
-    public function insert()
+    public function insert(): void
     {
-        return Users::insert($this);
+        Users::insert($this);
     }
 
-    public function update()
+    public function update(): void
     {
-        return Users::update($this);
+        Users::update($this);
     }
 
     public function uuid(): string

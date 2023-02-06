@@ -39,12 +39,12 @@ class NullUser extends User
         else return null;
     }
 
-    public function insert()
+    public function insert(): void
     {
         // does nothing, null users shouldn't be put into the database
     }
 
-    public function update()
+    public function update(): void
     {
         // does nothing, null users shouldn't be put into the database
     }

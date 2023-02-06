@@ -6,7 +6,7 @@ use DigraphCMS\DB\AbstractMappedSelect;
 
 class UserSelect extends AbstractMappedSelect
 {
-    function doRowToObject(array $row)
+    function doRowToObject(array $row): ?object
     {
         return Users::resultToUser($row);
     }

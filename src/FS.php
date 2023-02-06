@@ -6,15 +6,16 @@ FS::_init();
 
 abstract class FS
 {
+    /** @var int */
     public static $umask_file, $umask_dir;
 
-    public static function _init()
+    public static function _init(): void
     {
         self::$umask_file = Config::get('fs.umask_file');
         self::$umask_dir = Config::get('fs.umask_dir');
     }
 
-    public static function delete(string $file, string $deleteEmptyDirsUntil = null)
+    public static function delete(string $file, string $deleteEmptyDirsUntil = null): void
     {
         if ($file = realpath($file)) {
             unlink($file);
@@ -24,7 +25,7 @@ abstract class FS
         }
     }
 
-    public static function deleteEmptyDirsUntil(string $dir, string $until)
+    public static function deleteEmptyDirsUntil(string $dir, string $until): void
     {
         if (($dir = realpath($dir)) && ($until = realpath($until))) {
             if ($dir != $until && strpos($dir, $until) === 0) {
@@ -34,7 +35,7 @@ abstract class FS
         }
     }
 
-    public static function mirror(string $src, string $dest, $link = false)
+    public static function mirror(string $src, string $dest, bool $link = false): void
     {
         if (!is_dir($src)) {
             throw new \Exception("Couldn't mirror $src because it's not a directory.");
@@ -62,7 +63,7 @@ abstract class FS
         }
     }
 
-    public static function copy(string $src, string $dest, $link = false, $allow_uploads = false)
+    public static function copy(string $src, string $dest, bool $link = false, bool $allow_uploads = false): void
     {
         $umask = umask(self::$umask_file);
         if ($allow_uploads && is_uploaded_file($src)) {

@@ -13,10 +13,18 @@ use Throwable;
 
 abstract class Context
 {
-    protected static $request, $response, $url, $thrown;
+    /** @var Request|null */
+    protected static $request;
+    /** @var Response|null */
+    protected static $response;
+    /** @var URL|null */
+    protected static $url;
+    /** @var Throwable|null */
+    protected static $thrown;
+    /** @var array<string,mixed> */
     protected static $data = [];
 
-    public static function ensureUUIDArg($checkWith = null)
+    public static function ensureUUIDArg(string $checkWith = null): void
     {
         // ensure arg exists
         if (!static::arg('uuid')) {
@@ -139,7 +147,7 @@ abstract class Context
         return static::$thrown;
     }
 
-    public static function data($name, $value = null)
+    public static function data(string $name, mixed $value = null): mixed
     {
         end(static::$data);
         $endKey = key(static::$data);
@@ -149,17 +157,17 @@ abstract class Context
         return @static::$data[$endKey][$name];
     }
 
-    public static function begin()
+    public static function begin(): void
     {
         static::$data[] = [];
     }
 
-    public static function clone()
+    public static function clone(): void
     {
         static::$data[] = end(static::$data) ?? [];
     }
 
-    public static function end()
+    public static function end(): void
     {
         array_pop(static::$data);
     }

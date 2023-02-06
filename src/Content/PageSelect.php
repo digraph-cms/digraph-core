@@ -6,7 +6,7 @@ use DigraphCMS\DB\AbstractMappedSelect;
 
 class PageSelect extends AbstractMappedSelect
 {
-    protected function doRowToObject(array $row)
+    function doRowToObject(array $row): ?object
     {
         return Pages::resultToPage($row);
     }

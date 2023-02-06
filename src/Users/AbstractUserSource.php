@@ -8,9 +8,14 @@ use DigraphCMS\URL\URL;
 
 abstract class AbstractUserSource
 {
+    /** @var string */
     protected $name;
 
     abstract public function title(): string;
+    /**
+     * @param string|null $bounce
+     * @return array<string,URL>
+     */
     abstract public function allSigninURLs(?string $bounce): array;
 
     public function __construct(string $name)
@@ -33,6 +38,9 @@ abstract class AbstractUserSource
         return !!Config::get("user_sources." . $this->name . ".providers.$provider.active");
     }
 
+    /**
+     * @return array<int,string>
+     */
     public function providers(): array
     {
         return array_filter(
@@ -52,7 +60,7 @@ abstract class AbstractUserSource
         return $url;
     }
 
-    public function authorizeUser(string $user_uuid, string $provider, string $provider_id)
+    public function authorizeUser(string $user_uuid, string $provider, string $provider_id): void
     {
         DB::query()->insertInto(
             'user_source',

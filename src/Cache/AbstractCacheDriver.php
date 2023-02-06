@@ -6,6 +6,7 @@ use DigraphCMS\Config;
 
 abstract class AbstractCacheDriver
 {
+    /** @var string */
     protected $dir;
 
     /**
@@ -26,25 +27,25 @@ abstract class AbstractCacheDriver
      * @param integer|null $ttl
      * @return mixed
      */
-    abstract public function set(string $name, $value, int $ttl = null);
+    abstract public function set(string $name, mixed $value, int $ttl = null);
     abstract public function exists(string $name): bool;
     abstract public function expired(string $name): bool;
-    abstract public function get(string $name);
-    abstract public function invalidate(string $glob);
+    abstract public function get(string $name): mixed;
+    abstract public function invalidate(string $glob): void;
 
     public function __construct()
     {
         $this->dir = Config::get('cache.path');
     }
 
-    public static function checkName(string $name)
+    public static function checkName(string $name): void
     {
         if (!preg_match('/[a-z0-9\-_]+(\/[a-z0-9\-_]+)*/', $name)) {
             throw new \Exception("Invalid cache name. Item names must be valid directory paths consisting of only lower-case alphanumerics, dashes, and underscores.");
         }
     }
 
-    public static function checkGlob(string $glob)
+    public static function checkGlob(string $glob): void
     {
         if (!preg_match('/[a-z0-9\-_\*\?\[\]]+(\/[a-z0-9\-_\*\?\[\]]+)*/', $glob)) {
             throw new \Exception("Invalid cache glob. Item globs must be valid directory paths consisting of only lower-case alphanumerics, dashes, underscores, and glob characters.");

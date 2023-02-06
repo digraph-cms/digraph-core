@@ -6,7 +6,7 @@ use DigraphCMS\DB\AbstractMappedSelect;
 
 class EmailSelect extends AbstractMappedSelect
 {
-    protected function doRowToObject(array $row)
+    protected function doRowToObject(array $row): ?object
     {
         return Emails::resultToEmail($row);
     }
