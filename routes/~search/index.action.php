@@ -11,7 +11,7 @@ use DigraphCMS\UI\Pagination\PaginatedSection;
 use DigraphCMS\UI\Templates;
 use DigraphCMS\URL\URL;
 
-$query = trim(Context::arg('q'));
+$query = trim(Context::arg('q') ?? '');
 if (!$query) {
     echo '<h1>Site search</h1>';
     echo new SearchForm();
