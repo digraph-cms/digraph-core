@@ -4,18 +4,18 @@ namespace DigraphCMS\DB;
 
 class SubQuery
 {
-    /** @var string */
+    /** @var mixed */
     protected $value;
     /** @var AbstractMappedSelect */
     protected $select;
 
-    public function __construct(string $value, AbstractMappedSelect $select)
+    public function __construct(mixed $value, AbstractMappedSelect $select)
     {
         $this->value = $value;
         $this->select = $select;
     }
 
-    public function value(): string
+    public function value(): mixed
     {
         return $this->value;
     }
