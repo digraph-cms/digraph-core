@@ -312,7 +312,7 @@ class User implements ArrayAccess
      */
     public function primaryEmail(): ?string
     {
-        foreach ($this['emails'] as $row) {
+        foreach ($this['emails'] ?? [] as $row) {
             if (@$row['primary'] && !@$row['verification']) {
                 return $row['address'];
             }
