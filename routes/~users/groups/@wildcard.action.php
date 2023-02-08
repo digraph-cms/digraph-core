@@ -7,8 +7,6 @@ use DigraphCMS\UI\Pagination\UserTable;
 use DigraphCMS\Users\Users;
 use DigraphCMS\Users\UserSelect;
 
-Context::response()->enableCache();
-
 $group = Users::group(Context::url()->action());
 if (!$group) {
     throw new HttpError(404);
@@ -20,6 +18,7 @@ $users = new UserSelect(
         ->select('user.*')
         ->leftJoin('user on user_uuid = user.uuid')
         ->where('group_uuid = ?', [$group->uuid()])
+        ->order('user_group_membership.id DESC')
 );
 
 echo "<h1>" . ucfirst($group->name()) . "</h1>";

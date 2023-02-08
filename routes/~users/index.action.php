@@ -1,11 +1,11 @@
 <?php
 
-use DigraphCMS\Context;
 use DigraphCMS\UI\Pagination\UserTable;
-use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
 
-$users = Users::select();
+$users = Users::select()
+    ->order(null)
+    ->order('created DESC');
 
 echo "<h1>All users</h1>";
 
