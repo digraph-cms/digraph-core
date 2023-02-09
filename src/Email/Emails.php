@@ -5,6 +5,7 @@ namespace DigraphCMS\Email;
 use DateInterval;
 use DateTime;
 use DigraphCMS\Config;
+use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Media\Media;
 use DigraphCMS\UI\Templates;
@@ -64,7 +65,7 @@ class Emails
                 },
                 DB::query()->from('email')
                     ->select('DISTINCT category', true)
-                    ->fetchAll(0)//@phpstan-ignore-line
+                    ->fetchAll(0) //@phpstan-ignore-line
             )
         ));
     }
@@ -250,6 +251,10 @@ class Emails
 
     public static function prepareBody_html(Email $email): string
     {
+        Context::fields()['simplified_rendering'] = [
+            'active' => true,
+            'width' => Config::get('email.body_width')
+        ];
         if (Templates::exists('/email/html/body_' . $email->category() . '.php')) {
             $html = Templates::render('/email/html/body_' . $email->category() . '.php', ['email' => $email]);
         } else {
@@ -259,11 +264,13 @@ class Emails
         foreach (Media::glob('/styles_email/*.{scss,css}') as $file) {
             $css .= $file->content() . PHP_EOL;
         }
-        return (new CssToInlineStyles)
+        $output = (new CssToInlineStyles)
             ->convert(
                 $html,
                 static::css()
             );
+        Context::end();
+        return $output;
     }
 
     protected static function css(): string

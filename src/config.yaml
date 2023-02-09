@@ -14,7 +14,7 @@ rich_media_types:
 exception_log:
   notify_emails: []
   notify_frequency: 3600
-  
+
 curl:
   fallback_cafile: null # Allow a specific fallback CA file to be used
   use_fallback_cafile: false # Use built-in fallback CA file instead of relying on server's config
@@ -62,6 +62,8 @@ cache:
   content_ttl: 600
 
 email:
+  header_width: 596
+  body_width: 556
   enabled: true
   enabled_for: []
   from: null
