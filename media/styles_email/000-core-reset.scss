@@ -1,6 +1,6 @@
 body {
-  background-color: var(--background);
-  color: var(--color);
+  background-color: $background;
+  color: $color;
   -webkit-text-size-adjust: 100%;
 }
 
@@ -9,7 +9,7 @@ a:link,
 a[onclick],
 a[javascript] {
   cursor: pointer;
-  color: var(--link-normal);
+  color: $link-normal;
 }
 
 .button-menu,
@@ -24,18 +24,18 @@ a[javascript] {
   button,
   input[type="button"],
   input[type="submit"] {
-      border-radius: 0;
-      white-space: normal;
+    border-radius: 0;
+    white-space: normal;
 
-      &:first-child {
-          border-top-left-radius: $border-radius;
-          border-bottom-left-radius: $border-radius;
-      }
+    &:first-child {
+      border-top-left-radius: $border-radius;
+      border-bottom-left-radius: $border-radius;
+    }
 
-      &:last-child {
-          border-top-right-radius: $border-radius;
-          border-bottom-right-radius: $border-radius;
-      }
+    &:last-child {
+      border-top-right-radius: $border-radius;
+      border-bottom-right-radius: $border-radius;
+    }
   }
 }
 

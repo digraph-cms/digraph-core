@@ -1,8 +1,8 @@
 picture.fancyfit {
   display: block;
   background: #999;
-  box-shadow: var(--shadow);
-  border: $border solid var(--theme-neutral-a50);
+  box-shadow: $shadow;
+  border: $border solid $theme-neutral-a50;
   width: fit-content;
 
   img {
@@ -16,11 +16,11 @@ picture.fancyfit {
 figure {
   background-color: #999;
   font-family: $font-ui;
-  box-shadow: var(--shadow);
+  box-shadow: $shadow;
   max-width: $line-length*1.5;
 
   >* {
-    border: $border solid var(--theme-neutral);
+    border: $border solid $theme-neutral;
   }
 
   >picture {
@@ -44,8 +44,8 @@ figcaption {
   padding: $grid/2;
   width: 100%;
   box-sizing: border-box;
-  background-color: var(--background-a80);
-  color: var(--color);
+  background-color: $background-a80;
+  color: $color;
   border: 0;
 
   >*:first-child {

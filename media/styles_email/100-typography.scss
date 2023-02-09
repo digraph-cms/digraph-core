@@ -59,35 +59,35 @@ fieldset {
   h4,
   h5,
   h6 {
-      margin-top: $grid;
+    margin-top: $grid;
   }
 
   h1 {
-      font-size: 1.5em;
+    font-size: 1.5em;
   }
 
   h2 {
-      font-size: 1.25em;
+    font-size: 1.25em;
   }
 
   h3 {
-      font-size: 1.125em;
+    font-size: 1.125em;
   }
 
   h4 {
-      font-size: 1.06125em;
+    font-size: 1.06125em;
   }
 
   h5 {
-      font-size: 1em;
+    font-size: 1em;
   }
 
   h6 {
-      font-size: 1em;
+    font-size: 1em;
   }
 
   >*:last-child {
-      margin-bottom: 0;
+    margin-bottom: 0;
   }
 }
 
@@ -108,11 +108,11 @@ hr,
   margin: $grid 0;
 
   &:first-child {
-      margin-top: 0;
+    margin-top: 0;
   }
 
   &:last-child {
-      margin-bottom: 0;
+    margin-bottom: 0;
   }
 }
 
@@ -120,14 +120,14 @@ hr {
   border: 0;
   display: block;
   height: $border;
-  background: var(--theme-neutral);
+  background: $theme-neutral;
 }
 
 li {
 
   ul,
   ol {
-      margin: 0;
+    margin: 0;
   }
 }
 
@@ -157,12 +157,12 @@ table {
   border-collapse: collapse;
 
   pre>code {
-      max-width: 25vw;
+    max-width: 25vw;
   }
 }
 
 tr:nth-child(odd) {
-  background: var(--theme-neutral-a20);
+  background: $theme-neutral-a20;
 }
 
 tr:nth-child(even) {
@@ -170,22 +170,22 @@ tr:nth-child(even) {
 
   th,
   td.header {
-      background-color: var(--theme-accent-a80);
+    background-color: $theme-accent-a80;
   }
 }
 
 thead+tbody {
   tr:nth-child(even) {
-      background: var(--theme-neutral-a20);
+    background: $theme-neutral-a20;
   }
 
   tr:nth-child(odd) {
-      background: transparent;
+    background: transparent;
 
-      th,
-      td.header {
-          background-color: var(--theme-accent-a80);
-      }
+    th,
+    td.header {
+      background-color: $theme-accent-a80;
+    }
   }
 }
 
@@ -195,13 +195,13 @@ th {
   vertical-align: middle;
 
   >* {
-      &:first-child {
-          margin-top: 0;
-      }
+    &:first-child {
+      margin-top: 0;
+    }
 
-      &:last-child {
-          margin-bottom: 0;
-      }
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 }
 
@@ -210,8 +210,8 @@ td.header,
 thead>tr {
   font-family: $font-ui;
   text-align: left;
-  background-color: var(--theme-accent) !important;
-  color: var(--theme-accent-inv) !important;
+  background-color: $theme-accent !important;
+  color: $theme-accent-inv !important;
   break-inside: avoid;
 }
 
@@ -225,21 +225,21 @@ time {
 
 blockquote {
   box-sizing: border-box;
-  background: var(--background-light);
+  background: $background-light;
   padding: $grid;
   margin: $grid 0;
   max-width: $line-length;
   font-style: italic;
-  border-left: $border solid var(--theme-neutral);
+  border-left: $border solid $theme-neutral;
 
   >* {
-      &:first-child {
-          margin-top: 0;
-      }
+    &:first-child {
+      margin-top: 0;
+    }
 
-      &:last-child {
-          margin-bottom: 0;
-      }
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 }
 
@@ -253,38 +253,38 @@ mark,
 
 del,
 .del {
-  background: var(--cue-danger);
-  color: var(--cue-danger-inv);
+  background: $cue-danger;
+  color: $cue-danger-inv;
   padding: $border;
 }
 
 ins,
 .ins {
-  background: var(--cue-safe);
-  color: var(--cue-safe-inv);
+  background: $cue-safe;
+  color: $cue-safe-inv;
   padding: $border;
   text-decoration: underline;
 }
 
 mark {
-  background: var(--cue-information);
-  color: var(--cue-information-inv);
+  background: $cue-information;
+  color: $cue-information-inv;
   padding: $border;
   text-decoration: underline;
 
   &.mark--safe {
-      background: var(--cue-safe);
-      color: var(--cue-safe-inv);
+    background: $cue-safe;
+    color: $cue-safe-inv;
   }
 
   &.mark--warning {
-      background: var(--cue-warning);
-      color: var(--cue-warning-inv);
+    background: $cue-warning;
+    color: $cue-warning-inv;
   }
 
   &.mark--danger {
-      background: var(--cue-danger);
-      color: var(--cue-danger-inv);
+    background: $cue-danger;
+    color: $cue-danger-inv;
   }
 }
 

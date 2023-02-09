@@ -1,60 +1,60 @@
 .card {
   box-sizing: border-box;
-  background: var(--background-light);
-  color: var(--color);
+  background: $background-light;
+  color: $color;
   padding: $grid;
   font-family: $font-ui;
   margin: $grid 0;
-  box-shadow: var(--shadow);
+  box-shadow: $shadow;
   width: fit-content;
   max-width: 100%;
 
   &.card--accent {
-      background: var(--theme-accent);
-      color: var(--theme-accent-inv);
+    background: $theme-accent;
+    color: $theme-accent-inv;
   }
 
   &.card--light {
-      background: var(--background-lighter);
-      color: var(--color);
+    background: $background-lighter;
+    color: $color;
   }
 
   &.card--dark {
-      background: var(--background-darker);
-      color: var(--color);
+    background: $background-darker;
+    color: $color;
   }
 
   &.card--neutral {
-      background: var(--theme-neutral);
-      color: var(--theme-neutral-inv);
+    background: $theme-neutral;
+    color: $theme-neutral-inv;
   }
 
   &.card--info {
-      background: var(--cue-information);
-      color: var(--cue-information-inv);
+    background: $cue-information;
+    color: $cue-information-inv;
   }
 
   &.card--confirmation {
-      background: var(--cue-safe);
-      color: var(--cue-safe-inv);
+    background: $cue-safe;
+    color: $cue-safe-inv;
   }
 
   &.card--warning {
-      background: var(--cue-warning);
-      color: var(--cue-warning-inv);
+    background: $cue-warning;
+    color: $cue-warning-inv;
   }
 
   &.card--error {
-      background: var(--cue-danger);
-      color: var(--cue-danger-inv);
+    background: $cue-danger;
+    color: $cue-danger-inv;
   }
 
   >*:first-child {
-      margin-top: 0;
+    margin-top: 0;
   }
 
   >*:last-child {
-      margin-bottom: 0;
+    margin-bottom: 0;
   }
 }
 
@@ -74,35 +74,35 @@
 .card--confirmation,
 .card--warning,
 .card--error {
-    @include uncolored-links;
+  @include uncolored-links;
 }
 
 /*
 file cards include an icon
 */
 .file-card {
-  background: var(--cue-interactive);
-  color: var(--cue-interactive-inv);
+  background: $cue-interactive;
+  color: $cue-interactive-inv;
   display: grid;
   grid-template-columns: 3.5em auto;
   grid-template-rows: auto auto;
   padding: $grid/2;
   border: $border;
-  box-shadow: var(--shadow);
+  box-shadow: $shadow;
 
   &:before {
-      @include icofont;
-      display: block;
-      content: "\eb12";
-      grid-row-start: 1;
-      grid-row-end: -1;
-      font-size: 3em;
-      text-align: left;
-      line-height: 1.2;
+    @include icofont;
+    display: block;
+    content: "\eb12";
+    grid-row-start: 1;
+    grid-row-end: -1;
+    font-size: 3em;
+    text-align: left;
+    line-height: 1.2;
   }
 
   * {
-      grid-column-start: 2;
+    grid-column-start: 2;
   }
 }
 
@@ -116,11 +116,11 @@ extra file card styling for multifile cards
 */
 .multifile-card {
   .multifile-card__list {
-      margin-top: $grid/2;
+    margin-top: $grid/2;
   }
 
   .card__title+.multifile-card__list {
-      margin-top: 0;
+    margin-top: 0;
   }
 }
 
@@ -128,10 +128,10 @@ extra file card styling for multifile cards
   font-size: smaller;
 
   ul {
-      margin: 0;
-      margin-bottom: $grid/2;
-      list-style-position: inside;
-      padding-left: 0;
+    margin: 0;
+    margin-bottom: $grid/2;
+    list-style-position: inside;
+    padding-left: 0;
   }
 }
 
@@ -169,7 +169,7 @@ File card icons for extensions
   color: white;
 
   &:before {
-      content: "\eb27";
+    content: "\eb27";
   }
 }
 
@@ -179,7 +179,7 @@ File card icons for extensions
   background: #3e93ac;
 
   &:before {
-      content: "\eb0a";
+    content: "\eb0a";
   }
 }
 
@@ -190,7 +190,7 @@ File card icons for extensions
   background: #649fab;
 
   &:before {
-      content: "\eb0b";
+    content: "\eb0b";
   }
 }
 
@@ -255,6 +255,6 @@ File card icons for extensions
   background: #efab01;
 
   &:before {
-      content: "\eb30";
+    content: "\eb30";
   }
 }
