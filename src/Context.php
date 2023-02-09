@@ -24,6 +24,20 @@ abstract class Context
     /** @var array<string,mixed> */
     protected static $data = [];
 
+    public static function beginEmail(): void
+    {
+        static::beginSimplifiedRendering(intval(Config::get('email.body_width')));
+    }
+
+    public static function beginSimplifiedRendering(int $width): void
+    {
+        static::begin();
+        static::fields()['simplified_rendering'] = [
+            'active' => true,
+            'width' => $width
+        ];
+    }
+
     public static function ensureUUIDArg(string $checkWith = null): void
     {
         // ensure arg exists

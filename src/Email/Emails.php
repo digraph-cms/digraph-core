@@ -251,10 +251,8 @@ class Emails
 
     public static function prepareBody_html(Email $email): string
     {
-        Context::fields()['simplified_rendering'] = [
-            'active' => true,
-            'width' => Config::get('email.body_width')
-        ];
+
+        Context::beginEmail();
         if (Templates::exists('/email/html/body_' . $email->category() . '.php')) {
             $html = Templates::render('/email/html/body_' . $email->category() . '.php', ['email' => $email]);
         } else {
