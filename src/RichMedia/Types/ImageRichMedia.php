@@ -4,6 +4,7 @@ namespace DigraphCMS\RichMedia\Types;
 
 use DigraphCMS\Content\Filestore;
 use DigraphCMS\Content\FilestoreFile;
+use DigraphCMS\Context;
 use DigraphCMS\HTML\DIV;
 use DigraphCMS\HTML\FIGURE;
 use DigraphCMS\HTML\Forms\Field;
@@ -75,6 +76,22 @@ class ImageRichMedia extends AbstractRichMedia
 
     public function shortCode(ShortcodeInterface $code): ?string
     {
+        // if we are in a simplified rendering context, render as a straight image
+        if (Context::fields()['simplified_rendering']) {
+            $file = $this->file()->image();
+            // if a simplified rendering width is set, fit image to it
+            if ($width = intval(Context::fields()['simplified_rendering.width'])) {
+                if ($file->originalWidth() > $width) {
+                    $file->width($width);
+                }
+            }
+            // render image tag
+            $image = new IMG($file->url(), $this['alt']);
+            if ($code->getParameter('floated', 'no') !== 'no') {
+                $image->addClass('floated');
+            }
+            return $image->__toString();
+        }
         // if this is a plain image, just return a straight image
         if ($code->getParameter('plain', 'no') !== 'no') {
             $file = $this->file()->image();
