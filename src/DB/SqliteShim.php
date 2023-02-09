@@ -35,6 +35,8 @@ class SqliteShim
                 return null;
             }
         }
+        if ($out === true) return 'true';
+        if ($out === false) return 'false';
         $out = @"$out";
         return $out;
     }

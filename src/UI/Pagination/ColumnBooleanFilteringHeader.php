@@ -34,8 +34,8 @@ class ColumnBooleanFilteringHeader extends AbstractColumnFilteringHeader
     public function getWhereClauses(): array
     {
         $column = $this->column();
-        if ($this->config() === true) return [["$column", [true]]];
-        elseif ($this->config() === false) return [["(NOT $column OR $column is null)", []]];
+        if ($this->config() === true) return [["$column = 'true'", [true]]];
+        elseif ($this->config() === false) return [["($column = 'false' OR $column is null)", []]];
         else return [];
     }
 
