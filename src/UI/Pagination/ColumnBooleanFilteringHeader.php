@@ -34,9 +34,17 @@ class ColumnBooleanFilteringHeader extends AbstractColumnFilteringHeader
     public function getWhereClauses(): array
     {
         $column = $this->column();
-        if ($this->config() === true) return [["$column = 'true'", [true]]];
-        elseif ($this->config() === false) return [["($column = 'false' OR $column is null)", []]];
-        else return [];
+        if (str_contains($column, '${')) {
+            // this is a JSON column, so true/false are strings
+            if ($this->config() === true) return [["$column", ['true']]];
+            elseif ($this->config() === false) return [["($column <> ? AND $column is not null)", ['true']]];
+            else return [];
+        } else {
+            // this is a native column
+            if ($this->config() === true) return [["$column", []]];
+            elseif ($this->config() === false) return [["($column is null OR (NOT $column))", []]];
+            else return [];
+        }
     }
 
     public function getJoinClauses(): array
