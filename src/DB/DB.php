@@ -38,7 +38,7 @@ class DB
     public static function onDbExpandJsonPath_mysql(string $path, string $column, string $table): string
     {
         $table = $table ? "`$table`." : '';
-        return "JSON_UNQUOTE(JSON_EXTRACT($table`$column`,'$.{$path}'))";
+        return "JSON_EXTRACT($table`$column`,'$.{$path}')";
     }
 
     public static function onException_PDOException(PDOException $exception): ?bool

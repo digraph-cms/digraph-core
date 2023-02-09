@@ -139,7 +139,7 @@ abstract class AbstractMappedSelect implements Iterator, Countable
     {
         if ($string === null) return null;
         return preg_replace_callback(
-            '/\$\{((.+):)?([^\.\}\\\]+)\.([^\}\\\]+)\}/',
+            '/\$\{((.+?):)?([^\.\}\\\]+?)\.([^\}\\\]+?)\}/',
             function ($matches) {
                 return Cache::get(
                     'db/jsonref/' . md5($matches[0]),
