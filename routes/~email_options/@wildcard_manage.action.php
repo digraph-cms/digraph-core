@@ -3,25 +3,29 @@
 use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\Email\Emails;
-use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\UI\Breadcrumb;
 use DigraphCMS\UI\ToggleButton;
-use DigraphCMS\URL\URL;
+use DigraphCMS\Users\Permissions;
+use DigraphCMS\Users\Users;
 
 Breadcrumb::setTopName('Manage email preferences');
 
 /** @var array<int,string> email addresses to be managed with this form */
 $addresses = [];
 
-// only allow access with valid email ID or by being signed in
+// only allow access with valid email ID
 if ($email = Emails::get(Context::url()->actionSuffix())) {
     if ($user = $email->toUser()) {
         $addresses = $user->emails();
     }
     $addresses[] = $email->to();
     $usr = $email->toUser();
+} 
+// or if they're signed in, use their account email(s)
+elseif ($user = Users::current()) {
+    $addresses = $user->emails();
 } else {
-    throw new RedirectException(new URL('./'));
+    Permissions::requireAuth();
 }
 
 // print page title
