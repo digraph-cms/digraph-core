@@ -36,8 +36,8 @@ class ColumnBooleanFilteringHeader extends AbstractColumnFilteringHeader
         $column = $this->column();
         if (str_contains($column, '${')) {
             // this is a JSON column, so true/false are strings
-            if ($this->config() === true) return [["$column", ['true']]];
-            elseif ($this->config() === false) return [["($column <> ? AND $column is not null)", ['true']]];
+            if ($this->config() === true) return [["($column = ? OR $column = ?)", ['true', '1']]];
+            elseif ($this->config() === false) return [["($column = ? OR $column = ? OR $column is null)", ['false', '0']]];
             else return [];
         } else {
             // this is a native column
