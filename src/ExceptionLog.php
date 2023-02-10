@@ -38,11 +38,11 @@ class ExceptionLog
         // send email if lock isn't exceeded
         if (static::shouldSendMail($th)) {
             foreach (Config::get('exception_log.notify_emails') as $address) {
-                $subject = implode(' ', [
+                $subject = substr(implode(' ', [
                     'Site Error:',
                     method_exists($th, 'getMessage') ? $th->getMessage() : get_class($th),
                     Context::url(),
-                ]);
+                ]), 0, 250);
                 $body = implode('<br>', [
                     sprintf(
                         '<a href="%s">A new error</a> has been logged at <a href="%s">%s</a>',
