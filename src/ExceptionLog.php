@@ -9,7 +9,6 @@ use DigraphCMS\RichContent\RichContent;
 use DigraphCMS\Session\Session;
 use DigraphCMS\UI\Format;
 use DigraphCMS\URL\URL;
-use Exception;
 use Throwable;
 use ZipArchive;
 

@@ -5,6 +5,7 @@ namespace DigraphCMS\DB;
 use DigraphCMS\Config;
 use DigraphCMS\Digraph;
 use DigraphCMS\Events\Dispatcher;
+use DigraphCMS\ExceptionLog;
 use DigraphCMS\Users\Permissions;
 use Envms\FluentPDO\Query;
 use Exception;
@@ -43,6 +44,7 @@ class DB
 
     public static function onException_PDOException(PDOException $exception): ?bool
     {
+        ExceptionLog::log($exception);
         switch ($exception->getMessage()) {
             case 'SQLSTATE[HY000]: General error: 5 database is locked':
                 Digraph::buildErrorContent(503, 'Database is locked for writing or maintenance, please try again in a moment');
