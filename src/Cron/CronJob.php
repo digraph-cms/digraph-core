@@ -21,7 +21,7 @@ class CronJob
         $this->parent = $this->parent ?? $parent;
         $this->name = $this->name ?? $name;
         $this->job = $this->job !== null
-            ? unserialize($this->job)
+            ? @unserialize($this->job)
             : $job ?? function () {
                 return 'Empty job';
             };

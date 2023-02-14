@@ -11,13 +11,13 @@ use Exception;
 
 class DeferredJob
 {
-    protected $id, $group, $run, $error_time, $error_message, $job;
+    protected $id, $group, $run, $error, $message, $job;
 
     public function __construct(callable $job = null, string $group = null)
     {
         $this->group = $this->group ?? $group ?? static::uuid();
         $this->job = $this->job !== null
-            ? unserialize($this->job)
+            ? @unserialize($this->job)
             : $job ?? function () {
                 return 'Empty job';
             };
@@ -112,15 +112,8 @@ class DeferredJob
             : null;
     }
 
-    public function errorTime(): ?DateTime
-    {
-        return $this->error_time
-            ? (new DateTime)->setTimestamp($this->error_time)
-            : null;
-    }
-
     public function errorMessage(): ?string
     {
-        return $this->error_message;
+        return $this->message;
     }
 }

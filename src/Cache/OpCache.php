@@ -187,7 +187,8 @@ class OpCache extends AbstractCacheDriver
             );
         } catch (\Throwable $th) {
             return sprintf(
-                '\\unserialize(\'%s\')',
+                '@\\unserialize(\'%s\')',
+                // TODO: explore replacing Opis\Closure with a wrapper for some other serializer that isn't deprecating
                 str_replace("'", "\\'", @\Opis\Closure\serialize($value))
             );
         }

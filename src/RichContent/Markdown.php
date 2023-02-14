@@ -6,7 +6,8 @@ class Markdown
 {
     public static function parse(string $input): string
     {
-        return static::parsedown()->text($input);
+        // TODO: Look into replacing/updating parsedown to avoid deprecations
+        return @static::parsedown()->text($input);
     }
 
     protected static function parsedown(): ParsedownDigraph
