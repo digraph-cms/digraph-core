@@ -43,6 +43,7 @@ if ($bounce) {
     try {
         $bounce = new URL($bounce);
     } catch (\Throwable $th) {
+        // TODO: record bad behavior
         ExceptionLog::log($th);
         $bounce = new URL('/');
     }

@@ -349,6 +349,7 @@ class Emails
         $mailer->Body = '';
         $mailer->AltBody = '';
         $mailer->Subject = '';
+        $mailer->CharSet = 'UTF-8';
         $mailer->clearAllRecipients();
         $mailer->clearAttachments();
         $mailer->clearCustomHeaders();
