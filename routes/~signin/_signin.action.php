@@ -6,6 +6,7 @@ use DigraphCMS\DB\DB;
 use DigraphCMS\Email\Email;
 use DigraphCMS\Email\Emails;
 use DigraphCMS\Events\Dispatcher;
+use DigraphCMS\ExceptionLog;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\RichContent\RichContent;
 use DigraphCMS\Session\Cookies;
@@ -39,7 +40,12 @@ if (!$source->providerActive($provider)) {
 // get bounce arg and turn it into a URL (which verifies it's in-site)
 $bounce = Context::arg('_bounce');
 if ($bounce) {
-    $bounce = new URL($bounce);
+    try {
+        $bounce = new URL($bounce);
+    } catch (\Throwable $th) {
+        ExceptionLog::log($th);
+        $bounce = new URL('/');
+    }
 }
 
 // make breadcrumb right
