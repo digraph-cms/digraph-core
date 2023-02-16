@@ -72,7 +72,7 @@ foreach ($categories as $category) {
     echo "</td>";
     // don't show unsubscribe options for service categories
     if (Config::get('email.service_categories.' . $category)) {
-        echo "<td><em>This category cannot be unsubscribed</em></td>";
+        echo "<td>&nbsp;</td>";
         continue;
     }
     // unsubscribe options
