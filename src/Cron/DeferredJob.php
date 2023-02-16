@@ -6,6 +6,7 @@ use DateTime;
 use DigraphCMS\Cache\Locking;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Digraph;
+use DigraphCMS\ExceptionLog;
 use DigraphCMS\Session\Session;
 use Exception;
 
@@ -50,6 +51,7 @@ class DeferredJob
             $message = strval(call_user_func($this->job, $this));
             $error = false;
         } catch (\Throwable $th) {
+            ExceptionLog::log($th);
             if ($th instanceof Exception) {
                 $message = get_class($th) . ': ' . $th->getMessage();
             } else {

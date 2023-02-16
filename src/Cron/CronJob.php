@@ -6,6 +6,7 @@ use DateTime;
 use DigraphCMS\Cache\Locking;
 use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
+use DigraphCMS\ExceptionLog;
 use DigraphCMS\Session\Session;
 use Exception;
 
@@ -66,6 +67,7 @@ class CronJob
                 call_user_func($this->job(), $this, $deadlineTime);
             }
         } catch (\Throwable $th) {
+            ExceptionLog::log($th);
             $error = true;
             $row['error_time'] = time();
             if ($th instanceof Exception) {
