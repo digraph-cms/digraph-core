@@ -316,7 +316,7 @@ abstract class Users
                 'name' => $user->name(),
                 'data' => json_encode($user->get()),
                 'updated' => time(),
-                'updated_by' => Session::user()
+                'updated_by' => Session::uuid()
             ])
             ->execute();
     }
