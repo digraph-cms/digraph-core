@@ -1,0 +1,34 @@
+.notification {
+  @include uncolored-links;
+
+  background-color: $theme-highlight;
+  color: $theme-highlight-inv;
+  padding: $grid/2;
+  font-family: $font-ui;
+  border-radius: $border-radius;
+
+  &.notification--notice {
+    background-color: $cue-information;
+    color: $cue-information-inv;
+  }
+
+  &.notification--confirmation {
+    background-color: $cue-safe;
+    color: $cue-safe-inv;
+  }
+
+  &.notification--warning {
+    background-color: $cue-warning;
+    color: $cue-warning-inv;
+  }
+
+  &.notification--error {
+    background-color: $cue-danger;
+    color: $cue-danger-inv;
+  }
+}
+
+span.notification {
+  padding: 0.125em 0.25em;
+  border-radius: $border-radius;
+}
