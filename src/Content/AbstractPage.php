@@ -480,7 +480,7 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
         $page = Pages::get($uuid);
         if (!$page || !is_callable([$page, $method])) $job->delete();
         // run method
-        call_user_func([$page, $method], $job, $deadline);
+        else call_user_func([$page, $method], $job, $deadline);
     }
 
     public function insert(string $parent_uuid = null)
