@@ -63,7 +63,7 @@ cache:
 
 email:
   header_width: 596
-  body_width: 556
+  body_width: 576
   enabled: true
   enabled_for: []
   from: null
