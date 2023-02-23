@@ -61,8 +61,9 @@ class PaginatedSection extends Tag
      */
     public function addFilterTool(FilterToolInterface $tool)
     {
-        $tool->setSection($this);
         $this->filterTools[$tool->getFilterID()] = $tool;
+        $tool->setSection($this);
+        $this->filteredSource = null;
         return $this;
     }
 
@@ -73,6 +74,9 @@ class PaginatedSection extends Tag
         if ($config !== null) $fullConfig[$tool] = $config;
         $finalConfig = [];
         foreach ($fullConfig as $tool => $config) {
+            // I know it feels weird to store these with key/value as a tuple,
+            // but it's important because it preserves the order the filters
+            // have been applied in by the user, if there are more than one
             $finalConfig[] = [$tool, $config];
         }
         $url = Context::url();
@@ -104,6 +108,7 @@ class PaginatedSection extends Tag
 
     protected function getFilterConfig(): array
     {
+        if (!$this->filterTools) return [];
         if ($arg = Context::arg('filter_' . $this->id())) {
             // get and decode arg
             $json = json_decode($arg, true);
