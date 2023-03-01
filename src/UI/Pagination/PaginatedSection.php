@@ -30,7 +30,7 @@ class PaginatedSection extends Tag
     protected $body, $top, $bottom, $before, $after;
     protected $items;
     protected $callback;
-    protected $dl_filename, $dl_callback, $dl_headers, $dl_finalize_callback;
+    protected $dl_filename, $dl_callback, $dl_headers, $dl_finalize_callback, $dl_ttl;
     protected $dl_button = 'Download';
     /** @var FilterToolInterface[] */
     protected $filterTools = [];
@@ -350,13 +350,20 @@ class PaginatedSection extends Tag
      * @param callable|null $finalizeCallback
      * @return static
      */
-    public function download(string $filename, callable $callback, array $headers = [], callable $finalizeCallback = null, string $buttonText = null)
-    {
+    public function download(
+        string $filename,
+        callable $callback,
+        array $headers = [],
+        callable $finalizeCallback = null,
+        string $buttonText = null,
+        int $ttl = null
+    ) {
         $this->dl_filename = $filename;
         $this->dl_callback = $callback;
         $this->dl_headers = $headers;
         $this->dl_finalize_callback = $finalizeCallback;
         $this->dl_button = $buttonText ?? $this->dl_button;
+        $this->dl_ttl = $ttl;
         return $this;
     }
 
@@ -395,7 +402,8 @@ class PaginatedSection extends Tag
                 FS::copy($file->path() . '.tmp', $file->path());
                 unlink($file->path() . '.tmp');
             },
-            [get_called_class(), $this->downloadFileID()]
+            [get_called_class(), $this->downloadFileID()],
+            $this->dl_ttl
         );
     }
 

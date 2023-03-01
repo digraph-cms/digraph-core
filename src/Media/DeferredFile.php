@@ -8,12 +8,14 @@ use DigraphCMS\FS;
 class DeferredFile extends File
 {
     protected $stringContent;
+    protected $ttl;
 
-    public function __construct(string $filename, callable $content, $identifier)
+    public function __construct(string $filename, callable $content, $identifier, int $ttl = null)
     {
-        // take in filename/extension
+        // take in filename/extension/ttl
         $this->filename = $filename;
         $this->extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        $this->ttl = $ttl;
         // double check extension is valid
         if (strlen($this->extension) == 0 || preg_match('/[^a-z0-9]/', $this->extension)) {
             throw new \Exception("Filename $filename has an invalid extension");
@@ -57,8 +59,9 @@ class DeferredFile extends File
      */
     public function ttl(): int
     {
-        static $ttl;
-        return $ttl ?? $ttl = (Config::get('files.ttl') ?? 3600);
+        return $this->ttl
+            ?? Config::get('files.ttl')
+            ?? 3600;
     }
 
     public function content(): string
