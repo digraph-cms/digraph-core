@@ -272,7 +272,13 @@ abstract class Digraph
                 $id = 'response_index:' . Context::url()->fullPathString();
                 if (Locking::lock($id, false, Config::get('search.response_index.interval'))) {
                     $content = Context::response()->content();
-                    $name = Context::fields()['page.name'] ?? Context::url()->name();
+                    if (Context::fields()['page.name']) {
+                        $name = strip_tags(Context::fields()['page.name']);
+                    } elseif (preg_match("@<h1[^>]*>(.+?)</h1>@i", $content, $matches)) {
+                        $name = trim(strip_tags($matches[1]));
+                    } else {
+                        $name = strip_tags(Context::url()->name());
+                    }
                     $url = Context::url();
                     new DeferredJob(function () use ($content, $name, $url) {
                         Search::indexURL('response_index', $url, $name, $content);
