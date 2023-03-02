@@ -2,6 +2,7 @@
 
 use DigraphCMS\Config;
 use DigraphCMS\Context;
+use DigraphCMS\ExceptionLog;
 use DigraphCMS\HTML\Forms\Field;
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTTP\RedirectException;
@@ -39,7 +40,7 @@ if (!@$config['mock_cas_user']) {
     }
 
     phpCAS::client(
-        CAS_VERSION_2_0,
+        $version,
         $config['server'],
         intval($config['port']),
         $config['context'],
@@ -56,6 +57,11 @@ if (!@$config['mock_cas_user']) {
         phpCAS::forceAuthentication();
     }
     Context::data('signin_provider_id', phpCAS::getUser());
+    // Context::data('cas_attributes', phpCAS::getAttributes());
+    // var_dump(phpCAS::setVerbose(true));
+    // var_dump(phpCAS::getUser());
+    // var_dump(phpCAS::getAttributes());
+    // exit();
 } else {
     // USE MOCK CAS USER
     if (!Context::arg('_mockcasuser')) {
