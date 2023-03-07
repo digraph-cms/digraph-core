@@ -186,9 +186,7 @@ class RichMedia
         if (isset(static::$cache[$result['uuid']])) {
             return static::$cache[$result['uuid']];
         }
-        if (false === ($data = json_decode($result['data'], true))) {
-            throw new \Exception("Error decoding block json data");
-        }
+        $data = json_decode($result['data'], true, 512, JSON_THROW_ON_ERROR);
         $class = static::objectClass($result);
         static::$cache[$result['uuid']] = new $class(
             $data,

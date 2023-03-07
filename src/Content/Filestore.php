@@ -151,9 +151,7 @@ class Filestore
         if (isset(static::$cache[$result['uuid']])) {
             return static::$cache[$result['uuid']];
         }
-        if (false === ($data = json_decode($result['meta'], true))) {
-            throw new \Exception("Error decoding File json metadata");
-        }
+        $data = json_decode($result['meta'], true, 512, JSON_THROW_ON_ERROR);
         static::$cache[$result['uuid']] = new FilestoreFile(
             $result['uuid'],
             $result['hash'],

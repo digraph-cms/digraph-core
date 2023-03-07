@@ -74,7 +74,7 @@ class DatastoreItem
     public function data(): FlatArray
     {
         return $this->data_fltr
-            ?? $this->data_fltr = new FlatArray(json_decode($this->data, true));
+            ?? $this->data_fltr = new FlatArray(json_decode($this->data, true, 512, JSON_THROW_ON_ERROR));
     }
 
     public function group(): DatastoreGroup

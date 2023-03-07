@@ -26,7 +26,7 @@ class SqliteShim
     {
         $path = substr($path, 2);
         $path = explode('.', $path);
-        $arr = json_decode($json, true);
+        $arr = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
         $out = &$arr;
         while ($key = array_shift($path)) {
             if (isset($out[$key])) {

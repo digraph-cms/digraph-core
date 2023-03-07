@@ -24,12 +24,17 @@ if (!file_exists($path)) throw new HttpError(404);
 
 echo "<h1>Error logged " . Format::datetime($time) . "</h1>";
 
-$data = json_decode(file_get_contents($path), true);
+$data = json_decode(file_get_contents($path), true, 512, JSON_INVALID_UTF8_SUBSTITUTE);
 
 printf(
     '<a href="%s">View raw log file JSON</a>',
     new URL('json:' . $name)
 );
+
+if (!is_array($data)) {
+    Notifications::printError('Failed to decode JSON file');
+    return;
+}
 
 echo "<h2>Error message and trace</h2>";
 displayThrownLogData($data['thrown']);

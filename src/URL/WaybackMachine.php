@@ -181,7 +181,7 @@ class WaybackMachine
         $code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
         curl_close($ch);
         if ($code == 200) {
-            $json = json_decode($response, true);
+            $json = json_decode($response, true, 512, JSON_THROW_ON_ERROR);
             if ($json['archived_snapshots']) {
                 return [
                     'url' => $json['archived_snapshots']['closest']['url'],

@@ -453,7 +453,7 @@ class Cookies
     {
         $key = static::key($type, $name);
         if (isset($_COOKIE[$key])) {
-            return json_decode($_COOKIE[$key], true);
+            return json_decode($_COOKIE[$key], true, 512, JSON_THROW_ON_ERROR);
         } else {
             return null;
         }

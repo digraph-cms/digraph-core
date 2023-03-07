@@ -87,7 +87,7 @@ abstract class Config implements InitializedClassInterface
         if (!is_file($file)) {
             return [];
         }
-        return json_decode(file_get_contents($file), true);
+        return json_decode(file_get_contents($file), true, 512, JSON_THROW_ON_ERROR);
     }
 
     /**

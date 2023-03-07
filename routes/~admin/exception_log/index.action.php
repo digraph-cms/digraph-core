@@ -24,7 +24,7 @@ foreach ($dayDirs as $dayDir) {
         function (string $path): array {
             $name = basename($path);
             $time = intval(explode(' ', $name)[0]);
-            $data = json_decode(file_get_contents($path), true);
+            $data = json_decode(file_get_contents($path), true, 512, JSON_INVALID_UTF8_SUBSTITUTE);
             try {
                 $url = new URL($data['url']);
             } catch (\Throwable $th) {
