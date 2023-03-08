@@ -201,7 +201,7 @@ class PaginatedSection extends Tag
             ) {
                 // turn filtered/paginated results into array for final displaying
                 $source = clone $this->source();
-                $source->offset($this->paginator()->startItem());
+                if ($this->paginator()->startItem()) $source->offset($this->paginator()->startItem());
                 $source->limit($this->paginator()->perPage());
                 $this->items = $source->fetchAll();
             }
@@ -210,7 +210,7 @@ class PaginatedSection extends Tag
                 $this->items = array_slice(
                     $this->source(),
                     $this->paginator()->startItem(),
-                    $this->paginator()->endItem() - $this->paginator()->startItem()
+                    $this->paginator()->perPage()
                 );
             }
             // Straight Iterators aren't especially efficient, because you have to iterate through 

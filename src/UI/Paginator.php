@@ -97,8 +97,8 @@ class Paginator extends ConditionalContainer
 
     public function page(): int
     {
-        $page = Context::arg($this->arg());
-        if (!$page || $page < 1) {
+        $page = intval(Context::arg($this->arg()));
+        if ($page < 1) {
             return 1;
         } elseif ($page > $this->pages()) {
             return intval($this->pages());
@@ -135,7 +135,7 @@ class Paginator extends ConditionalContainer
 
     public function startItem(): int
     {
-        return ($this->page() - 1) * $this->perPage;
+        return max(0, ($this->page() - 1) * $this->perPage);
     }
 
     public function endItem(): int
