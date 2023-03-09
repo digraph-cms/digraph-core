@@ -112,9 +112,11 @@
     margin: 20px 0;
     font-family: $font-ui;
     border-radius: $border-radius;
-    padding: 20px;
+    padding: 10px;
     background-color: $cue-interactive;
     color: $cue-interactive-inv !important;
+    font-weight: bold;
+    text-decoration: none;
 }
 
 code {
