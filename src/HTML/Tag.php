@@ -77,6 +77,22 @@ abstract class Tag extends Node
     }
 
     /**
+     * add any number of classes from a string
+     *
+     * @param string $classes
+     * @return static
+     */
+    public function addClassString(string $classes)
+    {
+        $classes = preg_replace('/[^a-z0-9\-_]/i', '', $classes);
+        $classes = preg_split('/\s+/', $classes);
+        foreach ($classes as $class) {
+            if ($class) $this->addClass($class);
+        }
+        return $this;
+    }
+
+    /**
      * Remove a class to the class list
      *
      * @param string $class

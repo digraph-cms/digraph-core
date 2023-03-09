@@ -62,6 +62,7 @@ class ShortCodesListener
             // set up URL
             $link = (new A)
                 ->setAttribute('href', $url)
+                ->addClassString($s->getParameter('class', ''))
                 ->addChild($s->getContent() ? $s->getContent() : preg_replace('/^(https?:)?\/\//', '', $url));
             // return built link
             return $link;
@@ -97,6 +98,7 @@ class ShortCodesListener
                 return (new A)
                     ->setAttribute('href', $page->url())
                     ->setAttribute('title', $page->name())
+                    ->addClassString($s->getParameter('class', ''))
                     ->addChild(new Text($s->getContent() ? $s->getContent() : $page->name()));
             } else {
                 // if there are multiple pages, give link link--multiple-options class
@@ -111,6 +113,7 @@ class ShortCodesListener
                     ->setAttribute('href', new URL('/' . $s->getBbCode() . '/'))
                     ->setAttribute('title', $title)
                     ->addClass('link--multiple-options')
+                    ->addClassString($s->getParameter('class', ''))
                     ->addChild(new Text($s->getContent() ? $s->getContent() : $title));
             }
         } else {

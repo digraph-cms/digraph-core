@@ -117,6 +117,7 @@ class BookmarkRichMedia extends AbstractRichMedia
     public function shortCode(ShortcodeInterface $code): ?string
     {
         $link = (new A)
+            ->addClassString($code->getParameter('class', ''))
             ->setAttribute('title', $this->name());
         if ($this['mode'] == 'url') {
             // arbitrary URL
