@@ -12,11 +12,11 @@ $email = Emails::get(Context::url()->actionSuffix());
 if (!$email) throw new HttpError(404);
 
 if ($email->error()) {
-    Breadcrumb::parent(new URL('../email_errors.html'));
+    Breadcrumb::parent(new URL('email_errors.html'));
 } elseif ($email->sent()) {
-    Breadcrumb::parent(new URL('../sent_emails.html'));
+    Breadcrumb::parent(new URL('sent_emails.html'));
 } else {
-    Breadcrumb::parent(new URL('../queued_emails.html'));
+    Breadcrumb::parent(new URL('queued_emails.html'));
 }
 
 echo "<h1>Email: " . $email->subject() . "</h1>";
