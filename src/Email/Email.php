@@ -159,6 +159,11 @@ class Email
         return new URL('/~email_options/manage:' . $this->uuid());
     }
 
+    public function url_adminInfo(): URL
+    {
+        return new URL('/~admin/email/message:uuid=' . $this->uuid());
+    }
+
     public function uuid(): string
     {
         return $this->uuid;

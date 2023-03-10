@@ -8,7 +8,7 @@ use DigraphCMS\UI\Format;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\URL\URL;
 
-$email = Emails::get(Context::arg('uuid'));
+$email = Emails::get(Context::url()->actionSuffix());
 if (!$email) throw new HttpError(404);
 
 if ($email->error()) {
@@ -40,7 +40,7 @@ $email->toUser() ? printf("<dt>%s</dt><dd>%s</dd>", 'Recipient user', $email->to
 echo "</dl>";
 
 echo "<h2>Rendered HTML</h2>";
-echo "<iframe src='" . new URL('_iframe.html?uuid=' . Context::arg('uuid')) . "' style='border:0;width:100%;' class='autosized-frame'></iframe>";
+echo "<iframe src='" . new URL('iframe:' . $email->uuid()) . "' style='border:0;width:100%;' class='autosized-frame'></iframe>";
 
 echo "<h2>Rendered plaintext</h2>";
 $text = Emails::prepareBody_text($email);

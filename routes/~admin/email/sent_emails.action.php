@@ -19,7 +19,7 @@ echo new PaginatedTable(
             Format::datetime($email->time()),
             sprintf(
                 "<a href='%s'>%s</a>",
-                new URL('message/_message.html?uuid=' . $email->uuid()),
+                $email->url_adminInfo(),
                 $email->subject()
             ),
             $email->to()
