@@ -161,7 +161,7 @@ class Email
 
     public function url_adminInfo(): URL
     {
-        return new URL('/~admin/email/message:uuid=' . $this->uuid());
+        return new URL('/~admin/email/message:' . $this->uuid());
     }
 
     public function uuid(): string
