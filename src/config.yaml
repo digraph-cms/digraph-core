@@ -67,7 +67,8 @@ email:
   enabled: true
   enabled_for: []
   from: null
-  cron_time: 30
+  cron_time: 30 # seconds to allow sending email for during cron
+  cron_count: 500 # maximum number of queued emails to send in cron run
   use_smtp: false
   smtp:
     host: null

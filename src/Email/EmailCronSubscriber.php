@@ -23,7 +23,9 @@ class EmailCronSubscriber
     public static function cronJob_email(CronJob $job, int $deadlineTime = null)
     {
         $deadlineTime = $deadlineTime ?? (Config::get('email.cron_time') + time());
-        $queue = Emails::select()->queue();
+        $queue = Emails::select()
+            ->queue()
+            ->limit(Config::get('email.cron_count'));
         Emails::beginBatch();
         while (time() < $deadlineTime && $email = $queue->fetch()) {
             Emails::send($email);
