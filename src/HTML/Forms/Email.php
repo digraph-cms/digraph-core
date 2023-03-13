@@ -17,7 +17,9 @@ class Email extends INPUT
 
     public function value($useDefault = false)
     {
-        return strtolower(parent::value($useDefault));
+        return parent::value($useDefault)
+            ? strtolower(parent::value($useDefault))
+            : null;
     }
 
     public function attributes(): array
