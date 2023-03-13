@@ -38,7 +38,7 @@ foreach ($dayDirs as $dayDir) {
                     $data['thrown']['message']
                 ),
                 $url instanceof URL ? $url->fullPathString() : "<em>$url</em>",
-                $data['_SERVER']['REMOTE_ADDR'],
+                @$data['_SERVER']['REMOTE_ADDR'],
                 Users::user($data['user']),
             ];
         },
