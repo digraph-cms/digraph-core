@@ -87,16 +87,16 @@ class ImageRichMedia extends AbstractRichMedia
             }
             // render image tag
             $image = new IMG($file->url(), $this['alt']);
-            if ($code->getParameter('floated', 'no') !== 'no') {
+            if ($code->getParameter('floated', 'false') !== 'false') {
                 $image->addClass('floated');
             }
             return $image->__toString();
         }
         // if this is a plain image, just return a straight image
-        if ($code->getParameter('plain', 'no') !== 'no') {
+        if ($code->getParameter('plain', 'false') !== 'false') {
             $file = $this->file()->image();
             $image = new IMG($file->url(), $this['alt']);
-            if ($code->getParameter('floated', 'no') !== 'no') {
+            if ($code->getParameter('floated', 'false') !== 'false') {
                 $image->addClass('floated');
             }
             return $image->__toString();
@@ -136,7 +136,7 @@ class ImageRichMedia extends AbstractRichMedia
             $out = $image;
         }
         // set to float if specified
-        if ($code->getParameter('floated', 'no') !== 'no') {
+        if ($code->getParameter('floated', 'false') !== 'false') {
             $out->addClass('floated');
         }
         // return string

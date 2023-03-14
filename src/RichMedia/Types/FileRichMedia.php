@@ -72,7 +72,7 @@ class FileRichMedia extends AbstractRichMedia
 
     public function shortCode(ShortcodeInterface $code): ?string
     {
-        if ($code->getParameter('inline') || $code->getContent()) {
+        if ($code->getParameter('inline', 'false') !== 'false' || $code->getContent()) {
             return (new A)
                 ->setAttribute('href', $this->file()->url())
                 ->setAttribute('title', $this->file()->filename() . ' (' . Format::filesize($this->file()->bytes()) . ')')

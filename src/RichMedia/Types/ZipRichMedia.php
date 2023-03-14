@@ -111,7 +111,7 @@ class ZipRichMedia extends AbstractRichMedia
 
     public function shortCode(ShortcodeInterface $code): ?string
     {
-        if ($code->getParameter('inline') || $code->getContent()) {
+        if ($code->getParameter('inline', 'false') !== false || $code->getContent()) {
             return (new A)
                 ->setAttribute('href', $this->zipFile()->url())
                 ->setAttribute('title', $this->zipFile()->filename())
