@@ -21,20 +21,37 @@ class ExceptionLog
         $time = time();
         $uuid = Digraph::longUUID();
         $file = "$path/$time $uuid.json";
-        $data = [
-            'uuid' => $uuid,
-            'time' => time(),
-            'user' => Session::uuid(),
-            'authid' => Session::authentication() ? Session::authentication()->id() : null,
-            'url' => Context::request()->url()->__toString(),
-            'original_url' => Context::request()->originalUrl()->__toString(),
-            '_REQUEST' => $_REQUEST,
-            '_SERVER' => $_SERVER,
-            '_GET' => $_GET,
-            '_POST' => $_POST,
-            '_FILES' => $_FILES,
-            'thrown' => static::throwableArray($th)
-        ];
+        if (Context::request()) {
+            $data = [
+                'uuid' => $uuid,
+                'time' => time(),
+                'user' => Session::uuid(),
+                'authid' => Session::authentication() ? Session::authentication()->id() : null,
+                'url' => Context::request()->url()->__toString(),
+                'original_url' => Context::request()->originalUrl()->__toString(),
+                '_REQUEST' => $_REQUEST,
+                '_SERVER' => $_SERVER,
+                '_GET' => $_GET,
+                '_POST' => $_POST,
+                '_FILES' => $_FILES,
+                'thrown' => static::throwableArray($th)
+            ];
+        } else {
+            $data = [
+                'uuid' => $uuid,
+                'time' => time(),
+                'user' => Session::uuid(),
+                'authid' => Session::authentication() ? Session::authentication()->id() : null,
+                'url' => '[no Context::request()]',
+                'original_url' => '[no Context::request()]',
+                '_REQUEST' => $_REQUEST,
+                '_SERVER' => $_SERVER,
+                '_GET' => $_GET,
+                '_POST' => $_POST,
+                '_FILES' => $_FILES,
+                'thrown' => static::throwableArray($th)
+            ];
+        }
         // send email if lock isn't exceeded
         if (static::shouldSendMail($th)) {
             foreach (Config::get('exception_log.notify_emails') as $address) {

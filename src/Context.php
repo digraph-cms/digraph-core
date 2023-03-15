@@ -165,6 +165,7 @@ abstract class Context
     {
         end(static::$data);
         $endKey = key(static::$data);
+        if (!$endKey) $endKey = 0;
         if ($value !== null) {
             static::$data[$endKey][$name] = $value;
         }
