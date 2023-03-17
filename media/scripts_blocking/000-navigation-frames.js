@@ -7,21 +7,25 @@ document.addEventListener('DigraphDOMReady', (e) => {
     var divs = e.target.getElementsByTagName('div');
     for (let i = 0; i < divs.length; i++) {
         const div = divs[i];
-        if (div.classList.contains('navigation-frame')) {
-            // load initial source
-            if (div.dataset.initialSource) {
-                div.resetFrame = function (e) {
-                    Digraph.state.get(div.dataset.initialSource, div);
-                    e.stopPropagation();
-                }
-                div.reloadFrame = function (e) {
-                    if (div.dataset.currentUrl)
-                        Digraph.state.get(div.dataset.currentUrl, div);
-                }
-                div.addEventListener('navigation-frame-reset', div.resetFrame);
-                div.dispatchEvent(new Event('navigation-frame-reset'));
-            }
+        if (!div.classList.contains('navigation-frame')) continue;
+        // add reload method/listener to reload current content
+        div.reloadFrame = function (e) {
+            if (div.dataset.currentUrl)
+                Digraph.state.get(div.dataset.currentUrl, div);
         }
+        div.addEventListener('navigation-frame-reload', div.reloadFrame);
+        // set up reset method/listener to reset to initial state (simply reloads if initialSource isn't set)
+        div.resetFrame = function (e) {
+            if (div.dataset.initialSource)
+                Digraph.state.get(div.dataset.initialSource, div);
+            else
+                div.reloadFrame();
+            e.stopPropagation();
+        }
+        div.addEventListener('navigation-frame-reset', div.resetFrame);
+        // load initial source if specified
+        if (div.dataset.initialSource)
+            div.dispatchEvent(new Event('navigation-frame-reset'));
     }
 });
 
