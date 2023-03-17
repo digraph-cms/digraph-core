@@ -101,7 +101,7 @@ abstract class Users
     {
         static $groups;
         if (!$groups) {
-            $groups = [new Group('users', 'All users')];
+            // $groups = [new Group('users', 'All users')];
             $query = DB::query()->from('user_group');
             while ($g = $query->fetch()) {
                 $groups[] = new Group($g['uuid'], $g['name']);
@@ -118,6 +118,18 @@ abstract class Users
         if ($group = $query->fetch()) return new Group($group['uuid'], $group['name']);
         elseif ($uuid == 'admins') return new Group('admins', 'Administrators');
         else return null;
+    }
+
+    public static function groupMembers(string $group_uuid): UserSelect
+    {
+        return new UserSelect(
+            DB::query()
+                ->from('user_group_membership')
+                ->select('user.*')
+                ->leftJoin('user on user_uuid = user.uuid')
+                ->where('group_uuid = ?', [$group_uuid])
+                ->order('user_group_membership.id DESC')
+        );
     }
 
     /**
