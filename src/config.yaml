@@ -8,6 +8,7 @@ rich_media_types:
   content: \DigraphCMS\RichMedia\Types\ContentRichMedia
   file: \DigraphCMS\RichMedia\Types\FileRichMedia
   image: \DigraphCMS\RichMedia\Types\ImageRichMedia
+  svg: \DigraphCMS\RichMedia\Types\SvgRichMedia
   table: \DigraphCMS\RichMedia\Types\TableRichMedia
   zip: \DigraphCMS\RichMedia\Types\ZipRichMedia
 
