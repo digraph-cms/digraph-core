@@ -22,6 +22,7 @@ use DigraphCMS\UI\Templates;
         <?php echo Context::fields()['page.name'] ?? 'Untitled'; ?>
         :: <?php echo Context::fields()['site.name']; ?>
     </title>
+    <script>window.location.reload();</script>
 </head>
 
 <body class='template-framed'>

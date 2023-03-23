@@ -103,8 +103,9 @@ class Templates
                 $fields['page.name'] = strip_tags(Context::url()->name());
             }
         }
-        // override template for navigation frame responses
-        if (Context::request()->headers()->get('x-for-navigation-frame') == 'y') $response->template('framed.php');
+        // change template for navigation frame responses, to avoid unnecessary building
+        // template also adds javascript that will reload the page if the browser renders it, so users don't see the framed template
+        if (Context::request()->headers()->get('x-for-navigation-frame') == 'y') $response->template('x-for-navigation-frame.php');
         // render
         $response->content(Context::cache('wrapresponse')->get(
             md5($response->content()),
