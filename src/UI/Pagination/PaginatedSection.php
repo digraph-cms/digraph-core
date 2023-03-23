@@ -358,7 +358,7 @@ class PaginatedSection extends Tag
         string $buttonText = null,
         int $ttl = null
     ) {
-        $this->dl_filename = $filename;
+        $this->dl_filename = preg_replace('/[^a-z0-9 _\-]+/i', '_', $filename);
         $this->dl_callback = $callback;
         $this->dl_headers = $headers;
         $this->dl_finalize_callback = $finalizeCallback;
