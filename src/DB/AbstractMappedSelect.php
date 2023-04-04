@@ -118,6 +118,7 @@ abstract class AbstractMappedSelect implements Iterator, Countable
      */
     public function select($columns, bool $overrideDefault = false)
     {
+        $columns = $this->parseJsonRefs($columns);
         if ($overrideDefault) {
             $this->returnDataObjects = false;
         }
@@ -131,7 +132,8 @@ abstract class AbstractMappedSelect implements Iterator, Countable
      */
     public function leftJoin(string $statement)
     {
-        $this->query->leftJoin($this->parseJsonRefs($statement));
+        $statement = $this->parseJsonRefs($statement);
+        $this->query->leftJoin($statement);
         return $this;
     }
 
@@ -182,6 +184,8 @@ abstract class AbstractMappedSelect implements Iterator, Countable
      */
     public function like(string $column, string $pattern, bool $wildCardBefore = true, bool $wildCardAfter = true, $separator = "AND")
     {
+        $parsedColumn = $this->parseJsonRefs($column);
+        if ($parsedColumn != $column) $parsedColumn = "LOWER($parsedColumn)";
         return $this->where(
             "$column LIKE ?",
             [static::prepareLikePattern($pattern, $wildCardBefore, $wildCardAfter)],
@@ -201,6 +205,8 @@ abstract class AbstractMappedSelect implements Iterator, Countable
      */
     public function notLike(string $column, string $pattern, bool $wildCardBefore = true, bool $wildCardAfter = true, $separator = "AND")
     {
+        $parsedColumn = $this->parseJsonRefs($column);
+        if ($parsedColumn != $column) $parsedColumn = "LOWER($parsedColumn)";
         return $this->where(
             "$column NOT LIKE ?",
             [static::prepareLikePattern($pattern, $wildCardBefore, $wildCardAfter)],
@@ -220,6 +226,7 @@ abstract class AbstractMappedSelect implements Iterator, Countable
     {
         $pattern = preg_replace('/^[^a-z0-9_\- ]+/i', '', $pattern);
         $pattern = preg_replace('/[^a-z0-9_\- ]+$/i', '', $pattern);
+        $pattern = strtolower($pattern);
         return implode('', [
             $wildCardBefore ? '%' : '',
             preg_replace('/[%_]/', '\\$0', $pattern),
@@ -267,36 +274,36 @@ abstract class AbstractMappedSelect implements Iterator, Countable
     /**
      * Add a HAVING clause
      *
-     * @param string $column
+     * @param string $statement
      * @return static
      */
-    public function having(string $column)
+    public function having(string $statement)
     {
-        $this->query->having($column);
+        $this->query->having($statement);
         return $this;
     }
 
     /**
      * Add a LIMIT clause
      *
-     * @param integer $column
+     * @param integer $n
      * @return static
      */
-    public function limit(int $column)
+    public function limit(int $n)
     {
-        $this->query->limit($column);
+        $this->query->limit($n);
         return $this;
     }
 
     /**
      * Add an OFFSET clause
      *
-     * @param integer $column
+     * @param integer $n
      * @return static
      */
-    public function offset(int $column)
+    public function offset(int $n)
     {
-        $this->query->offset($column);
+        $this->query->offset($n);
         return $this;
     }
 
@@ -308,6 +315,7 @@ abstract class AbstractMappedSelect implements Iterator, Countable
      */
     public function group(string $column)
     {
+        $column = $this->parseJsonRefs($column);
         $this->returnDataObjects = false;
         $this->query->group($column);
         return $this;
