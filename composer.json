@@ -19,7 +19,6 @@
         "ext-zip": "*",
         "byjoby/flatrr": "^1.3",
         "fpdo/fluentpdo": "2.2.0 - 2.2.2||^2.2.4",
-        "robmorgan/phinx": "^0.12.7||^0.11.7",
         "tubalmartin/cssmin": "^4.1",
         "scssphp/scssphp": "^1.6",
         "donatj/phpuseragentparser": "^1.4",
@@ -38,7 +37,8 @@
         "caxy/php-htmldiff": "^0.1.10",
         "phpoffice/phpspreadsheet": "^1.23",
         "masterminds/html5": "^2.7",
-        "ezyang/htmlpurifier": "^4.16"
+        "ezyang/htmlpurifier": "^4.16",
+        "robmorgan/phinx": "^0.13.4"
     },
     "conflict": {
         "jasig/phpcas": "<1.6"
