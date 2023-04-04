@@ -1,15 +1,6 @@
-# demo storage/cache
-/demo/storage/*
-/demo/cache/*
-/demo/files/*
-!/demo/files/.htaccess
-/demo/phinx/*
-
-# odds and ends
 /vendor
 composer.lock
 *.ignore
 !.keep
 .DS_Store
-.vscode
 /demo/env.yaml

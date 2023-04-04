@@ -5,10 +5,10 @@ errors:
   display_trace: true
 
 cache:
-  ttl: 30
+  ttl: 600
 
 files:
-  ttl: 30
+  ttl: 600
   css:
     minify: true
     sourcemap: true
@@ -19,7 +19,7 @@ images:
 theme:
   bundle_css: false
   bundle_js: false
-  head_cache_ttl: 30
+  head_cache_ttl: 600
 
 user_sources:
   cas:

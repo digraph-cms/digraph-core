@@ -1,0 +1,4 @@
+/storage/*
+/cache/*
+/files/*
+!/files/.htaccess

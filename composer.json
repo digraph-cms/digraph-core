@@ -68,17 +68,11 @@
         "phpstan/phpstan": "^1.6"
     },
     "scripts": {
-        "server": [
-            "php -S localhost:8000 -t demo demo/index.php"
-        ],
         "migrate": [
             "phinx migrate"
         ],
         "seed": [
             "phinx seed:run"
-        ],
-        "stan": [
-            "phpstan analyse src/ --level=2 --memory-limit=256M"
         ]
     }
 }

@@ -5,6 +5,7 @@ use DigraphCMS\Cache\CacheableState;
 use DigraphCMS\Cache\CachedInitializer;
 use DigraphCMS\Config;
 use DigraphCMS\URL\URLs;
+use Mimey\MimeTypes;
 
 // display all errors in demo site, for development purposes
 ini_set('display_errors', 1);
@@ -15,12 +16,26 @@ error_reporting(E_ALL);
 // if you want Config to be able to cache its setup process
 require_once __DIR__ . "/../vendor/autoload.php";
 
-// special case for running in PHP's built-in server
+// special case for running in PHP's built-in server, to pass through static files
 if (php_sapi_name() === 'cli-server') {
     URLs::$sitePath = '';
     $url = Digraph::actualUrl();
     if ($url->path() == '/favicon.ico' || substr($url->path(), 0, 7) == '/files/') {
-        return false;
+        $filePath = __DIR__ . $url->path();
+        if (file_exists($filePath)) {
+            header(sprintf(
+                "Content-Type: %s",
+                (new MimeTypes)->getMimeType(strtolower(pathinfo($filePath, FILEINFO_EXTENSION)))
+            ));
+            header("Content-Length: " . filesize($filePath));
+            readfile($filePath);
+            exit;
+        } else {
+            http_response_code(404);
+            header("Content-Type: text/plain");
+            echo "Not found";
+            exit;
+        }
     }
 }
 
