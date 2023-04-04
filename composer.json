@@ -38,7 +38,8 @@
         "phpoffice/phpspreadsheet": "^1.23",
         "masterminds/html5": "^2.7",
         "ezyang/htmlpurifier": "^4.16",
-        "robmorgan/phinx": "^0.13.4"
+        "robmorgan/phinx": "^0.13.4",
+        "cakephp/database": "^4"
     },
     "conflict": {
         "jasig/phpcas": "<1.6"
