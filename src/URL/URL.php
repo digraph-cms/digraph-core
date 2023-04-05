@@ -94,6 +94,29 @@ class URL
         }
     }
 
+    /**
+     * @param string $source the advertiser, site, publication, etc. that is sending traffic to your property, for example: google, newsletter4, billboard.
+     * @param string $medium advertising or marketing medium, for example: cpc, banner, email newsletter.
+     * @param string $campaign individual campaign name, slogan, promo code, etc. for a product.
+     * @param string|null $term Identify paid search keywords. If you're manually tagging paid keyword campaigns, you should also use utm_term to specify the keyword.
+     * @param string|null $content Used to differentiate similar content, or links within the same ad. For example, if you have two call-to-action links within the same email message, you can use utm_content and set different values for each so you can tell which version is more effective.
+     * @return static 
+     */
+    public function utm(
+        string $source,
+        string $medium,
+        string $campaign,
+        string $term = null,
+        string $content = null,
+    ): static {
+        $this->arg('utm_source', $source);
+        $this->arg('utm_medium', $medium);
+        $this->arg('utm_campaign', $campaign);
+        if ($term) $this->arg('utm_term', $term);
+        if ($content) $this->arg('utm_content', $content);
+        return $this;
+    }
+
     public function permissions(User $user = null): bool
     {
         return Permissions::url($this, $user);
