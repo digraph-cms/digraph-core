@@ -124,7 +124,7 @@ final class Session
         return $ua->browser() . ' ' . $ua->browserVersion() . ' on ' . $ua->platform();
     }
 
-    public static function authenticate(string $user, string $comment, bool $rememberme): Authentication
+    public static function authenticate(string $user, string $comment): Authentication
     {
         // deauthenticate current authorization if one is set
         if (static::$auth) {
@@ -161,8 +161,7 @@ final class Session
                 ->execute();
             static::setAuthCookie(
                 $row['id'],
-                $row['secret'],
-                $rememberme
+                $row['secret']
             );
             static::$auth = new Authentication($row);
             Dispatcher::dispatchEvent('onAuthentication', [static::$auth]);
@@ -183,13 +182,13 @@ final class Session
         return Cookies::get('auth', 'session') ?? [];
     }
 
-    protected static function setAuthCookie(int $id, string $secret, bool $rememberme)
+    protected static function setAuthCookie(int $id, string $secret)
     {
         Cookies::set(
             'auth',
             'session',
             ["id" => $id, "secret" => $secret],
-            $rememberme
+            true
         );
     }
 

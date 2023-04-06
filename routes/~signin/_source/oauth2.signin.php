@@ -44,23 +44,6 @@ if (Context::arg('error')) {
 }
 
 /**
- * We need to handle the remember me form *before* we get our access token,
- * otherwise we'll wind up having to go back to GitHub and getting an invalid
- * OAuth state error.
- */
-// prompt for whether we should remember user
-if (!Session::user() && !Context::arg('_rememberme')) {
-    echo Templates::render(
-        '/signin/rememberme.php',
-        [
-            'yes_url' => new URL('&_rememberme=y'),
-            'no_url' => new URL('&_rememberme=n')
-        ]
-    );
-    return;
-}
-
-/**
  * If we fall through to this point we must have finished doing the sign-in, and
  * we can put their provider id into Context so that it will be available back
  * on _signin.action.php

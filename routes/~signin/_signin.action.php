@@ -60,18 +60,6 @@ if (!Context::data('signin_provider_id')) {
     return;
 }
 
-// prompt for whether we should remember user
-if (!Session::user() && !Context::arg('_rememberme')) {
-    echo Templates::render(
-        '/signin/rememberme.php',
-        [
-            'yes_url' => new URL('&_rememberme=y'),
-            'no_url' => new URL('&_rememberme=n')
-        ]
-    );
-    return;
-}
-
 // handle signin within digraph
 /** @var string */
 $providerID = Context::data('signin_provider_id');
@@ -86,7 +74,7 @@ if ($user = $source->lookupUser($provider, $providerID)) {
         );
     }
     // user is signed in, link this pair to their account
-    Session::authenticate($user, 'Signed in with ' . $fullSourceTitle, Context::arg('rememberme') == 'y');
+    Session::authenticate($user, 'Signed in with ' . $fullSourceTitle);
 } else {
     // this provider/id pair is not tied to a user
     // either link it to the current user or create a new user
@@ -119,7 +107,7 @@ if ($user = $source->lookupUser($provider, $providerID)) {
         $user->insert();
         $source->authorizeUser($user->uuid(), $provider, $providerID);
         // sign in as new user
-        Session::authenticate($user->uuid(), 'Signed up with ' . $fullSourceTitle, Context::arg('rememberme') == 'y');
+        Session::authenticate($user->uuid(), 'Signed up with ' . $fullSourceTitle);
         DB::commit();
     }
 }
