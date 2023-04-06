@@ -88,9 +88,9 @@ class Theme
                     'accent' => '#006064',
                     'highlight' => '#00b8d4'
                 ],
-                'visibility' => [
-                    'light' => 'visible',
-                    'dark' => 'hidden'
+                'display' => [
+                    'light' => 'revert',
+                    'dark' => 'none'
                 ]
             ],
             'dark' => [
@@ -104,9 +104,9 @@ class Theme
                     'focus' => '#ffb74d',
                     'active' => '#e57373'
                 ],
-                'visibility' => [
-                    'light' => 'hidden',
-                    'dark' => 'visible'
+                'display' => [
+                    'light' => 'none',
+                    'dark' => 'revert'
                 ]
             ],
             'colorblind' => [

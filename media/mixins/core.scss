@@ -5,11 +5,11 @@
 }
 
 @mixin light-mode-only {
-    visibility: var(--visibility-light);
+    display: var(--display-light);
 }
 
 @mixin dark-mode-only {
-    visibility: var(--visibility-dark);
+    display: var(--display-dark);
 }
 
 @mixin clearfix {
