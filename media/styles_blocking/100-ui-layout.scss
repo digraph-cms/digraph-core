@@ -6,6 +6,14 @@ body {
     }
 }
 
+.light-mode-only {
+    @include light-mode-only;
+}
+
+.dark-mode-only {
+    @include dark-mode-only;
+}
+
 body>.action-menu,
 #header,
 #main-nav,

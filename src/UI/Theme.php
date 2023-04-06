@@ -87,6 +87,10 @@ class Theme
                     'neutral' => '#9e9e9e',
                     'accent' => '#006064',
                     'highlight' => '#00b8d4'
+                ],
+                'visibility' => [
+                    'light' => 'visible',
+                    'dark' => 'hidden'
                 ]
             ],
             'dark' => [
@@ -99,6 +103,10 @@ class Theme
                     'visited' => '#ba68c8',
                     'focus' => '#ffb74d',
                     'active' => '#e57373'
+                ],
+                'visibility' => [
+                    'light' => 'hidden',
+                    'dark' => 'visible'
                 ]
             ],
             'colorblind' => [

@@ -4,6 +4,14 @@
     position: relative;
 }
 
+@mixin light-mode-only {
+    visibility: var(--visibility-light);
+}
+
+@mixin dark-mode-only {
+    visibility: var(--visibility-dark);
+}
+
 @mixin clearfix {
     &:after {
         content: "";
