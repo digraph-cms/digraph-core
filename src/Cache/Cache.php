@@ -60,7 +60,8 @@ class Cache
      */
     public static function get(string $name, callable $callback = null, int $ttl = null)
     {
-        $name = crc32(new URL('/')) . '/' . $name;
+        static $prefix;
+        $name = ($prefix ?? $prefix = crc32(new URL('/'))) . '/' . $name;
         if (static::$driver->exists($name) && !static::$driver->expired($name)) {
             return static::$driver->get($name);
         } elseif ($callback) {
