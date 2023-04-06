@@ -4,6 +4,7 @@ namespace DigraphCMS\Cache;
 
 use DigraphCMS\Config;
 use DigraphCMS\Cron\DeferredJob;
+use DigraphCMS\URL\URL;
 
 Cache::_init();
 
@@ -59,6 +60,7 @@ class Cache
      */
     public static function get(string $name, callable $callback = null, int $ttl = null)
     {
+        $name = crc32(new URL('/')) . '/' . $name;
         if (static::$driver->exists($name) && !static::$driver->expired($name)) {
             return static::$driver->get($name);
         } elseif ($callback) {

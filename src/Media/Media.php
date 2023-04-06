@@ -249,7 +249,9 @@ class Media
 
     protected static function idPath(File $file): string
     {
+        static $prefix;
         return implode('/', [
+            $prefix ?? $prefix = \crc32(new URL('/')),
             substr($file->identifier(), 0, 1),
             substr($file->identifier(), 1, 2),
             substr($file->identifier(), 3)

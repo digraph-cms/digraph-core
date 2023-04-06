@@ -12,7 +12,7 @@
         "-dxdebug.mode=debug",
         "-dxdebug.start_with_request=yes",
         "-S",
-        "localhost:8000",
+        "localhost:0",
         "${workspaceRoot}/demo/index.php"
       ],
       "cwd": "${workspaceRoot}/demo",
