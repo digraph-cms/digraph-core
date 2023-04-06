@@ -17,6 +17,7 @@ class FormWrapper extends Tag
     protected $form;
     protected $displayChildren = true;
     protected $callbacks = [];
+    protected $preValidationCallbacks = [];
 
     const METHOD_POST = 'post';
     const METHOD_GET = 'get';
@@ -42,6 +43,20 @@ class FormWrapper extends Tag
         return $this;
     }
 
+    /**
+     * Add a callback to be executed when a form is submitted, before validation
+     * runs. Useful for controlling when one field may or may not require 
+     * additional validation depending on the value of another field.
+     * 
+     * @param callable $callback 
+     * @return static 
+     */
+    public function addPreValidationCallback(callable $callback): static
+    {
+        $this->preValidationCallbacks[] = $callback;
+        return $this;
+    }
+
     public function ready(): bool
     {
         return $this->submitted() && $this->validate();
@@ -54,6 +69,11 @@ class FormWrapper extends Tag
 
     public function validate(): bool
     {
+        // run pre-validation callbacks
+        while ($this->preValidationCallbacks) {
+            call_user_func(array_shift($this->preValidationCallbacks), $this);
+        }
+        // run validation
         $valid = true;
         foreach ($this->children() as $child) {
             if (is_object($child) && method_exists($child, 'validationError')) {
