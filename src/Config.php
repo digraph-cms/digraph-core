@@ -13,6 +13,26 @@ abstract class Config implements InitializedClassInterface
     /** @var SelfReferencingFlatArray|null */
     protected static $data;
 
+    /**
+     * A globally-available prefix to be used by things like caches and static
+     * files for keeping them separate based on the environment being called.
+     * This will allow different caches when a site is accessed via different
+     * URLs or roots, even if they use the same base cache directory.
+     * 
+     * @return string 
+     */
+    public static function envPrefix(): string
+    {
+        static $cache;
+        return $cache ??
+            $cache = crc32(serialize([
+                $_SERVER['SCRIPT_FILENAME'],
+                $_SERVER['DOCUMENT_ROOT'],
+                $_SERVER['SERVER_PORT'],
+                $_SERVER['SERVER_NAME']
+            ]));
+    }
+
     public static function initialize_preCache(CacheableState $state): void
     {
         $state->merge(static::parseJsonFile(__DIR__ . '/config.json'), null, true);
