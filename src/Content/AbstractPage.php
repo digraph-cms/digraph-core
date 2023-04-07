@@ -20,6 +20,7 @@ use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
+use Exception;
 use Flatrr\FlatArrayInterface;
 use Flatrr\FlatArrayTrait;
 use Throwable;
@@ -51,6 +52,40 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
     protected $slugCollisions;
     protected static $class;
     protected $slugPattern;
+
+    /**
+     * Called automatically during the copying process. Should be used to spawn
+     * additional jobs as needed to do any extra copying necessary for your
+     * page type. May also be used to do work that must be done immediately, but
+     * note that the time it is called the new page has not yet been inserted.
+     * 
+     * New jobs spawned here will be run after the page is inserted, but before
+     * any child pages are copied.
+     * 
+     * @param DeferredJob $job 
+     * @param AbstractPage $old 
+     * @param AbstractPage $new 
+     * @return void 
+     */
+    public static function onCopyJob(DeferredJob $job, AbstractPage $old, AbstractPage $new): void
+    {
+        // does nothing
+    }
+
+    /**
+     * Called automatically during the deletion process. Should be used to spawn
+     * additional jobs as needed to do any extra cleanup necessary for your
+     * page type. May also be used to do work that must be done immediately, as
+     * at the time it is called the page has not yet been deleted.
+     * 
+     * @param DeferredJob $job 
+     * @param AbstractPage $page 
+     * @return void 
+     */
+    public static function onRecursiveDelete(DeferredJob $job, AbstractPage $page): void
+    {
+        // does nothing, but can be extended
+    }
 
     public function __construct(array $data = [], array $metadata = [])
     {
@@ -157,11 +192,6 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
             },
             $this['content'] ?? []
         );
-    }
-
-    public static function onRecursiveDelete(DeferredJob $job, AbstractPage $page)
-    {
-        // does nothing, but can be extended
     }
 
     protected function _date(string $key): ?DateTime
@@ -493,12 +523,115 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
         return Pages::update($this);
     }
 
-    public function delete()
-    {
-        return Pages::delete($this);
+    public function copy(
+        AbstractPage $parent = null,
+        string $slug = null,
+        string $name = null,
+        bool $recurse = false,
+        $cloneMedia = true,
+        array $parents = [],
+        string $user = null,
+        string $jobGroup = null
+    ): AbstractPage {
+        // we do this all in a transaction
+        DB::beginTransaction();
+        // set up job group name
+        $jobGroup = $jobGroup ?? Digraph::uuid('page_copy_');
+        // set up new page
+        $page = clone ($this);
+        $page->setUUID(Digraph::uuid());
+        $page->name($name ?? $this->name() . ' (copy)');
+        $page['page_copy_log.from'] = $this->uuid();
+        $page['page_copy_log.time'] = time();
+        $page['page_copy_log.user'] = $user ?? Session::uuid();
+        $page->slugPattern($slug ?? $this->slugPattern());
+        // clone page media if requested
+        if ($cloneMedia) static::cloneRichMedia($page, $parent);
+        // call hook in case child classes want to do anything
+        static::onCopyJob(new DeferredJob(null, $jobGroup), $this, $page);
+        // set up jobs to do recursive copying of children, if necessary
+        // also check if we've encountered a loop
+        if ($recurse && !in_array($this->uuid(), $parents)) {
+            // add this page to parents list
+            $parents[] = $this->uuid();
+            // pull out UUIDs for use() statements
+            $old_uuid = $this->uuid();
+            $new_uuid = $page->uuid();
+            $user_uuid = $user ?? Session::uuid();
+            $job = new DeferredJob(
+                function (DeferredJob $job) use ($old_uuid, $new_uuid, $cloneMedia, $parents, $user_uuid) {
+                    $parents[] = $old_uuid;
+                    // loop through child IDs
+                    foreach (Graph::childIDs($old_uuid) as $row) {
+                        $child_uuid = $row['end_page'];
+                        // check for loops here
+                        if (in_array($child_uuid, $parents)) return 'Loop averted by child_uuid';
+                        // spawn job if there are no loops
+                        $job->spawn(function (DeferredJob $job) use ($child_uuid, $new_uuid, $cloneMedia, $parents, $user_uuid) {
+                            $parent = Pages::get($new_uuid);
+                            $child = Pages::get($child_uuid);
+                            $child->copy(
+                                $parent,
+                                null,
+                                $child->name(),
+                                true,
+                                $cloneMedia,
+                                $parents,
+                                $user_uuid,
+                                $job->group()
+                            );
+                            return sprintf('Copied %s: %s', $child->uuid(), $child->name());
+                        });
+                    }
+                    return 'Spawned child copy jobs';
+                },
+                $jobGroup
+            );
+            $page['page_copy_log.job'] = $job->group();
+            $page->update();
+        }
+        // insert new page
+        $page->insert($parent ? $parent->uuid() : null);
+        // commit transaction
+        DB::commit();
+        // return new page
+        $page = Pages::get($page->uuid());
+        if (!$page) throw new Exception('Copied page not found in database');
+        return $page;
     }
 
-    public function recursiveDelete(string $jobGroup = null): DeferredJob
+    protected static function cloneRichMedia(AbstractPage $page, AbstractPage $parent)
+    {
+        // clone all media and track the old to new UUID mapping
+        $parentMedia = RichMedia::select($parent->uuid());
+        $cloned = [];
+        while ($media = $parentMedia->fetch()) {
+            $clone = clone ($media);
+            $clone->setUUID(Digraph::uuid());
+            $clone->setParent($page->uuid());
+            $clone->insert();
+            $cloned[$media->uuid()] = $clone->uuid();
+        }
+        // update all page data with new UUIDs
+        if ($cloned) {
+            $fn = function (&$ar) use ($cloned, &$fn) {
+                foreach ($ar as $k => $v) {
+                    if (is_string($v)) {
+                        foreach ($cloned as $oldUUID => $newUUID) {
+                            $ar[$k] = str_replace($oldUUID, $newUUID, $v);
+                        }
+                    } elseif (is_array($v)) {
+                        $fn($ar[$k]);
+                    }
+                }
+            };
+            $data = $page->get();
+            $fn($data);
+            $page->set(null, $data);
+        }
+    }
+
+    public function delete(string $jobGroup = null): DeferredJob
     {
         return new RecursivePageJob(
             $this->uuid(),
@@ -534,7 +667,7 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
                         $page = Pages::get($uuid);
                         if (!$page) return "Page $uuid already deleted";
                         // delete
-                        $page->delete();
+                        Pages::delete($page);
                         return "Deleted page " . $page->name() . " ($uuid)";
                     }
                 );

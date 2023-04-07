@@ -11,7 +11,7 @@ if (Context::arg('csrf') != Cookies::csrfToken('delete_' . Context::pageUUID()))
 
 echo '<div id="recursive-delete-interface" class="navigation-frame navigation-frame--stateless" data-target="_frame">';
 
-$job = $page->recursiveDelete();
+$job = $page->delete();
 
 $bar = new DeferredProgressBar($job->group());
 $bar->setDisplayAfter('Successfully deleted page and everything under it');

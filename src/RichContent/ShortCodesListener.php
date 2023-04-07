@@ -36,6 +36,13 @@ class ShortCodesListener
         return null;
     }
 
+    public static function onShortCode_page_name(ShortcodeInterface $s): ?string
+    {
+        $page = Pages::get($s->getBbCode()) ?? Context::page();
+        if (!$page) return '<span class="notification notification--error">no page</span>';
+        return $page->name();
+    }
+
     public static function onShortCode_video(ShortcodeInterface $s): ?string
     {
         return VideoEmbed::fromURL(trim($s->getContent()));

@@ -200,7 +200,7 @@ abstract class CoreEventSubscriber
      */
     public static function onAfterPageInsert(AbstractPage $page)
     {
-        Slugs::setFromPattern($page, $page->slugPattern());
+        Slugs::setFromPattern($page, $page->slugPattern(), true);
     }
 
     /**

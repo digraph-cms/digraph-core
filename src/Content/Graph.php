@@ -8,6 +8,23 @@ use Envms\FluentPDO\Queries\Select;
 
 class Graph
 {
+    public static function route(string $start, string $end, string $type = null, array $visited = []): ?array
+    {
+        // special case when they're the same
+        if ($start == $end) return [$start];
+        // start at the end and work backwards
+        foreach (static::parentIDs($end, $type) as $r) {
+            if (in_array($r['start_page'], $visited)) return null;
+            $visited[] = $r['start_page'];
+            if ($r['start_page'] == $start) return [$start, $end];
+            if ($route = static::route($start, $r['start_page'])) {
+                $route[] = $end;
+                return $route;
+            }
+        }
+        return null;
+    }
+
     public static function parentIDs(string $uuid, string $type = null): Select
     {
         $query = DB::query()
