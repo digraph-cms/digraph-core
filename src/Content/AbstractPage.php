@@ -587,8 +587,8 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
                 },
                 $jobGroup
             );
+            // save job ID into page so it can be displayed later
             $page['page_copy_log.job'] = $job->group();
-            $page->update();
         }
         // insert new page
         $page->insert($parent ? $parent->uuid() : null);
