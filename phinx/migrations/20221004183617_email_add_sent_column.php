@@ -8,8 +8,7 @@ final class EmailAddSentColumn extends AbstractMigration
 {
     public function change(): void
     {
-        $this->table('email_log')
-            ->rename('email')
+        $this->table('email')
             ->addColumn('sent', 'integer', ['null' => true, 'after' => 'uuid'])
             ->addIndex('sent')
             ->save();

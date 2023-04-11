@@ -9,7 +9,7 @@ final class EmailTables extends AbstractMigration
 {
     public function change(): void
     {
-        $this->table('email_log')
+        $this->table('email')
             ->addColumn('uuid', 'uuid')
             ->addColumn('time', 'integer')
             ->addColumn('category', 'string', ['length' => 50])
