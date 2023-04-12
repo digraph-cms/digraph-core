@@ -179,7 +179,7 @@ class PaginatedSection extends Tag
                 }
             } else {
                 foreach ($like as list($column, $pattern)) {
-                    $source->where("$column LIKE ?", AbstractMappedSelect::prepareLikePattern($pattern));
+                    $source->where(AbstractMappedSelect::parseJsonRefs($column) . " LIKE ?", AbstractMappedSelect::prepareLikePattern($pattern));
                 }
             }
             foreach ($where as list($clause, $args)) {
