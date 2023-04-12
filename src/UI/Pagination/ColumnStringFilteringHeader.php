@@ -66,24 +66,32 @@ class ColumnStringFilteringHeader extends AbstractColumnFilteringHeader
 
     public function getWhereClauses(): array
     {
-        if ($this->config('q')) {
-            return [
-                [
-                    $this->column(),
-                    $this->config('q')
-                ]
-            ];
-        } else return [];
+        return [];
     }
 
-    public function getLikeClauses(): array {
-        if ($this->config('q')) {
-            return [
-                [
-                    $this->column(),
-                    $this->config('q')
-                ]
-            ];
-        } else return [];
+    public function getLikeClauses(): array
+    {
+        $out = array_map(
+            function (string $word): array {
+                return [
+                    $this->column,
+                    $word
+                ];
+            },
+            $this->getQueryTerms()
+        );
+        return $out;
+    }
+
+    public function getQueryTerms(): array
+    {
+        $q = @$this->section->getToolConfig($this->getFilterID())['q'] ?? '';
+        $query = strtolower(trim($q));
+        $query = preg_split('/\s+/', $query);
+        $query = array_filter($query, function ($e) {
+            return strlen($e) >= 3;
+        });
+        $query = array_unique($query);
+        return $query;
     }
 }
