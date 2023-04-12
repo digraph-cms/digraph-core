@@ -47,6 +47,11 @@ class ColumnBooleanFilteringHeader extends AbstractColumnFilteringHeader
         }
     }
 
+    public function getLikeClauses(): array
+    {
+        return [];
+    }
+
     public function getJoinClauses(): array
     {
         return [];

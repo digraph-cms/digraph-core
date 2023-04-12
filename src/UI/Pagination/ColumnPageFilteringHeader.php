@@ -78,4 +78,9 @@ class ColumnPageFilteringHeader extends AbstractColumnFilteringHeader
             ];
         } else return [];
     }
+
+    public function getLikeClauses(): array
+    {
+        return [];
+    }
 }

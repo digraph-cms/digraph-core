@@ -162,14 +162,25 @@ class PaginatedSection extends Tag
             // apply filter tools
             $join = [];
             $where = [];
+            $like = [];
             $order = [];
             foreach (array_keys(array_reverse($this->getFilterConfig())) as $tool) {
                 $join = array_merge($join, $this->filterTools[$tool]->getJoinClauses());
                 $where = array_merge($where, $this->filterTools[$tool]->getWhereClauses());
+                $like = array_merge($like, $this->filterTools[$tool]->getLikeClauses());
                 $order = array_merge($order, $this->filterTools[$tool]->getOrderClauses());
             }
             foreach ($join as $clause) {
                 $source->leftJoin($clause);
+            }
+            if (\method_exists($source, 'like')) {
+                foreach ($like as list($column, $pattern)) {
+                    $source->like($column, $pattern);
+                }
+            } else {
+                foreach ($like as list($column, $pattern)) {
+                    $source->where("$column LIKE ?", AbstractMappedSelect::prepareLikePattern($pattern));
+                }
             }
             foreach ($where as list($clause, $args)) {
                 $source->where($clause, $args);

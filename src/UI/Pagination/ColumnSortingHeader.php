@@ -65,6 +65,11 @@ class ColumnSortingHeader extends AbstractColumnFilteringHeader
         return [];
     }
 
+    public function getLikeClauses(): array
+    {
+        return [];
+    }
+
     public function getJoinClauses(): array {
         return [];
     }

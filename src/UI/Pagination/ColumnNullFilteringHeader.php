@@ -38,6 +38,11 @@ class ColumnNullFilteringHeader extends AbstractColumnFilteringHeader
         else return [];
     }
 
+    public function getLikeClauses(): array
+    {
+        return [];
+    }
+
     public function getJoinClauses(): array
     {
         return [];

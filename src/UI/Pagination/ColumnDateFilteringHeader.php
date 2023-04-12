@@ -78,6 +78,11 @@ class ColumnDateFilteringHeader extends AbstractColumnFilteringHeader
         return $clauses;
     }
 
+    public function getLikeClauses(): array
+    {
+        return [];
+    }
+
     public function format(int $timestamp)
     {
         if (!$this->format) return $timestamp;

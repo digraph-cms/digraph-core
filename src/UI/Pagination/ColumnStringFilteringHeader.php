@@ -69,8 +69,19 @@ class ColumnStringFilteringHeader extends AbstractColumnFilteringHeader
         if ($this->config('q')) {
             return [
                 [
-                    $this->column() . ' LIKE ?',
-                    [AbstractMappedSelect::prepareLikePattern($this->config('q'))]
+                    $this->column(),
+                    $this->config('q')
+                ]
+            ];
+        } else return [];
+    }
+
+    public function getLikeClauses(): array {
+        if ($this->config('q')) {
+            return [
+                [
+                    $this->column(),
+                    $this->config('q')
                 ]
             ];
         } else return [];

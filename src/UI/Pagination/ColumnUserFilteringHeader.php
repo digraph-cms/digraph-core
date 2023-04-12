@@ -70,6 +70,11 @@ class ColumnUserFilteringHeader extends AbstractColumnFilteringHeader
         }
     }
 
+    public function getLikeClauses(): array
+    {
+        return [];
+    }
+
     public function getWhereClauses(): array
     {
         if ($this->config('user')) {

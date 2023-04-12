@@ -45,11 +45,16 @@ class StringSearchFilter extends FormWrapper implements FilterToolInterface
 
     public function getWhereClauses(): array
     {
+        return [];
+    }
+
+    public function getLikeClauses(): array
+    {
         $out = array_map(
             function (string $word): array {
                 return [
-                    $this->column . ' LIKE ?',
-                    [AbstractMappedSelect::prepareLikePattern($word)]
+                    $this->column,
+                    $word
                 ];
             },
             $this->getQueryTerms()

@@ -8,7 +8,7 @@ interface FilterToolInterface
      * Should return an array of strings, each being an order clause that will
      * be added to the query.
      *
-     * @return array
+     * @return array<int,string>
      */
     public function getOrderClauses(): array;
 
@@ -17,9 +17,18 @@ interface FilterToolInterface
      *  * first: The where clause to be added
      *  * second: The paramaters to be added, optionally
      *
-     * @return array
+     * @return array<int,array<int,mixed>>
      */
     public function getWhereClauses(): array;
+
+    /**
+     * Should return an array of arrays. Each item should be an array containing:
+     *  * first: The column to be matched on
+     *  * second: The query string to be wrapped and used as a LIKE query
+     *
+     * @return array<int,array<int,string>>
+     */
+    public function getLikeClauses(): array;
 
     /**
      * Should return an array of strings, which will be used as left joins on
