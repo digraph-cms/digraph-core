@@ -185,9 +185,12 @@ abstract class AbstractMappedSelect implements Iterator, Countable
     public function like(string $column, string $pattern, bool $wildCardBefore = true, bool $wildCardAfter = true, $separator = "AND")
     {
         $parsedColumn = $this->parseJsonRefs($column);
-        if ($parsedColumn != $column) $parsedColumn = "LOWER($parsedColumn)";
+        if ($parsedColumn != $column) {
+            $parsedColumn = "LOWER($parsedColumn)";
+            $pattern = strtolower($pattern);
+        }
         return $this->where(
-            "$column LIKE ?",
+            "$parsedColumn LIKE ?",
             [static::prepareLikePattern($pattern, $wildCardBefore, $wildCardAfter)],
             $separator
         );

@@ -528,7 +528,7 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
         string $slug = null,
         string $name = null,
         bool $recurse = false,
-        $cloneMedia = true,
+        bool $cloneMedia = true,
         array $parents = [],
         string $user = null,
         string $jobGroup = null
@@ -545,8 +545,6 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
         $page['page_copy_log.time'] = time();
         $page['page_copy_log.user'] = $user ?? Session::uuid();
         $page->slugPattern($slug ?? $this->slugPattern());
-        // clone page media if requested
-        if ($cloneMedia) static::cloneRichMedia($page, $parent);
         // call hook in case child classes want to do anything
         static::onCopyJob(new DeferredJob(null, $jobGroup), $this, $page);
         // set up jobs to do recursive copying of children, if necessary
@@ -592,6 +590,8 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
         }
         // insert new page
         $page->insert($parent ? $parent->uuid() : null);
+        // clone page media if requested
+        if ($cloneMedia) static::cloneRichMedia($page, $parent);
         // commit transaction
         DB::commit();
         // return new page
@@ -600,15 +600,15 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
         return $page;
     }
 
-    protected static function cloneRichMedia(AbstractPage $page, AbstractPage $parent)
+    protected static function cloneRichMedia(AbstractPage $new, AbstractPage $old)
     {
         // clone all media and track the old to new UUID mapping
-        $parentMedia = RichMedia::select($parent->uuid());
+        $parentMedia = RichMedia::select($old->uuid());
         $cloned = [];
         while ($media = $parentMedia->fetch()) {
             $clone = clone ($media);
             $clone->setUUID(Digraph::uuid());
-            $clone->setParent($page->uuid());
+            $clone->setParent($new->uuid());
             $clone->insert();
             $cloned[$media->uuid()] = $clone->uuid();
         }
@@ -625,10 +625,11 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
                     }
                 }
             };
-            $data = $page->get();
+            $data = $new->get();
             $fn($data);
-            $page->set(null, $data);
+            $new->merge(null, $data, true);
         }
+        $new->update();
     }
 
     public function delete(string $jobGroup = null): DeferredJob
