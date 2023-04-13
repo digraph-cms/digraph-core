@@ -588,10 +588,10 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
             // save job ID into page so it can be displayed later
             $page['page_copy_log.job'] = $job->group();
         }
+        // clone page media if requested
+        if ($cloneMedia) static::cloneRichMedia($page, $this);
         // insert new page
         $page->insert($parent ? $parent->uuid() : null);
-        // clone page media if requested
-        if ($cloneMedia) static::cloneRichMedia($page, $parent);
         // commit transaction
         DB::commit();
         // return new page
@@ -626,10 +626,22 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
                 }
             };
             $data = $new->get();
-            $fn($data);
-            $new->merge(null, $data, true);
+            static::cloneRichMediaHelper($data, $cloned);
+            $new->merge($data, null, true);
         }
-        $new->update();
+    }
+
+    protected static function cloneRichMediaHelper(array &$data, $uuid_changes): void
+    {
+        foreach ($data as $k => $v) {
+            if (is_string($v)) {
+                foreach ($uuid_changes as $oldUUID => $newUUID) {
+                    $data[$k] = str_replace($oldUUID, $newUUID, $v);
+                }
+            } elseif (is_array($v)) {
+                static::cloneRichMediaHelper($data[$k], $uuid_changes);
+            }
+        }
     }
 
     public function delete(string $jobGroup = null): DeferredJob
