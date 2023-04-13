@@ -15,6 +15,19 @@ class DatastoreNamespace
     }
 
     /**
+     * Delete all records from this namespace and optionally group, if their
+     * creation date is older than the given time.
+     * 
+     * @param null|string $group 
+     * @param int $time 
+     * @return void 
+     */
+    public function expire(?string $group, int $time): void
+    {
+        Datastore::expire($this->name, $group, $time);
+    }
+
+    /**
      * @param string $group
      * @param string $key
      * @param string|null $value

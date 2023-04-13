@@ -165,6 +165,13 @@ class CoreCronSubscriber
             },
             'core_maintenance_heavy'
         );
+        // expire old wayback data
+        new DeferredJob(
+            function () {
+                WaybackMachine::cleanup();
+            },
+            'core_maintenance_heavy'
+        );
         // do periodic maintenance on all pages
         new DeferredJob(
             function (DeferredJob $job) {

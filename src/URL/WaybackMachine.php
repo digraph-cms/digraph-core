@@ -14,6 +14,7 @@ use DigraphCMS\Email\Email;
 use DigraphCMS\Email\Emails;
 use DigraphCMS\RichContent\RichContent;
 use DigraphCMS\UI\Templates;
+use Envms\FluentPDO\Exception;
 
 class WaybackMachine
 {
@@ -21,6 +22,20 @@ class WaybackMachine
     protected static $active = null;
     /** @var bool */
     protected static $notifications = true;
+
+    /**
+     * called by CoreCronSubscriber to automatically clean up old Wayback
+     * data, so that it's not constantly making checks for URLs that aren't
+     * even referenced any more.
+     * 
+     * @return void 
+     * @throws Exception 
+     */
+    public static function cleanup(): void {
+        // TODO: maybe get expiration times from config?
+        static::statusStorage()->expire(time()-(86400*90));
+        static::apiStorage()->expire(time()-(86400*90));
+    }
 
     public static function activate(): void
     {

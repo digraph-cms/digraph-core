@@ -18,6 +18,18 @@ class DatastoreGroup
     }
 
     /**
+     * Delete all records from this group, if their
+     * creation date is older than the given time.
+     * 
+     * @param int $time 
+     * @return void 
+     */
+    public function expire(int $time): void
+    {
+        $this->namespace()->expire($this->name(), $time);
+    }
+
+    /**
      * @param string $key
      * @param string|null $value
      * @param array|FlatArray|null $data

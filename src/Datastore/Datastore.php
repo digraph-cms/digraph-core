@@ -8,6 +8,26 @@ use Flatrr\FlatArray;
 
 class Datastore
 {
+
+    /**
+     * Delete all records from a given namespace and optionally group, if their
+     * creation date is older than the given time.
+     * 
+     * @param string $namespace 
+     * @param null|string $group 
+     * @param int $time 
+     * @return void 
+     */
+    public static function expire(string $namespace, ?string $group, int $time): void
+    {
+        $query = DB::query()
+            ->delete('datastore')
+            ->where('created < ?', $time)
+            ->where('namespace', $namespace);
+        if ($group) $query->where('grp', $group);
+        $query->execute();
+    }
+
     /**
      * @param string $namespace
      * @param string $group
