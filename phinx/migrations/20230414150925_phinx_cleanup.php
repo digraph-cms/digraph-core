@@ -14,14 +14,15 @@ final class PhinxCleanup extends AbstractMigration
     public function change(): void
     {
         // drop all foreign keys to primary key id columns
-        $foreign_keys = [
-            'session_expiration' => ['column' => 'session_id', 'table' => 'session'],
-        ];
-        foreach ($foreign_keys as $table => $key) {
-            $this->table($table)
-                ->dropForeignKey($key['column'])
-                ->save();
-        }
+        // $foreign_keys = [
+        //     'session_expiration' => ['column' => 'session_id', 'table' => 'session'],
+        // ];
+        // foreach ($foreign_keys as $table => $key) {
+        //     $this->table($table)
+        //         ->removeIndex($key['column'])
+        //         ->dropForeignKey($key['column'])
+        //         ->save();
+        // }
         // update all the primary key id columns
         $primary_keys = [
             'cron', 'datastore', 'defex', 'email', 'email_unsubscribe',
@@ -36,10 +37,10 @@ final class PhinxCleanup extends AbstractMigration
                 ->save();
         }
         // re-add all the foreign keys that reference primary key id columns
-        foreach ($foreign_keys as $table => $key) {
-            $this->table($table)
-                ->addForeignKey($key['column'], $key['table'])
-                ->save();
-        }
+        // foreach ($foreign_keys as $table => $key) {
+        //     $this->table($table)
+        //         ->addForeignKey($key['column'], $key['table'])
+        //         ->save();
+        // }
     }
 }
