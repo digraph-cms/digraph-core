@@ -9,7 +9,7 @@ final class EmailAddSentColumn extends AbstractMigration
     public function change(): void
     {
         $this->table('email')
-            ->addColumn('sent', 'integer', ['null' => true, 'after' => 'uuid'])
+            ->addColumn('sent', 'biginteger', ['signed' => false, 'null' => true, 'after' => 'uuid'])
             ->addIndex('sent')
             ->save();
         $this->execute('UPDATE `email` SET `sent` = `time`');

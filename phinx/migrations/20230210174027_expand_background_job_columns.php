@@ -15,10 +15,10 @@ final class ExpandBackgroundJobColumns extends AbstractMigration
     public function change(): void
     {
         $this->table('defex')
-            ->changeColumn('job', 'text', ['limit' => MysqlAdapter::TEXT_MEDIUM])
+            ->changeColumn('job', 'text', ['limit' => MysqlAdapter::TEXT_MEDIUM, 'null' => false])
             ->save();
         $this->table('cron')
-            ->changeColumn('job', 'text', ['limit' => MysqlAdapter::TEXT_MEDIUM])
+            ->changeColumn('job', 'text', ['limit' => MysqlAdapter::TEXT_MEDIUM, 'null' => false])
             ->save();
     }
 }

@@ -9,7 +9,7 @@ final class AllowLongerSlugs extends AbstractMigration
     public function change(): void
     {
         $this->table('page_slug')
-            ->changeColumn('url', 'string', ['length' => 250])
+            ->changeColumn('url', 'string', ['length' => 250, 'null' => false])
             ->save();
     }
 }

@@ -10,13 +10,13 @@ final class SessionTables extends AbstractMigration
     {
         // holds authenticated user session tokens
         $this->table('session')
-            ->addColumn('user_uuid', 'uuid')
-            ->addColumn('comment', 'string')
-            ->addColumn('secret', 'string', ['length' => 44])
-            ->addColumn('created', 'integer')
-            ->addColumn('expires', 'integer')
-            ->addColumn('ip', 'string', ['length' => 39])
-            ->addColumn('ua', 'string', ['length' => 250])
+            ->addColumn('user_uuid', 'uuid', ['null' => false])
+            ->addColumn('comment', 'string', ['null' => false])
+            ->addColumn('secret', 'string', ['length' => 44, 'null' => false])
+            ->addColumn('created', 'integer', ['signed' => false, 'null' => false])
+            ->addColumn('expires', 'integer', ['signed' => false, 'null' => false])
+            ->addColumn('ip', 'string', ['length' => 39, 'null' => false])
+            ->addColumn('ua', 'string', ['length' => 250, 'null' => false])
             ->addIndex(['user_uuid'])
             ->addIndex(['secret'])
             ->addIndex(['expires'])
@@ -25,9 +25,9 @@ final class SessionTables extends AbstractMigration
             ->create();
         // holds early expirations for authenticated user session tokens
         $this->table('session_expiration')
-            ->addColumn('session_id', 'integer')
-            ->addColumn('date', 'integer')
-            ->addColumn('reason', 'string')
+            ->addColumn('session_id', 'integer', ['signed' => false, 'null' => false])
+            ->addColumn('date', 'biginteger', ['signed' => false, 'null' => false])
+            ->addColumn('reason', 'string', ['null' => false])
             ->addIndex(['session_id'], ['unique' => true])
             ->addForeignKey(['session_id'], 'session')
             ->create();

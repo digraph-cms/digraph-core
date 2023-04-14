@@ -10,7 +10,7 @@ final class CustomPageSorting extends AbstractMigration
     {
         $this->table('page')
             ->addColumn('sort_name', 'string', ['length' => 100, 'null' => true])
-            ->addColumn('sort_weight', 'integer', ['default' => 0])
+            ->addColumn('sort_weight', 'integer', ['default' => 0, 'null' => false])
             ->addIndex('sort_name')
             ->addIndex('sort_weight')
             ->save();
