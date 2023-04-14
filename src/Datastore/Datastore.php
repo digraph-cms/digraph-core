@@ -23,8 +23,8 @@ class Datastore
         $query = DB::query()
             ->delete('datastore')
             ->where('created < ?', $time)
-            ->where('namespace', $namespace);
-        if ($group) $query->where('grp', $group);
+            ->where('`ns`', $namespace);
+        if ($group) $query->where('`grp`', $group);
         $query->execute();
     }
 
