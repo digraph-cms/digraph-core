@@ -30,7 +30,7 @@ final class PhinxCleanup extends AbstractMigration
         ];
         foreach ($primary_keys as $table) {
             $this->table($table)
-                ->changeColumn('id', 'integer', ['signed' => false, 'null' => false])
+                ->changeColumn('id', 'integer', ['signed' => false, 'null' => false, 'identity' => true])
                 ->changePrimaryKey('id')
                 ->save();
         }
