@@ -6,8 +6,7 @@ use Phinx\Migration\AbstractMigration;
 
 /**
  * This migration is being added to coincide with updating to Phinx 0.13, to
- * help make sure all the index columns line up with the correct types, and that
- * nullability and integer types/signing are up to date and correct everywhere.
+ * help make sure all the index columns line up with the new default types.
  */
 final class PhinxCleanup extends AbstractMigration
 {
