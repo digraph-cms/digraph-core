@@ -228,7 +228,7 @@ abstract class CoreEventSubscriber
         if ($query) {
             $words = preg_split('/ +/', trim($query));
             foreach ($words as $word) {
-                $word = preg_quote($word);
+                $word = preg_quote($word, '/');
                 $name = preg_replace('/' . $word . '/i', '<strong>$0</strong>', $name);
             }
         }
@@ -252,7 +252,7 @@ abstract class CoreEventSubscriber
         if ($query) {
             $words = preg_split('/ +/', trim($query));
             foreach ($words as $word) {
-                $word = preg_quote($word);
+                $word = preg_quote($word, '/');
                 $name = preg_replace('/' . $word . '/i', '<strong>$0</strong>', $name);
             }
         }
