@@ -167,6 +167,7 @@ abstract class Context
         /** @var int|null */
         $endKey = intval(key(static::$data));
         if ($value !== null) {
+            if (!isset(static::$data[$endKey])) static::$data[$endKey] = [];
             static::$data[$endKey][$name] = $value;
         }
         return @static::$data[$endKey][$name];
@@ -177,7 +178,7 @@ abstract class Context
         static::$data[] = [];
     }
 
-    public static function clone(): void
+    public static function copy(): void
     {
         static::$data[] = end(static::$data) ? end(static::$data) : [];
     }

@@ -34,7 +34,7 @@ class Templates
     public static function render(string $template, array $fields = []): string
     {
         // add fields to context
-        Context::clone();
+        Context::copy();
         Context::fields()->merge($fields);
         // get template alias
         $template = Config::get("templates.aliases.$template") ?? $template;
