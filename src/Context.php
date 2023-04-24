@@ -21,7 +21,7 @@ abstract class Context
     protected static $url;
     /** @var Throwable|null */
     protected static $thrown;
-    /** @var array<string,mixed> */
+    /** @var array<int,array<string|int,mixed>> */
     protected static $data = [];
 
     public static function beginEmail(): void
@@ -164,8 +164,8 @@ abstract class Context
     public static function data(string $name, mixed $value = null): mixed
     {
         end(static::$data);
-        $endKey = key(static::$data);
-        if (!$endKey) $endKey = 0;
+        /** @var int|null */
+        $endKey = intval(key(static::$data));
         if ($value !== null) {
             static::$data[$endKey][$name] = $value;
         }
@@ -179,7 +179,7 @@ abstract class Context
 
     public static function clone(): void
     {
-        static::$data[] = end(static::$data) ?? [];
+        static::$data[] = end(static::$data) ? end(static::$data) : [];
     }
 
     public static function end(): void

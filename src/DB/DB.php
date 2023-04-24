@@ -141,7 +141,7 @@ class DB
                         Config::set('db.pass', false);
                         break;
                     default:
-                        throw new \Exception("Unsupported DB adapter " . Config::get('db.adapter'));
+                        throw new Exception("Unsupported DB adapter " . Config::get('db.adapter'));
                 }
             } catch (\Throwable $th) {
                 if ($th instanceof Exception) {

@@ -2,8 +2,6 @@
 
 namespace DigraphCMS\Content;
 
-use DigraphCMS\Cron\DeferredJob;
-use DigraphCMS\DB\DB;
 use DigraphCMS\Search\Search;
 
 class Page extends AbstractPage
@@ -19,4 +17,5 @@ class Page extends AbstractPage
     {
         return array_unique([$this->class(), 'page', '_any']);
     }
+
 }

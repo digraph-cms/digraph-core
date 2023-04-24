@@ -26,15 +26,14 @@ class RadioListField extends Field
 
     public function children(): array
     {
-        $children = array_merge(
+        return array_merge(
             [
                 $this->label(),
                 $this->tips(),
                 $this->validationMessage(),
                 $this->input(),
             ],
-            Tag::children()
+            $this->children
         );
-        return $children;
     }
 }

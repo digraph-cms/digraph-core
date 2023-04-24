@@ -27,10 +27,7 @@ use Throwable;
 
 abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
 {
-    use FlatArrayTrait {
-        set as protected rawSet;
-        unset as protected rawUnset;
-    }
+    use FlatArrayTrait;
 
     const DEFAULT_SLUG = '[name]';
     const DEFAULT_UNIQUE_SLUG = true;
@@ -96,7 +93,7 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
         $this->updated = @$metadata['updated'] ?? new DateTime();
         $this->updated_last = clone $this->updated;
         $this->updated_by = @$metadata['updated_by'] ?? Session::uuid();
-        $this->rawSet(null, $data);
+        $this->set(null, $data);
         $this->slugPattern = @$metadata['slug_pattern'] ?? static::DEFAULT_SLUG;
     }
 
@@ -332,7 +329,7 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
         return [$this->class(), '_any'];
     }
 
-    public static function class(): string
+    public static function class (): string
     {
         static $classes = [];
         $class = get_called_class();
@@ -345,7 +342,7 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
         foreach (Config::get('page_types') as $name => $class) {
             if ($class == $thisClass) return $name;
         }
-        throw new \Exception("Page class $thisClass is not configured");
+        throw new Exception("Page class $thisClass is not configured");
     }
 
     /**
@@ -659,14 +656,15 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
                     $mUUID = $m->uuid();
                     $job->spawn(
                         function () use ($mUUID) {
-                            $media = RichMedia::get($mUUID);
-                            $media->delete();
-                            return "Deleted rich media " . $media->name();
-                        }
+                                $media = RichMedia::get($mUUID);
+                                $media->delete();
+                                return "Deleted rich media " . $media->name();
+                            }
                     );
                 }
                 // queue deletion of all search indexes
                 $job->spawn(function () use ($uuid) {
+                    /** @var int */
                     $n = DB::query()
                         ->delete('search_index')
                         ->where('owner = ?', [$uuid])

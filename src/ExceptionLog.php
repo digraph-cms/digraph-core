@@ -90,7 +90,7 @@ class ExceptionLog
                     } else {
                         $sent = true;
                     }
-                } catch (\Throwable $th) {
+                } catch (Throwable $th) {
                     $sent = false;
                     $body .= '<br>Additional email system error: ' . get_class($th);
                     if (method_exists($th, 'getMessage')) $body .= '<br>Message: ' . $th->getMessage();
@@ -137,7 +137,7 @@ class ExceptionLog
         ]));
         try {
             return !!Locking::lock('exception_log/' . $hash, false, Config::get('exception_log.notify_frequency'));
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             return true;
         }
     }

@@ -115,8 +115,8 @@ $table->download(
     [
         'Job ID',
         'Group',
-        new ColumnDateFilteringHeader('Time', 'run'),
-        new ColumnStringFilteringHeader('Message', 'message')
+        'Time',
+        'Message'
     ]
 );
 echo $table;

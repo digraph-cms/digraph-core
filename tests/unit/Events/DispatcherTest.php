@@ -23,7 +23,7 @@ class DispatcherTest extends \Codeception\Test\Unit
     public function testEventListeners()
     {
         $ran = false;
-        $id = Dispatcher::addEventListener(
+        Dispatcher::addEventListener(
             'onTestEvent',
             function ($value) use (&$ran) {
                 $ran = $value;

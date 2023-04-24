@@ -56,7 +56,7 @@ abstract class Digraph
             Context::response()->renderContent();
         }
         // last resort error message
-        catch (\Throwable $th) {
+        catch (Throwable $th) {
             ExceptionLog::log($th);
             http_response_code(500);
             echo Templates::fallbackError($th);

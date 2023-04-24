@@ -61,12 +61,13 @@ class SpreadsheetWriter
         $this->spreadsheet->setActiveSheetIndex(0);
         $row = 1;
         foreach (array_values($cells) as $i => $cell) {
-            $this->spreadsheet->getActiveSheet()->setCellValueByColumnAndRow(
-                $i + 1,
-                $row,
-                $cell
-            );
-            $cell = $this->spreadsheet->getActiveSheet()->getCellByColumnAndRow($i + 1, $row);
+            $this->spreadsheet->getActiveSheet()
+                ->setCellValue(
+                    Coordinate::stringFromColumnIndex($i + 1) . $row,
+                    $cell
+                );
+            $cell = $this->spreadsheet->getActiveSheet()
+                ->getCell(Coordinate::stringFromColumnIndex($i + 1) . $row);
             $cell->getStyle()->getFont()->setBold(true);
             $cell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID);
             $cell->getStyle()->getFill()->setStartColor(new Color('FFCCCCCC'));

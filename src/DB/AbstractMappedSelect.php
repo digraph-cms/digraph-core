@@ -47,7 +47,9 @@ abstract class AbstractMappedSelect implements Iterator, Countable
     {
         $column = static::parseJsonRefs($column);
         $q = clone $this->query();
-        $q->asObject(false)->group($column)->select("$column as v");
+        $q->asObject(false);
+        $q->group($column);
+        $q->select("$column as v");
         $class = get_called_class();
         return array_map(
             function (array $row) use ($class, $column): SubQuery {
@@ -146,11 +148,11 @@ abstract class AbstractMappedSelect implements Iterator, Countable
                 return Cache::get(
                     'db/jsonref/' . md5($matches[0]),
                     function () use ($matches) {
-                        return Dispatcher::firstValue(
-                            'onDbExpandJsonPath_' . DB::driver(),
-                            [$matches[4], $matches[3], $matches[2]]
-                        );
-                    }
+                            return Dispatcher::firstValue(
+                                'onDbExpandJsonPath_' . DB::driver(),
+                                [$matches[4], $matches[3], $matches[2]]
+                            );
+                        }
                 );
             },
             $string

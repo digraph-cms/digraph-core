@@ -9,7 +9,10 @@ use DigraphCMS\URL\URL;
 
 abstract class AbstractColumnFilteringHeader extends ColumnHeader implements FilterToolInterface
 {
-    protected $id, $section, $column;
+    protected $id;
+    /** @var PaginatedSection|null */
+    protected $section;
+    protected $column;
 
     abstract public function toolbox();
 
@@ -106,6 +109,7 @@ abstract class AbstractColumnFilteringHeader extends ColumnHeader implements Fil
 
     protected function config(string $key = null)
     {
+        if (!$this->section) return null;
         if ($key) return @$this->section->getToolConfig($this->getFilterID())[$key];
         else return $this->section->getToolConfig($this->getFilterID());
     }

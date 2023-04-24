@@ -83,7 +83,7 @@ class Templates
             $out = static::render('fallback.php');
             Context::end();
             return $out;
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             Context::end();
             return '<h1>Unhandled error</h1><p>Additionally, an error occurred when generating the fallback error page.</p>';
         }
@@ -141,7 +141,7 @@ function require_file(string $file): string
     ob_start();
     try {
         require $file;
-    } catch (\Throwable $th) {
+    } catch (Throwable $th) {
         ob_end_clean();
         throw $th;
     }

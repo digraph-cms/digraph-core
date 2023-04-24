@@ -17,6 +17,7 @@ class CoreCronSubscriber
         // expire deferred execution jobs
         new DeferredJob(
             function () {
+                /** @var int */
                 $count = DB::query()->delete('defex')
                     ->where('run is not null')
                     ->where('run < ?', [strtotime(Config::get('maintenance.expire_defex_records'))])
@@ -28,6 +29,7 @@ class CoreCronSubscriber
         // expire locking records
         new DeferredJob(
             function () {
+                /** @var int */
                 $count = DB::query()->delete('locking')
                     ->where('expires < ?', [strtotime(Config::get('maintenance.expire_locking_records'))])
                     ->execute();
@@ -38,6 +40,7 @@ class CoreCronSubscriber
         // expire cron errors
         new DeferredJob(
             function () {
+                /** @var int */
                 $count = DB::query()
                     ->update('cron', [
                         'error_time' => null,
@@ -53,6 +56,7 @@ class CoreCronSubscriber
         // expire search index records
         new DeferredJob(
             function () {
+                /** @var int */
                 $count = DB::query()->delete('search_index')
                     ->where('updated < ?', [strtotime(Config::get('maintenance.expire_search_index'))])
                     ->execute();

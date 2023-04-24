@@ -372,7 +372,7 @@ abstract class CoreEventSubscriber
         if ($url->action() == 'index') {
             $user = null;
             if ($url->arg('id') && $user = Users::get($url->arg('id'))) {
-                $user = $user;
+                // does nothing, assigned in statement above
             } elseif (!$url->arg('id')) {
                 $user = Users::current() ?? Users::guest();
             }

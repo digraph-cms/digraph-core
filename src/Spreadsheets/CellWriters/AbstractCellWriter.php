@@ -3,6 +3,7 @@
 namespace DigraphCMS\Spreadsheets\CellWriters;
 
 use PhpOffice\PhpSpreadsheet\Cell\Cell;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
@@ -21,7 +22,7 @@ abstract class AbstractCellWriter
 
     public function write(Worksheet $sheet, int $column, int $row)
     {
-        $this->transformCell($sheet->getCellByColumnAndRow($column, $row));
+        $this->transformCell($sheet->getCell(Coordinate::stringFromColumnIndex($column) . $row));
     }
 
     public function fill(): ?string

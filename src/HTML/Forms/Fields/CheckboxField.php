@@ -19,7 +19,7 @@ class CheckboxField extends Field
                 $this->input(),
                 $this->label()
             ],
-            DIV::children()
+            $this->children
         );
         if ($this->submitted()) {
             $children[] = $this->validationMessage();
