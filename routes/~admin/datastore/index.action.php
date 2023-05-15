@@ -33,8 +33,8 @@ $table = new PaginatedTable(
     [
         new ColumnStringFilteringHeader('Namespace', 'ns'),
         new ColumnStringFilteringHeader('Group', 'grp'),
-        new ColumnStringFilteringHeader('Key', 'key'),
-        new ColumnStringFilteringHeader('Value', 'value'),
+        new ColumnStringFilteringHeader('Key', '`key`'),
+        new ColumnStringFilteringHeader('Value', '`value`'),
         'Data',
         new ColumnDateFilteringHeader('Created', 'created'),
         new ColumnDateFilteringHeader('Updated', 'updated')
