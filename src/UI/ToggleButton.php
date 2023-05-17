@@ -13,12 +13,15 @@ class ToggleButton extends Tag
     protected $tag = 'div';
     protected static $idCounter = 0;
 
-    protected $state;
+    /** @var callable */
     protected $toggleOn, $toggleOff;
 
-    public function __construct(bool $state, callable $toggleOn, callable $toggleOff)
-    {
-        $this->state = $state;
+    public function __construct(
+        protected bool $state,
+        callable $toggleOn,
+        callable $toggleOff,
+        protected bool $targetTop = false
+    ) {
         $this->toggleOn = $toggleOn;
         $this->toggleOff = $toggleOff;
         $this->setID('toggle-button-' . static::$idCounter++);
@@ -28,12 +31,12 @@ class ToggleButton extends Tag
     {
         return array_merge(
             parent::classes(),
-            [
+            array_filter([
                 'toggle-button',
                 $this->state ? 'toggle-button--on' : 'toggle-button--off',
-                'navigation-frame',
-                'navigation-frame--stateless'
-            ]
+                $this->targetTop ? false : 'navigation-frame',
+                $this->targetTop ? false : 'navigation-frame--stateless'
+            ])
         );
     }
 
@@ -41,9 +44,9 @@ class ToggleButton extends Tag
     {
         return array_merge(
             parent::attributes(),
-            [
-                'data-target' => 'frame'
-            ]
+            array_filter([
+                'data-target' => $this->targetTop ? false : 'frame'
+            ])
         );
     }
 
@@ -66,12 +69,12 @@ class ToggleButton extends Tag
     {
         return [
             $this->state
-                ? '<span class="toggle-button__state">[ON]</span>'
-                : '<span class="toggle-button__state">[OFF]</span>',
+            ? '<span class="toggle-button__state">[ON]</span>'
+            : '<span class="toggle-button__state">[OFF]</span>',
             ' ',
             $this->state
-                ? '<a class="toggle-button__link" href="' . $this->url_off() . '">Turn OFF</a>'
-                : '<a class="toggle-button__link" href="' . $this->url_on() . '">Turn ON</a>'
+            ? '<a class="toggle-button__link" href="' . $this->url_off() . '">Turn OFF</a>'
+            : '<a class="toggle-button__link" href="' . $this->url_on() . '">Turn ON</a>'
         ];
     }
 
