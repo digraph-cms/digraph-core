@@ -12,6 +12,10 @@ class CodeHighlighter
 {
     /**
      * Handle <code> tags in DOM
+     * 
+     * @suppress PHP0416
+     * @param DOMEvent $event
+     * @return void
      */
     public static function codeEvent(DOMEvent $event)
     {

@@ -30,6 +30,12 @@ class ZipRichMedia extends AbstractRichMedia
         return new Icon('zip');
     }
 
+    /**
+     * @suppress PHP0406
+     * @param FormWrapper $form
+     * @param boolean $create
+     * @return void
+     */
     public function prepareForm(FormWrapper $form, $create = false)
     {
         // name input

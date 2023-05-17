@@ -218,6 +218,11 @@ class FormWrapper extends Tag
         return parent::toString();
     }
 
+    /**
+     * @suppress PHP0418
+     * @param array $children
+     * @return void
+     */
     protected function setChildrenForms(array $children)
     {
         foreach ($children as $child) {

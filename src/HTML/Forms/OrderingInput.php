@@ -22,6 +22,10 @@ class OrderingInput extends INPUT
         );
     }
 
+    /**
+     * @suppress PHP0406
+     * @return string|null
+     */
     public function validationError(): ?string
     {
         if (!$this->allowAdding() && array_diff($this->value(true), $this->default())) {

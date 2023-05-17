@@ -77,6 +77,7 @@ abstract class AbstractMappedSelect implements Iterator, Countable
      * Construct using a FPDO query and the class of the DataObjectSource that
      * spawned this query.
      *
+     * @suppress PHP0406
      * @param Select $query
      */
     public function __construct(Select $query)
