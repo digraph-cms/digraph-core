@@ -216,6 +216,7 @@ fieldset {
     margin: $grid/2 0;
     font-weight: bold;
     color: var(--cue-danger);
+    line-height: $line-height-tight;
 
     &:last-child {
         margin-bottom: 0;
