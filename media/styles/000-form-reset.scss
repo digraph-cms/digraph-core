@@ -262,3 +262,19 @@ fieldset {
         font-size: smaller;
     }
 }
+
+// narrower input types
+input[type*="date"],
+input[type*="time"],
+input[type="number"],
+input[type="color"],
+input[type="month"],
+input[type="tel"],
+input[type="week"] {
+    max-width: 15em;
+}
+
+// make select fields narrower too
+select {
+    max-width: 30em;
+}
