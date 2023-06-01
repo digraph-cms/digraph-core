@@ -1,9 +1,0 @@
-parameters:
-  level: 5
-  paths:
-    - src
-    - routes
-  scanDirectories:
-    - vendor
-  excludePaths:
-    - demo/

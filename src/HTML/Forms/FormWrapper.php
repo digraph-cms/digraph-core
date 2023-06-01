@@ -8,20 +8,29 @@ use DigraphCMS\URL\URL;
 
 class FormWrapper extends Tag
 {
+    /** @var string */
     protected $tag = 'div';
-
+    /** @var string */
     protected $method = 'post';
+    /** @var URL|null */
     protected $action;
+    /** @var Token|null */
     protected $token;
+    /** @var SubmitButton|null */
     protected $button;
+    /** @var FORM|null */
     protected $form;
+    /** @var bool */
     protected $displayChildren = true;
+    /** @var callable[] */
     protected $callbacks = [];
+    /** @var callable[] */
     protected $preValidationCallbacks = [];
 
     const METHOD_POST = 'post';
     const METHOD_GET = 'get';
 
+    /** @var int */
     protected static $counter = 0;
 
     public function __construct(string $id = null)
@@ -187,7 +196,8 @@ class FormWrapper extends Tag
 
     public function addChild($child)
     {
-        if (method_exists($child, 'setForm')) {
+        if (is_a($child, InputInterface::class) || method_exists($child, 'setForm')) {
+            /** @psalm-suppress PossiblyInvalidMethodCall */
             $child->setForm($this);
         }
         return parent::addChild($child);
@@ -219,7 +229,6 @@ class FormWrapper extends Tag
     }
 
     /**
-     * @suppress PHP0418
      * @param array $children
      * @return void
      */
@@ -227,7 +236,8 @@ class FormWrapper extends Tag
     {
         foreach ($children as $child) {
             if ($child instanceof Tag) {
-                if (method_exists($child, 'setForm')) {
+                if (is_a($child, InputInterface::class) || method_exists($child, 'setForm')) {
+                    /** @psalm-suppress PossiblyInvalidMethodCall */
                     $child->setForm($this);
                 }
                 $this->setChildrenForms($child->children());

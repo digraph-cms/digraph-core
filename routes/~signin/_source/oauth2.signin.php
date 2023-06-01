@@ -5,8 +5,6 @@ use DigraphCMS\Context;
 use DigraphCMS\HTTP\ArbitraryRedirectException;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\Session\Cookies;
-use DigraphCMS\Session\Session;
-use DigraphCMS\UI\Templates;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Users;
 
@@ -56,6 +54,6 @@ $accessToken = $provider->getAccessToken('authorization_code', [
 Cookies::unset('csrf', 'oauth2state');
 
 // get user from provider and save ID into Context
-$resourceOwner = $provider->getResourceOwner($accessToken); //@phpstan-ignore-line this one is out of my control
+$resourceOwner = $provider->getResourceOwner($accessToken);
 Context::data('oauth_resource_owner', $resourceOwner);
 Context::data('signin_provider_id', $resourceOwner->getID());

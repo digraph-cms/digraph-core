@@ -25,19 +25,59 @@ abstract class AbstractCacheDriver
      * @param string $name
      * @param mixed|callable $value
      * @param integer|null $ttl
+     * @return static
+     */
+    abstract public function set(string $name, mixed $value, int $ttl = null): static;
+    
+    /**
+     * Check whether a given cache item exists
+     * 
+     * @param string $name
+     * @return bool
+     */
+    abstract public function exists(string $name): bool;
+
+    /**
+     * Check whether a given cache item is expired, return true for items that
+     * do not exist.
+     * 
+     * @param string $name
+     * @return bool
+     */
+    abstract public function expired(string $name): bool;
+
+    /**
+     * Get the value of a given cache item, if it exists, otherwise null.
+     * 
+     * @param string $name
      * @return mixed
      */
-    abstract public function set(string $name, mixed $value, int $ttl = null);
-    abstract public function exists(string $name): bool;
-    abstract public function expired(string $name): bool;
     abstract public function get(string $name): mixed;
-    abstract public function invalidate(string $glob): void;
 
+    /**
+     * Invalidate a given cache item, which may be many items as specified 
+     * using a glob.
+     * 
+     * @param string $glob
+     * @return static
+     */
+    abstract public function invalidate(string $glob): static;
+
+    /**
+     * Summary of __construct
+     */
     public function __construct()
     {
         $this->dir = Config::get('cache.path');
     }
 
+    /**
+     * Ensure that a given cache name is valid. Throws an exception if it is not.
+     * 
+     * @param mixed $name
+     * @throws \Exception
+     * @return void
+     */
     public static function checkName(string $name): void
     {
         if (!preg_match('/[a-z0-9\-_]+(\/[a-z0-9\-_]+)*/', $name)) {
@@ -45,6 +85,13 @@ abstract class AbstractCacheDriver
         }
     }
 
+    /**
+     * Ensure that a given cache glob is valid. Throws an exception if it is not.
+     * 
+     * @param mixed $glob
+     * @throws \Exception
+     * @return void
+     */
     public static function checkGlob(string $glob): void
     {
         if (!preg_match('/[a-z0-9\-_\*\?\[\]]+(\/[a-z0-9\-_\*\?\[\]]+)*/', $glob)) {

@@ -13,7 +13,6 @@ class CodeHighlighter
     /**
      * Handle <code> tags in DOM
      * 
-     * @suppress PHP0416
      * @param DOMEvent $event
      * @return void
      */
@@ -111,7 +110,7 @@ class CodeHighlighter
         );
     }
 
-    public static function loadCSS()
+    public static function loadCSS(): void
     {
         static $loaded = false;
         if (!$loaded) {

@@ -4,9 +4,11 @@ namespace DigraphCMS\HTML;
 
 use Exception;
 
-abstract class Tag extends Node
+abstract class Tag extends Node implements TagInterface
 {
-    protected $tag, $id;
+    /** @var string */
+    protected $tag;
+    protected $id;
     protected $attributes = [];
     protected $classes = [];
     protected $data = [];

@@ -55,7 +55,7 @@ abstract class AbstractMappedSelect implements Iterator, Countable
             function (array $row) use ($class, $column): SubQuery {
                 return new SubQuery(
                     $row['v'],
-                    /** @phpstan-ignore-next-line */
+                    /** @psalm-suppress UnsafeInstantiation */
                     (new $class(clone $this->query()))
                         ->where($column, $row['v'])
                 );
@@ -77,7 +77,6 @@ abstract class AbstractMappedSelect implements Iterator, Countable
      * Construct using a FPDO query and the class of the DataObjectSource that
      * spawned this query.
      *
-     * @suppress PHP0406
      * @param Select $query
      */
     public function __construct(Select $query)
@@ -86,7 +85,8 @@ abstract class AbstractMappedSelect implements Iterator, Countable
         $this->query->disableSmartJoin();
         if ($this->returnObjectClass) {
             $this->returnDataObjects = false;
-            $this->query->asObject($this->returnObjectClass); //@phpstan-ignore-line
+            /** @psalm-suppress InvalidArgument */
+            $this->query->asObject($this->returnObjectClass);
         }
     }
 
@@ -212,9 +212,12 @@ abstract class AbstractMappedSelect implements Iterator, Countable
     public function notLike(string $column, string $pattern, bool $wildCardBefore = true, bool $wildCardAfter = true, $separator = "AND")
     {
         $parsedColumn = $this->parseJsonRefs($column);
-        if ($parsedColumn != $column) $parsedColumn = "LOWER($parsedColumn)";
+        if ($parsedColumn != $column) {
+            $parsedColumn = "LOWER($parsedColumn)";
+            $pattern = strtolower($pattern);
+        }
         return $this->where(
-            "$column NOT LIKE ?",
+            "$parsedColumn NOT LIKE ?",
             [static::prepareLikePattern($pattern, $wildCardBefore, $wildCardAfter)],
             $separator
         );
@@ -411,9 +414,6 @@ abstract class AbstractMappedSelect implements Iterator, Countable
         return $this->query->count();
     }
 
-    /**
-     * @return mixed
-     */
     public function current(): mixed
     {
         if ($this->returnDataObjects) {

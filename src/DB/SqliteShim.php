@@ -13,7 +13,6 @@ class SqliteShim
     }
 
     /**
-     * @suppress PHP0418
      * @param PDO $pdo
      * @param string $name
      * @param integer $args
@@ -21,7 +20,7 @@ class SqliteShim
      */
     protected static function createFunction(PDO $pdo, string $name, int $args = -1): void
     {
-        $pdo->sqliteCreateFunction($name, self::class . '::' . $name, $args);
+        $pdo->sqliteCreateFunction($name, self::$name(...), $args);
     }
 
     public static function CONCAT(): string

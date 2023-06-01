@@ -316,11 +316,16 @@ class Theme
             ];
         }
         // add alpha colors
-        $colors['a90'] = (new Hex($color))->toRgba()->alpha(0.9);//@phpstan-ignore-line
-        $colors['a80'] = (new Hex($color))->toRgba()->alpha(0.8);//@phpstan-ignore-line
-        $colors['a50'] = (new Hex($color))->toRgba()->alpha(0.5);//@phpstan-ignore-line
-        $colors['a20'] = (new Hex($color))->toRgba()->alpha(0.2);//@phpstan-ignore-line
-        $colors['a10'] = (new Hex($color))->toRgba()->alpha(0.1);//@phpstan-ignore-line
+        /** @psalm-suppress InvalidArgument */
+        $colors['a90'] = (new Hex($color))->toRgba()->alpha(0.9);
+        /** @psalm-suppress InvalidArgument */
+        $colors['a80'] = (new Hex($color))->toRgba()->alpha(0.8);
+        /** @psalm-suppress InvalidArgument */
+        $colors['a50'] = (new Hex($color))->toRgba()->alpha(0.5);
+        /** @psalm-suppress InvalidArgument */
+        $colors['a20'] = (new Hex($color))->toRgba()->alpha(0.2);
+        /** @psalm-suppress InvalidArgument */
+        $colors['a10'] = (new Hex($color))->toRgba()->alpha(0.1);
         return $colors;
     }
 

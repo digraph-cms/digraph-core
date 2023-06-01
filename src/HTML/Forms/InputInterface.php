@@ -2,7 +2,9 @@
 
 namespace DigraphCMS\HTML\Forms;
 
-interface InputInterface
+use DigraphCMS\HTML\TagInterface;
+
+interface InputInterface extends TagInterface
 {
     /**
      * @param FormWrapper $form

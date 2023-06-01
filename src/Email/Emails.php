@@ -55,17 +55,22 @@ class Emails
             ?? '<em>No email category description found</em>';
     }
 
+    /**
+     * @psalm-suppress PossiblyInvalidArgument
+     * @psalm-suppress InvalidArgument
+     * @return array
+     */
     public static function existingCategories(): array
     {
         return array_unique(array_merge(
             array_keys(Config::get('email.categories')),
             array_map(
-                function ($row) {
+                function (array $row): string {
                     return $row['category'];
                 },
                 DB::query()->from('email')
                     ->select('DISTINCT category', true)
-                    ->fetchAll(0) //@phpstan-ignore-line
+                    ->fetchAll(0)
             )
         ));
     }
@@ -257,10 +262,6 @@ class Emails
             $html = Templates::render('/email/html/body_' . $email->category() . '.php', ['email' => $email]);
         } else {
             $html = Templates::render('/email/html/body_default.php', ['email' => $email]);
-        }
-        $css = '';
-        foreach (Media::glob('/styles_email/*.{scss,css}') as $file) {
-            $css .= $file->content() . PHP_EOL;
         }
         $output = (new CssToInlineStyles)
             ->convert(

@@ -30,7 +30,7 @@ function buildPageCopyLog(AbstractPage $page)
     $status = $page['page_copy_log'];
     if (!$status) return [];
     $originalPage = Pages::get($page['page_copy_log.from']);
-    $original = $originalPage ? $originalPage->url()->html() : '<strong>[not found]</strong>';
+    $original = $originalPage?->url()->html() ?? '<strong>[not found]</strong>';
     $user = Users::get($page['page_copy_log.user']) ?? '<strong>[not found]</strong>';
     $time = $page['page_copy_log.time'] ? Format::datetime($page['page_copy_log.time']) : '<strong>[not found]</strong>';
     // recurse for original page

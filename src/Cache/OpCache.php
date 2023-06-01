@@ -25,6 +25,10 @@ class OpCache extends AbstractCacheDriver
         $this->fuzz = Config::get('cache.fuzz');
     }
 
+    /**
+     * @param string $name
+     * @return non-empty-string
+     */
     protected function filename(string $name): string
     {
         return $this->dir . "/" . $name . ".opcache";
@@ -93,6 +97,7 @@ class OpCache extends AbstractCacheDriver
                 try {
                     $exp = 0;
                     $val = null;
+                    /** @psalm-suppress UnresolvableInclude */
                     include $filename;
                 } catch (\Throwable $th) {
                     // unlock file before throwing errors
@@ -115,7 +120,7 @@ class OpCache extends AbstractCacheDriver
         }
     }
 
-    public function invalidate(string $glob): void
+    public function invalidate(string $glob): static
     {
         static::checkGlob($glob);
         $glob = $this->filename($glob);
@@ -129,9 +134,10 @@ class OpCache extends AbstractCacheDriver
                 opcache_invalidate($filename);
             }
         }
+        return $this;
     }
 
-    public function set(string $name, $value, int $ttl = null)
+    public function set(string $name, $value, int $ttl = null): static
     {
         static::checkName($name);
         // save into internal cache
@@ -157,6 +163,8 @@ class OpCache extends AbstractCacheDriver
                 LOCK_EX
             );
         }
+        // return
+        return $this;
     }
 
     protected static function serialize(mixed $value): string
@@ -168,7 +176,7 @@ class OpCache extends AbstractCacheDriver
         } elseif ($value === false) {
             return 'false';
         } elseif (is_numeric($value)) {
-            if (is_infinite($value)) {
+            if (is_float($value) && is_infinite($value)) {
                 return 'INF';
             } else {
                 return "$value";
