@@ -28,6 +28,10 @@ $variables = Theme::variables('light');
                         echo '<tr><td align="center" valign="top" style="background:' . $variables['background-darker'] . ';border-bottom: 1px solid ' . $variables['theme-neutral'] . ';font-family:' . $variables['font-ui'] . '">';
                         echo Templates::render('/email/html/header_' . $email->category() . '.php');
                         echo "</td></tr>";
+                    } elseif (Templates::exists('/email/html/header_default.php')) {
+                        echo '<tr><td align="center" valign="top" style="background:' . $variables['background-darker'] . ';border-bottom: 1px solid ' . $variables['theme-neutral'] . ';font-family:' . $variables['font-ui'] . '">';
+                        echo Templates::render('/email/html/header_default.php');
+                        echo "</td></tr>";
                     }
                     ?>
                     <tr>
