@@ -85,7 +85,7 @@ abstract class AbstractMappedSelect implements Iterator, Countable
         $this->query->disableSmartJoin();
         if ($this->returnObjectClass) {
             $this->returnDataObjects = false;
-            /** @psalm-suppress InvalidArgument */
+            // @phpstan-ignore-next-line
             $this->query->asObject($this->returnObjectClass);
         }
     }

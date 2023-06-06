@@ -74,7 +74,7 @@ abstract class AbstractCacheDriver
     /**
      * Ensure that a given cache name is valid. Throws an exception if it is not.
      * 
-     * @param mixed $name
+     * @param string $name
      * @throws \Exception
      * @return void
      */
@@ -88,7 +88,7 @@ abstract class AbstractCacheDriver
     /**
      * Ensure that a given cache glob is valid. Throws an exception if it is not.
      * 
-     * @param mixed $glob
+     * @param string $glob
      * @throws \Exception
      * @return void
      */

@@ -151,7 +151,7 @@ class Checkbox extends Tag implements InputInterface
         }
     }
 
-    public function value($useDefault = false): ?bool
+    public function value(bool $useDefault = false): ?bool
     {
         if ($this->value !== null) {
             return $this->value;

@@ -20,7 +20,7 @@ interface InputInterface extends TagInterface
 
     public function required(): bool;
     public function default();
-    public function value($useDefault = false);
+    public function value(bool $useDefault = false): mixed;
 
     /**
      * @param bool $required

@@ -146,7 +146,7 @@ class INPUT extends Tag implements InputInterface
         }
     }
 
-    public function value($useDefault = false)
+    public function value(bool $useDefault = false): mixed
     {
         if ($this->value) {
             return $this->value;

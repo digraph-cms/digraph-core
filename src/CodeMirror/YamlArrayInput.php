@@ -42,7 +42,7 @@ class YamlArrayInput extends CodeMirrorInput
         else return [];
     }
 
-    public function value($useDefault = false): array
+    public function value(bool $useDefault = false): array
     {
         $value = parent::value($useDefault);
         if (is_array($value)) return $value;

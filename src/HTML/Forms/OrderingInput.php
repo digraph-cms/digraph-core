@@ -101,7 +101,10 @@ class OrderingInput extends INPUT
         return $this;
     }
 
-    public function value($useDefault = false)
+    /**
+     * @return array<string,string>
+     */
+    public function value(bool $useDefault = false): array
     {
         $value = parent::value($useDefault);
         if (is_string($value)) {

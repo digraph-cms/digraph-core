@@ -34,30 +34,37 @@ class TableInput extends INPUT
     {
         if ($this->default === null) {
             $this->default = [
-                'head' => [[
-                    'id' => Digraph::uuid(),
-                    'row' => [
-                        [
-                            'id' => Digraph::uuid(),
-                            'cell' => ''
+                'head' => [
+                    [
+                        'id' => Digraph::uuid(),
+                        'row' => [
+                            [
+                                'id' => Digraph::uuid(),
+                                'cell' => ''
+                            ]
                         ]
                     ]
-                ]],
-                'body' => [[
-                    'id' => Digraph::uuid(),
-                    'row' => [
-                        [
-                            'id' => Digraph::uuid(),
-                            'cell' => ''
+                ],
+                'body' => [
+                    [
+                        'id' => Digraph::uuid(),
+                        'row' => [
+                            [
+                                'id' => Digraph::uuid(),
+                                'cell' => ''
+                            ]
                         ]
                     ]
-                ]]
+                ]
             ];
         }
         return parent::default();
     }
 
-    public function value($useDefault = false)
+    /**
+     * @return null|array<string,array<string,mixed>>
+     */
+    public function value(bool $useDefault = false): array|null
     {
         $value = parent::value($useDefault);
         if (is_string($value)) {

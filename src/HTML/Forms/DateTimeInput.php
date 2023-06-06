@@ -17,8 +17,8 @@ class DateTimeInput extends INPUT
                 'type' => 'datetime-local',
                 'step' => $this->step,
                 'value' => $this->value(true)
-                    ? $this->value(true)->format('Y-m-d\TH:i')
-                    : null
+                ? $this->value(true)->format('Y-m-d\TH:i')
+                : null
             ]
         );
     }
@@ -29,7 +29,7 @@ class DateTimeInput extends INPUT
         return $this;
     }
 
-    public function value($useDefault = false)
+    public function value($useDefault = false): DateTime|null
     {
         if ($value = parent::value($useDefault)) {
             if (is_string($value)) {

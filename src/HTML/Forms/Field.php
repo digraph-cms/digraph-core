@@ -164,7 +164,7 @@ class Field extends DIV implements InputInterface
         return $this->input()->default();
     }
 
-    public function value($useDefault = false)
+    public function value(bool $useDefault = false): string|null
     {
         return $this->input()->value($useDefault);
     }

@@ -119,31 +119,38 @@ class CheckboxList extends DIV implements InputInterface
 
     public function default()
     {
-        return array_filter(array_map(
-            function ($f) {
-                if ($f['field']->default()) {
-                    return $f['value'];
-                } else {
-                    return false;
-                }
-            },
-            $this->fields
-        ));
+        return array_filter(
+            array_map(
+                function ($f) {
+                    if ($f['field']->default()) {
+                        return $f['value'];
+                    } else {
+                        return false;
+                    }
+                },
+                $this->fields
+            )
+        );
     }
 
-    public function value($useDefault = false)
+    /**
+     * @return array<string|true>
+     */
+    public function value(bool $useDefault = false): array
     {
-        return array_filter(array_map(
-            function ($f) use ($useDefault) {
-                $f['field']->setForm($this->form());
-                if ($f['field']->value($useDefault)) {
-                    return $f['value'];
-                } else {
-                    return false;
-                }
-            },
-            $this->fields
-        ));
+        return array_filter(
+            array_map(
+                function ($f) use ($useDefault) {
+                    $f['field']->setForm($this->form());
+                    if ($f['field']->value($useDefault)) {
+                        return $f['value'];
+                    } else {
+                        return false;
+                    }
+                },
+                $this->fields
+            )
+        );
     }
 
     /**

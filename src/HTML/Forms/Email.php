@@ -15,7 +15,7 @@ class Email extends INPUT
         });
     }
 
-    public function value($useDefault = false)
+    public function value(bool $useDefault = false): string|null
     {
         return parent::value($useDefault)
             ? strtolower(parent::value($useDefault))

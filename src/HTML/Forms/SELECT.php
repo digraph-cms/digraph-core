@@ -37,13 +37,14 @@ class SELECT extends Tag implements InputInterface
                         '<option value="%s"%s>%s</option>',
                         $key,
                         ($this->value(true) === $opt['value'] || $this->valueString() === $key)
-                            ? ' selected="true"'
-                            : '',
+                        ? ' selected="true"'
+                        : '',
                         $opt['label']
                     );
                 },
                 $this->options
-            ))
+            )
+            )
         ];
     }
 
@@ -206,7 +207,7 @@ class SELECT extends Tag implements InputInterface
         }
     }
 
-    public function value($useDefault = false)
+    public function value(bool $useDefault = false): mixed
     {
         if ($key = $this->valueString()) {
             return @$this->options[$key]['value'];

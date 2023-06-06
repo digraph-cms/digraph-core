@@ -18,7 +18,7 @@ class DateInput extends INPUT
         );
     }
 
-    public function value($useDefault = false)
+    public function value(bool $useDefault = false): DateTime|null
     {
         if ($value = parent::value($useDefault)) {
             if (is_string($value)) {

@@ -15,7 +15,7 @@ class Phone extends INPUT
         });
     }
 
-    public function value($useDefault = false)
+    public function value(bool $useDefault = false): string|null
     {
         /** @var string */
         $value = preg_replace('/[^0-9]/', '', parent::value($useDefault) ?? '') ?? '';

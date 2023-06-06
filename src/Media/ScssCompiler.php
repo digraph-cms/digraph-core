@@ -6,6 +6,8 @@ use DigraphCMS\URL\URL;
 use DigraphCMS\URL\URLs;
 use ScssPhp\ScssPhp\Formatter\OutputBlock;
 
+// TODO: figure out another way to extend the scss compiler
+// @phpstan-ignore-next-line
 class ScssCompiler extends \ScssPhp\ScssPhp\Compiler
 {
     function compileImport($rawPath, OutputBlock $out, $once = false)

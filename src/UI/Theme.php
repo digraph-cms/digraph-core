@@ -316,15 +316,15 @@ class Theme
             ];
         }
         // add alpha colors
-        /** @psalm-suppress InvalidArgument */
+        // @phpstan-ignore-next-line
         $colors['a90'] = (new Hex($color))->toRgba()->alpha(0.9);
-        /** @psalm-suppress InvalidArgument */
+        // @phpstan-ignore-next-line
         $colors['a80'] = (new Hex($color))->toRgba()->alpha(0.8);
-        /** @psalm-suppress InvalidArgument */
+        // @phpstan-ignore-next-line
         $colors['a50'] = (new Hex($color))->toRgba()->alpha(0.5);
-        /** @psalm-suppress InvalidArgument */
+        // @phpstan-ignore-next-line
         $colors['a20'] = (new Hex($color))->toRgba()->alpha(0.2);
-        /** @psalm-suppress InvalidArgument */
+        // @phpstan-ignore-next-line
         $colors['a10'] = (new Hex($color))->toRgba()->alpha(0.1);
         return $colors;
     }

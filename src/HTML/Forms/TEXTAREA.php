@@ -146,7 +146,7 @@ class TEXTAREA extends Tag implements InputInterface
         }
     }
 
-    public function value($useDefault = false)
+    public function value(bool $useDefault = false): string|null
     {
         if ($this->value) {
             return $this->value;

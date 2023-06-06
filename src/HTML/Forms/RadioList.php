@@ -125,7 +125,7 @@ class RadioList extends DIV implements InputInterface
         }
         return null;
     }
-    public function value($useDefault = false)
+    public function value(bool $useDefault = false): string|null
     {
         foreach ($this->fields as $f) {
             $f['field']->setForm($this->form());

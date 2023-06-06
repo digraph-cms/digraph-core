@@ -70,6 +70,7 @@ class Emails
                 },
                 DB::query()->from('email')
                     ->select('DISTINCT category', true)
+                    // @phpstan-ignore-next-line
                     ->fetchAll(0)
             )
         ));
