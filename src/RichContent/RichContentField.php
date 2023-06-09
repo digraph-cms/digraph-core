@@ -56,15 +56,19 @@ class RichContentField extends Field
                 ->addClass('rich-content-editor__content-editor__editor')
         );
         // add basic tips
-        $this->addTip(sprintf(
-            'Content can be formatted with <a href="%s" target="_lightbox">Markdown</a> and <a href="%s" target="_lightbox">ShortCodes</a>',
-            new URL('/~manual/editing/markdown.html'),
-            new URL('/~manual/editing/shortcodes.html')
-        ));
-        $this->addTip(sprintf(
-            'For advanced content editor tips, see the <a href="%s" target="_lightbox">Editor keyboard shortcuts reference</a>',
-            new URL('/~manual/editing/keyboard_shortcuts.html')
-        ));
+        $this->addTip(
+            sprintf(
+                'Content can be formatted with <a href="%s" target="_lightbox">Markdown</a> and <a href="%s" target="_lightbox">ShortCodes</a>',
+                new URL('/~manual/editing/markdown.html'),
+                new URL('/~manual/editing/shortcodes.html')
+            )
+        );
+        $this->addTip(
+            sprintf(
+                'For advanced content editor tips, see the <a href="%s" target="_lightbox">Editor keyboard shortcuts reference</a>',
+                new URL('/~manual/editing/keyboard_shortcuts.html')
+            )
+        );
     }
 
     public function id(): ?string
@@ -93,7 +97,11 @@ class RichContentField extends Field
         return $this;
     }
 
-    public function setDefault($default)
+    /**
+     * @param RichContent|string|null $default 
+     * @return static 
+     */
+    public function setDefault(mixed $default): static
     {
         if ($default instanceof RichContent) {
             $default = $default->source();
