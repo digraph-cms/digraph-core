@@ -124,7 +124,7 @@ class ShortCodesListener
             $action = $url->action();
             if (count($pages) == 1 && !Router::staticRouteExists($route, $action)) {
                 // one page with no matching static route: use its name as default name
-                $title = $pages[0]->getName();
+                $title = $pages[0]->name();
             } else {
                 // there are multiple options
                 $multiple_options = true;
