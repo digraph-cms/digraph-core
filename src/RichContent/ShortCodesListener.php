@@ -104,7 +104,7 @@ class ShortCodesListener
             if (!$s->getBbCode()) $url = Context::url();
             else {
                 $url = $s->getBbCode();
-                if (!str_starts_with('/', $url)) $url .= $url;
+                if (!str_starts_with($url,'/')) $url = "/$url";
                 $url = new URL($url);
             }
             // try to use the given action
@@ -124,7 +124,7 @@ class ShortCodesListener
             $action = $url->action();
             if (count($pages) == 1 && !Router::staticRouteExists($route, $action)) {
                 // one page with no matching static route: use its name as default name
-                $title = $pages[0]->name();
+                $title = $pages[0]->url($action)->name();
             } else {
                 // there are multiple options
                 $multiple_options = true;

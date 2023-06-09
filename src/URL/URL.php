@@ -311,11 +311,10 @@ class URL
      */
     public function setAction(string $action): static
     {
-        if ($file = $this->file()) {
-            $this->path = substr($this->path, 0, strlen($this->path) - strlen($file));
-            if (!preg_match('@(/|\.([a-z0-9]+))$@', $action) && !strpos($action, ':')) $action .= '.html';
-            $this->path .= $action;
-        }
+
+        $this->path = substr($this->path, 0, strlen($this->path) - strlen($this->file()));
+        if (!preg_match('@(/|\.([a-z0-9]+))$@', $action) && !strpos($action, ':')) $action .= '.html';
+        $this->path .= $action;
         return $this;
     }
 
