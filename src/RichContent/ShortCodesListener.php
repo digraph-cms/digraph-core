@@ -5,6 +5,7 @@ namespace DigraphCMS\RichContent;
 use DigraphCMS\Config;
 use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Content\Pages;
+use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
 use DigraphCMS\HTML\A;
 use DigraphCMS\HTML\Text;
@@ -91,40 +92,56 @@ class ShortCodesListener
     }
 
     /**
-     * Handle page link shortcodes
+     * Handle link shortcodes, which can be to either pages or static routes
      *
      * @param ShortcodeInterface $s
      * @return string|null
      */
     public static function onShortCode_link(ShortcodeInterface $s): ?string
     {
-        if ($pages = Pages::getAll($s->getBbCode())) {
-            if (count($pages) == 1) {
-                // if there is only one page at this slug/uuid, link to it
-                $page = reset($pages);
-                return (new A)
-                    ->setAttribute('href', $page->url())
-                    ->setAttribute('title', $page->name())
-                    ->addClassString($s->getParameter('class', ''))
-                    ->addChild(new Text($s->getContent() ? $s->getContent() : $page->name()));
-            } else {
-                // if there are multiple pages, give link link--multiple-options class
-                // make default title indicate that there are multiple options
-                $title = "Multiple options: " . implode(', ', array_map(
-                    function (AbstractPage $page): string {
-                        return $page->name();
-                    },
-                    $pages
-                ));
-                return (new A)
-                    ->setAttribute('href', new URL('/' . $s->getBbCode() . '/'))
-                    ->setAttribute('title', $title)
-                    ->addClass('link--multiple-options')
-                    ->addClassString($s->getParameter('class', ''))
-                    ->addChild(new Text($s->getContent() ? $s->getContent() : $title));
+        try {
+            // try to parse given URL, or use context if not specified
+            if (!$s->getBbCode()) $url = Context::url();
+            else {
+                $url = $s->getBbCode();
+                if (!str_starts_with('/', $url)) $url .= $url;
+                $url = new URL($url);
             }
-        } else {
+            // try to use the given action
+            if ($s->getParameter('action')) {
+                $url->setAction($s->getParameter('action'));
+            }
+        } catch (\Throwable $th) {
+            // if there was a problem, abort displaying this tag
             return null;
         }
+        // track whether there are multiple options
+        $multiple_options = false;
+        // search for pages this URL might refer to
+        if (!$url->explicitlyStaticRoute() && $pages = Pages::getAll($url->route())) {
+            // this route relates to one or more pages
+            $route = $url->route();
+            $action = $url->action();
+            if (count($pages) == 1 && !Router::staticRouteExists($route, $action)) {
+                // one page with no matching static route: use its name as default name
+                $title = $pages[0]->getName();
+            } else {
+                // there are multiple options
+                $multiple_options = true;
+                $title = array_map(fn($page) => $page->url($action)->name(), $pages);
+                if (Router::staticRouteExists($route, $action)) $title[] = (new URL("/~$route/"))->setAction($action)->name();
+                $title = sprintf('{multiple options: %s}', implode(', ', $title));
+            }
+        } else {
+            // this URL is static, it refers to no pages
+            $title = $url->name();
+        }
+        $link = (new A)
+            ->setAttribute('href', $url)
+            ->setAttribute('title', $title)
+            ->addClassString($s->getParameter('class', ''))
+            ->addChild(new Text($s->getContent() ? $s->getContent() : $title));
+        if ($multiple_options) $link->addClass('link--multiple-options');
+        return $link;
     }
 }

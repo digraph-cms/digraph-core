@@ -250,7 +250,7 @@ abstract class Digraph
                     // create a multiple options page if multiple pages or 1+ page and a static route exists
                     Context::data('300_pages', $pages);
                     if (Router::staticRouteExists($route, $action)) {
-                        $staticUrl = new URL("/~$route/$action.html");
+                        $staticUrl = (new URL("/~$route/"))->setAction($action);
                         $staticUrl->query($request->url()->query());
                         $staticUrl->normalize();
                         Context::data('300_static', $staticUrl);

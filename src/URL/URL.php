@@ -303,6 +303,22 @@ class URL
         return 'index';
     }
 
+    /**
+     * Set/change the action of this URL, appending .html automatically if necessary
+     * 
+     * @param string $action 
+     * @return static 
+     */
+    public function setAction(string $action): static
+    {
+        if ($file = $this->file()) {
+            $this->path = substr($this->path, 0, strlen($this->path) - strlen($file));
+            if (!preg_match('@(/|\.([a-z0-9]+))$@', $action) && !strpos($action, ':')) $action .= '.html';
+            $this->path .= $action;
+        }
+        return $this;
+    }
+
     public function actionPrefix(): ?string
     {
         $action = $this->action();
