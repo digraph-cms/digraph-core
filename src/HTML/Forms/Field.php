@@ -42,7 +42,7 @@ class Field extends DIV implements InputInterface
      * @param callable $validator
      * @return static
      */
-    public function addValidator(callable $validator)
+    public function addValidator(callable $validator): static
     {
         $this->input()->addValidator($validator);
         return $this;
@@ -93,10 +93,11 @@ class Field extends DIV implements InputInterface
         return $this->validationMessage;
     }
 
-    public function setInput(InputInterface $input)
+    public function setInput(InputInterface $input): static
     {
         $this->input = $input;
         $this->label->setFor($this->input);
+        return $this;
     }
 
     public function input(): InputInterface
@@ -122,7 +123,7 @@ class Field extends DIV implements InputInterface
      * @param string $tip
      * @return static
      */
-    public function addTip(string $tip)
+    public function addTip(string $tip): static
     {
         $this->tips()->addChild(
             (new SMALL())
@@ -142,13 +143,13 @@ class Field extends DIV implements InputInterface
         return $this->input()->submitted();
     }
 
-    public function addForm(FormWrapper $form)
+    public function addForm(FormWrapper $form): static
     {
         $form->addChild($this);
         return $this;
     }
 
-    public function setForm(FormWrapper $form)
+    public function setForm(FormWrapper $form): static
     {
         $this->input()->setForm($form);
         return $this;
@@ -159,29 +160,29 @@ class Field extends DIV implements InputInterface
         return $this->input()->required();
     }
 
-    public function default()
+    public function default(): mixed
     {
         return $this->input()->default();
     }
 
-    public function value(bool $useDefault = false): string|null
+    public function value(bool $useDefault = false): mixed
     {
         return $this->input()->value($useDefault);
     }
 
-    public function setRequired(bool $required, string $message = null)
+    public function setRequired(bool $required, string $message = null): static
     {
         $this->input()->setRequired($required, $message);
         return $this;
     }
 
-    public function setDefault($default)
+    public function setDefault(mixed $default): static
     {
         $this->input()->setDefault($default);
         return $this;
     }
 
-    public function setValue($value)
+    public function setValue(mixed $value): static
     {
         $this->input()->setValue($value);
         return $this;
