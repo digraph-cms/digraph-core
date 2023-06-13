@@ -4,6 +4,7 @@ namespace DigraphCMS;
 
 use DigraphCMS\Cache\CacheNamespace;
 use DigraphCMS\Content\AbstractPage;
+use DigraphCMS\Content\Page;
 use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\HTTP\Request;
 use DigraphCMS\HTTP\Response;
@@ -187,6 +188,13 @@ abstract class Context
         static::url($url);
     }
 
+    public static function beginPageContext(AbstractPage $page): void
+    {
+        static::copy();
+        static::page($page);
+        static::url($page->url());
+    }
+
     public static function begin(): void
     {
         static::$data[] = [];
@@ -202,7 +210,8 @@ abstract class Context
         array_pop(static::$data);
     }
 
-    public static function clear(): void {
+    public static function clear(): void
+    {
         static::$data = [];
     }
 }
