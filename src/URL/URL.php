@@ -43,23 +43,23 @@ class URL
     {
         // replace empty url with context
         if ($url == '') {
-            $url = URLs::context()->directory();
+            $url = Context::url()->directory();
         }
         // prefix with context for empty or query-only strings
         if (!$url) {
-            $url = URLs::context()->__toString();
+            $url = Context::url()->__toString();
         }
         // set query for query-only string
         if ($url[0] == '?') {
             parse_str(substr($url, 1), $query);
-            $url = clone URLs::context();
+            $url = clone Context::url();
             $url->query($query);
             $url = $url->__toString();
         }
         // merge in query for partial query strings
         if ($url[0] == '&') {
             parse_str(substr($url, 1), $query);
-            $url = clone URLs::context();
+            $url = clone Context::url();
             $query = array_merge($url->query(), $query);
             $url->query($query);
             $url = $url->__toString();
@@ -72,7 +72,7 @@ class URL
         }
         // otherwise add it to the context directory
         elseif ($url[0] != '/') {
-            $url = URLs::site() . URLs::context()->directory() . $url;
+            $url = URLs::site() . Context::url()->directory() . $url;
         }
         // strip protocol
         $url = preg_replace('@^(https?:)?//@', '//', $url);

@@ -19,7 +19,6 @@ use DigraphCMS\Search\Search;
 use DigraphCMS\UI\Templates;
 use DigraphCMS\UI\Theme;
 use DigraphCMS\URL\URL;
-use DigraphCMS\URL\URLs;
 use DigraphCMS\Users\Permissions;
 use Mimey\MimeTypes;
 use Throwable;
@@ -213,7 +212,6 @@ abstract class Digraph
     {
         ob_start();
         $request->url()->normalize();
-        URLs::beginContext($request->url());
         Context::begin();
         Context::url($request->url());
         Context::request($request);
@@ -353,7 +351,6 @@ abstract class Digraph
             Dispatcher::dispatchEvent('onResponseReady_html', [$response]);
         }
         Context::end();
-        URLs::endContext();
     }
 
     protected static function buildResponseContent(): void

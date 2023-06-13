@@ -3,6 +3,7 @@
 namespace DigraphCMS\URL;
 
 use DigraphCMS\Config;
+use DigraphCMS\Context;
 
 URLs::_init($_SERVER);
 
@@ -10,8 +11,6 @@ class URLs
 {
     /** @var string|null */
     public static $siteProtocol, $siteHost, $sitePath;
-    /** @var array<int,URL> */
-    public static $context = [];
 
     /**
      * Called automatically on first use using the environment's real $_SERVER,
@@ -79,10 +78,11 @@ class URLs
      *
      * @param URL $context
      * @return void
+     * @deprecated use Context::beginUrlContext($context) instead
      */
     public static function beginContext(URL $context): void
     {
-        static::$context[] = $context;
+        Context::beginUrlContext($context);
     }
 
     /**
@@ -90,14 +90,11 @@ class URLs
      * currently active.
      *
      * @return URL
+     * @deprecated use Context::url() instead
      */
     public static function context(): URL
     {
-        if (static::$context) {
-            return end(static::$context);
-        } else {
-            return new URL(static::site() . '/');
-        }
+        return Context::url();
     }
 
     /**
@@ -105,20 +102,11 @@ class URLs
      * was the new current context.
      *
      * @return void
+     * @deprecated use Context::end() instead
      */
     public static function endContext(): void
     {
-        array_pop(static::$context);
-    }
-
-    /**
-     * Clear the context stack, making the site root the current context.
-     *
-     * @return void
-     */
-    public static function clearContext(): void
-    {
-        static::$context = [];
+        Context::end();
     }
 
     /**

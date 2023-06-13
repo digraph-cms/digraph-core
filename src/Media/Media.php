@@ -4,6 +4,7 @@ namespace DigraphCMS\Media;
 
 use DigraphCMS\Cache\Cache;
 use DigraphCMS\Config;
+use DigraphCMS\Context;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\URL\URL;
 use DigraphCMS\URL\URLs;
@@ -59,7 +60,7 @@ class Media
             function () use ($path) {
                 $path = static::prefixContext($path);
                 $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
-                URLs::beginContext(new URL($path));
+                Context::beginUrlContext(new URL($path));
                 $file = Dispatcher::firstValue("onGetMedia_$extension", [$path]) ??
                     Dispatcher::firstValue("onGetMedia", [$path]) ??
                     static::doGet($path);
@@ -67,7 +68,7 @@ class Media
                     Dispatcher::dispatchEvent("onFileReady_" . $file->extension(), [$file]);
                     Dispatcher::dispatchEvent("onFileReady", [$file]);
                 }
-                URLs::endContext();
+                Context::end();
                 return $file;
             },
             Config::get('files.ttl')
@@ -77,10 +78,10 @@ class Media
     public static function glob(string $glob): array
     {
         $glob = static::prefixContext($glob);
-        URLs::beginContext(new URL($glob));
+        Context::beginUrlContext(new URL($glob));
         $files = array_map(
             function (string $path): string {
-                return URLs::context()->directory() . basename($path);
+                return Context::url()->directory() . basename($path);
             },
             static::search($glob)
         );
@@ -92,23 +93,23 @@ class Media
             },
             $files
         );
-        URLs::endContext();
+        Context::end();
         return $files;
     }
 
     public static function globToPaths(string $glob): array
     {
         $glob = static::prefixContext($glob);
-        URLs::beginContext(new URL($glob));
+        Context::beginUrlContext(new URL($glob));
         $files = array_map(
             function (string $path): string {
-                return URLs::context()->directory() . basename($path);
+                return Context::url()->directory() . basename($path);
             },
             static::search($glob)
         );
         $files = array_unique($files);
         asort($files);
-        URLs::endContext();
+        Context::end();
         return $files;
     }
 
@@ -212,7 +213,7 @@ class Media
     protected static function prefixContext(string $path)
     {
         if (substr($path, 0, 1) != '/') {
-            $path = '/' . URLs::context()->route() . '/' . $path;
+            $path = '/' . Context::url()->route() . '/' . $path;
         }
         return $path;
     }

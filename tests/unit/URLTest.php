@@ -1,21 +1,17 @@
 <?php
 
+use DigraphCMS\Context;
 use DigraphCMS\URL\URL;
 use DigraphCMS\URL\URLs;
 
 class URLTest extends \Codeception\Test\Unit
 {
-    /**
-     * @var \UnitTester
-     */
-    protected $tester;
-
     protected function _before()
     {
         $_SERVER['HTTP_HOST'] = 'www.test.com';
         URLs::_init($_SERVER);
         URLs::$sitePath = '/digraph';
-        URLs::clearContext();
+        Context::clear();
     }
 
     protected function _after()
@@ -86,28 +82,28 @@ class URLTest extends \Codeception\Test\Unit
         // context should be equal to site by default
         $this->assertEquals(
             URLs::site() . '/',
-            URLs::context()
+            Context::url()
         );
         // setting/clearing context
-        URLs::beginContext(new URL('/foo/'));
+        Context::beginUrlContext(new URL('/foo/'));
         $this->assertEquals(
             'http://www.test.com/digraph/foo/',
-            URLs::context()
+            Context::url()
         );
-        URLs::beginContext(new URL('/foo/bar/baz'));
+        Context::beginUrlContext(new URL('/foo/bar/baz'));
         $this->assertEquals(
             'http://www.test.com/digraph/foo/bar/baz',
-            URLs::context()
+            Context::url()
         );
-        URLs::endContext();
+        Context::end();
         $this->assertEquals(
             'http://www.test.com/digraph/foo/',
-            URLs::context()
+            Context::url()
         );
-        URLs::endContext();
+        Context::end();
         $this->assertEquals(
             URLs::site() . '/',
-            URLs::context()
+            Context::url()
         );
     }
 
@@ -119,7 +115,7 @@ class URLTest extends \Codeception\Test\Unit
             (new URL('..'))->__toString()
         );
         // context with a file at the end
-        URLs::beginContext(new URL('/a/b/c/d/e/f'));
+        Context::beginUrlContext(new URL('/a/b/c/d/e/f'));
         $this->assertEquals(
             'http://www.test.com/digraph/a/b/c/d/',
             (new URL('..'))->__toString()
@@ -137,7 +133,7 @@ class URLTest extends \Codeception\Test\Unit
             (new URL('../../'))->__toString()
         );
         // context with a directory at the end
-        URLs::beginContext(new URL('/a/b/c/d/e/f/'));
+        Context::beginUrlContext(new URL('/a/b/c/d/e/f/'));
         $this->assertEquals(
             'http://www.test.com/digraph/a/b/c/d/e/',
             (new URL('..'))->__toString()
@@ -155,7 +151,7 @@ class URLTest extends \Codeception\Test\Unit
 
     public function testPartialQueryParsing()
     {
-        URLs::beginContext(new URL('/foo/bar?baz=buzz'));
+        Context::beginUrlContext(new URL('/foo/bar?baz=buzz'));
         $this->assertEquals(
             'http://www.test.com/digraph/foo/bar?baz=buzz&caz=cuzz',
             (new URL('&caz=cuzz'))->__toString()

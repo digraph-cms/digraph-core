@@ -17,8 +17,6 @@ abstract class Context
     protected static $request;
     /** @var Response|null */
     protected static $response;
-    /** @var URL|null */
-    protected static $url;
     /** @var Throwable|null */
     protected static $thrown;
     /** @var array<int,array<string|int,mixed>> */
@@ -78,10 +76,8 @@ abstract class Context
 
     public static function url(URL $url = null): URL
     {
-        if ($url) {
-            static::$url = $url;
-        }
-        return clone static::$url;
+        return static::data('url', $url)
+            ?? Digraph::actualUrl();
     }
 
     /**
@@ -173,6 +169,24 @@ abstract class Context
         return @static::$data[$endKey][$name];
     }
 
+    /**
+     * Begin a "context" which will be used when parsing partial URLs, such as
+     * relative paths, or query-only URL strings. For example, setting the
+     * context to `[site]/foo/bar?a=b` would allow tricks like:
+     * 
+     *  * `..` => `[site]/`
+     *  * `?z=b` => `[site]/foo/bar?z=b`
+     *  * `&z=b` => `[site]/foo/bar?a=b&z=b`
+     *
+     * @param URL $url
+     * @return void
+     */
+    public static function beginUrlContext(URL $url): void
+    {
+        static::copy();
+        static::url($url);
+    }
+
     public static function begin(): void
     {
         static::$data[] = [];
@@ -186,5 +200,9 @@ abstract class Context
     public static function end(): void
     {
         array_pop(static::$data);
+    }
+
+    public static function clear(): void {
+        static::$data = [];
     }
 }

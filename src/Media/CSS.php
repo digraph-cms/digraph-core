@@ -3,11 +3,11 @@
 namespace DigraphCMS\Media;
 
 use DigraphCMS\Config;
+use DigraphCMS\Context;
 use DigraphCMS\FS;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\UI\Theme;
 use DigraphCMS\URL\URL;
-use DigraphCMS\URL\URLs;
 use ScssPhp\ScssPhp\OutputStyle;
 use tubalmartin\CssMin\Minifier;
 
@@ -104,7 +104,7 @@ class CSS
             $scss = $mixins . $scss;
         }
         // compile
-        URLs::beginContext(new URL($path));
+        Context::beginUrlContext(new URL($path));
         $result = $compiler->compileString(
             $scss,
             $smFile ? dirname($smFile->path()) . '/' . $path : null
@@ -115,7 +115,7 @@ class CSS
         }
         // compile, resolve URLs, and return
         $css = static::resolveURLs($result->getCss());
-        URLs::endContext();
+        Context::end();
         return $css;
     }
 
