@@ -32,9 +32,9 @@ class Group
     public function url(): URL
     {
         if ($this->uuid == 'users') {
-            return new URL('/~users/');
+            return new URL('/users/');
         }
-        return $this->url ?? new URL('/~users/groups/' . $this->uuid() . '.html');
+        return $this->url ?? new URL('/users/groups/' . $this->uuid() . '.html');
     }
 
     public function __toString()

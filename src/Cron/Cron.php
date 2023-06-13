@@ -31,7 +31,7 @@ class Cron
                 // render code
                 return sprintf(
                     PHP_EOL . '<script>if (window.Worker) { new Worker("%s"); }</script>' . PHP_EOL,
-                    new URL('/~cron/')
+                    new URL('/cron/')
                 );
             },
             60

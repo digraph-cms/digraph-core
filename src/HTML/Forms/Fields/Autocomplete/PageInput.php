@@ -14,7 +14,7 @@ class PageInput extends AutocompleteInput
         // pass endpoint and set up card-generating function
         parent::__construct(
             $id,
-            $endpoint ?? new URL('/~api/v1/autocomplete/page.php'),
+            $endpoint ?? new URL('/api/v1/autocomplete/page.php'),
             function (string $value) {
                 if ($page = Pages::get($value)) {
                     return Dispatcher::firstValue('onPageAutocompleteCard', [$page]);

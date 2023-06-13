@@ -43,7 +43,7 @@ class UserMenu extends MenuBar
             Dispatcher::dispatchEvent('onUserMenu_guest', [$this]);
         }
         // add admin settings
-        $this->adminItem = $this->addURL(new URL('/~admin/'), 'Admin')
+        $this->adminItem = $this->addURL(new URL('/admin/'), 'Admin')
             ->addClass('menuitem--admin');
         // add theme settings
         $this->addChild(
@@ -51,7 +51,7 @@ class UserMenu extends MenuBar
                 (new MenuItemFrame(
                     null,
                     'Theme',
-                    new URL('/~api/v1/usermenu/theme.php')
+                    new URL('/api/v1/usermenu/theme.php')
                 ))
                 ->addClass('menuitem--theme')
         );

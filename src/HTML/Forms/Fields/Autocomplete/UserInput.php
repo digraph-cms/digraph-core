@@ -14,7 +14,7 @@ class UserInput extends AutocompleteInput
         // pass endpoint and set up card-generating function
         parent::__construct(
             $id,
-            $endpoint ?? new URL('/~api/v1/autocomplete/user.php'),
+            $endpoint ?? new URL('/api/v1/autocomplete/user.php'),
             function (string $value) {
                 if ($user = Users::get($value)) {
                     return Dispatcher::firstValue('onUserAutoCompleteCard', [$user]);

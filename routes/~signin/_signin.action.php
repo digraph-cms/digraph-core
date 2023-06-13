@@ -50,7 +50,7 @@ if ($bounce) {
 }
 
 // make breadcrumb right
-$bc = new URL('/~signin/');
+$bc = new URL('/signin/');
 $bc->arg('_bounce', $bounce);
 Breadcrumb::top($bc);
 

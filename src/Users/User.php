@@ -236,7 +236,7 @@ class User implements ArrayAccess
                 [
                     'user' => $this,
                     'email' => $email,
-                    'link' => new URL('/~verify_email/?token=' . $token . '&user=' . $this->uuid())
+                    'link' => new URL('/verify_email/?token=' . $token . '&user=' . $this->uuid())
                 ]
             ))
         );
@@ -330,7 +330,7 @@ class User implements ArrayAccess
 
     public function profile(): ?URL
     {
-        return new URL('/~users/profile/?id=' . $this->uuid());
+        return new URL('/users/profile/?id=' . $this->uuid());
     }
 
     public function insert(): void

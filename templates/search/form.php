@@ -3,7 +3,7 @@
 use DigraphCMS\Context;
 use DigraphCMS\URL\URL;
 
-$url = new URL('/~search/');
+$url = new URL('/search/');
 $value = htmlentities(strip_tags(Context::arg('q') ?? ''));
 
 ?>

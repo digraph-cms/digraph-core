@@ -20,7 +20,7 @@ $form = (new FormWrapper())
     ->addClass('autoform')
     ->setID(Context::arg('frame') . '_adder');
 $form->button()->setText('Add');
-$adder = (new AutocompleteInput('rich-media-type-search', new URL('/~api/v1/autocomplete/rich-media-type.php')))
+$adder = (new AutocompleteInput('rich-media-type-search', new URL('/api/v1/autocomplete/rich-media-type.php')))
     ->addClass('autocomplete-input--autopopulate')
     ->addClass('autocomplete-input--autosubmit')
     ->setAttribute('placeholder', 'create rich media')
@@ -33,7 +33,7 @@ if ($form->ready()) {
     printf(
         '<script>Digraph.popup("%s","%s");</script>',
         new URL(sprintf(
-            '/~richmedia/editor/?add=%s&frame=%s&parent=%s',
+            '/richmedia/editor/?add=%s&frame=%s&parent=%s',
             $adder->value(),
             Context::arg('frame'),
             Context::arg('uuid')
@@ -61,14 +61,14 @@ else {
                     ->addClass('toolbar__button--compact-tip')
                     ->setAttribute('onclick', sprintf(
                         'Digraph.popup("%s")',
-                        new URL('/~richmedia/tune/?frame=' . Context::arg('frame') . '&uuid=' . $media->uuid())
+                        new URL('/richmedia/tune/?frame=' . Context::arg('frame') . '&uuid=' . $media->uuid())
                     ))
                     : '',
                 (new ToolbarLink('Edit', 'edit', null, null))
                     ->addClass('toolbar__button--compact-tip')
                     ->setAttribute('onclick', sprintf(
                         'Digraph.popup("%s")',
-                        new URL('/~richmedia/editor/?frame=' . Context::arg('frame') . '&uuid=' . $media->uuid())
+                        new URL('/richmedia/editor/?frame=' . Context::arg('frame') . '&uuid=' . $media->uuid())
                     ))
             ];
         },

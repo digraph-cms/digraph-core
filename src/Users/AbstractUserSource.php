@@ -53,7 +53,7 @@ abstract class AbstractUserSource
 
     protected function signinUrl(?string $bounce): URL
     {
-        $url = new URL('/~signin/_signin.html?_source=' . $this->name());
+        $url = new URL('/signin/_signin.html?_source=' . $this->name());
         if ($bounce) {
             $url->arg('_bounce', $bounce);
         }

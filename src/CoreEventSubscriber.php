@@ -326,7 +326,7 @@ abstract class CoreEventSubscriber
     public static function onStaticUrlPermissions_users(URL $url, User $user): ?bool
     {
         // disable authentication log if php sessions are being used
-        if (Config::get('php_session.enabled') && $url->path() == '/~users/profile/authentication_log.html') {
+        if (Config::get('php_session.enabled') && $url->path() == '/users/profile/authentication_log.html') {
             return false;
         }
         // limit list to users__view
@@ -393,7 +393,7 @@ abstract class CoreEventSubscriber
     public static function onStaticUrlParent_users_profile(URL $url): ?URL
     {
         if ($url->action() != 'index' && $url->arg('id')) {
-            return new URL('/~users/profile/?id=' . $url->arg('id'));
+            return new URL('/users/profile/?id=' . $url->arg('id'));
         }
         return null;
     }

@@ -20,7 +20,7 @@ if (!$query) {
 
 echo '<h1>Search results</h1>';
 Breadcrumb::setTopName('Search results');
-Breadcrumb::parent(new URL('/~search/'));
+Breadcrumb::parent(new URL('/search/'));
 echo new SearchForm();
 
 ob_start();

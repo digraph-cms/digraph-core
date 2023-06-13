@@ -17,7 +17,7 @@ class CodeMirrorField extends Field
         parent::__construct($label, $input);
         $this->addTip(sprintf(
             'For advanced code editor tips, see the <a href="%s" target="_lightbox">Editor keyboard shortcuts reference</a>',
-            new URL('/~manual/editing/keyboard_shortcuts.html')
+            new URL('/manual/editing/keyboard_shortcuts.html')
         ));
     }
 }

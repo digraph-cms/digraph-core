@@ -60,7 +60,7 @@ class Router
         $urls = [];
         foreach (self::search("~$route/*/index.action.*") as $file) {
             $action = basename(dirname($file));
-            $urls[] = new URL("/~$route/$action/");
+            $urls[] = new URL("/$route/$action/");
         }
         foreach (self::search("~$route/*.action.*") as $file) {
             $action = basename($file);
@@ -69,7 +69,7 @@ class Router
                 continue;
             }
             if (!preg_match('/\.[a-z0-9]+$/', $action)) {
-                $urls[] = new URL("/~$route/$action.html");
+                $urls[] = new URL("/$route/$action.html");
             }
         }
         Dispatcher::dispatchEvent('onStaticActions', [&$urls]);

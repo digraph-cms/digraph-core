@@ -2,8 +2,8 @@
 
 use DigraphCMS\URL\URL;
 
-$privacy = new URL('/~privacy/');
-$settings = new URL('/~privacy/cookie_authorizations.html');
+$privacy = new URL('/privacy/');
+$settings = new URL('/privacy/cookie_authorizations.html');
 
 ?>
 <p>

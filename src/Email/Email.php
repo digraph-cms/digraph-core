@@ -151,17 +151,17 @@ class Email
 
     public function url_unsubscribe(): URL
     {
-        return new URL('/~email_options/unsubscribe:' . $this->uuid());
+        return new URL('/email_options/unsubscribe:' . $this->uuid());
     }
 
     public function url_manageSubscriptions(): URL
     {
-        return new URL('/~email_options/manage:' . $this->uuid());
+        return new URL('/email_options/manage:' . $this->uuid());
     }
 
     public function url_adminInfo(): URL
     {
-        return new URL('/~admin/email/message:' . $this->uuid());
+        return new URL('/admin/email/message:' . $this->uuid());
     }
 
     public function uuid(): string

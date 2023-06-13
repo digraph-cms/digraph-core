@@ -11,7 +11,7 @@ Permissions::requireMetaGroup('richmedia__edit');
 
 echo new ToolbarLink('', 'link', null, null);
 $wrapper = (new DIV())->setID(Digraph::uuid())->setStyle('width', '100%');
-$input = (new AutocompleteInput(Digraph::uuid(), new URL('/~api/v1/autocomplete/rich-media.php')))
+$input = (new AutocompleteInput(Digraph::uuid(), new URL('/api/v1/autocomplete/rich-media.php')))
     ->addClass('navigation-frame__autofocus')
     ->addClass('autocomplete-input--autopopulate');
 $wrapper->addChild($input);

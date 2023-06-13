@@ -59,14 +59,14 @@ class RichContentField extends Field
         $this->addTip(
             sprintf(
                 'Content can be formatted with <a href="%s" target="_lightbox">Markdown</a> and <a href="%s" target="_lightbox">ShortCodes</a>',
-                new URL('/~manual/editing/markdown.html'),
-                new URL('/~manual/editing/shortcodes.html')
+                new URL('/manual/editing/markdown.html'),
+                new URL('/manual/editing/shortcodes.html')
             )
         );
         $this->addTip(
             sprintf(
                 'For advanced content editor tips, see the <a href="%s" target="_lightbox">Editor keyboard shortcuts reference</a>',
-                new URL('/~manual/editing/keyboard_shortcuts.html')
+                new URL('/manual/editing/keyboard_shortcuts.html')
             )
         );
     }
@@ -127,11 +127,11 @@ class RichContentField extends Field
         if ($this->mediaEditor) {
             $this->mediaEditorFrame
                 ->setID("b$id")
-                ->setData('initial-source', new URL("/~richmedia/sidebar/?frame=b$id&uuid=$uuid"));
+                ->setData('initial-source', new URL("/richmedia/sidebar/?frame=b$id&uuid=$uuid"));
         }
         $this->toolbarFrame
             ->setID("t$id")
-            ->setData('initial-source', new URL("/~api/v1/toolbar/?frame=t$id&uuid=$uuid"));
+            ->setData('initial-source', new URL("/api/v1/toolbar/?frame=t$id&uuid=$uuid"));
         // return normally
         return parent::toString();
     }

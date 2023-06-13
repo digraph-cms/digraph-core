@@ -15,7 +15,7 @@ $provider = $source->provider($providerName, Context::arg('_bounce'));
 
 if (Context::arg('error')) {
     // Got an error, probably user denied access or authorization code is expired
-    $url = new URL('/~signin/');
+    $url = new URL('/signin/');
     $url->arg('_bounce', Context::request()->url()->arg('_bounce'));
     throw new HttpError(
         500,
@@ -32,7 +32,7 @@ if (Context::arg('error')) {
 } elseif (!Context::arg('state') || Context::arg('state') !== Cookies::get('csrf', 'oauth2state')) {
     // State is invalid, possible CSRF attack
     // Cookies::unset('csrf', 'oauth2state');
-    $url = new URL('/~signin/');
+    $url = new URL('/signin/');
     $url->arg('_bounce', Context::arg('_bounce'));
     throw new HttpError(
         500,

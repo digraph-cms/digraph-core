@@ -19,7 +19,7 @@ Scripts for displaying deferred job progress bars
     function updateBar(wrapper) {
         if (wrapper.xhr) wrapper.xhr.abort();
         wrapper.xhr = new XMLHttpRequest();
-        var url = Digraph.config.url + '/~api/v1/deferred-progress/status.php?group=' + wrapper.dataset.group;
+        var url = Digraph.config.url + '/api/v1/deferred-progress/status.php?group=' + wrapper.dataset.group;
         wrapper.xhr.open('GET', url);
         wrapper.xhr.send();
 

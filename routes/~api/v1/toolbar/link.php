@@ -8,7 +8,7 @@ use DigraphCMS\URL\URL;
 
 echo new ToolbarLink('', 'link', null, null);
 $wrapper = (new DIV())->setID(Digraph::uuid())->setStyle('width', '100%');
-$input = (new AutocompleteInput(Digraph::uuid(), new URL('/~api/v1/autocomplete/page.php')))
+$input = (new AutocompleteInput(Digraph::uuid(), new URL('/api/v1/autocomplete/page.php')))
     ->addClass('navigation-frame__autofocus');
 $wrapper->addChild($input);
 echo $wrapper;

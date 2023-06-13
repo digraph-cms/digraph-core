@@ -63,7 +63,7 @@ class ExceptionLog
                 $body = implode('<br>', [
                     sprintf(
                         '<a href="%s">A new error</a> has been logged at <a href="%s">%s</a>',
-                        new URL("/~admin/exception_log/log:$time $uuid"),
+                        new URL("/admin/exception_log/log:$time $uuid"),
                         Context::url(),
                         Context::url()
                     ),
@@ -74,7 +74,7 @@ class ExceptionLog
                     sprintf(
                         'As of %s there have been <a href="%s">%s other errors logged today</a>',
                         Format::time(time()),
-                        new URL('/~admin/exception_log/'),
+                        new URL('/admin/exception_log/'),
                         count(glob("$path/*.json"))
                     )
                 ]);

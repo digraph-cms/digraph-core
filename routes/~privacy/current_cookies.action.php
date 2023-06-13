@@ -8,7 +8,7 @@ Context::response()->private(true);
 ?>
 <h1>Current cookies</h1>
 <p>The following cookies are currently associated with this site in your web browser, and can be read by the site.</p>
-<p>Visit the <a href="<?php echo new URL('/~privacy/cookie_authorizations.html'); ?>">cookie authorizations page</a> and <a href="<?php echo new URL('/~privacy/'); ?>">privacy page</a> to learn more about the cookies this site uses.</p>
+<p>Visit the <a href="<?php echo new URL('/privacy/cookie_authorizations.html'); ?>">cookie authorizations page</a> and <a href="<?php echo new URL('/privacy/'); ?>">privacy page</a> to learn more about the cookies this site uses.</p>
 
 <?php
 

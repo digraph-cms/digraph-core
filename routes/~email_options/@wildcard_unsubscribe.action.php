@@ -23,7 +23,7 @@ if ($user = $email->toUser()) {
 $addresses[] = $email->to();
 
 // set breadcrumb to use this email ID
-Breadcrumb::parent(new URL('/~email_options/?msg=' . $email->uuid()));
+Breadcrumb::parent(new URL('/email_options/?msg=' . $email->uuid()));
 
 // print page title
 echo "<h1>Email unsubscribe</h1>";

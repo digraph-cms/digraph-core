@@ -256,7 +256,13 @@ abstract class Digraph
                     static::buildErrorContent(300);
                 }
             } else {
-                // this route does not relate to any pages
+                // this route does not relate to any pages, so make it explicitly non-static for tidiness
+                if (Context::url()->explicitlyStaticRoute()) {
+                    Context::url()->path(
+                        preg_replace('@^/~@', '/', Context::url()->path())
+                    );
+                    throw new RedirectException(Context::url());
+                }
                 static::buildResponseContent();
             }
             // do search indexing if necessary

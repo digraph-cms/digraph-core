@@ -129,7 +129,7 @@ class ShortCodesListener
                 // there are multiple options
                 $multiple_options = true;
                 $title = array_map(fn($page) => $page->url($action)->name(), $pages);
-                if (Router::staticRouteExists($route, $action)) $title[] = (new URL("/~$route/"))->setAction($action)->name();
+                if (Router::staticRouteExists($route, $action)) $title[] = (new URL("/$route/"))->setAction($action)->name();
                 $title = sprintf('{multiple options: %s}', implode(', ', $title));
             }
         } else {

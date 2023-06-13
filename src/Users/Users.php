@@ -158,7 +158,7 @@ abstract class Users
     public static function signinUrl(URL $bounce = null): URL
     {
         $bounce = $bounce ?? Context::url();
-        $url = new URL('/~signin/');
+        $url = new URL('/signin/');
         $url->arg('_bounce', $bounce);
         return $url;
     }
@@ -169,7 +169,7 @@ abstract class Users
         if ($bounce->path() == '~signin') {
             $bounce = null;
         }
-        $url = new URL('/~signout/');
+        $url = new URL('/signout/');
         $url->arg('_bounce', $bounce);
         return $url;
     }
