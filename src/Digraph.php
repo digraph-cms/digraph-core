@@ -257,12 +257,6 @@ abstract class Digraph
                 }
             } else {
                 // this route does not relate to any pages
-                // make sure context url is explicitly static
-                if (!Context::url()->explicitlyStaticRoute()) {
-                    Context::url()->path(
-                        preg_replace('@^/([^~])@', '/~$1', Context::url()->path())
-                    );
-                }
                 static::buildResponseContent();
             }
             // do search indexing if necessary

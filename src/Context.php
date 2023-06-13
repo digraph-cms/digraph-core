@@ -4,7 +4,6 @@ namespace DigraphCMS;
 
 use DigraphCMS\Cache\CacheNamespace;
 use DigraphCMS\Content\AbstractPage;
-use DigraphCMS\Content\Page;
 use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\HTTP\Request;
 use DigraphCMS\HTTP\Response;
