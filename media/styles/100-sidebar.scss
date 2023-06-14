@@ -19,27 +19,27 @@
     margin-top: $grid;
     font-size: 1.25em;
   }
-}
 
-.sidebar__block {
-  margin: $grid*2 0;
-  break-inside: avoid;
+  .sidebar__block {
+    margin: $grid*2 0;
+    break-inside: avoid;
 
-  &:first-child {
-    margin-top: 0;
-  }
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-
-  >* {
     &:first-child {
       margin-top: 0;
     }
 
     &:last-child {
       margin-bottom: 0;
+    }
+
+    >* {
+      &:first-child {
+        margin-top: 0;
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
     }
   }
 }
