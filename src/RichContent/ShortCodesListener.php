@@ -37,6 +37,48 @@ class ShortCodesListener
         return null;
     }
 
+    public static function onShortCode_page_created_by(ShortcodeInterface $s): ?string
+    {
+        $page = Pages::get($s->getBbCode()) ?? Context::page();
+        if (!$page) return '<span class="notification notification--error">no page</span>';
+        return $page->createdBy();
+    }
+
+    public static function onShortCode_page_updated_by(ShortcodeInterface $s): ?string
+    {
+        $page = Pages::get($s->getBbCode()) ?? Context::page();
+        if (!$page) return '<span class="notification notification--error">no page</span>';
+        return $page->updatedBy();
+    }
+
+    public static function onShortCode_page_created(ShortcodeInterface $s): ?string
+    {
+        $page = Pages::get($s->getBbCode()) ?? Context::page();
+        if (!$page) return '<span class="notification notification--error">no page</span>';
+        return Format::datetime($page->created());
+    }
+
+    public static function onShortCode_page_updated(ShortcodeInterface $s): ?string
+    {
+        $page = Pages::get($s->getBbCode()) ?? Context::page();
+        if (!$page) return '<span class="notification notification--error">no page</span>';
+        return Format::datetime($page->updated());
+    }
+
+    public static function onShortCode_page_created_date(ShortcodeInterface $s): ?string
+    {
+        $page = Pages::get($s->getBbCode()) ?? Context::page();
+        if (!$page) return '<span class="notification notification--error">no page</span>';
+        return Format::date($page->created());
+    }
+
+    public static function onShortCode_page_updated_date(ShortcodeInterface $s): ?string
+    {
+        $page = Pages::get($s->getBbCode()) ?? Context::page();
+        if (!$page) return '<span class="notification notification--error">no page</span>';
+        return Format::date($page->updated());
+    }
+
     public static function onShortCode_page_name(ShortcodeInterface $s): ?string
     {
         $page = Pages::get($s->getBbCode()) ?? Context::page();
@@ -104,7 +146,7 @@ class ShortCodesListener
             if (!$s->getBbCode()) $url = Context::url();
             else {
                 $url = $s->getBbCode();
-                if (!str_starts_with($url,'/')) $url = "/$url";
+                if (!str_starts_with($url, '/')) $url = "/$url";
                 $url = new URL($url);
             }
             // try to use the given action
