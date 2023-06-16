@@ -89,6 +89,7 @@ file cards include an icon
     padding: $grid/2;
     border: $border;
     box-shadow: var(--shadow);
+    width: $line-length;
 
     &:before {
         @include icofont;
@@ -115,6 +116,8 @@ file cards include an icon
 extra file card styling for multifile cards
 */
 .multifile-card {
+    width: $line-length;
+
     .multifile-card__list {
         margin-top: $grid/2;
     }
