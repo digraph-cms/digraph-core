@@ -198,6 +198,7 @@ class Pages
     public static function update(AbstractPage $page)
     {
         DB::beginTransaction();
+        $page->beforeUpdate();
         Dispatcher::dispatchEvent('onBeforePageUpdate', [$page]);
         Dispatcher::dispatchEvent('onBeforePageUpdate_' . $page->class(), [$page]);
         // update values
@@ -223,6 +224,7 @@ class Pages
             ->execute();
         Dispatcher::dispatchEvent('onAfterPageUpdate_' . $page->class(), [$page]);
         Dispatcher::dispatchEvent('onAfterPageUpdate', [$page]);
+        $page->afterUpdate();
         DB::commit();
     }
 
@@ -230,6 +232,7 @@ class Pages
     {
         DB::beginTransaction();
         // pre-insert events
+        $page->beforeInsert();
         Dispatcher::dispatchEvent('onBeforePageInsert', [$page]);
         Dispatcher::dispatchEvent('onBeforePageInsert_' . $page->class(), [$page]);
         // insert page
@@ -256,6 +259,7 @@ class Pages
         // post-insert events
         Dispatcher::dispatchEvent('onAfterPageInsert_' . $page->class(), [$page]);
         Dispatcher::dispatchEvent('onAfterPageInsert', [$page]);
+        $page->afterUpdate();
         DB::commit();
     }
 

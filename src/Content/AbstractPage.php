@@ -510,6 +510,26 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
         else call_user_func([$page, $method], $job, $deadline);
     }
 
+    public function beforeUpdate(): void
+    {
+        // does nothing, but can be extended
+    }
+
+    public function afterUpdate(): void
+    {
+        // does nothing, but can be extended
+    }
+
+    public function beforeInsert(): void
+    {
+        // does nothing, but can be extended
+    }
+
+    public function afterInsert(): void
+    {
+        // does nothing, but can be extended
+    }
+
     public function insert(string $parent_uuid = null)
     {
         return Pages::insert($this, $parent_uuid);
@@ -656,10 +676,10 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
                     $mUUID = $m->uuid();
                     $job->spawn(
                         function () use ($mUUID) {
-                                $media = RichMedia::get($mUUID);
-                                $media->delete();
-                                return "Deleted rich media " . $media->name();
-                            }
+                            $media = RichMedia::get($mUUID);
+                            $media->delete();
+                            return "Deleted rich media " . $media->name();
+                        }
                     );
                 }
                 // queue deletion of all search indexes
@@ -674,13 +694,13 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
                 // queue deletion of this page last
                 $job->spawn(
                     function () use ($uuid) {
-                        // get page
-                        $page = Pages::get($uuid);
-                        if (!$page) return "Page $uuid already deleted";
-                        // delete
-                        Pages::delete($page);
-                        return "Deleted page " . $page->name() . " ($uuid)";
-                    }
+                    // get page
+                    $page = Pages::get($uuid);
+                    if (!$page) return "Page $uuid already deleted";
+                    // delete
+                    Pages::delete($page);
+                    return "Deleted page " . $page->name() . " ($uuid)";
+                }
                 );
                 return "Queued page for deletion " . $page->name() . " ($uuid)";
             },
