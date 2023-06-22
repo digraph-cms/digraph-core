@@ -143,7 +143,7 @@ class ShortCodesListener
     {
         try {
             // try to parse given URL, or use context if not specified
-            if (!$s->getBbCode()) $url = Context::url();
+            if (!$s->getBbCode()) $url = clone Context::url();
             else {
                 $url = $s->getBbCode();
                 if (!str_starts_with($url, '/')) $url = "/$url";
