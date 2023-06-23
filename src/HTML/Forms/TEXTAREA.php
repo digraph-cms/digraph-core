@@ -146,7 +146,11 @@ class TEXTAREA extends Tag implements InputInterface
         }
     }
 
-    public function value(bool $useDefault = false): string|null
+    /**
+     * @param bool $useDefault 
+     * @return string|null 
+     */
+    public function value(bool $useDefault = false): mixed
     {
         if ($this->value) {
             return $this->value;

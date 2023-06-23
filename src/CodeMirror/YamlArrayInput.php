@@ -42,8 +42,13 @@ class YamlArrayInput extends CodeMirrorInput
         else return [];
     }
 
-    public function value(bool $useDefault = false): array
+    /**
+     * @param bool $useDefault 
+     * @return array<mixed,mixed>|null
+     */
+    public function value(bool $useDefault = false): mixed
     {
+        /** @var string|null|array<mixed,mixed> might be an array, because of default */
         $value = parent::value($useDefault);
         if (is_array($value)) return $value;
         elseif ($value) return spyc_load($value);
