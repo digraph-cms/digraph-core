@@ -76,8 +76,8 @@ abstract class Context
 
     public static function url(URL $url = null): URL
     {
-        return static::data('url', $url)
-            ?? Digraph::actualUrl();
+        return clone (static::data('url', $url)
+            ?? Digraph::actualUrl());
     }
 
     /**
