@@ -312,7 +312,7 @@ class Pages
     protected static function filterCache(AbstractPage $page)
     {
         foreach (static::$cache as $i => $v) {
-            if ($v->uuid() == $page->uuid()) {
+            if ($v?->uuid() == $page->uuid()) {
                 unset(static::$cache[$i]);
             }
         }
