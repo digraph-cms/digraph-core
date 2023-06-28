@@ -51,7 +51,12 @@ class Notifications
         static::add($message, 'confirmation', $class);
     }
 
-    public static function add(string $message, string $type = 'unspecified', string $class = '')
+    public static function neutral(string $message, string $class = '')
+    {
+        static::add($message, 'neutral', $class);
+    }
+
+    public static function add(string $message, string $type = 'neutral', string $class = '')
     {
         static::$notifications[] = [$message, $type, $class];
     }
@@ -76,7 +81,12 @@ class Notifications
         static::flash($message, 'confirmation', $class);
     }
 
-    public static function flash(string $message, string $type = 'unspecified', string $class = '')
+    public static function flashNeutral(string $message, string $class = '')
+    {
+        static::flash($message, 'neutral', $class);
+    }
+
+    public static function flash(string $message, string $type = 'neutral', string $class = '')
     {
         Cookies::required('system');
         static::$flashes[] = [$message, $type, $class];
@@ -111,7 +121,7 @@ class Notifications
         static::print($message, 'confirmation', $class);
     }
 
-    public static function print(string $message, string $type = 'unspecified', string $class = '')
+    public static function print(string $message, string $type = 'neutral', string $class = '')
     {
         if ($type) {
             $class .= " notification--$type";

@@ -26,6 +26,11 @@
     background-color: $cue-danger;
     color: $cue-danger-inv;
   }
+
+  &.notification--neutral {
+    background-color: $theme-neutral;
+    color: $theme-neutral-inv;
+  }
 }
 
 span.notification {

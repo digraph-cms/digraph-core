@@ -134,6 +134,11 @@ body>.action-menu,
         background-color: var(--cue-danger);
         color: var(--cue-danger-inv);
     }
+
+    &.notification--neutral {
+        background-color: var(--theme-neutral);
+        color: var(--theme-neutral-inv);
+    }
 }
 
 span.notification {
