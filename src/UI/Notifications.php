@@ -121,6 +121,11 @@ class Notifications
         static::print($message, 'confirmation', $class);
     }
 
+    public static function printNeutral(string $message, string $class = '')
+    {
+        static::print($message, 'neutral', $class);
+    }
+
     public static function print(string $message, string $type = 'neutral', string $class = '')
     {
         if ($type) {
