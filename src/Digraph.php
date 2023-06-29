@@ -258,9 +258,11 @@ abstract class Digraph
             } else {
                 // this route does not relate to any pages, so make it explicitly non-static for tidiness
                 if (Context::url()->explicitlyStaticRoute()) {
-                    Context::url()->path(
+                    $url = Context::url();
+                    $url->path(
                         preg_replace('@^/~@', '/', Context::url()->path())
                     );
+                    Context::url($url);
                     throw new RedirectException(Context::url());
                 }
                 static::buildResponseContent();
