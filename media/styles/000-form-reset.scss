@@ -274,7 +274,9 @@ input[type="week"] {
     max-width: 15em;
 }
 
-// make select fields narrower too
+// make other fields narrower too
+input,
+textarea,
 select {
     max-width: 30em;
 }

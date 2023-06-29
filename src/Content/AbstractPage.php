@@ -670,8 +670,24 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
                 // extensible recursive deletion
                 $class = get_class($page);
                 $class::onRecursiveDelete($job, $page);
+                // queue deletion of all associated filestore files
+                $files = Filestore::select()
+                    ->where('parent', $page->uuid())
+                    ->like('parent', $page->uuid() . '/', false, true, 'OR');
+                while ($f = $files->fetch()) {
+                    $fUUID = $f->uuid();
+                    $job->spawn(
+                        function () use ($fUUID) {
+                            $file = Filestore::get($fUUID);
+                            $file->delete();
+                            return 'Deleted filestore file ' . $file->filename();
+                        }
+                    );
+                }
                 // queue deletion of all associated rich media
-                $media = RichMedia::select($uuid);
+                $media = RichMedia::select()
+                    ->where('parent', $page->uuid())
+                    ->like('parent', $page->uuid() . '/', false, true, 'OR');
                 while ($m = $media->fetch()) {
                     $mUUID = $m->uuid();
                     $job->spawn(

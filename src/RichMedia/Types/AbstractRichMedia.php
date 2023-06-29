@@ -43,7 +43,7 @@ abstract class AbstractRichMedia implements ArrayAccess
         return false;
     }
 
-    public static function class(): string
+    public static function class (): string
     {
         static $classes = [];
         $class = get_called_class();
@@ -148,6 +148,17 @@ abstract class AbstractRichMedia implements ArrayAccess
     public function parent(): ?string
     {
         return $this->parent;
+    }
+
+    /**
+     * Return just the UUID portion of the parent string (strip off /whatever from the end)
+     * 
+     * @return string|null
+     */
+    public function parentUUID(): ?string
+    {
+        if (!$this->parent()) return null;
+        return preg_replace('/\/.*$/', '', $this->parent());
     }
 
     public function setParent(string $pageUUID)

@@ -16,7 +16,7 @@ use Mimey\MimeTypes;
 
 class FilestoreFile extends DeferredFile
 {
-    protected $uuid, $hash, $filename, $media, $meta, $image;
+    protected $uuid, $hash, $filename, $parent, $meta, $image;
     protected $bytes, $created, $created_by;
 
     public function __construct(string $uuid, string $hash, string $filename, int $bytes, string $parent, array $meta, int $created, ?string $created_by)
@@ -25,7 +25,7 @@ class FilestoreFile extends DeferredFile
         $this->hash = $this->identifier = $hash;
         $this->filename = $filename;
         $this->bytes = $bytes;
-        $this->media = $parent;
+        $this->parent = $parent;
         $this->meta = $meta;
         $this->created = (new DateTime())->setTimestamp($created);
         $this->created_by = $created_by;
@@ -89,14 +89,29 @@ class FilestoreFile extends DeferredFile
         return (new MimeTypes())->getMimeType($this->extension());
     }
 
-    public function media(): AbstractRichMedia
+    /**
+     * Get the full parent string of this file.
+     * 
+     * @return string 
+     */
+    public function parent(): string
     {
-        return RichMedia::get($this->media);
+        return $this->parent;
+    }
+
+    /**
+     * Return just the UUID portion of the parent string (strip off /whatever from the end)
+     * 
+     * @return string 
+     */
+    public function parentUUID(): string
+    {
+        return preg_replace('/\/.*$/', '', $this->parent());
     }
 
     public function mediaUUID(): string
     {
-        return $this->media;
+        return $this->parent;
     }
 
     public function meta(): array
