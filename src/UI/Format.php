@@ -3,10 +3,13 @@
 namespace DigraphCMS\UI;
 
 use Caxy\HtmlDiff\HtmlDiff;
+use Countable;
 use DateTime;
 use DateTimeZone;
 use DigraphCMS\Cache\Cache;
 use DigraphCMS\Config;
+use DigraphCMS\DB\AbstractMappedSelect;
+use Envms\FluentPDO\Queries\Select;
 
 Format::_init();
 
@@ -23,6 +26,54 @@ class Format
         static::$dateFormat_thisYear = Config::get('theme.format.date_thisyear') ?? 'F j';
         static::$datetimeFormat_thisYear = Config::get('theme.format.datetime_thisyear') ?? 'F j, g:ia';
         static::$datetimeFormat_today = Config::get('theme.format.datetime_today') ?? 'g:ia';
+    }
+
+    /**
+     * Combine an iterable of stringable items into a list, separated by commas,
+     * with an oxford comma and the word "and" between the last two items
+     * (unless there are only two items in which case there is no oxford comma)
+     * 
+     * @param iterable $source 
+     * @return string 
+     */
+    public function list(iterable $source): string
+    {
+        $items = [];
+        foreach ($source as $item) $items[] = $item;
+        switch (count($items)) {
+            case 0:
+                return '{empty list}';
+            case 1:
+                return $items[0];
+            case 2:
+                return $items[0] . ' and ' . $items[1];
+            default:
+                $last = array_pop($items);
+                return implode(', ', $items) . ', and ' . $last;
+        }
+    }
+
+    /**
+     * Determine whether to use an "s" to pluralize strings referring to the given item. If given a
+     * string the length will be used, if given a numeric value it will be used directly, otherwise
+     * an appropriate counting method will be used.
+     * 
+     * @param array|string|Countable|int|float|AbstractMappedSelect|Select $items 
+     * @return string 
+     */
+    public static function s(array|string|Countable|int|float|AbstractMappedSelect|Select $items): string
+    {
+        if ($items instanceof AbstractMappedSelect || $items instanceof Select) {
+            $count = $items->count();
+        } elseif (is_array($items) || is_countable($items)) {
+            $count = count($items);
+        } elseif (is_string($items)) {
+            $count = strlen($items);
+        } elseif (is_numeric($items)) {
+            $count = $items;
+        }
+        if ($count == 1) return '';
+        else return 's';
     }
 
     /**
