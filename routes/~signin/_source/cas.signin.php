@@ -2,7 +2,6 @@
 
 use DigraphCMS\Config;
 use DigraphCMS\Context;
-use DigraphCMS\ExceptionLog;
 use DigraphCMS\HTML\Forms\Field;
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTTP\RedirectException;

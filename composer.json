@@ -42,13 +42,14 @@
         "cakephp/database": "^4"
     },
     "conflict": {
-        "jasig/phpcas": "<1.6"
+        "jasig/phpcas": "<1.6",
+        "apereo/phpcas": "<1.6"
     },
     "suggest": {
         "league/oauth2-github": "Needed to support OAuth sign-ins using GitHub",
         "league/oauth2-facebook": "Needed to support OAuth sign-ins using Facebook",
         "league/oauth2-google": "Needed to support OAuth sign-ins using Google",
-        "jasig/phpcas": "Needed to support CAS sign-ins",
+        "apereo/phpcas": "Needed to support CAS sign-ins",
         "ext-imagick": "Required to handle large images without using a ton of RAM",
         "ext-sqlite3": "Required to use a SQLite database",
         "ext-mysql": "Required to use a MySQL database"
@@ -65,7 +66,7 @@
         "league/oauth2-github": "^3.0||^2.0",
         "league/oauth2-facebook": "^2.0",
         "league/oauth2-google": "^4.0||^3.0",
-        "jasig/phpcas": "^1.4",
+        "apereo/phpcas": "^1.6",
         "vimeo/psalm": "^5.12",
         "phpstan/phpstan": "^1.10"
     },
