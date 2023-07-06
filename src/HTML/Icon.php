@@ -56,6 +56,7 @@ class Icon extends Tag
         'pending' => ['string' => 'pending_actions'],
         'person' => ['string' => 'person'],
         'post-add' => ['string' => 'post_add'],
+        'preview' => ['string' => '&#xf1c5;'],
         'previous' => ['string' => 'skip_previous'],
         'publish' => ['string' => 'publish'],
         'quote' => ['string' => 'format_quote'],
