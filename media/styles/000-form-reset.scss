@@ -29,7 +29,7 @@ fieldset {
 
     &:disabled,
     &:indeterminate {
-        background-color: var(--theme-neutral);
+        background-color: var(--theme-neutral-a20);
         color: var(--theme-neutral-darker);
     }
 }
