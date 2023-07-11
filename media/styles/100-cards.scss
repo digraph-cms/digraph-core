@@ -6,8 +6,8 @@
     font-family: $font-ui;
     margin: $grid 0;
     box-shadow: var(--shadow);
-    width: $line-length*1.5;
-    max-width: 100%;
+    max-width: $line-length*1.5;
+    width: 100%;
 
     &.card--accent {
         background: var(--theme-accent);
