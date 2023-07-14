@@ -3,18 +3,21 @@
 namespace DigraphCMS\RichMedia\Types;
 
 use DigraphCMS\Digraph;
+use DigraphCMS\FS;
 use DigraphCMS\HTML\Forms\Field;
 use DigraphCMS\HTML\Forms\Fields\RadioListField;
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTML\Forms\TableInput;
 use DigraphCMS\HTML\Forms\UploadSingle;
 use DigraphCMS\HTML\Icon;
+use DigraphCMS\Media\DeferredFile;
 use DigraphCMS\RichContent\RichContent;
+use DigraphCMS\Spreadsheets\SpreadsheetWriter;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Reader\Ods;
 use PhpOffice\PhpSpreadsheet\Reader\Xls;
-use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Thunder\Shortcode\Shortcode\ShortcodeInterface;
 
 class TableRichMedia extends AbstractRichMedia
@@ -35,8 +38,8 @@ class TableRichMedia extends AbstractRichMedia
 
         // toggle field for choosing whether to edit manually or upload spreadsheet
         $mode = (new RadioListField('How would you like to enter the table\'s content?', [
-            'edit' => 'Edit table content manually',
-            'file' => 'Upload a spreadsheet'
+        'edit' => 'Edit table content manually',
+        'file' => 'Upload a spreadsheet'
         ]))
             ->setRequired(true)
             ->setDefault('edit')
@@ -47,6 +50,51 @@ class TableRichMedia extends AbstractRichMedia
             ->setDefault($this['table'])
             ->setID('rich-table-edit-field')
             ->addForm($form);
+
+        // export tool
+        if ($this['table']) {
+            $export = new DeferredFile(
+                $this->name() . '.xlsx',
+                function (DeferredFile $file) {
+                    FS::touch($file->path());
+                    $writer = new SpreadsheetWriter();
+                    $data = $this['table'];
+                    // add header
+                    if ($data['head']) {
+                        $writer->writeHeaders(
+                            array_map(
+                                function (array $cell) {
+                                    return $cell['cell'];
+                                },
+                                $data['head'][0]['row']
+                            )
+                        );
+                    }
+                    // add the rest of the rows
+                    foreach ($data['body'] as $row) {
+                        $writer->writeRow(
+                            array_map(
+                                function (array $cell) {
+                                    return $cell['cell'];
+                                },
+                                $row['row']
+                            )
+                        );
+                    }
+                    // save file
+                    (new Xlsx($writer->spreadsheet()))
+                        ->save($file->path());
+                },
+                $this->uuid() . '/export',
+                60
+            );
+            $form->addChild(
+                sprintf(
+                    '<div><a href="%s">Export source to edit in Excel</a></div>',
+                    $export->url()
+                )
+            );
+        }
 
         // file uploading field
         $file = (new Field('Upload file', new UploadSingle()))
