@@ -203,6 +203,9 @@ abstract class Tag extends Node implements TagInterface
         return $this->children;
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     public function attributes(): array
     {
         $attributes = $this->attributes;
