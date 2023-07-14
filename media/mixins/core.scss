@@ -134,30 +134,6 @@
     }
 }
 
-@mixin button-confirmation {
-    @include button;
-    background: var(--cue-safe);
-    color: var(--cue-safe-inv);
-}
-
-@mixin button-info {
-    @include button;
-    background: var(--cue-information);
-    color: var(--cue-information-inv);
-}
-
-@mixin button-warning {
-    @include button;
-    background: var(--cue-warning);
-    color: var(--cue-warning-inv);
-}
-
-@mixin button-error {
-    @include button;
-    background: var(--cue-danger);
-    color: var(--cue-danger-inv);
-}
-
 @mixin loading-overlay {
     position: relative;
 

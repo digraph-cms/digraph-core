@@ -109,14 +109,92 @@
 
 .button {
     display: block;
-    margin: 20px 0;
-    font-family: $font-ui;
+    box-sizing: border-box;
+    background: var(--cue-interactive);
+    color: var(--cue-interactive-inv) !important;
+    box-shadow: var(--shadow);
+    border: $border outset var(--cue-interactive);
+    display: inline-block;
+    padding: $grid/2;
+    margin: 0;
+    cursor: pointer;
+    z-index: 1;
     border-radius: $border-radius;
-    padding: 10px;
-    background-color: $cue-interactive;
-    color: $cue-interactive-inv !important;
+    font-size: 1rem;
+    line-height: 1.4;
     font-weight: bold;
-    text-decoration: none;
+    font-family: $font-ui;
+    text-decoration: none !important;
+    width: auto;
+
+    &.button--small {
+        padding: $grid/4;
+        font-size: smaller;
+        border-width: $border/2;
+    }
+
+    &.button--confirmation,
+    &.button--safe {
+        background: var(--cue-safe);
+        color: var(--cue-safe-inv) !important;
+        border-color: var(--cue-safe) !important;
+    }
+
+    &.button--info &.button--information {
+        background: var(--cue-information);
+        color: var(--cue-information-inv) !important;
+        border-color: var(--cue-information) !important;
+    }
+
+    &.button--warning {
+        background: var(--cue-warning);
+        color: var(--cue-warning-inv) !important;
+        border-color: var(--cue-warning) !important;
+    }
+
+    &.button--error,
+    &.button--danger {
+        background: var(--cue-danger);
+        color: var(--cue-danger-inv) !important;
+        border-color: var(--cue-danger) !important;
+    }
+
+    &.button--neutral {
+        background: var(--theme-neutral);
+        color: var(--theme-neutral-inv) !important;
+        border-color: var(--theme-neutral) !important;
+    }
+
+    &.button--inverted {
+        background: var(--theme-neutral-a10);
+        color: var(--cue-interactive) !important;
+        border-color: var(--theme-neutral-a10) !important;
+        box-shadow: none;
+        border-style: inset;
+
+        &.button--confirmation,
+        &.button--safe {
+            color: var(--cue-safe) !important;
+        }
+
+        &.button--info,
+        &.button--information {
+            color: var(--cue-information) !important;
+        }
+
+        &.button--warning {
+            color: var(--cue-warning) !important;
+        }
+
+        &.button--error,
+        &.button--danger {
+            color: var(--cue-danger) !important;
+        }
+
+        &.button--neutral {
+            color: var(--theme-neutral) !important;
+        }
+    }
 }
 
 code {
