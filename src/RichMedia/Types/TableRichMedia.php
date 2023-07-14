@@ -54,7 +54,7 @@ class TableRichMedia extends AbstractRichMedia
         // export tool
         if ($this['table']) {
             $export = new DeferredFile(
-                $this->name() . '.xlsx',
+                'table_' . $this->uuid() . '.xlsx',
                 function (DeferredFile $file) {
                     FS::touch($file->path());
                     $writer = new SpreadsheetWriter();
