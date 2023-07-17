@@ -5,7 +5,6 @@ use DigraphCMS\Cache\Cache;
 use DigraphCMS\Context;
 use DigraphCMS\HTTP\AccessDeniedError;
 use DigraphCMS\HTTP\HttpError;
-use DigraphCMS\Media\PermissionedFile;
 
 Context::response()->private(true);
 
