@@ -13,7 +13,8 @@ class Response
 {
     protected $status = 200;
     protected $headers = [];
-    protected $content = '';
+    protected $content = null;
+    protected $content_file = null;
     protected $page = null;
     protected $browserTTL = null;
     protected $cacheTTL = null;
@@ -93,7 +94,7 @@ class Response
         }
     }
 
-    public function private(bool $private = null): bool
+    public function private (bool $private = null): bool
     {
         if ($private !== null) {
             $this->private = $private;
@@ -139,7 +140,7 @@ class Response
         return
             // explicitly set value
             $this->browserTTL ??
-            // page object's ttl
+                // page object's ttl
             ($this->page() ? $this->page->browserTTL($this->page()->url()->action()) : null) ??
             // default of 0
             0;
@@ -166,12 +167,36 @@ class Response
         return $this->status;
     }
 
+    public function setContentFile(?string $file): static
+    {
+        var_dump($file);
+        if ($file) {
+            $this->filename(basename($file));
+            $this->content_file = $file;
+            $this->content = null;
+        } else {
+            $this->content_file = null;
+        }
+        return $this;
+    }
+
+    public function contentFile(): ?string
+    {
+        return $this->content_file;
+    }
+
+    public function setContent(string $content): static
+    {
+        $this->content = $content;
+        $this->content_file = null;
+        return $this;
+    }
+
     public function content(string $content = null): string
     {
-        if ($content !== null) {
-            $this->content = $content;
-        }
-        return $this->content;
+        if ($content !== null) $this->setContent($content);
+        if ($this->content_file) return file_get_contents($this->content_file);
+        else return $this->content ?? '';
     }
 
     public function renderHeaders()
@@ -229,6 +254,7 @@ class Response
         if (Digraph::inferMime($this) == 'text/html') {
             Dispatcher::dispatchEvent('onResponseRender_html', [$this]);
         }
-        echo $this->content();
+        if ($this->content_file) readfile($this->content_file);
+        else echo $this->content();
     }
 }

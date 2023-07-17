@@ -387,6 +387,9 @@ abstract class Digraph
     protected static function doPageRoute(AbstractPage $page, string $action): ?bool
     {
         $content = Router::pageRoute($page, $action);
+        if (Context::response()->contentFile()) {
+            return true;
+        }
         if ($content !== null) {
             Context::response()->content($content);
             return true;
@@ -397,6 +400,9 @@ abstract class Digraph
     protected static function doStaticRoute(string $route, string $action): ?bool
     {
         $content = Router::staticRoute($route, $action);
+        if (Context::response()->contentFile()) {
+            return true;
+        }
         if ($content !== null) {
             Context::response()->content($content);
             return true;

@@ -26,7 +26,6 @@ abstract class Config implements InitializedClassInterface
         static $cache;
         return $cache ??
             $cache = crc32(serialize([
-                $_SERVER['SCRIPT_FILENAME'],
                 $_SERVER['DOCUMENT_ROOT'],
                 $_SERVER['SERVER_PORT'],
                 $_SERVER['SERVER_NAME']
