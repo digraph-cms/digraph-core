@@ -131,7 +131,6 @@ class Filestore
         return static::$cache[$uuid];
     }
 
-
     protected static function doGet(string $uuid): ?FilestoreFile
     {
         $query = DB::query()->from('filestore')

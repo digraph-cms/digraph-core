@@ -7,9 +7,9 @@ use DigraphCMS\Config;
 use DigraphCMS\FS;
 use DigraphCMS\Media\DeferredFile;
 use DigraphCMS\Media\ImageFile;
-use DigraphCMS\RichMedia\RichMedia;
-use DigraphCMS\RichMedia\Types\AbstractRichMedia;
+use DigraphCMS\Media\PermissionedFiles;
 use DigraphCMS\UI\Templates;
+use DigraphCMS\URL\URL;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
 use Mimey\MimeTypes;
@@ -33,6 +33,18 @@ class FilestoreFile extends DeferredFile
             FS::mkdir(dirname($this->path()));
             FS::copy(Filestore::path($this->hash), $this->path(), Config::get('filestore.symlink'));
         };
+    }
+
+    public function permissionedUrl(callable $permissions): URL
+    {
+        PermissionedFiles::prepare(
+            $this->identifier(),
+            $this->filename(),
+            $permissions,
+            $this->ttl(),
+            Filestore::path($this->hash),
+        );
+        return PermissionedFiles::url($this->identifier(), $this->filename());
     }
 
     public function embed(): string

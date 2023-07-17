@@ -2,27 +2,8 @@
 
 namespace DigraphCMS\Media;
 
-use DigraphCMS\Cache\Cache;
-use DigraphCMS\Config;
-use DigraphCMS\URL\URL;
-
 class PermissionedFile extends File
 {
-    public function write()
-    {
-        parent::write();
-        Cache::set(
-            'media/permissioned_file/filename_' . $this->identifier(),
-            $this->filename(),
-            $this->ttl()
-        );
-        Cache::set(
-            'media/permissioned_file/permissions_' . $this->identifier(),
-            $this->permissions(),
-            $this->ttl()
-        );
-    }
-
     protected $permissions = null;
 
     public function setPermissions(callable $callback): static
@@ -40,16 +21,23 @@ class PermissionedFile extends File
     public function url(): string
     {
         $this->write();
-        return (new URL('/assets/file:' . $this->identifier()))->__toString();
+        return PermissionedFiles::url($this->identifier(), $this->filename());
     }
 
     public function path(): string
     {
-        return Config::get('cache.path') . '/media/permissioned_files/' . $this->identifier() . '/' . $this->filename();
+        return PermissionedFiles::path($this->identifier());
     }
 
-    public static function buildPath(string $identifier, string $filename): string
+    public function write()
     {
-        return Config::get('cache.path') . '/media/permissioned_files/' . $identifier . '/' . $filename;
+        parent::write();
+        PermissionedFiles::prepare(
+            $this->identifier(),
+            $this->filename(),
+            $this->permissions(),
+            $this->ttl(),
+            $this->path(),
+        );
     }
 }
