@@ -1,0 +1,35 @@
+{
+	// build from dockerfile
+	"build": {
+		"dockerfile": "Dockerfile",
+		"context": ".."
+	},
+	// specify run arguments
+	"runArgs": [
+		"--dns=8.8.8.8" // for some reason DNS doesn't work right unless we explicitly name a DNS server
+	],
+	// mount entire sites_v2 directory, so we can access global config and shared DB
+	"workspaceMount": "source=${localWorkspaceFolder},target=/workspace/${localWorkspaceFolderBasename},type=bind,consistency=cached",
+	"workspaceFolder": "/workspace/${localWorkspaceFolderBasename}",
+	// specify extensions that we want
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"DEVSENSE.intelli-php-vscode",
+				"DEVSENSE.phptools-vscode",
+				"DEVSENSE.profiler-php-vscode",
+				"SanderRonde.phpstan-vscode",
+				"sibiraj-s.vscode-scss-formatter",
+				"mrmlnc.vscode-scss",
+				"Gruntfuggly.todo-tree",
+				"redhat.vscode-yaml",
+				"oliversturm.fix-json",
+				"ecmel.vscode-html-css",
+				"yzhang.markdown-all-in-one",
+				"DavidAnson.vscode-markdownlint",
+				"helixquar.randomeverything",
+				"DEVSENSE.composer-php-vscode"
+			]
+		}
+	}
+}

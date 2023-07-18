@@ -5,6 +5,7 @@ errors:
   display_trace: true
 
 cache:
+  path: false # use system temp dir, so it's fast in a dev container
   ttl: 600
 
 files:
@@ -17,8 +18,8 @@ images:
   ttl: 3600
 
 theme:
-  bundle_css: false
-  bundle_js: false
+  bundle_css: true
+  bundle_js: true
   head_cache_ttl: 600
 
 user_sources:
