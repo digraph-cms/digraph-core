@@ -18,6 +18,7 @@
 				"DEVSENSE.intelli-php-vscode",
 				"DEVSENSE.phptools-vscode",
 				"DEVSENSE.profiler-php-vscode",
+				"DEVSENSE.composer-php-vscode",
 				"SanderRonde.phpstan-vscode",
 				"sibiraj-s.vscode-scss-formatter",
 				"mrmlnc.vscode-scss",
@@ -28,7 +29,8 @@
 				"yzhang.markdown-all-in-one",
 				"DavidAnson.vscode-markdownlint",
 				"helixquar.randomeverything",
-				"DEVSENSE.composer-php-vscode"
+				"neilbrayfield.php-docblocker",
+				"ms-vscode.test-adapter-converter"
 			]
 		}
 	}
