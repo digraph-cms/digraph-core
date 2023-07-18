@@ -68,7 +68,7 @@ abstract class AbstractCacheDriver
      */
     public function __construct()
     {
-        $this->dir = Config::get('cache.path');
+        $this->dir = Config::cachePath();
     }
 
     /**

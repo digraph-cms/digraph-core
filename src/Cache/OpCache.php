@@ -20,7 +20,7 @@ class OpCache extends AbstractCacheDriver
 
     public function __construct()
     {
-        $this->dir = Config::get('cache.path');
+        $this->dir = Config::cachePath();
         $this->ttl = Config::get('cache.ttl');
         $this->fuzz = Config::get('cache.fuzz');
     }

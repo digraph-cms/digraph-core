@@ -40,6 +40,6 @@ class PermissionedFiles
 
     public static function path(string $identifier): string
     {
-        return Config::get('cache.path') . '/media/permissioned_files/file/' . $identifier;
+        return Config::cachePath() . '/media/permissioned_files/file/' . $identifier;
     }
 }

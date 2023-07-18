@@ -70,6 +70,24 @@ abstract class Config implements InitializedClassInterface
         return $cache;
     }
 
+    public static function cachePath(): string
+    {
+        static $cache;
+        return $cache
+            ?? $cache = (
+                static::get('cache.path')
+                ? static::get('cache.path')
+                : static::generatedCachePath()
+            );
+    }
+
+    protected static function generatedCachePath(): string
+    {
+        return realpath(sys_get_temp_dir())
+            . '/digraph-'
+            . static::envPrefix();
+    }
+
     public static function get(string $key = null): mixed
     {
         return self::$data->get($key);
