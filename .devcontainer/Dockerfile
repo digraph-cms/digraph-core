@@ -7,7 +7,10 @@ RUN add-apt-repository ppa:ondrej/php
 RUN apt update
 
 # install php 8.2 and other fundamental packages
-RUN export DEBIAN_FRONTEND=noninteractive; apt install -y --no-install-recommends php8.2 php-curl composer git openssl unzip
+RUN export DEBIAN_FRONTEND=noninteractive; apt install -y --no-install-recommends php8.2 php-curl git openssl unzip
+
+# install composer
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
 # install the PHP extensions that basically all PHP projects should need
 RUN export DEBIAN_FRONTEND=noninteractive; apt install -y php8.2-opcache php-xdebug php-mbstring php-zip php-gd php-xml
