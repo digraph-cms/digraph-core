@@ -1,3 +1,9 @@
+.form-field.safe-bbcode-field {
+  .sceditor-container {
+    max-width: $line-length;
+  }
+}
+
 .sceditor-button {
   float: left;
   cursor: pointer;
