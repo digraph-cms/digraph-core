@@ -22,7 +22,8 @@ class UploadMulti extends INPUT
             [
                 'type' => 'file',
                 'multiple' => null,
-                'name' => parent::attributes()['name'] . '[]'
+                'name' => parent::attributes()['name'] . '[]',
+                'value' => null
             ]
         );
     }

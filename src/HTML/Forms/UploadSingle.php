@@ -14,7 +14,8 @@ class UploadSingle extends INPUT
         return array_merge(
             parent::attributes(),
             [
-                'type' => 'file'
+                'type' => 'file',
+                'value' => null
             ]
         );
     }
