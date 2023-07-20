@@ -1,6 +1,11 @@
 .form-field.safe-bbcode-field {
   .sceditor-container {
     max-width: $line-length;
+
+    >textarea {
+      max-width: none;
+      font-weight: 200;
+    }
   }
 }
 
