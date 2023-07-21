@@ -83,6 +83,7 @@
         .card {
             margin-left: -$grid/2;
             margin-right: -$grid/2;
+            width: auto;
 
             &:first-child {
                 margin-top: -$grid/2;
