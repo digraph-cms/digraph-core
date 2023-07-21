@@ -19,9 +19,14 @@ class TabInterface
         $this->id = $id ?? $counter++;
     }
 
+    public function tabExists(string $id): bool
+    {
+        return isset($this->tabs[$id]);
+    }
+
     public function setTabLabel(string $id, string $label): static
     {
-        if (!isset(static::$tabs[$id])) throw new \Exception("Tab ID $id not found");
+        if (!isset($this->tabs[$id])) throw new \Exception("Tab ID $id not found");
         $this->tabs[$id][0] = $label;
         return $this;
     }
