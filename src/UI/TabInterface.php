@@ -19,6 +19,13 @@ class TabInterface
         $this->id = $id ?? $counter++;
     }
 
+    public function setTabLabel(string $id, string $label): static
+    {
+        if (!isset(static::$tabs[$id])) throw new \Exception("Tab ID $id not found");
+        $this->tabs[$id][0] = $label;
+        return $this;
+    }
+
     public function id(): string
     {
         return $this->id;
@@ -101,7 +108,8 @@ class TabInterface
         if (!$this->tabs) {
             Notifications::printError('No tabs defined');
             return ob_get_clean();
-        };
+        }
+        ;
         echo '<div class="tab-interface' . ($this->vertical() ? ' tab-interface--vertical' : '') . ' navigation-frame" data-target="_top" id="tab-interface-' . $this->id . '">' . PHP_EOL;
         if (count($this->tabs) > 1) {
             echo '<nav class="tab-interface-tabs">' . PHP_EOL;
