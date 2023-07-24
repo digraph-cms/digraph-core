@@ -2,8 +2,10 @@
 
 namespace DigraphCMS\DB;
 
+use ArrayIterator;
 use Envms\FluentPDO\Queries\Select;
 use Iterator;
+use PDOStatement;
 
 class SubValueIterator implements Iterator
 {
@@ -18,7 +20,12 @@ class SubValueIterator implements Iterator
     ) {
         if (is_string($column)) $column = fn($i) => $i[$column];
         $this->column = $column;
+        // turn fpdo Select into a PDOStatement
         if ($iterator instanceof Select) $iterator = $iterator->getIterator();
+        // turn PDOStatement into ArrayIterator if it lacks the rewind method
+        if ($iterator instanceof PDOStatement && !method_exists($iterator,'rewind')) {
+            $iterator = new ArrayIterator($iterator->fetchAll());
+        }
         $this->iterator = $iterator;
     }
 
