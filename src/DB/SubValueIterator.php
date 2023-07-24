@@ -1,6 +1,6 @@
 <?php
 
-namespace DigraphCMS\Content;
+namespace DigraphCMS\DB;
 
 use Envms\FluentPDO\Queries\Select;
 use Iterator;

@@ -4,6 +4,7 @@ namespace DigraphCMS\Content;
 
 use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
+use DigraphCMS\DB\SubValueIterator;
 use Envms\FluentPDO\Queries\Select;
 
 class Graph
