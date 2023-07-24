@@ -13,7 +13,7 @@ class Graph
         // special case when they're the same
         if ($start == $end) return [$start];
         // start at the end and work backwards
-        foreach (static::parentIDs($end, $type) as $r) {
+        foreach (static::parentEdges($end, $type) as $r) {
             if (in_array($r['start_page'], $visited)) return null;
             $visited[] = $r['start_page'];
             if ($r['start_page'] == $start) return [$start, $end];
@@ -25,12 +25,11 @@ class Graph
         return null;
     }
 
-    public static function parentIDs(string $uuid, string $type = null): Select
+    public static function parentEdges(string $uuid, string $type = null): Select
     {
         $query = DB::query()
             ->from('page_link')
             ->leftJoin('page on page_link.start_page = page.uuid')
-            ->select('start_page')
             ->where('end_page = ?', [$uuid]);
         if ($type) {
             $query->where('page_link.type = ?', [$type]);
@@ -51,12 +50,11 @@ class Graph
         return new PageSelect($query);
     }
 
-    public static function childIDs(string $uuid, string $type = null): Select
+    public static function childEdges(string $uuid, string $type = null): Select
     {
         $query = DB::query()
             ->from('page_link')
             ->leftJoin('page on page_link.start_page = page.uuid')
-            ->select('end_page')
             ->where('start_page = ?', [$uuid]);
         if ($type) {
             $query->where('page_link.type = ?', [$type]);
@@ -64,9 +62,19 @@ class Graph
         return $query;
     }
 
+    public static function childIDs(string $uuid, string $type = null): SubValueIterator
+    {
+        return new SubValueIterator(static::childEdges($uuid, $type), 'end_page');
+    }
+
+    public static function parentIDs(string $uuid, string $type = null): SubValueIterator
+    {
+        return new SubValueIterator(static::parentEdges($uuid, $type), 'start_page');
+    }
+
     public static function randomChildID(string $uuid, string $type = null): ?string
     {
-        $query = static::childIDs($uuid, $type)
+        $query = static::childEdges($uuid, $type)
             ->limit(1);
         if (Config::get('db.adapter') == 'sqlite') {
             $query->order('RANDOM()');
@@ -79,7 +87,7 @@ class Graph
 
     public static function randomParentID(string $uuid, string $type = null): ?string
     {
-        $query = static::parentIDs($uuid, $type)
+        $query = static::parentEdges($uuid, $type)
             ->limit(1);
         if (Config::get('db.adapter') == 'sqlite') {
             $query->order('RANDOM()');

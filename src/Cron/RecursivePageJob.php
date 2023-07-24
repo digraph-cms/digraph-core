@@ -40,7 +40,7 @@ class RecursivePageJob extends DeferredJob
 
     public static function spawnChildJobs(DeferredJob $job, string $uuid, callable $function, bool $leavesFirst, array $parents)
     {
-        $children = Graph::childIDs($uuid);
+        $children = Graph::childEdges($uuid);
         while ($row = $children->fetch()) {
             $child = $row['end_page'];
             new RecursivePageJob($child, $function, $leavesFirst, $job->group(), $parents);

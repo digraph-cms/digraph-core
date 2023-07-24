@@ -149,11 +149,11 @@ abstract class AbstractMappedSelect implements Iterator, Countable
                 return Cache::get(
                     'db/jsonref/' . md5($matches[0]),
                     function () use ($matches) {
-                            return Dispatcher::firstValue(
-                                'onDbExpandJsonPath_' . DB::driver(),
-                                [$matches[4], $matches[3], $matches[2]]
-                            );
-                        }
+                        return Dispatcher::firstValue(
+                            'onDbExpandJsonPath_' . DB::driver(),
+                            [$matches[4], $matches[3], $matches[2]]
+                        );
+                    }
                 );
             },
             $string

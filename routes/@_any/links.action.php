@@ -25,9 +25,9 @@ $fn = function () use ($tabs) {
 
     // display table of connections
     if ($mode == 'children') {
-        $query = Graph::childIDs(Context::page()->uuid())->order('page_link.id desc');
+        $query = Graph::childEdges(Context::page()->uuid())->order('page_link.id desc');
     } else {
-        $query = Graph::parentIDs(Context::page()->uuid())->order('page_link.id desc');
+        $query = Graph::parentEdges(Context::page()->uuid())->order('page_link.id desc');
     }
     $table = new PaginatedTable(
         $query,

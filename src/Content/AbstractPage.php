@@ -577,7 +577,7 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
                 function (DeferredJob $job) use ($old_uuid, $new_uuid, $cloneMedia, $parents, $user_uuid) {
                     $parents[] = $old_uuid;
                     // loop through child IDs
-                    foreach (Graph::childIDs($old_uuid) as $row) {
+                    foreach (Graph::childEdges($old_uuid) as $row) {
                         $child_uuid = $row['end_page'];
                         // check for loops here
                         if (in_array($child_uuid, $parents)) return 'Loop averted by child_uuid';

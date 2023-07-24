@@ -15,7 +15,7 @@ $page = Context::page();
 Notifications::printError('Are you sure you would like to delete <strong>' . $page->name() . '</strong>? This action cannot be undone.');
 
 // has child pages, so remind user of that
-if ($count = Graph::childIDs($page->uuid())->count()) {
+if ($count = Graph::childEdges($page->uuid())->count()) {
     Notifications::printError("$count child pages and everything under them will also be deleted.");
 }
 
