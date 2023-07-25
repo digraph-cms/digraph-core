@@ -15,10 +15,12 @@ class Filestore
     public static function delete(FilestoreFile $file): bool
     {
         // delete file
-        if (!DB::query()
-            ->delete('filestore')
-            ->where('uuid = ?', [$file->uuid()])
-            ->execute()) {
+        if (
+            !DB::query()
+                ->delete('filestore')
+                ->where('uuid = ?', [$file->uuid()])
+                ->execute()
+        ) {
             return false;
         }
         // determine if any with this hash remain
@@ -33,14 +35,14 @@ class Filestore
         return true;
     }
 
-    public static function create(string $data, string $filename, string $parent, array $meta): FilestoreFile
+    public static function create(string $data, string $filename, string $parent, array $meta, string $uuid = null): FilestoreFile
     {
         $hash = md5($data);
         $dest = static::path($hash);
         FS::mkdir(dirname($dest));
         file_put_contents($dest, $data);
         $file = new FilestoreFile(
-            Digraph::uuid(),
+            $uuid ?? Digraph::uuid(),
             $hash,
             $filename,
             filesize($dest),
