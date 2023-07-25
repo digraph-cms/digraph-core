@@ -204,13 +204,7 @@ class Pages
         // update values
         DB::query()
             ->update('page')
-            ->where(
-                'uuid = ? AND updated = ?',
-                [
-                    $page->uuid(),
-                    $page->updatedLast()->getTimestamp()
-                ]
-            )
+            ->where('uuid', $page->uuid())
             ->set([
                 'name' => $page->name(null, true, true),
                 'sort_name' => $page->sortName(),
