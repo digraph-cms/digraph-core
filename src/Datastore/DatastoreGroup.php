@@ -42,6 +42,15 @@ class DatastoreGroup
 
     /**
      * @param string $key
+     * @return void
+     */
+    public function delete(string $key): void
+    {
+        $this->namespace()->delete($this->name, $key);
+    }
+
+    /**
+     * @param string $key
      * @return boolean
      */
     public function exists(string $key): bool
