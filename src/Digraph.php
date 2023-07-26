@@ -18,6 +18,7 @@ use DigraphCMS\HTTP\Response;
 use DigraphCMS\Search\Search;
 use DigraphCMS\UI\Templates;
 use DigraphCMS\UI\Theme;
+use DigraphCMS\URL\Redirects;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Permissions;
 use Mimey\MimeTypes;
@@ -216,6 +217,11 @@ abstract class Digraph
         Context::url($request->url());
         Context::request($request);
         Context::response(new Response());
+        // check if there are any redirects for the request URL and bounce if necessary
+        if ($destination = Redirects::destination($request->url())) {
+            Context::response()->redirect($destination, true, true);
+            return;
+        }
         // allow URL normalization hooks
         Context::url(Dispatcher::chainEvents('onNormalizeUrl', $request->url()));
         // redirect if normalizing changed URL
@@ -223,6 +229,7 @@ abstract class Digraph
             Context::response()->redirect($request->url(), true, true);
             return;
         }
+        // begin full response building process
         try {
             if (Permissions::url(Context::url()) === false) {
                 throw new AccessDeniedError('');
