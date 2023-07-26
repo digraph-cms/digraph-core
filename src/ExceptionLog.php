@@ -113,6 +113,7 @@ class ExceptionLog
             $zip->open($zipFile, ZipArchive::CREATE);
             $zip->addFromString('log.json', json_encode($data, JSON_PRETTY_PRINT));
             foreach ($_FILES as $file) {
+                if (!file_exists($file['tmp_name'])) continue;
                 $zip->addFile($file['tmp_name'], 'files/' . $file['name']);
             }
             $zip->close();
