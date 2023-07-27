@@ -14,9 +14,9 @@ class PaginatedTable extends PaginatedSection
     /**
      * @param mixed $source
      * @param callable|null $callback
-     * @param array $headers
+     * @param array|null $headers
      */
-    public function __construct($source, ?callable $callback = null, array $headers = [])
+    public function __construct($source, ?callable $callback = null, array|null $headers = null)
     {
         if (!$callback) $callback = function (array $row): array {
             return $row;
@@ -26,7 +26,7 @@ class PaginatedTable extends PaginatedSection
             if (!($header instanceof ColumnHeader)) return new ColumnHeader($header);
             if ($header instanceof FilterToolInterface) $this->addFilterTool($header);
             return $header;
-        }, $headers);
+        }, $headers ?? []);
     }
 
     public function body(): Tag
