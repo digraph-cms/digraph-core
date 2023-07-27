@@ -196,6 +196,7 @@ class Format
     public static function filesize(int $bytes, int $decimals = 1): string
     {
         static $size = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        if ($bytes == 0) return '0B';
         $factor = floor(log($bytes, 1024));
         return preg_replace("/\.([0-9]*)0+$/", "$1", sprintf("%.{$decimals}f", $bytes / pow(1024, $factor))) . @$size[$factor];
     }
