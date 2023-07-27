@@ -39,7 +39,8 @@
         "masterminds/html5": "^2.7",
         "ezyang/htmlpurifier": "^4.16",
         "robmorgan/phinx": "^0.13.4",
-        "cakephp/database": "^4"
+        "cakephp/database": "^4",
+        "jbroadway/urlify": "^1.2"
     },
     "conflict": {
         "jasig/phpcas": "<1.6",

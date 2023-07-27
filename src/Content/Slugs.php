@@ -4,6 +4,7 @@ namespace DigraphCMS\Content;
 
 use DigraphCMS\DB\DB;
 use DigraphCMS\Events\Dispatcher;
+use URLify;
 
 class Slugs
 {
@@ -112,14 +113,14 @@ class Slugs
             ['s', 's', ' '],
             $slug
         );
-        $slug = preg_replace('@[^a-z0-9\-_\/]+@i', '_', $slug);
         // prepend parent slug if necessary
         if (substr($slug, 0, 1) != '/' && $page->parent()) {
             $slug = $page->parent()->route() . '/' . $slug;
         }
+        // run through URLify
+        $slug = URLify::transliterate($slug);
         // trim and clean up
         $slug = strtolower($slug);
-        $slug = iconv('UTF-8', 'ASCII//TRANSLIT', $slug);
         $slug = preg_replace('@[^a-z0-9\-_\.\/]+@', '_', $slug);
         $slug = preg_replace('@/+@', '/', $slug);
         $slug = preg_replace('@^home/@', '', $slug);
