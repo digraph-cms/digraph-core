@@ -121,7 +121,7 @@ class Slugs
         $slug = URLify::transliterate($slug);
         // trim and clean up
         $slug = strtolower($slug);
-        $slug = preg_replace('@[^a-z0-9\-_\.\/]+@', '_', $slug);
+        $slug = preg_replace('@[^' . static::SLUG_CHARS . '\/]+@', '_', $slug);
         $slug = preg_replace('@/+@', '/', $slug);
         $slug = preg_replace('@^home/@', '', $slug);
         $slug = trim($slug, '/');
