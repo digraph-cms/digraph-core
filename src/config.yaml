@@ -28,7 +28,6 @@ sidebar:
 
 cron:
   route_enabled: false
-  poor_mans_cron: true
   time_limit: 1
   intervals:
     default: 12 hours

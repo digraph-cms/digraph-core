@@ -1,11 +1,11 @@
 <?php
+declare(strict_types=1);
 
-use DigraphCMS\Digraph;
-use Phinx\Seed\AbstractSeed;
+use Phinx\Migration\AbstractMigration;
 
-class AdminUser extends AbstractSeed
+final class AdminUser extends AbstractMigration
 {
-    public function run()
+    public function change(): void
     {
         $this->table('user')
             ->insert([

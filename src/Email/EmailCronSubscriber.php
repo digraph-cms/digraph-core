@@ -9,8 +9,7 @@ class EmailCronSubscriber
 {
     /**
      * Send queued emails for as long as specified in either a deadline time
-     * passed in because we're running on poor man's cron, or for the duration
-     * specified by email.cron_time
+     * passed in, or for the duration specified by email.cron_time
      * 
      * When using SMTP queued emails are significantly more efficient to send,
      * because many can be sent at a time through cron reusing a single 

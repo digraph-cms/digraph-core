@@ -17,4 +17,8 @@ COPY --from=composer:latest /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca
 RUN export DEBIAN_FRONTEND=noninteractive; apt install -y php8.2-opcache php-xdebug php-mbstring php-zip php-gd php-xml
 
 # install extensions that are more project-specific
-RUN export DEBIAN_FRONTEND=noninteractive; apt install -y php-sqlite3 npm
+RUN export DEBIAN_FRONTEND=noninteractive; apt install -y php-sqlite3 npm cron
+
+# add cron job to container and start cron
+RUN crontab -l | { cat; echo "*/2 * * * * /usr/bin/php /workspace/digraph-core/demo/scripts/cron.php"; } | crontab -
+RUN service cron restart

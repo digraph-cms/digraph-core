@@ -11,6 +11,9 @@
 	// mount entire sites_v2 directory, so we can access global config and shared DB
 	"workspaceMount": "source=${localWorkspaceFolder},target=/workspace/${localWorkspaceFolderBasename},type=bind,consistency=cached",
 	"workspaceFolder": "/workspace/${localWorkspaceFolderBasename}",
+	// post-install commands
+	"postCreateCommand": "composer install && composer run migrate",
+	"postStartCommand": "cron",
 	// specify extensions that we want
 	"customizations": {
 		"vscode": {

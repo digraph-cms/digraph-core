@@ -13,39 +13,6 @@ class Cron
 {
     protected static $skip = [];
 
-    public static function renderPoorMansCron()
-    {
-        // return nothing if poor man's cron is off
-        if (!Config::get('cron.poor_mans_cron')) return null;
-        // otherwise return output cached, to limit db queries
-        return Cache::get(
-            'cron/pmc',
-            function () {
-                // return nothing if there are no pending cron jobs, and also none exist whatsoever
-                // this will allow cron jobs to be automatically built at first install
-                // even if poor man's cron is in use
-                $run = static::getNextJob()
-                    || Deferred::getNextJob()
-                    || DB::query()->from('cron')->limit(1)->count() == 0;
-                if (!$run) return '';
-                // render code
-                return sprintf(
-                    PHP_EOL . '<script>if (window.Worker) { new Worker("%s"); }</script>' . PHP_EOL,
-                    new URL('/cron/')
-                );
-            },
-            60
-        );
-    }
-
-    public static function exists(string $parent, string $name): bool
-    {
-        return !!DB::query()->from('delex')
-            ->where('parent = ? AND name = ?', [$parent, $name])
-            ->limit(1)
-            ->count();
-    }
-
     public static function runJobs(int $deadlineTime = null): int
     {
         // count number of jobs run
