@@ -23,6 +23,11 @@ printf(
 );
 
 printf(
+    '<tr><th>Scheduled for</th><td>%s</td></tr>',
+    $job['scheduled'] ? Format::datetime($job['scheduled']) : '<em>immediately</em>'
+);
+
+printf(
     '<tr><th>Run at</th><td>%s</td></tr>',
     $job['run'] ? Format::datetime($job['run']) : '<em>pending</em>'
 );

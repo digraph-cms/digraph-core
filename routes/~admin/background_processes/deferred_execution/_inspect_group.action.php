@@ -61,7 +61,7 @@ if ($first && $first['run']) {
 
 $jobs = DB::query()->from('defex')
     ->where('`group` = ?', [$group])
-    ->order('id asc');
+    ->order('scheduled asc, id asc');
 
 if ($first && $last && $last['run']) {
     printf(
@@ -79,6 +79,7 @@ echo new PaginatedTable(
                 new URL('_inspect_job.html?id=' . $row['id']),
                 $row['id']
             ),
+            $row['scheduled'] ? Format::datetime($row['scheduled']) : '',
             $row['run'] ? Format::datetime($row['run']) : '<em>pending</em>',
             $row['message'],
             $row['error'] ? '<strong>yes</strong>' : '<em>none</em>'
@@ -86,7 +87,8 @@ echo new PaginatedTable(
     },
     [
         new ColumnHeader('Job ID'),
-        new ColumnHeader('Time'),
+        new ColumnHeader('Scheduled'),
+        new ColumnHeader('Run'),
         new ColumnStringFilteringHeader('Message', 'message'),
         new ColumnBooleanFilteringHeader('Error', 'error')
     ]

@@ -13,8 +13,10 @@ use Exception;
 class DeferredJob
 {
     protected $id, $group, $run, $error, $message, $job;
+    /** @var int|null */
+    protected $scheduled = null;
 
-    public function __construct(callable $job = null, string $group = null)
+    public function __construct(callable $job = null, string $group = null, int|null $scheduled = null)
     {
         $this->group = $this->group ?? $group ?? static::uuid();
         $this->job = $this->job !== null
@@ -22,15 +24,22 @@ class DeferredJob
             : $job ?? function () {
                 return 'Empty job';
             };
+        $this->scheduled = $this->scheduled ?? $scheduled;
         // insert into database immediately
         if ($this->id() !== null) return;
         $this->id = DB::query()->insertInto(
             'defex',
             [
                 '`group`' => $this->group(),
+                'scheduled' => $this->scheduled(),
                 'job' => $this->serializedJob()
             ]
         )->execute();
+    }
+
+    public function scheduled(): int|null
+    {
+        return $this->scheduled;
     }
 
     protected static function uuid(): string
@@ -42,6 +51,8 @@ class DeferredJob
     {
         // only execute if ID exists, meaning this job is in the database
         if ($this->id() === null) return false;
+        // also only execute if scheduledd time has arrived
+        if ($this->scheduled() > time()) return false;
         // try to get lock
         if (!($lock = Locking::lock('defex_' . $this->id(), false, 450))) return false;
         // override user

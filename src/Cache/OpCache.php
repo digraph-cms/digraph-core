@@ -3,6 +3,7 @@
 namespace DigraphCMS\Cache;
 
 use DigraphCMS\Config;
+use DigraphCMS\Digraph;
 use DigraphCMS\FS;
 
 class OpCache extends AbstractCacheDriver
@@ -182,23 +183,7 @@ class OpCache extends AbstractCacheDriver
                 return "$value";
             }
         } else {
-            return static::serialize_object($value);
-        }
-    }
-
-    protected static function serialize_object(mixed $value): string
-    {
-        try {
-            return sprintf(
-                '\\unserialize(\'%s\')',
-                str_replace("'", "\\'", \serialize($value))
-            );
-        } catch (\Throwable $th) {
-            return sprintf(
-                '@\\unserialize(\'%s\')',
-                // TODO: explore replacing Opis\Closure with a wrapper for some other serializer that isn't deprecating
-                str_replace("'", "\\'", @\Opis\Closure\serialize($value))
-            );
+            return Digraph::serialize($value);
         }
     }
 

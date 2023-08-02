@@ -38,7 +38,8 @@ class Deferred
     {
         $query = DB::query()->from('defex')
             ->where('run is null')
-            ->order('id ASC')
+            ->where('scheduled is null OR scheduled <= ?', [time()])
+            ->order('scheduled ASC, id ASC')
             ->limit(1);
         if ($group) {
             $query->where('`group` = ?', [$group]);

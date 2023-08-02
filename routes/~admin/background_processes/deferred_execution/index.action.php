@@ -2,7 +2,8 @@
 
 <p>
     Deferred execution jobs are used to allow slow operations to be executed in the background.
-    They are also used to break large tasks into a series of smaller operations so that they can be run in a distributed way in the background while providing a progress bar.
+    They are also used to break large tasks into a series of smaller operations so that they can be run in a distributed
+    way in the background while providing a progress bar.
 </p>
 
 <?php
@@ -23,7 +24,7 @@ $recent = DB::query()->from('defex')
 
 $upcoming = DB::query()->from('defex')
     ->where('run is null')
-    ->order('id asc');
+    ->order('scheduled asc, id asc');
 
 $errors = DB::query()->from('defex')
     ->where('error = 1')
@@ -45,6 +46,7 @@ if ($errors->count()) {
                     new URL('_inspect_group.html?id=' . $row['group']),
                     $row['group']
                 ),
+                $row['scheduled'] ? Format::datetime($row['scheduled']) : '',
                 Format::datetime($row['run']),
                 $row['message']
             ];
@@ -52,7 +54,8 @@ if ($errors->count()) {
         [
             'Job ID',
             'Group',
-            new ColumnDateFilteringHeader('Time', 'run'),
+            new ColumnDateFilteringHeader('Scheduled', 'scheduled'),
+            new ColumnDateFilteringHeader('Run', 'run'),
             new ColumnStringFilteringHeader('Message', 'message')
         ]
     );
@@ -62,6 +65,7 @@ if ($errors->count()) {
             return [
                 new LinkCell($row['id'], new URL('_inspect_job.html?id=' . $row['id'])),
                 new LinkCell($row['group'], new URL('_inspect_group.html?id=' . $row['group'])),
+                $row['scheduled'] ? new DateTimeCell(Format::parseDate($row['scheduled'])) : '',
                 new DateTimeCell(Format::parseDate($row['run'])),
                 $row['message']
             ];
@@ -69,7 +73,8 @@ if ($errors->count()) {
         [
             'Job ID',
             'Group',
-            new ColumnDateFilteringHeader('Time', 'run'),
+            new ColumnDateFilteringHeader('Scheduled', 'scheduled'),
+            new ColumnDateFilteringHeader('Run', 'run'),
             new ColumnStringFilteringHeader('Message', 'message')
         ]
     );
@@ -91,6 +96,7 @@ $table = new PaginatedTable(
                 new URL('_inspect_group.html?id=' . $row['group']),
                 $row['group']
             ),
+            $row['scheduled'] ? Format::datetime($row['scheduled']) : '',
             Format::datetime($row['run']),
             $row['message']
         ];
@@ -98,7 +104,8 @@ $table = new PaginatedTable(
     [
         'Job ID',
         'Group',
-        new ColumnDateFilteringHeader('Time', 'run'),
+        new ColumnDateFilteringHeader('Scheduled', 'scheduled'),
+        new ColumnDateFilteringHeader('Run', 'run'),
         new ColumnStringFilteringHeader('Message', 'message')
     ]
 );
@@ -108,6 +115,7 @@ $table->download(
         return [
             new LinkCell($row['id'], new URL('_inspect_job.html?id=' . $row['id'])),
             new LinkCell($row['group'], new URL('_inspect_group.html?id=' . $row['group'])),
+            $row['scheduled'] ? new DateTimeCell(Format::parseDate($row['scheduled'])) : '',
             new DateTimeCell(Format::parseDate($row['run'])),
             $row['message']
         ];
@@ -115,7 +123,8 @@ $table->download(
     [
         'Job ID',
         'Group',
-        'Time',
+        'Scheduled',
+        'Run',
         'Message'
     ]
 );
@@ -135,12 +144,14 @@ $table = new PaginatedTable(
                 '<a href="%s">%s</a>',
                 new URL('_inspect_group.html?id=' . $row['group']),
                 $row['group']
-            )
+            ),
+            $row['scheduled'] ? Format::datetime($row['scheduled']) : '',
         ];
     },
     [
         'Job ID',
-        'Group'
+        'Group',
+        new ColumnDateFilteringHeader('Scheduled', 'scheduled'),
     ]
 );
 $table->download(
@@ -148,12 +159,14 @@ $table->download(
     function (array $row) {
         return [
             new LinkCell($row['id'], new URL('_inspect_job.html?id=' . $row['id'])),
-            new LinkCell($row['group'], new URL('_inspect_group.html?id=' . $row['group']))
+            new LinkCell($row['group'], new URL('_inspect_group.html?id=' . $row['group'])),
+            $row['scheduled'] ? new DateTimeCell(Format::parseDate($row['scheduled'])) : '',
         ];
     },
     [
         'Job ID',
-        'Group'
+        'Group',
+        'Scheduled'
     ]
 );
 echo $table;
