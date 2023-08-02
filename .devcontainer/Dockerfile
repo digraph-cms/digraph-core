@@ -17,4 +17,4 @@ COPY --from=composer:latest /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca
 RUN export DEBIAN_FRONTEND=noninteractive; apt install -y php8.2-opcache php-xdebug php-mbstring php-zip php-gd php-xml
 
 # install extensions that are more project-specific
-RUN export DEBIAN_FRONTEND=noninteractive; apt install -y php-sqlite3
+RUN export DEBIAN_FRONTEND=noninteractive; apt install -y php-sqlite3 npm
