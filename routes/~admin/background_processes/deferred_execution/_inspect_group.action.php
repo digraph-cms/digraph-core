@@ -61,7 +61,8 @@ if ($first && $first['run']) {
 
 $jobs = DB::query()->from('defex')
     ->where('`group` = ?', [$group])
-    ->order('scheduled asc, id asc');
+    ->order('CASE WHEN run is null THEN 1 ELSE 0 END')
+    ->order('COALESCE(run,scheduled) asc, id asc');
 
 if ($first && $last && $last['run']) {
     printf(

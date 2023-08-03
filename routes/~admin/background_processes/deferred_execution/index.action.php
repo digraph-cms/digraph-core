@@ -24,7 +24,8 @@ $recent = DB::query()->from('defex')
 
 $upcoming = DB::query()->from('defex')
     ->where('run is null')
-    ->order('scheduled asc, id asc');
+    ->order('CASE WHEN run is null THEN 1 ELSE 0 END')
+    ->order('COALESCE(run,scheduled) asc, id asc');
 
 $errors = DB::query()->from('defex')
     ->where('error = 1')

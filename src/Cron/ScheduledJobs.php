@@ -8,47 +8,66 @@ use DigraphCMS\DB\DB;
 use DigraphCMS\Digraph;
 use DigraphCMS\UI\Format;
 
-class ScheduledJob
+class ScheduledJobs
 {
     /**
      * @param callable $job
      * @param Schedule|Schedule[] $schedules
      * @param string $job_name
-     * @return void
+     * @return string the internal job group name
      */
-    public function schedule(callable $job, Schedule|array $schedules, string $job_name): void
+    public static function schedule(callable $job, Schedule|array $schedules, string $job_name): string
     {
         if (!is_array($schedules)) $schedules = [$schedules];
-        /** internal name to use for this job group */
-        $job_group = 'sched_' . md5($job_name);
+        /** internal group name to use for this job group */
+        $group_name = static::groupName($job_name);
         /** hash of settings so we can clear and rebuild jobs only if it is different from what was last entered */
         $hash = md5(Digraph::serialize([
             $job,
             $schedules,
         ]));
         // check if last build of this job was the same
-        if (Datastore::value('system', 'scheduled_jobs', $job_name) == $hash) return;
-        else {
+        if (static::storedHash($job_name) == $hash) {
+            // stored hash matches new hash, so there's nothing to update
+            return $group_name;
+        } else {
             // this call is different from the last build of this job, we need to rebuild it
-            // first clear all jobs with this group
+            // first clear all non-executed jobs with this group
             DB::query()->delete('defex')
-                ->where('group', $job_group)
+                ->where('`group`', $group_name)
+                ->where('`run` is null')
                 ->execute();
             // next create new job that will handle future runs of this job
             new DeferredJob(
-                $this->buildInitialization($job, $schedules, $job_group),
-                $job_group,
+                static::buildInitialization($job, $schedules, $group_name),
+                $group_name,
                 null,
             );
             // save hash in datastore
-            Datastore::set(
-                'system',
-                'scheduled_jobs',
-                $job_name,
-                $hash,
-                ['job_group' => $job_group]
-            );
+            static::setStoredHash($job_name, $hash);
         }
+        // return internal job group name
+        return $group_name;
+    }
+
+    protected static function setStoredHash(string $job_name, string $hash): void
+    {
+        Datastore::set(
+            'system',
+            'scheduled_jobs',
+            $job_name,
+            $hash
+        );
+    }
+
+    public static function storedHash(string $job_name): ?string
+    {
+        return Datastore::value('system', 'scheduled_jobs', $job_name);
+    }
+
+    public static function groupName($job_name): string
+    {
+        return 'sched_' . md5($job_name);
     }
 
     /**
@@ -77,7 +96,7 @@ class ScheduledJob
      */
     protected static function initialize(callable $job, array $schedules, string $group): string
     {
-        return static::scheduleNext($job, $schedules, $group);
+        return 'Initialized first run: ' . static::scheduleNext($job, $schedules, $group);
     }
 
     /**
@@ -125,10 +144,14 @@ class ScheduledJob
      */
     protected static function callback(DeferredJob $deferred_job, callable $job, array $schedules, string $group): string
     {
+        // schedule next run
+        $next = static::scheduleNext($job, $schedules, $group);
+        // spawns job in its own DeferredJob so that it can't break rescheduling if it throws an exception
+        $deferred_job->spawn($job);
+        // return status
         return sprintf(
-            '%s (%s)',
-            call_user_func($job, $deferred_job),
-            static::scheduleNext($job, $schedules, $group)
+            'Spawned runner (%s)',
+            $next
         );
     }
 
