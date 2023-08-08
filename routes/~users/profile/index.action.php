@@ -2,7 +2,6 @@
 
 use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
-use DigraphCMS\Digraph;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\UI\TabInterface;
 use DigraphCMS\URL\URLs;
@@ -26,7 +25,12 @@ foreach ($tabs as $file) {
     $contents = ob_get_clean();
     if (!$contents) continue;
     $tabInterface->addTab(
-        Digraph::uuid(null, $file),
+        URLify::filter(
+            URLs::pathToName(basename($file)),
+            removeWords: true,
+            strToLower: true,
+            separator: '_'
+        ),
         URLs::pathToName(basename($file)),
         function () use ($contents) {
             echo $contents;
