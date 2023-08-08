@@ -34,6 +34,8 @@ class Redirects
     {
         // skip disallowed from URLs
         if (in_array($redirect_from->pathString(), static::DISALLOWED)) return;
+        // skip obvious infinite redirects
+        if ($redirect_from->fullPathString() == $redirect_to->fullPathString()) return;
         // delete any existing record and re-add
         static::delete($redirect_from);
         DB::query()->insertInto(
