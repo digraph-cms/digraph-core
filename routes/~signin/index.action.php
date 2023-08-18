@@ -11,7 +11,7 @@ Cookies::required(['system', 'auth', 'csrf']);
 
 // handle single signin option by bouncing directly to it
 $urls = Users::allSigninURLs(Context::arg('_bounce'));
-if (count($urls) == 1) {
+if (count($urls) == 1 && !Context::arg('_noredirect')) {
     Context::response()->redirect(reset($urls));
     return;
 }

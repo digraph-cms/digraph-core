@@ -5,6 +5,7 @@ use DigraphCMS\Context;
 use DigraphCMS\HTML\Forms\Field;
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTTP\RedirectException;
+use DigraphCMS\UI\Notifications;
 use DigraphCMS\URL\URL;
 
 // display individual provider
@@ -52,10 +53,14 @@ if (!@$config['mock_cas_user']) {
     }
 
     // TRY TO SIGN IN
-    if (!phpCAS::isAuthenticated()) {
-        phpCAS::forceAuthentication();
+    try {
+        if (!phpCAS::isAuthenticated()) {
+            phpCAS::forceAuthentication();
+        }
+        Context::data('signin_provider_id', phpCAS::getUser());
+    } catch (\Throwable $th) {
+        Notifications::flashError("CAS authentication failed. If this only happens for a brief period it is most likely due to timeouts or a transient network problem.");
     }
-    Context::data('signin_provider_id', phpCAS::getUser());
     // Context::data('cas_attributes', phpCAS::getAttributes());
     // var_dump(phpCAS::setVerbose(true));
     // var_dump(phpCAS::getUser());
