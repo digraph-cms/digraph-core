@@ -67,7 +67,7 @@ try {
 }
 
 // handle signin within digraph
-if (!Context::data('signin_provider_id')) {
+if (Context::data('signin_provider_id')) {
     /** @var string */
     $providerID = Context::data('signin_provider_id');
     $fullSourceTitle = $source->providerName($provider) . ' via ' . $source->title();
