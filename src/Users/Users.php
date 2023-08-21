@@ -255,8 +255,9 @@ abstract class Users
      * @param string $uuid
      * @return User
      */
-    public static function user(string $uuid): User
+    public static function user(string|null $uuid): User
     {
+        if (is_null($uuid)) return static::guest();
         return static::get($uuid) ?? static::null($uuid);
     }
 
