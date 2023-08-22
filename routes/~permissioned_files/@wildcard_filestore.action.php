@@ -5,6 +5,7 @@ use DigraphCMS\Content\Filestore;
 use DigraphCMS\Context;
 use DigraphCMS\HTTP\AccessDeniedError;
 use DigraphCMS\HTTP\HttpError;
+use DigraphCMS\Users\Permissions;
 
 Context::response()->private(true);
 
@@ -15,7 +16,7 @@ $file = Filestore::get($uuid);
 
 // check permissions with object
 if (!$file) throw new HttpError(404);
-if (!$file->checkPermissions()) throw new AccessDeniedError('File access denied');
+if (!Permissions::inMetaGroup('content__admin') && !$file->checkPermissions()) throw new AccessDeniedError('File access denied');
 
 // pass through file
 Context::response()
