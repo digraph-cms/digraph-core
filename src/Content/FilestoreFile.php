@@ -72,7 +72,7 @@ class FilestoreFile extends DeferredFile
      */
     public function url(): string
     {
-        if ($this->permissions()) return (new URL('/~permissioned_files/filestore:' . $this->uuid()))->__toString();
+        if ($this->permissions()) return (new URL('/permissioned_files/filestore:' . $this->uuid()))->__toString();
         else return parent::url();
     }
 
