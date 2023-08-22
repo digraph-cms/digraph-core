@@ -65,6 +65,18 @@ abstract class Digraph
     }
 
     /**
+     * DANGER ZONE. Can evaluate arbitrary code. Should only be passed things
+     * that were definitely created using Digraph::serialize();
+     *
+     * @param string $value
+     * @return mixed
+     */
+    public static function unserialize(string $value): mixed
+    {
+        return eval('return ' . $value . ';');
+    }
+
+    /**
      * Generate a response from an automatically-loaded request and render it.
      * In many cases once your config and database are configured calling this
      * is all that's necessary.

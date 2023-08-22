@@ -4,20 +4,25 @@
 </p>
 <?php
 
-use DigraphCMS\Media\PermissionedFile;
+use DigraphCMS\Content\Filestore;
+use DigraphCMS\Content\FilestoreFile;
 use DigraphCMS\Users\Permissions;
+use DigraphCMS\Users\User;
 
-$users = (
-    new PermissionedFile(
+if ($file = Filestore::get('debug_users_only')) {
+    $file->delete();
+}
+$file = Filestore::create(
+    'This file is only visible to signed-in users',
     'users-only.txt',
-    'This file is only visible to signed-in users'
-    )
-)
-    ->setPermissions(function () {
-        return Permissions::inGroup('users');
-    });
+    'debug',
+    [],
+    'debug_users_only',
+    fn(FilestoreFile $file, User $user) => Permissions::inGroup('users', $user),
+);
+
 printf(
     '<p><a href="%s">%s</a></p>',
-    $users->url(),
-    $users->filename()
+    $file->url(),
+    $file->filename()
 );

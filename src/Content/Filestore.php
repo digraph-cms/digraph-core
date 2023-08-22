@@ -5,8 +5,10 @@ namespace DigraphCMS\Content;
 use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Digraph;
+use DigraphCMS\ExceptionLog;
 use DigraphCMS\FS;
 use DigraphCMS\Session\Session;
+use Exception;
 
 class Filestore
 {
@@ -35,7 +37,7 @@ class Filestore
         return true;
     }
 
-    public static function create(string $data, string $filename, string $parent, array $meta, string $uuid = null): FilestoreFile
+    public static function create(string $data, string $filename, string $parent, array $meta, string $uuid = null, null|callable $permissions = null): FilestoreFile
     {
         $hash = md5($data);
         $dest = static::path($hash);
@@ -49,7 +51,8 @@ class Filestore
             $parent,
             $meta,
             time(),
-            Session::user()
+            Session::user(),
+            $permissions
         );
         $file->write();
         static::insert($file);
@@ -57,7 +60,7 @@ class Filestore
         return $file;
     }
 
-    public static function upload(string $src, string $filename, string $parent, array $meta): FilestoreFile
+    public static function upload(string $src, string $filename, string $parent, array $meta, ?callable $permissions = null): FilestoreFile
     {
         $hash = md5_file($src);
         $dest = static::path($hash);
@@ -71,7 +74,8 @@ class Filestore
             $parent,
             $meta,
             time(),
-            Session::user()
+            Session::user(),
+            $permissions,
         );
         $file->write();
         static::insert($file);
@@ -92,7 +96,8 @@ class Filestore
                     'parent' => $file->mediaUUID(),
                     'meta' => json_encode($file->meta()),
                     'created' => $file->created()->getTimestamp(),
-                    'created_by' => $file->createdByUUID()
+                    'created_by' => $file->createdByUUID(),
+                    'permissions' => $file->permissions() ? Digraph::serialize($file->permissions()) : null,
                 ]
             )
             ->execute();
@@ -153,6 +158,15 @@ class Filestore
             return static::$cache[$result['uuid']];
         }
         $data = json_decode($result['meta'], true, 512, JSON_THROW_ON_ERROR);
+        if ($result['permissions']) {
+            $permissions = Digraph::unserialize($result['permissions']);
+            if (!is_callable($permissions)) {
+                ExceptionLog::log(new Exception('Error unserializing permissions for file ' . $result['uuid']));
+                $permissions = fn() => false;
+            }
+        } else {
+            $permissions = null;
+        }
         static::$cache[$result['uuid']] = new FilestoreFile(
             $result['uuid'],
             $result['hash'],
@@ -161,7 +175,8 @@ class Filestore
             $result['parent'],
             $data,
             $result['created'],
-            $result['created_by']
+            $result['created_by'],
+            $permissions
         );
         return static::$cache[$result['uuid']];
     }
