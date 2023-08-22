@@ -59,22 +59,20 @@ class UploadMulti extends INPUT
     }
 
     /**
-     * Undocumented function
-     *
-     * @param string $media_uuid
      * @return FilestoreFile[]
      */
-    public function filestore(string $media_uuid): array
+    public function filestore(string $media_uuid, null|callable $permissions = null): array
     {
         if ($this->filestore === null) {
 
             $this->filestore = array_map(
-                function (array $f) use ($media_uuid): FilestoreFile {
+                function (array $f) use ($media_uuid, $permissions): FilestoreFile {
                     return Filestore::upload(
                         $f['tmp_name'],
                         $f['name'],
                         $media_uuid,
-                        []
+                        [],
+                        $permissions,
                     );
                 },
                 $this->value()

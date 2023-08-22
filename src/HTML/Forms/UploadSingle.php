@@ -35,14 +35,15 @@ class UploadSingle extends INPUT
         }
     }
 
-    public function filestore(string $media_uuid): FilestoreFile
+    public function filestore(string $media_uuid, null|callable $permissions = null, string|null $filename = null): FilestoreFile
     {
         if (!$this->filestore && $this->value()) {
             $this->filestore = Filestore::upload(
                 $this->value()['tmp_name'],
-                $this->value()['name'],
+                $filename ?? $this->value()['name'],
                 $media_uuid,
-                []
+                [],
+                $permissions
             );
         }
         return @$this->filestore;
