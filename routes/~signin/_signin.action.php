@@ -9,6 +9,7 @@ use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\ExceptionLog;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\HTTP\RedirectException;
+use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\RichContent\RichContent;
 use DigraphCMS\Session\Cookies;
 use DigraphCMS\Session\Session;
@@ -59,6 +60,8 @@ Breadcrumb::top($bc);
 // include source handler file
 try {
     Router::include('_source/' . $source->name() . '.signin.php');
+} catch (RedirectException | RefreshException $r) {
+    throw $r;
 } catch (\Throwable $th) {
     Notifications::flashError("Sign-in handler encountered an error. Please try again.");
     $url = Users::signinUrl($bounce);
@@ -68,6 +71,7 @@ try {
 
 // handle signin within digraph
 if (Context::data('signin_provider_id')) {
+
     /** @var string */
     $providerID = Context::data('signin_provider_id');
     $fullSourceTitle = $source->providerName($provider) . ' via ' . $source->title();
@@ -128,14 +132,15 @@ if (Context::data('signin_provider_id')) {
         // silently log errors here so they don't interrupt signin
         ExceptionLog::log($th);
     }
-}
 
-// if there is a bounce target, try to make it into a URL and redirect
-if ($bounce) {
-    Context::response()->redirect($bounce);
-} else {
-    // otherwise redirect to profile page
-    Context::response()->redirect(
-        Users::current()->profile()
-    );
+    // if there is a bounce target, try to make it into a URL and redirect
+    if ($bounce) {
+        Context::response()->redirect($bounce);
+    } else {
+        // otherwise redirect to profile page
+        Context::response()->redirect(
+            Users::current()->profile()
+        );
+    }
+
 }
