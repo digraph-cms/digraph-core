@@ -206,11 +206,11 @@ class Pages
             ->update('page')
             ->where('uuid', $page->uuid())
             ->set([
-                'name' => $page->name(null, true, true),
-                'sort_name' => $page->sortName(),
+                'name' => substr($page->name(null, true, true), 0, 250),
+                'sort_name' => substr($page->sortName(), 0, 100),
                 'sort_weight' => $page->sortWeight(),
                 'data' => json_encode($page->get()),
-                'slug_pattern' => $page->slugPattern(),
+                'slug_pattern' => substr($page->slugPattern(), 0, 100),
                 'class' => $page->class(),
                 'updated' => time(),
                 'updated_by' => Session::uuid()
@@ -235,11 +235,11 @@ class Pages
                 'page',
                 [
                     'uuid' => $page->uuid(),
-                    'name' => $page->name(null, true, true),
-                    'sort_name' => $page->sortName(),
+                    'name' => substr($page->name(null, true, true), 0, 250),
+                    'sort_name' => substr($page->sortName(), 0, 100),
                     'sort_weight' => $page->sortWeight(),
                     'data' => json_encode($page->get()),
-                    'slug_pattern' => $page->slugPattern(),
+                    'slug_pattern' => substr($page->slugPattern(), 0, 100),
                     'class' => $page->class(),
                     'created' => time(),
                     'created_by' => Session::uuid(),
