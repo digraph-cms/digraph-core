@@ -88,16 +88,18 @@ class Router
      */
     protected static function filterActions(array $urls, bool $menuFilter): array
     {
-        return array_unique(array_filter(
-            $urls,
-            function (URL $url) use ($menuFilter) {
-                if ($menuFilter) {
-                    if (($result = Dispatcher::firstValue('onFilterActions', [$url])) !== null) return $result;
-                    if (substr($url->action(), 0, 1) == '_') return false;
+        return array_unique(
+            array_filter(
+                $urls,
+                function (URL $url) use ($menuFilter) {
+                    if ($menuFilter) {
+                        if (($result = Dispatcher::firstValue('onFilterActions', [$url])) !== null) return $result;
+                        if (substr($url->action(), 0, 1) == '_') return false;
+                    }
+                    return $url->permissions();
                 }
-                return $url->permissions();
-            }
-        ));
+            )
+        );
     }
 
     public static function search(string $glob): array
@@ -182,6 +184,11 @@ class Router
      */
     public static function pageRouteExists(AbstractPage $page, string $action): bool
     {
+        // check if there's an action prefix
+        if ($pos = strpos($action, ':')) {
+            $action = '@wildcard_' . substr($action, 0, $pos);
+        }
+        // search sources
         foreach (self::$sources as $source) {
             foreach ($page->routeClasses() as $route) {
                 $path = "$source/@$route/$action.action.*";
@@ -232,6 +239,11 @@ class Router
     public static function staticRouteExists(string $route, string $action): bool
     {
         $route = preg_replace('/^~/', '', $route);
+        // check if there's an action prefix
+        if ($pos = strpos($action, ':')) {
+            $action = '@wildcard_' . substr($action, 0, $pos);
+        }
+        // search sources
         foreach (self::$sources as $source) {
             // check individual/specific route
             $path = "$source/~$route/$action.action.*";
