@@ -143,7 +143,7 @@ class ShortCodesListener
     {
         if (!$s->getBbCode()) {
             // nothing is specified, just use context URL route and optional index
-            $query = Context::url()->fullPathString();
+            $url = Context::url();
             $route = Context::url()->route();
             $action = $s->getParameter('action', 'index');
         } else {
@@ -156,10 +156,12 @@ class ShortCodesListener
                 $action = substr($query, strlen($route) + 1);
                 // still allow action parameter to override URL
                 $action = $s->getParameter('action', $action);
+                $url = new URL("/$route/$action");
             } else {
                 // route looks like a clean route with no filename
                 $route = $query;
                 $action = $s->getParameter('action', 'index');
+                $url = new URL("/$route/");
             }
         }
         // keep running list of everything this could refer to
@@ -187,6 +189,7 @@ class ShortCodesListener
             $title = 'unknown link';
         } elseif (count($options) == 1) {
             $title = $options[0]['title'];
+            $url = $options[0]['url'];
         } else {
             $title = sprintf(
                 'ambiguous link: %s',
@@ -201,7 +204,7 @@ class ShortCodesListener
         }
         // build link
         $link = (new A)
-            ->setAttribute('href', new URL($query))
+            ->setAttribute('href', $url)
             ->setAttribute('title', $title)
             ->addClassString($s->getParameter('class', ''))
             ->addChild(new Text($s->getContent() ? $s->getContent() : $title));
