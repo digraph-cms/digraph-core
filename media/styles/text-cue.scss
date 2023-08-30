@@ -7,7 +7,8 @@
     background-color: var(--cue-safe);
 }
 
-.text-cue--information {
+.text-cue--information,
+a.link--multiple-options {
     padding: $border;
     vertical-align: middle;
     line-height: $line-height-tight;

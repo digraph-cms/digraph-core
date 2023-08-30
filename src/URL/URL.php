@@ -311,8 +311,7 @@ class URL
      */
     public function setAction(string $action): static
     {
-
-        $this->path = substr($this->path, 0, strlen($this->path) - strlen($this->file()));
+        $this->path = substr($this->path, 0, strlen($this->path) - strlen($this->file() ?? ''));
         if (!preg_match('@(/|\.([a-z0-9]+))$@', $action) && !strpos($action, ':')) $action .= '.html';
         $this->path .= $action;
         return $this;

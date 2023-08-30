@@ -141,49 +141,71 @@ class ShortCodesListener
      */
     public static function onShortCode_link(ShortcodeInterface $s): ?string
     {
-        try {
-            // try to parse given URL, or use context if not specified
-            if (!$s->getBbCode()) $url = clone Context::url();
-            else {
-                $url = $s->getBbCode();
-                if (!str_starts_with($url, '/')) $url = "/$url";
-                $url = new URL($url);
-            }
-            // try to use the given action
-            if ($s->getParameter('action')) {
-                $url->setAction($s->getParameter('action'));
-            }
-        } catch (\Throwable $th) {
-            // if there was a problem, abort displaying this tag
-            return null;
-        }
-        // track whether there are multiple options
-        $multiple_options = false;
-        // search for pages this URL might refer to
-        if (!$url->explicitlyStaticRoute() && $pages = Pages::getAll($url->route())) {
-            // this route relates to one or more pages
-            $route = $url->route();
-            $action = $url->action();
-            if (count($pages) == 1 && !Router::staticRouteExists($route, $action)) {
-                // one page with no matching static route: use its name as default name
-                $title = $pages[0]->url($action)->name();
-            } else {
-                // there are multiple options
-                $multiple_options = true;
-                $title = array_map(fn($page) => $page->url($action)->name(), $pages);
-                if (Router::staticRouteExists($route, $action)) $title[] = (new URL("/$route/"))->setAction($action)->name();
-                $title = sprintf('{multiple options: %s}', implode(', ', $title));
-            }
+        if (!$s->getBbCode()) {
+            // nothing is specified, just use context URL route and optional index
+            $query = Context::url()->fullPathString();
+            $route = Context::url()->route();
+            $action = $s->getParameter('action', 'index');
         } else {
-            // this URL is static, it refers to no pages
-            $title = $url->name();
+            // otherwise we have to take a closer look at what was specified
+            // check if bbcode value looks like it has a filename at the end
+            $query = trim($s->getBbCode(), '/');
+            if (preg_match('@\.[a-z0-9]+$@', $query)) {
+                // route is bbcode value with filename stripped
+                $route = preg_replace('@[^\\]\.([a-z0-9]+$@', '', $query);
+                $action = substr($query, strlen($route) + 1);
+                // still allow action parameter to override URL
+                $action = $s->getParameter('action', $action);
+            } else {
+                // route looks like a clean route with no filename
+                $route = $query;
+                $action = $s->getParameter('action', 'index');
+            }
         }
+        // keep running list of everything this could refer to
+        /** array<int,array{url:URL,title:string}> */
+        $options = [];
+        // check if there's a static route
+        if (Router::staticRouteExists($route, $action)) {
+            $static_url = new URL("/~$route/");
+            $static_url->setAction($action);
+            $options[] = [
+                'url' => $static_url,
+                'title' => $static_url->name(),
+            ];
+        }
+        // search for pages this URL might refer to
+        foreach (Pages::getAll($route) as $page) {
+            $page_url = $page->url($action);
+            $options[] = [
+                'url' => $page_url,
+                'title' => $page_url->name(),
+            ];
+        }
+        // prepare link title
+        if (count($options) == 0) {
+            $title = 'unknown link';
+        } elseif (count($options) == 1) {
+            $title = $options[0]['title'];
+        } else {
+            $title = sprintf(
+                'ambiguous link: %s',
+                implode(
+                    ', ',
+                    array_map(
+                        fn($e) => '"' . $e['title'] . '"',
+                        $options
+                    )
+                )
+            );
+        }
+        // build link
         $link = (new A)
-            ->setAttribute('href', $url)
+            ->setAttribute('href', new URL($query))
             ->setAttribute('title', $title)
             ->addClassString($s->getParameter('class', ''))
             ->addChild(new Text($s->getContent() ? $s->getContent() : $title));
-        if ($multiple_options) $link->addClass('link--multiple-options');
+        if (count($options) > 1) $link->addClass('link--multiple-options');
         return $link;
     }
 }

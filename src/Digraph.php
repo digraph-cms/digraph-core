@@ -272,44 +272,49 @@ abstract class Digraph
                 throw new AccessDeniedError('');
             }
             // search for relevant pages and handle putting them into Context
-            if (!$request->url()->explicitlyStaticRoute() && $pages = Pages::getAll($request->url()->route())) {
-                // this route relates to one or more pages
-                $route = $request->url()->route();
-                $action = $request->url()->action();
-                if (count($pages) == 1 && !Router::staticRouteExists($route, $action)) {
-                    // one page with no matching static route: put it in Context and build content
-                    /** @var AbstractPage */
-                    $page = reset($pages);
-                    // first check if this is the page's actual preferred URL
-                    $pageURL = $page->url($action, Context::url()->query());
-                    if ($pageURL->__toString() != Context::url()->__toString()) {
-                        throw new RedirectException($pageURL, false, true);
-                    }
-                    // build response content
-                    Context::page($page);
-                    static::buildResponseContent();
-                } else {
-                    // create a multiple options page if multiple pages or 1+ page and a static route exists
-                    Context::data('300_pages', $pages);
-                    if (Router::staticRouteExists($route, $action)) {
-                        $staticUrl = (new URL("/~$route/"))->setAction($action);
-                        $staticUrl->query($request->url()->query());
-                        $staticUrl->normalize();
-                        Context::data('300_static', $staticUrl);
-                    }
-                    static::buildErrorContent(300);
-                }
-            } else {
-                // this route does not relate to any pages, so make it explicitly non-static for tidiness
-                if (Context::url()->explicitlyStaticRoute()) {
-                    $url = Context::url();
-                    $url->path(
-                        preg_replace('@^/~@', '/', Context::url()->path())
-                    );
-                    Context::url($url);
-                    throw new RedirectException(Context::url());
-                }
+            $route = $request->url()->route();
+            $action = $request->url()->action();
+            $explicitly_static = $request->url()->explicitlyStaticRoute();
+            // get list of pages for which this action's route exists
+            $pages = Pages::getAll($route);
+            $pages = array_filter($pages, fn($page) => Router::pageRouteExists($page, $action));
+            // determine whether a static route exists
+            $static_exists = Router::staticRouteExists($route, $action);
+            // this route exists but does not relate to any pages, so make it explicitly non-static for tidiness
+            if ($explicitly_static && $static_exists && !$pages) {
+                $url = Context::url();
+                $url->path(
+                    preg_replace('@^/~@', '/', Context::url()->path())
+                );
+                Context::url($url);
+                throw new RedirectException(Context::url());
+            }
+            // process request
+            if ($explicitly_static || (!$pages && $static_exists)) {
+                // explicitly static or no pages and static exists
                 static::buildResponseContent();
+            } elseif (count($pages) == 1 && !$static_exists) {
+                // one page with no matching static route: put it in Context and build content
+                /** @var AbstractPage */
+                $page = reset($pages);
+                // first check if this is the page's actual preferred URL
+                $pageURL = $page->url($action, Context::url()->query());
+                if ($pageURL->__toString() != Context::url()->__toString()) {
+                    throw new RedirectException($pageURL, false, true);
+                }
+                // build response content
+                Context::page($page);
+                static::buildResponseContent();
+            } elseif (count($pages) > 1 || ($pages && $static_exists)) {
+                // create a multiple options page if multiple pages exist, or if one or more pages pages and a static route exists
+                Context::data('300_pages', $pages);
+                if (Router::staticRouteExists($route, $action)) {
+                    $staticUrl = (new URL("/~$route/"))->setAction($action);
+                    $staticUrl->query($request->url()->query());
+                    $staticUrl->normalize();
+                    Context::data('300_static', $staticUrl);
+                }
+                static::buildErrorContent(300);
             }
             // do search indexing if necessary
             if (Context::response()->searchIndex()) {
