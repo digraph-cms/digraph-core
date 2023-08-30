@@ -50,7 +50,7 @@ abstract class Schedule
     {
         // first filter out all times that are not in the future
         $next = array_filter(
-            $this->potentialTimes(),
+            $this->potentialTimes() ?? [],
             fn($time) => $time > time(),
         );
         // then filter out all times that are after the expires time

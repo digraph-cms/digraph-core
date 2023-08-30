@@ -68,6 +68,7 @@ email:
   from: null
   cron_time: 30 # seconds to allow sending email for during cron
   cron_count: 1000 # maximum number of queued emails to send in cron run
+  expiration_interval: P18M # amount of time to keep emails for, should be >1 year
   use_smtp: false
   smtp:
     host: null

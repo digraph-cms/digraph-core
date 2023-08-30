@@ -8,7 +8,13 @@
 
 .autocomplete-input-wrapper {
     position: relative;
+    max-width: $line-length*2;
     width: 100%;
+
+    input.autocomplete-input {
+        width: 100%;
+        max-width: 100%;
+    }
 
     &.ui-focused {
         .autocomplete-input {

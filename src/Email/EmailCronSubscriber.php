@@ -2,11 +2,15 @@
 
 namespace DigraphCMS\Email;
 
+use DateInterval;
+use DateTime;
 use DigraphCMS\Config;
 use DigraphCMS\Cron\CronJob;
+use DigraphCMS\DB\DB;
 
 class EmailCronSubscriber
 {
+
     /**
      * Send queued emails for as long as specified in either a deadline time
      * passed in, or for the duration specified by email.cron_time
@@ -31,4 +35,25 @@ class EmailCronSubscriber
         }
         Emails::endBatch();
     }
+
+    /**
+     * Heavy maintenance job to expire old emails from the database after an
+     * amount of time defined in config email.expiration_interval
+     *
+     * @param CronJob $job
+     * @param integer $deadlineTime
+     * @return void
+     */
+    public static function cronJob_maintenance_heavy(CronJob $job, int $deadlineTime): void
+    {
+        DB::query()
+            ->delete('email')
+            ->where(
+                'sent < ?',
+                (new DateTime)
+                    ->sub(new DateInterval(Config::get('email.expiration_interval')))
+                    ->getTimestamp()
+            )->execute();
+    }
+
 }
