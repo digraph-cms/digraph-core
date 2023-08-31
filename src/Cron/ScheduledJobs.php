@@ -2,7 +2,6 @@
 
 namespace DigraphCMS\Cron;
 
-use DigraphCMS\Cache\Cache;
 use DigraphCMS\Datastore\Datastore;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Digraph;
@@ -14,18 +13,21 @@ class ScheduledJobs
      * @param callable $job
      * @param Schedule|Schedule[] $schedules
      * @param string $job_name
+     * @param mixed $hash pass your own non-null values to override hashing and avoid unnecessary rebuilds/reinitialization
      * @return string the internal job group name
      */
-    public static function schedule(callable $job, Schedule|array $schedules, string $job_name): string
+    public static function schedule(callable $job, Schedule|array $schedules, string $job_name, mixed $hash = null): string
     {
         if (!is_array($schedules)) $schedules = [$schedules];
         /** internal group name to use for this job group */
         $group_name = static::groupName($job_name);
         /** hash of settings so we can clear and rebuild jobs only if it is different from what was last entered */
-        $hash = md5(Digraph::serialize([
-            $job,
-            $schedules,
-        ]));
+        // NOTE: can be overridden if a job includes things that don't hash consistently (which is likely)
+        if (is_null($hash)) $hash = md5(Digraph::serialize([
+                $job,
+                $schedules,
+            ]));
+        else $hash = md5(Digraph::serialize($hash));
         // check if last build of this job was the same
         if (static::storedHash($job_name) == $hash) {
             // stored hash matches new hash, so there's nothing to update
