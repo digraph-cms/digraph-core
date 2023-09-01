@@ -280,6 +280,10 @@ abstract class Digraph
             $pages = array_filter($pages, fn($page) => Router::pageRouteExists($page, $action));
             // determine whether a static route exists
             $static_exists = Router::staticRouteExists($route, $action);
+            // throw 404 if no pages or static routes exist
+            if (!$static_exists && !$pages) {
+                throw new HttpError(404);
+            }
             // this route exists but does not relate to any pages, so make it explicitly non-static for tidiness
             if ($explicitly_static && $static_exists && !$pages) {
                 $url = Context::url();
