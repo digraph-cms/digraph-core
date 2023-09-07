@@ -2,6 +2,7 @@
 
 namespace DigraphCMS\Media;
 
+use DigraphCMS\Cache\Cache;
 use DigraphCMS\Config;
 use DigraphCMS\FS;
 
@@ -10,7 +11,7 @@ class DeferredFile extends File
     protected $stringContent;
     protected $ttl;
 
-    public function __construct(string $filename, callable $content, $identifier, int $ttl = null)
+    public function __construct(string $filename, callable $content, $identifier, int $ttl = null, callable|null $permissions = null)
     {
         // take in filename/extension/ttl
         $this->filename = $filename;
@@ -23,6 +24,8 @@ class DeferredFile extends File
         // take in content/identifier
         $this->content = $content;
         $this->identifier = md5(@\Opis\Closure\serialize($identifier));
+        // permissions
+        $this->permissions = $permissions;
     }
 
     public function write()
@@ -48,6 +51,19 @@ class DeferredFile extends File
         call_user_func($this->content, $this);
         // reset URL
         $this->url = null;
+        // save permissions if necessary
+        if ($this->permissions()) {
+            Cache::set(
+                'permissioned_media/info/' . $this->identifier(),
+                [
+                    'path' => $this->path(),
+                    'filename' => $this->filename(),
+                    'permissions' => $this->permissions(),
+                ],
+                // cache for twice TTL just to ensure permissions stay accessible in some edge cases
+                $this->ttl() * 2
+            );
+        }
     }
 
     /**

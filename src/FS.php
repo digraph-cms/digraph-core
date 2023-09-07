@@ -110,4 +110,19 @@ abstract class FS
         if (!is_dir($dir)) static::mkdir($dir);
         touch($path);
     }
+
+    /**
+     * Create a file and all parent directories and file_put_contents the
+     * specified content into it.
+     *
+     * @param string $path
+     * @param mixed $content
+     * @return void
+     */
+    public static function dump(string $path, mixed $content)
+    {
+        $dir = dirname($path);
+        if (!is_dir($dir)) static::mkdir($dir);
+        file_put_contents($path, $content);
+    }
 }

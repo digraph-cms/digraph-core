@@ -17,7 +17,6 @@ class FilestoreFile extends DeferredFile
 {
     protected $uuid, $hash, $filename, $parent, $meta, $image;
     protected $bytes, $created, $created_by;
-    protected $permissions;
 
     public function __construct(
         string $uuid,
@@ -48,21 +47,6 @@ class FilestoreFile extends DeferredFile
     public function embed(): string
     {
         return Templates::render('content/embed-file.php', ['file' => $this]);
-    }
-
-    public function permissions(): ?callable
-    {
-        return $this->permissions;
-    }
-
-    public function checkPermissions(User|null $user = null): bool
-    {
-        if (is_null($this->permissions())) return true;
-        else return call_user_func(
-                $this->permissions(),
-                $this,
-                $user ?? Users::current() ?? Users::guest(),
-            );
     }
 
     /**

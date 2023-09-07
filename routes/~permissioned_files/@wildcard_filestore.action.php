@@ -7,19 +7,22 @@ use DigraphCMS\HTTP\AccessDeniedError;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\Users\Permissions;
 
-Context::response()->private(true);
-
 // get identifier from URL
 /** @var string */
 $uuid = Context::url()->actionSuffix();
-$file = Filestore::get($uuid);
+$filestore = Filestore::get($uuid);
+
+// check object exists
+if (!$filestore) throw new HttpError(404);
+
+// set to private if exists
+Context::response()->private(true);
 
 // check permissions with object
-if (!$file) throw new HttpError(404);
-if (!Permissions::inMetaGroup('content__admin') && !$file->checkPermissions()) throw new AccessDeniedError('File access denied');
+if (!Permissions::inMetaGroup('content__admin') && !$filestore->checkPermissions()) throw new AccessDeniedError('File access denied');
 
 // pass through file
 Context::response()
-    ->setContentFile($file->path());
+    ->setContentFile($filestore->path());
 Context::response()
-    ->filename($file->filename());
+    ->filename($filestore->filename());

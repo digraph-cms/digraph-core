@@ -232,19 +232,27 @@ class Media
         return null;
     }
 
-    public static function filePath(File $file): string
+    public static function filePath(File $file, bool $permissioned = false): string
     {
-        return Config::get('files.path') . '/' . static::idPath($file) . '/' . $file->filename();
+        $location = $permissioned
+            ? Config::get('cache.path') . '/permissioned_media/files'
+            : Config::get('files.path');
+        return $location . '/' . static::idPath($file) . '/' . $file->filename();
     }
 
-    public static function fileUrl(File $file): string
+    public static function fileUrl(File $file, bool $permissioned = false): string
     {
-        $filename = urlencode($file->filename());
-        $filename = str_replace('+', '%20', $filename);
-        if (Config::get('files.external')) {
-            return Config::get('files.url') . '/' . static::idPath($file) . '/' . $filename;
+        if ($permissioned) {
+            return (new URL('/permissioned_files/file:' . $file->identifier()))
+                ->__toString();
         } else {
-            return URLs::site() . Config::get('files.url') . '/' . static::idPath($file) . '/' . $filename;
+            $filename = urlencode($file->filename());
+            $filename = str_replace('+', '%20', $filename);
+            if (Config::get('files.external')) {
+                return Config::get('files.url') . '/' . static::idPath($file) . '/' . $filename;
+            } else {
+                return URLs::site() . Config::get('files.url') . '/' . static::idPath($file) . '/' . $filename;
+            }
         }
     }
 

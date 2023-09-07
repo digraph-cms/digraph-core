@@ -2,14 +2,19 @@
 
 namespace DigraphCMS\Media;
 
+use DigraphCMS\Cache\Cache;
 use DigraphCMS\Config;
 use DigraphCMS\FS;
+use DigraphCMS\Users\User;
+use DigraphCMS\Users\Users;
 
 class File
 {
     protected $filename, $extension, $content, $identifier, $written, $src, $url;
+    /** @var callable|null */
+    protected $permissions;
 
-    public function __construct(string $filename, string $content, $identifier = null)
+    public function __construct(string $filename, string $content, $identifier = null, callable|null $permissions = null)
     {
         // take in filename/extension
         $this->filename = $filename;
@@ -21,6 +26,22 @@ class File
         // take in content/identifier
         $this->content = $content;
         $this->identifier = $identifier ? md5(serialize($identifier)) : md5($content);
+        // permissions
+        $this->permissions = $permissions;
+    }
+
+    public function permissions(): null|callable
+    {
+        return $this->permissions;
+    }
+
+    public function checkPermissions(User|null $user = null): bool
+    {
+        if (is_null($this->permissions())) return true;
+        else return call_user_func(
+                $this->permissions(),
+                $user ?? Users::current() ?? Users::guest(),
+            );
     }
 
     public function image(): ?ImageFile
@@ -45,13 +66,19 @@ class File
 
     public function path(): string
     {
-        return Media::filePath($this);
+        return Media::filePath($this, !is_null($this->permissions()));
     }
 
     public function url(): string
     {
         $this->write();
-        return $this->url ?? $this->url = Media::fileUrl($this) . '?' . substr(md5_file($this->path()), 0, 4);
+        if (!$this->url) {
+            $this->url = Media::fileUrl($this, !is_null($this->permissions()));
+            if (is_null($this->permissions())) {
+                $this->url .= '?' . substr(md5_file($this->path()), 0, 4);
+            }
+        }
+        return $this->url;
     }
 
     public function ttl(): int
@@ -73,8 +100,20 @@ class File
             }
         }
         // create directory and put content in file
-        FS::mkdir(dirname($this->path()));
-        file_put_contents($this->path(), $this->content());
+        FS::dump($this->path(), $this->content());
+        // cache file location and permissions
+        if ($this->permissions()) {
+            Cache::set(
+                'permissioned_media/info/' . $this->identifier(),
+                [
+                    'path' => $this->path(),
+                    'filename' => $this->filename(),
+                    'permissions' => $this->permissions(),
+                ],
+                // cache for twice TTL just to ensure permissions stay accessible in some edge cases
+                $this->ttl() * 2
+            );
+        }
     }
 
     public function content(): string
