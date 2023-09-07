@@ -35,15 +35,6 @@ class File
         return $this->permissions;
     }
 
-    public function checkPermissions(User|null $user = null): bool
-    {
-        if (is_null($this->permissions())) return true;
-        else return call_user_func(
-                $this->permissions(),
-                $user ?? Users::current() ?? Users::guest(),
-            );
-    }
-
     public function image(): ?ImageFile
     {
         return null;

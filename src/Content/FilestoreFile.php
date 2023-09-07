@@ -44,6 +44,16 @@ class FilestoreFile extends DeferredFile
         $this->permissions = $permissions;
     }
 
+    public function checkPermissions(User|null $user = null): bool
+    {
+        if (is_null($this->permissions())) return true;
+        else return call_user_func(
+                $this->permissions(),
+                $user ?? Users::current() ?? Users::guest(),
+                $this
+            );
+    }
+
     public function embed(): string
     {
         return Templates::render('content/embed-file.php', ['file' => $this]);
