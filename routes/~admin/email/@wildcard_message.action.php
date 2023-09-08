@@ -2,11 +2,15 @@
 
 use DigraphCMS\Context;
 use DigraphCMS\Email\Emails;
+use DigraphCMS\FS;
 use DigraphCMS\HTTP\HttpError;
+use DigraphCMS\Media\DeferredFile;
+use DigraphCMS\Media\File;
 use DigraphCMS\UI\Breadcrumb;
 use DigraphCMS\UI\Format;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\URL\URL;
+use DigraphCMS\Users\Permissions;
 
 $email = Emails::get(Context::url()->actionSuffix());
 if (!$email) throw new HttpError(404);
@@ -39,8 +43,20 @@ printf("<dt>%s</dt><dd>%s</dd>", 'Category', $email->categoryLabel());
 $email->toUser() ? printf("<dt>%s</dt><dd>%s</dd>", 'Recipient user', $email->toUser()) : '';
 echo "</dl>";
 
+$file = new File(
+    $email->uuid() . '.html',
+    Emails::prepareBody_html($email),
+    [
+        'email_message_admin_view',
+        $email->uuid(),
+    ],
+    function () {
+        return Permissions::inMetaGroup('email__admin');
+    }
+);
+
 echo "<h2>Rendered HTML</h2>";
-echo "<iframe src='" . new URL('iframe:' . $email->uuid()) . "' style='border:0;width:100%;' class='autosized-frame'></iframe>";
+echo "<iframe src='" . $file->url() . "' style='border:0;width:100%;' class='autosized-frame'></iframe>";
 
 echo "<h2>Rendered plaintext</h2>";
 $text = Emails::prepareBody_text($email);

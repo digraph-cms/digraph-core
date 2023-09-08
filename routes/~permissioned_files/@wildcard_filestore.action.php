@@ -23,6 +23,8 @@ if (!Permissions::inMetaGroup('content__admin') && !$filestore->checkPermissions
 
 // pass through file
 Context::response()
+    ->template('null.php');
+Context::response()
     ->setContentFile($filestore->path());
 Context::response()
     ->filename($filestore->filename());

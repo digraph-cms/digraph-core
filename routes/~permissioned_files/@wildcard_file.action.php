@@ -28,6 +28,8 @@ if (!$allowed && !Permissions::inMetaGroup('content__admin')) throw new AccessDe
 
 // pass through file
 Context::response()
+    ->template('null.php');
+Context::response()
     ->setContentFile($info['path']);
 Context::response()
     ->filename($info['filename']);
