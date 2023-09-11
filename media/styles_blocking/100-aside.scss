@@ -30,9 +30,11 @@ aside {
     }
 }
 
+/* never float last children, asides with .aside--block or asides inside asides */
 #article>aside:last-child,
-aside.aside--block {
+aside.aside--block,
+aside aside {
     float: none !important;
     margin: ($grid * 3) 0 !important;
-    width: auto;
+    width: auto !important;
 }

@@ -1,0 +1,80 @@
+aside {
+  background: var(--background-dark);
+  padding: $grid;
+  box-shadow: var(--shadow);
+  box-sizing: border-box;
+  max-width: $line-length;
+  border-left: $border solid var(--theme-neutral);
+  margin: ($grid * 3) 0;
+
+  >h1 {
+    margin-left: -$grid;
+    margin-right: -$grid;
+    background: var(--theme-neutral);
+    color: var(--theme-neutral-inv);
+    padding: $grid;
+
+    &:first-child {
+      margin-top: -$grid;
+    }
+  }
+
+  >* {
+    &:first-child {
+      margin-top: 0;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &.aside--accent {
+    border-color: var(--cue-accent);
+
+    >h1 {
+      background: var(--cue-accent);
+      color: var(--cue-accent-inv);
+    }
+  }
+
+  &.aside--info,
+  &.aside--information,
+  &.aside--notice {
+    border-color: var(--cue-information);
+
+    >h1 {
+      background: var(--cue-information);
+      color: var(--cue-information-inv);
+    }
+  }
+
+  &.aside--confirmation,
+  &.aside--safe {
+    border-color: var(--cue-safe);
+
+    >h1 {
+      background: var(--cue-safe);
+      color: var(--cue-safe-inv);
+    }
+  }
+
+  &.aside--warning {
+    border-color: var(--cue-warning);
+
+    >h1 {
+      background: var(--cue-warning);
+      color: var(--cue-warning-inv);
+    }
+  }
+
+  &.aside--error,
+  &.aside--danger {
+    border-color: var(--cue-error);
+
+    >h1 {
+      background: var(--cue-error);
+      color: var(--cue-error-inv);
+    }
+  }
+}
