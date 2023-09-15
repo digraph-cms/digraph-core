@@ -16,6 +16,7 @@ use DigraphCMS\HTTP\Request;
 use DigraphCMS\HTTP\RequestHeaders;
 use DigraphCMS\HTTP\Response;
 use DigraphCMS\Search\Search;
+use DigraphCMS\Session\Session;
 use DigraphCMS\UI\Templates;
 use DigraphCMS\UI\Theme;
 use DigraphCMS\URL\Redirects;
@@ -321,7 +322,7 @@ abstract class Digraph
                 static::buildErrorContent(300);
             }
             // do search indexing if necessary
-            if (Context::response()->searchIndex()) {
+            if (Context::response()->searchIndex() && !Session::user()) {
                 $id = 'response_index:' . Context::url()->fullPathString();
                 if (Locking::lock($id, false, Config::get('search.response_index.interval'))) {
                     $content = Context::response()->content();

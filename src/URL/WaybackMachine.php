@@ -238,12 +238,12 @@ class WaybackMachine
         if (static::noNotifyFlag($url, $context)) return;
         foreach (Config::get('wayback.notify_emails') as $addr) {
             // lock per-recipient
-            $lock = Locking::lock(
+            $locked = Locking::lock(
                 'wayback_notification_' . md5(serialize([$context->pathString(), $url, $addr])),
                 false,
                 Config::get('wayback.notify_frequency')
             );
-            if (!$lock) continue;
+            if (!$locked) continue;
             // queue email
             $email = Email::newForEmail(
                 'wayback',

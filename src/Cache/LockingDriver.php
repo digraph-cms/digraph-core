@@ -4,6 +4,6 @@ namespace DigraphCMS\Cache;
 
 interface LockingDriver
 {
-    public function release(int $id): void;
-    public function lock(string $name, int $ttl): ?int;
+    public function release(string $name): void;
+    public function lock(string $name, int $ttl): bool;
 }

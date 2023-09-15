@@ -5,13 +5,13 @@ namespace DigraphCMS\Cache;
 class LockingDriverNull implements LockingDriver
 {
 
-    public function release(int $id): void
+    public function release(string $name): void
     {
         // does nothing
     }
 
-    public function lock(string $name, int $ttl): ?int
+    public function lock(string $name, int $ttl): bool
     {
-        return random_int(0, PHP_INT_MAX);
+        return true;
     }
 }

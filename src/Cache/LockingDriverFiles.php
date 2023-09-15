@@ -9,67 +9,51 @@ class LockingDriverFiles implements LockingDriver
 {
     protected array $handles = [];
 
-    public function release(int $id): void
+    public function release(string $name): void
     {
-        $handle = $this->handleFromId($id);
-        flock($handle, LOCK_UN);
-        fclose($handle);
-        unset($this->handles[$id]);
+        if ($handle = @$this->handles[$name]) {
+            flock($handle, LOCK_UN);
+            fclose($handle);
+            unset($this->handles[$name]);
+        }
+        unlink($this->path($name));
     }
 
-    public function lock(string $name, int $ttl): ?int
+    public function lock(string $name, int $ttl): bool
     {
-        $id = $this->idFromName($name);
-        $path = $this->pathFromId($id);
+        $path = $this->path($name);
         // release if necessary and delete file if it's already expired based on given TTL
         if (file_exists($path) && filemtime($path) < time() - $ttl) {
-            if (isset($this->handles[$id])) {
-                $this->release($id);
+            if (isset($this->handles[$name])) {
+                $this->release($name);
             }
             unlink($path);
         }
         // as a fallback fail if file exists
-        if (file_exists($path)) return null;
-        // attempt to generate a handle and lock it
+        if (file_exists($path)) return false;
+        // attempt to generate a handle and lock it for extra assurance
         // this won't work on all environments, but we're doing best-effort here I guess
-        $handle = $this->handleFromName($name);
-        if (flock($handle, LOCK_EX)) {
-            return $id;
-        } else return null;
+        $handle = $this->handle($name);
+        if (flock($handle, LOCK_EX)) return true;
+        else return false;
     }
 
-    protected function handleFromName($name)
+    protected function handle(string $name)
     {
-        return $this->handleFromId($this->idFromName($name));
-    }
-
-    protected function handleFromId(int $id)
-    {
-        if (!isset($this->handles[$id])) {
-            $path = $this->pathFromId($id);
+        if (!isset($this->handles[$name])) {
+            $path = $this->path($name);
             if (!file_exists($path)) FS::touch($path);
-            $this->handles[$id] = fopen($path, 'r');
+            $this->handles[$name] = fopen($path, 'r');
         }
-        return $this->handles[$id];
+        return $this->handles[$name];
     }
 
-    protected function pathFromName(string $name): string
-    {
-        return $this->pathFromId($this->idFromName($name));
-    }
-
-    protected function idFromName(string $name): int
-    {
-        return crc32($name);
-    }
-
-    protected function pathFromId(int $id): string
+    protected function path(string $name): string
     {
         return sprintf(
-            '%s/locking/%s/%s',
+            '%s/locking/%s',
             Config::get('cache.path'),
-            substr("$id", 0, 1),
-            $id
+            $name
         );
     }
 }

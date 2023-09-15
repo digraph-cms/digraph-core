@@ -9,9 +9,9 @@ error_reporting(0);
 
 $group = Context::arg('group');
 if (!$group || !Deferred::groupCount($group)) throw new HttpError(400);
-$justRan = Deferred::runJobs($group, time() + 1);
+$justRan = Deferred::runJobs($group, time() + 2);
 
-Context::response()->browserTTL(1);
+Context::response()->browserTTL(2);
 Context::response()->filename('dpb.json');
 
 $pending = DB::query()->from('defex')->where('`group` = ?', [$group])

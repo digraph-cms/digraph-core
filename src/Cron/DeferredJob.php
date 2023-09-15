@@ -54,7 +54,8 @@ class DeferredJob
         // also only execute if scheduledd time has arrived
         if ($this->scheduled() > time()) return false;
         // try to get lock
-        if (!($lock = Locking::lock('defex_' . $this->id(), false, 450))) return false;
+        $lock_id = 'defex/' . $this->id();
+        if (!Locking::lock($lock_id, false, 300)) return false;
         // override user
         Session::overrideUser('system');
         // execute
@@ -84,7 +85,7 @@ class DeferredJob
         // remove override user
         Session::overrideUser(null);
         // release lock
-        Locking::release($lock);
+        Locking::release($lock_id);
         // return error state
         return !$error;
     }

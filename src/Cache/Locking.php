@@ -9,16 +9,16 @@ class Locking
     /** @var LockingDriver|null */
     protected static $driver;
 
-    public static function lock(string $name, bool $blocking = false, int $ttl = 30): ?int
+    public static function lock(string $name, bool $blocking = false, int $ttl = 30): bool
     {
         while (!($id = static::driver()->lock($name, $ttl))) {
             if ($blocking) usleep(random_int(0, 100));
-            else return null;
+            else return false;
         }
-        return $id;
+        return true;
     }
 
-    public static function release(int $id): void
+    public static function release(string $id): void
     {
         static::driver()->release($id);
     }

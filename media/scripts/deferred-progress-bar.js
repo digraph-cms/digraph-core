@@ -32,7 +32,7 @@ Scripts for displaying deferred job progress bars
                 var pct = Math.round(100 * (data.completed / data.total));
                 var indicator = wrapper.getElementsByClassName('progress-bar__indicator')[0];
                 indicator.style.width = pct + '%';
-                setTimeout(() => updateBar(wrapper), 500);
+                setTimeout(() => updateBar(wrapper), 1000);
             } else {
                 barError(wrapper, 'Error ' + e.target.status);
             }
