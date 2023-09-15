@@ -47,7 +47,7 @@ class LockingDriverFiles implements LockingDriver
     {
         if (!isset($this->handles[$id])) {
             $path = $this->pathFromId($id);
-            FS::mkdir(dirname($path));
+            if (!file_exists($path)) FS::touch($path);
             $this->handles[$id] = fopen($path, 'r');
         }
         return $this->handles[$id];
