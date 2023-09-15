@@ -10,13 +10,8 @@ class LockingDriverNull implements LockingDriver
         // does nothing
     }
 
-    public function getExclusiveLock(string $name, int $ttl): ?int
+    public function lock(string $name, int $ttl): ?int
     {
-        return 1;
-    }
-
-    public function getSharedLock(string $name, int $ttl): ?int
-    {
-        return 1;
+        return random_int(0, PHP_INT_MAX);
     }
 }

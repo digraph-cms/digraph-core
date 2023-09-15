@@ -26,17 +26,6 @@ class CoreCronSubscriber
             },
             'core_maintenance'
         );
-        // expire locking records
-        new DeferredJob(
-            function () {
-                /** @var int */
-                $count = DB::query()->delete('locking')
-                    ->where('expires < ?', [strtotime(Config::get('maintenance.expire_locking_records'))])
-                    ->execute();
-                return "Expired $count locking records";
-            },
-            'core_maintenance'
-        );
         // expire cron errors
         new DeferredJob(
             function () {
