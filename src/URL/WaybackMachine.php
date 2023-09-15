@@ -239,7 +239,7 @@ class WaybackMachine
         foreach (Config::get('wayback.notify_emails') as $addr) {
             // lock per-recipient
             $locked = Locking::lock(
-                'wayback_notification_' . md5(serialize([$context->pathString(), $url, $addr])),
+                'wayback/notification_' . md5(serialize([$context->pathString(), $url, $addr])),
                 false,
                 Config::get('wayback.notify_frequency')
             );

@@ -278,7 +278,7 @@ abstract class Digraph
             $explicitly_static = $request->url()->explicitlyStaticRoute();
             // get list of pages for which this action's route exists
             $pages = Pages::getAll($route);
-            $pages = array_filter($pages, fn($page) => Router::pageRouteExists($page, $action));
+            $pages = array_filter($pages, fn ($page) => Router::pageRouteExists($page, $action));
             // determine whether a static route exists
             $static_exists = Router::staticRouteExists($route, $action);
             // throw 404 if no pages or static routes exist
@@ -323,7 +323,7 @@ abstract class Digraph
             }
             // do search indexing if necessary
             if (Context::response()->searchIndex() && !Session::user()) {
-                $id = 'response_index:' . Context::url()->fullPathString();
+                $id = 'response_index/' . md5(Context::url()->fullPathString());
                 if (Locking::lock($id, false, Config::get('search.response_index.interval'))) {
                     $content = Context::response()->content();
                     if (Context::fields()['page.name']) {

@@ -138,7 +138,7 @@ class ExceptionLog
             method_exists($th, 'getMessage') ? $th->getMessage() : null,
         ]));
         try {
-            return !!Locking::lock('exception_log/' . $hash, false, Config::get('exception_log.notify_frequency'));
+            return !!Locking::lock('exception_log/notify_' . $hash, false, Config::get('exception_log.notify_frequency'));
         } catch (Throwable $th) {
             return true;
         }
