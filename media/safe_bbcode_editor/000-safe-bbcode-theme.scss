@@ -6,6 +6,10 @@
       max-width: none;
       font-weight: 200;
     }
+
+    >iframe {
+      margin: $grid/2;
+    }
   }
 }
 
