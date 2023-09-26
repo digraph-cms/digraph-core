@@ -130,7 +130,9 @@ class ShortCodesListener
     {
         $email = $s->getBbCode() ?? $s->getContent();
         $content = $s->getContent() ? $s->getContent() : $email;
-        return Format::base64obfuscate(sprintf('<a href="mailto:%s">%s</a>', $email, $content));
+        $output = sprintf('<a href="mailto:%s">%s</a>', $email, $content);
+        if (Context::fields()['simplified_rendering']) return $output;
+        else return Format::base64obfuscate($output);
     }
 
     /**
