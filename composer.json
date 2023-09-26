@@ -61,14 +61,6 @@
         }
     },
     "require-dev": {
-        "codeception/codeception": "^4.1",
-        "codeception/module-phpbrowser": "^1.0.0",
-        "codeception/module-asserts": "^1.0.0",
-        "league/oauth2-github": "^3.0||^2.0",
-        "league/oauth2-facebook": "^2.0",
-        "league/oauth2-google": "^4.0||^3.0",
-        "apereo/phpcas": "^1.6",
-        "vimeo/psalm": "^5.12",
         "phpstan/phpstan": "^1.10"
     },
     "scripts": {
