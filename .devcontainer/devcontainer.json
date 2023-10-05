@@ -17,7 +17,8 @@
 	// volumes
 	"mounts": [
 		"source=${localWorkspaceFolderBasename}-demo-files,target=${containerWorkspaceFolder}/demo/files,type=volume",
-		"source=${localWorkspaceFolderBasename}-demo-storage,target=${containerWorkspaceFolder}/demo/storage,type=volume"
+		"source=${localWorkspaceFolderBasename}-demo-storage,target=${containerWorkspaceFolder}/demo/storage,type=volume",
+		"source=${localWorkspaceFolderBasename}-demo-vendor,target=${containerWorkspaceFolder}/demo/vendor,type=volume"
 	],
 	// specify extensions that we want
 	"customizations": {
