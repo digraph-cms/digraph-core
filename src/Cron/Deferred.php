@@ -3,6 +3,7 @@
 namespace DigraphCMS\Cron;
 
 use DigraphCMS\DB\DB;
+use Exception;
 
 class Deferred
 {
@@ -13,8 +14,9 @@ class Deferred
         // count number of jobs run
         $count = 0;
         // proceed with jobs one at a time
-        while ((!$endByTime || time() < $endByTime) && $job = static::getNextJob($group)) {
+        while ((!$endByTime || time() < $endByTime) && ($job = static::getNextJob($group))) {
             // don't make more than one attempt per job
+            if (in_array($job->id(), static::$skip)) throw new Exception('Tried to run defex job ' . $job->id() . ' again after skipping it');
             static::$skip[] = $job->id();
             // execute job
             if ($job->execute()) $count++;
@@ -45,7 +47,7 @@ class Deferred
             $query->where('`group` = ?', [$group]);
         }
         if (static::$skip) {
-            $query->where('id NOT IN (?)', [static::$skip]);
+            $query->where('id NOT IN (?)', implode(',', static::$skip));
         }
         $query->execute();
         if ($result = $query->getResult()) {

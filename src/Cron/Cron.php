@@ -2,12 +2,10 @@
 
 namespace DigraphCMS\Cron;
 
-use DigraphCMS\Cache\Cache;
-use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Email\EmailCronSubscriber;
 use DigraphCMS\Plugins\Plugins;
-use DigraphCMS\URL\URL;
+use Exception;
 
 class Cron
 {
@@ -22,8 +20,9 @@ class Cron
         static::registerSubscriber(EmailCronSubscriber::class);
         foreach (Plugins::plugins() as $plugin) static::registerSubscriber($plugin);
         // proceed with jobs one at a time
-        while ((!$deadlineTime || time() < $deadlineTime) && $job = static::getNextJob()) {
+        while ((!$deadlineTime || time() < $deadlineTime) && ($job = static::getNextJob())) {
             // don't make more than one attempt per job
+            if (in_array($job->id(), static::$skip)) throw new Exception('Tried to run cron job ' . $job->id() . ' again after skipping it');
             static::$skip[] = $job->id();
             // execute job
             if ($job->execute($deadlineTime)) $count++;
@@ -84,7 +83,7 @@ class Cron
             ->order('run_next ASC, id ASC')
             ->limit(1);
         if (static::$skip) {
-            $query->where('id NOT IN (?)', [static::$skip]);
+            $query->where('id NOT IN (?)', implode(',', static::$skip));
         }
         $query->execute();
         if ($result = $query->getResult()) {
