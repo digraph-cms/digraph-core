@@ -2,34 +2,46 @@
 
 namespace DigraphCMS\Cache;
 
-use DigraphCMS\Config;
+use DigraphCMS\DB\DB;
+use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\Lock\Store\PdoStore;
+use Symfony\Component\Lock\SharedLockInterface;
+use Throwable;
 
 class Locking
 {
-    /** @var LockingDriver|null */
-    protected static $driver;
+    /** @var array<string,SharedLockInterface> */
+    protected static array $locks = [];
 
     public static function lock(string $name, bool $blocking = false, int $ttl = 30): bool
     {
-        while (!($id = static::driver()->lock($name, $ttl))) {
-            if ($blocking) usleep(random_int(0, 100));
-            else return false;
+        $lock = static::factory()->createLock($name, $ttl, true);
+        while (true) {
+            try {
+                $lock->acquire();
+                static::$locks[$name] = $lock;
+                return true;
+            } catch (Throwable) {
+                if ($blocking) usleep(random_int(0, 100));
+                else return false;
+            }
         }
-        return true;
     }
 
-    public static function release(string $id): void
+    public static function release(string $name): void
     {
-        static::driver()->release($id);
+        if (isset(static::$locks[$name])) {
+            static::$locks[$name]->release();
+            unset(static::$locks[$name]);
+        }
     }
 
-    protected static function driver(): LockingDriver
+    protected static function factory(): LockFactory
     {
-        if (!static::$driver) {
-            $class = Config::get('locking.driver')
-                ?? LockingDriverFiles::class;
-            static::$driver = new $class;
-        }
-        return static::$driver;
+        static $store;
+        static $factory;
+        $store = $store ?? new PdoStore(DB::pdo());
+        $factory = $factory ?? new LockFactory($store);
+        return $factory;
     }
 }

@@ -29,3 +29,6 @@ user_sources:
         active: true
         name: Demo login provider
         mock_cas_user: true
+
+cron:
+  route_enabled: true

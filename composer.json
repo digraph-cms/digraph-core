@@ -40,7 +40,8 @@
         "ezyang/htmlpurifier": "^4.16",
         "robmorgan/phinx": "^0.13.4",
         "cakephp/database": "^4",
-        "jbroadway/urlify": "^1.2"
+        "jbroadway/urlify": "^1.2",
+        "symfony/lock": "^6.3"
     },
     "conflict": {
         "jasig/phpcas": "<1.6",
