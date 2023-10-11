@@ -17,9 +17,10 @@ class Deferred
         while ((!$endByTime || time() < $endByTime) && ($job = static::getNextJob($group))) {
             // don't make more than one attempt per job
             if (in_array($job->id(), static::$skip)) throw new Exception('Tried to run defex job ' . $job->id() . ' again after skipping it');
-            static::$skip[] = $job->id();
             // execute job
             if ($job->execute()) $count++;
+            // log that we at least tried this job
+            static::$skip[] = $job->id();
         }
         // return number of jobs run
         return $count;

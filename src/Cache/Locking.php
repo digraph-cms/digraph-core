@@ -3,10 +3,10 @@
 namespace DigraphCMS\Cache;
 
 use DigraphCMS\DB\DB;
+use Symfony\Component\Lock\Exception\LockConflictedException;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\Store\PdoStore;
 use Symfony\Component\Lock\SharedLockInterface;
-use Throwable;
 
 class Locking
 {
@@ -21,7 +21,7 @@ class Locking
                 $lock->acquire();
                 static::$locks[$name] = $lock;
                 return true;
-            } catch (Throwable) {
+            } catch (LockConflictedException) {
                 if ($blocking) usleep(random_int(0, 100));
                 else return false;
             }
