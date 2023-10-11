@@ -46,8 +46,15 @@ class Locking
     {
         static $store;
         static $factory;
-        // $store = $store ?? new PdoStore(DB::pdo());
-        $store = $store ?? new FlockStore(Config::cachePath() . '/locking');
+        if (!$store) {
+            switch (Config::get('locking.storage')) {
+                case 'db':
+                    $store = new PdoStore(DB::pdo());
+                    break;
+                default:
+                    $store = new FlockStore(Config::cachePath() . '/locking');
+            }
+        }
         $factory = $factory ?? new LockFactory($store);
         return $factory;
     }
