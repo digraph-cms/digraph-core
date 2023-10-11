@@ -92,8 +92,10 @@ class CachedInitializer
         $key = preg_replace('/[^a-z0-9\-\_]+/', '/', strtolower($class)) . '_' . md5($class);
         static::run(
             $key,
-            $class::initialize_preCache(...),
-            method_exists($class, 'initialize_postCache') ? $class::initialize_postCache(...) : null
+            fn ($state) => $class::initialize_preCache($state),
+            method_exists($class, 'initialize_postCache')
+                ? fn ($state) => $class::initialize_postCache($state)
+                : null
         );
     }
 }
