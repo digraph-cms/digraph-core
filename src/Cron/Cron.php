@@ -82,8 +82,8 @@ class Cron
             ->where('run_next <= ?', [time()])
             ->order('run_next ASC, id ASC')
             ->limit(1);
-        if (static::$skip) {
-            $query->where('id NOT IN (?)', implode(',', static::$skip));
+        foreach (static::$skip as $skip) {
+            $query->where('id <> ?', $skip);
         }
         $query->execute();
         if ($result = $query->getResult()) {

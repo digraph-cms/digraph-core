@@ -46,8 +46,8 @@ class Deferred
         if ($group) {
             $query->where('`group` = ?', [$group]);
         }
-        if (static::$skip) {
-            $query->where('id NOT IN (?)', implode(',', static::$skip));
+        foreach (static::$skip as $skip) {
+            $query->where('id <> ?', $skip);
         }
         $query->execute();
         if ($result = $query->getResult()) {
