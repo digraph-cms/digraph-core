@@ -30,7 +30,7 @@ class Format
         static::$dateFormat_thisYear_day_of_week = Config::get('theme.format.date_thisyear') ?? 'l, F j';
         static::$datetimeFormat_thisYear = Config::get('theme.format.datetime_thisyear') ?? 'F j, g:ia';
         static::$datetimeFormat_thisYear_day_of_week = Config::get('theme.format.datetime_thisyear_dayofweek') ?? 'l, F j, g:ia';
-        static::$datetimeFormat_today = Config::get('theme.format.datetime_today') ?? 'g:ia';
+        static::$datetimeFormat_today = Config::get('theme.format.datetime_today') ?? ' \a\t g:ia';
     }
 
     /**
@@ -233,7 +233,7 @@ class Format
         $date = static::parseDate($date);
         if (!$precise && $date->format('Y') == date('Y')) {
             if ($date->format('Ydm') == date('Ydm')) {
-                $text = 'today';
+                $text = $date->format(static::$datetimeFormat_today);
             } elseif ($day_of_week) {
                 $text = $date->format(static::$datetimeFormat_thisYear_day_of_week);
             } else {
