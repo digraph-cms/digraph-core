@@ -15,7 +15,7 @@ Format::_init();
 
 class Format
 {
-    protected static $timezone, $dateFormat, $datetimeFormat, $timeFormat, $dateFormat_thisYear, $datetimeFormat_thisYear, $datetimeFormat_today;
+    protected static $timezone, $dateFormat, $datetimeFormat, $timeFormat, $dateFormat_thisYear, $datetimeFormat_thisYear, $datetimeFormat_today, $dateFormat_today;
     protected static $dateFormat_day_of_week, $datetimeFormat_day_of_week, $dateFormat_thisYear_day_of_week, $datetimeFormat_thisYear_day_of_week;
 
     public static function _init()
@@ -23,6 +23,7 @@ class Format
         static::$timezone = Theme::timezone();
         static::$dateFormat = Config::get('theme.format.date') ?? 'F j, Y';
         static::$dateFormat_day_of_week = Config::get('theme.format.date_dayofweek') ?? 'l, F j, Y';
+        static::$dateFormat_today = Config::get('theme.format.datetime_today') ?? '\t\o\d\a\y';
         static::$datetimeFormat = Config::get('theme.format.datetime') ?? 'F j, Y, g:ia';
         static::$datetimeFormat_day_of_week = Config::get('theme.format.datetime_dayofweek') ?? 'l, F j, Y, g:ia';
         static::$timeFormat = Config::get('theme.format.time') ?? 'g:ia';
@@ -30,7 +31,7 @@ class Format
         static::$dateFormat_thisYear_day_of_week = Config::get('theme.format.date_thisyear') ?? 'l, F j';
         static::$datetimeFormat_thisYear = Config::get('theme.format.datetime_thisyear') ?? 'F j, g:ia';
         static::$datetimeFormat_thisYear_day_of_week = Config::get('theme.format.datetime_thisyear_dayofweek') ?? 'l, F j, g:ia';
-        static::$datetimeFormat_today = Config::get('theme.format.datetime_today') ?? ' \a\t g:ia';
+        static::$datetimeFormat_today = Config::get('theme.format.datetime_today') ?? '\t\o\d\a\y \a\t g:ia';
     }
 
     /**
@@ -211,7 +212,7 @@ class Format
         $date = static::parseDate($date);
         if (!$precise && $date->format('Y') == date('Y')) {
             if ($date->format('Ydm') == date('Ydm')) {
-                $text = 'today';
+                $text = $date->format(static::$dateFormat_today);;
             } elseif ($day_of_week) {
                 $text = $date->format(static::$dateFormat_thisYear_day_of_week);
             } else {
