@@ -47,7 +47,10 @@
             color: var(--theme-highlight);
         }
 
-        &.cm-variable {
+        &.cm-variable,
+        &.cm-variable-1,
+        &.cm-variable-2,
+        &.cm-variable-3 {
             color: var(--color);
         }
 
