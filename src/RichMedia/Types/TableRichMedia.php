@@ -173,7 +173,7 @@ class TableRichMedia extends AbstractRichMedia
                 $reader = new Csv;
                 break;
             case 'xlsx':
-                $reader = new Xlsx;
+                $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx;
                 break;
             case 'xls':
                 $reader = new Xls;
