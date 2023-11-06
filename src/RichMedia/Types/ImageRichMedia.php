@@ -45,7 +45,7 @@ class ImageRichMedia extends AbstractRichMedia
             ->addForm($form);
 
         // upload field
-        $file = (new Field($create ? 'File' : 'Replace file', new UploadSingle()))
+        $file = (new Field($create ? 'File' : 'Replace file', $input = new UploadSingle()))
             ->addForm($form);
         if ($create) $file->setRequired(true);
 
@@ -60,11 +60,11 @@ class ImageRichMedia extends AbstractRichMedia
             ->addForm($form);
 
         // callback for taking in values
-        $form->addCallback(function () use ($name, $file, $alt, $caption) {
+        $form->addCallback(function () use ($name, $input, $alt, $caption) {
             // upload/replace file
-            if ($file->value()) {
+            if ($input->value()) {
                 if ($this->file()) $this->file()->delete();
-                $this['file'] = $file->input()->filestore($this->uuid())->uuid();
+                $this['file'] = $input->filestore($this->uuid())->uuid();
             }
             // set name
             $this->name($name->value() ? $name->value() : $this->file()->filename());

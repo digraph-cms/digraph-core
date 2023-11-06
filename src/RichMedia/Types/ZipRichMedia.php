@@ -46,44 +46,50 @@ class ZipRichMedia extends AbstractRichMedia
 
         // existing files
         if ($this->files()) {
-            $order = (new Field('Current files', new OrderingInput()))
+            $order = (new Field('Current files', $order_input = new OrderingInput()))
                 ->addForm($form)
                 ->addTip('Drag and drop to reorder in web lists (order in downloaded zip file can\'t be controlled');
             foreach ($this->files() as $file) {
-                $order->input()->addLabel($file->uuid(), $file->filename());
+                $order_input->addLabel($file->uuid(), $file->filename());
             }
             $order->setDefault($this['files']);
-            $order->input()->setAllowDeletion(true);
-        } else $order = null;
+            $order_input->setAllowDeletion(true);
+        } else
+            $order = null;
 
         // upload field
-        $files = (new Field($create ? 'File' : 'Add files', new UploadMulti()))
+        $files = (new Field($create ? 'File' : 'Add files', $files_input = new UploadMulti()))
             ->addForm($form);
-        if ($create) $files->setRequired(true);
+        if ($create)
+            $files->setRequired(true);
 
         // options
-        $options = (new CheckboxListField(
-            'Options',
-            [
-                'single' => 'Allow listing and downloading individual files'
-            ]
-        ))
+        $options = (
+            new CheckboxListField(
+                'Options',
+                [
+                    'single' => 'Allow listing and downloading individual files'
+                ]
+            )
+        )
             ->setDefault($this['options'] ?? [])
             ->addForm($form);
 
         // meta
-        $meta = (new CheckboxListField(
-            'Display metadata',
-            [
-                'uploader' => 'Update user',
-                'upload_date' => 'Update date',
-            ]
-        ))
+        $meta = (
+            new CheckboxListField(
+                'Display metadata',
+                [
+                    'uploader' => 'Update user',
+                    'upload_date' => 'Update date',
+                ]
+            )
+        )
             ->setDefault($this['meta'] ?? [])
             ->addForm($form);
 
         // callback for taking in values
-        $form->addCallback(function () use ($name, $order, $files, $options, $meta) {
+        $form->addCallback(function () use ($name, $order, $files_input, $options, $meta) {
             // set name
             $this->name($name->value());
             // set options
@@ -109,7 +115,7 @@ class ZipRichMedia extends AbstractRichMedia
                     function (FilestoreFile $file): string {
                         return $file->uuid();
                     },
-                    $files->input()->filestore($this->uuid())
+                    $files_input->filestore($this->uuid())
                 )
             );
         });
@@ -165,7 +171,8 @@ class ZipRichMedia extends AbstractRichMedia
             }
         }
         if ($meta) {
-            $card->addChild((new DIV)
+            $card->addChild(
+                (new DIV)
                     ->addClass('file-card__meta')
                     ->addChild(implode('; ', $meta))
             );

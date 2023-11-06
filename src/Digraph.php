@@ -213,7 +213,8 @@ abstract class Digraph
     public static function validateUUID(string $uuid, string $prefix = null): bool
     {
         if ($prefix) {
-            if (substr($uuid, 0, strlen($prefix) + 1) != $prefix . '_') return false;
+            if (substr($uuid, 0, strlen($prefix) + 1) != $prefix . '_')
+                return false;
         }
         $pattern = '/^([a-z]+_)?' . str_replace('0', '[' . static::uuidChars() . ']', preg_quote(static::uuidPattern(), '/')) . '$/';
         return preg_match($pattern, $uuid);
@@ -295,6 +296,7 @@ abstract class Digraph
                 throw new RedirectException(Context::url());
             }
             // process request
+            // @phpstan-ignore-next-line while not necessarily a false positive I think the order of this next block of if/elifs is important for clarity
             if ($explicitly_static || (!$pages && $static_exists)) {
                 // explicitly static or no pages and static exists
                 static::buildResponseContent();
