@@ -1,5 +1,6 @@
 <?php
 
+use DigraphCMS\Captcha\Captcha;
 use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
@@ -45,8 +46,8 @@ $bounce = Context::arg('_bounce');
 if ($bounce) {
     try {
         $bounce = new URL($bounce);
-    } catch (\Throwable $th) {
-        // TODO: record bad behavior
+    } catch (Throwable $th) {
+        Captcha::flag('potentially malicious bounce URL');
         ExceptionLog::log($th);
         $bounce = null;
     }
@@ -62,7 +63,8 @@ try {
     Router::include('_source/' . $source->name() . '.signin.php');
 } catch (RedirectException | RefreshException $r) {
     throw $r;
-} catch (\Throwable $th) {
+} catch (Throwable $th) {
+    ExceptionLog::log($th);
     Notifications::flashError("Sign-in handler encountered an error. Please try again.");
     $url = Users::signinUrl($bounce);
     $url->arg('_noredirect', 1);
@@ -128,7 +130,7 @@ if (Context::data('signin_provider_id')) {
     // include post-signin handler file
     try {
         Router::include('_source/' . $source->name() . '.after.php');
-    } catch (\Throwable $th) {
+    } catch (Throwable $th) {
         // silently log errors here so they don't interrupt signin
         ExceptionLog::log($th);
     }

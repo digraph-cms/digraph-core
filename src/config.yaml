@@ -11,6 +11,10 @@ rich_media_types:
   table: \DigraphCMS\RichMedia\Types\TableRichMedia
   zip: \DigraphCMS\RichMedia\Types\ZipRichMedia
 
+captcha:
+  service: mock
+  pass_ttl: 3600
+
 exception_log:
   notify_emails: []
   notify_frequency: 3600

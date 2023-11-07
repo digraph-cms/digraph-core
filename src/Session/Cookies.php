@@ -305,13 +305,7 @@ class Cookies
 
     public static function onCookieDescribe_PHPSESSID()
     {
-        if (Config::get('php_session.enabled')) {
-            return 'Used by the CMS to store and verify your sign-in status. Once you sign in, on the server this cookie is used to link your account to your IP address, sign-in time, and browser user agent.'
-                . ' This cookie and the PHP session store may also be used by third party libraries to manage the UI state of things like forms.';
-        }
-        $d = "This cookie can be set automatically by the PHP programming language, or it may have been set by a different piece of software running on this server.";
-        $d .= " This cookie and the PHP session store are not used directly by any core CMS code, but may be necessary for third party libraries to manage the UI state of things like forms.";
-        return $d;
+        return 'Used by a variety of PHP features to store temporary data about your session on this site.';
     }
 
     public static function describe(string $key): string

@@ -8,24 +8,18 @@ use DigraphCMS\URL\URL;
 
 class FormWrapper extends Tag
 {
-    /** @var string */
     protected $tag = 'div';
-    /** @var string */
-    protected $method = 'post';
-    /** @var URL|null */
-    protected $action;
-    /** @var Token|null */
-    protected $token;
-    /** @var SubmitButton|null */
-    protected $button;
-    /** @var FORM|null */
-    protected $form;
-    /** @var bool */
-    protected $displayChildren = true;
+    protected string $method = 'post';
+    protected URL|null $action = null;
+    protected Token|null $token = null;
+    protected SubmitButton|null $button = null;
+    protected FORM|null $form = null;
+    protected bool $captcha = true;
+    protected bool $displayChildren = true;
     /** @var callable[] */
-    protected $callbacks = [];
+    protected array $callbacks = [];
     /** @var callable[] */
-    protected $preValidationCallbacks = [];
+    protected array $preValidationCallbacks = [];
 
     const METHOD_POST = 'post';
     const METHOD_GET = 'get';
@@ -37,6 +31,28 @@ class FormWrapper extends Tag
     {
         $this->setID($id ?? 'form-' . self::$counter++);
         $this->addClass('form-wrapper');
+    }
+
+    /**
+     * Set whether CAPTCHA verification is required for this form. Note that
+     * this will not necessarily show a CAPTCHA if the user is signed in or has
+     * already completed a CAPTCHA in this session.
+     * @param bool $captcha 
+     * @return static 
+     */
+    public function setCaptcha(bool $captcha): static
+    {
+        $this->captcha = $captcha;
+        return $this;
+    }
+
+    /**
+     * Whether or not CAPTCHA verifiation is required for this form.
+     * @return bool 
+     */
+    public function captcha(): bool
+    {
+        return $this->captcha;
     }
 
     /**
@@ -197,7 +213,6 @@ class FormWrapper extends Tag
     public function addChild($child)
     {
         if (is_a($child, InputInterface::class) || method_exists($child, 'setForm')) {
-            /** @psalm-suppress PossiblyInvalidMethodCall */
             $child->setForm($this);
         }
         return parent::addChild($child);
@@ -237,7 +252,6 @@ class FormWrapper extends Tag
         foreach ($children as $child) {
             if ($child instanceof Tag) {
                 if (is_a($child, InputInterface::class) || method_exists($child, 'setForm')) {
-                    /** @psalm-suppress PossiblyInvalidMethodCall */
                     $child->setForm($this);
                 }
                 $this->setChildrenForms($child->children());
