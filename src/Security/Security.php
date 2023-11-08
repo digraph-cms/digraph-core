@@ -51,10 +51,20 @@ class Security
             if (static::authenticationFlagged() || static::userFlagged()) {
                 return true;
             }
+            // only respect IP flags if their session is also flagged
+            if (static::ipFlagged() && static::sessionFlagged()) {
+                return true;
+            }
+            // users are unflagged by default
+            return false;
+        } else {
+            // unflag only if both IP and session are unflagged
+            if (!static::ipFlagged() && !static::sessionFlagged()) {
+                return false;
+            }
+            // guests are flagged by default
+            return true;
         }
-        // for IP flags only show the flag if the session is also flagged
-        // this allows users to get a session unflag and not be CAPTCHA'd for a while
-        return static::sessionFlagged() && static::ipFlagged();
     }
 
     /**

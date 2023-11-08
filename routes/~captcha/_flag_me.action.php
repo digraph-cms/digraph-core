@@ -10,6 +10,10 @@ echo '<h2>My IP</h2>';
 if (Security::ipFlagged()) Notifications::printWarning('Currently flagged');
 else echo (new CallbackLink(Security::flagIP(...)))->addChild('Flag my IP');
 
+echo '<h2>My session</h2>';
+if (Security::sessionFlagged()) Notifications::printWarning('Currently flagged');
+else echo (new CallbackLink(Security::flagSession(...)))->addChild('Flag my session');
+
 if (!Session::user()) return;
 
 echo '<h2>My account</h2>';
