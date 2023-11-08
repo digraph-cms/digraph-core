@@ -18,10 +18,10 @@ if (!isset($_SESSION['gregwar_captcha_image']) || Context::arg('refresh')) {
 
 $form = new FormWrapper('gregwar-captcha-form--' . md5(Context::url()));
 $form->setCaptcha(false);
-$form->button()->setText('Submit');
+$form->button()->setText('Submit CAPTCHA');
 
 $form->addChild(sprintf(
-    '<p class="navigation-frame navigation-frame--stateless" id="gregwar-captcha" data=target="_frame">%s<br>%s</p>',
+    '<div class="navigation-frame navigation-frame--stateless" id="gregwar-captcha" data=target="_frame">%s<br>%s</div>',
     $_SESSION['gregwar_captcha_image'],
     '<a href="' . new URL('&refresh=1') . '">refresh</a>'
 ));

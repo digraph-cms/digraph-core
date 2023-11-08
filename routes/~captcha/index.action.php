@@ -14,7 +14,7 @@ $id = Context::arg('frame') ?? 'captcha-interface';
 
 echo '<div id="' . $id . '">';
 if (Context::arg('frame')) {
-    echo '<div data-target="' . Context::arg('frame') . '">';
+    echo '<div data-target="' . Context::arg('frame') . '" class="card">';
 }
 
 if (!Security::flagged()) {
@@ -35,7 +35,6 @@ if (!Security::flagged()) {
     return;
 }
 Context::response()->template('minimal.php');
-Notifications::printNotice('To prove you are a human and not a bot please complete the CAPTCHA below to continue.');
 Router::include('_services/' . Config::get('captcha.service') . '.php');
 
 if (Context::arg('frame')) {
