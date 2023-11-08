@@ -1,6 +1,6 @@
 <?php
 
-namespace DigraphCMS\Captcha;
+namespace DigraphCMS\Security;
 
 use DigraphCMS\Config;
 use DigraphCMS\Context;
@@ -14,7 +14,7 @@ use Envms\FluentPDO\Exception;
 
 @session_start();
 
-class Captcha
+class Security
 {
     /**
      * Secure this request behind a CAPTCHA if user is flagged, operates by
@@ -22,12 +22,20 @@ class Captcha
      * @return void 
      * @throws RedirectException 
      */
-    public static function require(): void
+    public static function requireSecurityCheck(): void
     {
         if (!static::flagged()) return;
+        throw new RedirectException(static::captchaUrl());
+    }
+
+    public static function captchaUrl(string $frame = null): URL
+    {
         $url = new URL('/~captcha/');
         $url->arg('bounce', Context::url()->__toString());
-        throw new RedirectException($url);
+        if ($frame) {
+            $url->arg('frame', $frame);
+        }
+        return $url;
     }
 
     /**

@@ -5,7 +5,10 @@ use DigraphCMS\Content\Filestore;
 use DigraphCMS\Context;
 use DigraphCMS\HTTP\AccessDeniedError;
 use DigraphCMS\HTTP\HttpError;
+use DigraphCMS\Security\Security;
 use DigraphCMS\Users\Permissions;
+
+Security::requireSecurityCheck();
 
 // get identifier from URL
 /** @var string */

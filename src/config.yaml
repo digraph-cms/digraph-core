@@ -12,7 +12,7 @@ rich_media_types:
   zip: \DigraphCMS\RichMedia\Types\ZipRichMedia
 
 captcha:
-  service: mock
+  service: gregwar
   pass_ttl: 3600
 
 exception_log:

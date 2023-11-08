@@ -4,7 +4,7 @@ namespace DigraphCMS\Session;
 
 use DateInterval;
 use DateTime;
-use DigraphCMS\Captcha\Captcha;
+use DigraphCMS\Security\Security;
 use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Events\Dispatcher;
@@ -92,12 +92,12 @@ final class Session
         static::$auth = $auth;
         // check for different user agent
         if (static::browserPlatform($auth->ua()) != static::browserPlatform()) {
-            Captcha::flag('User agent changed');
+            Security::flag('User agent changed');
             return;
         }
         // check for different IP
         if ($auth->ip() != $_SERVER['REMOTE_ADDR']) {
-            Captcha::flag('IP address changed');
+            Security::flag('IP address changed');
             return;
         }
     }

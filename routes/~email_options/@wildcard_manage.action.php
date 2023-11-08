@@ -3,10 +3,13 @@
 use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\Email\Emails;
+use DigraphCMS\Security\Security;
 use DigraphCMS\UI\Breadcrumb;
 use DigraphCMS\UI\ToggleButton;
 use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\Users;
+
+Security::requireSecurityCheck();
 
 Breadcrumb::setTopName('Manage email preferences');
 

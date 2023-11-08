@@ -6,6 +6,7 @@ use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTML\Forms\INPUT;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\HTTP\RefreshException;
+use DigraphCMS\Security\Security;
 use DigraphCMS\Session\Session;
 use DigraphCMS\UI\CallbackLink;
 use DigraphCMS\UI\Format;
@@ -15,6 +16,8 @@ use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\UI\Toolbars\ToolbarLink;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
+
+Security::requireSecurityCheck();
 
 $user = Users::get(Context::arg('id') ?? Session::user());
 if (!$user) throw new HttpError(404, "User not found");

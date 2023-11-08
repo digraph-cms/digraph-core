@@ -3,10 +3,13 @@
 use DigraphCMS\Context;
 use DigraphCMS\Email\Emails;
 use DigraphCMS\HTTP\HttpError;
+use DigraphCMS\Security\Security;
 use DigraphCMS\UI\Breadcrumb;
 use DigraphCMS\UI\ButtonMenus\SingleButton;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\URL\URL;
+
+Security::requireSecurityCheck();
 
 Breadcrumb::setTopName('Email unsubscribe');
 

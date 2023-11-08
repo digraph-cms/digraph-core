@@ -4,6 +4,8 @@ namespace DigraphCMS\HTML\Forms;
 
 use DigraphCMS\Context;
 use DigraphCMS\HTML\Tag;
+use DigraphCMS\Security\SecureContent;
+use DigraphCMS\Security\Security;
 use DigraphCMS\URL\URL;
 
 class FormWrapper extends Tag
@@ -14,7 +16,7 @@ class FormWrapper extends Tag
     protected Token|null $token = null;
     protected SubmitButton|null $button = null;
     protected FORM|null $form = null;
-    protected bool $captcha = true;
+    protected bool $captcha = false;
     protected bool $displayChildren = true;
     /** @var callable[] */
     protected array $callbacks = [];
@@ -89,6 +91,9 @@ class FormWrapper extends Tag
 
     public function submitted(): bool
     {
+        if ($this->captcha() && Security::flagged()) {
+            return false;
+        }
         return $this->token()->submitted();
     }
 
@@ -130,14 +135,18 @@ class FormWrapper extends Tag
 
     public function children(): array
     {
-        return array_merge(
-            $this->displayChildren() ? parent::children() : [],
-            [
-                $this->token(),
-                $this->button(),
-                $this->form()
-            ]
-        );
+        $children = $this->displayChildren() ? parent::children() : [];
+        if ($this->captcha()) {
+            $children[] = (new SecureContent($this->id() . '__captcha'))
+                ->addChild($this->token())
+                ->addChild($this->button())
+                ->addChild($this->form());
+        } else {
+            $children[] = $this->token();
+            $children[] = $this->button();
+            $children[] = $this->form();
+        }
+        return $children;
     }
 
     public function token(): Token

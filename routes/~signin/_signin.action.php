@@ -1,6 +1,6 @@
 <?php
 
-use DigraphCMS\Captcha\Captcha;
+use DigraphCMS\Security\Security;
 use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
@@ -47,7 +47,7 @@ if ($bounce) {
     try {
         $bounce = new URL($bounce);
     } catch (Throwable $th) {
-        Captcha::flag('potentially malicious bounce URL');
+        Security::flag('potentially malicious bounce URL');
         ExceptionLog::log($th);
         $bounce = null;
     }

@@ -3,10 +3,13 @@
 use DigraphCMS\Context;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\HTTP\RedirectException;
+use DigraphCMS\Security\Security;
 use DigraphCMS\Session\Session;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Users;
+
+Security::requireSecurityCheck();
 
 $user = Users::get(Context::arg('user'));
 $token = Context::arg('token');
