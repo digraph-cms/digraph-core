@@ -6,6 +6,7 @@ use DigraphCMS\Context;
 use DigraphCMS\HTML\Tag;
 use DigraphCMS\Security\SecureContent;
 use DigraphCMS\Security\Security;
+use DigraphCMS\Session\Session;
 use DigraphCMS\URL\URL;
 
 class FormWrapper extends Tag
@@ -33,6 +34,9 @@ class FormWrapper extends Tag
     {
         $this->setID($id ?? 'form-' . self::$counter++);
         $this->addClass('form-wrapper');
+        if (!Session::user()) {
+            $this->setCaptcha(true);
+        }
     }
 
     /**

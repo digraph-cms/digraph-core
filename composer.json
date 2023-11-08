@@ -41,7 +41,8 @@
         "robmorgan/phinx": "^0.13.4",
         "cakephp/database": "^4",
         "jbroadway/urlify": "^1.2",
-        "symfony/lock": "^6.3"
+        "symfony/lock": "^6.3",
+        "gregwar/captcha": "^1.2"
     },
     "conflict": {
         "jasig/phpcas": "<1.6",
@@ -54,8 +55,7 @@
         "apereo/phpcas": "Needed to support CAS sign-ins",
         "ext-imagick": "Required to handle large images without using a ton of RAM",
         "ext-sqlite3": "Required to use a SQLite database",
-        "ext-mysql": "Required to use a MySQL database",
-        "gregwar/captcha": "Required to use the gregwar CAPTCHA service"
+        "ext-mysql": "Required to use a MySQL database"
     },
     "autoload": {
         "psr-4": {
@@ -64,8 +64,7 @@
     },
     "require-dev": {
         "phpstan/phpstan": "^1.10",
-        "league/oauth2-client": "^2.7",
-        "gregwar/captcha": "^1.2"
+        "league/oauth2-client": "^2.7"
     },
     "scripts": {
         "migrate": [
