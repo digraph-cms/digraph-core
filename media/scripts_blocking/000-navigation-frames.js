@@ -9,7 +9,7 @@ document.addEventListener('DigraphDOMReady', (e) => {
         const div = divs[i];
         if (!div.classList.contains('navigation-frame')) continue;
         // add reload method/listener to reload current content
-        div.reloadFrame = function (e) {
+        div.reloadFrame = function () {
             if (div.dataset.currentUrl)
                 Digraph.state.get(div.dataset.currentUrl, div);
         }

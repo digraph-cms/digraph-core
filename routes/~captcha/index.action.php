@@ -13,9 +13,6 @@ use DigraphCMS\URL\URL;
 $id = Context::arg('frame') ?? 'captcha-interface';
 
 echo '<div id="' . $id . '">';
-if (Context::arg('frame')) {
-    echo '<div data-target="' . Context::arg('frame') . '" class="card">';
-}
 
 if (!Security::flagged()) {
     if (Context::arg('bounce')) {
@@ -37,7 +34,4 @@ if (!Security::flagged()) {
 Context::response()->template('minimal.php');
 Router::include('_services/' . Config::get('captcha.service') . '.php');
 
-if (Context::arg('frame')) {
-    echo '</div>';
-}
 echo '</div>';

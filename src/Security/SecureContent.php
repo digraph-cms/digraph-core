@@ -27,8 +27,16 @@ class SecureContent extends DIV
         $attributes = parent::attributes();
         if (Security::flagged()) {
             $attributes['data-initial-source'] = Security::captchaUrl($this->id());
+            $attributes['data-target'] = '_frame';
         }
         return $attributes;
+    }
+
+    public function children(): array
+    {
+        $children = parent::children();
+        if (!Security::flagged()) $children[] = '<!--SECURE_CONTENT_LOADED-->';
+        return $children;
     }
 
     public function __toString(): string

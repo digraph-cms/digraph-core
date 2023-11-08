@@ -4,6 +4,8 @@
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\Security\SecureContent;
 
+echo md5(random_bytes(10));
+
 echo '<h2>Arbitrary secure content</h2>';
 $content = new SecureContent();
 $content->addChild('This content is not visible to suspicious characters or bots.');
