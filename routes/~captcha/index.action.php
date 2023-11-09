@@ -7,6 +7,7 @@ use DigraphCMS\Context;
 use DigraphCMS\ExceptionLog;
 use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\HTTP\RefreshException;
+use DigraphCMS\Security\CaptchaMisconfigurationException;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\URL\URL;
 
@@ -31,7 +32,19 @@ if (!Security::flagged()) {
     }
     return;
 }
+
 Context::response()->template('minimal.php');
-Router::include('_services/' . Config::get('captcha.service') . '.php');
+
+try {
+    Router::include('_services/' . Config::get('captcha.service') . '.php');
+} catch (CaptchaMisconfigurationException $e) {
+    ExceptionLog::log($e);
+    Notifications::printError(sprintf(
+        "The configured CAPTCHA service \"%s\" is misconfigured, falling back to \"%s\"",
+        Config::get('captcha.service'),
+        Config::get('captcha.fallback')
+    ));
+    Router::include('_services/' . Config::get('captcha.fallback') . '.php');
+}
 
 echo '</div>';

@@ -36,6 +36,29 @@ class CurlHelper
         return $data;
     }
 
+    public static function post(string $url, array $fields): ?string
+    {
+        // reset and get a handle
+        static::$lastError = null;
+        static::$lastErrorNumber = null;
+        $handle = static::init($url);
+        if (!$handle) return null;
+        // set options
+        curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($handle, CURLOPT_POST, true);
+        curl_setopt($handle, CURLOPT_POSTFIELDS, $fields);
+        // execute and return data, store errors if necessary
+        $data = curl_exec($handle);
+        if ($data === false || curl_getinfo($handle, CURLINFO_HTTP_CODE) != 200) {
+            static::$lastError = curl_error($handle);
+            static::$lastErrorNumber = curl_errno($handle);
+            curl_close($handle);
+            return null;
+        }
+        curl_close($handle);
+        return $data;
+    }
+
     public static function error(): ?string
     {
         return static::$lastError;

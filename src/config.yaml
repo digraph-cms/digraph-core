@@ -13,7 +13,11 @@ rich_media_types:
 
 captcha:
   service: gregwar
+  fallback: gregwar
   pass_ttl: 3600
+  turnstile:
+    site_key: false
+    secret_key: false
 
 exception_log:
   notify_emails: []

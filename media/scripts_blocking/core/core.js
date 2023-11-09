@@ -60,6 +60,7 @@ Digraph.message = (name, data) => {
 };
 
 window.addEventListener('message', function (event) {
+    if (typeof event.data != 'string') return;
     if (event.data.startsWith('[digraph-message]')) {
         if (event.origin == Digraph.config.origin) {
             var data = event.data.substr(17).split(':', 2);
