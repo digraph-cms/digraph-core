@@ -27,11 +27,8 @@ $form->setCaptcha(false);
 $token = new INPUT('token');
 $form->addChild($token);
 
-// hide token and form
-$token->setAttribute('type','hidden');
-$form->setStyle('display','none');
-
-echo $form;
+// hide form
+$form->setStyle('display', 'none');
 
 if ($form->ready()) {
     $response = CurlHelper::post(
@@ -60,9 +57,10 @@ if ($form->ready()) {
             sitekey: '<?= Config::get('captcha.turnstile.site_key') ?>',
             callback: function(token) {
                 document.getElementById('<?= $token->id() ?>').value = token;
-                document.getElementById('<?= $form->form()->id() ?>').submit();
+                Digraph.submitForm(document.getElementById('<?= $form->id() ?>').getElementsByTagName('form')[0]);
             },
         });
     };
 </script>
 <div id="<?= $container_id ?>"></div>
+<?= $form ?>
