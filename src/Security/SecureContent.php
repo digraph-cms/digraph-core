@@ -17,8 +17,10 @@ class SecureContent extends DIV
     {
         $classes = parent::classes();
         $classes[] = 'secure-content';
-        $classes[] = 'navigation-frame';
-        $classes[] = 'navigation-frame--stateless';
+        if (Security::flagged()) {
+            $classes[] = 'navigation-frame';
+            $classes[] = 'navigation-frame--stateless';
+        }
         return array_unique($classes);
     }
 
@@ -35,7 +37,9 @@ class SecureContent extends DIV
     public function children(): array
     {
         $children = parent::children();
-        if (!Security::flagged()) $children[] = '<!--SECURE_CONTENT_LOADED-->';
+        if (!Security::flagged()) {
+            $children[] = '<!--SECURE_CONTENT_LOADED-->';
+        }
         return $children;
     }
 
