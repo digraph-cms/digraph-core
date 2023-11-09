@@ -139,6 +139,7 @@ class Cookies
             );
         }
         $form = new FormWrapper('cookie-authorization');
+        $form->setCaptcha(false);
         // $form->addChild("<div class='notification notification--info'>In order to create a GDPR compliant record of affirmative consent, your response to this form will be recorded with the time and your IP address. The record will be associated with your account if you are signed in.</div>");
         $form->button()->setText('Accept the selected cookies');
         $form->token()->setCSRF(false);

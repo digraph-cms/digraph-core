@@ -17,6 +17,7 @@ echo '<div id="' . Context::arg('frame') . '">';
 
 // fancy autocomplete search form
 $form = (new FormWrapper())
+    ->setCaptcha(false)
     ->addClass('autoform')
     ->setID(Context::arg('frame') . '_adder');
 $form->button()->setText('Add');

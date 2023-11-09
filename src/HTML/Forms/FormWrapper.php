@@ -17,7 +17,7 @@ class FormWrapper extends Tag
     protected Token|null $token = null;
     protected SubmitButton|null $button = null;
     protected FORM|null $form = null;
-    protected bool $captcha = false;
+    protected bool $captcha = true;
     protected bool $displayChildren = true;
     /** @var callable[] */
     protected array $callbacks = [];
@@ -34,9 +34,6 @@ class FormWrapper extends Tag
     {
         $this->setID($id ?? 'form-' . self::$counter++);
         $this->addClass('form-wrapper');
-        if (!Session::user()) {
-            $this->setCaptcha(true);
-        }
     }
 
     /**

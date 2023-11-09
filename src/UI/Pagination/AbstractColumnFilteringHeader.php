@@ -54,6 +54,7 @@ abstract class AbstractColumnFilteringHeader extends ColumnHeader implements Fil
     protected function form(): FormWrapper
     {
         $form = new FormWrapper('form-' . $this->id);
+        $form->setCaptcha(false);
         $form->addClass('form--small');
         $form->setData('target', '_frame');
         $form->button()->setText('Apply');
