@@ -2,7 +2,6 @@
 
 namespace DigraphCMS\UI\Pagination;
 
-use DigraphCMS\DB\AbstractMappedSelect;
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTML\Forms\INPUT;
 use DigraphCMS\HTTP\RedirectException;
@@ -21,6 +20,7 @@ class StringSearchFilter extends FormWrapper implements FilterToolInterface
         parent::__construct();
         $this->column = $column;
         $this->input = new INPUT('Search');
+        $this->setCaptcha(false);
         $this->addChild($this->input);
         $this->button()->setText('Search');
         $this->addClass('inline-form');
