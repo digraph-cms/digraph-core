@@ -214,16 +214,16 @@ class Security
 
     protected static function flaggedAuthentications(): DatastoreGroup
     {
-        return new DatastoreGroup('captcha', 'flagged_authentications');
+        return new DatastoreGroup('security_flags', 'flagged_authentications');
     }
 
     protected static function flaggedUsers(): DatastoreGroup
     {
-        return new DatastoreGroup('captcha', 'flagged_users');
+        return new DatastoreGroup('security_flags', 'flagged_users');
     }
 
     protected static function flaggedIPs(): DatastoreGroup
     {
-        return new DatastoreGroup('captcha', 'flagged_ips');
+        return new DatastoreGroup('security_flags', 'flagged_ips');
     }
 }
