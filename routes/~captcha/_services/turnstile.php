@@ -8,6 +8,7 @@ use DigraphCMS\HTML\Forms\INPUT;
 use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\Security\CaptchaMisconfigurationException;
 use DigraphCMS\Security\Security;
+use DigraphCMS\UI\Notifications;
 
 if (!Config::get('captcha.turnstile.site_key')) {
     throw new CaptchaMisconfigurationException('Turnstile site key not configured (Config: captcha.turnstile.site_key)');
@@ -50,6 +51,9 @@ if ($form->ready()) {
 }
 
 ?>
+<noscript>
+    <?php Notifications::printError("Javascript is required to complete this verification."); ?>
+</noscript>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=<?= $callback_id ?>" defer></script>
 <script>
     window.<?= $callback_id ?> = function() {
