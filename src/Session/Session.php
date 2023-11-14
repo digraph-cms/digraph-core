@@ -96,10 +96,10 @@ final class Session
             return;
         }
         // check for different IP
-        if ($auth->ip() != $_SERVER['REMOTE_ADDR']) {
-            Security::flag('IP address changed');
-            return;
-        }
+        // if ($auth->ip() != $_SERVER['REMOTE_ADDR']) {
+        //     Security::flag('IP address changed');
+        //     return;
+        // }
     }
 
     public static function browserPlatform(string $ua = null): string
