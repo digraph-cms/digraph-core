@@ -184,15 +184,15 @@ class Security
     {
         $authentication_id = $authentication_id ?? Session::authentication()?->id();
         if (!$authentication_id) return false;
-        return static::flaggedSessions()->exists($authentication_id)
-            && static::flaggedSessions()->value($authentication_id) != 'passed';
+        return static::flaggedAuthentications()->exists($authentication_id)
+            && static::flaggedAuthentications()->value($authentication_id) != 'passed';
     }
 
     public static function unflagAuthentication(string $authentication_id = null)
     {
         $authentication_id = $authentication_id ?? Session::authentication()?->id();
         if (!$authentication_id) return;
-        $data = static::flaggedSessions()->get($authentication_id);
+        $data = static::flaggedAuthentications()->get($authentication_id);
         if (!$data) return;
         if ($data->value() == 'passed') return;
         $data->setValue('passed');
@@ -203,18 +203,18 @@ class Security
     {
         $authentication_id = $authentication_id ?? Session::authentication()?->id();
         if (!$authentication_id) return;
-        $data = static::flaggedSessions()->get($authentication_id)?->data()->get(null) ?? [];
+        $data = static::flaggedAuthentications()->get($authentication_id)?->data()->get(null) ?? [];
         $data[] = [
             'reason' => $reason,
             'time' => time(),
             'url' => Context::url()->__toString()
         ];
-        static::flaggedSessions()->set($authentication_id, 'pending', $data);
+        static::flaggedAuthentications()->set($authentication_id, 'pending', $data);
     }
 
-    protected static function flaggedSessions(): DatastoreGroup
+    protected static function flaggedAuthentications(): DatastoreGroup
     {
-        return new DatastoreGroup('captcha', 'flagged_sessions');
+        return new DatastoreGroup('captcha', 'flagged_authentications');
     }
 
     protected static function flaggedUsers(): DatastoreGroup

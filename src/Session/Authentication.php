@@ -29,7 +29,8 @@ class Authentication
         return $this->id;
     }
 
-    public function userUUID(): string {
+    public function userUUID(): string
+    {
         return $this->userUUID;
     }
 
@@ -61,6 +62,18 @@ class Authentication
     public function ua(): string
     {
         return $this->ua;
+    }
+
+    public function update(): bool
+    {
+        return DB::query()->update(
+            'session',
+            [
+                'ip' => $_SERVER['REMOTE_ADDR'],
+                'ua' => $_SERVER['HTTP_USER_AGENT']
+            ],
+            $this->id
+        )->execute();
     }
 
     public function deauthenticate(string $message)

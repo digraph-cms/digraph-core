@@ -92,14 +92,28 @@ final class Session
         static::$auth = $auth;
         // check for different user agent
         if (static::browserPlatform($auth->ua()) != static::browserPlatform()) {
-            Security::flag('User agent changed');
-            return;
+            Security::flagAuthentication(
+                $auth->id(),
+                sprintf(
+                    'User agent changed from "%s" to "%s"',
+                    $auth->ua(),
+                    static::browserPlatform()
+                )
+            );
+            $auth->update();
         }
         // check for different IP
-        // if ($auth->ip() != $_SERVER['REMOTE_ADDR']) {
-        //     Security::flag('IP address changed');
-        //     return;
-        // }
+        if ($auth->ip() != $_SERVER['REMOTE_ADDR']) {
+            Security::flagAuthentication(
+                $auth->id(),
+                sprintf(
+                    'IP address changed from %s to %s',
+                    $auth->ip(),
+                    $_SERVER['REMOTE_ADDR']
+                )
+            );
+            $auth->update();
+        }
     }
 
     public static function browserPlatform(string $ua = null): string
