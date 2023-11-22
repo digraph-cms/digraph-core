@@ -32,6 +32,7 @@ class PaginatedSection extends Tag
     protected $callback;
     protected $dl_filename, $dl_callback, $dl_headers, $dl_finalize_callback, $dl_ttl;
     protected $dl_button = 'Download';
+    protected $dl_permissions;
     /** @var FilterToolInterface[] */
     protected $filterTools = [];
 
@@ -367,7 +368,8 @@ class PaginatedSection extends Tag
         array $headers = [],
         callable $finalizeCallback = null,
         string $buttonText = null,
-        int $ttl = null
+        int $ttl = null,
+        callable|null $permissions = null,
     ) {
         $this->dl_filename = preg_replace('/[^a-z0-9 _\-]+/i', '_', $filename);
         $this->dl_callback = $callback;
@@ -375,6 +377,7 @@ class PaginatedSection extends Tag
         $this->dl_finalize_callback = $finalizeCallback;
         $this->dl_button = $buttonText ?? $this->dl_button;
         $this->dl_ttl = $ttl;
+        $this->dl_permissions = $permissions;
         return $this;
     }
 
@@ -414,7 +417,8 @@ class PaginatedSection extends Tag
                 unlink($file->path() . '.tmp');
             },
             [get_called_class(), $this->downloadFileID()],
-            $this->dl_ttl
+            $this->dl_ttl,
+            $this->dl_permissions
         );
     }
 
