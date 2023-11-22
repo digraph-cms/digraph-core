@@ -382,10 +382,13 @@ class Cookies
             setcookie(
                 $key,
                 $encoded,
-                $expiration,
-                static::cookiePath($localScope),
-                static::cookieDomain(),
-                static::cookieSecure()
+                [
+                    'expires' => $expiration,
+                    'path' => static::cookiePath($localScope),
+                    'domain' => static::cookieDomain(),
+                    'secure' => static::cookieSecure(),
+                    'samesite' => 'Lax',
+                ]
             );
             return $value;
         } else {
@@ -419,10 +422,13 @@ class Cookies
         setcookie(
             $key,
             "",
-            1,
-            static::cookiePath($localScope),
-            static::cookieDomain(),
-            static::cookieSecure()
+            [
+                'expires' => 1,
+                'path' => static::cookiePath($localScope),
+                'domain' => static::cookieDomain(),
+                'secure' => static::cookieSecure(),
+                'samesite' => 'Lax',
+            ]
         );
     }
 
@@ -432,10 +438,24 @@ class Cookies
         setcookie(
             $key,
             "",
-            1,
-            static::cookiePath(false),
-            static::cookieDomain(),
-            static::cookieSecure()
+            [
+                'expires' => 1,
+                'path' => static::cookiePath(true),
+                'domain' => static::cookieDomain(),
+                'secure' => static::cookieSecure(),
+                'samesite' => 'Lax',
+            ]
+        );
+        setcookie(
+            $key,
+            "",
+            [
+                'expires' => 1,
+                'path' => static::cookiePath(false),
+                'domain' => static::cookieDomain(),
+                'secure' => static::cookieSecure(),
+                'samesite' => 'Lax',
+            ]
         );
         setcookie(
             $key,
