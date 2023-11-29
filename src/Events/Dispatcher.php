@@ -132,12 +132,12 @@ class Dispatcher
         if (is_object($object_or_class)) {
             // add callable [object, method] arrays
             foreach (self::getMethods($object_or_class) as $method) {
-                self::addEventListener($method, [$object_or_class, $method]);
+                self::addEventListener($method, $object_or_class->$method(...));
             }
         } elseif (class_exists($object_or_class)) {
             // add strings of static methods
             foreach (self::getMethods($object_or_class) as $method) {
-                self::addEventListener($method, "$object_or_class::$method");
+                self::addEventListener($method, $object_or_class::$method(...));
             }
         }
     }
