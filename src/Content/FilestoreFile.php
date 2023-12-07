@@ -5,8 +5,10 @@ namespace DigraphCMS\Content;
 use DateTime;
 use DigraphCMS\Config;
 use DigraphCMS\FS;
+use DigraphCMS\HTML\DIV;
 use DigraphCMS\Media\DeferredFile;
 use DigraphCMS\Media\ImageFile;
+use DigraphCMS\UI\Format;
 use DigraphCMS\UI\Templates;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\User;
@@ -42,6 +44,34 @@ class FilestoreFile extends DeferredFile
             FS::copy(Filestore::path($this->hash), $this->path(), Config::get('filestore.symlink'));
         };
         $this->permissions = $permissions;
+    }
+
+    public function card(?string $name = null, array $display_meta = ['upload_date']): DIV
+    {
+        $card = parent::card($name);
+        // add requested metadata
+        $meta = [];
+        if (in_array('size', $display_meta)) {
+            $meta[] = Format::filesize($this->bytes());
+        }
+        if (in_array('uploader', $display_meta) && in_array('upload_date', $this['meta'])) {
+            $meta[] = 'created ' . Format::date($this->created()) . ' by ' . $this->createdBy();
+        } else {
+            if (in_array('upload_date', $display_meta)) {
+                $meta[] = 'created ' . Format::date($this->created());
+            }
+            if (in_array('uploader', $display_meta)) {
+                $meta[] = 'created by ' . $this->createdBy();
+            }
+        }
+        if (in_array('hash', $display_meta)) {
+            $meta[] = 'MD5 ' . $this->hash();
+        }
+        $card->addChild((new DIV)
+                ->addClass('file-card__meta')
+                ->addChild(implode('; ', $meta))
+        );
+        return $card;
     }
 
     public function checkPermissions(User|null $user = null): bool

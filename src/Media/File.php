@@ -5,8 +5,8 @@ namespace DigraphCMS\Media;
 use DigraphCMS\Cache\Cache;
 use DigraphCMS\Config;
 use DigraphCMS\FS;
-use DigraphCMS\Users\User;
-use DigraphCMS\Users\Users;
+use DigraphCMS\HTML\A;
+use DigraphCMS\HTML\DIV;
 
 class File
 {
@@ -28,6 +28,22 @@ class File
         $this->identifier = $identifier ? md5(serialize($identifier)) : md5($content);
         // permissions
         $this->permissions = $permissions;
+    }
+
+    public function card(string $name = null): DIV
+    {
+        $card = (new DIV())
+            ->addClass('file-card')
+            ->addClass('card')
+            ->addClass('file-card--extension-' . $this->extension());
+        // add card title
+        $card->addChild((new DIV)
+            ->addClass('card__title')
+            ->addChild((new A())
+                ->addChild($name ?? $this->filename())
+                ->setAttribute('title', $this->filename())
+                ->setAttribute('href', $this->url())));
+        return $card;
     }
 
     public function permissions(): null|callable
