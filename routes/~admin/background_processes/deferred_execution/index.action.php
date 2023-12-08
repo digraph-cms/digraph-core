@@ -13,6 +13,7 @@ use DigraphCMS\Spreadsheets\CellWriters\DateTimeCell;
 use DigraphCMS\Spreadsheets\CellWriters\LinkCell;
 use DigraphCMS\UI\Format;
 use DigraphCMS\UI\Pagination\ColumnDateFilteringHeader;
+use DigraphCMS\UI\Pagination\ColumnSortingHeader;
 use DigraphCMS\UI\Pagination\ColumnStringFilteringHeader;
 use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\URL\URL;
@@ -53,8 +54,8 @@ if ($errors->count()) {
             ];
         },
         [
-            'Job ID',
-            'Group',
+            new ColumnSortingHeader('Job ID', 'id'),
+            new ColumnStringFilteringHeader('Group', 'group'),
             new ColumnDateFilteringHeader('Scheduled', 'scheduled'),
             new ColumnDateFilteringHeader('Run', 'run'),
             new ColumnStringFilteringHeader('Message', 'message')
@@ -72,8 +73,8 @@ if ($errors->count()) {
             ];
         },
         [
-            'Job ID',
-            'Group',
+            new ColumnSortingHeader('Job ID', 'id'),
+            new ColumnStringFilteringHeader('Group', 'group'),
             new ColumnDateFilteringHeader('Scheduled', 'scheduled'),
             new ColumnDateFilteringHeader('Run', 'run'),
             new ColumnStringFilteringHeader('Message', 'message')

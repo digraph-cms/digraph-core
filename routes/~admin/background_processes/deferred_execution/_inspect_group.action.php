@@ -7,7 +7,9 @@ use DigraphCMS\DB\DB;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\UI\Format;
 use DigraphCMS\UI\Pagination\ColumnBooleanFilteringHeader;
+use DigraphCMS\UI\Pagination\ColumnDateFilteringHeader;
 use DigraphCMS\UI\Pagination\ColumnHeader;
+use DigraphCMS\UI\Pagination\ColumnSortingHeader;
 use DigraphCMS\UI\Pagination\ColumnStringFilteringHeader;
 use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\URL\URL;
@@ -87,9 +89,9 @@ echo new PaginatedTable(
         ];
     },
     [
-        new ColumnHeader('Job ID'),
-        new ColumnHeader('Scheduled'),
-        new ColumnHeader('Run'),
+        new ColumnSortingHeader('Job ID', 'id'),
+        new ColumnDateFilteringHeader('Scheduled', 'scheduled'),
+        new ColumnDateFilteringHeader('Run', 'run'),
         new ColumnStringFilteringHeader('Message', 'message'),
         new ColumnBooleanFilteringHeader('Error', 'error')
     ]
