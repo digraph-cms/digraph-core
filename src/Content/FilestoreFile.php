@@ -46,9 +46,9 @@ class FilestoreFile extends DeferredFile
         $this->permissions = $permissions;
     }
 
-    public function card(?string $name = null, array $display_meta = ['upload_date']): DIV
+    public function card(?string $name = null, bool $nofollow = false, array $display_meta = ['upload_date']): DIV
     {
-        $card = parent::card($name);
+        $card = parent::card($name, $nofollow);
         // add requested metadata
         $meta = [];
         if (in_array('size', $display_meta)) {

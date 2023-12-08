@@ -30,7 +30,7 @@ class File
         $this->permissions = $permissions;
     }
 
-    public function card(string $name = null): DIV
+    public function card(string $name = null, bool $nofollow = false): DIV
     {
         $card = (new DIV())
             ->addClass('file-card')
@@ -39,10 +39,13 @@ class File
         // add card title
         $card->addChild((new DIV)
             ->addClass('card__title')
-            ->addChild((new A())
+            ->addChild($a = (new A())
                 ->addChild($name ?? $this->filename())
                 ->setAttribute('title', $this->filename())
                 ->setAttribute('href', $this->url())));
+        if ($nofollow) {
+            $a->setAttribute('rel', 'nofollow');
+        }
         return $card;
     }
 
