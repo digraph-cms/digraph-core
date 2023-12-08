@@ -232,18 +232,31 @@ class Format
     public static function datetime($date, $textOnly = false, $precise = false, $day_of_week = false): string
     {
         $date = static::parseDate($date);
-        if (!$precise && $date->format('Y') == date('Y')) {
-            if ($date->format('Ydm') == date('Ydm')) {
-                $text = $date->format(static::$datetimeFormat_today);
-            } elseif ($day_of_week) {
-                $text = $date->format(static::$datetimeFormat_thisYear_day_of_week);
-            } else {
-                $text = $date->format(static::$datetimeFormat_thisYear);
-            }
-        } elseif ($day_of_week) {
-            $text = $date->format(static::$datetimeFormat_day_of_week);
+        if ($date->format('his') == '000000') {
+            // display midnight as the previous day, followed by "at midnight"
+            $yesterday = clone $date;
+            $yesterday->modify('-1 day');
+            $text = static::date($yesterday, true, $precise, $day_of_week);
+            $text .= ' at midnight';
+        } elseif ($date->format('his') == '120000') {
+            // display noon as the current day, followed by "at noon"
+            $text = static::date($date, true, $precise, $day_of_week);
+            $text .= ' at noon';
         } else {
-            $text = $date->format(static::$datetimeFormat);
+            // display a date with a time
+            if (!$precise && $date->format('Y') == date('Y')) {
+                if ($date->format('Ydm') == date('Ydm')) {
+                    $text = $date->format(static::$datetimeFormat_today);
+                } elseif ($day_of_week) {
+                    $text = $date->format(static::$datetimeFormat_thisYear_day_of_week);
+                } else {
+                    $text = $date->format(static::$datetimeFormat_thisYear);
+                }
+            } elseif ($day_of_week) {
+                $text = $date->format(static::$datetimeFormat_day_of_week);
+            } else {
+                $text = $date->format(static::$datetimeFormat);
+            }
         }
         if (!$textOnly) {
             $text = static::wrapDateHTML($date, $text);
@@ -254,7 +267,13 @@ class Format
     public static function time($date, $textOnly = false): string
     {
         $date = static::parseDate($date);
-        $text = $date->format(static::$timeFormat);
+        if ($date->format('his') == '000000') {
+            $text = 'midnight';
+        } elseif ($date->format('his') == '120000') {
+            $text = 'noon';
+        } else {
+            $text = $date->format(static::$timeFormat);
+        }
         if (!$textOnly) {
             $text = static::wrapDateHTML($date, $text);
         }
