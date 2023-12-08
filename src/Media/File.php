@@ -84,9 +84,6 @@ class File
         $this->write();
         if (!$this->url) {
             $this->url = Media::fileUrl($this, !is_null($this->permissions()));
-            if (is_null($this->permissions())) {
-                $this->url .= '?' . substr(md5_file($this->path()), 0, 4);
-            }
         }
         return $this->url;
     }
