@@ -81,18 +81,21 @@
 file cards include an icon
 */
 .file-card {
-    background: var(--cue-interactive);
-    color: var(--cue-interactive-inv);
+    box-sizing: border-box;
+    background: var(--background-bright);
+    color: var(--color);
     display: grid;
     grid-template-columns: 3.5em auto;
     grid-template-rows: auto auto;
     padding: $grid/2;
-    border: $border;
+    border-left: 1em solid var(--cue-interactive);
     box-shadow: var(--shadow);
-    width: $line-length;
+    width: 100%;
+    max-width: $line-length;
 
     &:before {
         @include icofont;
+        color: var(--cue-interactive);
         display: block;
         content: "\eb12";
         grid-row-start: 1;
@@ -168,10 +171,10 @@ File card icons for extensions
 .file-card--extension-ogw,
 .file-card--extension-ess,
 .file-card--extension-xlhtml {
-    background: #49a94d;
-    color: white;
+    border-color: #49a94d;
 
     &:before {
+        color: #49a94d;
         content: "\eb27";
     }
 }
@@ -188,10 +191,10 @@ File card icons for extensions
 .file-card--extension-rtf,
 .file-card--extension-wpd,
 .file-card--extension-wps {
-    background: #2a5699;
-    color: white;
+    border-color: #2a5699;
 
     &:before {
+        color: #2a5699;
         content: "\eb0e";
     }
 }
@@ -207,10 +210,10 @@ File card icons for extensions
 .file-card--extension-pot,
 .file-card--extension-pps,
 .file-card--extension-ppa {
-    background: #d24726;
-    color: white;
+    border-color: #d24726;
 
     &:before {
+        color: #d24726;
         content: "\eb22";
     }
 }
@@ -235,20 +238,20 @@ File card icons for extensions
 .file-card--extension-k25,
 .file-card--extension-kdc,
 .file-card--extension-dng {
-    background: #666;
-    color: white;
+    border-color: #666;
 
     &:before {
+        color: #666;
         content: "\eb16";
     }
 }
 
 /* pdf */
 .file-card--extension-pdf {
-    background: #e03c31;
-    color: white;
+    border-color: #e03c31;
 
     &:before {
+        color: #e03c31;
         content: "\eb1e";
     }
 }
@@ -256,9 +259,10 @@ File card icons for extensions
 /* avi/mp4 only */
 .file-card--extension-avi,
 .file-card--extension-mp4 {
-    background: #3e93ac;
+    border-color: #3e93ac;
 
     &:before {
+        color: #3e93ac;
         content: "\eb0a";
     }
 }
@@ -267,9 +271,10 @@ File card icons for extensions
 .file-card--extension-bmp,
 .file-card--extension-dib,
 .file-card--extension-wbmp {
-    background: #649fab;
+    border-color: #649fab;
 
     &:before {
+        color: #649fab;
         content: "\eb0b";
     }
 }
@@ -332,9 +337,10 @@ File card icons for extensions
 .file-card--extension-gzi,
 .file-card--extension-lzh,
 .file-card--extension-zz {
-    background: #efab01;
+    border-color: #efab01;
 
     &:before {
+        color: #efab01;
         content: "\eb30";
     }
 }
