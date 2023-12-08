@@ -176,6 +176,15 @@ File card icons for extensions
     }
 }
 
+/* pdf */
+.file-card--extension-pdf {
+    background: #e03c31;
+
+    &:before {
+        content: "\eb1e";
+    }
+}
+
 /* avi/mp4 only */
 .file-card--extension-avi,
 .file-card--extension-mp4 {

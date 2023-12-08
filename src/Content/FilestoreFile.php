@@ -69,7 +69,7 @@ class FilestoreFile extends DeferredFile
         }
         $card->addChild((new DIV)
                 ->addClass('file-card__meta')
-                ->addChild(implode('; ', $meta))
+                ->addChild(implode('<br>', $meta))
         );
         return $card;
     }
