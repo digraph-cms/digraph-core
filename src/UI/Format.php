@@ -232,13 +232,7 @@ class Format
     public static function datetime($date, $textOnly = false, $precise = false, $day_of_week = false): string
     {
         $date = static::parseDate($date);
-        if ($date->format('his') == '000000') {
-            // display midnight as the previous day, followed by "at midnight"
-            $yesterday = clone $date;
-            $yesterday->modify('-1 day');
-            $text = static::date($yesterday, true, $precise, $day_of_week);
-            $text .= ' at midnight';
-        } elseif ($date->format('his') == '120000') {
+        if ($date->format('his') == '120000') {
             // display noon as the current day, followed by "at noon"
             $text = static::date($date, true, $precise, $day_of_week);
             $text .= ' at noon';
@@ -267,9 +261,7 @@ class Format
     public static function time($date, $textOnly = false): string
     {
         $date = static::parseDate($date);
-        if ($date->format('his') == '000000') {
-            $text = 'midnight';
-        } elseif ($date->format('his') == '120000') {
+        if ($date->format('his') == '120000') {
             $text = 'noon';
         } else {
             $text = $date->format(static::$timeFormat);
