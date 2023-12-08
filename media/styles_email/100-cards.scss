@@ -175,6 +175,73 @@ File card icons for extensions
   }
 }
 
+/* word processing */
+.file-card--extension-docx,
+.file-card--extension-doc,
+.file-card--extension-odt,
+.file-card--extension-sxw,
+.file-card--extension-dotx,
+.file-card--extension-dotm,
+.file-card--extension-docm,
+.file-card--extension-dot,
+.file-card--extension-rtf,
+.file-card--extension-wpd,
+.file-card--extension-wps {
+    background: #2a5699;
+    color: white;
+
+    &:before {
+        content: "\eb0e";
+    }
+}
+
+/* presentations */
+.file-card--extension-pptx,
+.file-card--extension-ppt,
+.file-card--extension-odp,
+.file-card--extension-sxi,
+.file-card--extension-potx,
+.file-card--extension-potm,
+.file-card--extension-pptm,
+.file-card--extension-pot,
+.file-card--extension-pps,
+.file-card--extension-ppa {
+    background: #d24726;
+    color: white;
+
+    &:before {
+        content: "\eb22";
+    }
+}
+
+/* images */
+.file-card--extension-jpg,
+.file-card--extension-jpeg,
+.file-card--extension-jpe,
+.file-card--extension-jfif,
+.file-card--extension-jif,
+.file-card--extension-jfi,
+.file-card--extension-png,
+.file-card--extension-gif,
+.file-card--extension-webp,
+.file-card--extension-tif,
+.file-card--extension-tiff,
+.file-card--extension-psd,
+.file-card--extension-raw,
+.file-card--extension-arw,
+.file-card--extension-cr2,
+.file-card--extension-nrw,
+.file-card--extension-k25,
+.file-card--extension-kdc,
+.file-card--extension-dng {
+    background: #666;
+    color: white;
+
+    &:before {
+        content: "\eb16";
+    }
+}
+
 /* pdf */
 .file-card--extension-pdf {
   background: #e03c31;
