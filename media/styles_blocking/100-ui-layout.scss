@@ -159,13 +159,6 @@ span.notification {
         margin-top: 0;
     }
 
-    >h1:first-child {
-        font-size: 3rem;
-        padding-bottom: $grid;
-        border-bottom: $grid/2 solid var(--background-light);
-        margin-bottom: $grid * 2;
-    }
-
     >* {
         &:first-child {
             margin-top: $grid;
