@@ -18,7 +18,7 @@ class Locking
 
     public static function lock(string $name, bool $blocking = false, int $ttl = 30): bool
     {
-        $lock = static::factory()->createLock($name, $ttl, true, false);
+        $lock = static::factory()->createLock($name, $ttl, false);
         while (true) {
             try {
                 $lock->acquire();
