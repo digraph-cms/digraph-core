@@ -11,8 +11,8 @@ final class SymfonyLockingTable extends AbstractMigration
         $this->table('lock_keys', [
             'id' => false,
             'primary_key' => ['key_id'],
-            'encoding'  => 'utf8',
-            'collation' => 'utf8_mb4_bin',
+            // 'encoding'  => 'utf8',
+            // 'collation' => 'utf8_mb4_bin',
         ])
             ->addColumn('key_id', 'string', ['length' => 64, 'null' => false])
             ->addcolumn('key_token', 'string', ['length' => 44, 'null' => false])
