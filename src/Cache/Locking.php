@@ -21,7 +21,7 @@ class Locking
         $lock = static::factory()->createLock($name, $ttl, false);
         while (true) {
             try {
-                $lock->acquire();
+                $lock->acquire(true);
                 static::$locks[$name] = $lock;
                 return true;
             } catch (LockConflictedException) {
