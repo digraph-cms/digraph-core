@@ -18,27 +18,31 @@ class Locking
 
     public static function lock(string $name, bool $blocking = false, int $ttl = 30): bool
     {
-        $lock = static::factory()->createLock($name, $ttl, false);
-        while (true) {
-            try {
-                $lock->acquire(true);
-                static::$locks[$name] = $lock;
-                return true;
-            } catch (LockConflictedException) {
-                if ($blocking) usleep(random_int(0, 100));
-                else return false;
-            } catch (LockAcquiringException) {
-                if ($blocking) usleep(random_int(0, 100));
-                else return false;
-            }
-        }
+        return Cache::get(
+            'locks/' . md5($name),
+            function () use ($name, $blocking, $ttl) {
+                $lock = static::factory()->createLock($name, $ttl, false);
+                if ($blocking) {
+                    $lock->acquire(true);
+                }else {
+                    try {
+                        $lock->acquire(false);
+                    } catch (LockAcquiringException $e) {
+                        return false;
+                    } catch (LockConflictedException $e) {
+                        return false;
+                    }
+                }
+                return $lock;
+            },
+            $ttl,
+        );
     }
 
     public static function release(string $name): void
     {
-        if (isset(static::$locks[$name])) {
-            static::$locks[$name]->release();
-            unset(static::$locks[$name]);
+        if ($lock = Cache::get('locks/' . md5($name))) {
+            $lock->release();
         }
     }
 
