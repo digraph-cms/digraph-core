@@ -19,6 +19,9 @@ captcha:
     site_key: false
     secret_key: false
 
+locking:
+  storage: db
+
 exception_log:
   notify_emails: []
   notify_frequency: 3600
