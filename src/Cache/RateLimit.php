@@ -9,9 +9,9 @@ class RateLimit
     public static function run(string $namespace, string $name, int $ttl, callable $callback)
     {
         DB::beginTransaction();
-        if (static::check($namespace, $name)) {
-            static::set($namespace, $name, $ttl);
+        if (!static::limited($namespace, $name)) {
             $output = $callback();
+            static::set($namespace, $name, $ttl);
         } else {
             $output = null;
         }
@@ -44,13 +44,13 @@ class RateLimit
         DB::commit();
     }
 
-    public static function check(string $namespace, string $name): bool
+    public static function limited(string $namespace, string $name): bool
     {
         $query = DB::query()
             ->from('rate_limit')
             ->where('namespace', $namespace)
             ->where('name', $name)
-            ->where('expires < ?', time());
-        return !$query->count();
+            ->where('expires > ?', time());
+        return $query->count() > 0;
     }
 }
