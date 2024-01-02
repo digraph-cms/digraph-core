@@ -1,6 +1,9 @@
 urls:
   protocol: http
 
+locking:
+  storage: db
+
 errors:
   display_trace: true
 

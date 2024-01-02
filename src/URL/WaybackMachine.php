@@ -4,7 +4,7 @@ namespace DigraphCMS\URL;
 
 use DateTime;
 use DateTimeZone;
-use DigraphCMS\Cache\Locking;
+use DigraphCMS\Cache\RateLimit;
 use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\Curl\CurlHelper;
@@ -31,10 +31,11 @@ class WaybackMachine
      * @return void 
      * @throws Exception 
      */
-    public static function cleanup(): void {
+    public static function cleanup(): void
+    {
         // TODO: maybe get expiration times from config?
-        static::statusStorage()->expire(time()-(86400*90));
-        static::apiStorage()->expire(time()-(86400*90));
+        static::statusStorage()->expire(time() - (86400 * 90));
+        static::apiStorage()->expire(time() - (86400 * 90));
     }
 
     public static function activate(): void
@@ -237,29 +238,30 @@ class WaybackMachine
         if (!static::notifications()) return;
         if (static::noNotifyFlag($url, $context)) return;
         foreach (Config::get('wayback.notify_emails') as $addr) {
-            // lock per-recipient
-            $locked = Locking::lock(
-                'wayback/notification_' . md5(serialize([$context->pathString(), $url, $addr])),
-                false,
-                Config::get('wayback.notify_frequency')
+            $id = md5(serialize([$context->pathString(), $url, $addr]));
+            RateLimit::run(
+                'wayback_notification',
+                $id,
+                Config::get('wayback.notify_frequency'),
+                function () use ($context, $url, $addr) {
+                    // queue email
+                    $email = Email::newForEmail(
+                        'wayback',
+                        $addr,
+                        'Broken link on ' . $context,
+                        new RichContent(
+                            Templates::render(
+                                'email/wayback/broken-link.php',
+                                [
+                                    'broken_url' => $url,
+                                    'context_url' => $context,
+                                ]
+                            )
+                        )
+                    );
+                    Emails::queue($email);
+                }
             );
-            if (!$locked) continue;
-            // queue email
-            $email = Email::newForEmail(
-                'wayback',
-                $addr,
-                'Broken link on ' . $context,
-                new RichContent(
-                    Templates::render(
-                        'email/wayback/broken-link.php',
-                        [
-                            'broken_url' => $url,
-                            'context_url' => $context,
-                        ]
-                    )
-                )
-            );
-            Emails::queue($email);
         }
     }
 

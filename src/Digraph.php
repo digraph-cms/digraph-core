@@ -2,7 +2,7 @@
 
 namespace DigraphCMS;
 
-use DigraphCMS\Cache\Locking;
+use DigraphCMS\Cache\RateLimit;
 use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Content\Router;
 use DigraphCMS\Content\Pages;
@@ -325,22 +325,26 @@ abstract class Digraph
             }
             // do search indexing if necessary
             if (Context::response()->searchIndex() && !Session::user()) {
-                $id = 'response_index/' . md5(Context::url()->fullPathString());
-                if (Locking::lock($id, false, Config::get('search.response_index.interval'))) {
-                    $content = Context::response()->content();
-                    if (Context::fields()['page.name']) {
-                        $name = strip_tags(Context::fields()['page.name']);
-                    } elseif (preg_match("@<h1[^>]*>(.+?)</h1>@i", $content, $matches)) {
-                        $name = trim(strip_tags($matches[1]));
-                    } else {
-                        $name = strip_tags(Context::url()->name());
+                RateLimit::run(
+                    'response_index',
+                    Context::url()->fullPathString(),
+                    Config::get('search.response_index.interval'),
+                    function () {
+                        $content = Context::response()->content();
+                        if (Context::fields()['page.name']) {
+                            $name = strip_tags(Context::fields()['page.name']);
+                        } elseif (preg_match("@<h1[^>]*>(.+?)</h1>@i", $content, $matches)) {
+                            $name = trim(strip_tags($matches[1]));
+                        } else {
+                            $name = strip_tags(Context::url()->name());
+                        }
+                        $url = Context::url();
+                        new DeferredJob(function () use ($content, $name, $url) {
+                            Search::indexURL('response_index', $url, $name, $content);
+                            return "Indexed response for " . $url;
+                        }, 'response_index');
                     }
-                    $url = Context::url();
-                    new DeferredJob(function () use ($content, $name, $url) {
-                        Search::indexURL('response_index', $url, $name, $content);
-                        return "Indexed response for " . $url;
-                    }, 'response_index');
-                }
+                );
             }
             // wrap with template (HTML only)
             if (static::inferMime() == 'text/html') {

@@ -10,7 +10,11 @@ final class SymfonyLockingTable extends AbstractMigration
 {
     public function change(): void
     {
-        (new PdoStore(DB::pdo()))
-            ->createTable();
+        try {
+            (new PdoStore(DB::pdo()))
+                ->createTable();
+        } catch (\Throwable $th) {
+            // FAILS SILENTLY
+        }
     }
 }
