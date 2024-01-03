@@ -203,6 +203,10 @@ th {
             margin-bottom: 0;
         }
     }
+
+    >ul,>ol {
+        padding-left: $grid;
+    }
 }
 
 th,
