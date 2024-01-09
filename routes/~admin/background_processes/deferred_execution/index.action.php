@@ -73,11 +73,11 @@ if ($errors->count()) {
             ];
         },
         [
-            new ColumnSortingHeader('Job ID', 'id'),
-            new ColumnStringFilteringHeader('Group', 'group'),
-            new ColumnDateFilteringHeader('Scheduled', 'scheduled'),
-            new ColumnDateFilteringHeader('Run', 'run'),
-            new ColumnStringFilteringHeader('Message', 'message')
+            'Job ID',
+            'Group',
+            'Scheduled',
+            'Run',
+            'Message'
         ]
     );
     echo $table;
@@ -104,8 +104,8 @@ $table = new PaginatedTable(
         ];
     },
     [
-        'Job ID',
-        'Group',
+        new ColumnSortingHeader('Job ID', 'id'),
+        new ColumnStringFilteringHeader('Group', 'group'),
         new ColumnDateFilteringHeader('Scheduled', 'scheduled'),
         new ColumnDateFilteringHeader('Run', 'run'),
         new ColumnStringFilteringHeader('Message', 'message')
@@ -151,8 +151,8 @@ $table = new PaginatedTable(
         ];
     },
     [
-        'Job ID',
-        'Group',
+        new ColumnSortingHeader('Job ID', 'id'),
+        new ColumnStringFilteringHeader('Group', 'group'),
         new ColumnDateFilteringHeader('Scheduled', 'scheduled'),
     ]
 );

@@ -5,6 +5,7 @@ namespace DigraphCMS\Cron;
 use DigraphCMS\Config;
 use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Content\Slugs;
+use DigraphCMS\Datastore\Datastore;
 use DigraphCMS\Datastore\DatastoreGroup;
 use DigraphCMS\DB\DB;
 use DigraphCMS\URL\WaybackMachine;
@@ -138,6 +139,18 @@ class CoreCronSubscriber
 
     public static function cronJob_maintenance_heavy()
     {
+        // expire old scheduled job hashes after 30 days
+        new DeferredJob(
+            function () {
+                Datastore::expire(
+                    'system',
+                    'scheduled_jobs',
+                    time() - (86400 * 30)
+                );
+                return "Expired old scheduled job hashes";
+            },
+            'core_maintenance_heavy'
+        );
         // expire old exception logs
         new DeferredJob(
             function () {
