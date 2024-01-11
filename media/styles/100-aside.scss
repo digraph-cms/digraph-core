@@ -40,11 +40,11 @@ aside {
 
   &.aside--error,
   &.aside--danger {
-    border-color: var(--cue-error);
+    border-color: var(--cue-danger);
 
     >h1 {
-      background: var(--cue-error);
-      color: var(--cue-error-inv);
+      background: var(--cue-danger);
+      color: var(--cue-danger-inv);
     }
   }
 }

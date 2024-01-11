@@ -70,11 +70,11 @@ aside {
 
   &.aside--error,
   &.aside--danger {
-    border-color: $cue-error;
+    border-color: $cue-danger;
 
     >h1 {
-      background: $cue-error;
-      color: $cue-error-inv;
+      background: $cue-danger;
+      color: $cue-danger-inv;
     }
   }
 }
