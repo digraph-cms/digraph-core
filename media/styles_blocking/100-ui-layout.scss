@@ -114,6 +114,7 @@ body>.action-menu,
     padding: $grid/2;
     font-family: $font-ui;
     border-radius: $border-radius;
+    max-width: $line-length;
 
     &.notification--notice {
         background-color: var(--cue-information);
