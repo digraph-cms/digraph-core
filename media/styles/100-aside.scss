@@ -1,10 +1,10 @@
 aside {
   &.aside--accent {
-    border-color: var(--cue-accent);
+    border-color: var(--theme-accent);
 
     >h1 {
-      background: var(--cue-accent);
-      color: var(--cue-accent-inv);
+      background: var(--theme-accent);
+      color: var(--theme-accent-inv);
     }
   }
 

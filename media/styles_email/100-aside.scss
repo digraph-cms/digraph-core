@@ -30,11 +30,11 @@ aside {
   }
 
   &.aside--accent {
-    border-color: $cue-accent;
+    border-color: $theme-accent;
 
     >h1 {
-      background: $cue-accent;
-      color: $cue-accent-inv;
+      background: $theme-accent;
+      color: $theme-accent-inv;
     }
   }
 
