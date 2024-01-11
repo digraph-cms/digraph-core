@@ -1,17 +1,17 @@
 aside {
-  background: var(--background-dark);
+  background: $background-dark;
   padding: $grid;
-  box-shadow: var(--shadow);
+  box-shadow: $shadow;
   box-sizing: border-box;
   max-width: $line-length;
-  border-left: $border solid var(--theme-neutral);
+  border-left: $border solid $theme-neutral;
   margin: ($grid * 3) 0;
 
   >h1 {
     margin-left: -$grid;
     margin-right: -$grid;
-    background: var(--theme-neutral);
-    color: var(--theme-neutral-inv);
+    background: $theme-neutral;
+    color: $theme-neutral-inv;
     padding: $grid;
 
     &:first-child {
@@ -30,51 +30,51 @@ aside {
   }
 
   &.aside--accent {
-    border-color: var(--cue-accent);
+    border-color: $cue-accent;
 
     >h1 {
-      background: var(--cue-accent);
-      color: var(--cue-accent-inv);
+      background: $cue-accent;
+      color: $cue-accent-inv;
     }
   }
 
   &.aside--info,
   &.aside--information,
   &.aside--notice {
-    border-color: var(--cue-information);
+    border-color: $cue-information;
 
     >h1 {
-      background: var(--cue-information);
-      color: var(--cue-information-inv);
+      background: $cue-information;
+      color: $cue-information-inv;
     }
   }
 
   &.aside--confirmation,
   &.aside--safe {
-    border-color: var(--cue-safe);
+    border-color: $cue-safe;
 
     >h1 {
-      background: var(--cue-safe);
-      color: var(--cue-safe-inv);
+      background: $cue-safe;
+      color: $cue-safe-inv;
     }
   }
 
   &.aside--warning {
-    border-color: var(--cue-warning);
+    border-color: $cue-warning;
 
     >h1 {
-      background: var(--cue-warning);
-      color: var(--cue-warning-inv);
+      background: $cue-warning;
+      color: $cue-warning-inv;
     }
   }
 
   &.aside--error,
   &.aside--danger {
-    border-color: var(--cue-error);
+    border-color: $cue-error;
 
     >h1 {
-      background: var(--cue-error);
-      color: var(--cue-error-inv);
+      background: $cue-error;
+      color: $cue-error-inv;
     }
   }
 }
