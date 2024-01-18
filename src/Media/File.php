@@ -64,6 +64,12 @@ class File
         return $this->filename;
     }
 
+    public function setFilename(string $filename): static
+    {
+        $this->filename = $filename;
+        return $this;
+    }
+
     public function extension(): string
     {
         return $this->extension;

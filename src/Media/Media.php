@@ -53,17 +53,19 @@ class Media
         return $result;
     }
 
-    public static function get(string $path): ?File
+    public static function get(string $path, string $override_filename = null): ?File
     {
         return Cache::get(
             'media/' . md5($path),
-            function () use ($path) {
+            function () use ($path, $override_filename) {
                 $path = static::prefixContext($path);
-                $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+                $filename = $override_filename ?? basename($path);
+                $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
                 Context::beginUrlContext(new URL($path));
                 $file = Dispatcher::firstValue("onGetMedia_$extension", [$path]) ??
                     Dispatcher::firstValue("onGetMedia", [$path]) ??
                     static::doGet($path);
+                $file->setFilename($filename);
                 if ($file) {
                     Dispatcher::dispatchEvent("onFileReady_" . $file->extension(), [$file]);
                     Dispatcher::dispatchEvent("onFileReady", [$file]);
