@@ -65,8 +65,8 @@ class Media
                 $file = Dispatcher::firstValue("onGetMedia_$extension", [$path]) ??
                     Dispatcher::firstValue("onGetMedia", [$path]) ??
                     static::doGet($path);
-                $file->setFilename($filename);
                 if ($file) {
+                    $file->setFilename($filename);
                     Dispatcher::dispatchEvent("onFileReady_" . $file->extension(), [$file]);
                     Dispatcher::dispatchEvent("onFileReady", [$file]);
                 }
