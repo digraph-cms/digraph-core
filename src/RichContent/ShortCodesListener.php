@@ -144,7 +144,7 @@ class ShortCodesListener
     public static function onShortCode_link(ShortcodeInterface $s): ?string
     {
         if (!$s->getBbCode()) {
-            // nothing is specified, just use context URL route and optional index
+            // nothing is specified, just use context URL route and optional action
             $url = Context::url();
             $route = Context::url()->route();
             $action = $s->getParameter('action', 'index');
@@ -198,15 +198,18 @@ class ShortCodesListener
                 implode(
                     ', ',
                     array_map(
-                        fn($e) => '"' . $e['title'] . '"',
+                        fn ($e) => '"' . $e['title'] . '"',
                         $options
                     )
                 )
             );
         }
+        // add fragment to URL
+        $fragment = trim($s->getParameter('fragment', ''));
+        if ($fragment) $fragment = '#' . $fragment;
         // build link
         $link = (new A)
-            ->setAttribute('href', $url)
+            ->setAttribute('href', $url . $fragment)
             ->setAttribute('title', $title)
             ->addClassString($s->getParameter('class', ''))
             ->addChild(new Text($s->getContent() ? $s->getContent() : $title));
