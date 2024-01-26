@@ -105,7 +105,7 @@ $table = new PaginatedTable(
     },
     [
         new ColumnSortingHeader('Job ID', 'id'),
-        new ColumnStringFilteringHeader('Group', 'group'),
+        new ColumnStringFilteringHeader('Group', '`group`'),
         new ColumnDateFilteringHeader('Scheduled', 'scheduled'),
         new ColumnDateFilteringHeader('Run', 'run'),
         new ColumnStringFilteringHeader('Message', 'message')

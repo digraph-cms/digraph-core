@@ -3,7 +3,6 @@
 namespace DigraphCMS\RichContent;
 
 use DigraphCMS\Config;
-use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Content\Pages;
 use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
