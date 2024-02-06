@@ -20,30 +20,37 @@ class SELECT extends Tag implements InputInterface
 
     protected static $counter = 0;
 
-    public function __construct(array $options = null)
+    public function __construct(array $options = null, string $null_label = null)
     {
-        $this->setOptions($options);
+        if ($null_label) {
+            $this->setOption(null, $null_label);
+        }
+        if (!is_null($options)) {
+            $this->setOptions($options);
+        }
         $this->setID('select-' . static::$counter++);
     }
 
     public function children(): array
     {
         return [
-            implode('', array_map(
-                function ($opt) {
-                    if (is_string($opt['value']) || is_int($opt['value'])) $key = $opt['value'];
-                    else $key = md5(serialize($opt['value']));
-                    return sprintf(
-                        '<option value="%s"%s>%s</option>',
-                        $key,
-                        ($this->value(true) === $opt['value'] || $this->valueString() === $key)
-                        ? ' selected="true"'
-                        : '',
-                        $opt['label']
-                    );
-                },
-                $this->options
-            )
+            implode(
+                '',
+                array_map(
+                    function ($opt) {
+                        if (is_string($opt['value']) || is_int($opt['value'])) $key = $opt['value'];
+                        else $key = md5(serialize($opt['value']));
+                        return sprintf(
+                            '<option value="%s"%s>%s</option>',
+                            $key,
+                            ($this->value(true) === $opt['value'] || $this->valueString() === $key)
+                                ? ' selected="true"'
+                                : '',
+                            $opt['label']
+                        );
+                    },
+                    $this->options
+                )
             )
         ];
     }
@@ -97,7 +104,7 @@ class SELECT extends Tag implements InputInterface
 
     public function validationError(): ?string
     {
-        if ($this->required() && !$this->value()) {
+        if ($this->required() && is_null($this->value())) {
             return $this->requiredMessage;
         } else {
             foreach ($this->validators as $validator) {
