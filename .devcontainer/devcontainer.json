@@ -5,9 +5,9 @@
 		"context": ".."
 	},
 	// specify run arguments
-	"runArgs": [
-		"--dns=8.8.8.8" // for some reason DNS doesn't work right unless we explicitly name a DNS server
-	],
+	// "runArgs": [
+	// 	"--dns=8.8.8.8" // for some reason DNS doesn't work right unless we explicitly name a DNS server
+	// ],
 	// mount entire sites_v2 directory, so we can access global config and shared DB
 	"workspaceMount": "source=${localWorkspaceFolder},target=/workspace/${localWorkspaceFolderBasename},type=bind,consistency=cached",
 	"workspaceFolder": "/workspace/${localWorkspaceFolderBasename}",
@@ -18,7 +18,7 @@
 	"mounts": [
 		"source=${localWorkspaceFolderBasename}-demo-files,target=${containerWorkspaceFolder}/demo/files,type=volume",
 		"source=${localWorkspaceFolderBasename}-demo-storage,target=${containerWorkspaceFolder}/demo/storage,type=volume",
-		"source=${localWorkspaceFolderBasename}-demo-vendor,target=${containerWorkspaceFolder}/demo/vendor,type=volume"
+		"source=${localWorkspaceFolderBasename}-vendor,target=${containerWorkspaceFolder}/vendor,type=volume"
 	],
 	// specify extensions that we want
 	"customizations": {
