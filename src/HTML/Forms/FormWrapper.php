@@ -6,7 +6,6 @@ use DigraphCMS\Context;
 use DigraphCMS\HTML\Tag;
 use DigraphCMS\Security\SecureContent;
 use DigraphCMS\Security\Security;
-use DigraphCMS\Session\Session;
 use DigraphCMS\URL\URL;
 
 class FormWrapper extends Tag
@@ -23,6 +22,8 @@ class FormWrapper extends Tag
     protected array $callbacks = [];
     /** @var callable[] */
     protected array $preValidationCallbacks = [];
+    protected bool $display_validation_error = false;
+    protected bool $enable_validation_error = true;
 
     const METHOD_POST = 'post';
     const METHOD_GET = 'get';
@@ -116,6 +117,18 @@ class FormWrapper extends Tag
         return $valid;
     }
 
+    /**
+     * Set whether or not to display a validation error message at the top of the form
+     *
+     * @param boolean $enable
+     * @return void
+     */
+    public function setEnableValidationError(bool $enable)
+    {
+        $this->enable_validation_error = $enable;
+        return $this;
+    }
+
     public function displayChildren(): bool
     {
         return $this->displayChildren;
@@ -137,6 +150,9 @@ class FormWrapper extends Tag
     public function children(): array
     {
         $children = $this->displayChildren() ? parent::children() : [];
+        if ($this->display_validation_error) {
+            array_unshift($children, '<div class="notification notification--error notification--form-validation">Please correct any form validation errors below</div>');
+        }
         if ($this->captcha()) {
             $children[] = (new SecureContent($this->id() . '__captcha'))
                 ->addChild($this->token())
@@ -249,6 +265,12 @@ class FormWrapper extends Tag
             ->setAttribute('method', $this->method())
             ->setAttribute('action', $this->action())
             ->setID($this->formID());
+        // check if we want to display a validation error
+        if ($this->displayChildren() && $this->submitted() && !$this->validate()) {
+            $this->display_validation_error = true;
+        } else {
+            $this->display_validation_error = false;
+        }
         // return normal printing
         return parent::toString();
     }
