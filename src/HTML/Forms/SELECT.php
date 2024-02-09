@@ -33,26 +33,18 @@ class SELECT extends Tag implements InputInterface
 
     public function children(): array
     {
-        return [
-            implode(
-                '',
-                array_map(
-                    function ($opt) {
-                        if (is_string($opt['value']) || is_int($opt['value'])) $key = $opt['value'];
-                        else $key = md5(serialize($opt['value']));
-                        return sprintf(
-                            '<option value="%s"%s>%s</option>',
-                            $key,
-                            ($this->value(true) === $opt['value'])
-                                ? ' selected="true"'
-                                : '',
-                            $opt['label']
-                        );
-                    },
-                    $this->options
-                )
-            )
-        ];
+        $children = [];
+        foreach ($this->options as $key => $opt) {
+            $children = sprintf(
+                '<option value="%s"%s>%s</option>',
+                $key,
+                ($this->value(true) === $opt['value'])
+                    ? ' selected="true"'
+                    : '',
+                $opt['label']
+            );
+        }
+        return $children;
     }
 
     public function attributes(): array
