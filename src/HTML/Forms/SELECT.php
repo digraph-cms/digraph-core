@@ -35,7 +35,7 @@ class SELECT extends Tag implements InputInterface
     {
         $children = [];
         foreach ($this->options as $key => $opt) {
-            $children = sprintf(
+            $children[] = sprintf(
                 '<option value="%s"%s>%s</option>',
                 $key,
                 ($this->value(true) === $opt['value'])
