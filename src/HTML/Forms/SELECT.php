@@ -85,10 +85,10 @@ class SELECT extends Tag implements InputInterface
      */
     public function setOption($value, string $label)
     {
-        if ($value === true) $key = '__true__';
-        elseif ($value === false) $key = '__false__';
-        elseif ($value === null) $key = '__null__';
-        else $key = md5(serialize($value));
+        if ($value === true) $key = 'true';
+        elseif ($value === false) $key = 'false';
+        elseif ($value === null) $key = 'null';
+        else $key = crc32(serialize($value));
         $this->options[$key] = [
             'value' => $value,
             'label' => $label
@@ -157,7 +157,6 @@ class SELECT extends Tag implements InputInterface
      */
     public function setValue($value)
     {
-        if (is_string($value) || is_int($value)) $value = "$value";
         $this->value = $value;
         return $this;
     }
@@ -209,21 +208,11 @@ class SELECT extends Tag implements InputInterface
 
     public function value(bool $useDefault = false): mixed
     {
-        if ($key = $this->valueString()) {
+        $key = $this->submittedValue();
+        if (!is_null($key)) {
             return @$this->options[$key]['value'];
         } elseif ($useDefault) {
             return $this->default();
-        } else {
-            return null;
-        }
-    }
-
-    public function valueString()
-    {
-        if ($this->value) {
-            return $this->value;
-        } elseif (($value = trim($this->submittedValue() ?? "")) || $this->submitted()) {
-            return $value ? $value : null;
         } else {
             return null;
         }
