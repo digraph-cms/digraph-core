@@ -6,7 +6,7 @@ use DigraphCMS\Cache\CacheableState;
 use DigraphCMS\Cache\InitializedClassInterface;
 use DigraphCMS\Cache\CachedInitializer;
 use Flatrr\SelfReferencingFlatArray;
-use Spyc;
+use Symfony\Component\Yaml\Yaml;
 
 abstract class Config implements InitializedClassInterface
 {
@@ -112,7 +112,7 @@ abstract class Config implements InitializedClassInterface
         if (!is_file($file)) {
             return [];
         }
-        return Spyc::YAMLLoadString(file_get_contents($file));
+        return Yaml::parseFile($file);
     }
 
     /**
@@ -143,11 +143,11 @@ abstract class Config implements InitializedClassInterface
      */
     public static function dumpYaml(array $data): string
     {
-        return Spyc::YAMLDump(
+        return Yaml::dump(
             $data,
             2,
-            80,
-            true
+            2,
+            Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK
         );
     }
 }
