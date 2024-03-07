@@ -66,7 +66,7 @@ class TableRichMedia extends AbstractRichMedia
                                 function (array $cell) {
                                     return $cell['cell'];
                                 },
-                                $data['head'][0]['row']
+                                $data['head'][0]['row'] ?? []
                             )
                         );
                     }
