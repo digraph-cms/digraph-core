@@ -3,6 +3,7 @@
 namespace DigraphCMS\CodeMirror;
 
 use Flatrr\FlatArray;
+use Symfony\Component\Yaml\Yaml;
 
 class YamlArrayInput extends CodeMirrorInput
 {
@@ -38,7 +39,7 @@ class YamlArrayInput extends CodeMirrorInput
     {
         $value = parent::default();
         if (is_array($value)) return $value;
-        elseif ($value) return spyc_load($value);
+        elseif ($value) return Yaml::parse($value);
         else return [];
     }
 
@@ -51,13 +52,13 @@ class YamlArrayInput extends CodeMirrorInput
         /** @var string|null|array<mixed,mixed> might be an array, because of default */
         $value = parent::value($useDefault);
         if (is_array($value)) return $value;
-        elseif ($value) return spyc_load($value);
+        elseif ($value) return Yaml::parse($value);
         else return [];
     }
 
     protected static function yamlDump(array $value): string
     {
-        $value = spyc_dump($value);
+        $value = Yaml::dump($value, 2, 2, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK);
         $value = preg_replace_callback('/^(  )+/m', function ($m) {
             return str_repeat("\t", strlen($m[0]) / 2);
         }, $value);
