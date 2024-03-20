@@ -4,6 +4,7 @@ namespace DigraphCMS\CodeMirror;
 
 use DigraphCMS\Exception;
 use DigraphCMS\ExceptionLog;
+use DigraphCMS\UI\Notifications;
 use Flatrr\FlatArray;
 use Symfony\Component\Yaml\Yaml;
 
@@ -63,6 +64,7 @@ class YamlArrayInput extends CodeMirrorInput
             try {
                 return Yaml::parse($value);
             } catch (\Throwable $th) {
+                Notifications::error("A YAML input field failed to parse. Submitting the form it is in may cause data loss.");
                 ExceptionLog::log(new Exception("Failed to parse YAML", $value, $th));
                 return [];
             }
