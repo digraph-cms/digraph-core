@@ -59,13 +59,17 @@ class YamlArrayInput extends CodeMirrorInput
      */
     protected static function yamlParse($value): array
     {
+        $input = $value;
         if (is_array($value)) return $value;
         elseif ($value) {
             try {
+                $value = preg_replace_callback('/^(\t)+/m', function ($m) {
+                    return str_repeat("  ", strlen($m[0]) / 2);
+                }, $value);
                 return Yaml::parse($value);
             } catch (\Throwable $th) {
                 Notifications::error("A YAML input field failed to parse. Submitting the form it is in may cause data loss.");
-                ExceptionLog::log(new Exception("Failed to parse YAML", $value, $th));
+                ExceptionLog::log(new Exception("Failed to parse YAML", $input, $th));
                 return [];
             }
         } else return [];
