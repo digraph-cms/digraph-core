@@ -39,10 +39,7 @@ class YamlArrayInput extends CodeMirrorInput
 
     public function default(): array
     {
-        $value = parent::default();
-        if (is_array($value)) return $value;
-        elseif ($value) return Yaml::parse($value);
-        else return [];
+        return static::yamlParse(parent::default());
     }
 
     /**
@@ -51,26 +48,34 @@ class YamlArrayInput extends CodeMirrorInput
      */
     public function value(bool $useDefault = false): mixed
     {
-        /** @var string|null|array<mixed,mixed> might be an array, because of default */
-        $value = parent::value($useDefault);
+        return static::yamlParse(parent::value($useDefault));
+    }
+
+    /**
+     * 
+     * @param string|null|array<mixed,mixed> $value 
+     * @return array 
+     */
+    protected static function yamlParse($value): array
+    {
         if (is_array($value)) return $value;
-        elseif ($value) return Yaml::parse($value);
-        else return [];
+        elseif ($value) {
+            try {
+                return Yaml::parse($value);
+            } catch (\Throwable $th) {
+                ExceptionLog::log(new Exception("Failed to parse YAML", $value, $th));
+                return [];
+            }
+        } else return [];
     }
 
     protected static function yamlDump(array $value): string
     {
-        $input = $value;
-        try {
-            $value = Yaml::dump($value, 2, 2, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK);
-            $value = preg_replace_callback('/^(  )+/m', function ($m) {
-                return str_repeat("\t", strlen($m[0]) / 2);
-            }, $value);
-            return $value;
-        } catch (\Throwable $th) {
-            ExceptionLog::log(new Exception('Failed to parse YAML for input field', $input, $th));
-            return '';
-        }
+        $value = Yaml::dump($value, 2, 2, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK);
+        $value = preg_replace_callback('/^(  )+/m', function ($m) {
+            return str_repeat("\t", strlen($m[0]) / 2);
+        }, $value);
+        return $value;
     }
 
     public function children(): array
