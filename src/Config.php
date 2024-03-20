@@ -145,7 +145,7 @@ abstract class Config implements InitializedClassInterface
     {
         return Yaml::dump(
             $data,
-            2,
+            4,
             2,
             Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK
         );
