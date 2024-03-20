@@ -2,6 +2,8 @@
 
 namespace DigraphCMS\CodeMirror;
 
+use DigraphCMS\Exception;
+use DigraphCMS\ExceptionLog;
 use Flatrr\FlatArray;
 use Symfony\Component\Yaml\Yaml;
 
@@ -58,11 +60,17 @@ class YamlArrayInput extends CodeMirrorInput
 
     protected static function yamlDump(array $value): string
     {
-        $value = Yaml::dump($value, 2, 2, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK);
-        $value = preg_replace_callback('/^(  )+/m', function ($m) {
-            return str_repeat("\t", strlen($m[0]) / 2);
-        }, $value);
-        return $value;
+        $input = $value;
+        try {
+            $value = Yaml::dump($value, 2, 2, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK);
+            $value = preg_replace_callback('/^(  )+/m', function ($m) {
+                return str_repeat("\t", strlen($m[0]) / 2);
+            }, $value);
+            return $value;
+        } catch (\Throwable $th) {
+            ExceptionLog::log(new Exception('Failed to parse YAML for input field', $input, $th));
+            return '';
+        }
     }
 
     public function children(): array

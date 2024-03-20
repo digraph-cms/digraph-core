@@ -3,6 +3,7 @@
 use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
+use DigraphCMS\Exception;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\Session\Session;
 use DigraphCMS\UI\Format;
@@ -148,6 +149,11 @@ function displayThrownLogData(array $th): void
         echo $th['file'] . ':' . $th['line'];
     }
     echo '</div>';
+    // attached data
+    if ($th['class'] == Exception::class && $th['data'] !== null) {
+        echo "<h3>Attached data:</h3>";
+        echo "<pre>" . print_r($th['data'], true) . "</pre>";
+    }
     // stack trace
     echo "<div class='stack-trace'>";
     foreach ($th['trace'] as $t) {
