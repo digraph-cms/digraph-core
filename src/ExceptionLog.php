@@ -143,6 +143,7 @@ class ExceptionLog
         return [
             'class' => get_class($th),
             'code' => method_exists($th, 'getCode') ? $th->getCode() : null,
+            'data' => $th instanceof Exception ? $th->data() : null,
             'message' => method_exists($th, 'getMessage') ? $th->getMessage() : null,
             'file' => method_exists($th, 'getFile') ? static::shortenPath($th->getFile()) : null,
             'line' => method_exists($th, 'getLine') ? $th->getLine() : null,

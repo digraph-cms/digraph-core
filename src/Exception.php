@@ -14,4 +14,9 @@ class Exception extends GlobalException
         $this->data = $data;
         parent::__construct($message, 1, $previous);
     }
+
+    public function data()
+    {
+        return $this->data;
+    }
 }
