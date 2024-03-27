@@ -3,6 +3,7 @@
 namespace DigraphCMS\UI\MenuBar;
 
 use DigraphCMS\Content\AbstractPage;
+use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
 use DigraphCMS\HTML\DIV;
 use DigraphCMS\UI\Breadcrumb;
@@ -45,6 +46,27 @@ class MenuBar extends DIV
             $item->addChild($subMenu);
             foreach ($page->children() as $child) {
                 $subMenu->addPageDropdown($child, null, $openContext, $depth);
+            }
+        }
+        return $item;
+    }
+
+    public function addUrlDropdown(URL $url, string $label = null, bool $openContext = false, int $depth = 3): MenuItem
+    {
+        $item = $this->addURL($url, $label);
+        if ($openContext) {
+            if ($url == Context::url()) $item->addClass('menuitem--open');
+            elseif (in_array($url, Breadcrumb::breadcrumb())) $item->addClass('menuitem--open');
+        }
+        $children = Router::staticActions($url->route(), true);
+        if ($page = $url->page()) {
+            $children = array_merge($children, Router::pageActions($page, true));
+        }
+        if ($depth-- && $children) {
+            $subMenu = new MenuBar;
+            $item->addChild($subMenu);
+            foreach ($children as $child) {
+                $subMenu->addUrlDropdown($child, null, $openContext, $depth);
             }
         }
         return $item;
