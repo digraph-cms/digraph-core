@@ -33,6 +33,7 @@ class Icon extends Tag
         'expand-more' => ['string' => 'expand_more'],
         'expand-less' => ['string' => 'expand_less'],
         'facebook' => ['string' => '&#xed37;', 'type' => 'icofont'],
+        'feed' => ['string' => 'rss_feed'],
         'filter' => ['string' => 'filter_alt'],
         'heading' => ['string' => 'title'],
         'hide' => ['string' => 'visibility_off'],
