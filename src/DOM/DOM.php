@@ -26,21 +26,21 @@ class DOM
                 if ($fragment) {
                     $dom = static::html5()->parseFragment($html);
                     static::dispatchEvents($dom, 'fragment');
-                    $html = $dom->ownerDocument->saveHTML($dom);
+                    $html = static::html5()->saveHTML($dom);
                 }
                 // parse full document
                 else {
                     $dom = static::html5()->loadHTML($html);
                     static::dispatchEvents($dom, 'full');
                     $dom->normalizeDocument();
-                    $html = $dom->saveHTML();
+                    $html = static::html5()->saveHTML($dom);
                 }
                 // fix oddities
-                $html = str_ireplace(
-                    ['<br></br>'],
-                    ['<br/>'],
-                    $html
-                );
+                // $html = str_ireplace(
+                //     ['<br></br>'],
+                //     ['<br/>'],
+                //     $html
+                // );
                 // return processed HTML
                 return $html;
             },
