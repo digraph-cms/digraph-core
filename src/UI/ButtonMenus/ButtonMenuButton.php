@@ -26,7 +26,7 @@ class ButtonMenuButton
     public function execute()
     {
         if ($this->callback_or_url instanceof URL) {
-            throw new RedirectException($this->callback_or_url->url());
+            throw new RedirectException($this->callback_or_url);
         } else {
             call_user_func($this->callback_or_url);
         }

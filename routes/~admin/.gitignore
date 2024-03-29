@@ -1,0 +1,2 @@
+testing/*
+!testing/index.action.php
