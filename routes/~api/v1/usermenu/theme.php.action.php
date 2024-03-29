@@ -1,49 +1,54 @@
 <?php
 
+use DigraphCMS\HTML\DIV;
 use DigraphCMS\UI\ButtonMenus\ButtonMenu;
 use DigraphCMS\UI\ButtonMenus\ButtonMenuButton;
+use DigraphCMS\UI\CallbackLink;
 use DigraphCMS\UI\Theme;
 
-$mode = new ButtonMenu([
-    new ButtonMenuButton(
-        'Auto',
-        function () {
-            Theme::setColorMode(null);
-        },
-        [Theme::colorMode() === null ? 'button--interactive' : 'button--neutral']
-    ),
-    new ButtonMenuButton(
-        'Dark',
-        function () {
-            Theme::setColorMode('dark');
-        },
-        [Theme::colorMode() !== 'dark' ? 'button--neutral' : 'button--interactive']
-    ),
-    new ButtonMenuButton(
-        'Light',
-        function () {
-            Theme::setColorMode('light');
-        },
-        [Theme::colorMode() !== 'light' ? 'button--neutral' : 'button--interactive']
-    )
-]);
+$mode = (new DIV)->addClass('button-menu');
+$mode->addChild(
+    (new CallbackLink(function () {
+        Theme::setColorMode(null);
+    }))
+        ->addChild('Auto')
+        ->addClass('button')
+        ->addClass(Theme::colorMode() === null ? 'button--interactive' : 'button--neutral')
+);
+$mode->addChild(
+    (new CallbackLink(function () {
+        Theme::setColorMode('dark');
+    }))
+        ->addChild('Dark')
+        ->addClass('button')
+        ->addClass(Theme::colorMode() !== 'dark' ? 'button--neutral' : 'button--interactive')
+);
+$mode->addChild(
+    (new CallbackLink(function () {
+        Theme::setColorMode('light');
+    }))
+        ->addChild('Light')
+        ->addClass('button')
+        ->addClass(Theme::colorMode() !== 'light' ? 'button--neutral' : 'button--interactive')
+);
 
-$colorblind = new ButtonMenu([
-    new ButtonMenuButton(
-        'On',
-        function () {
-            Theme::setcolorblindMode(true);
-        },
-        [Theme::colorblindMode() === true ? 'button--interactive' : 'button--neutral']
-    ),
-    new ButtonMenuButton(
-        'Off',
-        function () {
-            Theme::setcolorblindMode(false);
-        },
-        [Theme::colorblindMode() !== true ? 'button--interactive' : 'button--neutral']
-    )
-]);
+$colorblind = (new DIV)->addClass('button-menu');
+$colorblind->addChild(
+    (new CallbackLink(function () {
+        Theme::setColorblindMode(true);
+    }))
+        ->addChild('On')
+        ->addClass('button')
+        ->addClass(Theme::colorblindMode() === true ? 'button--interactive' : 'button--neutral')
+);
+$colorblind->addChild(
+    (new CallbackLink(function () {
+        Theme::setColorblindMode(false);
+    }))
+        ->addChild('Off')
+        ->addClass('button')
+        ->addClass(Theme::colorblindMode() !== true ? 'button--interactive' : 'button--neutral')
+);
 
 echo "<div class='theme-menu navigation-frame navigation-frame--stateless' id='theme-menu'>";
 
