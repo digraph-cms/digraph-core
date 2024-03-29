@@ -6,6 +6,7 @@ use DigraphCMS\Context;
 use DigraphCMS\Exception;
 use DigraphCMS\ExceptionLog;
 use DigraphCMS\Session\Cookies;
+use DigraphCMS\URL\URL;
 
 class ButtonMenu
 {
@@ -47,9 +48,9 @@ class ButtonMenu
         $this->buttons[] = $button;
     }
 
-    public function newButton(string $label, callable $callback, array $classes = []): ButtonMenuButton
+    public function newButton(string $label, callable|URL $callback_or_url, array $classes = []): ButtonMenuButton
     {
-        return $this->buttons[] = new ButtonMenuButton($label, $callback, $classes);
+        return $this->buttons[] = new ButtonMenuButton($label, $callback_or_url, $classes);
     }
 
     public function id(): string
