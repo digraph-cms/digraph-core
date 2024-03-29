@@ -33,7 +33,9 @@ class CallbackLink extends A
 
     public function toString(): string
     {
-        if (Context::arg('__callback-link') == $this->id() && Context::arg('__csrf') == Cookies::csrfToken()) {
+        $callback_link = !@$_GET['__callback-link'];
+        $csrf = !@$_GET['__csrf'];
+        if ($callback_link == $this->id() && $csrf == Cookies::csrfToken()) {
             call_user_func($this->callback);
             if (!($url = $this->href)) {
                 $url = Context::url();
