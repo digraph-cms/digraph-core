@@ -3,6 +3,8 @@
 namespace DigraphCMS\UI\ButtonMenus;
 
 use DigraphCMS\Context;
+use DigraphCMS\Exception;
+use DigraphCMS\ExceptionLog;
 use DigraphCMS\Session\Cookies;
 
 class ButtonMenu
@@ -59,9 +61,6 @@ class ButtonMenu
     {
         if ($csrf !== null) {
             $this->csrf = $csrf;
-            if ($this->csrf) {
-                Cookies::required('csrf');
-            }
         }
         return $this->csrf;
     }
@@ -69,9 +68,7 @@ class ButtonMenu
     public function token()
     {
         if ($this->csrf) {
-            return
-                Cookies::get('csrf', $this->id()) ??
-                Cookies::set('csrf', $this->id(), bin2hex(random_bytes(16)), false, true);
+            return Cookies::csrfToken();
         } else {
             return md5(Context::url() . $_SERVER['HTTP_USER_AGENT']);
         }
@@ -85,8 +82,9 @@ class ButtonMenu
                     $button->execute();
                 }
             }
-            Cookies::unset('csrf', $this->id(), true);
             Context::response()->redirect(Context::url());
+        } else {
+            ExceptionLog::log(new Exception('Button menu token mismatch'));
         }
     }
 
