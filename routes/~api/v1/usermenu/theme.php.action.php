@@ -1,8 +1,6 @@
 <?php
 
 use DigraphCMS\HTML\DIV;
-use DigraphCMS\UI\ButtonMenus\ButtonMenu;
-use DigraphCMS\UI\ButtonMenus\ButtonMenuButton;
 use DigraphCMS\UI\CallbackLink;
 use DigraphCMS\UI\Theme;
 
