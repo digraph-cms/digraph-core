@@ -5,7 +5,7 @@ use DigraphCMS\Content\Graph;
 use DigraphCMS\Context;
 use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\Session\Cookies;
-use DigraphCMS\UI\ButtonMenus\SingleButton;
+use DigraphCMS\UI\CallbackLink;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\URL\URL;
 
@@ -19,14 +19,15 @@ if ($count = Graph::childEdges($page->uuid())->count()) {
     Notifications::printError("$count child pages and everything under them will also be deleted.");
 }
 
-echo new SingleButton(
-    'Confirm deletion',
+echo (new CallbackLink(
     function () {
         throw new RedirectException(
             new URL('_delete.html?csrf=' . Cookies::csrfToken('delete_' . Context::pageUUID()))
         );
     },
     ['button--danger']
-);
+))
+    ->addChild('Delete now')
+    ->addClass('button button--danger');
 
 echo '</div>';

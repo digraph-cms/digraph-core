@@ -6,7 +6,7 @@ use DigraphCMS\HTML\Forms\Field;
 use DigraphCMS\HTML\Forms\Fields\CheckboxField;
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTTP\RefreshException;
-use DigraphCMS\UI\ButtonMenus\SingleButton;
+use DigraphCMS\UI\CallbackLink;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\Pagination\ColumnHeader;
 use DigraphCMS\UI\Pagination\ColumnStringFilteringHeader;
@@ -18,13 +18,13 @@ echo '<div class="navigation-frame" id="page-urls-form">';
 $table = new PaginatedTable(
     Slugs::list(Context::page()->uuid()),
     function (string $slug) {
-        $button = new SingleButton(
-            'Remove',
+        $button = (new CallbackLink(
             function () use ($slug) {
                 Slugs::delete(Context::page()->uuid(), $slug);
-            },
-            ['button--warning']
-        );
+            }
+        ))
+            ->addChild('Remove')
+            ->addClass('button button--warning');
         return [
             $slug,
             $button

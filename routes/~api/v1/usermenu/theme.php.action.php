@@ -4,7 +4,7 @@ use DigraphCMS\UI\ButtonMenus\ButtonMenu;
 use DigraphCMS\UI\ButtonMenus\ButtonMenuButton;
 use DigraphCMS\UI\Theme;
 
-$mode = new ButtonMenu('Color mode', [
+$mode = new ButtonMenu([
     new ButtonMenuButton(
         'Auto',
         function () {
@@ -28,7 +28,7 @@ $mode = new ButtonMenu('Color mode', [
     )
 ]);
 
-$colorblind = new ButtonMenu('Colorblind mode', [
+$colorblind = new ButtonMenu([
     new ButtonMenuButton(
         'On',
         function () {

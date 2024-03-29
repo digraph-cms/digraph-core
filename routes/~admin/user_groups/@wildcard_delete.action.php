@@ -4,7 +4,7 @@ use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\HTTP\RedirectException;
-use DigraphCMS\UI\ButtonMenus\SingleButton;
+use DigraphCMS\UI\CallbackLink;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Users;
 
@@ -14,8 +14,7 @@ if (in_array($group->uuid(), ['admins', 'editors'])) throw new HttpError(404);
 
 printf('<h1>Delete group %s</h1>', $group->name());
 
-echo new SingleButton(
-    'Delete group now',
+echo (new CallbackLink(
     function () use ($group) {
         DB::query()
             ->deleteFrom('user_group_membership')
@@ -26,6 +25,7 @@ echo new SingleButton(
             ->where('uuid', $group->uuid())
             ->execute();
         throw new RedirectException(new URL('./'));
-    },
-    ['button--danger']
-);
+    }
+))
+    ->addChild('Delete group now')
+    ->addClass('button button--danger');

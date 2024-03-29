@@ -8,7 +8,7 @@ use DigraphCMS\HTML\Forms\Field;
 use DigraphCMS\HTML\Forms\Fields\Autocomplete\PageField;
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTTP\RefreshException;
-use DigraphCMS\UI\ButtonMenus\SingleButton;
+use DigraphCMS\UI\CallbackLink;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\Pagination\ColumnHeader;
 use DigraphCMS\UI\Pagination\ColumnPageFilteringHeader;
@@ -33,16 +33,16 @@ $fn = function () use ($tabs) {
         $query,
         function (array $row) use ($mode) {
             $page = ($mode == 'children' ? Pages::get($row['end_page']) : Pages::get($row['start_page']));
-            $button = new SingleButton(
-                'Remove',
+            $button = (new CallbackLink(
                 function () use ($row) {
                     DB::query()
                         ->delete('page_link')
                         ->where('id = ?', [$row['id']])
                         ->execute();
-                },
-                ['button--warning']
-            );
+                }
+            ))
+                ->addChild('Remove')
+                ->addClass('button button--warning');
             return [
                 $page ? $page->url()->html() : $page,
                 $row['type'],
