@@ -74,9 +74,14 @@ class ButtonMenu
         }
     }
 
+    public function tokenID()
+    {
+        return md5($this->id()) . "_token";
+    }
+
     public function execute()
     {
-        if (@Context::request()->post()[$this->id()] == $this->token()) {
+        if (@Context::request()->post()[$this->tokenID()] == $this->token()) {
             foreach ($this->buttons as $button) {
                 if (@$_POST[$button->id()]) {
                     $button->execute();
@@ -84,7 +89,10 @@ class ButtonMenu
             }
             Context::response()->redirect(Context::url());
         } else {
-            ExceptionLog::log(new Exception('Button menu token mismatch'));
+            ExceptionLog::log(new Exception('Button menu token mismatch', [
+                'Context::request()->post()[$this->tokenID()]' => Context::request()->post()[$this->id()],
+                '$this->token()' => $this->token(),
+            ]));
         }
     }
 
@@ -98,7 +106,7 @@ class ButtonMenu
             echo $button;
         }
         echo "</div>";
-        echo "<input type='hidden' name='" . $this->id() . "' value='" . $this->token() . "'>";
+        echo "<input type='hidden' name='" . $this->tokenID() . "' value='" . $this->token() . "'>";
         echo "</form></nav>";
         return ob_get_clean();
     }
