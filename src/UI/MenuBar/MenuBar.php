@@ -41,8 +41,14 @@ class MenuBar extends DIV
             if ($page->url() == Context::url()) $item->addClass('menuitem--open');
             elseif (in_array($page->url(), Breadcrumb::breadcrumb())) $item->addClass('menuitem--open');
         }
-        if ($depth-- && $page->children()->count()) {
-            $subMenu = new MenuBar;
+        $children = $page->children()->fetchAll();
+        $children = array_filter(
+            $children,
+            $this->filterPage(...)
+        );
+        if ($depth-- && $children) {
+            $class = get_called_class();
+            $subMenu = new $class;
             $item->addChild($subMenu);
             foreach ($page->children() as $child) {
                 $subMenu->addPageDropdown($child, null, $openContext, $depth);
@@ -62,14 +68,32 @@ class MenuBar extends DIV
         if ($page = $url->page()) {
             $children = array_merge($children, Router::pageActions($page, true));
         }
+        $children = array_filter(
+            $children,
+            $this->filterUrl(...)
+        );
         if ($depth-- && $children) {
-            $subMenu = new MenuBar;
+            $class = get_called_class();
+            $subMenu = new $class;
             $item->addChild($subMenu);
             foreach ($children as $child) {
                 $subMenu->addUrlDropdown($child, null, $openContext, $depth);
             }
         }
         return $item;
+    }
+
+    public function filterPage(AbstractPage $page): bool
+    {
+        return true;
+    }
+
+    public function filterUrl(URL $url): bool
+    {
+        if ($url->page() && !$this->filterPage($url->page())) {
+            return false;
+        }
+        return true;
     }
 
     public function addURL(URL $url, string $label = null): MenuItem
