@@ -44,7 +44,7 @@ class Slugs
             DB::query()
                 ->from('page_slug')
                 ->where('page_uuid = ?', [$uuid])
-                ->orderBy('id DESC')
+                ->orderBy('updated DESC, id DESC')
                 ->fetchAll()
         );
     }
@@ -129,10 +129,11 @@ class Slugs
         return $slug;
     }
 
-    public static function set(AbstractPage $page, string $slug, $unique = null)
+    public static function set(AbstractPage $page, string $slug, $unique = null, int|null $expires = null)
     {
         // pull unique default from page class
         $unique = $unique ?? $page::DEFAULT_UNIQUE_SLUG;
+        $expires = $expires ?? $page->slugDefaultExpiration();
         // validate
         if (!static::validate($slug)) {
             throw new \Exception("Slug $slug is not valid");
@@ -151,33 +152,57 @@ class Slugs
             }
         }
         // insert slug into database
-        static::insert($page->uuid(), $slug);
+        static::insert($page->uuid(), $slug, $expires);
     }
 
     protected static function uniqueSlug(string $slug, AbstractPage $page): string
     {
-        $uuid = str_split(str_replace('/[^a-z0-9]/', '', substr($page->uuid(), 4)), 4);
-        $slug .= '_' . substr($page->uuid(), 0, 4);
+        $uuid = str_split(
+            str_replace(
+                '/[^a-z0-9]/',
+                '',
+                (string) crc32($page->uuid() . $slug)
+            ) . strtolower($page->uuid()),
+            1
+        );
+        $count = 0;
         while (static::exists($slug, $page->uuid()) || Pages::exists($slug)) {
+            if (!$count) $slug .= '_';
             $slug .= array_shift($uuid);
+            $count++;
         }
         return $slug;
     }
 
-    protected static function insert(string $page_uuid, string $slug)
+    protected static function insert(string $page_uuid, string $slug, int|null $expires)
     {
         if (!static::validate($slug)) {
             throw new \Exception("Invalid slug");
         }
-        static::delete($page_uuid, $slug);
-        DB::query()
-            ->insertInto(
-                'page_slug',
-                [
-                    'url' => $slug,
-                    'page_uuid' => $page_uuid
-                ]
-            )
-            ->execute();
+        $existing = DB::query()->from('page_slug')
+            ->where('page_uuid', $page_uuid)
+            ->where('url', $slug);
+        if ($existing->count()) {
+            DB::query()->update('page_slug')
+                ->where('page_uuid', $page_uuid)
+                ->where('url', $slug)
+                ->set([
+                    'expires' => $expires,
+                    'updated' => time(),
+                ])
+                ->execute();
+        } else {
+            DB::query()
+                ->insertInto(
+                    'page_slug',
+                    [
+                        'url' => $slug,
+                        'page_uuid' => $page_uuid,
+                        'expires' => $expires,
+                        'updated' => time(),
+                    ]
+                )
+                ->execute();
+        }
     }
 }

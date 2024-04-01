@@ -2,13 +2,15 @@
 
 use DigraphCMS\Content\Slugs;
 use DigraphCMS\Context;
+use DigraphCMS\DB\DB;
 use DigraphCMS\HTML\Forms\Field;
 use DigraphCMS\HTML\Forms\Fields\CheckboxField;
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\UI\CallbackLink;
+use DigraphCMS\UI\Format;
 use DigraphCMS\UI\Notifications;
-use DigraphCMS\UI\Pagination\ColumnHeader;
+use DigraphCMS\UI\Pagination\ColumnDateFilteringHeader;
 use DigraphCMS\UI\Pagination\ColumnStringFilteringHeader;
 use DigraphCMS\UI\Pagination\PaginatedTable;
 
@@ -16,23 +18,31 @@ echo '<div class="navigation-frame" id="page-urls-form">';
 
 // display table
 $table = new PaginatedTable(
-    Slugs::list(Context::page()->uuid()),
-    function (string $slug) {
+    DB::query()
+        ->from('page_slug')
+        ->where('page_uuid = ?', [Context::pageUUID()])
+        ->orderBy('id DESC')
+        ->fetchAll(),
+    function (array $row) {
         $button = (new CallbackLink(
-            function () use ($slug) {
-                Slugs::delete(Context::page()->uuid(), $slug);
+            function () use ($row) {
+                Slugs::delete(Context::pageUUID(), $row['url']);
             }
         ))
             ->addChild('Remove')
             ->addClass('button button--warning');
         return [
-            $slug,
+            $row['url'],
+            $row['expires'] ? Format::date($row['expires']) : 'never',
+            Format::date($row['updated']),
             $button
         ];
     },
     [
         new ColumnStringFilteringHeader('URL path', 'slug'),
-        new ColumnHeader('Remove URL')
+        new ColumnDateFilteringHeader('Expires', 'expires'),
+        new ColumnDateFilteringHeader('Updated', 'updated'),
+        ''
     ]
 );
 $table->paginator()->perPage(15);

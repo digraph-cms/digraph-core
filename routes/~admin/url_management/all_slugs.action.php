@@ -6,8 +6,11 @@
     may be recreated later during periodic maintenance background jobs.
 </p>
 <?php
+
 use DigraphCMS\Content\Pages;
 use DigraphCMS\DB\DB;
+use DigraphCMS\UI\Format;
+use DigraphCMS\UI\Pagination\ColumnDateFilteringHeader;
 use DigraphCMS\UI\Pagination\ColumnPageFilteringHeader;
 use DigraphCMS\UI\Pagination\ColumnStringFilteringHeader;
 use DigraphCMS\UI\Pagination\PaginatedTable;
@@ -16,24 +19,28 @@ use DigraphCMS\UI\Toolbars\ToolbarLink;
 $table = new PaginatedTable(
     DB::query()
         ->from('page_slug')
-        ->orderBy('id DESC'),
+        ->orderBy('updated DESC'),
     function (array $row): array {
         return [
             (
                 new ToolbarLink(
-                'Delete',
-                'delete',
+                    'Delete',
+                    'delete',
                     DB::query()->deleteFrom('page_slug', $row['id'])->execute(...)
                 )
             )->setData('target', '_frame'),
             $row['url'],
-            Pages::get($row['page_uuid'])->url()->html()
+            Pages::get($row['page_uuid'])->url()->html(),
+            $row['expires'] ? Format::date($row['expires']) : 'never',
+            Format::date($row['updated'])
         ];
     },
     [
         '',
         new ColumnStringFilteringHeader('Slug', 'url'),
-        new ColumnPageFilteringHeader('Page', 'page_uuid')
+        new ColumnPageFilteringHeader('Page', 'page_uuid'),
+        new ColumnDateFilteringHeader('Expires', 'expires',),
+        new ColumnDateFilteringHeader('Updated', 'updated')
     ]
 );
 

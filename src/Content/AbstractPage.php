@@ -304,18 +304,32 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
         return $this->slugPattern;
     }
 
+    /**
+     * Get the current "best" slug for this page. This is the most recently
+     * updated slug that has the fewest collisions with other pages. Falls back
+     * to the UUID if no slugs are available.
+     */
     public function slug(): ?string
     {
         return Cache::get('page_slug/' . $this->uuid(), function () {
             return @DB::query()->from('page_slug as outer_table')
                 ->select('(SELECT COUNT(*) FROM page_slug WHERE url = outer_table.url) AS total_count')
                 ->where('page_uuid = ?', [$this->uuid()])
-                ->order('total_count asc, id desc')
+                ->order('total_count ASC, updated DESC, id DESC')
                 ->group('url')
-                ->limit(1)
                 ->fetch()['url']
                 ?? $this->uuid;
         });
+    }
+
+    /**
+     * Timestamp of when the default auto-generated slugs for this page should
+     * expire. This is an absolute time, not the number of seconds until it
+     * should happen. Return null for no expiration.
+     */
+    public function slugDefaultExpiration(): ?int
+    {
+        return null;
     }
 
     public function slugCollisions(): bool
