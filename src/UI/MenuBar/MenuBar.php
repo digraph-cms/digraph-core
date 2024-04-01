@@ -61,7 +61,7 @@ class MenuBar extends DIV
         if ($depth-- && $children) {
             $subMenu = new MenuBar($this->page_filter, $this->url_filter);
             $item->addChild($subMenu);
-            foreach ($page->children() as $child) {
+            foreach ($children as $child) {
                 $subMenu->addPageDropdown($child, null, $openContext, $depth);
             }
         }
