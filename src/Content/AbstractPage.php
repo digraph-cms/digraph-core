@@ -4,6 +4,7 @@ namespace DigraphCMS\Content;
 
 use ArrayAccess;
 use DateTime;
+use DigraphCMS\Cache\Cache;
 use DigraphCMS\Config;
 use DigraphCMS\Cron\CronJob;
 use DigraphCMS\Cron\DeferredJob;
@@ -42,7 +43,6 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
 
     protected $uuid, $name, $sortName;
     protected $sortWeight = 0;
-    protected $slug = false;
     protected $created, $created_by;
     protected $updated, $updated_by;
     protected $updated_last;
@@ -306,14 +306,16 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
 
     public function slug(): ?string
     {
-        if ($this->slug === false) {
-            $this->slug = @DB::query()->from('page_slug')
+        return Cache::get('page_slug/' . $this->uuid(), function () {
+            return @DB::query()->from('page_slug as outer_table')
+                ->select('(SELECT COUNT(*) FROM page_slug WHERE url = outer_table.url) AS total_count')
                 ->where('page_uuid = ?', [$this->uuid()])
-                ->order('id desc')
+                ->order('total_count asc, id desc')
+                ->group('url')
                 ->limit(1)
-                ->fetch()['url'];
-        }
-        return $this->slug ?? $this->uuid;
+                ->fetch()['url']
+                ?? $this->uuid;
+        });
     }
 
     public function slugCollisions(): bool
@@ -329,7 +331,7 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
         return [$this->class(), '_any'];
     }
 
-    public static function class (): string
+    public static function class(): string
     {
         static $classes = [];
         $class = get_called_class();
@@ -710,13 +712,13 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
                 // queue deletion of this page last
                 $job->spawn(
                     function () use ($uuid) {
-                    // get page
-                    $page = Pages::get($uuid);
-                    if (!$page) return "Page $uuid already deleted";
-                    // delete
-                    Pages::delete($page);
-                    return "Deleted page " . $page->name() . " ($uuid)";
-                }
+                        // get page
+                        $page = Pages::get($uuid);
+                        if (!$page) return "Page $uuid already deleted";
+                        // delete
+                        Pages::delete($page);
+                        return "Deleted page " . $page->name() . " ($uuid)";
+                    }
                 );
                 return "Queued page for deletion " . $page->name() . " ($uuid)";
             },
