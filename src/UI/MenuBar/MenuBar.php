@@ -12,6 +12,18 @@ use DigraphCMS\URL\URL;
 class MenuBar extends DIV
 {
     protected $checkPermissions = false;
+    /** @var callable|null */
+    protected $page_filter = null;
+    /** @var callable|null */
+    protected $url_filter = null;
+
+    public function __construct(
+        callable|null $page_filter = null,
+        callable|null $url_filter = null
+    ) {
+        $this->page_filter = $page_filter;
+        $this->url_filter = $url_filter;
+    }
 
     /**
      * Set whether this menu should check the permissions of its children when
@@ -47,8 +59,7 @@ class MenuBar extends DIV
             $this->filterPage(...)
         );
         if ($depth-- && $children) {
-            $class = get_called_class();
-            $subMenu = new $class;
+            $subMenu = new MenuBar($this->page_filter, $this->url_filter);
             $item->addChild($subMenu);
             foreach ($page->children() as $child) {
                 $subMenu->addPageDropdown($child, null, $openContext, $depth);
@@ -73,8 +84,7 @@ class MenuBar extends DIV
             $this->filterUrl(...)
         );
         if ($depth-- && $children) {
-            $class = get_called_class();
-            $subMenu = new $class;
+            $subMenu = new MenuBar($this->page_filter, $this->url_filter);
             $item->addChild($subMenu);
             foreach ($children as $child) {
                 $subMenu->addUrlDropdown($child, null, $openContext, $depth);
@@ -83,17 +93,17 @@ class MenuBar extends DIV
         return $item;
     }
 
-    public function filterPage(AbstractPage $page): bool
+    protected function filterPage(AbstractPage $page): bool
     {
-        return true;
+        if ($this->page_filter) return call_user_func($this->page_filter, $page);
+        else return true;
     }
 
-    public function filterUrl(URL $url): bool
+    protected function filterUrl(URL $url): bool
     {
-        if ($url->page() && !$this->filterPage($url->page())) {
-            return false;
-        }
-        return true;
+        if ($this->url_filter) return call_user_func($this->url_filter, $url);
+        elseif ($url->page() && !$this->filterPage($url->page())) return false;
+        else return true;
     }
 
     public function addURL(URL $url, string $label = null): MenuItem
