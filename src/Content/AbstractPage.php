@@ -375,9 +375,10 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
      * The default AbstractPage behavior is to respect the sort order column,
      * and then sort by sort name falling back to normal name.
      *
+     * @param string|string[]|null $edge_type
      * @return PageSelect
      */
-    public function children(string|null $edge_type = null, bool|null $ignore_sort_order = null): PageSelect
+    public function children(string|array|null $edge_type = null, bool|null $ignore_sort_order = null): PageSelect
     {
         return Graph::children(
             $this->uuid(),
