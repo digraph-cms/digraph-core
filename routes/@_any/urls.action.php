@@ -5,6 +5,7 @@ use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
 use DigraphCMS\HTML\Forms\Field;
 use DigraphCMS\HTML\Forms\Fields\CheckboxField;
+use DigraphCMS\HTML\Forms\Fields\DatetimeField;
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\UI\CallbackLink;
@@ -63,18 +64,29 @@ $unique = (new CheckboxField('Force URL to be unique'))
     ->addTip('Check this box to force the generated URL to be unique. If it collides with an existing URL it will have a random ID appended to it.')
     ->addTip('Leave unchecked to allow it to collide with existing URLs. Disambiguation pages are served at any colliding URLs automatically if necessary.');
 
+$expires = (new DatetimeField('Expires'))
+    ->setDefault(Context::page()->slugDefaultExpiration())
+    ->setRequired(false)
+    ->addTip('Set an expiration date for this URL.')
+    ->addTip('Leave blank for no expiration.');
+
+if (Context::page()->slugDefaultExpiration()) {
+    $expires->addTip('Note that if this URL matches whatever the saved pattern generates, it will be automatically regenerated later &emdash; including an expiration date.');
+}
 
 echo (new FormWrapper(Context::pageUUID() . '_urls'))
     ->addChild($pattern)
+    ->addChild($expires)
     ->addChild($save)
     ->addChild($unique)
-    ->addCallback(function () use ($pattern, $save, $unique) {
+    ->addCallback(function () use ($pattern, $save, $unique, $expires) {
         try {
             // set new slug from pattern
             Slugs::setFromPattern(
                 Context::page(),
                 $pattern->value(),
-                $unique->value()
+                $unique->value(),
+                $expires->value() ? $expires->value()->getTimeStamp() : false,
             );
             $page = Context::page();
             // save pattern into page

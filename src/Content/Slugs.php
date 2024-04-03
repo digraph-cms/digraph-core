@@ -77,11 +77,14 @@ class Slugs
             ->execute();
     }
 
-    public static function setFromPattern(AbstractPage $page, string $pattern, bool $unique = false)
+    /**
+     * @param null|int|bool $expires null for default, false for never, int for timestamp
+     */
+    public static function setFromPattern(AbstractPage $page, string $pattern, bool $unique = false, int|null|bool $expires = null)
     {
         $slug = static::compilePattern($page, $pattern);
         // set slug
-        static::set($page, $slug, $unique);
+        static::set($page, $slug, $unique, $expires);
     }
 
     public static function validatePattern(AbstractPage $page, string $pattern): bool
@@ -129,11 +132,15 @@ class Slugs
         return $slug;
     }
 
-    public static function set(AbstractPage $page, string $slug, $unique = null, int|null $expires = null)
+    /**
+     * @param null|int|bool $expires null for default, false for never, int for timestamp
+     */
+    public static function set(AbstractPage $page, string $slug, $unique = null, int|null|bool $expires = null)
     {
         // pull unique default from page class
         $unique = $unique ?? $page::DEFAULT_UNIQUE_SLUG;
-        $expires = $expires ?? $page->slugDefaultExpiration();
+        if (is_null($expires)) $expires = $page->slugDefaultExpiration();
+        elseif (!is_int($expires)) $expires = null;
         // validate
         if (!static::validate($slug)) {
             throw new \Exception("Slug $slug is not valid");
