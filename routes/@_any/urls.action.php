@@ -51,7 +51,7 @@ echo $table;
 
 // display form below table
 $pattern = (new Field('Set new URL/pattern'))
-    ->setDefault(Context::page()->slugPattern() ? Format::parseDate(Context::page()->slugPattern()) : null)
+    ->setDefault(Context::page()->slugPattern())
     ->setRequired(true)
     ->addTip('Add a leading slash to make pattern relative to site root, otherwise it will be relative to the page\'s parent URL.');
 
@@ -65,7 +65,7 @@ $unique = (new CheckboxField('Force URL to be unique'))
     ->addTip('Leave unchecked to allow it to collide with existing URLs. Disambiguation pages are served at any colliding URLs automatically if necessary.');
 
 $expires = (new DatetimeField('Expires'))
-    ->setDefault(Context::page()->slugDefaultExpiration())
+    ->setDefault(Context::page()->slugDefaultExpiration() ? Format::parseDate(Context::page()->slugDefaultExpiration()) : null)
     ->setRequired(false)
     ->addTip('Set an expiration date for this URL.')
     ->addTip('Leave blank for no expiration.');
