@@ -140,9 +140,9 @@ class Graph
         $start = Pages::get($start);
         $end = Pages::get($end);
         if (!$start || !$end) return null;
-        return Dispatcher::firstValue('defaultLinkType', [$start, $end])
-            ?? Dispatcher::firstValue(sprintf('defaultLinkType_%s', $start->class()), [$start, $end])
-            ?? Dispatcher::firstValue(sprintf('defaultLinkType_%s_%s', $start->class(), $end->class()), [$start, $end]);
+        return Dispatcher::firstValue('onLinkType', [$start, $end])
+            ?? Dispatcher::firstValue(sprintf('onLinkType_%s', $start->class()), [$start, $end])
+            ?? Dispatcher::firstValue(sprintf('onLinkType_%s_%s', $start->class(), $end->class()), [$start, $end]);
     }
 
     /**
