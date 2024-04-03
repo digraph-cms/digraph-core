@@ -107,7 +107,7 @@ class ShortCodesListener
                 $edge_types,
                 fn ($e) => !!$e
             );
-            if (!$edge_types) $edge_types = null;
+            if (!count($edge_types)) $edge_types = null;
         }
         // ignore_sort_order parameter is true if the parameter exists
         $ignore_sort_order = $s->getParameter('ignore_sort_order', 'false') !== 'false';
