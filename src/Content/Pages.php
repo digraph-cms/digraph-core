@@ -249,7 +249,12 @@ class Pages
             )
             ->execute();
         // insert link if specified
-        if ($parent_uuid) static::insertLink($parent_uuid, $page->uuid(), $edge_type);
+        if ($parent_uuid) static::insertLink(
+            $parent_uuid,
+            $page->uuid(),
+            $edge_type
+                ?? Graph::defaultLinkType(Pages::get($parent_uuid)?->class(), $page->class())
+        );
         // post-insert events
         Dispatcher::dispatchEvent('onAfterPageInsert_' . $page->class(), [$page]);
         Dispatcher::dispatchEvent('onAfterPageInsert', [$page]);

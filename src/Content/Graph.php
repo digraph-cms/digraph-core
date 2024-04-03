@@ -129,20 +129,25 @@ class Graph
                 'start_page' => $start,
                 'end_page' => $end,
                 'type' => $type
-                    ?? static::defaultLinkType($start, $end)
+                    ?? static::defaultLinkTypeByUuid($start, $end)
                     ?? 'normal'
             ]
         )->execute();
     }
 
-    public static function defaultLinkType(string $start, string $end): null|string
+    public static function defaultLinkTypeByUuid(string $start, string $end): null|string
     {
         $start = Pages::get($start);
         $end = Pages::get($end);
         if (!$start || !$end) return null;
-        return Dispatcher::firstValue('onLinkType', [$start, $end])
-            ?? Dispatcher::firstValue(sprintf('onLinkType_%s', $start->class()), [$start, $end])
-            ?? Dispatcher::firstValue(sprintf('onLinkType_%s_%s', $start->class(), $end->class()), [$start, $end]);
+        return static::defaultLinkType($start->class(), $end->class());
+    }
+
+    public static function defaultLinkType(string $start_type, string $end_type): null|string
+    {
+        return Dispatcher::firstValue('onLinkType', [$start_type, $end_type])
+            ?? Dispatcher::firstValue(sprintf('onLinkType_%s', $start_type), [])
+            ?? Dispatcher::firstValue(sprintf('onLinkType_%s_to_%s', $start_type, $end_type), []);
     }
 
     /**
