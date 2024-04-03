@@ -5,6 +5,7 @@ namespace DigraphCMS\Content;
 use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
 use DigraphCMS\DB\SubValueIterator;
+use DigraphCMS\Events\Dispatcher;
 use Envms\FluentPDO\Queries\Select;
 
 class Graph
@@ -99,14 +100,14 @@ class Graph
         return $result ? $result['start_page'] : null;
     }
 
-    public static function children(string $uuid, string $type = null, bool $ignoreSortOrder = false): PageSelect
+    public static function children(string $uuid, string|array|null $type = null, bool $ignoreSortOrder = false): PageSelect
     {
         $query = DB::query()
             ->from('page_link')
             ->leftJoin('page on page_link.end_page = page.uuid')
             ->select('page.*')
             ->where('start_page = ?', [$uuid]);
-        if ($type) $query->where('page_link.type = ?', [$type]);
+        if ($type) $query->where('page_link.type', $type);
         if (!$ignoreSortOrder) $query->order('sort_weight ASC');
         return new PageSelect($query);
     }
@@ -127,9 +128,21 @@ class Graph
             [
                 'start_page' => $start,
                 'end_page' => $end,
-                'type' => $type ?? 'normal'
+                'type' => $type
+                    ?? static::defaultLinkType($start, $end)
+                    ?? 'normal'
             ]
         )->execute();
+    }
+
+    public static function defaultLinkType(string $start, string $end): null|string
+    {
+        $start = Pages::get($start);
+        $end = Pages::get($end);
+        if (!$start || !$end) return null;
+        return Dispatcher::firstValue('defaultLinkType', [$start, $end])
+            ?? Dispatcher::firstValue(sprintf('defaultLinkType_%s', $start->class()), [$start, $end])
+            ?? Dispatcher::firstValue(sprintf('defaultLinkType_%s_%s', $start->class(), $end->class()), [$start, $end]);
     }
 
     /**

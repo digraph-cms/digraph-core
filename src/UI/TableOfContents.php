@@ -10,17 +10,21 @@ class TableOfContents extends Tag
 {
     protected $tag = 'ul';
     protected $page;
+    protected $edge_types = null;
+    protected $ignore_sort_order = null;
     protected $firstPage = 20;
     protected $perPage = 10;
     protected $parents = [];
     protected $depth;
 
-    public function __construct(AbstractPage $page, $depth = null, $parents = [])
+    public function __construct(AbstractPage $page, null|string|array $edge_types = null, null|bool $ignore_sort_order, int $depth = null, array $parents = [])
     {
         $this->page = $page;
         $this->parents = $parents;
         $this->parents[] = $page->uuid();
         $this->depth = $depth;
+        $this->edge_types = $edge_types;
+        $this->ignore_sort_order = $ignore_sort_order;
     }
 
     public function classes(): array
@@ -92,7 +96,7 @@ class TableOfContents extends Tag
     protected function generateItems(): array
     {
         $parents = $this->parents;
-        $children = $this->page->children();
+        $children = $this->page->children($this->edge_types, $this->ignore_sort_order);
         $children->limit(($this->firstPage - $this->perPage) + ($this->page() * $this->perPage));
         $output = [];
         while ($page = $children->fetch()) {
@@ -104,7 +108,7 @@ class TableOfContents extends Tag
                 $page->url(),
                 $page->name(),
                 $this->depth > 1 && $page->children()->count()
-                    ? trim(new TableOfContents($page, $this->depth - 1, $parents))
+                    ? trim(new TableOfContents($page, $this->edge_types, $this->ignore_sort_order, $this->depth - 1, $parents))
                     : ''
             );
         }

@@ -94,7 +94,25 @@ class ShortCodesListener
     {
         $page = Pages::get($s->getBbCode() ?? Context::pageUUID());
         if (!$page) return null;
-        $toc = new TableOfContents($page, intval($s->getParameter('depth', '1')));
+        // edge_types parameter is a space-separated list of edge types
+        // by default it will be null, which includes all, or the page's default (which is usuall all)
+        $edge_types = $s->getParameter('edge_types', null);
+        if ($edge_types) {
+            $edge_types = explode(' ', strtolower($edge_types));
+            $edge_types = array_map(
+                fn ($e) => trim($e),
+                $edge_types
+            );
+            $edge_types = array_filter(
+                $edge_types,
+                fn ($e) => !!$e
+            );
+            if (!$edge_types) $edge_types = null;
+        }
+        // ignore_sort_order parameter is true if the parameter exists
+        $ignore_sort_order = $s->getParameter('ignore_sort_order', 'false') !== 'false';
+        // build TOC
+        $toc = new TableOfContents($page, $edge_types, $ignore_sort_order, intval($s->getParameter('depth', '1')));
         return $toc->__toString();
     }
 
