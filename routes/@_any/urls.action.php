@@ -51,7 +51,7 @@ echo $table;
 
 // display form below table
 $pattern = (new Field('Set new URL/pattern'))
-    ->setDefault(Context::page()->slugPattern())
+    ->setDefault(Context::page()->slugPattern() ? Format::parseDate(Context::page()->slugPattern()) : null)
     ->setRequired(true)
     ->addTip('Add a leading slash to make pattern relative to site root, otherwise it will be relative to the page\'s parent URL.');
 
