@@ -36,6 +36,8 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
     const ORDER_USES_SORT_NAME = true;
     /** @const null|string|string[] */
     const VISIBLE_CHILD_EDGE_TYPES = null;
+    /** @const null|string|string[] */
+    const PREFERRED_PARENT_EDGE_TYPES = null;
 
     const ACTIONS_DISABLED = [];
     const ACTIONS_PUBLIC = ['index'];
@@ -280,7 +282,19 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
 
     public function parentPage(): ?AbstractPage
     {
+        // first try to return preferred parent type
+        if (static::PREFERRED_PARENT_EDGE_TYPES) {
+            $preferred = Graph::parents($this->uuid(), static::PREFERRED_PARENT_EDGE_TYPES)
+                ->limit(1)
+                ->fetch();
+            if ($preferred) return $preferred;
+        }
+        // then try to return "normal" parent
         return Graph::parents($this->uuid(), 'normal')
+            ->limit(1)
+            ->fetch()
+            // then try to return any parent
+            ?? Graph::parents($this->uuid())
             ->limit(1)
             ->fetch();
     }
