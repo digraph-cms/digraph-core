@@ -29,60 +29,58 @@ if ($action && !preg_match('/[^a-z0-9\-\_]/', $action)) {
 $buttons = [];
 
 if (!$only || in_array('format', $only)) {
-    $buttons[] = [
-        (new ToolbarLink('Heading', 'heading', 'markdownToggleHeading'))
+    $buttons['format'] = [
+        'heading' => (new ToolbarLink('Heading', 'heading', 'markdownToggleHeading'))
             ->setShortcut('Ctrl-H'),
-        (new ToolbarLink('Heading (reversed)', 'heading', 'markdownToggleHeadingReverse'))
+        'heading_reverse' => (new ToolbarLink('Heading (reversed)', 'heading', 'markdownToggleHeadingReverse'))
             ->setShortcut('Ctrl-Shift-H')
             ->setStyle('display', 'none'),
-        (new ToolbarLink('Bold', 'bold', 'markdownToggleBold'))
+        'bold' => (new ToolbarLink('Bold', 'bold', 'markdownToggleBold'))
             ->setShortcut('Ctrl-B'),
-        (new ToolbarLink('Italic', 'italic', 'markdownToggleItalic'))
+        'italic' => (new ToolbarLink('Italic', 'italic', 'markdownToggleItalic'))
             ->setShortcut('Ctrl-I'),
-        (new ToolbarLink('Strike', 'strikethrough', 'markdownToggleStrikethrough'))
+        'strike' => (new ToolbarLink('Strike', 'strikethrough', 'markdownToggleStrikethrough'))
             ->setShortcut('Ctrl-Shift-S'),
-        (new ToolbarLink('Highlight', 'highlight', 'markdownToggleHighlight'))
+        'highlight' => (new ToolbarLink('Highlight', 'highlight', 'markdownToggleHighlight'))
             ->setShortcut('Ctrl-Shift-M'),
     ];
 }
 if (!$only || in_array('blocks', $only)) {
-    $buttons[] = [
-        (new ToolbarLink('Bullet list', 'list-bullet', 'markdownToggleBulletList'))
+    $buttons['blocks'] = [
+        'bullet_list' => (new ToolbarLink('Bullet list', 'list-bullet', 'markdownToggleBulletList'))
             ->setShortcut('Ctrl-L'),
-        (new ToolbarLink('Numbered list', 'list-numbered', 'markdownToggleNumberedList'))
+        'numbered_list' => (new ToolbarLink('Numbered list', 'list-numbered', 'markdownToggleNumberedList'))
             ->setShortcut('Ctrl-Shift-L'),
-        (new ToolbarLink('Block quote', 'quote', 'markdownToggleQuote'))
+        'blockquote' => (new ToolbarLink('Block quote', 'quote', 'markdownToggleQuote'))
             ->setShortcut('Ctrl-Shift-Q'),
-        (new ToolbarLink('Code', 'code', 'markdownToggleCodeBlock'))
+        'code' => (new ToolbarLink('Code', 'code', 'markdownToggleCodeBlock'))
             ->setShortcut('Ctrl-Shift-C'),
     ];
 }
 if (!$only || in_array('insert', $only)) {
-    $buttons[] = [
-        (new ToolbarLink('Link to any URL', 'link', null, new URL('&action=weblink')))
+    $buttons['insert'] = [
+        'weblink' => (new ToolbarLink('Link to any URL', 'link', null, new URL('&action=weblink')))
             ->setShortcut('Ctrl-Shift-K'),
-        (new ToolbarLink('Link to a page', 'pages', null, new URL('&action=link')))
+        'link' => (new ToolbarLink('Link to a page', 'pages', null, new URL('&action=link')))
             ->setShortcut('Ctrl-K'),
-        Permissions::inMetaGroup('richmedia__edit')
+        'richmedia' => Permissions::inMetaGroup('richmedia__edit')
             ? (new ToolbarLink('Quick media insert', 'media', null, new URL('&action=media')))->setShortcut('Ctrl-M')
             : false,
-        // (new ToolbarLink('Link to a user', 'person', null, new URL('&action=user')))
-        //     ->setShortcut('Ctrl-U'),
     ];
 }
 if (!$only || in_array('advanced', $only)) {
-    $buttons[] = [
-        (new ToolbarLink('Toggle comment', 'hide', 'toggleComment', null))
+    $buttons['advanced'] = [
+        'comment' => (new ToolbarLink('Toggle comment', 'hide', 'toggleComment', null))
             ->setShortcut('Ctrl-/ '),
     ];
 }
 if (!$only || in_array('history', $only)) {
-    $buttons[] = [
-        new ToolbarSpacer,
-        new ToolbarSeparator,
-        (new ToolbarLink('Undo', 'undo', 'undo'))
+    $buttons['history'] = [
+        'spacer' => new ToolbarSpacer,
+        'separator' => new ToolbarSeparator,
+        'undo' => (new ToolbarLink('Undo', 'undo', 'undo'))
             ->setShortcut('Ctrl-Z'),
-        (new ToolbarLink('Redo', 'redo', 'redo'))
+        'redo' => (new ToolbarLink('Redo', 'redo', 'redo'))
             ->setShortcut('Ctrl-Y')
     ];
 }
