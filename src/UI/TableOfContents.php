@@ -17,7 +17,7 @@ class TableOfContents extends Tag
     protected $parents = [];
     protected $depth;
 
-    public function __construct(AbstractPage $page, null|string|array $edge_types = null, null|bool $ignore_sort_order, int $depth = null, array $parents = [])
+    public function __construct(AbstractPage $page, null|string|array $edge_types = null, null|bool $ignore_sort_order = null, int $depth = null, array $parents = [])
     {
         $this->page = $page;
         $this->parents = $parents;
