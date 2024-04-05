@@ -100,15 +100,17 @@ class Graph
         return $result ? $result['start_page'] : null;
     }
 
-    public static function children(string $uuid, string|array|null $type = null, bool $ignoreSortOrder = false): PageSelect
+    public static function children(string $uuid, string|array|null $type = null, bool $sorted = true): PageSelect
     {
         $query = DB::query()
             ->from('page_link')
             ->leftJoin('page on page_link.end_page = page.uuid')
             ->select('page.*')
             ->where('start_page', $uuid);
-        if ($type) $query->where('page_link.type', $type);
-        if (!$ignoreSortOrder) {
+        if ($type) {
+            $query->where('page_link.type', $type);
+        }
+        if ($sorted) {
             $query->order('page.sort_weight ASC');
             $query->order('COALESCE(page.sort_name, page.name) ASC');
         }

@@ -32,8 +32,6 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
 
     const DEFAULT_SLUG = '[name]';
     const DEFAULT_UNIQUE_SLUG = true;
-    const ORDER_IGNORES_WEIGHT = false;
-    const ORDER_USES_SORT_NAME = true;
     /** @const null|string|string[] */
     const VISIBLE_CHILD_EDGE_TYPES = null;
     /** @const null|string|string[] */
@@ -397,7 +395,7 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
         return Graph::children(
             $this->uuid(),
             $edge_type ?? static::VISIBLE_CHILD_EDGE_TYPES,
-            $ignore_sort_order ?? static::ORDER_IGNORES_WEIGHT
+            true
         );
     }
 

@@ -14,15 +14,7 @@ use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\Pagination\PaginatedTable;
 
-if (Context::page()::ORDER_IGNORES_WEIGHT) {
-    Notifications::printWarning("This page does not use the weight column displayed here to sort its child pages.");
-}
-
-if (!Context::page()::ORDER_USES_SORT_NAME) {
-    Notifications::printWarning("This page does not use the sort name column displayed here to sort its child pages.");
-}
-
-$query = Graph::children(Context::pageUUID());
+$query = Graph::children(Context::pageUUID(), null, true);
 
 $table = new PaginatedTable(
     $query,
