@@ -5,6 +5,7 @@
 <?php
 
 use DigraphCMS\Content\AbstractPage;
+use DigraphCMS\Content\Graph;
 use DigraphCMS\Context;
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTML\Forms\INPUT;
@@ -21,7 +22,8 @@ if (!Context::page()::ORDER_USES_SORT_NAME) {
     Notifications::printWarning("This page does not use the sort name column displayed here to sort its child pages.");
 }
 
-$query = Context::page()->children();
+$query = Graph::children(Context::pageUUID());
+
 $table = new PaginatedTable(
     $query,
     function (AbstractPage $page): array {
