@@ -107,7 +107,7 @@ class TableOfContents extends Tag
                 '<li><a href="%s">%s</a>%s</li>',
                 $page->url(),
                 $page->name(),
-                $this->depth > 1 && $page->children()->count()
+                $this->depth > 1 && $page->children($this->edge_types)->count()
                     ? trim(new TableOfContents($page, $this->edge_types, $this->ignore_sort_order, $this->depth - 1, $parents))
                     : ''
             );

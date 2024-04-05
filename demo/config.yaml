@@ -8,8 +8,7 @@ errors:
   display_trace: true
 
 cache:
-  path: false # use system temp dir, so it's fast in a dev container
-  ttl: 600
+  ttl: 10
 
 files:
   ttl: 600
