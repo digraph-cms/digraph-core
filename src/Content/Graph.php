@@ -106,10 +106,12 @@ class Graph
             ->from('page_link')
             ->leftJoin('page on page_link.end_page = page.uuid')
             ->select('page.*')
-            ->where('start_page', $uuid)
-            ->order('COALESCE(sort_name, name) ASC');
+            ->where('start_page', $uuid);
         if ($type) $query->where('page_link.type', $type);
-        if (!$ignoreSortOrder) $query->order('sort_weight ASC');
+        if (!$ignoreSortOrder) {
+            $query->order('page.sort_weight ASC');
+            $query->order('COALESCE(page.sort_name, page.name) ASC');
+        }
         return new PageSelect($query);
     }
 

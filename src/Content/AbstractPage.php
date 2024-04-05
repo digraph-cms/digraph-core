@@ -398,8 +398,7 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
             $this->uuid(),
             $edge_type ?? static::VISIBLE_CHILD_EDGE_TYPES,
             $ignore_sort_order ?? static::ORDER_IGNORES_WEIGHT
-        )
-            ->order('COALESCE(sort_name, name) ASC');
+        );
     }
 
     public function name(string $name = null, bool $unfiltered = false, bool $forDB = false): string
