@@ -3,6 +3,7 @@
 namespace DigraphCMS\UI\MenuBar;
 
 use DigraphCMS\Content\AbstractPage;
+use DigraphCMS\Content\Graph;
 use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
 use DigraphCMS\HTML\DIV;
@@ -16,13 +17,17 @@ class MenuBar extends DIV
     protected $page_filter = null;
     /** @var callable|null */
     protected $url_filter = null;
+    /** @var string|string[]|null */
+    protected $edge_types = null;
 
     public function __construct(
         callable|null $page_filter = null,
-        callable|null $url_filter = null
+        callable|null $url_filter = null,
+        string|array|null $edge_types = null,
     ) {
         $this->page_filter = $page_filter;
         $this->url_filter = $url_filter;
+        $this->edge_types = $edge_types;
     }
 
     /**
@@ -53,7 +58,8 @@ class MenuBar extends DIV
             if ($page->url() == Context::url()) $item->addClass('menuitem--open');
             elseif (in_array($page->url(), Breadcrumb::breadcrumb())) $item->addClass('menuitem--open');
         }
-        $children = $page->children()->fetchAll();
+        $children = Graph::children($page->uuid(), $this->edge_types, true)
+            ->fetchAll();
         $children = array_filter(
             $children,
             $this->filterPage(...)
