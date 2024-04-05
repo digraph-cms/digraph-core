@@ -207,7 +207,7 @@ class Pages
             ->where('uuid', $page->uuid())
             ->set([
                 'name' => substr($page->name(null, true, true), 0, 250),
-                'sort_name' => substr($page->sortName(), 0, 100),
+                'sort_name' => substr($page->sortName(), 0, 100) ?: null,
                 'sort_weight' => $page->sortWeight(),
                 'data' => json_encode($page->get()),
                 'slug_pattern' => substr($page->slugPattern(), 0, 100),
@@ -236,7 +236,7 @@ class Pages
                 [
                     'uuid' => $page->uuid(),
                     'name' => substr($page->name(null, true, true), 0, 250),
-                    'sort_name' => substr($page->sortName(), 0, 100),
+                    'sort_name' => substr($page->sortName(), 0, 100) ?: null,
                     'sort_weight' => $page->sortWeight(),
                     'data' => json_encode($page->get()),
                     'slug_pattern' => substr($page->slugPattern(), 0, 100),
