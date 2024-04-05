@@ -34,7 +34,7 @@ $table = new PaginatedTable(
         $name->button()->setText('Save');
         $nameField = new INPUT();
         $nameField->setDefault($page->sortName());
-        $nameField->setAttribute('placeholder', $page->name());
+        $nameField->setAttribute('placeholder', $page->name(null, true));
         $name->addChild($nameField);
         $name->addCallback(function () use ($page, $nameField) {
             $page->setSortName(
