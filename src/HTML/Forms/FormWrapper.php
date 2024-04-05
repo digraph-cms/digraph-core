@@ -121,9 +121,8 @@ class FormWrapper extends Tag
      * Set whether or not to display a validation error message at the top of the form
      *
      * @param boolean $enable
-     * @return void
      */
-    public function setEnableValidationError(bool $enable)
+    public function setEnableValidationError(bool $enable): static
     {
         $this->enable_validation_error = $enable;
         return $this;
