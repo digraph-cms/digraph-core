@@ -10,12 +10,12 @@ class ButtonMenu extends DIV
     /** @var DIV */
     protected $buttons;
 
-    public function __construct(array $buttons = [])
+    public function __construct(array|null $buttons = [])
     {
         $this->buttons = (new DIV)->addClass('button-menu__buttons');
         $this->addChild($this->buttons);
         $this->addClass('button-menu');
-        foreach ($buttons as $button) {
+        foreach ($buttons ?? [] as $button) {
             if ($button instanceof ButtonMenuButton) {
                 $this->addButton($button);
             } else {
