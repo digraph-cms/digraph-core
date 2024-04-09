@@ -37,7 +37,7 @@ abstract class Digraph
      * any website this system is capable of scaling up to).
      */
     const UUIDCHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    const UUIDPATTERN = '000000';
+    const UUIDPATTERN = '00000000';
     const LONGUUIDPATTERN = '0000000000000000';
 
     /**
