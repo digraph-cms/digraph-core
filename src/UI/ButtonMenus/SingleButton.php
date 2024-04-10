@@ -2,6 +2,9 @@
 
 namespace DigraphCMS\UI\ButtonMenus;
 
+/**
+ * @deprecated use CallbackLink instead
+ */
 class SingleButton extends ButtonMenuButton
 {
     protected $menu;
@@ -10,7 +13,7 @@ class SingleButton extends ButtonMenuButton
     public function __construct(string $label, callable $callback, array $classes = [])
     {
         parent::__construct($label, $callback, $classes);
-        $this->menu = new ButtonMenu(null, [$this]);
+        $this->menu = new ButtonMenu([$this]);
     }
 
     public function csrf(bool $csrf = null): bool

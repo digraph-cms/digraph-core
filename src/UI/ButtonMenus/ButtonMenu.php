@@ -5,6 +5,9 @@ namespace DigraphCMS\UI\ButtonMenus;
 use DigraphCMS\HTML\DIV;
 use DigraphCMS\URL\URL;
 
+/**
+ * @deprecated use CallbackLink in a DIV with the class button-menu instead
+ */
 class ButtonMenu extends DIV
 {
     /** @var DIV */

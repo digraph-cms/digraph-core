@@ -5,6 +5,9 @@ namespace DigraphCMS\UI\ButtonMenus;
 use DigraphCMS\UI\CallbackLink;
 use DigraphCMS\URL\URL;
 
+/**
+ * @deprecated use CallbackLink in a DIV with the class button-menu instead
+ */
 class ButtonMenuButton extends CallbackLink
 {
     public function __construct(string $label, callable|URL $callback_or_url, array $classes = [])
