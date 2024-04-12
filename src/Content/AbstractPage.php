@@ -30,7 +30,7 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
 {
     use FlatArrayTrait;
 
-    const DEFAULT_SLUG = '[name]';
+    const DEFAULT_SLUG = '[default]';
     const DEFAULT_UNIQUE_SLUG = true;
     /** @const null|string|string[] */
     const VISIBLE_CHILD_EDGE_TYPES = null;
@@ -57,14 +57,14 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
      * additional jobs as needed to do any extra copying necessary for your
      * page type. May also be used to do work that must be done immediately, but
      * note that the time it is called the new page has not yet been inserted.
-     * 
+     *
      * New jobs spawned here will be run after the page is inserted, but before
      * any child pages are copied.
-     * 
-     * @param DeferredJob $job 
-     * @param AbstractPage $old 
-     * @param AbstractPage $new 
-     * @return void 
+     *
+     * @param DeferredJob $job
+     * @param AbstractPage $old
+     * @param AbstractPage $new
+     * @return void
      */
     public static function onCopyJob(DeferredJob $job, AbstractPage $old, AbstractPage $new): void
     {
@@ -76,10 +76,10 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
      * additional jobs as needed to do any extra cleanup necessary for your
      * page type. May also be used to do work that must be done immediately, as
      * at the time it is called the page has not yet been deleted.
-     * 
-     * @param DeferredJob $job 
-     * @param AbstractPage $page 
-     * @return void 
+     *
+     * @param DeferredJob $job
+     * @param AbstractPage $page
+     * @return void
      */
     public static function onRecursiveDelete(DeferredJob $job, AbstractPage $page): void
     {
@@ -269,6 +269,8 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
     public function slugVariable(string $name): ?string
     {
         switch ($name) {
+            case 'default':
+                return $this->defaultSlug();
             case 'uuid':
                 return $this->uuid();
             case 'name':
@@ -276,6 +278,14 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
             default:
                 return null;
         }
+    }
+
+    /**
+     * Override this method to control a page type's default slug without needing to override the entire slugVariable method.
+     */
+    public function defaultSlug(): string
+    {
+        return $this->name(null, true);
     }
 
     public function parentPage(): ?AbstractPage
@@ -293,8 +303,8 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
             ->fetch()
             // then try to return any parent
             ?? Graph::parents($this->uuid())
-            ->limit(1)
-            ->fetch();
+                ->limit(1)
+                ->fetch();
     }
 
     public function parent(URL $url = null): ?URL
@@ -380,10 +390,10 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
      * way for this particular class/page. May be ordered or filtered different
      * than what comes out of Graph::children(), and should be used when
      * displaying most user-facing interfaces for the page.
-     * 
+     *
      * For example, this method might change the default ordering to creation
      * date for a blog/news section, or updated date for a list of downloads.
-     * 
+     *
      * The default AbstractPage behavior is to respect the sort order column,
      * and then sort by sort name falling back to normal name.
      *
@@ -498,8 +508,8 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
         } else {
             $slug =
                 ($this->slugCollisions() || ($this->slug() && Router::staticRouteExists($this->slug(), $action ?? 'index')))
-                ? $this->uuid()
-                : $this->slug();
+                    ? $this->uuid()
+                    : $this->slug();
         }
         if ($slug == 'home' && $action != 'index.html' && $action != '') {
             $slug = $this->uuid();
@@ -566,30 +576,31 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
 
     public function insert(string $parent_uuid = null)
     {
-        return Pages::insert($this, $parent_uuid);
+        Pages::insert($this, $parent_uuid);
     }
 
     public function update()
     {
-        return Pages::update($this);
+        Pages::update($this);
     }
 
     public function copy(
         AbstractPage $parent = null,
-        string $slug = null,
-        string $name = null,
-        bool $recurse = false,
-        bool $cloneMedia = true,
-        array $parents = [],
-        string $user = null,
-        string $jobGroup = null
-    ): AbstractPage {
+        string       $slug = null,
+        string       $name = null,
+        bool         $recurse = false,
+        bool         $cloneMedia = true,
+        array        $parents = [],
+        string       $user = null,
+        string       $jobGroup = null
+    ): AbstractPage
+    {
         // we do this all in a transaction
         DB::beginTransaction();
         // set up job group name
         $jobGroup = $jobGroup ?? Digraph::uuid('page_copy_');
         // set up new page
-        $page = clone ($this);
+        $page = clone($this);
         $page->setUUID(Digraph::uuid());
         $page->name($name ?? $this->name() . ' (copy)');
         $page['page_copy_log.from'] = $this->uuid();
@@ -657,7 +668,7 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
         $parentMedia = RichMedia::select($old->uuid());
         $cloned = [];
         while ($media = $parentMedia->fetch()) {
-            $clone = clone ($media);
+            $clone = clone($media);
             $clone->setUUID(Digraph::uuid());
             $clone->setParent($new->uuid());
             $clone->insert();
