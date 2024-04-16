@@ -136,12 +136,12 @@ class Pages
     /**
      * Get the top result for a given slug/UUID. Will be fastest for UUID and
      * primary slug matches, but will run an additional query and search
-     * alternate slugs if UUID or primary slug matches are not found. A UUID 
-     * match will take precedence, followed by the oldest creation date primary 
+     * alternate slugs if UUID or primary slug matches are not found. A UUID
+     * match will take precedence, followed by the oldest creation date primary
      * slug match, followed by the oldest alternate slug match.
      *
      * @template T of AbstractPage
-     * 
+     *
      * @param string|null $uuid_or_slug
      * @param class-string<T> $class
      * @return T|null
@@ -229,6 +229,13 @@ class Pages
         $page->beforeInsert();
         Dispatcher::dispatchEvent('onBeforePageInsert', [$page]);
         Dispatcher::dispatchEvent('onBeforePageInsert_' . $page->class(), [$page]);
+        // insert link if specified
+        if ($parent_uuid) static::insertLink(
+            $parent_uuid,
+            $page->uuid(),
+            $edge_type
+            ?? Graph::defaultLinkType(Pages::get($parent_uuid)?->class(), $page->class())
+        );
         // insert page
         DB::query()
             ->insertInto(
@@ -248,13 +255,6 @@ class Pages
                 ]
             )
             ->execute();
-        // insert link if specified
-        if ($parent_uuid) static::insertLink(
-            $parent_uuid,
-            $page->uuid(),
-            $edge_type
-                ?? Graph::defaultLinkType(Pages::get($parent_uuid)?->class(), $page->class())
-        );
         // post-insert events
         Dispatcher::dispatchEvent('onAfterPageInsert_' . $page->class(), [$page]);
         Dispatcher::dispatchEvent('onAfterPageInsert', [$page]);
