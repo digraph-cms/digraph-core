@@ -100,12 +100,12 @@ class ShortCodesListener
         if ($edge_types) {
             $edge_types = explode(' ', strtolower($edge_types));
             $edge_types = array_map(
-                fn ($e) => trim($e),
+                fn($e) => trim($e),
                 $edge_types
             );
             $edge_types = array_filter(
                 $edge_types,
-                fn ($e) => !!$e
+                fn($e) => !!$e
             );
             if (!count($edge_types)) $edge_types = null;
         }
@@ -113,7 +113,15 @@ class ShortCodesListener
         $ignore_sort_order = $s->getParameter('ignore_sort_order', 'false') !== 'false';
         // build TOC
         $toc = new TableOfContents($page, $edge_types, $ignore_sort_order, intval($s->getParameter('depth', '1')));
-        return $toc->__toString();
+        $content = $s->getContent();
+        if (!$content) return $toc->__toString();
+        else {
+            if ($toc->childCount()) {
+                return $content . PHP_EOL . $toc;
+            } else {
+                return $toc->__toString();
+            }
+        }
     }
 
     /**
@@ -215,7 +223,7 @@ class ShortCodesListener
                 implode(
                     ', ',
                     array_map(
-                        fn ($e) => '"' . $e['title'] . '"',
+                        fn($e) => '"' . $e['title'] . '"',
                         $options
                     )
                 )

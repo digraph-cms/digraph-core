@@ -49,9 +49,9 @@ class TableOfContents extends Tag
         );
     }
 
-    public function id(): ?string
+    public function childCount(): int
     {
-        return parent::id() ?? 'table-of-contents--' . $this->page->uuid();
+        return $this->page->children($this->edge_types, true)->count();
     }
 
     public function children(): array
@@ -61,36 +61,6 @@ class TableOfContents extends Tag
             $this->generateItems(),
             [$this->page() < $this->maxPage() ? $this->generateMoreLink() : '']
         );
-    }
-
-    public function page(): int
-    {
-        $page = intval(Context::arg($this->arg()) ?? 1);
-        if ($page > $this->maxPage()) $page = $this->maxPage();
-        elseif ($page < 1) $page = 1;
-        return $page;
-    }
-
-    public function maxPage(): int
-    {
-        $count = $this->page->children()->count();
-        if ($count <= $this->firstPage) return 1;
-        else return intval(ceil(($count - $this->firstPage) / $this->perPage) + 1);
-    }
-
-    public function generateMoreLink(): string
-    {
-        $url = Context::url();
-        $url->arg($this->arg(), strval($this->page() + 1));
-        return sprintf(
-            '<li class="table-of-contents__load-more"><a href="%s" data-target="_frame">-- load more --</a></li>',
-            $url,
-        );
-    }
-
-    public function arg(): string
-    {
-        return '__toc_' . crc32($this->id());
     }
 
     protected function generateItems(): array
@@ -113,5 +83,40 @@ class TableOfContents extends Tag
             );
         }
         return $output;
+    }
+
+    public function page(): int
+    {
+        $page = intval(Context::arg($this->arg()) ?? 1);
+        if ($page > $this->maxPage()) $page = $this->maxPage();
+        elseif ($page < 1) $page = 1;
+        return $page;
+    }
+
+    public function arg(): string
+    {
+        return '__toc_' . crc32($this->id());
+    }
+
+    public function id(): ?string
+    {
+        return parent::id() ?? 'table-of-contents--' . $this->page->uuid();
+    }
+
+    public function maxPage(): int
+    {
+        $count = $this->page->children()->count();
+        if ($count <= $this->firstPage) return 1;
+        else return intval(ceil(($count - $this->firstPage) / $this->perPage) + 1);
+    }
+
+    public function generateMoreLink(): string
+    {
+        $url = Context::url();
+        $url->arg($this->arg(), strval($this->page() + 1));
+        return sprintf(
+            '<li class="table-of-contents__load-more"><a href="%s" data-target="_frame">-- load more --</a></li>',
+            $url,
+        );
     }
 }
