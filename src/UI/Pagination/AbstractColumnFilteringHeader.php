@@ -65,7 +65,7 @@ abstract class AbstractColumnFilteringHeader extends ColumnHeader implements Fil
     {
         return sprintf(
             <<<EOD
-            <div id="f_%s__closed"></div>
+            <span id="f_%s__closed"></span>
             <div class="filtering-header">
                 <div class="filtering-header__label">%s</div>
                 <div class="column-filter" id="f_%s__open">
