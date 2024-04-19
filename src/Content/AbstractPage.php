@@ -373,7 +373,9 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
     {
         static $classes = [];
         $class = get_called_class();
-        return @$classes[$class] ?? $classes[$class] = static::getClass($class);
+        return isset($classes[$class])
+            ? $classes[$class]
+            : $classes[$class] = static::getClass($class);
     }
 
     protected static function getClass(string $thisClass): string

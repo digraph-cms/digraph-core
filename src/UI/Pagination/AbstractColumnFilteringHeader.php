@@ -64,7 +64,7 @@ abstract class AbstractColumnFilteringHeader extends ColumnHeader implements Fil
     protected function headerContent(): string
     {
         return sprintf(
-            <<<EOD
+        /** @lang text */ <<<EOD
             <span id="f_%s__closed"></span>
             <span class="filtering-header">
                 <span class="filtering-header__label">%s</span>
