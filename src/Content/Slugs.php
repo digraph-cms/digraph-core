@@ -4,6 +4,7 @@ namespace DigraphCMS\Content;
 
 use DigraphCMS\DB\DB;
 use DigraphCMS\Events\Dispatcher;
+use Exception;
 use URLify;
 
 class Slugs
@@ -80,11 +81,11 @@ class Slugs
     /**
      * @param null|int|bool $expires null for default, false for never, int for timestamp
      */
-    public static function setFromPattern(AbstractPage $page, string $pattern, bool $unique = false, int|null|bool $expires = null)
+    public static function setFromPattern(AbstractPage $page, string $pattern, bool $unique = false, int|null|bool $expires = null, bool $archive = false)
     {
         $slug = static::compilePattern($page, $pattern);
         // set slug
-        static::set($page, $slug, $unique, $expires);
+        static::set($page, $slug, $unique, $expires, $archive);
     }
 
     public static function validatePattern(AbstractPage $page, string $pattern): bool
@@ -135,7 +136,7 @@ class Slugs
     /**
      * @param null|int|bool $expires null for default, false for never, int for timestamp
      */
-    public static function set(AbstractPage $page, string $slug, $unique = null, int|null|bool $expires = null)
+    public static function set(AbstractPage $page, string $slug, $unique = null, int|null|bool $expires = null, bool $archive = false)
     {
         // pull unique default from page class
         $unique = $unique ?? $page::DEFAULT_UNIQUE_SLUG;
@@ -143,7 +144,7 @@ class Slugs
         elseif (!is_int($expires)) $expires = null;
         // validate
         if (!static::validate($slug)) {
-            throw new \Exception("Slug $slug is not valid");
+            throw new Exception("Slug $slug is not valid");
         }
         if ($unique) {
             // if $unique is requested slug will be renamed if it collides
@@ -159,7 +160,7 @@ class Slugs
             }
         }
         // insert slug into database
-        static::insert($page->uuid(), $slug, $expires);
+        static::insert($page->uuid(), $slug, $expires, $archive);
     }
 
     protected static function uniqueSlug(string $slug, AbstractPage $page): string
@@ -168,7 +169,7 @@ class Slugs
             str_replace(
                 '/[^a-z0-9]/',
                 '',
-                (string) crc32($page->uuid() . $slug)
+                (string)crc32($page->uuid() . $slug)
             ) . strtolower($page->uuid()),
             1
         );
@@ -181,10 +182,10 @@ class Slugs
         return $slug;
     }
 
-    protected static function insert(string $page_uuid, string $slug, int|null $expires)
+    protected static function insert(string $page_uuid, string $slug, int|null $expires, bool $archive)
     {
         if (!static::validate($slug)) {
-            throw new \Exception("Invalid slug");
+            throw new Exception("Invalid slug");
         }
         $existing = DB::query()->from('page_slug')
             ->where('page_uuid', $page_uuid)
@@ -196,6 +197,7 @@ class Slugs
                 ->set([
                     'expires' => $expires,
                     'updated' => time(),
+                    'archive' => $archive
                 ])
                 ->execute();
         } else {
@@ -207,6 +209,7 @@ class Slugs
                         'page_uuid' => $page_uuid,
                         'expires' => $expires,
                         'updated' => time(),
+                        'archive' => $archive
                     ]
                 )
                 ->execute();

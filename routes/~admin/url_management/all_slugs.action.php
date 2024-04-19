@@ -10,6 +10,7 @@
 use DigraphCMS\Content\Pages;
 use DigraphCMS\DB\DB;
 use DigraphCMS\UI\Format;
+use DigraphCMS\UI\Pagination\ColumnBooleanFilteringHeader;
 use DigraphCMS\UI\Pagination\ColumnDateFilteringHeader;
 use DigraphCMS\UI\Pagination\ColumnPageFilteringHeader;
 use DigraphCMS\UI\Pagination\ColumnStringFilteringHeader;
@@ -23,14 +24,15 @@ $table = new PaginatedTable(
     function (array $row): array {
         return [
             (
-                new ToolbarLink(
-                    'Delete',
-                    'delete',
-                    DB::query()->deleteFrom('page_slug', $row['id'])->execute(...)
-                )
+            new ToolbarLink(
+                'Delete',
+                'delete',
+                DB::query()->deleteFrom('page_slug', $row['id'])->execute(...)
+            )
             )->setData('target', '_frame'),
             $row['url'],
             Pages::get($row['page_uuid'])->url()->html(),
+            $row['archive'] ? 'Y' : '',
             $row['expires'] ? Format::date($row['expires']) : 'never',
             Format::date($row['updated'])
         ];
@@ -39,6 +41,7 @@ $table = new PaginatedTable(
         '',
         new ColumnStringFilteringHeader('Slug', 'url'),
         new ColumnPageFilteringHeader('Page', 'page_uuid'),
+        new ColumnBooleanFilteringHeader('Archive', 'archive'),
         new ColumnDateFilteringHeader('Expires', 'expires',),
         new ColumnDateFilteringHeader('Updated', 'updated')
     ]

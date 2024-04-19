@@ -11,6 +11,7 @@ use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\UI\CallbackLink;
 use DigraphCMS\UI\Format;
 use DigraphCMS\UI\Notifications;
+use DigraphCMS\UI\Pagination\ColumnBooleanFilteringHeader;
 use DigraphCMS\UI\Pagination\ColumnDateFilteringHeader;
 use DigraphCMS\UI\Pagination\ColumnStringFilteringHeader;
 use DigraphCMS\UI\Pagination\PaginatedTable;
@@ -34,6 +35,7 @@ $table = new PaginatedTable(
             ->addClass('button button--warning');
         return [
             $row['url'],
+            $row['archive'] ? 'Y' : '',
             $row['expires'] ? Format::date($row['expires']) : 'never',
             Format::date($row['updated']),
             $button
@@ -41,6 +43,7 @@ $table = new PaginatedTable(
     },
     [
         new ColumnStringFilteringHeader('URL path', 'slug'),
+        new ColumnBooleanFilteringHeader('Archive', 'archive'),
         new ColumnDateFilteringHeader('Expires', 'expires'),
         new ColumnDateFilteringHeader('Updated', 'updated'),
         ''
@@ -64,6 +67,10 @@ $unique = (new CheckboxField('Force URL to be unique'))
     ->addTip('Check this box to force the generated URL to be unique. If it collides with an existing URL it will have a random ID appended to it.')
     ->addTip('Leave unchecked to allow it to collide with existing URLs. Disambiguation pages are served at any colliding URLs automatically if necessary.');
 
+$archive = (new CheckboxField('Archival URL'))
+    ->setDefault(false)
+    ->addTip('Archival URLs will not be used as the default main URL for a page unless they are the only option');
+
 $expires = (new DatetimeField('Expires'))
     ->setDefault(Context::page()->slugDefaultExpiration() ? Format::parseDate(Context::page()->slugDefaultExpiration()) : null)
     ->setRequired(false)
@@ -79,7 +86,8 @@ echo (new FormWrapper(Context::pageUUID() . '_urls'))
     ->addChild($expires)
     ->addChild($save)
     ->addChild($unique)
-    ->addCallback(function () use ($pattern, $save, $unique, $expires) {
+    ->addChild($archive)
+    ->addCallback(function () use ($pattern, $save, $unique, $expires, $archive) {
         try {
             // set new slug from pattern
             Slugs::setFromPattern(
@@ -87,6 +95,7 @@ echo (new FormWrapper(Context::pageUUID() . '_urls'))
                 $pattern->value(),
                 $unique->value(),
                 $expires->value() ? $expires->value()->getTimeStamp() : false,
+                $archive->value()
             );
             $page = Context::page();
             // save pattern into page
@@ -94,11 +103,14 @@ echo (new FormWrapper(Context::pageUUID() . '_urls'))
                 $page->slugPattern($pattern->value());
             }
             // otherwise set pattern again from saved pattern so it stays at the top
-            else {
+            // don't bother if new slug is archival though
+            elseif (!$archive->value()) {
                 Slugs::setFromPattern(
                     Context::page(),
                     $page->slugPattern(),
-                    $unique->value()
+                    $unique->value(),
+                    null,
+                    $archive->value()
                 );
             }
             $page->update();

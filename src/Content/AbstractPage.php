@@ -340,6 +340,7 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
                 ->select('(SELECT COUNT(*) FROM page_slug WHERE url = outer_table.url) AS total_count')
                 ->where('page_uuid = ?', [$this->uuid()])
                 ->order('total_count ASC, updated DESC, id DESC')
+                ->order('archive ASC')
                 ->group('url')
                 ->fetch()['url']
                 ?? $this->uuid;
