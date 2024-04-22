@@ -10,8 +10,9 @@ class UploadMulti extends INPUT
     protected $filestore;
     protected $value;
 
-    public function __construct()
+    public function __construct(string $id = null)
     {
+        parent::__construct($id);
         $this->setAttribute('type', 'file');
     }
 
