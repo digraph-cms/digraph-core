@@ -151,7 +151,7 @@ class Graph
     public static function defaultLinkType(string $start_type, string $end_type): null|string
     {
         return Dispatcher::firstValue('onLinkType', [$start_type, $end_type])
-            ?? Dispatcher::firstValue(sprintf('onLinkType_%s', $start_type), [])
+            ?? Dispatcher::firstValue(sprintf('onLinkType_%s', $start_type), [$end_type])
             ?? Dispatcher::firstValue(sprintf('onLinkType_%s_to_%s', $start_type, $end_type), []);
     }
 
