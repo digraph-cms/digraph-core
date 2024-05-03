@@ -225,6 +225,10 @@ class Pages
     public static function insert(AbstractPage $page, string $parent_uuid = null, string $edge_type = null)
     {
         DB::beginTransaction();
+        // disable foreign key checks
+        if (DB::driver() == 'mysql') {
+            DB::pdo()->exec('SET foreign_key_checks = 0');
+        }
         // pre-insert events
         $page->beforeInsert();
         Dispatcher::dispatchEvent('onBeforePageInsert', [$page]);
@@ -234,7 +238,7 @@ class Pages
             $parent_uuid,
             $page->uuid(),
             $edge_type
-            ?? Graph::defaultLinkType(Pages::get($parent_uuid)?->class(), $page->class())
+                ?? Graph::defaultLinkType(Pages::get($parent_uuid)?->class(), $page->class())
         );
         // insert page
         DB::query()
@@ -255,10 +259,15 @@ class Pages
                 ]
             )
             ->execute();
+        // re-enable foreign key checks
+        if (DB::driver() == 'mysql') {
+            DB::pdo()->exec('SET foreign_key_checks = 1');
+        }
         // post-insert events
         Dispatcher::dispatchEvent('onAfterPageInsert_' . $page->class(), [$page]);
         Dispatcher::dispatchEvent('onAfterPageInsert', [$page]);
         $page->afterUpdate();
+        // commit DB changes
         DB::commit();
     }
 
