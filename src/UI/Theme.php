@@ -326,6 +326,8 @@ class Theme
         $colors['a20'] = (new Hex($color))->toRgba()->alpha(0.2);
         // @phpstan-ignore-next-line
         $colors['a10'] = (new Hex($color))->toRgba()->alpha(0.1);
+        // @phpstan-ignore-next-line
+        $colors['a0'] = (new Hex($color))->toRgba()->alpha(0);
         return $colors;
     }
 
