@@ -89,7 +89,7 @@ class Theme
                     'highlight' => '#00b8d4'
                 ],
                 'display' => [
-                    'light' => 'revert',
+                    'light' => 'initial',
                     'dark' => 'none'
                 ]
             ],
@@ -106,7 +106,7 @@ class Theme
                 ],
                 'display' => [
                     'light' => 'none',
-                    'dark' => 'revert'
+                    'dark' => 'initial'
                 ]
             ],
             'colorblind' => [
