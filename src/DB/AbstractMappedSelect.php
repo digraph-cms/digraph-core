@@ -14,7 +14,8 @@ use PDOStatement;
  * Wraps an FPDO Select object in an analogous interface, but converts results
  * into objects on the fly.
  * 
- * @implements Iterator<int,array|object>
+ * @template T array|object
+ * @implements Iterator<int,T>
  */
 abstract class AbstractMappedSelect implements Iterator, Countable
 {
