@@ -7,6 +7,7 @@ use DigraphCMS\HTML\DIV;
 class SecureContent extends DIV
 {
     protected static $idCounter = 0;
+    protected static $displayCount = 0;
 
     public function __construct(string $id = null)
     {
@@ -46,6 +47,11 @@ class SecureContent extends DIV
     public function __toString(): string
     {
         if (Security::flagged()) {
+            // count, and redirect if there will be more than one inline captcha
+            static::$displayCount++;
+            if (static::$displayCount > 1) {
+                Security::requireSecurityCheck();
+            }
             // override to display a div requiring CAPTCHA
             // opening tag
             $html = '<' . $this->tag();
