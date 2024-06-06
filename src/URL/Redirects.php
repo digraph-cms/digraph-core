@@ -24,8 +24,9 @@ class Redirects
         return Cache::get(
             'redirect/' . md5($url),
             function () use ($url) {
-                return static::getDestination($url->fullPathString())
-                    ?? static::getDestination($url->pathString());
+                $pathString = urldecode($url->pathString());
+                return static::getDestination($pathString . $url->queryString())
+                    ?? static::getDestination($pathString);
             }
         );
     }

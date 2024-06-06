@@ -349,7 +349,7 @@ class URL
         return URLs::site() . $this->pathString() . $this->queryString();
     }
 
-    protected function queryString(): string
+    public function queryString(): string
     {
         if ($this->query) {
             return '?' . http_build_query($this->query);
