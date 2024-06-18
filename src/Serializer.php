@@ -37,16 +37,16 @@ class Serializer
                 // SerializableClosure with a call get the closure
                 return sprintf(
                     '\\unserialize(\'%s\')->getClosure()',
-                    serialize(new SerializableClosure($value))
+                    str_replace('\'', '\\\'', serialize(new SerializableClosure($value)))
                 );
             } else {
                 // otherwise serialize it as a closure that returns the value,
                 // this way we're still leaning on the Symfony serializer
                 return sprintf(
                     '\\call_user_func(\\unserialize(\'%s\')->getClosure())',
-                    serialize(new SerializableClosure(function () use ($value) {
+                    str_replace('\'', '\\\'', serialize(new SerializableClosure(function () use ($value) {
                         return $value;
-                    }))
+                    })))
                 );
             }
         }
