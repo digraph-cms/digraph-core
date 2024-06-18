@@ -7,6 +7,7 @@ use DigraphCMS\Context;
 use DigraphCMS\DB\DBConnectionException;
 use DigraphCMS\Digraph;
 use DigraphCMS\Events\Dispatcher;
+use DigraphCMS\ExceptionLog;
 use DigraphCMS\HTTP\Response;
 use Throwable;
 
@@ -84,6 +85,7 @@ class Templates
             Context::end();
             return $out;
         } catch (Throwable $th) {
+            ExceptionLog::log($th);
             Context::end();
             return '<h1>Unhandled error</h1><p>Additionally, an error occurred when generating the fallback error page.</p>';
         }

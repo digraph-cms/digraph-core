@@ -4,7 +4,7 @@ namespace DigraphCMS\Cron;
 
 use DigraphCMS\Datastore\Datastore;
 use DigraphCMS\DB\DB;
-use DigraphCMS\Digraph;
+use DigraphCMS\Serializer;
 use DigraphCMS\UI\Format;
 
 class ScheduledJobs
@@ -23,11 +23,11 @@ class ScheduledJobs
         $group_name = static::groupName($job_name);
         /** hash of settings so we can clear and rebuild jobs only if it is different from what was last entered */
         // NOTE: can be overridden if a job includes things that don't hash consistently (which is likely)
-        if (is_null($hash)) $hash = md5(Digraph::serialize([
+        if (is_null($hash)) $hash = md5(Serializer::serialize([
                 $job,
                 $schedules,
             ]));
-        else $hash = md5(Digraph::serialize($hash));
+        else $hash = md5(Serializer::serialize($hash));
         // check if last build of this job was the same
         if (static::storedHash($job_name) == $hash) {
             // stored hash matches new hash, so there's nothing to update

@@ -5,6 +5,7 @@ namespace DigraphCMS\Media;
 use DigraphCMS\Cache\Cache;
 use DigraphCMS\Config;
 use DigraphCMS\FS;
+use DigraphCMS\Serializer;
 
 class DeferredFile extends File
 {
@@ -23,7 +24,7 @@ class DeferredFile extends File
         }
         // take in content/identifier
         $this->content = $content;
-        $this->identifier = md5(@\Opis\Closure\serialize($identifier));
+        $this->identifier = md5(Serializer::serialize($identifier));
         // permissions
         $this->permissions = $permissions;
     }

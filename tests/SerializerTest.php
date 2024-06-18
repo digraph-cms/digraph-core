@@ -4,11 +4,13 @@ namespace DigraphCMS;
 
 use PHPUnit\Framework\TestCase;
 
-class SerializationTest extends TestCase
+class SerializerTest extends TestCase
 {
     protected function apply($data)
     {
-        return Digraph::unserialize(Digraph::serialize($data));
+        $serialized = Serializer::serialize($data);
+        $unserialized = Serializer::unserialize($serialized);
+        return $unserialized;
     }
 
     public function testSerializingScalars()
@@ -20,6 +22,12 @@ class SerializationTest extends TestCase
         $this->assertEquals(false, static::apply(false));
         $this->assertEquals(null, static::apply(null));
         $this->assertEquals([1, 2, 3], static::apply([1, 2, 3]));
+    }
+
+    public function testSerializingStringWithQuotes()
+    {
+        $this->assertEquals('\'hello\'', static::apply('\'hello\''));
+        $this->assertEquals('"hello"', static::apply('"hello"'));
     }
 
     public function testSerializingEmptyString()
@@ -99,8 +107,8 @@ class SerializationTest extends TestCase
         $this->assertEquals(5, static::apply($closure)(2, 3));
         // test with array callable syntax
         $this->assertEquals(5, static::apply([$this, 'callable_method'])(2, 3));
-        // test with first-class callable syntax (wishlist: doesn't work with Opis/Closure)
-        // $this->assertEquals(5, static::apply($this->callable_method(...))(2, 3));
+        // test with first-class callable syntax
+        $this->assertEquals(5, static::apply($this->callable_method(...))(2, 3));
     }
 
     public function testSerializingObjectContainingClosure()
@@ -148,8 +156,8 @@ class SerializationTest extends TestCase
         $this->assertEquals(5, static::apply($closure)(2, 3));
         // test with array callable syntax
         $this->assertEquals(5, static::apply([static::class, 'static_callable_method'])(2, 3));
-        // test with first-class callable syntax (wishlist: doesn't work with Opis/Closure)
-        // $this->assertEquals(5, static::apply(static::static_callable_method(...))(2, 3));
+        // test with first-class callable syntax
+        $this->assertEquals(5, static::apply(static::static_callable_method(...))(2, 3));
     }
 
     /**

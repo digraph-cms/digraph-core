@@ -7,6 +7,7 @@ use DigraphCMS\DB\DB;
 use DigraphCMS\Digraph;
 use DigraphCMS\ExceptionLog;
 use DigraphCMS\FS;
+use DigraphCMS\Serializer;
 use DigraphCMS\Session\Session;
 use Exception;
 
@@ -97,7 +98,7 @@ class Filestore
                     'meta' => json_encode($file->meta()),
                     'created' => $file->created()->getTimestamp(),
                     'created_by' => $file->createdByUUID(),
-                    'permissions' => $file->permissions() ? Digraph::serialize($file->permissions()) : null,
+                    'permissions' => $file->permissions() ? Serializer::serialize($file->permissions()) : null,
                 ]
             )
             ->execute();

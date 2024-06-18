@@ -7,6 +7,7 @@ use DigraphCMS\Cache\Locking;
 use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
 use DigraphCMS\ExceptionLog;
+use DigraphCMS\Serializer;
 use DigraphCMS\Session\Session;
 use Exception;
 
@@ -168,7 +169,7 @@ class CronJob
         try {
             return serialize($this->job);
         } catch (\Throwable $th) {
-            return @\Opis\Closure\serialize($this->job);
+            return Serializer::serialize($this->job);
         }
     }
 

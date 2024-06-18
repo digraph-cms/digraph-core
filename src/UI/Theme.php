@@ -12,6 +12,7 @@ use DigraphCMS\Media\CSS;
 use DigraphCMS\Media\DeferredFile;
 use DigraphCMS\Media\File;
 use DigraphCMS\Media\Media;
+use DigraphCMS\Serializer;
 use DigraphCMS\Session\Cookies;
 use DigraphCMS\URL\URL;
 use DigraphCMS\URL\URLs;
@@ -698,7 +699,7 @@ class Theme
      */
     public static function head(): string
     {
-        $key = md5(@\Opis\Closure\serialize([
+        $key = md5(Serializer::serialize([
             static::$variables,
             static::$blockingThemeCss,
             static::$blockingPageCss,

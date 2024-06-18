@@ -3,8 +3,8 @@
 namespace DigraphCMS\Cache;
 
 use DigraphCMS\Config;
-use DigraphCMS\Digraph;
 use DigraphCMS\FS;
+use DigraphCMS\Serializer;
 
 class OpCache extends AbstractCacheDriver
 {
@@ -184,8 +184,10 @@ class OpCache extends AbstractCacheDriver
             } else {
                 return "$value";
             }
+        } elseif (is_string($value)) {
+            return sprintf('\'%s\'', str_replace('\'', '\\\'', $value));
         } else {
-            return Digraph::serialize($value);
+            return Serializer::serialize($value);
         }
     }
 

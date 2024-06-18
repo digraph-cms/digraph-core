@@ -43,26 +43,14 @@ abstract class Digraph
     /**
      * Broadly-useful serialization function that can serialize many objects and
      * closures, unlike PHP's built-in serialization.
-     * 
-     * At the moment under the hood this simply wraps Opis\Closure
      *
      * @param mixed $value
      * @return string
+     * @deprecated Use Serializer::serialize() instead
      */
     public static function serialize(mixed $value): string
     {
-        try {
-            return sprintf(
-                '\\unserialize(\'%s\')',
-                str_replace("'", "\\'", \serialize($value))
-            );
-        } catch (Throwable $th) {
-            return sprintf(
-                '@\\unserialize(\'%s\')',
-                // TODO: explore replacing Opis\Closure with a wrapper for some other serializer that isn't deprecating
-                str_replace("'", "\\'", @\Opis\Closure\serialize($value))
-            );
-        }
+        return Serializer::serialize($value);
     }
 
     /**
@@ -71,10 +59,11 @@ abstract class Digraph
      *
      * @param string $value
      * @return mixed
+     * @deprecated Use Serializer::unserialize() instead
      */
     public static function unserialize(string $value): mixed
     {
-        return eval('return ' . $value . ';');
+        return Serializer::unserialize($value);
     }
 
     /**
