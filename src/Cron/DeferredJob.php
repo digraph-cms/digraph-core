@@ -13,18 +13,26 @@ use Exception;
 
 class DeferredJob
 {
-    protected $id, $group, $run, $error, $message, $job;
+    protected $id, $group, $run, $error, $message;
+    /** @var callable|string|null */
+    protected $job = null;
     /** @var int|null */
     protected $scheduled = null;
 
     public function __construct(callable $job = null, string $group = null, int|null $scheduled = null)
     {
         $this->group = $this->group ?? $group ?? static::uuid();
-        $this->job = $this->job !== null
-            ? @unserialize($this->job)
-            : $job ?? function () {
+        if ($this->job === null) {
+            // $this->job is empty, so we're creating a new job
+            $this->job = $job ?? function () {
                 return 'Empty job';
             };
+        } elseif (is_string($this->job)) {
+            // $this->job is not empty, so we're loading an existing job from the database
+            $this->job = Serializer::unserialize($this->job);
+        } else {
+            throw new Exception('Invalid job data');
+        }
         $this->scheduled = $this->scheduled ?? $scheduled;
         // insert into database immediately
         if ($this->id() !== null) return;
@@ -93,11 +101,7 @@ class DeferredJob
 
     protected function serializedJob(): string
     {
-        try {
-            return serialize($this->job);
-        } catch (\Throwable $th) {
-            return Serializer::serialize($this->job);
-        }
+        return Serializer::serialize($this->job);
     }
 
     public function spawn(callable $job)
