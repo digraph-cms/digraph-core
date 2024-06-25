@@ -139,24 +139,35 @@ class CoreCronSubscriber
 
     public static function cronJob_maintenance_heavy()
     {
-        // expire old scheduled job hashes after 30 days
+        // expire old security flags
+        new DeferredJob(
+            function(){
+                Datastore::expire(
+                    'security_flags',
+                    null,
+                    strtotime('-6 months')
+                );
+            },
+            'core_maintenance_heavy'
+        );
+        // expire old scheduled job hashes after a month
         new DeferredJob(
             function () {
                 Datastore::expire(
                     'system',
                     'scheduled_jobs',
-                    time() - (86400 * 30)
+                    strtotime('-1 month')
                 );
                 return "Expired old scheduled job hashes";
             },
             'core_maintenance_heavy'
         );
-        // expire old exception logs
+        // expire old exception logs after a month
         new DeferredJob(
             function () {
                 $path = Config::get('paths.storage') . '/exception_log';
                 $dayDirs = array_reverse(glob("$path/" . str_repeat('[0123456789]', 8), GLOB_ONLYDIR | GLOB_NOSORT));
-                $expires = intval(date('Ymd', time() - (86400 * 30)));
+                $expires = intval(date('Ymd', strtotime('-1 month')));
                 $count = 0;
                 foreach ($dayDirs as $dayDir) {
                     if (intval(basename($dayDir)) < $expires) {
