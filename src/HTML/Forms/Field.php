@@ -22,6 +22,17 @@ class Field extends DIV implements InputInterface
         $this->addClass('form-field');
     }
 
+    public function disabled(): bool
+    {
+        return $this->input()->disabled();
+    }
+
+    public function setDisabled(bool $disabled): static
+    {
+        $this->input()->setDisabled($disabled);
+        return $this;
+    }
+
     public function validationError(): ?string
     {
         if ($message = $this->input()->validationError()) {
@@ -76,6 +87,12 @@ class Field extends DIV implements InputInterface
     public function classes(): array
     {
         $classes = parent::classes();
+        if ($this->required()) {
+            $classes[] = 'form-field--required';
+        }
+        if ($this->disabled()) {
+            $classes[] = 'form-field--disabled';
+        }
         if ($this->submitted()) {
             if ($this->validationError()) {
                 $classes[] = 'form-field--error';

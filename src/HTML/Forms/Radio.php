@@ -16,6 +16,7 @@ class Radio extends Tag implements InputInterface
     protected $required = false;
     protected $requiredMessage = 'This field is required';
     protected $validators = [];
+    protected bool $disabled = false;
 
     protected $key;
 
@@ -23,6 +24,17 @@ class Radio extends Tag implements InputInterface
     {
         $this->key = $key;
         $this->setID($id);
+    }
+
+    public function disabled(): bool
+    {
+        return $this->disabled;
+    }
+
+    public function setDisabled(bool $disabled): static
+    {
+        $this->disabled = $disabled;
+        return $this;
     }
 
     public function validationError(): ?string
@@ -66,6 +78,9 @@ class Radio extends Tag implements InputInterface
         );
         if ($this->value(true)) {
             $attributes['checked'] = null;
+        }
+        if ($this->disabled()) {
+            $attributes['disabled'] = null;
         }
         return $attributes;
     }

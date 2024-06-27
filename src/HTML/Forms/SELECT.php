@@ -14,6 +14,7 @@ class SELECT extends Tag implements InputInterface
     protected $value;
     protected $default;
     protected $validators = [];
+    protected bool $disabled = false;
 
     /** @var FormWrapper|null */
     protected $form;
@@ -47,15 +48,30 @@ class SELECT extends Tag implements InputInterface
         return $children;
     }
 
+    public function disabled(): bool
+    {
+        return $this->disabled;
+    }
+
+    public function setDisabled(bool $disabled): static
+    {
+        $this->disabled = $disabled;
+        return $this;
+    }
+
     public function attributes(): array
     {
-        return array_merge(
+        $attributes = array_merge(
             parent::attributes(),
             [
                 'name' => $this->id(),
                 'form' => $this->form() ? $this->form()->formID() : null
             ]
         );
+        if ($this->disabled()) {
+            $attributes['disabled'] = null;
+        }
+        return $attributes;
     }
 
     /**

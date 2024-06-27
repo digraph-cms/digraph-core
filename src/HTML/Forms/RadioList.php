@@ -13,6 +13,7 @@ class RadioList extends DIV implements InputInterface
     protected $required = false;
     protected $requiredMessage = 'You must select an option';
     protected $validators = [];
+    protected bool $disabled = false;
 
     public function __construct(array $options = [])
     {
@@ -23,6 +24,17 @@ class RadioList extends DIV implements InputInterface
         }
     }
 
+    public function disabled(): bool
+    {
+        return $this->disabled;
+    }
+
+    public function setDisabled(bool $disabled): static
+    {
+        $this->disabled = $disabled;
+        return $this;
+    }
+
     public function children(): array
     {
         return array_merge(
@@ -30,6 +42,7 @@ class RadioList extends DIV implements InputInterface
             array_map(
                 function ($f) {
                     $f['field']->setForm($this->form());
+                    $f['field']->setDisabled($this->disabled());
                     return $f['field'];
                 },
                 $this->fields

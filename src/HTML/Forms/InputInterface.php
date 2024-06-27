@@ -22,6 +22,9 @@ interface InputInterface extends TagInterface
     public function default();
     public function value(bool $useDefault = false): mixed;
 
+    public function disabled(): bool;
+    public function setDisabled(bool $disabled): static;
+
     /**
      * @param bool $required
      * @param string|null $message

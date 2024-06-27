@@ -16,12 +16,24 @@ class INPUT extends Tag implements InputInterface
     protected $required = false;
     protected $requiredMessage = 'This field is required';
     protected $validators = [];
+    protected bool $disabled = false;
 
     protected static $counter = 0;
 
     public function __construct(string $id = null)
     {
         $this->setID($id ?? 'input-' . crc32(get_called_class() . static::$counter++));
+    }
+
+    public function disabled(): bool
+    {
+        return $this->disabled;
+    }
+
+    public function setDisabled(bool $disabled): static
+    {
+        $this->disabled = $disabled;
+        return $this;
     }
 
     public function validationError(): ?string
@@ -53,7 +65,7 @@ class INPUT extends Tag implements InputInterface
 
     public function attributes(): array
     {
-        return array_merge(
+        $attributes = array_merge(
             parent::attributes(),
             [
                 'value' => $this->value(true),
@@ -61,6 +73,10 @@ class INPUT extends Tag implements InputInterface
                 'form' => $this->form() ? $this->form()->formID() : null
             ]
         );
+        if ($this->disabled()) {
+            $attributes['disabled'] = null;
+        }
+        return $attributes;
     }
 
     public function required(): bool

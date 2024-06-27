@@ -17,12 +17,24 @@ class Checkbox extends Tag implements InputInterface
     protected $required = false;
     protected $requiredMessage = 'This field is required';
     protected $validators = [];
+    protected bool $disabled = false;
 
     protected static $counter = 0;
 
     public function __construct(string $id = null)
     {
         $this->setID($id ?? 'checkbox-' . self::$counter++);
+    }
+
+    public function disabled(): bool
+    {
+        return $this->disabled;
+    }
+
+    public function setDisabled(bool $disabled): static
+    {
+        $this->disabled = $disabled;
+        return $this;
     }
 
     public function validationError(): ?string
@@ -64,6 +76,9 @@ class Checkbox extends Tag implements InputInterface
         );
         if ($this->value(true)) {
             $attributes['checked'] = null;
+        }
+        if ($this->disabled()) {
+            $attributes['disabled'] = null;
         }
         return $attributes;
     }
