@@ -33,7 +33,10 @@ class FormWrapper extends Tag
 
     public function __construct(string $id = null)
     {
-        $this->setID($id ?? 'form-' . self::$counter++);
+        $this->setID(
+            $id
+                ?? 'form-' . self::$counter++ . '-' . crc32(Context::url()->path())
+        );
         $this->addClass('form-wrapper');
     }
 
