@@ -26,7 +26,6 @@
         "ralouphie/mimey": "^1.0",
         "spatie/image": "^2.1||^1.7.6",
         "ksubileau/color-thief-php": "^1.4",
-        "erusev/parsedown-extra": "^0.8.1",
         "thunderer/shortcode": "^0.7.4",
         "scrivo/highlight.php": "v9.18.1.9",
         "ozdemirburak/iris": "^2",
@@ -43,7 +42,9 @@
         "jbroadway/urlify": "^1.2",
         "symfony/lock": "^6.3",
         "gregwar/captcha": "^1.2",
-        "symfony/yaml": "^6.4"
+        "symfony/yaml": "^6.4",
+        "league/commonmark": "^2.4",
+        "n0sz/commonmark-marker-extension": "^1.0"
     },
     "conflict": {
         "jasig/phpcas": "<1.6",
