@@ -36,7 +36,7 @@ class Templates
     {
         // add fields to context
         Context::copy();
-        Context::fields()->merge($fields);
+        Context::fields()->merge($fields, null, true);
         // get template alias
         $template = Config::get("templates.aliases.$template") ?? $template;
         // do rendering and output
