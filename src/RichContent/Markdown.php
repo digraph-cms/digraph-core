@@ -14,7 +14,13 @@ class Markdown
     {
         static $converter = null;
         if (!$converter) {
-            $config = [];
+            $config = [
+                'safe' => false,
+                'html_input' => 'allow',
+                'disallowed_raw_html' => [
+                    'disallowed_tags' => ['title', 'textarea', 'style', 'xmp', 'noembed', 'noframes', 'script', 'plaintext'],
+                ],
+            ];
             $environment = new Environment($config);
             $environment->addExtension(new CommonMarkCoreExtension());
             $environment->addExtension(new GithubFlavoredMarkdownExtension());
