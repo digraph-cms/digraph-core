@@ -194,21 +194,28 @@ Digraph.state = {
         frame.stateUpdateRequest = new XMLHttpRequest();
         frame.stateUpdateRequest.addEventListener('load', (e) => {
             if (e.target.status == 200) {
+                // check for X-Target-Frame header and change target frame if specified
+                if (e.target.getResponseHeader('X-Target-Frame')) {
+                    target_frame = document.getElementById(e.target.getResponseHeader('X-Target-Frame'));
+                }else {
+                    target_frame = frame;
+                }
+                // parse response and put it into the target frame
                 const doc = new DOMParser().parseFromString(e.target.response, 'text/html');
                 if (document.getElementById('notifications') && doc.getElementById('notifications')) {
                     document.getElementById('notifications').innerHTML += doc.getElementById('notifications').innerHTML;
                 }
-                const docElement = doc.getElementById(frame.dataset.id ?? frame.getAttribute('id'));
+                const docElement = doc.getElementById(target_frame.dataset.id ?? target_frame.getAttribute('id'));
                 if (!docElement) {
-                    if (frame.classList.contains('navigation-frame--hide-if-missing')) {
-                        frame.style.display = 'none';
+                    if (target_frame.classList.contains('navigation-frame--hide-if-missing')) {
+                        target_frame.style.display = 'none';
                     } else {
-                        frame.classList.add('error');
+                        target_frame.classList.add('error');
                         if (document.getElementById('notifications')) {
                             var error = document.createElement('div');
                             error.classList.add('notification');
                             error.classList.add('notification--error');
-                            error.innerText = 'Error loading navigation frame: target ID missing (' + (frame.dataset.id ?? frame.getAttribute('id')) + ')';
+                            error.innerText = 'Error loading navigation frame: target ID missing (' + (target_frame.dataset.id ?? target_frame.getAttribute('id')) + ')';
                             document.getElementById('notifications').appendChild(error);
                             error.parentElement.dispatchEvent(new Event('DigraphDOMReady', { bubbles: true }));
                         }
@@ -216,7 +223,7 @@ Digraph.state = {
                     return;
                 }
                 // update frame
-                frame.innerHTML = docElement.innerHTML;
+                target_frame.innerHTML = docElement.innerHTML;
                 if (!Digraph.state.frameIsStateless(frame)) {
                     if (document.getElementById('breadcrumb') && doc.getElementById('breadcrumb')) {
                         document.getElementById('breadcrumb').innerHTML = doc.getElementById('breadcrumb').innerHTML;
@@ -227,20 +234,20 @@ Digraph.state = {
                 }
                 // update classes from pulled element
                 if (docElement.getAttribute('class')) {
-                    frame.setAttribute('class', docElement.getAttribute('class'));
+                    target_frame.setAttribute('class', docElement.getAttribute('class'));
                 }
                 // update data-current-url {
-                frame.setAttribute('data-current-url', frame.stateUpdateRequest.responseURL);
+                target_frame.setAttribute('data-current-url', target_frame.stateUpdateRequest.responseURL);
                 // dispatch dom ready event
-                frame.dispatchEvent(
+                target_frame.dispatchEvent(
                     new Event('DigraphDOMReady', {
                         bubbles: true,
                         cancelable: false
                     })
                 );
-                frame.classList.remove('loading');
+                target_frame.classList.remove('loading');
                 // execute scripts
-                Array.from(frame.getElementsByTagName('script')).forEach(
+                Array.from(target_frame.getElementsByTagName('script')).forEach(
                     oldElement => {
                         const newScript = document.createElement('script');
                         Array.from(oldElement.attributes).forEach(
@@ -251,13 +258,13 @@ Digraph.state = {
                     }
                 );
                 // focus autofocus element
-                var af = frame.getElementsByClassName('navigation-frame__autofocus')[0];
+                var af = target_frame.getElementsByClassName('navigation-frame__autofocus')[0];
                 if (af) af.focus();
                 // if requested, push state on completion
                 if (pushState) {
-                    history.pushState({ url: frame.stateUpdateRequest.responseURL, frame: frame.getAttribute('id') },
+                    history.pushState({ url: target_frame.stateUpdateRequest.responseURL, frame: target_frame.getAttribute('id') },
                         document.getElementsByTagName('title')[0].innerHTML,
-                        frame.stateUpdateRequest.responseURL
+                        target_frame.stateUpdateRequest.responseURL
                     );
                 }
             } else {

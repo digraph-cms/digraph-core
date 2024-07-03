@@ -364,7 +364,12 @@ abstract class Digraph
                 throw $th;
             } catch (RedirectException $r) {
                 // RedirectExceptions are used to allow exception handling that becomes a redirect
-                Context::response()->redirect($r->url(), $r->permanent(), $r->preserveMethod());
+                Context::response()->redirect(
+                    $r->url(),
+                    $r->permanent(),
+                    $r->preserveMethod(),
+                    $r->targetFrame(),
+                );
             } catch (HttpError $error) {
                 // generate exception-handling page
                 try {
@@ -375,7 +380,12 @@ abstract class Digraph
                     Templates::wrapResponse(Context::response());
                 } catch (RedirectException $r) {
                     // RedirectExceptions are used to allow exception handling that becomes a redirect
-                    Context::response()->redirect($r->url(), $r->permanent(), $r->preserveMethod());
+                    Context::response()->redirect(
+                        $r->url(),
+                        $r->permanent(),
+                        $r->preserveMethod(),
+                        $r->targetFrame(),
+                    );
                 }
             } catch (Throwable $th) {
                 try {
@@ -390,7 +400,12 @@ abstract class Digraph
                     Templates::wrapResponse(Context::response());
                 } catch (RedirectException $r) {
                     // RedirectExceptions are used to allow exception handling that becomes a redirect
-                    Context::response()->redirect($r->url(), $r->permanent(), $r->preserveMethod());
+                    Context::response()->redirect(
+                        $r->url(),
+                        $r->permanent(),
+                        $r->preserveMethod(),
+                        $r->targetFrame(),
+                    );
                 }
             }
         }

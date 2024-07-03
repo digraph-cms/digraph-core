@@ -84,13 +84,16 @@ class Response
         $this->template = null;
     }
 
-    public function redirect(string $url, bool $permanent = false, bool $preserveMethod = false)
+    public function redirect(string $url, bool $permanent = false, bool $preserveMethod = false, string|null $targetFrame = null)
     {
         $this->headers()->set('Location', $url);
         if ($preserveMethod) {
             $this->status($permanent ? 308 : 307);
         } else {
             $this->status($permanent ? 301 : 302);
+        }
+        if ($targetFrame) {
+            $this->headers()->set('X-Target-Frame', $targetFrame);
         }
     }
 
