@@ -8,7 +8,7 @@ use Exception;
 class RedirectException extends Exception
 {
     protected $url, $permanent, $preserveMethod;
-    protected string|null $targetFrame;
+    protected string|null $targetFrame = null;
 
     public function __construct(URL $url, bool $permanent = false, bool $preserveMethod = false, string|null $targetFrame = null)
     {
