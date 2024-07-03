@@ -16,17 +16,24 @@ class CronJob
     protected $id, $parent, $name, $interval;
     protected $run_next, $run_last;
     protected $error_time, $error_message;
-    protected $job;
+    /** @var callable|string|null */
+    protected $job = null;
 
     public function __construct(string $parent = null, string $name = null, callable $job = null, string $interval = null)
     {
         $this->parent = $this->parent ?? $parent;
         $this->name = $this->name ?? $name;
-        $this->job = $this->job !== null
-            ? @unserialize($this->job)
-            : $job ?? function () {
+        if ($this->job === null) {
+            // $this->job is empty, so we're creating a new job
+            $this->job = $job ?? function () {
                 return 'Empty job';
             };
+        } elseif (is_string($this->job)) {
+            // $this->job is not empty, so we're loading an existing job from the database
+            $this->job = Serializer::unserialize($this->job);
+        } else {
+            throw new Exception('Invalid job data');
+        }
         $this->run_next = $this->run_next ?? time();
         $this->interval = $this->interval ?? $interval ?? 'default';
         // insert into database immediately if not already in there
