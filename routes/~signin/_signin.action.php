@@ -21,6 +21,9 @@ use DigraphCMS\URL\URL;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
 
+// require captcha
+Security::requireSecurityCheck();
+
 // require the necessary cookies
 Cookies::required(['system', 'auth', 'csrf']);
 

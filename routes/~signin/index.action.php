@@ -2,11 +2,16 @@
 <?php
 
 use DigraphCMS\Context;
+use DigraphCMS\Security\Security;
 use DigraphCMS\Session\Cookies;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\Templates;
 use DigraphCMS\Users\Users;
 
+// require captcha
+Security::requireSecurityCheck();
+
+// require the necessary cookies
 Cookies::required(['system', 'auth', 'csrf']);
 
 // handle single signin option by bouncing directly to it
