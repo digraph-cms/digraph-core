@@ -59,7 +59,7 @@ if ($form->ready()) {
     window.<?= $callback_id ?> = function() {
         turnstile.render('#<?= $container_id ?>', {
             sitekey: '<?= Config::get('captcha.turnstile.site_key') ?>',
-            action: '<?= Context::url()->path() ?>',
+            action: '<?= $bounce->path() ?>',
             callback: function(token) {
                 document.getElementById('<?= $token->id() ?>').value = token;
                 Digraph.submitForm(document.getElementById('<?= $form->id() ?>').getElementsByTagName('form')[0]);
