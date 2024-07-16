@@ -41,7 +41,7 @@ class PaginatedTable extends PaginatedSection
         return parent::download(
             $filename,
             $callback ?? $this->callback,
-            $headers ?? $this->headers,
+            $headers ?? array_map(fn (ColumnHeader $h) => $h->label(), $this->headers),
             $finalizeCallback,
             $buttonText,
             $ttl,

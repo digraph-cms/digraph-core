@@ -14,6 +14,11 @@ class ColumnHeader
         $this->id = 'c' . self::$idCounter++;
     }
 
+    public function label(): string
+    {
+        return $this->label;
+    }
+
     protected function classes(): array
     {
         return [];
