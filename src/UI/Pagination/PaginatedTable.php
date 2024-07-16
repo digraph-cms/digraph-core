@@ -29,6 +29,26 @@ class PaginatedTable extends PaginatedSection
         }, $headers ?? []);
     }
 
+    public function download(
+        string $filename,
+        callable|null $callback,
+        array|null $headers = [],
+        ?callable $finalizeCallback = null,
+        ?string $buttonText = null,
+        ?int $ttl = null,
+        ?callable $permissions = null
+    ) {
+        return parent::download(
+            $filename,
+            $callback ?? $this->callback,
+            $headers ?? $this->headers,
+            $finalizeCallback,
+            $buttonText,
+            $ttl,
+            $permissions
+        );
+    }
+
     public function body(): Tag
     {
         if (!$this->body) {
