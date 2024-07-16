@@ -40,7 +40,19 @@ class PaginatedTable extends PaginatedSection
     ) {
         return parent::download(
             $filename,
-            $callback ?? $this->callback,
+            $callback ?? function (mixed $input): array {
+                $row = call_user_func($this->callback, $input);
+                $row = array_map(
+                    function ($cell) {
+                        $cell = strval($cell);
+                        $cell = strip_tags($cell, ['<br>']);
+                        $cell = str_ireplace('<br>', PHP_EOL, $cell);
+                        return $cell;
+                    },
+                    $row
+                );
+                return $row;
+            },
             $headers ?? array_map(fn (ColumnHeader $h) => $h->label(), $this->headers),
             $finalizeCallback,
             $buttonText,
