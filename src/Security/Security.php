@@ -44,7 +44,7 @@ class Security
      * @return bool 
      * @throws Exception 
      */
-    public static function flagged(): bool
+    public static function flagged(bool $guest_default = true): bool
     {
         if (Session::user()) {
             // always respect flags for the authentication/user of users
@@ -63,7 +63,7 @@ class Security
                 return false;
             }
             // guests are flagged by default
-            return true;
+            return $guest_default;
         }
     }
 

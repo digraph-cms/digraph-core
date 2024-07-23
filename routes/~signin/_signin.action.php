@@ -22,7 +22,7 @@ use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
 
 // require captcha
-Security::requireSecurityCheck();
+Security::requireSecurityCheck(false);
 
 // require the necessary cookies
 Cookies::required(['system', 'auth', 'csrf']);

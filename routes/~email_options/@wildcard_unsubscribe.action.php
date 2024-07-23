@@ -9,7 +9,7 @@ use DigraphCMS\UI\ButtonMenus\SingleButton;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\URL\URL;
 
-Security::requireSecurityCheck();
+Security::requireSecurityCheck(false);
 
 Breadcrumb::setTopName('Email unsubscribe');
 
