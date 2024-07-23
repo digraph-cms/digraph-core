@@ -67,5 +67,5 @@ if ($form->ready()) {
         });
     };
 </script>
-<div id="<?= $container_id ?>"></div>
+<div class="turnstile-interface" id="<?= $container_id ?>"></div>
 <?= $form ?>

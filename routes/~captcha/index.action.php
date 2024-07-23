@@ -13,7 +13,7 @@ use DigraphCMS\URL\URL;
 
 $id = Context::arg('frame') ?? 'captcha-interface';
 
-echo '<div id="' . $id . '">';
+echo '<div class="captcha-interface" id="' . $id . '">';
 
 if (!Security::flagged()) {
     if (Context::arg('bounce')) {
