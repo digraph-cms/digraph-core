@@ -2,8 +2,9 @@
 
 use DigraphCMS\Config;
 use DigraphCMS\Context;
+use DigraphCMS\Users\Permissions;
 
-if (Config::get('errors.display_trace')) {
+if (Config::get('errors.display_trace') || (Config::get('errors.display_trace_to_admins') && Permissions::inGroup('admins'))) {
     if (!($thrown = Context::thrown())) {
         return;
     }

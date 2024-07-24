@@ -64,6 +64,7 @@
         "umask_dir": 2
     },
     "errors": {
-        "display_trace": false
+        "display_trace": false,
+        "display_trace_to_admins": true
     }
 }
