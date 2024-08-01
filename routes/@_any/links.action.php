@@ -64,18 +64,16 @@ $fn = function () use ($tabs) {
     // display form for adding connections
     $target = (new PageField('Add new ' . ($mode == 'children' ? 'child' : 'parent')))
         ->setRequired(true);
-    $type = (new Field('Edge type'))
-        ->setDefault('normal')
-        ->setRequired(true);
+    $type = (new Field('Edge type'));
     $form = new FormWrapper(Context::pageUUID() . '_' . $mode);
     $form->addChild($target);
     $form->addChild($type);
     $form->addCallback(function () use ($mode, $target, $type) {
         try {
             if ($mode == 'children') {
-                Pages::insertLink(Context::pageUUID(), $target->value(), $type->value());
+                Pages::insertLink(Context::pageUUID(), $target->value(), $type->value() ?: null);
             } else {
-                Pages::insertLink($target->value(), Context::pageUUID(), $type->value());
+                Pages::insertLink($target->value(), Context::pageUUID(), $type->value() ?: null);
             }
         } catch (\Throwable $th) {
             if ($th instanceof Exception) {
