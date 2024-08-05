@@ -303,8 +303,8 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
             ->fetch()
             // then try to return any parent
             ?? Graph::parents($this->uuid())
-                ->limit(1)
-                ->fetch();
+            ->limit(1)
+            ->fetch();
     }
 
     public function parent(URL $url = null): ?URL
@@ -362,7 +362,8 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
     public function slugCollisions(): bool
     {
         if ($this->slugCollisions === null) {
-            $this->slugCollisions = Slugs::collisions($this->slug());
+            if (is_null($this->slug())) $this->slugCollisions = false;
+            else $this->slugCollisions = Slugs::collisions($this->slug());
         }
         return $this->slugCollisions;
     }
@@ -513,8 +514,8 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
         } else {
             $slug =
                 ($this->slugCollisions() || ($this->slug() && Router::staticRouteExists($this->slug(), $action ?? 'index')))
-                    ? $this->uuid()
-                    : $this->slug();
+                ? $this->uuid()
+                : $this->slug();
         }
         if ($slug == 'home' && $action != 'index.html' && $action != '') {
             $slug = $this->uuid();
@@ -598,14 +599,13 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
         array        $parents = [],
         string       $user = null,
         string       $jobGroup = null
-    ): AbstractPage
-    {
+    ): AbstractPage {
         // we do this all in a transaction
         DB::beginTransaction();
         // set up job group name
         $jobGroup = $jobGroup ?? Digraph::uuid('page_copy_');
         // set up new page
-        $page = clone($this);
+        $page = clone ($this);
         $page->setUUID(Digraph::uuid());
         $page->name($name ?? $this->name() . ' (copy)');
         $page['page_copy_log.from'] = $this->uuid();
@@ -673,7 +673,7 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
         $parentMedia = RichMedia::select($old->uuid());
         $cloned = [];
         while ($media = $parentMedia->fetch()) {
-            $clone = clone($media);
+            $clone = clone ($media);
             $clone->setUUID(Digraph::uuid());
             $clone->setParent($new->uuid());
             $clone->insert();
