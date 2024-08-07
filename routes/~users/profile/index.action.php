@@ -19,21 +19,17 @@ usort($tabs, function ($a, $b) {
 
 $tabInterface = new TabInterface('profile');
 
-foreach ($tabs as $filestore) {
-    ob_start();
-    include $filestore;
-    $contents = ob_get_clean();
-    if (!$contents) continue;
+foreach ($tabs as $file) {
     $tabInterface->addTab(
         URLify::filter(
-            URLs::pathToName(basename($filestore)),
+            URLs::pathToName(basename($file)),
             removeWords: true,
             strToLower: true,
             separator: '_'
         ),
-        URLs::pathToName(basename($filestore)),
-        function () use ($contents) {
-            echo $contents;
+        URLs::pathToName(basename($file)),
+        function () use ($file, $user) {
+            include $file;
         }
     );
 }
