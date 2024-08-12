@@ -187,12 +187,12 @@ File card icons for extensions
 .file-card--extension-rtf,
 .file-card--extension-wpd,
 .file-card--extension-wps {
-    background: #2a5699;
-    color: white;
+  background: #2a5699;
+  color: white;
 
-    &:before {
-        content: "\eb0e";
-    }
+  &:before {
+    content: "\eb0e";
+  }
 }
 
 /* presentations */
@@ -206,12 +206,12 @@ File card icons for extensions
 .file-card--extension-pot,
 .file-card--extension-pps,
 .file-card--extension-ppa {
-    background: #d24726;
-    color: white;
+  background: #d24726;
+  color: white;
 
-    &:before {
-        content: "\eb22";
-    }
+  &:before {
+    content: "\eb22";
+  }
 }
 
 /* images */
@@ -234,12 +234,12 @@ File card icons for extensions
 .file-card--extension-k25,
 .file-card--extension-kdc,
 .file-card--extension-dng {
-    background: #666;
-    color: white;
+  background: #666;
+  color: white;
 
-    &:before {
-        content: "\eb16";
-    }
+  &:before {
+    content: "\eb16";
+  }
 }
 
 /* pdf */
@@ -248,7 +248,7 @@ File card icons for extensions
   color: white;
 
   &:before {
-      content: "\eb1e";
+    content: "\eb1e";
   }
 }
 
@@ -335,5 +335,26 @@ File card icons for extensions
 
   &:before {
     content: "\eb30";
+  }
+}
+
+/* audio files */
+.file-card--extension-mp3,
+.file-card--extension-mp4,
+.file-card--extension-wav,
+.file-card--extension-aiff,
+.file-card--extension-flac,
+.file-card--extension-m4a,
+.file-card--extension-ogg,
+.file-card--extension-wma,
+.file-card--extension-mpa,
+.file-card--extension-pcm,
+.file-card--extension-aac,
+.file-card--extension-mid,
+.file-card--extension-alac {
+  background: #3938a8;
+
+  &:before {
+    content: "\eb09";
   }
 }
