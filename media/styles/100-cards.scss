@@ -199,6 +199,28 @@ File card icons for extensions
     }
 }
 
+/* audio files */
+.file-card--extension-mp3,
+.file-card--extension-mp4,
+.file-card--extension-wav,
+.file-card--extension-aiff,
+.file-card--extension-flac,
+.file-card--extension-m4a,
+.file-card--extension-ogg,
+.file-card--extension-wma,
+.file-card--extension-mpa,
+.file-card--extension-pcm,
+.file-card--extension-aac,
+.file-card--extension-mid,
+.file-card--extension-alac {
+    border-color: #3938a8;
+
+    &:before {
+        color: #3938a8;
+        content: "\eb09";
+    }
+}
+
 /* presentations */
 .file-card--extension-pptx,
 .file-card--extension-ppt,
