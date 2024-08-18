@@ -104,6 +104,8 @@ class SELECT extends Tag implements InputInterface
         if ($value === true) $key = 'true';
         elseif ($value === false) $key = 'false';
         elseif ($value === null) $key = 'null';
+        elseif (is_int($value)) $key = $value;
+        elseif (is_string($value) && !str_contains($value, '"')) $key = $value;
         else $key = crc32(serialize($value));
         $this->options[$key] = [
             'value' => $value,
