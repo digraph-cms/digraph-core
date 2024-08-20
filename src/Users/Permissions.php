@@ -21,6 +21,11 @@ class Permissions
     public static function url(URL $url, User $user = null): bool
     {
         $user = $user ?? Users::current() ?? Users::guest();
+        // first try non-type-specific permissions
+        if (null !== $value = Dispatcher::firstValue("onUrlPermissions", [$url, $user])) {
+            return $value;
+        }
+        // next try page/static permissions
         if ($url->page()) {
             return static::pageUrl($url, $user);
         } else {
