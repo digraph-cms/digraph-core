@@ -345,7 +345,7 @@ class PaginatedSection extends Tag
         } else {
             // link to initialize
             $out .= sprintf(
-                '<a href="%s" class="button">%s%s</a>',
+                '<a href="%s" class="button" rel="nofollow">%s%s</a>',
                 new URL('&' . $arg . '=true'),
                 $this->dl_button,
                 $this->getFilterConfig() ? ' (filtered)' : '',
