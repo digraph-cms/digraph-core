@@ -108,7 +108,13 @@ class RichContent
     {
         if ($this->text === null) {
             $converter = new HtmlConverter();
-            $this->text = $converter->convert($this->html());
+            $this->text = strip_tags(
+                html_entity_decode(
+                    strip_tags(
+                        $converter->convert($this->html())
+                    )
+                )
+            );
         }
         return $this->text;
     }
