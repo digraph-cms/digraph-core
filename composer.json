@@ -44,7 +44,8 @@
         "gregwar/captcha": "^1.2",
         "symfony/yaml": "^6.4",
         "league/commonmark": "^2.4",
-        "n0sz/commonmark-marker-extension": "^1.0"
+        "n0sz/commonmark-marker-extension": "^1.0",
+        "league/html-to-markdown": "^5.1"
     },
     "conflict": {
         "jasig/phpcas": "<1.6",
