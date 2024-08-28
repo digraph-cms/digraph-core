@@ -232,7 +232,7 @@ class Format
     public static function datetime($date, $textOnly = false, $precise = false, $day_of_week = false): string
     {
         $date = static::parseDate($date);
-        if ($date->format('his') == '120000') {
+        if ($date->format('His') == '120000') {
             // display noon as the current day, followed by "at noon"
             $text = static::date($date, true, $precise, $day_of_week);
             $text .= ' at noon';
