@@ -4,6 +4,7 @@ namespace DigraphCMS\RichContent;
 
 use DateTime;
 use DigraphCMS\Context;
+use League\HTMLToMarkdown\Converter\TableConverter;
 use League\HTMLToMarkdown\HtmlConverter;
 
 class RichContent
@@ -107,14 +108,14 @@ class RichContent
     public function text(): string
     {
         if ($this->text === null) {
-            $converter = new HtmlConverter();
-            $this->text = strip_tags(
-                html_entity_decode(
-                    strip_tags(
-                        $converter->convert($this->html())
-                    )
-                )
-            );
+            $converter = new HtmlConverter([
+                'strip_tags' => true,
+                'preserve_comments' => false,
+                'strip_placeholder_links' => true,
+                'hard_break' => true,
+            ]);
+            $converter->getEnvironment()->addConverter(new TableConverter);
+            $this->text = $converter->convert($this->html());
         }
         return $this->text;
     }
