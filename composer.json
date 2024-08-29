@@ -34,7 +34,7 @@
         "phpmailer/phpmailer": "^6.6",
         "tijsverkoyen/css-to-inline-styles": "^2.2",
         "caxy/php-htmldiff": "^0.1.10",
-        "phpoffice/phpspreadsheet": "^1.23",
+        "phpoffice/phpspreadsheet": "^2.2.1",
         "masterminds/html5": "^2.7",
         "ezyang/htmlpurifier": "^4.16",
         "robmorgan/phinx": "^0.13.4",
