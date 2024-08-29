@@ -17,7 +17,7 @@ class DollarCell extends AbstractCellWriter
         $cell->getStyle()
             ->getNumberFormat()
             ->setFormatCode(
-                NumberFormat::FORMAT_CURRENCY_USD_SIMPLE
+                NumberFormat::FORMAT_CURRENCY_USD
             );
     }
 }
