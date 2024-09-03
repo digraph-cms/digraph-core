@@ -83,9 +83,8 @@ class SpreadsheetWriter
             if ($cell instanceof AbstractCellWriter) {
                 $cell->write($this->spreadsheet->getActiveSheet(), $i + 1, $row);
             } else {
-                $this->spreadsheet->getActiveSheet()->setCellValueByColumnAndRow(
-                    $i + 1,
-                    $row,
+                $this->spreadsheet->getActiveSheet()->setCellValue(
+                    Coordinate::stringFromColumnIndex($i + 1) . $row,
                     $cell
                 );
             }
