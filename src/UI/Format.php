@@ -111,25 +111,23 @@ class Format
         $truncate = '';
         foreach ($lines as $line_matchings) {
             // if there is any html-tag in this line, handle it and add it (uncounted) to the output
-            if (!empty($line_matchings[1])) {
-                // if it's an "empty element" with or without xhtml-conform closing slash
-                if (preg_match('/^<(\s*.+?\/\s*|\s*(img|br|input|hr|area|base|basefont|col|frame|isindex|link|meta|param)(\s.+?)?)>$/is', $line_matchings[1])) {
-                    // do nothing
-                    // if tag is a closing tag
-                } else if (preg_match('/^<\s*\/([^\s]+?)\s*>$/s', $line_matchings[1], $tag_matchings)) {
-                    // delete tag from $open_tags list
-                    $pos = array_search($tag_matchings[1], $open_tags);
-                    if ($pos !== false) {
-                        unset($open_tags[$pos]);
-                    }
-                    // if tag is an opening tag
-                } else if (preg_match('/^<\s*([^\s>!]+).*?>$/s', $line_matchings[1], $tag_matchings)) {
-                    // add tag to the beginning of $open_tags list
-                    array_unshift($open_tags, strtolower($tag_matchings[1]));
+            // if it's an "empty element" with or without xhtml-conform closing slash
+            if (preg_match('/^<(\s*.+?\/\s*|\s*(img|br|input|hr|area|base|basefont|col|frame|isindex|link|meta|param)(\s.+?)?)>$/is', $line_matchings[1])) {
+                // do nothing
+                // if tag is a closing tag
+            } else if (preg_match('/^<\s*\/([^\s]+?)\s*>$/s', $line_matchings[1], $tag_matchings)) {
+                // delete tag from $open_tags list
+                $pos = array_search($tag_matchings[1], $open_tags);
+                if ($pos !== false) {
+                    unset($open_tags[$pos]);
                 }
-                // add html-tag to $truncate'd text
-                $truncate .= $line_matchings[1];
+                // if tag is an opening tag
+            } else if (preg_match('/^<\s*([^\s>!]+).*?>$/s', $line_matchings[1], $tag_matchings)) {
+                // add tag to the beginning of $open_tags list
+                array_unshift($open_tags, strtolower($tag_matchings[1]));
             }
+            // add html-tag to $truncate'd text
+            $truncate .= $line_matchings[1];
             // calculate the length of the plain text part of the line; handle entities as one character
             $content_length = strlen(preg_replace('/&[0-9a-z]{2,8};|&#[0-9]{1,7};|[0-9a-f]{1,6};/i', ' ', $line_matchings[2]));
             if ($total_length + $content_length > $length) {
