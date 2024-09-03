@@ -90,7 +90,9 @@ class SpreadsheetWriter
                 );
             }
             // set fill
-            $style = $this->spreadsheet->getActiveSheet()->getCellByColumnAndRow($i + 1, $row)->getStyle();
+            $style = $this->spreadsheet->getActiveSheet()
+                ->getCell([$i+1,$row])
+                ->getStyle();
             $style->getFill()->setFillType(Fill::FILL_SOLID);
             if ($cell instanceof AbstractCellWriter && $fill = $cell->fill()) {
                 $style->getFill()->setStartColor(new Color($fill));
