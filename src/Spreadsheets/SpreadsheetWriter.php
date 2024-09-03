@@ -91,7 +91,7 @@ class SpreadsheetWriter
             }
             // set fill
             $style = $this->spreadsheet->getActiveSheet()
-                ->getCell([$i+1,$row])
+                ->getCell(Coordinate::stringFromColumnIndex($i + 1) . $row)
                 ->getStyle();
             $style->getFill()->setFillType(Fill::FILL_SOLID);
             if ($cell instanceof AbstractCellWriter && $fill = $cell->fill()) {
