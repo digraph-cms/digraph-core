@@ -14,7 +14,7 @@ class File
     /** @var callable|null */
     protected $permissions;
 
-    public function __construct(string $filename, string $content, $identifier = null, callable|null $permissions = null)
+    public function __construct(string $filename, string|callable $content, $identifier = null, callable|null $permissions = null)
     {
         // take in filename/extension
         $this->filename = $filename;
@@ -56,7 +56,9 @@ class File
 
     public function image(): ?ImageFile
     {
-        return null;
+        if ($this instanceof ImageFile) return $this;
+        if (!ImageFile::handles($this->extension())) return null;
+        return new ImageFile($this->path(), $this->filename(), $this->permissions());
     }
 
     public function filename(): string
@@ -131,6 +133,9 @@ class File
 
     public function content(): string
     {
+        if (is_callable($this->content)) {
+            $this->content = call_user_func($this->content);
+        }
         return $this->content;
     }
 }

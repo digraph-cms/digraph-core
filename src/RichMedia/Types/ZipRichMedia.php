@@ -226,7 +226,7 @@ class ZipRichMedia extends AbstractRichMedia
                     $zip = new ZipArchive;
                     $zip->open($temp, ZipArchive::CREATE);
                     foreach ($this->files() as $f) {
-                        $zip->addFile($f->src(), $f->filename());
+                        $zip->addFile($f->path(), $f->filename());
                     }
                     $zip->close();
                     FS::copy($temp, $file->path());

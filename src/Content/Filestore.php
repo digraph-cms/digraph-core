@@ -9,6 +9,7 @@ use DigraphCMS\ExceptionLog;
 use DigraphCMS\FS;
 use DigraphCMS\Serializer;
 use DigraphCMS\Session\Session;
+use DigraphCMS\URL\URL;
 use Exception;
 
 class Filestore
@@ -33,7 +34,7 @@ class Filestore
             ->count();
         // delete file if was unique
         if ($unique) {
-            FS::delete($file->src(), Config::get('filestore.path'));
+            FS::delete($file->path(), Config::get('filestore.path'));
         }
         return true;
     }
@@ -93,7 +94,7 @@ class Filestore
                     'uuid' => $file->uuid(),
                     'hash' => $file->hash(),
                     'filename' => $file->filename(),
-                    'bytes' => filesize($file->src()),
+                    'bytes' => filesize($file->path()),
                     'parent' => $file->mediaUUID(),
                     'meta' => json_encode($file->meta()),
                     'created' => $file->created()->getTimestamp(),
@@ -110,6 +111,12 @@ class Filestore
             '/' . substr($hash, 0, 2) .
             '/' . substr($hash, 2, 2) .
             '/' . $hash;
+    }
+
+    public static function url(string $uuid): string
+    {
+        return (new URL('/filestore/file:' . $uuid))
+            ->__toString();
     }
 
     /**

@@ -23,11 +23,13 @@ if (!$info) throw new HttpError(404);
 Context::response()->private(true);
 
 // check permissions
-$allowed = call_user_func(
-    $info['permissions'],
-    $user ?? Users::current() ?? Users::guest(),
-);
-if (!$allowed && !Permissions::inMetaGroup('content__admin')) throw new AccessDeniedError('File access denied');
+$allowed =
+    Permissions::inMetaGroup('content__editor')
+    || call_user_func(
+        $info['permissions'],
+        Users::current() ?? Users::guest(),
+    );
+if (!$allowed) throw new AccessDeniedError('File access denied');
 
 // pass through file
 Context::response()

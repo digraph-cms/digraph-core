@@ -245,7 +245,7 @@ class Media
     public static function fileUrl(File $file, bool $permissioned = false): string
     {
         if ($permissioned) {
-            return (new URL('/permissioned_files/file:' . $file->identifier()))
+            return (new URL('/filestore/permissioned:' . $file->identifier()))
                 ->__toString();
         } else {
             $filename = urlencode($file->filename());

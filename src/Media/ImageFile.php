@@ -34,7 +34,7 @@ class ImageFile extends DeferredFile
         );
     }
 
-    public function __construct(string $src, string $filename)
+    public function __construct(string $src, string $filename, callable|null $permissions = null)
     {
         $this->src = $src;
         $this->filename = $filename;
@@ -45,6 +45,7 @@ class ImageFile extends DeferredFile
         $this->content = [$this, 'contentCallback'];
         $this->filename = $filename;
         $this->cache = new CacheNamespace('image-file', $this->ttl());
+        $this->permissions = $permissions;
     }
 
     public function previewBackgroundUrl(): string
@@ -197,7 +198,7 @@ class ImageFile extends DeferredFile
 
     public function originalWidth(): int
     {
-        $exif = @exif_read_data($this->src());
+        $exif = @exif_read_data($this->src);
         if ($exif && @$exif['Orientation']) {
             if (in_array($exif['Orientation'], [6, 8])) {
                 return $this->image->getHeight();
@@ -208,7 +209,7 @@ class ImageFile extends DeferredFile
 
     public function originalHeight(): int
     {
-        $exif = @exif_read_data($this->src());
+        $exif = @exif_read_data($this->src);
         if ($exif && @$exif['Orientation']) {
             if (in_array($exif['Orientation'], [6, 8])) {
                 return $this->image->getWidth();

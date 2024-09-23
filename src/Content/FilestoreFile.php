@@ -3,19 +3,16 @@
 namespace DigraphCMS\Content;
 
 use DateTime;
-use DigraphCMS\Config;
-use DigraphCMS\FS;
 use DigraphCMS\HTML\DIV;
-use DigraphCMS\Media\DeferredFile;
-use DigraphCMS\Media\ImageFile;
+use DigraphCMS\Media\File;
 use DigraphCMS\UI\Format;
 use DigraphCMS\UI\Templates;
-use DigraphCMS\URL\URL;
+use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
 use Mimey\MimeTypes;
 
-class FilestoreFile extends DeferredFile
+class FilestoreFile extends File
 {
     protected $uuid, $hash, $filename, $parent, $meta, $image;
     protected $bytes, $created, $created_by;
@@ -40,8 +37,7 @@ class FilestoreFile extends DeferredFile
         $this->created = (new DateTime())->setTimestamp($created);
         $this->created_by = $created_by;
         $this->content = function () {
-            FS::mkdir(dirname($this->path()));
-            FS::copy(Filestore::path($this->hash), $this->path(), Config::get('filestore.symlink'));
+            return file_get_contents($this->path());
         };
         $this->permissions = $permissions;
     }
@@ -77,9 +73,11 @@ class FilestoreFile extends DeferredFile
     public function checkPermissions(User|null $user = null): bool
     {
         if (is_null($this->permissions())) return true;
-        else return call_user_func(
+        else return
+            Permissions::inMetaGroup('content__editor', $user)
+            || call_user_func(
                 $this->permissions(),
-                $user ?? Users::current() ?? Users::guest(),
+                Users::current() ?? Users::guest(),
                 $this
             );
     }
@@ -90,63 +88,40 @@ class FilestoreFile extends DeferredFile
     }
 
     /**
-     * Override to return files/filestore:uuid URL if permissions are set
+     * Override to return filestore/file:uuid URL
      *
      * @return string
      */
     public function url(): string
     {
-        if ($this->permissions()) return (new URL('/permissioned_files/filestore:' . $this->uuid()))->__toString();
-        else return parent::url();
+        return Filestore::url($this->uuid());
     }
 
     /**
-     * Override to do nothing on write() calls if permissions are set, since path
-     * is the direct Filestore path.
+     * Override to do nothing on write() because files are written to the
+     * filestore storage directory only.
      *
      * @return void
      */
     public function write()
     {
-        if ($this->permissions) {
-            // do nothing if file is permissioned, because we'll read it directly from the filestore
-        } else {
-            parent::write();
-        }
+        // does nothing, because files live in the filestore storage directory only
     }
 
     /**
-     * Override path to return direct Filestore path if permissions are set, so
-     * we can read directly from there.
+     * Override path to return direct Filestore path because files are stored
+     * in the filestore storage directory only.
      *
      * @return string
      */
     public function path(): string
     {
-        if ($this->permissions()) {
-            return Filestore::path($this->hash());
-        } else {
-            return parent::path();
-        }
+        return Filestore::path($this->hash());
     }
 
     public function delete(): bool
     {
         return Filestore::delete($this);
-    }
-
-    public function src(): string
-    {
-        return Filestore::path($this->hash);
-    }
-
-    public function image(): ?ImageFile
-    {
-        if (!ImageFile::handles($this->extension())) {
-            return null;
-        } else {
-            return new ImageFile($this->src(), $this->filename);
-        }
     }
 
     public function uuid(): string
