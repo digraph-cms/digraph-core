@@ -17,6 +17,12 @@ if ($p = $file->permissions()) {
     Context::response()->private(true);
     $allowed = $file->checkPermissions();
     if (!$allowed) throw new AccessDeniedError('File access denied');
+} else {
+    // if there are no permissions, make response public and enable caching
+    Context::response()->enableCache();
+    Context::response()->private(false);
+    Context::response()->staleTTL(86400 * 30);
+    Context::response()->cacheTTL(3600);
 }
 
 // pass through file
