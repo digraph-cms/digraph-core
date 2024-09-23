@@ -132,7 +132,7 @@ class ShortCodesListener
      */
     public static function onShortCode_url(ShortcodeInterface $s): ?string
     {
-        $url = $s->getBbCode();
+        $url = $s->getBbCode() ?? $s->getContent();
         if (filter_var($url, FILTER_VALIDATE_URL)) {
             // set up URL
             $link = (new A)
