@@ -21,8 +21,9 @@ if ($p = $file->permissions()) {
     // if there are no permissions, make response public and enable caching
     Context::response()->enableCache();
     Context::response()->private(false);
-    Context::response()->staleTTL(86400 * 30);
     Context::response()->cacheTTL(3600);
+    Context::response()->browserTTL(3600);
+    Context::response()->staleTTL(86400 * 30);
 }
 
 // pass through file

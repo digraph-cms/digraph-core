@@ -7,12 +7,14 @@ use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Context;
 use DigraphCMS\Digraph;
 use DigraphCMS\Events\Dispatcher;
+use DigraphCMS\Exception as DigraphCMSException;
 use DigraphCMS\Session\Session;
+use Exception;
 
 class Response
 {
     protected $status = 200;
-    protected $headers = [];
+    protected ResponseHeaders $headers;
     protected $content = null;
     protected $content_file = null;
     protected $page = null;
@@ -28,7 +30,7 @@ class Response
     public function __construct(int $status = null)
     {
         $this->status($status);
-        $this->headers = new ResponseHeaders();
+        $this->headers = new ResponseHeaders;
     }
 
     public function searchIndex(): bool
@@ -97,12 +99,12 @@ class Response
         }
     }
 
-    public function private (bool $private = null): bool
+    public function private(bool $private = null): bool
     {
-        if ($private !== null) {
+        if ($private !== null && !$this->private) {
             $this->private = $private;
         }
-        return $this->private || Session::uuid() != 'guest';
+        return $this->private ?? Session::uuid() != 'guest';
     }
 
     public function enableCache()
@@ -143,7 +145,7 @@ class Response
         return
             // explicitly set value
             $this->browserTTL ??
-                // page object's ttl
+            // page object's ttl
             ($this->page() ? $this->page->browserTTL($this->page()->url()->action()) : null) ??
             // default of 0
             0;
@@ -257,7 +259,11 @@ class Response
         if (Digraph::inferMime($this) == 'text/html') {
             Dispatcher::dispatchEvent('onResponseRender_html', [$this]);
         }
-        if ($this->content_file) readfile($this->content_file);
-        else echo $this->content();
+        if ($this->content_file) {
+            if (!file_exists($this->content_file)) throw new DigraphCMSException("Response content file not found", ['file' => $this->content_file, 'response' => $this]);
+            readfile($this->content_file);
+        } else {
+            echo $this->content();
+        }
     }
 }
