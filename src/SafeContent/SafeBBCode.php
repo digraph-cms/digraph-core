@@ -43,6 +43,8 @@ class SafeBBCode
     {
         $string = Sanitizer::full($string);
         $string = static::parser()->process($string);
+        $string = str_replace("\r\n","<br>",$string);
+        $string = str_replace("\n","<br>",$string);
         $string = "<div class='safe-bbcode-content'>$string</div>";
         return $string;
     }
