@@ -2,11 +2,13 @@
 
 namespace DigraphCMS\Cache;
 
+use DigraphCMS\Config;
+
 class StatelessOpCache extends OpCache
 {
     public function __construct(string $dir, int $ttl)
     {
-        $this->dir = $dir;
+        $this->dir = $dir . '/' . Config::envPrefix();
         $this->ttl = $ttl;
         $this->fuzz = max(60, $ttl);
     }

@@ -35,16 +35,19 @@ class Cache
 
     public static function exists(string $name): bool
     {
+        $name = Config::envPrefix() . '/' . $name;
         return static::$driver->exists($name);
     }
 
     public static function expired(string $name): bool
     {
+        $name = Config::envPrefix() . '/' . $name;
         return static::$driver->expired($name);
     }
 
     public static function set(string $name, mixed $value, int $ttl = null): mixed
     {
+        $name = Config::envPrefix() . '/' . $name;
         return static::$driver->set($name, $value, $ttl);
     }
 
@@ -60,6 +63,7 @@ class Cache
      */
     public static function get(string $name, callable $callback = null, int $ttl = null)
     {
+        $name = Config::envPrefix() . '/' . $name;
         if (static::$driver->exists($name) && !static::$driver->expired($name)) {
             return static::$driver->get($name);
         } elseif ($callback) {
@@ -72,6 +76,7 @@ class Cache
 
     public static function invalidate(string $glob): void
     {
+        $glob = Config::envPrefix() . '/' . $glob;
         static::$driver->invalidate($glob);
     }
 }
