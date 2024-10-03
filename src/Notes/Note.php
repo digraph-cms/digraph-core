@@ -37,6 +37,11 @@ class Note
         $existing->update();
     }
 
+    public function datastoreId(): int
+    {
+        return $this->id;
+    }
+
     public function url_admin(): URL
     {
         return new URL('/admin/datastore/item:' . $this->id);

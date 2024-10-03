@@ -71,10 +71,19 @@ class Datastore
      */
     public static function delete(string $namespace, string $group, string $key): bool
     {
-        return !!DB::query()->delete('datastore')
+        return !!DB::query()
+            ->delete('datastore')
             ->where('`ns`', $namespace)
             ->where('`grp`', $group)
             ->where('`key`', $key)
+            ->execute();
+    }
+
+    public static function deleteById(int $id): bool
+    {
+        return !!DB::query()
+            ->delete('datastore')
+            ->where('id', $id)
             ->execute();
     }
 

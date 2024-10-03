@@ -9,9 +9,11 @@ use DigraphCMS\Config;
 use DigraphCMS\Cron\CronJob;
 use DigraphCMS\Cron\DeferredJob;
 use DigraphCMS\Cron\RecursivePageJob;
+use DigraphCMS\Datastore\Datastore;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Digraph;
 use DigraphCMS\Events\Dispatcher;
+use DigraphCMS\Notes\Note;
 use DigraphCMS\RichContent\RichContent;
 use DigraphCMS\RichMedia\RichMedia;
 use DigraphCMS\Session\Session;
@@ -757,6 +759,20 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
                         ->where('owner = ?', [$uuid])
                         ->execute();
                     return "Deleted search indexes created by page $uuid ($n)";
+                });
+                // queue deletion of all page notes
+                $job->spawn(function()use($uuid){
+                    // get page
+                    $page = Pages::get($uuid);
+                    if (!$page) return "Page $uuid already deleted";
+                    // get notes
+                    $notes = PageNotes::group($page);
+                    $count = $notes->select()->count();
+                    // delete all
+                    foreach ($notes->select() as $note) {
+                        Datastore::deleteById($note->datastoreId());
+                    }
+                    return "Deleted $count notes for page $uuid";
                 });
                 // queue deletion of this page last
                 $job->spawn(
