@@ -40,7 +40,7 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
     const ACTIONS_DISABLED = [];
     const ACTIONS_PUBLIC = ['index'];
     const ACTIONS_USER = [];
-    const ACTIONS_EDITOR = [];
+    const ACTIONS_EDITOR = ['page_notes'];
     const ACTIONS_ADMIN = [];
 
     protected $uuid, $name, $sortName;
@@ -167,6 +167,7 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
         // all non-disabled verbs are accessible to admins
         if ($this->isAdmin($user)) return true;
         // returns null by default, which the Permissions class will treat as false
+        // if it is the last/only value available
         return null;
     }
 
