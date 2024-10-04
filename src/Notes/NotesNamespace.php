@@ -37,6 +37,17 @@ class NotesNamespace
     }
 
     /**
+     * Get a specific note by datastore ID.
+     */
+    public function getByDatastoreId(int $id): ?Note
+    {
+        return $this->select()
+            ->where('`id`', $id)
+            ->fetch()
+            ?: null;
+    }
+
+    /**
      * @return Select<Note>
      */
     public function select(): Select

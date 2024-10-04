@@ -45,7 +45,18 @@ class NotesGroup
     public function get(string $key): ?Note
     {
         return $this->select()
-            ->where('key', $key)
+            ->where('`key`', $key)
+            ->fetch()
+            ?: null;
+    }
+
+    /**
+     * Get a specific note by datastore ID.
+     */
+    public function getByDatastoreId(int $id): ?Note
+    {
+        return $this->select()
+            ->where('`id`', $id)
             ->fetch()
             ?: null;
     }
