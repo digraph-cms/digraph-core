@@ -70,6 +70,24 @@ class Filestore
         return $file;
     }
 
+    public static function migrateToSearchIndexing(DeferredJob $job): string
+    {
+        $files = DB::query()
+            ->from('filestore')
+            ->where('permissions is null')
+            ->select('uuid', true);
+        foreach ($files as $r) {
+            $uuid = $r['uuid'];
+            $job->spawn(function () use ($uuid) {
+                $file = Filestore::get($uuid);
+                if (!$file) return "File $uuid not found";
+                Filestore::updateSearchIndex($file);
+                return "Queued index of file $uuid";
+            });
+        }
+        return sprintf("Spawned %s filestore indexing jobs", $files->count());
+    }
+
     public static function updateSearchIndex(FilestoreFile $file): void
     {
         // don't index if file has permissions
