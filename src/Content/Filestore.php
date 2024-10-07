@@ -3,10 +3,14 @@
 namespace DigraphCMS\Content;
 
 use DigraphCMS\Config;
+use DigraphCMS\Cron\DeferredJob;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Digraph;
 use DigraphCMS\ExceptionLog;
 use DigraphCMS\FS;
+use DigraphCMS\Media\TextExtractor;
+use DigraphCMS\RichMedia\RichMedia;
+use DigraphCMS\Search\Search;
 use DigraphCMS\Serializer;
 use DigraphCMS\Session\Session;
 use DigraphCMS\URL\URL;
@@ -41,6 +45,7 @@ class Filestore
 
     public static function create(string $data, string $filename, string $parent, array $meta, string $uuid = null, null|callable $permissions = null): FilestoreFile
     {
+        // create file
         $hash = md5($data);
         $dest = static::path($hash);
         FS::mkdir(dirname($dest));
@@ -59,7 +64,43 @@ class Filestore
         $file->write();
         static::insert($file);
         static::$cache[$file->uuid()] = $file;
+        // queue job to index file in search index
+        static::updateSearchIndex($file);
+        // return file
         return $file;
+    }
+
+    public static function updateSearchIndex(FilestoreFile $file): void
+    {
+        // don't index if file has permissions
+        if ($file->permissions()) return;
+        // queue job to index file in search index
+        $uuid = $file->uuid();
+        new DeferredJob(
+            function () use ($uuid) {
+                $file = Filestore::get($uuid);
+                if (!$file) return "File $uuid not found";
+                $parent_uuid = $file->parentUUID();
+                $parent_page = Pages::get($parent_uuid);
+                if (!$parent_page) {
+                    $parent_media = RichMedia::get($parent_uuid);
+                    if (!$parent_media) return "Parent $parent_uuid is not a page or media";
+                    $parent_uuid = $parent_media->parentUUID();
+                    $parent_page = Pages::get($parent_uuid);
+                    if (!$parent_page) return "Parent $parent_uuid is not a page";
+                }
+                $text = TextExtractor::extractFilestoreFile($file);
+                if (!$text) return "No text extracted from $uuid";
+                Search::indexURL(
+                    $parent_page->uuid(),
+                    $parent_page->url('filestore:' . $file->uuid()),
+                    $file->filename(),
+                    $text
+                );
+                return "Indexed file $uuid";
+            },
+            'search_index'
+        );
     }
 
     public static function upload(string $src, string $filename, string $parent, array $meta, ?callable $permissions = null): FilestoreFile

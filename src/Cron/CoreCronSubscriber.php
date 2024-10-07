@@ -4,15 +4,10 @@ namespace DigraphCMS\Cron;
 
 use DigraphCMS\Config;
 use DigraphCMS\Content\AbstractPage;
-use DigraphCMS\Content\Filestore;
-use DigraphCMS\Content\Pages;
 use DigraphCMS\Content\Slugs;
 use DigraphCMS\Datastore\Datastore;
 use DigraphCMS\Datastore\DatastoreGroup;
 use DigraphCMS\DB\DB;
-use DigraphCMS\Media\TextExtractor;
-use DigraphCMS\RichMedia\RichMedia;
-use DigraphCMS\Search\Search;
 use DigraphCMS\URL\WaybackMachine;
 
 class CoreCronSubscriber
@@ -230,42 +225,6 @@ class CoreCronSubscriber
                     );
                 }
                 return "Spawned page heavy maintenance jobs";
-            },
-            'core_maintenance_heavy'
-        );
-        // spawn jobs to index filestore files
-        new DeferredJob(
-            function (DeferredJob $job) {
-                $files = DB::query()
-                    ->from('filestore')
-                    ->where('permissions is null')
-                    ->select('uuid', true);
-                foreach ($files as $r) {
-                    $uuid = $r['uuid'];
-                    $job->spawn(function () use ($uuid) {
-                        $file = Filestore::get($uuid);
-                        if (!$file) return "File $uuid not found";
-                        $parent_uuid = $file->parentUUID();
-                        $parent_page = Pages::get($parent_uuid);
-                        if (!$parent_page) {
-                            $parent_media = RichMedia::get($parent_uuid);
-                            if (!$parent_media) return "Parent $parent_uuid is not a page or media";
-                            $parent_uuid = $parent_media->parentUUID();
-                            $parent_page = Pages::get($parent_uuid);
-                            if (!$parent_page) return "Parent $parent_uuid is not a page";
-                        }
-                        $text = TextExtractor::extractFilestoreFile($file);
-                        if (!$text) return "No text extracted from $uuid";
-                        Search::indexURL(
-                            $parent_page->uuid(),
-                            $parent_page->url('filestore:' . $file->uuid()),
-                            $file->filename(),
-                            $text
-                        );
-                        return "Indexed $uuid";
-                    });
-                }
-                return sprintf("Spawned %s filestore indexing jobs", $files->count());
             },
             'core_maintenance_heavy'
         );
