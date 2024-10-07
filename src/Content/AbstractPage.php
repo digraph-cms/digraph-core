@@ -13,7 +13,6 @@ use DigraphCMS\Datastore\Datastore;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Digraph;
 use DigraphCMS\Events\Dispatcher;
-use DigraphCMS\Notes\Note;
 use DigraphCMS\RichContent\RichContent;
 use DigraphCMS\RichMedia\RichMedia;
 use DigraphCMS\Session\Session;
@@ -40,7 +39,7 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
     const PREFERRED_PARENT_EDGE_TYPES = null;
 
     const ACTIONS_DISABLED = [];
-    const ACTIONS_PUBLIC = ['index'];
+    const ACTIONS_PUBLIC = ['index', 'filestore:'];
     const ACTIONS_USER = [];
     const ACTIONS_EDITOR = ['page_notes'];
     const ACTIONS_ADMIN = [];
@@ -761,7 +760,7 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
                     return "Deleted search indexes created by page $uuid ($n)";
                 });
                 // queue deletion of all page notes
-                $job->spawn(function()use($uuid){
+                $job->spawn(function () use ($uuid) {
                     // get page
                     $page = Pages::get($uuid);
                     if (!$page) return "Page $uuid already deleted";
