@@ -60,7 +60,7 @@ maintenance:
   expire_locking_records: -7 days
   expire_defex_records: -3 days
   expire_cron_errors: -7 days
-  expire_search_index: -14 days
+  expire_search_index: -15 days # 1 day more than 2 weeks, so biweekly jobs can keep it updated
 
 cache:
   path: ${paths.base}/cache
