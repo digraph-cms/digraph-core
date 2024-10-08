@@ -92,7 +92,7 @@ class TextExtractor
             }
         }
         $text = trim($text);
-        $text = mb_convert_encoding($text, 'UTF-8');
+        $text = mb_convert_encoding($text, mb_internal_encoding());
         $text = mb_trim($text);
         return $text ?: null;
     }
@@ -120,7 +120,7 @@ class TextExtractor
         $parser = new Parser();
         $pdf = $parser->parseFile($path);
         $text = $pdf->getText();
-        $text = mb_convert_encoding($text, 'UTF-8');
+        $text = mb_convert_encoding($text, mb_internal_encoding());
         $text = mb_trim($text);
         return $text ?: null;
     }
