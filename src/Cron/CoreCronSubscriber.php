@@ -4,6 +4,7 @@ namespace DigraphCMS\Cron;
 
 use DigraphCMS\Config;
 use DigraphCMS\Content\AbstractPage;
+use DigraphCMS\Content\Filestore;
 use DigraphCMS\Content\Slugs;
 use DigraphCMS\Datastore\Datastore;
 use DigraphCMS\Datastore\DatastoreGroup;
@@ -12,6 +13,14 @@ use DigraphCMS\URL\WaybackMachine;
 
 class CoreCronSubscriber
 {
+    public static function cronJob_biweekly()
+    {
+        // run filestore indexing
+        new DeferredJob(
+            [Filestore::class, 'runSearchIndexing'],
+            'core_biweekly'
+        );
+    }
 
     public static function cronJob_maintenance()
     {

@@ -14,7 +14,7 @@ final class IndexingFilestore extends AbstractMigration
          * automatically as they are created.
          */
         new DeferredJob(
-            [Filestore::class, 'migrateToSearchIndexing'],
+            [Filestore::class, 'runSearchIndexing'],
             'index_filestore_migration'
         );
     }

@@ -70,7 +70,7 @@ class Filestore
         return $file;
     }
 
-    public static function migrateToSearchIndexing(DeferredJob $job): string
+    public static function runSearchIndexing(DeferredJob $job): string
     {
         $files = DB::query()
             ->from('filestore')
