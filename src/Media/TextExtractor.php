@@ -4,7 +4,6 @@ namespace DigraphCMS\Media;
 
 use DigraphCMS\Cache\Cache;
 use DigraphCMS\Content\FilestoreFile;
-use DigraphCMS\ExceptionLog;
 use PhpOffice\PhpWord\Element\AbstractContainer;
 use PhpOffice\PhpWord\Element\AbstractElement;
 use PhpOffice\PhpWord\Element\Text;
@@ -36,7 +35,6 @@ class TextExtractor
                     }
                     return null;
                 } catch (\Throwable $th) {
-                    ExceptionLog::log($th);
                     return null;
                 }
             },
