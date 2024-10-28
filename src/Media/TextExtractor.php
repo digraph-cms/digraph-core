@@ -24,14 +24,26 @@ class TextExtractor
     public static function extract(string $path, string|null $hash = null, string|null $filename = null): string|null
     {
         $filename = $filename ?? basename($path);
-        try {
-            $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-            if (method_exists(static::class, 'extract_' . $extension)) {
-                return call_user_func([static::class, 'extract_' . $extension], $path);
-            }
+        $hash = $hash ?? md5($path);
+        $output = Cache::get(
+            'system/extracted_file_text/' . $hash,
+            function () use ($path, $filename) {
+                try {
+                    $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+                    if (method_exists(static::class, 'extract_' . $extension)) {
+                        return base64_encode(call_user_func([static::class, 'extract_' . $extension], $path));
+                    }
+                    return null;
+                } catch (\Throwable $th) {
+                    return null;
+                }
+            },
+            -1
+        );
+        if (is_null($output)) {
             return null;
-        } catch (\Throwable $th) {
-            return null;
+        } else {
+            return base64_decode($output);
         }
     }
 
