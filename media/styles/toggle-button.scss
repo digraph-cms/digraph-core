@@ -47,3 +47,39 @@
         }
     }
 }
+
+&.toggle-button--danger {
+    &.toggle-button--on {
+        border: $border solid var(--cue-danger);
+
+        .toggle-button__link {
+            &:after {
+                background: var(--cue-danger);
+            }
+        }
+    }
+}
+
+&.toggle-button--warning {
+    &.toggle-button--on {
+        border: $border solid var(--cue-warning);
+
+        .toggle-button__link {
+            &:after {
+                background: var(--cue-warning);
+            }
+        }
+    }
+}
+
+&.toggle-button--interactive {
+    &.toggle-button--on {
+        border: $border solid var(--cue-interactive);
+
+        .toggle-button__link {
+            &:after {
+                background: var(--cue-interactive);
+            }
+        }
+    }
+}
