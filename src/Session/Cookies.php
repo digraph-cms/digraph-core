@@ -8,8 +8,10 @@ use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\Digraph;
 use DigraphCMS\Events\Dispatcher;
+use DigraphCMS\ExceptionLog;
 use DigraphCMS\HTML\Forms\Fields\CheckboxField;
 use DigraphCMS\HTML\Forms\FormWrapper;
+use DigraphCMS\Security\Security;
 use DigraphCMS\UI\ButtonMenus\SingleButton;
 use DigraphCMS\UI\Templates;
 use DigraphCMS\URL\URL;
@@ -448,7 +450,13 @@ class Cookies
     {
         $key = static::key($type, $name);
         if (isset($_COOKIE[$key])) {
-            return json_decode($_COOKIE[$key], true, 512, JSON_THROW_ON_ERROR);
+            try {
+                return json_decode($_COOKIE[$key], true, 512, JSON_THROW_ON_ERROR);
+            } catch (\Throwable $th) {
+                ExceptionLog::log($th);
+                Security::flag('Invalid JSON in cookie');
+                return null;
+            }
         } else {
             return null;
         }
