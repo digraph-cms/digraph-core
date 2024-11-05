@@ -41,7 +41,7 @@ class Pages
 
     /**
      * Insert a link of the specified type between $start and $end. If no type
-     * is specified the type 'normal' will be used.
+     * is specified the default type from Graph will be used
      *
      * @param string $start
      * @param string $end
@@ -50,12 +50,21 @@ class Pages
      */
     public static function insertLink(string $start, string $end, string $type = null)
     {
+        if (!$type) {
+            $start_page = Pages::get($start);
+            $end_page = Pages::get($end);
+            if ($start_page && $end_page) {
+                $type = Graph::defaultLinkType($start_page->class(), $end_page->class());
+            } else {
+                $type = 'normal';
+            }
+        }
         DB::query()->insertInto(
             'page_link',
             [
                 'start_page' => $start,
                 'end_page' => $end,
-                'type' => $type ?? 'normal'
+                'type' => $type,
             ]
         )->execute();
     }
