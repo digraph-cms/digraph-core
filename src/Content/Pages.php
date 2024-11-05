@@ -55,7 +55,8 @@ class Pages
             $end_page = Pages::get($end);
             if ($start_page && $end_page) {
                 $type = Graph::defaultLinkType($start_page->class(), $end_page->class());
-            } else {
+            }
+            if (!$type) {
                 $type = 'normal';
             }
         }
