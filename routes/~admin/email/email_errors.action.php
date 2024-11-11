@@ -4,14 +4,25 @@
 use DigraphCMS\Email\Email;
 use DigraphCMS\Email\Emails;
 use DigraphCMS\UI\Format;
+use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\Pagination\ColumnDateFilteringHeader;
 use DigraphCMS\UI\Pagination\ColumnStringFilteringHeader;
 use DigraphCMS\UI\Pagination\PaginatedTable;
+use DigraphCMS\URL\URL;
+
+Emails::select()
+    ->where('error is not null')
+    ->order('time desc');
+
+if ($emails->count()) {
+    Notifications::printNotice(sprintf(
+        '<a href="%s">Use the requeue tool to attempt resending emails</a>',
+        new URL('_requeue_errors.html')
+    ));
+}
 
 echo new PaginatedTable(
-    Emails::select()
-        ->where('error is not null')
-        ->order('time desc'),
+    $emails,
     function (Email $email) {
         return [
             Format::datetime($email->time()),

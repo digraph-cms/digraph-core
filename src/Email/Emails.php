@@ -126,6 +126,19 @@ class Emails
         return false;
     }
 
+    public static function requeue(Email $email): void
+    {
+        DB::query()->update(
+            'email',
+            [
+                'sent' => null,
+                'error' => null
+            ]
+        )
+            ->where('uuid', $email->uuid())
+            ->execute();
+    }
+
     /**
      * Send an Email or array of Emails now if possible, or queue for later if
      * quota is reached. Optionally ignore the quota check.
