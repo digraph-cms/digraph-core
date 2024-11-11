@@ -67,10 +67,12 @@ if ($date->value(false)) {
 }
 
 if ($form->ready()) {
+    $count = 0;
     foreach ($messages as $message) {
         Emails::requeue($message);
+        $count++;
     }
-    Notifications::flashConfirmation(sprintf('Re-queued %s messages', $messages->count()));
+    Notifications::flashConfirmation(sprintf('Re-queued %s messages', $count));
     throw new RedirectException(new URL('queued_emails.html'));
 }
 
