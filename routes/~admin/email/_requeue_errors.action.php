@@ -11,6 +11,7 @@ use DigraphCMS\HTML\Forms\Fields\CheckboxField;
 use DigraphCMS\HTML\Forms\Fields\DatetimeField;
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTTP\RedirectException;
+use DigraphCMS\UI\Format;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\Pagination\ColumnDateFilteringHeader;
 use DigraphCMS\UI\Pagination\ColumnStringFilteringHeader;
@@ -41,7 +42,7 @@ if ($date->value(false)) {
         $messages,
         function (Email $email) {
             return [
-                $email->time(),
+                Format::date($email->time()),
                 $email->error(),
                 sprintf(
                     "<a href='%s'>%s</a>",
