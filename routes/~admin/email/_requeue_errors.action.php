@@ -63,11 +63,12 @@ if ($date->value(false)) {
     $confirm = (new CheckboxField(sprintf('Confirm re-queueing these %s messages', $messages->count())))
         ->setRequired(true)
         ->addForm($form);
+    $form->button()->setText('Re-queue messages');
 }
 
 if ($form->ready()) {
     foreach ($messages as $message) {
-        Emails::requeue($email);
+        Emails::requeue($message);
     }
     Notifications::flashConfirmation(sprintf('Re-queued %s messages', $messages->count()));
     throw new RedirectException(new URL('queued_emails.html'));
