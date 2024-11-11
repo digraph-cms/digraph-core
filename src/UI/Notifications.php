@@ -25,7 +25,9 @@ class Notifications
         }
         // display notifications
         echo "<section id='notifications'>";
-        foreach (static::$notifications as list($message, $type, $class)) {
+        $notifications = static::$notifications;
+        Dispatcher::dispatchEvent('onPrintNotifications', [&$notifications]);
+        foreach ($notifications as list($message, $type, $class)) {
             static::print($message, $type, $class);
         }
         echo "</section>";

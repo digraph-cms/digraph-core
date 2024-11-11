@@ -10,6 +10,7 @@ use DigraphCMS\Content\Slugs;
 use DigraphCMS\DOM\CodeHighlighter;
 use DigraphCMS\DOM\DOM;
 use DigraphCMS\DOM\DOMEvent;
+use DigraphCMS\Email\Emails;
 use DigraphCMS\HTTP\Response;
 use DigraphCMS\RichContent\RichContent;
 use DigraphCMS\RichMedia\Types\AbstractRichMedia;
@@ -30,6 +31,32 @@ use function DigraphCMS\Content\require_file;
 
 abstract class CoreEventSubscriber
 {
+
+    /**
+     * @param array<array{string,string,string}> &$notifications 
+     * @return void 
+     */
+    public static function onPrintNotifications(array &$notifications)
+    {
+        if (!Permissions::inGroup('admins')) return;
+        // display message about email errors
+        $errors = Emails::select()
+            ->where('error is not null')
+            ->where('time > ?', [time() - 86400])
+            ->count();
+        if ($errors) {
+            $notifications[] = [
+                sprintf(
+                    '<a href="%s">There have been %s email sending error%s in the last 24 hours</a>',
+                    new URL('/~admin/email/email_errors.html'),
+                    $errors,
+                    $errors == 1 ? '' : 's'
+                ),
+                'error',
+                'email-error'
+            ];
+        }
+    }
 
     /**
      * Preserve/enforce "id" argument in actions across the users/profile route
