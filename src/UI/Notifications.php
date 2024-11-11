@@ -133,6 +133,9 @@ class Notifications
         if ($type) {
             $class .= " notification--$type";
         }
+        if (!str_starts_with($class,' ')) {
+            $class = " $class";
+        }
         echo "<div class='notification$class'>";
         echo $message;
         echo "</div>";
