@@ -10,7 +10,7 @@ use DigraphCMS\UI\Pagination\ColumnStringFilteringHeader;
 use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\URL\URL;
 
-Emails::select()
+$emails = Emails::select()
     ->where('error is not null')
     ->order('time desc');
 
