@@ -21,6 +21,7 @@ class EmailSelect extends AbstractMappedSelect
         return $this
             ->notSent()
             ->notErrored()
+            ->order('time_sensitive DESC')
             ->order('id ASC');
     }
 

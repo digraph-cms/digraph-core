@@ -13,24 +13,37 @@ use DigraphCMS\Users\Users;
 
 class Email
 {
-    protected $uuid, $time, $sent, $category, $subject, $to, $to_uuid, $from, $cc, $bcc;
-    protected $body_text, $body_html;
-    protected $error = null;
-    protected $exists = false;
+    protected string $uuid;
+    protected bool $time_sensitive;
+    protected int $time;
+    protected int|null $sent;
+    protected string $category;
+    protected string $subject;
+    protected string|null $to;
+    protected string|null $to_uuid;
+    protected string $from;
+    protected string|null $cc;
+    protected string|null $bcc;
+    protected string $body_text;
+    protected string $body_html;
+    protected string|null $error = null;
+    protected bool $exists = false;
 
     public static function newForEmail(
         string $category,
         string $email,
         string $subject,
-        RichContent $body
+        RichContent $body,
+        bool $time_sensitive = false,
     ): Email {
         return new Email(
-            $category,
-            $subject,
-            $email,
-            null,
-            null,
-            $body->html()
+            category: $category,
+            subject: $subject,
+            to: $email,
+            to_uuid: null,
+            from: null,
+            body_html: $body->html(),
+            time_sensitive: $time_sensitive
         );
     }
 
@@ -48,17 +61,19 @@ class Email
         string $category,
         User $user,
         string $subject,
-        RichContent $body
+        RichContent $body,
+        bool $time_sensitive = false,
     ): array {
         return array_map(
-            function ($email) use ($category, $user, $subject, $body) {
+            function ($email) use ($category, $user, $subject, $body, $time_sensitive) {
                 return new Email(
-                    $category,
-                    $subject,
-                    $email,
-                    $user->uuid(),
-                    null,
-                    $body->html()
+                    category: $category,
+                    subject: $subject,
+                    to: $email,
+                    to_uuid: $user->uuid(),
+                    from: null,
+                    body_html: $body->html(),
+                    time_sensitive: $time_sensitive
                 );
             },
             $user->emails()
@@ -79,16 +94,18 @@ class Email
         string $category,
         User $user,
         string $subject,
-        RichContent $body
+        RichContent $body,
+        bool $time_sensitive = false,
     ): ?Email {
         if (!$user->primaryEmail()) return null;
         return new Email(
-            $category,
-            $subject,
-            $user->primaryEmail(),
-            $user->uuid(),
-            null,
-            $body->html()
+            category: $category,
+            subject: $subject,
+            to: $user->primaryEmail(),
+            to_uuid: $user->uuid(),
+            from: null,
+            body_html: $body->html(),
+            time_sensitive: $time_sensitive
         );
     }
 
@@ -106,6 +123,7 @@ class Email
         int $time = null,
         int $sent = null,
         string $error = null,
+        bool $time_sensitive = false,
         bool $exists = null
     ) {
         $this->category = $category;
@@ -121,6 +139,7 @@ class Email
         $this->time = $time ?? time();
         $this->sent = $sent;
         $this->error = $error;
+        $this->time_sensitive = $time_sensitive;
         $this->exists = $exists ?? false;
     }
 
@@ -220,6 +239,11 @@ class Email
     {
         if ($this->sent) return (new DateTime)->setTimestamp($this->sent);
         else return null;
+    }
+
+    public function timeSensitive(): bool
+    {
+        return $this->time_sensitive;
     }
 
     public function time(): DateTime

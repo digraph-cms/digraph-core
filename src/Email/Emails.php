@@ -116,7 +116,7 @@ class Emails
     {
         if (!Config::get('email.quota')) return false;
         if (Config::get('email.quota.mode') == 'rolling') {
-            $interval = new DateInterval(Config::get('email.quota.interval'));
+            $interval = DateInterval::createFromDateString(Config::get('email.quota.interval'));
             $start = (new DateTime)->sub($interval)->getTimestamp();
             $count = static::select()
                 ->where('sent >= ?', [$start])
@@ -208,6 +208,7 @@ class Emails
                 'email',
                 [
                     'uuid' => $email->uuid(),
+                    'time_sensitive' => $email->timeSensitive(),
                     'time' => time(),
                     'sent' => time(),
                     'category' => $email->category(),

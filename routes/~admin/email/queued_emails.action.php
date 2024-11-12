@@ -7,7 +7,6 @@ use DigraphCMS\UI\Format;
 use DigraphCMS\UI\Pagination\ColumnDateFilteringHeader;
 use DigraphCMS\UI\Pagination\ColumnStringFilteringHeader;
 use DigraphCMS\UI\Pagination\PaginatedTable;
-use DigraphCMS\URL\URL;
 
 echo new PaginatedTable(
     Emails::select()->queue(),
