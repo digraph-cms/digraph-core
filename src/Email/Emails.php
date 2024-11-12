@@ -265,6 +265,7 @@ class Emails
             $row['time'],
             $row['sent'],
             $row['error'],
+            !!$row['time_sensitive'],
             true
         );
     }
