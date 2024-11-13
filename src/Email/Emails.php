@@ -181,7 +181,7 @@ class Emails
                 $mailer->AltBody = static::prepareBody_text($email);
                 $mailer->send();
             } catch (\Throwable $th) {
-                ExceptionLog::log($th);
+                ExceptionLog::log($th, true);
                 if ($th instanceof Exception) {
                     $email->setError($th->getMessage() . ' (' . get_class($th) . ')');
                 } else {
