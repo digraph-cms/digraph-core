@@ -7,6 +7,7 @@ use DateTime;
 use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
+use DigraphCMS\ExceptionLog;
 use DigraphCMS\Media\Media;
 use DigraphCMS\UI\Templates;
 use Exception;
@@ -180,6 +181,7 @@ class Emails
                 $mailer->AltBody = static::prepareBody_text($email);
                 $mailer->send();
             } catch (\Throwable $th) {
+                ExceptionLog::log($th);
                 if ($th instanceof Exception) {
                     $email->setError($th->getMessage() . ' (' . get_class($th) . ')');
                 } else {
