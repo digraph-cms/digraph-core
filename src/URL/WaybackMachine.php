@@ -22,6 +22,8 @@ class WaybackMachine
     protected static $active = null;
     /** @var bool */
     protected static $notifications = true;
+    /** @var string[] */
+    public static array $log = [];
 
     /**
      * called by CoreCronSubscriber to automatically clean up old Wayback
@@ -115,6 +117,7 @@ class WaybackMachine
 
     public static function actualUrlStatus(string $url): bool
     {
+        static::$log[] = $url;
         try {
             $ch = CurlHelper::init($url);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Wayback isn't in the business of verifying everyone's SSL config
@@ -130,11 +133,17 @@ class WaybackMachine
             if ($success) {
                 return true;
             } elseif ($errno == 28) {
+                static::$log[] = 'Timeout';
                 return true;
             } else {
+                static::$log[] = 'HTTP code: ' . $code;
+                static::$log[] = 'Curl error number: ' . $errno;
+                static::$log[] = 'Curl error: ' . curl_error($ch);
                 return false;
             }
         } catch (\Throwable $th) {
+            static::$log[] = get_class($th);
+            static::$log[] = $th->getMessage();
             return true;
         }
     }

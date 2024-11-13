@@ -83,8 +83,10 @@ class CoreCronSubscriber
                     ->order('updated ASC');
                 while ($statusData = $records->fetch()) {
                     $job->spawn(function () use ($statusData) {
+                        WaybackMachine::$log = [];
                         $status = WaybackMachine::actualUrlStatus('http://' . $statusData->data()['url'])
                             || WaybackMachine::actualUrlStatus('https://' . $statusData->data()['url']);
+                        $statusData->data()['log'] = WaybackMachine::$log;
                         if ($status) {
                             $statusData->setValue('ok');
                             $statusData->update();
