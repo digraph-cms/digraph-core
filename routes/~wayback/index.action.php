@@ -16,10 +16,20 @@ echo new PaginatedTable(
         switch ($item->group()->name()) {
             case 'status':
                 $action = 'Link status: ' . $item->value();
+                $action = sprintf(
+                    '<a href="%s">%s</a>',
+                    new URL('/admin/datastore/item:'.$item->id()),
+                    $action,
+                );
                 $url = $data['url'];
                 break;
             case 'api':
                 $action = 'API call: ' . $item->value();
+                $action = sprintf(
+                    '<a href="%s">%s</a>',
+                    new URL('/admin/datastore/item:'.$item->id()),
+                    $action,
+                );
                 $url = $data['url'];
                 break;
             case 'page':

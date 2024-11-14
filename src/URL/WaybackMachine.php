@@ -102,7 +102,9 @@ class WaybackMachine
     {
         $hash = md5($normalizedUrl);
         $status = static::statusStorage()->value($hash);
-        // if status is false, this URL has never been checked, add it to the queue and optimistically return a null value to show it's not broken
+        // if status is false, this URL has never been checked, add it to the
+        // queue and optimistically return a null value to show it's not known
+        // to be broken
         if ($status === false) {
             static::statusStorage()->set($hash, 'pending', ['url' => $normalizedUrl]);;
             return null;
@@ -134,6 +136,12 @@ class WaybackMachine
                 return true;
             } elseif ($errno == 28) {
                 static::$log[] = 'Timeout';
+                return true;
+            } elseif ($code == 403) {
+                static::$log[] = 'HTTP code: ' . $code;
+                static::$log[] = 'Curl error number: ' . $errno;
+                static::$log[] = 'Curl error: ' . curl_error($ch);
+                static::$log[] = 'Optimistically calling 403 success';
                 return true;
             } else {
                 static::$log[] = 'HTTP code: ' . $code;
