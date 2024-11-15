@@ -72,6 +72,7 @@ class ExceptionLog
                             method_exists($th, 'getMessage') ? $th->getMessage() : get_class($th),
                             Context::url(),
                         ]), 0, 250);
+                        $count = count(glob("$path/*.json"));
                         $body = implode('<br>', [
                             sprintf(
                                 '<a href="%s">A new error</a> has been logged at <a href="%s">%s</a>',
@@ -84,10 +85,12 @@ class ExceptionLog
                                 method_exists($th, 'getMessage') ? $th->getMessage() : 'No message: ' . get_class($th)
                             ),
                             sprintf(
-                                'As of %s there have been <a href="%s">%s other errors logged today</a>',
+                                'As of %s there %s been <a href="%s">%s other error%s logged today</a>',
                                 Format::time(time()),
+                                $count == 1 ? 'has' : 'have',
                                 new URL('/admin/exception_log/'),
-                                count(glob("$path/*.json"))
+                                number_format($count),
+                                $count == 1 ? '' : 's'
                             )
                         ]);
                         $sent = false;

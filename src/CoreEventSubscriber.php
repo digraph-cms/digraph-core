@@ -47,8 +47,9 @@ abstract class CoreEventSubscriber
         if ($errors) {
             $notifications[] = [
                 sprintf(
-                    '<a href="%s">There have been %s email sending error%s in the last 24 hours</a>',
+                    '<a href="%s">There %s been %s email sending error%s in the last 24 hours</a>',
                     new URL('/~admin/email/email_errors.html'),
+                    $errors == 1 ? 'has' : 'have',
                     number_format($errors),
                     $errors == 1 ? '' : 's'
                 ),
