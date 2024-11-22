@@ -84,8 +84,8 @@ class CoreCronSubscriber
                 while ($statusData = $records->fetch()) {
                     $job->spawn(function () use ($statusData) {
                         WaybackMachine::$log = [];
-                        $status = WaybackMachine::actualUrlStatus('http://' . $statusData->data()['url'])
-                            || WaybackMachine::actualUrlStatus('https://' . $statusData->data()['url']);
+                        $status = WaybackMachine::actualUrlStatus('https://' . $statusData->data()['url'])
+                            || WaybackMachine::actualUrlStatus('http://' . $statusData->data()['url']);
                         $statusData->data()['log'] = WaybackMachine::$log;
                         if ($status) {
                             $statusData->setValue('ok');
