@@ -5,4 +5,7 @@ A CMS that treats content as a generalized directed graph (generalized to the po
 This repo contains the source code of the core of the CMS. This is intended for more advanced development by users who are comfortable setting up their own entire system, and maintaining their own update schedule using Composer.
 
 ## Under active development
-For the love of glob, don't use this thing in production yet. There are no installation instructions or tools yet, and it's not even remotely ready for production use.
+
+For the love of glob, don't use this thing in production yet.
+
+It's getting to be in the ballpark of production-ready, but the interfaces honestly *still* don't feel stable enough for me to subject other people to it.
