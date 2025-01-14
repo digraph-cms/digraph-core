@@ -1,6 +1,7 @@
 menu.signin-sources {
   list-style: none;
   padding: 0;
+  font-family: $font-ui;
 
   li {
     @include uncolored-links;
@@ -10,7 +11,10 @@ menu.signin-sources {
     color: var(--cue-interactive--inv);
     font-weight: bold;
     border-radius: $border-radius;
+    margin: 0;
     margin-bottom: $grid;
+    max-width: 10em;
+    font-weight: bold;
 
     &.signin-source--oauth2_google {
       background-color: #0F9D58;
@@ -41,11 +45,7 @@ menu.signin-sources {
     >a {
       display: block;
       padding: $grid;
+      text-decoration: none;
     }
-  }
-
-  @media (min-width: 30rem) {
-    columns: 2;
-    column-gap: $grid;
   }
 }
