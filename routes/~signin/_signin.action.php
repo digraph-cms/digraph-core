@@ -7,6 +7,7 @@ use DigraphCMS\DB\DB;
 use DigraphCMS\Email\Email;
 use DigraphCMS\Email\Emails;
 use DigraphCMS\Events\Dispatcher;
+use DigraphCMS\Exception;
 use DigraphCMS\ExceptionLog;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\HTTP\RedirectException;
@@ -141,5 +142,19 @@ if (Context::data('signin_provider_id')) {
     // redirect to bounce target. Note that it uses the response->redirect()
     // method directly, because all this happens in a try/catch block and the
     // RedirectException would just get logged
-    Context::response()->redirect($bounce->__toString());
+    Context::response()->redirect((string)$bounce->__toString());
+
+    // if we get here, something went wrong
+    ExceptionLog::log(
+        new Exception(
+            "Sign-in handler failed to redirect to bounce target",
+            [
+                'bounce' => $bounce
+            ]
+        )
+    );
+    Notifications::printNotice(sprintf(
+        "Sign-in successful, but failed to redirect to bounce target. Please <a href=\"%s\">click here</a> to continue.",
+        $bounce ?: new URL('/')
+    ));
 }
