@@ -198,6 +198,11 @@ user_sources:
         class: \League\OAuth2\Client\Provider\Github
         scope:
           - "user:email"
+      apple:
+        name: Apple
+        class: \League\OAuth2\Client\Provider\Apple
+        scope:
+          - email
       google:
         name: Google
         class: \League\OAuth2\Client\Provider\Google
@@ -210,3 +215,9 @@ user_sources:
           - email
         config:
           graphApiVersion: v2.10
+      microsoft:
+        name: Microsoft
+        class: \League\OAuth2\Client\Provider\Microsoft
+        scope:
+          - wl.basic
+          - wl.signin

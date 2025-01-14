@@ -34,10 +34,24 @@ menu.signin-sources {
       }
     }
 
+    &.signin-source--oauth2_apple {
+      >a {
+        background-color: #000;
+        color: #fff;
+      }
+    }
+
+    &.signin-source--oauth2_microsoft {
+      >a {
+        background-color: #e6e6e6;
+        color: #000;
+      }
+    }
+
     &.signin-source--oauth2_google {
       >a {
-        background-color: #0F9D58;
-        color: #fff;
+        background-color: #d2d2d2;
+        color: #000;
       }
     }
 
