@@ -1,0 +1,51 @@
+menu.signin-sources {
+  list-style: none;
+  padding: 0;
+
+  li {
+    @include uncolored-links;
+    padding: 0;
+    order: 100;
+    background-color: var(--cue-interactive);
+    color: var(--cue-interactive--inv);
+    font-weight: bold;
+    border-radius: $radius;
+    margin-bottom: $grid;
+
+    &.signin-source--oauth2_google {
+      background-color: #0F9D58;
+      color: #fff;
+    }
+
+    &.signin-source--oauth2_facebook {
+      background-color: #1877f2;
+      color: #fff;
+    }
+
+    &.signin-source--oauth2_github {
+      background-color: #FF507A;
+      color: #000;
+    }
+
+    img {
+      max-width: 10em;
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    &:hover {
+      filter: brightness(1.1) saturate(1.1);
+    }
+
+    >a {
+      display: block;
+      padding: $grid;
+    }
+  }
+
+  @media (min-width: 30rem) {
+    columns: 2;
+    column-gap: $grid;
+  }
+}

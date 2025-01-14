@@ -2,7 +2,7 @@
     <?php
 
     use DigraphCMS\Context;
-    use DigraphCMS\UI\Templates;
+    use DigraphCMS\Media\Media;
     use DigraphCMS\Users\Users;
 
     echo "<p>Please select a method to use for logging in.</p>";
@@ -10,12 +10,17 @@
     echo '<menu class="signin-sources">';
     foreach (Users::allSigninURLs(Context::fields()['bounce']) as $k => $url) {
         echo "<li class='signin-source signin-source--" . preg_replace('/_.+$/', '', $k) . " signin-source--$k'>";
-        if (Templates::exists('signin/option_' . $k . '.php')) {
-            echo Templates::render('signin/option_' . $k . '.php', ['url' => $url]);
-        } elseif (Templates::exists('signin/option_' . preg_replace('/_.+$/', '', $k) . '.php')) {
-            echo Templates::render('signin/option_' . preg_replace('/_.+$/', '', $k) . '.php', ['url' => $url]);
+        $logo_path = sprintf('/signin_logos/%s.png', $k);
+        $image = Media::get($logo_path);
+        if ($image = $image?->image()) {
+            printf(
+                '<a href="%s"><img src="%s" alt="%s"></a>',
+                $url,
+                $image->url(),
+                $url->name(),
+            );
         } else {
-            echo $url->html();
+            echo "<a href='$url'>$k</a>";
         }
         echo "</li>";
     }
