@@ -7,13 +7,8 @@ menu.signin-sources {
     @include uncolored-links;
     padding: 0;
     order: 100;
-    background-color: var(--cue-interactive);
-    color: var(--cue-interactive--inv);
-    font-weight: bold;
-    border-radius: $border-radius;
     margin: 0;
     margin-bottom: $grid;
-    font-weight: bold;
 
     &.signin-source--oauth2_google {
       background-color: #0F9D58;
@@ -31,18 +26,22 @@ menu.signin-sources {
     }
 
     >a {
-      max-width: 10em;
+      border-radius: $border-radius;
+      background-color: var(--cue-interactive);
+      color: var(--cue-interactive--inv);
+      font-weight: bold;
+      width: 10em;
       display: block;
       padding: $grid;
       text-decoration: none;
+      text-align: center;
 
       &:hover {
         filter: brightness(1.1) saturate(1.1);
       }
 
       img {
-        max-width: 10em;
-        width: 100%;
+        max-width: 100%;
         height: auto;
         display: block;
       }
