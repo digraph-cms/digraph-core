@@ -72,15 +72,10 @@ $table = new PaginatedTable(
 
 echo $table;
 
-echo "<h2>Add login method</h2>";
 if ($user->uuid() == $user->uuid()) {
-    echo "<ul class='signin-options'>";
-    foreach (Users::allSigninURLs(Context::url()) as $k => $url) {
-        echo "<li class='signin-source type-" . preg_replace('/_.+$/', '', $k) . " $k'>";
-        echo $url->html();
-        echo "</li>";
-    }
-    echo "</ul>";
-} else {
-    Notifications::printNotice('You cannot add new login methods for other users.');
+    echo "<h2>Add login method</h2>";
+    Notifications::printNeutral(sprintf(
+        'To add a new sign-in method to your account, <a href="%s">sign in here using the method you want to add to your account</a>.',
+        Users::signinUrl(Context::url())
+    ));
 }
