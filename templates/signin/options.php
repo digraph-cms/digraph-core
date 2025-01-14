@@ -20,7 +20,7 @@
                 $url->name(),
             );
         } else {
-            echo "<a href='$url'>$k</a>";
+            echo $url->html();
         }
         echo "</li>";
     }
