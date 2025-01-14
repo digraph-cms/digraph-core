@@ -13,7 +13,6 @@ menu.signin-sources {
     border-radius: $border-radius;
     margin: 0;
     margin-bottom: $grid;
-    max-width: 10em;
     font-weight: bold;
 
     &.signin-source--oauth2_google {
@@ -31,21 +30,22 @@ menu.signin-sources {
       color: #000;
     }
 
-    img {
-      max-width: 10em;
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-
-    &:hover {
-      filter: brightness(1.1) saturate(1.1);
-    }
-
     >a {
+      max-width: 10em;
       display: block;
       padding: $grid;
       text-decoration: none;
+
+      &:hover {
+        filter: brightness(1.1) saturate(1.1);
+      }
+
+      img {
+        max-width: 10em;
+        width: 100%;
+        height: auto;
+        display: block;
+      }
     }
   }
 }
