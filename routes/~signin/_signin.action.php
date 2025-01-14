@@ -49,17 +49,17 @@ $bounce = Context::arg('_bounce');
 if ($bounce) {
     try {
         $bounce = new URL($bounce);
+        Cookies::set('auth', 'bounce', $bounce->__toString());
     } catch (Throwable $th) {
+        Cookies::unset('auth', 'bounce');
         Security::flag('potentially malicious bounce URL');
         ExceptionLog::log($th);
         $bounce = null;
     }
+    $url = Context::url();
+    $url->unsetArg('_bounce');
+    throw new RedirectException($url);
 }
-
-// make breadcrumb right
-$bc = new URL('/signin/');
-$bc->arg('_bounce', $bounce);
-Breadcrumb::top($bc);
 
 // include source handler file
 try {
@@ -69,7 +69,7 @@ try {
 } catch (Throwable $th) {
     ExceptionLog::log($th);
     Notifications::flashError("Sign-in handler encountered an error. Please try again.");
-    $url = Users::signinUrl($bounce);
+    $url = Users::signinUrl();
     $url->arg('_noredirect', 1);
     throw new RedirectException($url);
 }
@@ -139,22 +139,21 @@ if (Context::data('signin_provider_id')) {
     }
 
     // if there is a bounce target, try to make it into a URL and redirect
-    if ($bounce instanceof URL) {
-        throw new RedirectException($bounce);
-    } elseif (is_string($bounce)) {
+    $bounce = Cookies::get('auth', 'bounce');
+    if ($bounce) {
         try {
             $bounce = new URL($bounce);
             throw new RedirectException($bounce);
         } catch (Throwable $th) {
-            Security::flag('potentially malicious bounce URL');
+            Security::flag('potentially malicious bounce URL (after signin)');
             ExceptionLog::log($th);
             $bounce = null;
         }
     }
 
-    // as a fallback redirect to either profile page or home page
+    // as a fallback redirect to either profile page or sign in page
     throw new RedirectException(
         Users::current()?->profile()
-            ?? new URL('/')
+            ?? new URL('/signin/')
     );
 }

@@ -379,7 +379,12 @@ class Cookies
             } else {
                 $expiration = 0;
             }
-            $encoded = json_encode($value);
+            $salt = bin2hex(random_bytes(16));
+            $encoded = json_encode([
+                'value' => $value,
+                'salt' => $salt,
+                'signature' => hash('sha256', serialize($value) . $salt . Config::secret()),
+            ]);
             $_COOKIE[$key] = $encoded;
             setcookie(
                 $key,
@@ -450,13 +455,26 @@ class Cookies
     {
         $key = static::key($type, $name);
         if (isset($_COOKIE[$key])) {
+            // attempt json decode
             try {
-                return json_decode($_COOKIE[$key], true, 512, JSON_THROW_ON_ERROR);
+                $value = json_decode($_COOKIE[$key], true, 512, JSON_THROW_ON_ERROR);
             } catch (\Throwable $th) {
                 ExceptionLog::log($th);
                 Security::flag('Invalid JSON in cookie');
                 return null;
             }
+            // attempt signature check
+            if (
+                !isset($value['value']) ||
+                !isset($value['salt']) ||
+                !isset($value['signature']) ||
+                !hash_equals($value['signature'], hash('sha256', serialize($value['value']) . $value['salt'] . Config::secret()))
+            ) {
+                Security::flag('Invalid signature in cookie');
+                return null;
+            }
+            // return value
+            return $value['value'];
         } else {
             return null;
         }

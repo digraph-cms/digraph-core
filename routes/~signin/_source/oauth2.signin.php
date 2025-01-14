@@ -4,6 +4,7 @@ use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\HTTP\ArbitraryRedirectException;
 use DigraphCMS\HTTP\HttpError;
+use DigraphCMS\Security\Security;
 use DigraphCMS\Session\Cookies;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Users;
@@ -11,12 +12,11 @@ use DigraphCMS\Users\Users;
 /** @var \DigraphCMS\Users\OAuth2UserSource */
 $source = Users::source('oauth2');
 $providerName = Context::arg('_provider');
-$provider = $source->provider($providerName, Context::arg('_bounce'));
+$provider = $source->provider($providerName);
 
 if (Context::arg('error')) {
     // Got an error, probably user denied access or authorization code is expired
     $url = new URL('/signin/');
-    $url->arg('_bounce', Context::request()->url()->arg('_bounce'));
     throw new HttpError(
         500,
         'OAuth Error: ' . htmlspecialchars(Context::arg('error'), ENT_QUOTES, 'UTF-8') .
@@ -31,9 +31,8 @@ if (Context::arg('error')) {
     throw new ArbitraryRedirectException($authURL);
 } elseif (!Context::arg('state') || Context::arg('state') !== Cookies::get('csrf', 'oauth2state')) {
     // State is invalid, possible CSRF attack
-    // Cookies::unset('csrf', 'oauth2state');
+    Security::flag('Invalid OAuth state');
     $url = new URL('/signin/');
-    $url->arg('_bounce', Context::arg('_bounce'));
     throw new HttpError(
         500,
         'Invalid OAuth state' .
