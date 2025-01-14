@@ -10,21 +10,6 @@ menu.signin-sources {
     margin: 0;
     margin-bottom: $grid;
 
-    &.signin-source--oauth2_google {
-      background-color: #0F9D58;
-      color: #fff;
-    }
-
-    &.signin-source--oauth2_facebook {
-      background-color: #1877f2;
-      color: #fff;
-    }
-
-    &.signin-source--oauth2_github {
-      background-color: #FF507A;
-      color: #000;
-    }
-
     >a {
       border-radius: $border-radius;
       background-color: var(--cue-interactive);
@@ -44,6 +29,27 @@ menu.signin-sources {
         max-width: 100%;
         height: auto;
         display: block;
+      }
+    }
+
+    &.signin-source--oauth2_google {
+      >a {
+        background-color: #0F9D58;
+        color: #fff;
+      }
+    }
+
+    &.signin-source--oauth2_facebook {
+      >a {
+        background-color: #1877f2;
+        color: #fff;
+      }
+    }
+
+    &.signin-source--oauth2_github {
+      >a {
+        background-color: #FF507A;
+        color: #000;
       }
     }
   }
