@@ -202,7 +202,7 @@ user_sources:
         name: Google
         class: \League\OAuth2\Client\Provider\Google
         scope:
-          - userinfo.email
+          - https://www.googleapis.com/auth/userinfo.email
       facebook:
         name: Facebook
         class: \League\OAuth2\Client\Provider\Facebook

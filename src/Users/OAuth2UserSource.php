@@ -22,6 +22,7 @@ class OAuth2UserSource extends AbstractUserSource
         foreach ($this->providers() as $id) {
             $url = $this->signinUrl($bounce);
             $url->arg('_provider', $id);
+            $url->unsetArg('_bounce');// TODO: figure out a way to keep bounce
             $url->setName(Config::get("user_sources.oauth2.providers.$id.name"));
             $urls[$this->name() . "_$id"] = $url;
         }
