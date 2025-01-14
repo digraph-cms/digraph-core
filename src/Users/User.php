@@ -102,7 +102,7 @@ class User implements ArrayAccess
             'comment' => $comment
         ];
         foreach ($this['emails'] ?? [] as $k => $existing) {
-            if (@$existing[0] == $email) {
+            if (@$existing['address'] == $email) {
                 unset($this['emails.' . $k]);
                 $this['emails.' . $k] = $value;
                 return;
