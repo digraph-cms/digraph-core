@@ -9,7 +9,7 @@ menu.signin-sources {
     background-color: var(--cue-interactive);
     color: var(--cue-interactive--inv);
     font-weight: bold;
-    border-radius: $radius;
+    border-radius: $border-radius;
     margin-bottom: $grid;
 
     &.signin-source--oauth2_google {
