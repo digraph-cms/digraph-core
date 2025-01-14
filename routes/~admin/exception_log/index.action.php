@@ -35,7 +35,7 @@ foreach ($dayDirs as $dayDir) {
                 sprintf(
                     '<a href="%s">%s</a>',
                     new URL('log:' . explode('.', basename($path))[0]),
-                    $data['thrown']['message']
+                    $data['thrown']['message'] ?: $data['thrown']['class']
                 ),
                 $url instanceof URL ? $url->fullPathString() : "<em>$url</em>",
                 @$data['_SERVER']['REMOTE_ADDR'],

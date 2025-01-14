@@ -126,7 +126,6 @@ if (Context::data('signin_provider_id')) {
         Cookies::unset('auth', 'bounce');
         try {
             $bounce = new URL($bounce);
-            throw new RedirectException($bounce);
         } catch (Throwable $th) {
             Security::flag('potentially malicious bounce URL (after signin)');
             ExceptionLog::log($th);
@@ -135,8 +134,10 @@ if (Context::data('signin_provider_id')) {
     }
 
     // as a fallback redirect to either profile page or sign in page
-    throw new RedirectException(
-        Users::current()?->profile()
-            ?? new URL('/signin/')
-    );
+    $bounce = $bounce
+        ?? Users::current()?->profile()
+        ?? new URL('/signin/');
+
+    // redirect to bounce target
+    Context::response()->redirect($bounce->__toString());
 }
