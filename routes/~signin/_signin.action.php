@@ -86,7 +86,7 @@ if (Context::data('signin_provider_id')) {
             throw new HttpError(
                 403,
                 "That $fullSourceTitle signin is already associated with a different account on this site. " .
-                "To associate your current account " . Users::current() . " with this $fullSourceTitle signin, you need to first sign into the other account and remove it there."
+                    "To associate your current account " . Users::current() . " with this $fullSourceTitle signin, you need to first sign into the other account and remove it there."
             );
         }
         // user is signed in, link this pair to their account
@@ -139,13 +139,22 @@ if (Context::data('signin_provider_id')) {
     }
 
     // if there is a bounce target, try to make it into a URL and redirect
-    if ($bounce) {
-        Context::response()->redirect($bounce);
-    } else {
-        // otherwise redirect to profile page
-        Context::response()->redirect(
-            Users::current()->profile()
-        );
+    if ($bounce instanceof URL) {
+        throw new RedirectException($bounce);
+    } elseif (is_string($bounce)) {
+        try {
+            $bounce = new URL($bounce);
+            throw new RedirectException($bounce);
+        } catch (Throwable $th) {
+            Security::flag('potentially malicious bounce URL');
+            ExceptionLog::log($th);
+            $bounce = null;
+        }
     }
 
+    // as a fallback redirect to either profile page or home page
+    throw new RedirectException(
+        Users::current()?->profile()
+            ?? new URL('/')
+    );
 }
