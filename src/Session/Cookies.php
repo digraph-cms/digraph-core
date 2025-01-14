@@ -461,6 +461,7 @@ class Cookies
             } catch (\Throwable $th) {
                 ExceptionLog::log($th);
                 Security::flag('Invalid JSON in cookie');
+                static::unset($type, $name);
                 return null;
             }
             // attempt signature check
@@ -471,6 +472,7 @@ class Cookies
                 !hash_equals($value['signature'], hash('sha256', serialize($value['value']) . $value['salt'] . Config::secret()))
             ) {
                 Security::flag('Invalid signature in cookie');
+                static::unset($type, $name);
                 return null;
             }
             // return value
