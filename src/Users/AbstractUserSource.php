@@ -13,10 +13,9 @@ abstract class AbstractUserSource
 
     abstract public function title(): string;
     /**
-     * @param string|null $bounce
      * @return array<string,URL>
      */
-    abstract public function allSigninURLs(?string $bounce): array;
+    abstract public function allSigninURLs(): array;
 
     public function __construct(string $name)
     {
@@ -51,13 +50,9 @@ abstract class AbstractUserSource
         );
     }
 
-    protected function signinUrl(?string $bounce): URL
+    protected function signinUrl(): URL
     {
-        $url = new URL('/signin/_signin.html?_source=' . $this->name());
-        if ($bounce) {
-            $url->arg('_bounce', $bounce);
-        }
-        return $url;
+        return new URL('/signin/_signin.html?_source=' . $this->name());
     }
 
     public function authorizeUser(string $user_uuid, string $provider, string $provider_id): void

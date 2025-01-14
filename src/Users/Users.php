@@ -65,16 +65,15 @@ abstract class Users
      * Get an array of all possible signin URLs, so that if there are more than
      * one options can be presented to the user.
      *
-     * @param string|null $bounce
      * @return URL[]
      */
-    public static function allSigninURLs(string $bounce = null): array
+    public static function allSigninURLs(): array
     {
         static $urls;
         if (!$urls) {
             $urls = [];
             foreach (static::sources() as $source) {
-                $urls = array_merge($urls, $source->allSigninURLs($bounce));
+                $urls = array_merge($urls, $source->allSigninURLs());
             }
         }
         return $urls;

@@ -11,11 +11,11 @@ class CASUserSource extends AbstractUserSource
         return 'CAS';
     }
 
-    public function allSigninURLs(?string $bounce): array
+    public function allSigninURLs(): array
     {
         $urls = [];
         foreach ($this->providers() as $id) {
-            $url = $this->signinUrl($bounce);
+            $url = $this->signinUrl();
             $url->arg('_provider',$id);
             $url->setName(Config::get("user_sources.cas.providers.$id.name"));
             $urls[$this->name()."_$id"] = $url;

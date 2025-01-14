@@ -14,7 +14,6 @@ use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\RichContent\RichContent;
 use DigraphCMS\Session\Cookies;
 use DigraphCMS\Session\Session;
-use DigraphCMS\UI\Breadcrumb;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\Templates;
 use DigraphCMS\URL\URL;
@@ -42,23 +41,6 @@ if (!$source) {
 $provider = Context::arg('_provider');
 if (!$source->providerActive($provider)) {
     throw new HttpError(404);
-}
-
-// get bounce arg and turn it into a URL (which verifies it's in-site)
-$bounce = Context::arg('_bounce');
-if ($bounce) {
-    try {
-        $bounce = new URL($bounce);
-        Cookies::set('auth', 'bounce', $bounce->__toString());
-    } catch (Throwable $th) {
-        Cookies::unset('auth', 'bounce');
-        Security::flag('potentially malicious bounce URL');
-        ExceptionLog::log($th);
-        $bounce = null;
-    }
-    $url = Context::url();
-    $url->unsetArg('_bounce');
-    throw new RedirectException($url);
 }
 
 // include source handler file
@@ -141,6 +123,7 @@ if (Context::data('signin_provider_id')) {
     // if there is a bounce target, try to make it into a URL and redirect
     $bounce = Cookies::get('auth', 'bounce');
     if ($bounce) {
+        Cookies::unset('auth', 'bounce');
         try {
             $bounce = new URL($bounce);
             throw new RedirectException($bounce);
