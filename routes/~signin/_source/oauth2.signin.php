@@ -2,10 +2,13 @@
 
 use DigraphCMS\Config;
 use DigraphCMS\Context;
+use DigraphCMS\Exception;
+use DigraphCMS\ExceptionLog;
 use DigraphCMS\HTTP\ArbitraryRedirectException;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\Security\Security;
 use DigraphCMS\Session\Cookies;
+use DigraphCMS\UI\Notifications;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Users;
 
@@ -16,12 +19,12 @@ $provider = $source->provider($providerName);
 
 if (Context::arg('error')) {
     // Got an error, probably user denied access or authorization code is expired
-    $url = new URL('/signin/');
-    throw new HttpError(
-        500,
-        'OAuth Error: ' . htmlspecialchars(Context::arg('error'), ENT_QUOTES, 'UTF-8') .
-            "<br><a href='$url'>Restart the sign-in process?</a>"
+    Notifications::printError(
+        'OAuth Error: %s <a href="%s">Restart the sign-in process?</a>',
+        htmlspecialchars(Context::arg('error'), ENT_QUOTES, 'UTF-8'),
+        Users::signinUrl(null)
     );
+    return;
 } elseif (!Context::arg('code')) {
     // Redirect to provider authorization URL so we will get a code on the next pageview
     $authURL = $provider->getAuthorizationUrl([
@@ -32,12 +35,17 @@ if (Context::arg('error')) {
 } elseif (!Context::arg('state') || Context::arg('state') !== Cookies::get('csrf', 'oauth2state')) {
     // State is invalid, possible CSRF attack
     Security::flag('Invalid OAuth state');
-    $url = new URL('/signin/');
-    throw new HttpError(
-        500,
-        'Invalid OAuth state' .
-            "<br><a href='$url'>Restart the sign-in process?</a>"
+    ExceptionLog::log(
+        new Exception('Invalid OAuth state', [
+            'state' => Context::arg('state'),
+            'csrf' => Cookies::get('csrf', 'oauth2state')
+        ])
+        );
+    Notifications::printError(
+        'Invalid OAuth state. <a href="%s">Please try again</a>.',
+        Users::signinUrl(null)
     );
+    return;
 }
 
 /**

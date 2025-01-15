@@ -9,6 +9,7 @@ use DigraphCMS\Email\Emails;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\Exception;
 use DigraphCMS\ExceptionLog;
+use DigraphCMS\HTTP\ArbitraryRedirectException;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\HTTP\RefreshException;
@@ -22,7 +23,7 @@ use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
 
 // require captcha
-Security::requireSecurityCheck(false);
+Security::requireSecurityCheck();
 
 // require the necessary cookies
 Cookies::required(['system', 'auth', 'csrf']);
@@ -47,14 +48,17 @@ if (!$source->providerActive($provider)) {
 // include source handler file
 try {
     Router::include('_source/' . $source->name() . '.signin.php');
-} catch (RedirectException | RefreshException $r) {
+} catch (RedirectException | RefreshException | ArbitraryRedirectException $r) {
     throw $r;
 } catch (Throwable $th) {
     ExceptionLog::log($th);
-    Notifications::flashError("Sign-in handler encountered an error. Please try again.");
-    $url = Users::signinUrl();
+    $url = Users::signinUrl(null);
     $url->arg('_noredirect', 1);
-    throw new RedirectException($url);
+    Notifications::printError(sprintf(
+        'Sign-in handler encountered an error. <a href="%s">Please try again</a>.',
+        $url
+    ));
+    return;
 }
 
 // handle signin within digraph
@@ -66,11 +70,14 @@ if (Context::data('signin_provider_id')) {
     if ($user = $source->lookupUser($provider, $providerID)) {
         // user is signed in as a different user than who this signin is already associated with
         if (Session::user() && Session::user() != $user) {
-            throw new HttpError(
-                403,
-                "That $fullSourceTitle signin is already associated with a different account on this site. " .
-                    "To associate your current account " . Users::current() . " with this $fullSourceTitle signin, you need to first sign into the other account and remove it there."
-            );
+            Notifications::printError(sprintf(
+                "That %s signin is already associated with a different account on this site. To associate your current account %s with this %s signin, you need to first sign into the other account and remove it there.",
+                $fullSourceTitle,
+                Users::current(),
+                $fullSourceTitle
+            ));
+            Context::response()->status(403);
+            return;
         }
         // user is signed in, link this pair to their account
         Session::authenticate($user, 'Signed in with ' . $fullSourceTitle);
