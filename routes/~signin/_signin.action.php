@@ -131,7 +131,6 @@ if (Context::data('signin_provider_id')) {
     // if there is a bounce target, try to make it into a URL and redirect
     $bounce = Cookies::get('auth', 'bounce');
     if ($bounce) {
-        Cookies::unset('auth', 'bounce');
         try {
             $bounce = new URL($bounce);
         } catch (Throwable $th) {
@@ -149,7 +148,11 @@ if (Context::data('signin_provider_id')) {
     // redirect to bounce target. Note that it uses the response->redirect()
     // method directly, because all this happens in a try/catch block and the
     // RedirectException would just get logged
-    Context::response()->redirect((string)$bounce->__toString());
+    if ($bounce) {
+        Context::response()->redirect((string)$bounce->__toString());
+        Cookies::unset('auth', 'bounce');
+        return;
+    }
 
     // if we get here, something went wrong
     ExceptionLog::log(
