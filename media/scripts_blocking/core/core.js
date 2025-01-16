@@ -12,7 +12,7 @@ const Digraph = {
         for (let i = 0; i < allCookies.length; i++) {
             const el = allCookies[i].trim();
             if (el.indexOf(fullName + '=') == 0) {
-                return JSON.parse(el.substring(fullName.length + 1, el.length));
+                return JSON.parse(el.substring(fullName.length + 1, el.length)).value;
             }
         }
         return null;
