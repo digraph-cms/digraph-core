@@ -77,6 +77,7 @@ class YamlArrayInput extends CodeMirrorInput
 
     protected static function yamlDump(array $value): string
     {
+        if (!$value) return '';
         $value = Yaml::dump($value, 4, 2, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK);
         $value = preg_replace_callback('/^(  )+/m', function ($m) {
             return str_repeat("\t", strlen($m[0]) / 2);
