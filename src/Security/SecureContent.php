@@ -4,6 +4,9 @@ namespace DigraphCMS\Security;
 
 use DigraphCMS\HTML\DIV;
 
+/**
+ * @deprecated use Security::requireSecurityCheck() instead
+ */
 class SecureContent extends DIV
 {
     protected static $idCounter = 0;

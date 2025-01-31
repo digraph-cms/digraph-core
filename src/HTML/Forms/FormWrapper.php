@@ -4,7 +4,6 @@ namespace DigraphCMS\HTML\Forms;
 
 use DigraphCMS\Context;
 use DigraphCMS\HTML\Tag;
-use DigraphCMS\Security\SecureContent;
 use DigraphCMS\Security\Security;
 use DigraphCMS\URL\URL;
 
@@ -155,16 +154,9 @@ class FormWrapper extends Tag
         if ($this->display_validation_error) {
             array_unshift($children, '<div class="notification notification--error notification--form-validation">Please correct any form validation errors below</div>');
         }
-        if ($this->captcha()) {
-            $children[] = (new SecureContent($this->id() . '__captcha'))
-                ->addChild($this->token())
-                ->addChild($this->button())
-                ->addChild($this->form());
-        } else {
-            $children[] = $this->token();
-            $children[] = $this->button();
-            $children[] = $this->form();
-        }
+        $children[] = $this->token();
+        $children[] = $this->button();
+        $children[] = $this->form();
         return $children;
     }
 
@@ -253,6 +245,8 @@ class FormWrapper extends Tag
 
     public function toString(): string
     {
+        // require security check if requested
+        if ($this->captcha()) Security::requireSecurityCheck();
         // recursively set form on children
         $this->setChildrenForms($this->children());
         // call callbacks when printed
