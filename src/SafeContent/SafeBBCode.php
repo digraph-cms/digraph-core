@@ -2,6 +2,7 @@
 
 namespace DigraphCMS\SafeContent;
 
+use DigraphCMS\DOM\DOM;
 use DigraphCMS\HTML\A;
 use DigraphCMS\RichContent\Video\VideoEmbed;
 use DigraphCMS\UI\Format;
@@ -45,6 +46,7 @@ class SafeBBCode
         $string = static::parser()->process($string);
         $string = str_replace("\r\n","<br>",$string);
         $string = str_replace("\n","<br>",$string);
+        $string = SafeBBCodeHtmlParser::parse($string);
         $string = "<div class='safe-bbcode-content'>$string</div>";
         return $string;
     }
