@@ -42,7 +42,7 @@ class SafeBBCodeHtmlParser
         if ($node instanceof DOMText) {
             $text = $node->textContent;
             // turn URLs into links
-            $text = preg_replace_callback('/\bhttps?:\/\/\S+\b/', function ($matches) {
+            $text = preg_replace_callback('/\bhttps?:\/\/[^\s]+/', function ($matches) {
                 if (!filter_var($matches[0], FILTER_VALIDATE_URL)) {
                     return $matches[0];
                 }
