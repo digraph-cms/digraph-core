@@ -42,11 +42,11 @@ class SafeBBCodeHtmlParser
         if ($node instanceof DOMText) {
             $text = $node->textContent;
             // turn URLs into links
-            $text = preg_replace_callback('/\bhttps?:\/\/[^\s]+/', function ($matches) {
-                if (!filter_var($matches[0], FILTER_VALIDATE_URL)) {
-                    return $matches[0];
+            $text = preg_replace_callback('@\b(([\w-]+://?|www[.])[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/)))@', function ($matches) {
+                if (!filter_var($matches[1], FILTER_VALIDATE_URL)) {
+                    return $matches[1];
                 }
-                return "<a href='{$matches[0]}' target='_blank'>{$matches[0]}</a>";
+                return "<a href='{$matches[1]}' target='_blank'>{$matches[1]}</a>";
             }, $text);
             // turn email addresses into obfuscated links
             $text = preg_replace_callback('/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/', function ($matches) {

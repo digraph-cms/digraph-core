@@ -35,6 +35,16 @@ class SafeBBCodeHtmlParserTest extends TestCase
             'Test <a href="https://example.com/foo/bar/" target="_blank">https://example.com/foo/bar/</a> URL',
             SafeBBCodeHtmlParser::parse('Test https://example.com/foo/bar/ URL')
         );
+        // test example that doesn't work for some reason
+        $this->assertEquals(
+            'If at '.Format::base64obfuscate('<a href="mailto:example@unm.edu">example@unm.edu</a>').' for.',
+            SafeBBCodeHtmlParser::parse('If at example@unm.edu for.')
+        );
+        // another that doesn't work for some reason
+        $this->assertEquals(
+            '<a href="https://css.unm.edu/campus-maps/docs/visitormapcentral_alpha.pdf" target="_blank">https://css.unm.edu/campus-maps/docs/visitormapcentral_alpha.pdf</a>',
+            SafeBBCodeHtmlParser::parse('https://css.unm.edu/campus-maps/docs/visitormapcentral_alpha.pdf')
+        );
         // test that it doesn't alter existing links
         $this->assertEquals(
             'Test <a href="https://example.com" target="_blank">https://example.com</a> <a href="https://example2.com" target="_blank">https://example2.com</a>',
