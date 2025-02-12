@@ -25,6 +25,10 @@ class SafeBBCode
         'quote' => 'blockquote',
     ];
 
+    const NUISANCE_TAGS = [
+        'size',
+    ];
+
     public static function loadEditorMedia()
     {
         static $loaded = false;
@@ -39,12 +43,29 @@ class SafeBBCode
         Theme::addBlockingPageJs('/safe_bbcode_editor/*.js');
     }
 
+    public static function stripNuisanceTags(string $string): string
+    {
+        // create a special parser just for this
+        static $parser;
+        if (!$parser) {
+            $handlers = new HandlerContainer();
+            foreach (static::NUISANCE_TAGS as $tag) {
+                $handlers->add($tag, function (ShortcodeInterface $s) {
+                    return $s->getContent();
+                });
+            }
+            $parser = new Processor(new RegularParser(), $handlers);
+        }
+        // process the string
+        return $parser->process($string);
+    }
+
     public static function parse(string $string): string
     {
         $string = Sanitizer::full($string);
         $string = static::parser()->process($string);
-        $string = str_replace("\r\n","<br>",$string);
-        $string = str_replace("\n","<br>",$string);
+        $string = str_replace("\r\n", "<br>", $string);
+        $string = str_replace("\n", "<br>", $string);
         $string = SafeBBCodeHtmlParser::parse($string);
         $string = "<div class='safe-bbcode-content'>$string</div>";
         return $string;
@@ -55,6 +76,19 @@ class SafeBBCode
         static $parser;
         if (!$parser) {
             $handlers = new HandlerContainer();
+            // named handlers for stripping nuisance tags
+            foreach (static::NUISANCE_TAGS as $tag) {
+                $handlers->add($tag, function (ShortcodeInterface $s) {
+                    return $s->getContent();
+                });
+            }
+            // named handlers for tags-to-tags straight conversion
+            foreach (static::TAG_TO_TAGS as $tag => $htmlTag) {
+                $handlers->add($tag, function (ShortcodeInterface $s) use ($htmlTag) {
+                    return sprintf('<%1$s>%2$s</%1$s>', $htmlTag, $s->getContent());
+                });
+            }
+            // default handler for fancier stuff
             $handlers->setDefault(function (ShortcodeInterface $s) {
                 // return processed tag content if found
                 if ($content = static::codeHandler($s)) {
@@ -110,11 +144,7 @@ class SafeBBCode
      */
     protected static function codeHandler(ShortcodeInterface $s): ?string
     {
-        // first look for a simple tag-to-tag translation
-        if ($tag = @static::TAG_TO_TAGS[$s->getName()]) {
-            return sprintf('<%1$s>%2$s</%1$s>', $tag, $s->getContent());
-        }
-        // then handle more advanced tags
+        // handle more advanced tags
         $fn = 'tag_' . $s->getName();
         if (method_exists(static::class, $fn)) return call_user_func([static::class, $fn], $s);
         else return null;

@@ -27,4 +27,13 @@ class SafeBBCodeTest extends TestCase
             SafeBBCode::parse("Test https://example.com\nTest https://example2.com")
         );
     }
+
+    public function testStripNuisanceTags()
+    {
+        // test that it strips out unwanted BBCode tag [size] while leaving [quote] alone
+        $this->assertEquals(
+            'Test (un)sized text [quote]quoted text[/quote]',
+            SafeBBCode::stripNuisanceTags('Test [size=12](un)sized text[/size] [quote]quoted text[/quote]')
+        );
+    }
 }

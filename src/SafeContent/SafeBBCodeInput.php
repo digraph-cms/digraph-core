@@ -17,6 +17,14 @@ class SafeBBCodeInput extends TEXTAREA
         );
     }
 
+    public function value(bool $useDefault = false): mixed
+    {
+        $value = parent::value($useDefault);
+        // strip out any disabled/nuisance tags
+        $value = SafeBBCode::stripNuisanceTags($value);
+        return $value;
+    }
+
     public function __toString()
     {
         SafeBBCode::loadEditorMedia();
