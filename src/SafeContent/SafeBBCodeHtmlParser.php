@@ -3,7 +3,6 @@
 namespace DigraphCMS\SafeContent;
 
 use DigraphCMS\UI\Format;
-use DOMDocument;
 use DOMDocumentFragment;
 use DOMElement;
 use DOMNode;
@@ -27,42 +26,52 @@ class SafeBBCodeHtmlParser
 
     protected static function walk(DOMNode $node)
     {
-        // process elements
+        // process text nodes
+        if ($node instanceof DOMText) {
+            if (empty(trim($node->textContent))) {
+                return;
+            }
+            $fragment = $node->ownerDocument->createDocumentFragment();
+            $text = $node->textContent;
+            $text = preg_replace_callback(
+                '/\bhttps?:\/\/[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i',
+                function ($matches) {
+                    if (!filter_var($matches[0], FILTER_VALIDATE_URL)) {
+                        return $matches[0];
+                    }
+                    return "<a href='{$matches[0]}' target='_blank'>{$matches[0]}</a>";
+                },
+                $text
+            );
+            $text = preg_replace_callback(
+                '/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/i',
+                function ($matches) {
+                    if (!filter_var($matches[0], FILTER_VALIDATE_EMAIL)) {
+                        return $matches[0];
+                    }
+                    return Format::base64obfuscate("<a href=\"mailto:{$matches[0]}\">{$matches[0]}</a>");
+                },
+                $text
+            );
+            $fragment->appendXML($text);
+            $node->parentNode->replaceChild($fragment, $node);
+            return;
+        }
+        // process element nodes
         if ($node instanceof DOMElement) {
-            // process and then don't recurse into links
             if ($node->tagName == 'a') {
                 return;
             }
-            // recurse into other elements
-            foreach ($node->childNodes as $child) {
+            // Store children in array first
+            $children = iterator_to_array($node->childNodes);
+            foreach ($children as $child) {
                 static::walk($child);
             }
         }
-        // process text nodes
-        if ($node instanceof DOMText) {
-            $text = $node->textContent;
-            // turn URLs into links
-            $text = preg_replace_callback('@\b(([\w-]+://?|www[.])[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/)))@i', function ($matches) {
-                if (!filter_var($matches[1], FILTER_VALIDATE_URL)) {
-                    return $matches[1];
-                }
-                return "<a href='{$matches[1]}' target='_blank'>{$matches[1]}</a>";
-            }, $text);
-            // turn email addresses into obfuscated links
-            $text = preg_replace_callback('/\b[A-z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i', function ($matches) {
-                if (!filter_var($matches[0], FILTER_VALIDATE_EMAIL)) {
-                    return $matches[0];
-                }
-                return Format::base64obfuscate("<a href=\"mailto:{$matches[0]}\">{$matches[0]}</a>");
-            }, $text);
-            // replace text node with text converted into multiple parsed dom nodes
-            $fragment = $node->ownerDocument->createDocumentFragment();
-            $fragment->appendXML($text);
-            $node->parentNode->replaceChild($fragment, $node);
-        }
-        // recurse into fragments
+        // process fragment nodes
         if ($node instanceof DOMDocumentFragment) {
-            foreach ($node->childNodes as $child) {
+            $children = iterator_to_array($node->childNodes);
+            foreach ($children as $child) {
                 static::walk($child);
             }
         }

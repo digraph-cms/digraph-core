@@ -2,7 +2,6 @@
 
 namespace DigraphCMS\SafeContent;
 
-use DigraphCMS\DOM\DOM;
 use DigraphCMS\HTML\A;
 use DigraphCMS\RichContent\Video\VideoEmbed;
 use DigraphCMS\UI\Format;

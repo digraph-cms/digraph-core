@@ -37,7 +37,7 @@ class SafeBBCodeHtmlParserTest extends TestCase
         );
         // test example that doesn't work for some reason
         $this->assertEquals(
-            'If at '.Format::base64obfuscate('<a href="mailto:example@unm.edu">example@unm.edu</a>').' for.',
+            'If at ' . Format::base64obfuscate('<a href="mailto:example@unm.edu">example@unm.edu</a>') . ' for.',
             SafeBBCodeHtmlParser::parse('If at example@unm.edu for.')
         );
         // another that doesn't work for some reason
@@ -49,6 +49,25 @@ class SafeBBCodeHtmlParserTest extends TestCase
         $this->assertEquals(
             'Test <a href="https://example.com" target="_blank">https://example.com</a> <a href="https://example2.com" target="_blank">https://example2.com</a>',
             SafeBBCodeHtmlParser::parse('Test <a href="https://example.com" target="_blank">https://example.com</a> <a href="https://example2.com" target="_blank">https://example2.com</a>')
+        );
+    }
+
+    public function testMultilineInput()
+    {
+        // test that it works with multiline input
+        $this->assertEquals(
+            "Test <a href=\"https://example.com\" target=\"_blank\">https://example.com</a>\nTest <a href=\"https://example2.com\" target=\"_blank\">https://example2.com</a>",
+            SafeBBCodeHtmlParser::parse("Test https://example.com\nTest https://example2.com")
+        );
+        // test /r/n
+        $this->assertEquals(
+            "Test <a href=\"https://example.com\" target=\"_blank\">https://example.com</a>\nTest <a href=\"https://example2.com\" target=\"_blank\">https://example2.com</a>",
+            SafeBBCodeHtmlParser::parse("Test https://example.com\r\nTest https://example2.com")
+        );
+        // test with <br> tags
+        $this->assertEquals(
+            "Test <a href=\"https://example.com\" target=\"_blank\">https://example.com</a><br>Test <a href=\"https://example2.com\" target=\"_blank\">https://example2.com</a>",
+            SafeBBCodeHtmlParser::parse("Test https://example.com<br>Test https://example2.com")
         );
     }
 }
