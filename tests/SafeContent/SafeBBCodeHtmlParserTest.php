@@ -69,5 +69,10 @@ class SafeBBCodeHtmlParserTest extends TestCase
             "Test <a href=\"https://example.com\" target=\"_blank\">https://example.com</a><br>Test <a href=\"https://example2.com\" target=\"_blank\">https://example2.com</a>",
             SafeBBCodeHtmlParser::parse("Test https://example.com<br>Test https://example2.com")
         );
+        // test line with an ampersand
+        $this->assertEquals(
+            'Some other content with an &amp; and nothing to match<br>Test <a href="https://example.com" target="_blank">https://example.com</a><br>Test <a href="https://example2.com" target="_blank">https://example2.com</a>',
+            SafeBBCodeHtmlParser::parse("Some other content with an & and nothing to match<br>Test https://example.com<br>Test https://example2.com")
+        );
     }
 }

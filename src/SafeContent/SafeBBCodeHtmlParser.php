@@ -33,6 +33,8 @@ class SafeBBCodeHtmlParser
             }
             $fragment = $node->ownerDocument->createDocumentFragment();
             $text = $node->textContent;
+            // TODO: do this better
+            $text = str_replace(['&'], ['&amp;'], $text);
             $text = preg_replace_callback(
                 '/\bhttps?:\/\/[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i',
                 function ($matches) {

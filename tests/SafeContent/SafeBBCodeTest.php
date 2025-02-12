@@ -26,6 +26,22 @@ class SafeBBCodeTest extends TestCase
             '<div class=\'safe-bbcode-content\'>Test <a href="https://example.com" target="_blank">https://example.com</a><br>Test <a href="https://example2.com" target="_blank">https://example2.com</a></div>',
             SafeBBCode::parse("Test https://example.com\nTest https://example2.com")
         );
+        $this->assertEquals(
+            '<div class=\'safe-bbcode-content\'>Test <a href="https://example.com" target="_blank">https://example.com</a><br>Test <a href="https://example2.com" target="_blank">https://example2.com</a></div>',
+            SafeBBCode::parse("Test https://example.com\r\nTest https://example2.com")
+        );
+        $this->assertEquals(
+            '<div class=\'safe-bbcode-content\'>Test <a href="https://example.com" target="_blank">https://example.com</a><br><br>Test <a href="https://example2.com" target="_blank">https://example2.com</a></div>',
+            SafeBBCode::parse("Test https://example.com\r\n\r\nTest https://example2.com")
+        );
+        $this->assertEquals(
+            '<div class=\'safe-bbcode-content\'>Some other content with nothing to match<br><br>Test <a href="https://example.com" target="_blank">https://example.com</a><br><br>Test <a href="https://example2.com" target="_blank">https://example2.com</a></div>',
+            SafeBBCode::parse("Some other content with nothing to match\r\n\r\nTest https://example.com\r\n\r\nTest https://example2.com")
+        );
+        $this->assertEquals(
+            '<div class=\'safe-bbcode-content\'>Some other content with an & and nothing to match<br><br>Test <a href="https://example.com" target="_blank">https://example.com</a><br><br>Test <a href="https://example2.com" target="_blank">https://example2.com</a></div>',
+            SafeBBCode::parse("Some other content with an & and nothing to match\r\n\r\nTest https://example.com\r\n\r\nTest https://example2.com")
+        );
     }
 
     public function testStripNuisanceTags()
