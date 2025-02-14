@@ -43,8 +43,12 @@ class SafeBBCode
         Theme::addBlockingPageJs('/safe_bbcode_editor/*.js');
     }
 
-    public static function stripNuisanceTags(string $string): string
+    /**
+     * @return ($string is null ? null : string)
+     */
+    public static function stripNuisanceTags(string|null $string): string|null
     {
+        if (is_null($string)) return null;
         // create a special parser just for this
         static $parser;
         if (!$parser) {
