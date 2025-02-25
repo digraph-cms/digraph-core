@@ -35,13 +35,15 @@ class Email
         string $subject,
         RichContent $body,
         bool $time_sensitive = false,
+        User|null $user = null,
+        string|null $from = null,
     ): Email {
         return new Email(
             category: $category,
             subject: $subject,
             to: $email,
-            to_uuid: null,
-            from: null,
+            to_uuid: $user ? $user->uuid() : null,
+            from: $from,
             body_html: $body->html(),
             time_sensitive: $time_sensitive
         );
@@ -63,15 +65,16 @@ class Email
         string $subject,
         RichContent $body,
         bool $time_sensitive = false,
+        string|null $from = null,
     ): array {
         return array_map(
-            function ($email) use ($category, $user, $subject, $body, $time_sensitive) {
+            function ($email) use ($category, $user, $subject, $body, $time_sensitive, $from) {
                 return new Email(
                     category: $category,
                     subject: $subject,
                     to: $email,
                     to_uuid: $user->uuid(),
-                    from: null,
+                    from: $from,
                     body_html: $body->html(),
                     time_sensitive: $time_sensitive
                 );
