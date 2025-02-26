@@ -99,9 +99,9 @@ class File
         $this->write();
         if (!$this->url) {
             $this->url = Media::fileUrl($this, !is_null($this->permissions()));
-        }
-        if (static::CONTENT_HASH_URL) {
-            $this->url .= '?' . hash_file('crc32b', $this->path());
+            if (static::CONTENT_HASH_URL) {
+                $this->url .= '?' . hash_file('crc32b', $this->path());
+            }
         }
         return $this->url;
     }
