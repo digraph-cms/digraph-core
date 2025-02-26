@@ -10,6 +10,13 @@ use DigraphCMS\HTML\DIV;
 
 class File
 {
+    /**
+     * Whether to add a content hash to the query string of file URLs to ensure
+     * caches bust when file content changes. Should be disabled for extending
+     * classes that ensure content-addressed URLs some other way.
+     */
+    const CONTENT_HASH_URL = true;
+
     protected $filename, $extension, $content, $identifier, $written, $src, $url;
     /** @var callable|null */
     protected $permissions;
@@ -92,6 +99,9 @@ class File
         $this->write();
         if (!$this->url) {
             $this->url = Media::fileUrl($this, !is_null($this->permissions()));
+        }
+        if (static::CONTENT_HASH_URL) {
+            $this->url .= '?' . hash_file('crc32b', $this->path());
         }
         return $this->url;
     }
