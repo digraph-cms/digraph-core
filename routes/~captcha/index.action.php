@@ -24,7 +24,7 @@ if (!Security::flagged()) {
             ExceptionLog::log($th);
             throw new RefreshException();
         }
-        throw new RedirectException($bounce);
+        throw new RedirectException($bounce, targetFrame: "_frame");
     }
     Notifications::printConfirmation('No CAPTCHA is required for you at this time.');
     if (Context::arg('frame')) {
