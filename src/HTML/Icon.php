@@ -18,6 +18,7 @@ class Icon extends Tag
         'add' => ['string' => 'add'],
         'archive' => ['string' => 'archive'],
         'article' => ['string' => 'article'],
+        'block' => ['string' => 'block'],
         'bold' => ['string' => 'format_bold'],
         'bookmark' => ['string' => 'bookmark'],
         'calendar' => ['string' => 'calendar_today'],
@@ -84,7 +85,7 @@ class Icon extends Tag
         'zip' => ['string' => 'archive'],
     ];
 
-    public function __construct(string $name, string $alt = null)
+    public function __construct(string $name, string|null $alt = null)
     {
         $this->setIcon($name);
         if ($alt) {
