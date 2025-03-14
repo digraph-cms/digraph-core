@@ -4,7 +4,7 @@ namespace DigraphCMS\Spreadsheets\CellWriters;
 
 use DateTime;
 use PhpOffice\PhpSpreadsheet\Cell\Cell;
-use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 /**
  * @method __construct(DateTime $date)
@@ -14,11 +14,10 @@ class DateTimeCell extends AbstractCellWriter
 {
     public function transformCell(Cell $cell)
     {
-        $cell->setValue($this->value);
+        assert($this->value instanceof DateTime);
+        $cell->setValue(Date::PHPToExcel($this->value));
         $cell->getStyle()
             ->getNumberFormat()
-            ->setFormatCode(
-                NumberFormat::FORMAT_DATE_DATETIME
-            );
+            ->setFormatCode('mmm d yy, h:mm AM/PM');
     }
 }
