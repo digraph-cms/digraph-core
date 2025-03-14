@@ -18,6 +18,6 @@ class DateTimeCell extends AbstractCellWriter
         $cell->setValue(Date::PHPToExcel($this->value));
         $cell->getStyle()
             ->getNumberFormat()
-            ->setFormatCode('mmm d yy, h:mm AM/PM');
+            ->setFormatCode('mmm d, yyyy, h:mm AM/PM');
     }
 }
