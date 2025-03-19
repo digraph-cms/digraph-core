@@ -25,10 +25,10 @@ class Security
     public static function requireSecurityCheck(): void
     {
         if (!static::flagged()) return;
-        throw new RedirectException(static::captchaUrl());
+        throw new RedirectException(static::captchaUrl(), targetFrame: '_top');
     }
 
-    public static function captchaUrl(string $frame = null): URL
+    public static function captchaUrl(string|null $frame = null): URL
     {
         $url = new URL('/~captcha/');
         $url->arg('bounce', Context::url()->__toString());

@@ -145,9 +145,19 @@ class Graph
         $start = Pages::get($start);
         $end = Pages::get($end);
         if (!$start || !$end) return null;
-        return static::defaultLinkType($start->class(), $end->class());
+        return static::linkType($start, $end);
     }
 
+    public static function linkType(AbstractPage $start, AbstractPage $end): string|null
+    {
+        return Dispatcher::firstValue('onPageLink', [$start, $end])
+            ?? static::defaultLinkType($start->class(), $end->class());
+    }
+
+    /**
+     * @deprecated use linkType() instead
+     * TODO: eventually merge this with linkType()
+     */
     public static function defaultLinkType(string $start_type, string $end_type): null|string
     {
         return Dispatcher::firstValue('onLinkType', [$start_type, $end_type])

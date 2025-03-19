@@ -54,7 +54,7 @@ class Pages
             $start_page = Pages::get($start);
             $end_page = Pages::get($end);
             if ($start_page && $end_page) {
-                $type = Graph::defaultLinkType($start_page->class(), $end_page->class());
+                $type = Graph::linkType($start_page, $end_page);
             }
             if (!$type) {
                 $type = 'normal';
@@ -248,7 +248,7 @@ class Pages
             $parent_uuid,
             $page->uuid(),
             $edge_type
-                ?? Graph::defaultLinkType(Pages::get($parent_uuid)?->class(), $page->class())
+                ?? Graph::linkType(Pages::get($parent_uuid), $page)
         );
         // insert page
         DB::query()
