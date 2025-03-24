@@ -193,7 +193,7 @@ class Email
 
     public function subject(): string
     {
-        return strip_tags($this->subject);
+        return mb_convert_encoding(strip_tags($this->subject), 'UTF-8');
     }
 
     public function from(): string
@@ -230,12 +230,12 @@ class Email
 
     public function body_html(): string
     {
-        return $this->body_html;
+        return mb_convert_encoding($this->body_html, 'UTF-8');
     }
 
     public function body_text(): string
     {
-        return $this->body_text;
+        return mb_convert_encoding($this->body_text, 'UTF-8');
     }
 
     public function sent(): ?DateTime
