@@ -9,7 +9,8 @@ use DigraphCMS\UI\Pagination\ColumnStringFilteringHeader;
 use DigraphCMS\UI\Pagination\PaginatedTable;
 
 echo new PaginatedTable(
-    Emails::select()->queue(),
+    Emails::select()
+        ->queue(),
     function (Email $email) {
         return [
             Format::datetime($email->time()),
