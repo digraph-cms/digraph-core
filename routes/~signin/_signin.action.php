@@ -149,7 +149,7 @@ if (Context::data('signin_provider_id')) {
     // method directly, because all this happens in a try/catch block and the
     // RedirectException would just get logged
     if ($bounce) {
-        Context::response()->redirect((string)$bounce->__toString());
+        Context::response()->redirect((string)$bounce->__toString(), targetFrame: '_top');
         Cookies::unset('auth', 'bounce');
         return;
     }
