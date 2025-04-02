@@ -110,8 +110,8 @@ if (Context::data('signin_provider_id')) {
             DB::beginTransaction();
             $user = new User();
             Dispatcher::dispatchEvent('onCreateUser', [$user, $source->name(), $provider, $providerID]);
-            Dispatcher::dispatchEvent('onCreateUser_' . $sourceName, [$user, $source->name(), $provider, $providerID]);
-            Dispatcher::dispatchEvent('onCreateUser_' . $sourceName . '_' . $provider, [$user, $source->name(), $provider, $providerID]);
+            Dispatcher::dispatchEvent('onCreateUser_' . $sourceName, [$user, $provider, $providerID]);
+            Dispatcher::dispatchEvent('onCreateUser_' . $sourceName . '_' . $provider, [$user, $providerID]);
             $user->insert();
             $source->authorizeUser($user->uuid(), $provider, $providerID);
             // sign in as new user
