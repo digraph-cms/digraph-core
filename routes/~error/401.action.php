@@ -2,7 +2,6 @@
 
 use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
-use DigraphCMS\Users\AbstractUserSource;
 use DigraphCMS\Users\Users;
 
 $user = Users::current();
@@ -25,7 +24,7 @@ if (!$user) {
         $provider_names[] = array_pop($provider_names) . ' or ' . $last;
         $provider_names = implode(', ', $provider_names);
         echo "<h1>Sign in required</h1>";
-        printf('<p>To view this page you will need to sign in with a %s account.</p>', $provider_names);
+        printf('<p>To view this page you will need to sign in with your %s account.</p>', $provider_names);
     }
     $signinUrl = Users::signinUrl(Context::request()->originalUrl());
     echo "<p><a href='$signinUrl' class='button'>Sign in</a> to view this page</p>";
