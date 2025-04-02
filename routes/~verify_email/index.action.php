@@ -29,9 +29,11 @@ foreach ($user['emails'] as $i => $row) {
             // user is not signed in, prompt them to sign in
             Notifications::printConfirmation('Email address verified: ' . $row['address']);
             echo Users::signinUrl(new URL('/'))->html();
+            return;
         } else {
             // user is signed in as somebody else? Weird but we'll handle it
-            Notifications::printConfirmation('Email address verified: ' . $row['address']);
+            Notifications::printConfirmation('Email address verified on behalf of ' . $user . ': ' . $row['address']);
+            return;
         }
     }
 }
