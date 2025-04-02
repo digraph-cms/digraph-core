@@ -17,7 +17,7 @@ if (!$user) {
     }
     if (count($providers) <= 1) {
         $source = reset($providers);
-        echo "<h1>" . $source->providerName() . " sign in required</h1>";
+        echo "<h1>$source sign in required</h1>";
     } else {
         $provider_names = array_map(fn(string $p) => '<strong>' . $p . '</strong>', $providers);
         $last = array_pop($provider_names);
