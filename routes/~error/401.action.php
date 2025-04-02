@@ -8,16 +8,24 @@ use DigraphCMS\Users\Users;
 $user = Users::current();
 if (!$user) {
     $sources = Users::sources();
-    if (count($sources) <= 1) {
-        $source = reset($sources);
-        echo "<h1>" . $source->name() . " sign in required</h1>";
+    $providers = [];
+    foreach ($sources as $source) {
+        foreach ($source->providers() as $p) {
+            if ($source->providerActive($p)) {
+                $providers = $source->providerName($p);
+            }
+        }
+    }
+    if (count($providers) <= 1) {
+        $source = reset($providers);
+        echo "<h1>" . $source->providerName() . " sign in required</h1>";
     } else {
-        $source_names = array_map(fn(AbstractUserSource $s) => '<strong>' . $s->name() . '</strong>', $sources);
-        $last = array_pop($source_names);
-        $source_names[] = array_pop($source_names) . ' or ' . $last;
-        $source_names = implode(', ', $source_names);
+        $provider_names = array_map(fn(string $p) => '<strong>' . $p . '</strong>', $providers);
+        $last = array_pop($provider_names);
+        $provider_names[] = array_pop($provider_names) . ' or ' . $last;
+        $provider_names = implode(', ', $provider_names);
         echo "<h1>Sign in required</h1>";
-        printf('<p>To view this page you will need to sign in with a %s account.</p>', $source_names);
+        printf('<p>To view this page you will need to sign in with a %s account.</p>', $provider_names);
     }
     $signinUrl = Users::signinUrl(Context::request()->originalUrl());
     echo "<p><a href='$signinUrl' class='button'>Sign in</a> to view this page</p>";
