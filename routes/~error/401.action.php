@@ -11,7 +11,7 @@ if (!$user) {
     foreach ($sources as $source) {
         foreach ($source->providers() as $p) {
             if ($source->providerActive($p)) {
-                $providers = $source->providerName($p);
+                $providers[] = $source->providerName($p);
             }
         }
     }
