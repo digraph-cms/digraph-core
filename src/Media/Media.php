@@ -89,12 +89,12 @@ class Media
         );
         $files = array_unique($files);
         asort($files);
-        $files = array_map(
-            function (string $path): File {
+        $files = array_filter(array_map(
+            function (string $path): File|null {
                 return static::get($path);
             },
             $files
-        );
+        ));
         Context::end();
         return $files;
     }

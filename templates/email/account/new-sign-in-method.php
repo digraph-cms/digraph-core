@@ -1,9 +1,7 @@
 <?php
 
-use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\UI\Templates;
-use DigraphCMS\URL\URL;
 use DigraphCMS\URL\URLs;
 use DigraphCMS\Users\User;
 
