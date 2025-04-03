@@ -5,11 +5,9 @@ use DigraphCMS\Context;
 use DigraphCMS\Exception;
 use DigraphCMS\ExceptionLog;
 use DigraphCMS\HTTP\ArbitraryRedirectException;
-use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\Security\Security;
 use DigraphCMS\Session\Cookies;
 use DigraphCMS\UI\Notifications;
-use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Users;
 
 /** @var \DigraphCMS\Users\OAuth2UserSource */
