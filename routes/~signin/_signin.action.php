@@ -30,19 +30,19 @@ Cookies::required(['system', 'auth', 'csrf']);
 
 // provider and source must be specified
 if (!Context::arg('_provider') || !Context::arg('_source')) {
-    throw new HttpError(404);
+    throw new HttpError(404, 'Missing provider or source');
 }
 
 // source and provider must exist
 $sourceName = Context::arg('_source');
 $source = Users::source(Context::arg('_source'));
 if (!$source) {
-    throw new HttpError(404);
+    throw new HttpError(404, 'Unknown source');
 }
 /** @var string */
 $provider = Context::arg('_provider');
 if (!$source->providerActive($provider)) {
-    throw new HttpError(404);
+    throw new HttpError(404, 'Unknown provider');
 }
 
 // include source handler file
@@ -88,7 +88,7 @@ if (Context::data('signin_provider_id')) {
             // user is signed in, link this pair to their account
             $source->authorizeUser($user, $provider, $providerID);
             // send emails indicating that a new auth method was added
-            $emails = Email::newForUser_all(
+            Emails::queue(Email::newForUser_all(
                 'service',
                 Users::current(),
                 "New sign-in method added to your account",
@@ -101,10 +101,7 @@ if (Context::data('signin_provider_id')) {
                         ]
                     )
                 )
-            );
-            foreach ($emails as $email) {
-                Emails::queue($email);
-            }
+            ));
         } else {
             // user is not signed in, create a new user and link pair to it
             DB::beginTransaction();
