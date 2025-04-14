@@ -1,11 +1,11 @@
 <?php
 
-use DigraphCMS\CodeMirror\CodeMirrorField;
 use DigraphCMS\CodeMirror\YamlArrayInput;
 use DigraphCMS\Context;
 use DigraphCMS\Datastore\Datastore;
 use DigraphCMS\HTML\Forms\Field;
 use DigraphCMS\HTML\Forms\FormWrapper;
+use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\UI\Breadcrumb;
@@ -16,6 +16,7 @@ use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\URL\URL;
 
 $item = Datastore::getByID(intval(Context::url()->actionSuffix()));
+if (!$item) throw new HttpError(404);
 
 Breadcrumb::parents(
     [
