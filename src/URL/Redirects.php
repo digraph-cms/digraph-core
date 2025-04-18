@@ -4,6 +4,7 @@ namespace DigraphCMS\URL;
 
 use DigraphCMS\Cache\Cache;
 use DigraphCMS\DB\DB;
+use DigraphCMS\ExceptionLog;
 use DigraphCMS\Session\Session;
 
 class Redirects
@@ -60,9 +61,16 @@ class Redirects
 
     protected static function getDestination(string $path): ?URL
     {
-        $result = DB::query()->from('redirect')
-            ->where('redirect_from', $path)
-            ->fetch();
-        return $result ? new URL($result['redirect_to']) : null;
+        // wrapped in try/catch to log, but not outwardly report errors
+        // to avoid exposing even the existence of database errors to the user
+        try {
+            $result = DB::query()->from('redirect')
+                ->where('redirect_from', $path)
+                ->fetch();
+            return $result ? new URL($result['redirect_to']) : null;
+        } catch (\Throwable $th) {
+            ExceptionLog::log($th);
+            return null;
+        }
     }
 }
