@@ -103,17 +103,17 @@ final class Session
             $auth->update();
         }
         // check for different IP
-        if ($auth->ip() != $_SERVER['REMOTE_ADDR']) {
-            Security::flagAuthentication(
-                $auth->id(),
-                sprintf(
-                    'IP address changed from %s to %s',
-                    $auth->ip(),
-                    $_SERVER['REMOTE_ADDR']
-                )
-            );
-            $auth->update();
-        }
+        // if ($auth->ip() != $_SERVER['REMOTE_ADDR']) {
+        //     Security::flagAuthentication(
+        //         $auth->id(),
+        //         sprintf(
+        //             'IP address changed from %s to %s',
+        //             $auth->ip(),
+        //             $_SERVER['REMOTE_ADDR']
+        //         )
+        //     );
+        //     $auth->update();
+        // }
     }
 
     public static function browserPlatform(string $ua = null): string
