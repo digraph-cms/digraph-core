@@ -52,6 +52,8 @@ class ExceptionLog
                 'thrown' => static::throwableArray($th)
             ];
         }
+        // transcode arrays entirely into UTF-8
+        $data = static::transcodeArray($data);
         // send email if lock isn't exceeded
         $hash = md5(serialize([
             get_class($th),
@@ -136,6 +138,32 @@ class ExceptionLog
             }
             $zip->close();
         }
+    }
+
+    /**
+     * Recursively transcode all strings in an array to UTF-8, so that things
+     * don't break when we try to save all this data into a JSON file.
+     */
+    protected static function transcodeArray(array $data): array
+    {
+        foreach ($data as $key => $value) {
+            if (is_array($value)) {
+                $data[$key] = static::transcodeArray($value);
+            } elseif (is_string($value)) {
+                $data[$key] = static::transcodeString($value);
+            }
+        }
+        return $data;
+    }
+
+    protected static function transcodeString(string $string): string
+    {
+        // convert to UTF-8 if not already
+        if (mb_detect_encoding($string, 'UTF-8', true) === false) {
+            $string = mb_convert_encoding($string, 'UTF-8');
+        }
+        // remove any non-UTF-8 characters
+        return preg_replace('/[^\x{0000}-\x{FFFF}]/u', '', $string);
     }
 
     /**
