@@ -8,6 +8,7 @@ use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\Digraph;
 use DigraphCMS\Events\Dispatcher;
+use DigraphCMS\Exception;
 use DigraphCMS\ExceptionLog;
 use DigraphCMS\HTML\Forms\Fields\CheckboxField;
 use DigraphCMS\HTML\Forms\FormWrapper;
@@ -459,7 +460,15 @@ class Cookies
             try {
                 $value = json_decode($_COOKIE[$key], true, 512, JSON_THROW_ON_ERROR);
             } catch (\Throwable $th) {
-                ExceptionLog::log($th);
+                ExceptionLog::log(new Exception(
+                    'Invalid JSON in cookie',
+                    [
+                        'cookie' => $_COOKIE[$key],
+                        'type' => $type,
+                        'name' => $name,
+                    ],
+                    $th
+                ));
                 Security::flag('Invalid JSON in cookie');
                 static::unset($type, $name);
                 return null;
