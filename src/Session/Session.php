@@ -7,8 +7,8 @@ use DateTime;
 use DigraphCMS\Security\Security;
 use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
+use DigraphCMS\Digraph;
 use DigraphCMS\Events\Dispatcher;
-use DigraphCMS\URL\URLs;
 use DigraphCMS\Users\Users;
 use donatj\UserAgent\UserAgentParser;
 
@@ -158,7 +158,7 @@ final class Session
             return static::$auth = new PHPAuthentication([
                 'user_uuid' => $user,
                 'comment' => $comment,
-                'secret' => static::generateSecret(),
+                'secret' => Digraph::longUUID(),
                 'created' => time(),
                 'expires' => $expires->getTimestamp(),
                 'ip' => $_SERVER['REMOTE_ADDR'],
@@ -170,7 +170,7 @@ final class Session
             $row = [
                 'user_uuid' => $user,
                 'comment' => $comment,
-                'secret' => static::generateSecret(),
+                'secret' => Digraph::longUUID(),
                 'created' => time(),
                 'expires' => $expires->getTimestamp(),
                 'ip' => $_SERVER['REMOTE_ADDR'],
@@ -215,16 +215,5 @@ final class Session
     protected static function clearAuthCookie()
     {
         Cookies::unset('auth', 'session');
-    }
-
-    /**
-     * Generates a random 64 character string, consisting of the characters in
-     * base 64 encoding (so it's 384 bits)
-     *
-     * @return string
-     */
-    protected static function generateSecret(): string
-    {
-        return URLs::base64_encode(random_bytes(24));
     }
 }
