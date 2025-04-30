@@ -8,11 +8,9 @@ use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\Digraph;
 use DigraphCMS\Events\Dispatcher;
-use DigraphCMS\Exception;
-use DigraphCMS\ExceptionLog;
 use DigraphCMS\HTML\Forms\Fields\CheckboxField;
 use DigraphCMS\HTML\Forms\FormWrapper;
-use DigraphCMS\Security\Security;
+use DigraphCMS\Security\SignedData;
 use DigraphCMS\UI\ButtonMenus\SingleButton;
 use DigraphCMS\UI\Templates;
 use DigraphCMS\URL\URL;
@@ -370,7 +368,7 @@ class Cookies
         return "$type/$name";
     }
 
-    public static function set(string $type, string $name, $value, bool $skipRuleChecks = false, bool $localScope = false)
+    public static function set(string $type, string $name, $value, bool $skipRuleChecks = false, bool $localScope = false, bool $http_only = false)
     {
         $key = static::key($type, $name);
         if ($skipRuleChecks || static::isAllowed($type)) {
@@ -380,12 +378,7 @@ class Cookies
             } else {
                 $expiration = 0;
             }
-            $salt = bin2hex(random_bytes(16));
-            $encoded = json_encode([
-                'value' => $value,
-                'salt' => $salt,
-                'signature' => hash('sha256', serialize($value) . $salt . Config::secret()),
-            ]);
+            $encoded = (string) new SignedData($value, null, $expiration ?: null);
             $_COOKIE[$key] = $encoded;
             setcookie(
                 $key,
@@ -393,7 +386,8 @@ class Cookies
                 $expiration,
                 static::cookiePath($localScope),
                 static::cookieDomain(),
-                static::cookieSecure()
+                static::cookieSecure(),
+                $http_only
             );
             return $value;
         } else {
@@ -456,36 +450,7 @@ class Cookies
     {
         $key = static::key($type, $name);
         if (isset($_COOKIE[$key])) {
-            // attempt json decode
-            try {
-                $value = json_decode($_COOKIE[$key], true, 512, JSON_THROW_ON_ERROR);
-            } catch (\Throwable $th) {
-                ExceptionLog::log(new Exception(
-                    'Cookie JSON error: ' . $th->getMessage(),
-                    [
-                        'cookie' => $_COOKIE[$key],
-                        'type' => $type,
-                        'name' => $name,
-                    ],
-                    $th
-                ));
-                Security::flag('Invalid JSON in cookie');
-                static::unset($type, $name);
-                return null;
-            }
-            // attempt signature check
-            if (
-                !isset($value['value']) ||
-                !isset($value['salt']) ||
-                !isset($value['signature']) ||
-                !hash_equals($value['signature'], hash('sha256', serialize($value['value']) . $value['salt'] . Config::secret()))
-            ) {
-                Security::flag('Invalid signature in cookie');
-                static::unset($type, $name);
-                return null;
-            }
-            // return value
-            return $value['value'];
+            return SignedData::dataFromString($_COOKIE[$key]);
         } else {
             return null;
         }
@@ -507,6 +472,6 @@ class Cookies
 
     protected static function cookieSecure(): bool
     {
-        return false;
+        return Config::get('cookies.secure');
     }
 }

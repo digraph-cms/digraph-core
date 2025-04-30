@@ -180,6 +180,11 @@ php_session:
   enabled: false
   key: DigraphAuthentication
 
+cookies:
+  secure: true
+  duration: "3 months"
+  consent_prompt: false
+
 users:
   sources:
     oauth2: \DigraphCMS\Users\OAuth2UserSource

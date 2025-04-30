@@ -9,6 +9,7 @@ use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\SafeContent\Sanitizer;
+use DigraphCMS\Security\SignedData;
 use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\User;
 
@@ -106,8 +107,8 @@ class URL
         string $source,
         string $medium,
         string $campaign,
-        string $term = null,
-        string $content = null,
+        string|null $term = null,
+        string|null $content = null,
     ): static {
         $this->arg('utm_source', $source);
         $this->arg('utm_medium', $medium);
@@ -159,7 +160,7 @@ class URL
      * @param string|null $target
      * @return string
      */
-    public function html(array $class = [], bool $inPageContext = false, string $target = null): string
+    public function html(array $class = [], bool $inPageContext = false, string|null $target = null): string
     {
         $normalized = clone ($this);
         $normalized->normalize();
@@ -186,7 +187,7 @@ class URL
         }
     }
 
-    public function setName(string $name = null): static
+    public function setName(string|null $name = null): static
     {
         $this->name = $name;
         return $this;
@@ -369,7 +370,7 @@ class URL
      * @param string $path
      * @return string
      */
-    public function path(string $path = null): string
+    public function path(string|null $path = null): string
     {
         if ($path !== null) {
             // make sure trailing .. has a trailing slash
@@ -409,7 +410,7 @@ class URL
      * @param array<string,string> $query
      * @return array<string,string>
      */
-    public function query(array $query = null): array
+    public function query(array|null $query = null): array
     {
         if ($query !== null) {
             $this->query = $query;
@@ -444,5 +445,28 @@ class URL
     {
         unset($this->query[$name]);
         return $this;
+    }
+
+    /**
+     * Set data into the URL as a signed data object, which will be signed and
+     * base64 encoded. This is useful for passing data between pages while
+     * ensuring it is not tampered with.
+     */
+    public function setSignedData(mixed $data): static
+    {
+        $this->arg('_signed_data', URLs::base64_encode(new SignedData($data)));
+        return $this;
+    }
+
+    /**
+     * Get the signed data from the URL, if it exists. This will return null
+     * if the signed data argument is not present or if it is invalid/expired.
+     */
+    public function signedData(): mixed
+    {
+        if ($this->arg('_signed_data')) {
+            return SignedData::dataFromString(URLs::base64_decode($this->arg('_signed_data')));
+        }
+        return null;
     }
 }
