@@ -461,7 +461,7 @@ class Cookies
                 $value = json_decode($_COOKIE[$key], true, 512, JSON_THROW_ON_ERROR);
             } catch (\Throwable $th) {
                 ExceptionLog::log(new Exception(
-                    'Cookie JSON error: ' + $th->getMessage(),
+                    'Cookie JSON error: ' . $th->getMessage(),
                     [
                         'cookie' => $_COOKIE[$key],
                         'type' => $type,
