@@ -2,6 +2,7 @@
 
 namespace DigraphCMS\Security;
 
+use DigraphCMS\Digraph;
 use RuntimeException;
 use Stringable;
 
@@ -21,16 +22,20 @@ class SignedData implements Stringable
         if (json_last_error() !== JSON_ERROR_NONE) {
             return null;
         }
-        if (!isset($data['data'], $data['salt'], $data['expires'], $data['hash'])) {
+        if (!isset($data['d'], $data['s'], $data['e'], $data['h'])) {
             return null;
         }
-        if (!is_string($data['data']) || !is_string($data['salt']) || !is_int($data['expires'])) {
+        if (!is_string($data['d']) || !is_string($data['s']) || !is_int($data['e'])) {
             return null;
         }
-        if (!static::checkHash($data['hash'], $data['data'], $data['salt'], $data['expires'])) {
+        if (!static::checkHash($data['h'], $data['d'], $data['s'], $data['e'])) {
             return null;
         }
-        return new SignedData($data['data'], $data['salt'], $data['expires']);
+        $payload = json_decode($data['d'], true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return null;
+        }
+        return new SignedData($payload, $data['s'], $data['e']);
     }
 
     /**
@@ -52,7 +57,7 @@ class SignedData implements Stringable
         int|null $expires = null,
     ) {
         $this->data = $data;
-        $this->salt = $salt ?? SecurityKeys::generateString();
+        $this->salt = $salt ?? Digraph::uuid();
         $this->expires = $expires ?? SecurityKeys::currentExpiration();
     }
 
@@ -71,15 +76,15 @@ class SignedData implements Stringable
     public static function makeHash(string $data_json, string $salt, int|null $expires): string
     {
         // generate the hash using the current key
-        return hash_hmac(
+        return Digraph::longUUID(null, hash_hmac(
             'sha256',
             json_encode([
-                'data' => $data_json,
-                'salt' => $salt,
-                'expires' => $expires
+                'd' => $data_json,
+                's' => $salt,
+                'e' => $expires
             ]),
             SecurityKeys::currentKey()
-        );
+        ));
     }
 
     /**
@@ -96,15 +101,15 @@ class SignedData implements Stringable
         // recent first so we can rotate keys
         foreach (SecurityKeys::active() as $key) {
             if (hash_equals(
-                hash_hmac(
+                Digraph::longUUID(null, hash_hmac(
                     'sha256',
                     json_encode([
-                        'data' => $data_json,
-                        'salt' => $salt,
-                        'expires' => $expires
+                        'd' => $data_json,
+                        's' => $salt,
+                        'e' => $expires
                     ]),
                     $key
-                ),
+                )),
                 $hash
             )) {
                 return true;
@@ -125,10 +130,10 @@ class SignedData implements Stringable
             throw new RuntimeException('Failed to encode data to JSON: ' . json_last_error_msg());
         }
         return json_encode([
-            'data' => $data_json,
-            'salt' => $this->salt,
-            'expires' => $this->expires,
-            'hash' => static::makeHash($data_json, $this->salt, $this->expires)
+            'd' => $data_json,
+            's' => $this->salt,
+            'e' => $this->expires,
+            'h' => static::makeHash($data_json, $this->salt, $this->expires)
         ]);
     }
 }

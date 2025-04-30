@@ -106,7 +106,7 @@ class Cookies
     {
         return
             static::get('csrf', $name) ??
-            static::set('csrf', $name, bin2hex(random_bytes(16)));
+            static::set('csrf', $name, Digraph::longUUID());
     }
 
     public static function allTypes(): array

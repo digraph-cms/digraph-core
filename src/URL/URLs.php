@@ -52,7 +52,10 @@ class URLs
      */
     public static function base64_encode(string $string): string
     {
-        return str_replace(['+', '/'], ['-', '_'], base64_encode($string));
+        return rtrim(
+            str_replace(['+', '/'], ['-', '_'], base64_encode($string)),
+            '='
+        );
     }
 
     /**
@@ -64,6 +67,11 @@ class URLs
      */
     public static function base64_decode(string $string): string
     {
+        // Add padding if needed
+        $padding = strlen($string) % 4;
+        if ($padding) {
+            $string .= str_repeat('=', 4 - $padding);
+        }
         return base64_decode(str_replace(['-', '_'], ['+', '/'], $string));
     }
 

@@ -38,7 +38,7 @@ abstract class Digraph
      */
     const UUIDCHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     const UUIDPATTERN = '00000000';
-    const LONGUUIDPATTERN = '0000000000000000';
+    const LONGUUIDPATTERN = '000000000000';
 
     /**
      * Broadly-useful serialization function that can serialize many objects and

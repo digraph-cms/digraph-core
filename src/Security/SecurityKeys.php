@@ -4,6 +4,7 @@ namespace DigraphCMS\Security;
 
 use DigraphCMS\Cache\Cache;
 use DigraphCMS\DB\DB;
+use DigraphCMS\Digraph;
 
 class SecurityKeys
 {
@@ -50,7 +51,7 @@ class SecurityKeys
 
     public static function generateString(): string
     {
-        return bin2hex(random_bytes(16));
+        return Digraph::longUUID();
     }
 
     /**

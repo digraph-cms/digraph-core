@@ -64,7 +64,7 @@ abstract class Config implements InitializedClassInterface
         static $cache;
         if (!$cache) {
             $file = static::get('paths.storage') . '/secret.txt';
-            if (!file_exists($file)) file_put_contents($file, bin2hex(random_bytes(32)));
+            if (!file_exists($file)) file_put_contents($file, Digraph::longUUID());
             $cache = file_get_contents($file);
         }
         return $cache;
