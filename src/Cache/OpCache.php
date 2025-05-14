@@ -88,6 +88,7 @@ class OpCache extends AbstractCacheDriver
             $this->readInternally($name);
         } catch (\Throwable $th) {
             // if we can't read the file, invalidate it
+            $this->invalidate($name);
             ExceptionLog::log(
                 new Exception(
                     "Failed to read opcache file: $name",
