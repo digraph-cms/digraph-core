@@ -3,6 +3,8 @@
 namespace DigraphCMS\Cache;
 
 use DigraphCMS\Config;
+use DigraphCMS\Exception;
+use DigraphCMS\ExceptionLog;
 use DigraphCMS\FS;
 use DigraphCMS\Serializer;
 
@@ -82,7 +84,21 @@ class OpCache extends AbstractCacheDriver
 
     public function get(string $name): mixed
     {
-        $this->readInternally($name);
+        try {
+            $this->readInternally($name);
+        } catch (\Throwable $th) {
+            // if we can't read the file, invalidate it
+            ExceptionLog::log(
+                new Exception(
+                    "Failed to read opcache file: $name",
+                    [
+                        'data' => file_get_contents($this->filename($name)),
+                    ],
+                    $th
+                )
+            );
+            return null;
+        }
         return @$this->cache[$name][1];
     }
 
