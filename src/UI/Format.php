@@ -59,6 +59,23 @@ class Format
         }
     }
 
+    public function phone(string $phone): string
+    {
+        $phone = preg_replace('/[^0-9]/', '', $phone);
+        if (strlen($phone) == 7) return sprintf('%s-%s', substr($phone, 0, 3), substr($phone, 3, 4));
+        elseif (strlen($phone) == 10) return sprintf('(%s) %s-%s', substr($phone, 0, 3), substr($phone, 3, 3), substr($phone, 6, 4));
+        elseif (strlen($phone) >= 11) {
+            return sprintf(
+                '+%s (%s) %s-%s',
+                substr($phone, 0, strlen($phone) - 10),
+                substr($phone, -10, 3),
+                substr($phone, -7, 3),
+                substr($phone, -4)
+            );
+        }
+        else return $phone;
+    }
+
     /**
      * Determine whether to use an "s" to pluralize strings referring to the given item. If given a
      * string the length will be used, if given a numeric value it will be used directly, otherwise
