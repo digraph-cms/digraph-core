@@ -59,7 +59,7 @@ class Format
         }
     }
 
-    public function phone(string $phone): string
+    public static function phone(string $phone): string
     {
         $phone = preg_replace('/[^0-9]/', '', $phone);
         if (strlen($phone) == 7) return sprintf('%s-%s', substr($phone, 0, 3), substr($phone, 3, 4));
