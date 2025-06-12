@@ -58,7 +58,8 @@ class PaginatedTable extends PaginatedSection
             $finalizeCallback,
             $buttonText,
             $ttl,
-            $permissions
+            $permissions,
+            $extension,
         );
     }
 
