@@ -363,7 +363,7 @@ class PaginatedSection extends Tag
 
     /**
      * Configure the download tool for this section.
-     * @param string $extension The file extension to use for the download (options: 'csv', 'xlsx', 'ods', 'pdf', 'html', 'xls').
+     * @param string $extension The file extension to use for the download (options: 'csv', 'xlsx', 'ods', 'html', 'xls').
      */
     public function download(
         string $filename,
@@ -406,10 +406,6 @@ class PaginatedSection extends Tag
             case 'ods':
                 $filename .= '.ods';
                 $outputter_class = Ods::class;
-                break;
-            case 'pdf':
-                $filename .= '.pdf';
-                $outputter_class = Pdf::class;
                 break;
             case 'html':
                 $filename .= '.html';

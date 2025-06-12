@@ -36,7 +36,8 @@ class PaginatedTable extends PaginatedSection
         ?callable $finalizeCallback = null,
         ?string $buttonText = null,
         ?int $ttl = null,
-        ?callable $permissions = null
+        ?callable $permissions = null,
+        string $extension = 'xlsx',
     ) {
         return parent::download(
             $filename,
@@ -53,7 +54,7 @@ class PaginatedTable extends PaginatedSection
                 );
                 return $row;
             },
-            $headers ?? array_map(fn (ColumnHeader $h) => $h->label(), $this->headers),
+            $headers ?? array_map(fn(ColumnHeader $h) => $h->label(), $this->headers),
             $finalizeCallback,
             $buttonText,
             $ttl,
