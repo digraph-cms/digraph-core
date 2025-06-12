@@ -17,13 +17,18 @@ use DigraphCMS\UI\Paginator;
 use DigraphCMS\URL\URL;
 use Envms\FluentPDO\Queries\Select;
 use Iterator;
+use PhpOffice\PhpSpreadsheet\Writer\Csv;
+use PhpOffice\PhpSpreadsheet\Writer\Html;
+use PhpOffice\PhpSpreadsheet\Writer\Ods;
+use PhpOffice\PhpSpreadsheet\Writer\Pdf;
+use PhpOffice\PhpSpreadsheet\Writer\Xls;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-
+use RuntimeException;
 
 class PaginatedSection extends Tag
 {
     protected static $counter = 0;
-    protected $paginator = false;
+    protected Paginator|bool $paginator = false;
     protected $count;
     protected $tag = 'div';
     protected $source, $filteredSource;
@@ -33,6 +38,7 @@ class PaginatedSection extends Tag
     protected $dl_filename, $dl_callback, $dl_headers, $dl_finalize_callback, $dl_ttl;
     protected $dl_button = 'Download';
     protected $dl_permissions;
+    protected string $dl_extension;
     /** @var FilterToolInterface[] */
     protected $filterTools = [];
 
@@ -356,20 +362,18 @@ class PaginatedSection extends Tag
     }
 
     /**
-     * @param string $filename
-     * @param callable $callback
-     * @param array $headers
-     * @param callable|null $finalizeCallback
-     * @return static
+     * Configure the download tool for this section.
+     * @param string $extension The file extension to use for the download (options: 'csv', 'xlsx', 'ods', 'pdf', 'html', 'xls').
      */
     public function download(
         string $filename,
         callable $callback,
         array $headers = [],
-        callable $finalizeCallback = null,
-        string $buttonText = null,
-        int $ttl = null,
+        callable|null $finalizeCallback = null,
+        string|null $buttonText = null,
+        int|null $ttl = null,
         callable|null $permissions = null,
+        string $extension = 'xlsx',
     ) {
         $this->dl_filename = preg_replace('/[^a-z0-9 _\-]+/i', '_', $filename);
         $this->dl_callback = $callback;
@@ -378,14 +382,45 @@ class PaginatedSection extends Tag
         $this->dl_button = $buttonText ?? $this->dl_button;
         $this->dl_ttl = $ttl;
         $this->dl_permissions = $permissions;
+        $this->dl_extension = $extension;
         return $this;
     }
 
     protected function downloadFile(): File
     {
+        $filename = $this->dl_filename . ($this->getFilterConfig() ? ' (filtered)' : '');
+        $writer = new SpreadsheetWriter();
+        switch ($this->dl_extension) {
+            case 'csv':
+                $filename .= '.csv';
+                $outputter_class = Csv::class;
+                break;
+            case 'xlsx':
+                $filename .= '.xlsx';
+                $outputter_class = Xlsx::class;
+                break;
+            case 'xls':
+                $filename .= '.xls';
+                $outputter_class = Xls::class;
+                break;
+            case 'ods':
+                $filename .= '.ods';
+                $outputter_class = Ods::class;
+                break;
+            case 'pdf':
+                $filename .= '.pdf';
+                $outputter_class = Pdf::class;
+                break;
+            case 'html':
+                $filename .= '.html';
+                $outputter_class = Html::class;
+                break;
+            default:
+                throw new RuntimeException("Unsupported download spreadsheet extension: " . $this->dl_extension);
+        }
         return new DeferredFile(
-            $this->dl_filename . ($this->getFilterConfig() ? ' (filtered)' : '') . '.xlsx',
-            function (DeferredFile $file) {
+            $filename,
+            function (DeferredFile $file) use ($writer, $outputter_class) {
                 FS::touch($file->path());
                 $writer = new SpreadsheetWriter();
                 // write headers
@@ -411,8 +446,8 @@ class PaginatedSection extends Tag
                 // run finalization callback
                 if ($this->dl_finalize_callback) call_user_func($this->dl_finalize_callback, $writer);
                 // save file
-                (new Xlsx($writer->spreadsheet()))
-                    ->save($file->path() . '.tmp');
+                $outputter = new $outputter_class($writer->spreadsheet());
+                $outputter->save($file->path() . '.tmp');
                 FS::copy($file->path() . '.tmp', $file->path());
                 unlink($file->path() . '.tmp');
             },
