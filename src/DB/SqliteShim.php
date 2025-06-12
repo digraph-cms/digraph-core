@@ -10,6 +10,7 @@ class SqliteShim
     {
         static::createFunction($pdo, 'JSON_VALUE', 2);
         static::createFunction($pdo, 'CONCAT');
+        static::createFunction($pdo, 'RAND', 0);
     }
 
     /**
@@ -21,6 +22,14 @@ class SqliteShim
     protected static function createFunction(PDO $pdo, string $name, int $args = -1): void
     {
         $pdo->sqliteCreateFunction($name, self::$name(...), $args);
+    }
+
+    /**
+     * Generates a random float between 0 and 1.
+     */
+    public static function RAND(): float
+    {
+        return mt_rand() / mt_getrandmax();
     }
 
     public static function CONCAT(): string
