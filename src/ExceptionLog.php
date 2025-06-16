@@ -14,6 +14,17 @@ use ZipArchive;
 
 class ExceptionLog
 {
+    static function logMessage(string $message, mixed $data = null, Throwable|null $previous = null): void
+    {
+        static::log(
+            new Exception(
+                $message,
+                $data,
+                $previous
+            )
+        );
+    }
+
     static function log(Throwable $th, bool $no_email = false): void
     {
         // generate data that will be saved
