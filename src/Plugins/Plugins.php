@@ -116,7 +116,7 @@ class Plugins
                     if (!preg_match('/namespace (.+);/', $contents, $match)) continue;
                     $namespace = $match[1];
                     // get class name
-                    if (!preg_match('/class (.+) extends (\\\DigraphCMS\\\Plugins\\\)?AbstractPlugin/', $contents, $match)) continue;
+                    if (!preg_match('/class (.+) extends (\\\DigraphCMS\\\Plugins\\\)?Abstract(Initialized)?Plugin/', $contents, $match)) continue;
                     $classname = $match[1];
                     // we have a namespace and a class name
                     $found = true;
