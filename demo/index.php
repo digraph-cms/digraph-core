@@ -1,16 +1,16 @@
 <?php
 
-use DigraphCMS\Digraph;
 use DigraphCMS\Cache\CacheableState;
 use DigraphCMS\Cache\CachedInitializer;
 use DigraphCMS\Config;
+use DigraphCMS\Digraph;
 use DigraphCMS\URL\URLs;
 use Mimey\MimeTypes;
 
-// display all errors in demo site, for development purposes
+// display all errors except deprecations in demo site, for development purposes
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+error_reporting(E_ALL & ~E_DEPRECATED);
 
 // autoload and CacheInitializer::configureCache must be called absolutely first
 // if you want Config to be able to cache its setup process

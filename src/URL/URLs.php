@@ -39,7 +39,7 @@ class URLs
             }
         }
         $path = preg_replace('/\.[a-z0-9]+$/i', '', $path);
-        $path = trim(preg_replace('@[~_.\/\:]+@', ' ', $path));
+        $path = trim(preg_replace('@[~_./:]+@', ' ', $path));
         return ucfirst($path);
     }
 
@@ -139,7 +139,7 @@ class URLs
      * @param array<string,mixed>|null $SERVER
      * @return boolean
      */
-    protected static function isHTTPS(array $SERVER = null)
+    protected static function isHTTPS(array|null $SERVER = null)
     {
         $SERVER = $SERVER ?? $_SERVER;
         return (!empty(@$SERVER['HTTPS']) && @$SERVER['HTTPS'] !== 'off')

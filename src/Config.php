@@ -43,7 +43,7 @@ abstract class Config implements InitializedClassInterface
         static::$data = clone $state;
     }
 
-    public static function data(SelfReferencingFlatArray $set = null): SelfReferencingFlatArray
+    public static function data(SelfReferencingFlatArray|null $set = null): SelfReferencingFlatArray
     {
         if ($set) {
             self::$data = $set;
@@ -88,17 +88,17 @@ abstract class Config implements InitializedClassInterface
             . static::envPrefix();
     }
 
-    public static function get(string $key = null): mixed
+    public static function get(string|null $key = null): mixed
     {
         return self::$data->get($key);
     }
 
-    public static function set(?string $key, mixed $value): mixed
+    public static function set(string|null $key, mixed $value): mixed
     {
         return self::$data->set($key, $value);
     }
 
-    public static function merge(mixed $value, string $name = null, bool $overwrite = true): void
+    public static function merge(mixed $value, string|null $name = null, bool $overwrite = true): void
     {
         self::$data->merge($value, $name, $overwrite);
     }

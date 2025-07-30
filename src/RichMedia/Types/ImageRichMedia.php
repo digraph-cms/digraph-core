@@ -15,6 +15,7 @@ use DigraphCMS\HTML\IMG;
 use DigraphCMS\HTML\ResponsivePicture;
 use DigraphCMS\RichContent\RichContent;
 use DigraphCMS\RichContent\RichContentField;
+use Throwable;
 use Thunder\Shortcode\Shortcode\ShortcodeInterface;
 
 class ImageRichMedia extends AbstractRichMedia
@@ -34,7 +35,7 @@ class ImageRichMedia extends AbstractRichMedia
                 $preview->setExpectedWidth(50);
                 $preview->setMaxHeight(30);
                 $form->addChild($preview);
-            } catch (\Throwable $th) {
+            } catch (Throwable $th) {
             }
         }
 
@@ -107,7 +108,7 @@ class ImageRichMedia extends AbstractRichMedia
                 $this->file()->image(),
                 $this['alt']
             );
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             return (new DIV)
                 ->addClass('notification')
                 ->addClass('notification--error')
@@ -138,6 +139,11 @@ class ImageRichMedia extends AbstractRichMedia
         // set to float if specified
         if ($code->getParameter('floated', 'false') !== 'false') {
             $out->addClass('floated');
+        }
+        // wrap images in a div so it doesn't donk up the HTML processor
+        if ($out instanceof ResponsivePicture) {
+            $out = (new DIV)
+                ->addChild($out);
         }
         // return string
         return $out->__toString();

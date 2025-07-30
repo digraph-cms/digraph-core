@@ -4,3 +4,4 @@ composer.lock
 !.keep
 .DS_Store
 /demo/env.yaml
+/.idea
