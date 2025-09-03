@@ -33,7 +33,7 @@ if (!Security::flagged()) {
     return;
 }
 
-Context::response()->template('minimal.php');
+Context::response()->template('captcha.php');
 
 try {
     Router::include('_services/' . Config::get('captcha.service') . '.php');
