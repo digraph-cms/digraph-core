@@ -90,30 +90,6 @@ final class Session
     protected static function setAuth(Authentication $auth)
     {
         static::$auth = $auth;
-        // check for different user agent
-        if (static::browserPlatform($auth->ua()) != static::browserPlatform()) {
-            Security::flagAuthentication(
-                $auth->id(),
-                sprintf(
-                    'User agent changed from "%s" to "%s"',
-                    $auth->ua(),
-                    static::browserPlatform()
-                )
-            );
-            $auth->update();
-        }
-        // check for different IP
-        // if ($auth->ip() != $_SERVER['REMOTE_ADDR']) {
-        //     Security::flagAuthentication(
-        //         $auth->id(),
-        //         sprintf(
-        //             'IP address changed from %s to %s',
-        //             $auth->ip(),
-        //             $_SERVER['REMOTE_ADDR']
-        //         )
-        //     );
-        //     $auth->update();
-        // }
     }
 
     public static function browserPlatform(string $ua = null): string
