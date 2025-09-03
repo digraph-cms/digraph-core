@@ -4,8 +4,8 @@ namespace DigraphCMS;
 
 use DigraphCMS\Cache\RateLimit;
 use DigraphCMS\Content\AbstractPage;
-use DigraphCMS\Content\Router;
 use DigraphCMS\Content\Pages;
+use DigraphCMS\Content\Router;
 use DigraphCMS\Cron\DeferredJob;
 use DigraphCMS\DB\DBConnectionException;
 use DigraphCMS\Events\Dispatcher;
@@ -16,6 +16,7 @@ use DigraphCMS\HTTP\Request;
 use DigraphCMS\HTTP\RequestHeaders;
 use DigraphCMS\HTTP\Response;
 use DigraphCMS\Search\Search;
+use DigraphCMS\Security\Security;
 use DigraphCMS\Session\Session;
 use DigraphCMS\UI\Templates;
 use DigraphCMS\UI\Theme;
@@ -45,6 +46,7 @@ abstract class Digraph
      * closures, unlike PHP's built-in serialization.
      *
      * @param mixed $value
+     *
      * @return string
      * @deprecated Use Serializer::serialize() instead
      */
@@ -58,6 +60,7 @@ abstract class Digraph
      * that were definitely created using Digraph::serialize();
      *
      * @param string $value
+     *
      * @return mixed
      * @deprecated Use Serializer::unserialize() instead
      */
@@ -81,9 +84,9 @@ abstract class Digraph
             header('Content-Type: ' . static::inferMime());
             header('Content-Disposition: filename="' . static::inferFilename() . '"');
             Context::response()->renderContent();
-        }
-        // last resort error message
+        } // last resort error message
         catch (Throwable $th) {
+            Security::flag('Unhandled exception');
             ExceptionLog::log($th);
             http_response_code(500);
             echo Templates::fallbackError($th);
@@ -115,14 +118,15 @@ abstract class Digraph
      * generating the result. This isn't something you should rely on as a
      * secure hash, but can be useful if for some reason you need to generate
      * UUIDs in a deterministic way.
-     * 
+     *
      * Note that Digraph's UUIDs are not compatible with the GUID spec, as they
-     * use characters a-z and A-Z, and not just a-f. This gives us more entropy, 
+     * use characters a-z and A-Z, and not just a-f. This gives us more entropy,
      * and has no performance implications as they are saved in the database as
      * strings anyway, and no binary/numeric operations are ever needed.
      *
      * @param string|null $prefix
      * @param string|null $seed
+     *
      * @return string
      */
     public static function uuid(string $prefix = null, string $seed = null): string
@@ -148,14 +152,15 @@ abstract class Digraph
      * generating the result. This isn't something you should rely on as a
      * secure hash, but can be useful if for some reason you need to generate
      * UUIDs in a deterministic way.
-     * 
+     *
      * Note that Digraph's UUIDs are not compatible with the GUID spec, as they
-     * use characters a-z and A-Z, and not just a-f. This gives us more entropy, 
+     * use characters a-z and A-Z, and not just a-f. This gives us more entropy,
      * and has no performance implications as they are saved in the database as
      * strings anyway, and no binary/numeric operations are ever needed.
      *
      * @param string|null $prefix
      * @param string|null $seed
+     *
      * @return string
      */
     public static function longUUID(string $prefix = null, string $seed = null): string
@@ -195,8 +200,9 @@ abstract class Digraph
      * Determine whether a string is a valid UUID, in terms of length and basic
      * composition (character types, placement of dashes, etc).
      *
-     * @param string $uuid
+     * @param string      $uuid
      * @param string|null $prefix
+     *
      * @return boolean
      */
     public static function validateUUID(string $uuid, string $prefix = null): bool
@@ -268,7 +274,7 @@ abstract class Digraph
             $explicitly_static = $request->url()->explicitlyStaticRoute();
             // get list of pages for which this action's route exists
             $pages = Pages::getAll($route);
-            $pages = array_filter($pages, fn ($page) => Router::pageRouteExists($page, $action));
+            $pages = array_filter($pages, fn($page) => Router::pageRouteExists($page, $action));
             // determine whether a static route exists
             $static_exists = Router::staticRouteExists($route, $action);
             // throw 404 if no pages or static routes exist
@@ -374,6 +380,7 @@ abstract class Digraph
                 // generate exception-handling page
                 try {
                     if ($error->status() >= 500) {
+                        Security::flag('Server error');
                         ExceptionLog::log($error);
                     }
                     static::buildErrorContent($error->status(), $error->getMessage());
@@ -392,6 +399,7 @@ abstract class Digraph
                     // generate a fallback exception handling error page
                     if (!Dispatcher::firstValue('onException_' . substr(get_class($th), (strrpos(get_class($th), '\\') ?: -1) + 1), [$th])) {
                         if (!Dispatcher::firstValue('onException', [$th])) {
+                            Security::flag('Unhandled exception');
                             ExceptionLog::log($th);
                             static::buildErrorContent(500.1);
                         }
@@ -417,6 +425,22 @@ abstract class Digraph
             Dispatcher::dispatchEvent('onResponseReady_html', [$response]);
         }
         Context::end();
+    }
+
+    public static function buildErrorContent(float $status, string $message = null): bool
+    {
+        Context::data('error_message', $message);
+        Context::response()->status(intval(floor($status)));
+        Context::response()->filename(intval(floor($status)) . '.html');
+        $built =
+            static::doStaticRoute('error', strval($status)) ??
+            static::doStaticRoute('error', strval(round($status))) ??
+            static::doStaticRoute('error', floor($status / 100) . 'xx') ??
+            static::doStaticRoute('error', 'xxx');
+        if (!$built) {
+            throw new \Exception("Failed to build error content");
+        }
+        return true;
     }
 
     protected static function buildResponseContent(): void
@@ -472,21 +496,5 @@ abstract class Digraph
             return true;
         }
         return null;
-    }
-
-    public static function buildErrorContent(float $status, string $message = null): bool
-    {
-        Context::data('error_message', $message);
-        Context::response()->status(intval(floor($status)));
-        Context::response()->filename(intval(floor($status)) . '.html');
-        $built =
-            static::doStaticRoute('error', strval($status)) ??
-            static::doStaticRoute('error', strval(round($status))) ??
-            static::doStaticRoute('error', floor($status / 100) . 'xx') ??
-            static::doStaticRoute('error', 'xxx');
-        if (!$built) {
-            throw new \Exception("Failed to build error content");
-        }
-        return true;
     }
 }
