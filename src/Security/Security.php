@@ -97,7 +97,7 @@ class Security
      * @return void
      * @throws Exception
      */
-    public static function flag(string $reason)
+    public static function flag(string $reason): void
     {
         @session_start();
         static::flagIP(null, $reason);
@@ -129,7 +129,7 @@ class Security
             && static::flaggedIPs()->value($ip) != 'passed';
     }
 
-    public static function unflagIP(string|null $ip = null)
+    public static function unflagIP(string|null $ip = null): void
     {
         $ip = $ip ?? $_SERVER['REMOTE_ADDR'];
         $data = static::flaggedIPs()->get($ip);
@@ -139,7 +139,7 @@ class Security
         $data->update();
     }
 
-    public static function flagIP(string|null $ip = null, string $reason = 'unspecified')
+    public static function flagIP(string|null $ip = null, string $reason = 'unspecified'): void
     {
         $ip = $ip ?? $_SERVER['REMOTE_ADDR'];
         $data = static::flaggedIPs()->get($ip)?->data()->get(null) ?? [];
@@ -151,7 +151,7 @@ class Security
         static::flaggedIPs()->set($ip, 'pending', $data);
     }
 
-    public static function banned(string|null $ip = null, string|User $user = null): bool
+    public static function banned(string|null $ip = null, string|User|null $user = null): bool
     {
         // bypass bans for signed-in users
         $user = $user ?? Session::uuid();
@@ -173,7 +173,7 @@ class Security
                 if (count($flags) < $limit) return false;
                 $count = 0;
                 $expiry = time() - $window;
-                foreach ($flags as $flag) {
+                while ($flag = array_pop($flags)) {
                     if ($flag['time'] > $expiry) {
                         $count++;
                         if ($count >= $limit) return true;
@@ -187,7 +187,7 @@ class Security
         );
     }
 
-    public static function userFlagged(string|User $user = null): bool
+    public static function userFlagged(string|User|null $user = null): bool
     {
         if (is_null($user)) $user = Session::uuid();
         if ($user instanceof User) $user = $user->uuid();
@@ -196,7 +196,7 @@ class Security
             && static::flaggedUsers()->value($user) != 'passed';
     }
 
-    public static function unflagUser(string|User $user = null)
+    public static function unflagUser(string|User|null $user = null): void
     {
         if (is_null($user)) $user = Session::uuid();
         if ($user instanceof User) $user = $user->uuid();
@@ -208,7 +208,7 @@ class Security
         $data->update();
     }
 
-    public static function flagUser(string|User $user = null, string $reason = 'unspecified')
+    public static function flagUser(string|User|null $user = null, string $reason = 'unspecified'): void
     {
         if (is_null($user)) $user = Session::uuid();
         if ($user instanceof User) $user = $user->uuid();
@@ -222,7 +222,7 @@ class Security
         static::flaggedUsers()->set($user, 'pending', $data);
     }
 
-    public static function authenticationFlagged(string $authentication_id = null): bool
+    public static function authenticationFlagged(string|null $authentication_id = null): bool
     {
         $authentication_id = $authentication_id ?? Session::authentication()?->id();
         if (!$authentication_id) return false;
@@ -230,7 +230,7 @@ class Security
             && static::flaggedAuthentications()->value($authentication_id) != 'passed';
     }
 
-    public static function unflagAuthentication(string $authentication_id = null)
+    public static function unflagAuthentication(string|null $authentication_id = null): void
     {
         $authentication_id = $authentication_id ?? Session::authentication()?->id();
         if (!$authentication_id) return;
@@ -241,7 +241,7 @@ class Security
         $data->update();
     }
 
-    public static function flagAuthentication(string $authentication_id = null, string $reason = 'unspecified')
+    public static function flagAuthentication(string|null $authentication_id = null, string $reason = 'unspecified'): void
     {
         $authentication_id = $authentication_id ?? Session::authentication()?->id();
         if (!$authentication_id) return;
