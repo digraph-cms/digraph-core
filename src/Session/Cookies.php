@@ -18,6 +18,7 @@ use DigraphCMS\UI\Templates;
 use DigraphCMS\URL\URL;
 use DigraphCMS\URL\URLs;
 use DigraphCMS\Users\Users;
+use Throwable;
 
 Dispatcher::addSubscriber(Cookies::class);
 
@@ -370,7 +371,7 @@ class Cookies
         return "$type/$name";
     }
 
-    public static function set(string $type, string $name, $value, bool $skipRuleChecks = false, bool $localScope = false)
+    public static function set(string $type, string $name, $value, bool $skipRuleChecks = false, bool $localScope = false, bool $saveRawValue = false)
     {
         $key = static::key($type, $name);
         if ($skipRuleChecks || static::isAllowed($type)) {
@@ -380,12 +381,16 @@ class Cookies
             } else {
                 $expiration = 0;
             }
-            $salt = bin2hex(random_bytes(16));
-            $encoded = json_encode([
-                'value' => $value,
-                'salt' => $salt,
-                'signature' => hash('sha256', serialize($value) . $salt . Config::secret()),
-            ]);
+            if ($saveRawValue) {
+                $encoded = $value;
+            } else {
+                $salt = bin2hex(random_bytes(16));
+                $encoded = json_encode([
+                    'value' => $value,
+                    'salt' => $salt,
+                    'signature' => hash('sha256', serialize($value) . $salt . Config::secret()),
+                ]);
+            }
             $_COOKIE[$key] = $encoded;
             setcookie(
                 $key,
@@ -405,7 +410,8 @@ class Cookies
      * Undocumented function
      *
      * @param string|array $types
-     * @param string $message
+     * @param string       $message
+     *
      * @return void
      */
     public static function required($types, string $message = '')
@@ -452,40 +458,44 @@ class Cookies
         );
     }
 
-    public static function get(string $type, string $name)
+    public static function get(string $type, string $name, bool $getRawValue = false)
     {
         $key = static::key($type, $name);
         if (isset($_COOKIE[$key])) {
-            // attempt json decode
-            try {
-                $value = json_decode($_COOKIE[$key], true, 512, JSON_THROW_ON_ERROR);
-            } catch (\Throwable $th) {
-                ExceptionLog::log(new Exception(
-                    'Cookie JSON error: ' . $th->getMessage(),
-                    [
-                        'cookie' => $_COOKIE[$key],
-                        'type' => $type,
-                        'name' => $name,
-                    ],
-                    $th
-                ));
-                Security::flag('Invalid JSON in cookie');
-                static::unset($type, $name);
-                return null;
+            if ($getRawValue) {
+                return $_COOKIE[$key];
+            } else {
+                // attempt json decode
+                try {
+                    $value = json_decode($_COOKIE[$key], true, 512, JSON_THROW_ON_ERROR);
+                } catch (Throwable $th) {
+                    ExceptionLog::log(new Exception(
+                        'Cookie JSON error: ' . $th->getMessage(),
+                        [
+                            'cookie' => $_COOKIE[$key],
+                            'type' => $type,
+                            'name' => $name,
+                        ],
+                        $th
+                    ));
+                    Security::flag('Invalid JSON in cookie');
+                    static::unset($type, $name);
+                    return null;
+                }
+                // attempt signature check
+                if (
+                    !isset($value['value']) ||
+                    !isset($value['salt']) ||
+                    !isset($value['signature']) ||
+                    !hash_equals($value['signature'], hash('sha256', serialize($value['value']) . $value['salt'] . Config::secret()))
+                ) {
+                    Security::flag('Invalid signature in cookie');
+                    static::unset($type, $name);
+                    return null;
+                }
+                // return value
+                return $value['value'];
             }
-            // attempt signature check
-            if (
-                !isset($value['value']) ||
-                !isset($value['salt']) ||
-                !isset($value['signature']) ||
-                !hash_equals($value['signature'], hash('sha256', serialize($value['value']) . $value['salt'] . Config::secret()))
-            ) {
-                Security::flag('Invalid signature in cookie');
-                static::unset($type, $name);
-                return null;
-            }
-            // return value
-            return $value['value'];
         } else {
             return null;
         }

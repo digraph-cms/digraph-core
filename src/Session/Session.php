@@ -4,7 +4,6 @@ namespace DigraphCMS\Session;
 
 use DateInterval;
 use DateTime;
-use DigraphCMS\Security\Security;
 use DigraphCMS\Config;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Events\Dispatcher;
@@ -80,18 +79,6 @@ final class Session
         return static::$auth;
     }
 
-    /**
-     * Set a new auth for the current session and then check it for anything
-     * suspicious that requires deauthentication.
-     *
-     * @param Authentication $auth
-     * @return void
-     */
-    protected static function setAuth(Authentication $auth)
-    {
-        static::$auth = $auth;
-    }
-
     public static function browserPlatform(string $ua = null): string
     {
         $parser = new UserAgentParser();
@@ -140,8 +127,7 @@ final class Session
                 'ip' => $_SERVER['REMOTE_ADDR'],
                 'ua' => $_SERVER['HTTP_USER_AGENT']
             ]);
-        }
-        // otherwise use manual authentication cookies and save them in database
+        } // otherwise use manual authentication cookies and save them in database
         else {
             $row = [
                 'user_uuid' => $user,
@@ -173,18 +159,43 @@ final class Session
         }
     }
 
+    /**
+     * Set a new auth for the current session and then check it for anything
+     * suspicious that requires deauthentication.
+     *
+     * @param Authentication $auth
+     *
+     * @return void
+     */
+    protected static function setAuth(Authentication $auth)
+    {
+        static::$auth = $auth;
+    }
+
     protected static function getAuthCookie(): array
     {
-        return Cookies::get('auth', 'session') ?? [];
+        $value = Cookies::get(
+            type: 'auth',
+            name:'session',
+            getRawValue: true,
+        );
+        if (!$value) return [];
+        $value = explode('|', $value);
+        if (count($value) != 2) return [];
+        return [
+            'id' => intval($value[0]),
+            'secret' => $value[1]
+        ];
     }
 
     protected static function setAuthCookie(int $id, string $secret)
     {
         Cookies::set(
-            'auth',
-            'session',
-            ["id" => $id, "secret" => $secret],
-            true
+            type: 'auth',
+            name: 'session',
+            value: $id . '|' . $secret,
+            skipRuleChecks: true,
+            saveRawValue: true,
         );
     }
 
