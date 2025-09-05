@@ -2,6 +2,7 @@
 
 namespace DigraphCMS\Security;
 
+use DigraphCMS\Cache\Cache;
 use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\Datastore\DatastoreGroup;
@@ -19,8 +20,9 @@ class Security
     /**
      * Secure this request behind a CAPTCHA if user is flagged, operates by
      * bouncing the user to a dedicated CAPTCHA page then back to this URL.
-     * @return void 
-     * @throws RedirectException 
+     *
+     * @return void
+     * @throws RedirectException
      */
     public static function requireSecurityCheck(): void
     {
@@ -41,8 +43,9 @@ class Security
     /**
      * Check if the current user is flagged in any way, meaning that they should
      * be given a CAPTCHA if required.
-     * @return bool 
-     * @throws Exception 
+     *
+     * @return bool
+     * @throws Exception
      */
     public static function flagged(bool $guest_default = true): bool
     {
@@ -70,9 +73,10 @@ class Security
     /**
      * Unflag the current user, removing any CAPTCHA requirements for the
      * duration specified in Config::get('captcha.pass_ttl')
-     * @return void 
-     * @throws DBConnectionException 
-     * @throws Exception 
+     *
+     * @return void
+     * @throws DBConnectionException
+     * @throws Exception
      */
     public static function unflag(): void
     {
@@ -87,9 +91,11 @@ class Security
      * Flag the current user for CAPTCHA verification. This should be done if
      * anything strange happens with this user, such as a failed login attempt
      * or any other sort of suspicious activity.
-     * @param string $reason 
-     * @return void 
-     * @throws Exception 
+     *
+     * @param string $reason
+     *
+     * @return void
+     * @throws Exception
      */
     public static function flag(string $reason)
     {
@@ -143,6 +149,42 @@ class Security
             'url' => Context::url()->__toString()
         ];
         static::flaggedIPs()->set($ip, 'pending', $data);
+    }
+
+    public static function banned(string|null $ip = null, string|User $user = null): bool
+    {
+        // bypass bans for signed-in users
+        $user = $user ?? Session::uuid();
+        if ($user instanceof User) $user = $user->uuid();
+        if (!static::userFlagged($user)) return false;
+        // check the user's IP for excessive flags
+        $ip = $ip ?? $_SERVER['REMOTE_ADDR'];
+        $key = 'security/ip_bans/' . md5($ip);
+        $window = (int)Config::get('security.ip_bans.window');
+        return Cache::get(
+            $key,
+            function () use ($ip, $window): bool {
+                $data = static::flaggedIPs()->get($ip);
+                if (!$data) return false;
+                $time = $data->updated()->getTimestamp();
+                if (time() - $time > $window) return false;
+                $flags = $data->data()->get(null) ?? [];
+                $limit = (int)Config::get('security.ip_bans.limit');
+                if (count($flags) < $limit) return false;
+                $count = 0;
+                $expiry = time() - $window;
+                foreach ($flags as $flag) {
+                    if ($flag['time'] > $expiry) {
+                        $count++;
+                        if ($count >= $limit) return true;
+                    } else {
+                        break;
+                    }
+                }
+                return false;
+            },
+            $window / 10
+        );
     }
 
     public static function userFlagged(string|User $user = null): bool

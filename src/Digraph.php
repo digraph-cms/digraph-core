@@ -251,6 +251,13 @@ abstract class Digraph
         Context::url($request->url());
         Context::request($request);
         Context::response(new Response());
+        // check security system for bans on this IP address
+        if (Security::banned()) {
+            Context::response()->status(403);
+            Context::response()->filename('banned.txt');
+            Context::response()->content('Your IP address has been temporarily banned.');
+            return;
+        }
         // check if there are any redirects for the request URL and bounce if necessary
         if ($destination = Redirects::destination($request->url())) {
             Context::response()->redirect($destination, true, true);

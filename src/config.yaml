@@ -11,6 +11,11 @@ rich_media_types:
   table: \DigraphCMS\RichMedia\Types\TableRichMedia
   zip: \DigraphCMS\RichMedia\Types\ZipRichMedia
 
+security:
+  ip_bans:
+    window: 600
+    limit: 10
+
 captcha:
   service: gregwar
   fallback: gregwar
