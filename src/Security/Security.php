@@ -156,7 +156,7 @@ class Security
         // bypass bans for signed-in users
         $user = $user ?? Session::uuid();
         if ($user instanceof User) $user = $user->uuid();
-        if (!static::userFlagged($user)) return false;
+        if ($user != 'guest') return false;
         // check the user's IP for excessive flags
         $ip = $ip ?? $_SERVER['REMOTE_ADDR'];
         $key = 'security/ip_bans/' . md5($ip);
