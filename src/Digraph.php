@@ -252,10 +252,9 @@ abstract class Digraph
         Context::request($request);
         Context::response(new Response());
         // check security system for bans on this IP address
+        // if there is a ban, build the response entirely here and return immediately to minimize code execution
         if (Security::banned()) {
-            Context::response()->status(403);
-            Context::response()->filename('banned.txt');
-            Context::response()->content('Your IP address has been temporarily banned.');
+            static::buildBannedResponse();
             return;
         }
         // check if there are any redirects for the request URL and bounce if necessary
@@ -448,6 +447,38 @@ abstract class Digraph
             throw new \Exception("Failed to build error content");
         }
         return true;
+    }
+
+    protected static function buildBannedResponse(): void
+    {
+        $window = (int)Config::get('security.ip_bans.window');
+        $duration = $window;
+        $duration_string = '';
+        if ($duration > 3600) {
+            $hours = floor($duration / 3600);
+            $duration_string .= $hours . ' hour';
+            if ($hours > 1) $duration_string .= 's';
+            $duration -= $hours * 3600;
+        }
+        if ($duration > 60) {
+            $minutes = floor($duration / 60);
+            $duration_string .= ($duration_string ? ', ' : '') . $minutes . ' minute';
+            if ($minutes > 1) $duration_string .= 's';
+            $duration -= $minutes * 60;
+        }
+        if ($duration > 0) {
+            $seconds = $duration;
+            $duration_string .= ($duration_string ? ', ' : '') . $seconds . ' second';
+            if ($seconds > 1) $duration_string .= 's';
+        }
+        Context::response()->status(429);
+        Context::response()->headers()->set('Retry-After', $window);
+        Context::response()->filename('banned.txt');
+        Context::response()->content(sprintf(
+            'Your IP address %s has been temporarily banned. Please try again in %s.',
+            $_SERVER['REMOTE_ADDR'],
+            $duration_string,
+        ));
     }
 
     protected static function buildResponseContent(): void
