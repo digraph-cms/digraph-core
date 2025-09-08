@@ -77,7 +77,13 @@ class Paginator extends ConditionalContainer
         if ($page < 1) {
             throw new HttpError(400, 'Invalid argument');
         } elseif ($page > $this->pages()) {
-            throw new RedirectException(new URL('&' . $this->arg() . '=' . $this->pages()));
+            if ($this->pages() > 1) {
+                throw new RedirectException(new URL('&' . $this->arg() . '=' . $this->pages()));
+            } else {
+                $url = clone Context::url();
+                $url->unsetArg($this->arg());
+                throw new RedirectException($url);
+            }
         } else {
             return $page;
         }
