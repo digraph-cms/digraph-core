@@ -22,10 +22,10 @@ echo '<div id="rich-media-editor">';
 // buttons
 echo '<div id="rich-media-editor__buttons">';
 // delete button
-if (!Context::arg('add')) {
+if (!Context::arg_string('add', true)) {
     $delete = new URL('../delete/');
-    $delete->arg('frame', Context::arg('frame'));
-    $delete->arg('uuid', Context::arg('uuid'));
+    $delete->arg('frame', Context::arg_string('frame'));
+    $delete->arg('uuid', Context::arg_string('uuid'));
     echo "<a href='$delete' id='data--delete' class='button button--danger'>Delete</a>";
 }
 // spacer
@@ -36,7 +36,7 @@ echo (new CallbackLink(function () {
     echo "Attempting to close window.<script>window.close()</script>";
     exit();
 }))
-    ->addChild(Context::arg('add') ? 'Cancel' : 'Close')
+    ->addChild(Context::arg_string('add', true) ? 'Cancel' : 'Close')
     ->setID('button--close')
     ->addClass('button button--warning');
 echo '</div>';
@@ -45,15 +45,15 @@ echo '</div>';
 echo '<div id="rich-media-editor__interface">';
 
 // creation form
-if (Context::arg('add')) {
+if (Context::arg_string('add', true)) {
     // ensure we have a valid UUID for the new media
     Context::ensureUUIDArg(RichMedia::class);
     // set up new object
-    $class = Config::get('rich_media_types.' . Context::arg('add'));
+    $class = Config::get('rich_media_types.' . Context::arg_string('add'));
     /** @var AbstractRichMedia */
     $media = new $class();
-    $media->setUUID(Context::arg('uuid'));
-    $media->setParent(Context::arg('parent'));
+    $media->setUUID(Context::arg_string('uuid'));
+    $media->setParent(Context::arg_string('parent'));
     // get form from object
     $form = $media->editForm(true);
     // set button name
@@ -65,10 +65,9 @@ if (Context::arg('add')) {
         $url->unsetArg('parent');
         throw new RedirectException($url);
     });
-}
-// editing form
+} // editing form
 else {
-    $media = RichMedia::get(Context::arg('uuid'));
+    $media = RichMedia::get(Context::arg_string('uuid'));
     if (!$media) throw new HttpError(400);
     // get form from object
     $form = $media->editForm();

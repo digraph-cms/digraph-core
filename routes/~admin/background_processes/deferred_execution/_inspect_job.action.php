@@ -7,7 +7,7 @@ use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\UI\Format;
 use DigraphCMS\URL\URL;
 
-$job = DB::query()->from('defex')->where('id = ?', [Context::arg('id')])->fetch();
+$job = DB::query()->from('defex')->where('id', Context::arg_int('id'))->fetch();
 
 if (!$job) throw new HttpError(404, 'Job not found');
 

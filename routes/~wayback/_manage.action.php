@@ -2,15 +2,22 @@
 <?php
 
 use DigraphCMS\Context;
+use DigraphCMS\Security\Security;
 use DigraphCMS\UI\ToggleButton;
 use DigraphCMS\URL\URL;
 use DigraphCMS\URL\WaybackMachine;
 
 echo '<div id="wayback_manage_interface" class="navigation-frame">';
 
-$url = Context::arg('url');
-if (Context::arg('context')) $context = new URL(Context::arg('context'));
-else $context = null;
+$url = Context::arg_string('url');
+if (Context::arg_string('context', true)) {
+    try {
+        $context = new URL(Context::arg_string('context'));
+    } catch (Throwable $th) {
+        $context = null;
+        Security::flag('invalid context URL');
+    }
+} else $context = null;
 
 printf('<h2>Link: <code>%s</code></h2>', $url);
 

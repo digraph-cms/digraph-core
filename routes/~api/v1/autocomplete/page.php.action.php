@@ -7,7 +7,7 @@ use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\Session\Cookies;
 
-if (Context::arg('csrf') !== Cookies::csrfToken('autocomplete')) {
+if (Context::arg_string('csrf') !== Cookies::csrfToken('autocomplete')) {
     throw new HttpError(401);
 }
 
@@ -15,24 +15,24 @@ Context::response()->private(true);
 Context::response()->filename('response.json');
 
 // get exact results
-$pages = Pages::getAll(Context::arg('query'));
+$pages = Pages::getAll(Context::arg_string('query'));
 // filter by class
-if (Context::arg('class')) {
+if ($class = Context::arg_string('class')) {
     $pages = array_filter(
         $pages,
-        function (AbstractPage $page) {
-            return $page->class() == Context::arg('class');
+        function (AbstractPage $page)use ($class) {
+            return $page->class() == $class;
         }
     );
 }
 // get stricter name matches
 if (count($pages) < 100) {
     $query = Pages::select()->limit(100);
-    foreach (preg_split('/ +/', Context::arg('query')) as $word) {
+    foreach (preg_split('/ +/', Context::arg_string('query')) as $word) {
         $query->like('name', $word);
     }
-    if (Context::arg('class')) {
-        $query->where('class = ?', [Context::arg('class')]);
+    if ($class = Context::arg_string('class')) {
+        $query->where('class', $class);
     }
     $pages = array_merge(
         $pages,
@@ -42,11 +42,11 @@ if (count($pages) < 100) {
 // get looser name matches
 if (count($pages) < 100) {
     $query = Pages::select()->limit(100);
-    foreach (preg_split('/ +/', Context::arg('query')) as $word) {
+    foreach (preg_split('/ +/', Context::arg_string('query')) as $word) {
         $query->like('name', $word, true, true, 'OR');
     }
-    if (Context::arg('class')) {
-        $query->where('class = ?', [Context::arg('class')]);
+    if ($class = Context::arg_string('class')) {
+        $query->where('class', $class);
     }
     $pages = array_merge(
         $pages,
@@ -59,7 +59,7 @@ $pages = array_map(
     function (AbstractPage $page) {
         return [
             $page,
-            Dispatcher::firstValue('onScorePageResult', [$page, Context::arg('query')])
+            Dispatcher::firstValue('onScorePageResult', [$page, Context::arg_string('query')])
         ];
     },
     $pages
@@ -84,7 +84,7 @@ $pages = array_unique($pages, SORT_REGULAR);
 echo json_encode(
     array_map(
         function (AbstractPage $page) {
-            return Dispatcher::firstValue('onPageAutocompleteCard', [$page, Context::arg('query')]);
+            return Dispatcher::firstValue('onPageAutocompleteCard', [$page, Context::arg_string('query')]);
         },
         array_slice($pages, 0, 50)
     )

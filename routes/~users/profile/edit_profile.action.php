@@ -6,14 +6,11 @@ use DigraphCMS\HTML\Forms\Field;
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\HTTP\RefreshException;
-use DigraphCMS\Session\Session;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\Users\Users;
 
-$user = Users::get(Context::arg('id') ?? Session::user());
-if (!$user) {
-    throw new HttpError(404, "User not found");
-}
+$user = Users::get(Context::arg_string('id')) ?? Users::current();
+if (!$user) throw new HttpError(404);
 
 echo "<h1>Edit profile: " . $user->name() . "</h1>";
 

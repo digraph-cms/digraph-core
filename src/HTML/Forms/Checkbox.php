@@ -7,9 +7,9 @@ use DigraphCMS\HTML\Tag;
 
 class Checkbox extends Tag implements InputInterface
 {
+    protected static $counter = 0;
     protected $tag = 'input';
     protected $void = true;
-
     /** @var FormWrapper */
     protected $form;
     protected $default;
@@ -18,8 +18,6 @@ class Checkbox extends Tag implements InputInterface
     protected $requiredMessage = 'This field is required';
     protected $validators = [];
     protected bool $disabled = false;
-
-    protected static $counter = 0;
 
     public function __construct(string $id = null)
     {
@@ -56,6 +54,7 @@ class Checkbox extends Tag implements InputInterface
      * error message if invalid, or otherwise null.
      *
      * @param callable $validator
+     *
      * @return static
      */
     public function addValidator(callable $validator)
@@ -100,6 +99,7 @@ class Checkbox extends Tag implements InputInterface
      * submitted in the get/post values.
      *
      * @param mixed $value
+     *
      * @return static
      */
     public function setDefault($value)
@@ -113,6 +113,7 @@ class Checkbox extends Tag implements InputInterface
      * different submitted values from this point onward.
      *
      * @param mixed $value
+     *
      * @return static
      */
     public function setValue($value)
@@ -155,17 +156,6 @@ class Checkbox extends Tag implements InputInterface
         return $this->default;
     }
 
-    protected function submittedValue(): ?bool
-    {
-        if ($this->submitted() && $this->form()->method() == FormWrapper::METHOD_GET) {
-            return Context::arg($this->id()) == 'on';
-        } elseif ($this->submitted() && $this->form()->method() == FormWrapper::METHOD_POST) {
-            return Context::post($this->id()) == 'on';
-        } else {
-            return null;
-        }
-    }
-
     public function value(bool $useDefault = false): ?bool
     {
         if ($this->value !== null) {
@@ -174,6 +164,17 @@ class Checkbox extends Tag implements InputInterface
             return $this->submittedValue();
         } elseif ($useDefault) {
             return $this->default();
+        } else {
+            return null;
+        }
+    }
+
+    protected function submittedValue(): ?bool
+    {
+        if ($this->submitted() && $this->form()->method() == FormWrapper::METHOD_GET) {
+            return Context::arg_string($this->id(), true) == 'on';
+        } elseif ($this->submitted() && $this->form()->method() == FormWrapper::METHOD_POST) {
+            return Context::post($this->id()) == 'on';
         } else {
             return null;
         }

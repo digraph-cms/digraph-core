@@ -21,23 +21,19 @@ $name = (new Field('Page name'))
 
 $content = (new RichContentField('Body content'))
     ->setDefault('# [page_name]')
-    ->setPageUuid(Context::arg('uuid'))
+    ->setPageUuid(Context::arg_string('uuid'))
     ->setRequired(true);
 
-$form = (new FormWrapper('add-' . Context::arg('uuid')))
+$form = (new FormWrapper('add-' . Context::arg_string('uuid')))
     ->addChild($name)
     ->addChild($content)
     ->addCallback(function () use ($name, $content) {
         // insert page
-        $page = new Page(
-            [],
-            [
-                'uuid' => Context::arg('uuid')
-            ]
-        );
+        $page = new Page();
+        $page->setUUID(Context::arg_string('uuid'));
         $page->name($name->value());
         $page->richContent('body', $content->value());
-        // insert with parent link to current context page
+        // insert with a link to this page from the current context page
         $page->insert(Context::page()->uuid());
         // redirect
         Notifications::flashConfirmation('Page created: ' . $page->url()->html());

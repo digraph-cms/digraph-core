@@ -11,7 +11,7 @@ use DigraphCMS\URL\URL;
 Context::response()->template('chromeless.php');
 Theme::addBlockingPageCss('/rich_media_editor/*.css');
 
-$media = RichMedia::get(Context::arg('uuid'));
+$media = RichMedia::get(Context::arg_string('uuid'));
 if (!$media) throw new HttpError(400);
 
 echo '<div id="rich-media-deleter">';
@@ -23,8 +23,8 @@ echo '<p>This action cannot be undone.</p>';
 echo '<div style="display:flex;">';
 
 $edit = new URL('../editor/');
-$edit->arg('frame', Context::arg('frame'));
-$edit->arg('uuid', Context::arg('uuid'));
+$edit->arg('frame', Context::arg_string('frame'));
+$edit->arg('uuid', Context::arg_string('uuid'));
 echo '<a href="' . $edit . '" class="button button--neutral">Back to editing</a>';
 
 echo new ToolbarSpacer;

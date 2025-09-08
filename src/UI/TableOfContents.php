@@ -5,6 +5,9 @@ namespace DigraphCMS\UI;
 use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Context;
 use DigraphCMS\HTML\Tag;
+use DigraphCMS\HTTP\HttpError;
+use DigraphCMS\HTTP\RedirectException;
+use DigraphCMS\URL\URL;
 
 class TableOfContents extends Tag
 {
@@ -63,33 +66,13 @@ class TableOfContents extends Tag
         );
     }
 
-    protected function generateItems(): array
-    {
-        $parents = $this->parents;
-        $children = $this->page->children($this->edge_types, $this->ignore_sort_order);
-        $children->limit(($this->firstPage - $this->perPage) + ($this->page() * $this->perPage));
-        $output = [];
-        while ($page = $children->fetch()) {
-            // skip any pages that are in the parents list
-            if (in_array($page->uuid(), $parents)) continue;
-            // add list item
-            $output[] = sprintf(
-                '<li><a href="%s">%s</a>%s</li>',
-                $page->url(),
-                $page->name(),
-                $this->depth > 1 && $page->children($this->edge_types)->count()
-                    ? trim(new TableOfContents($page, $this->edge_types, $this->ignore_sort_order, $this->depth - 1, $parents))
-                    : ''
-            );
-        }
-        return $output;
-    }
-
     public function page(): int
     {
-        $page = intval(Context::arg($this->arg()) ?? 1);
-        if ($page > $this->maxPage()) $page = $this->maxPage();
-        elseif ($page < 1) $page = 1;
+        $page = intval(Context::arg_int($this->arg(), true) ?? 1);
+        if ($page < 1) throw new HttpError(400, 'Invalid argument');
+        if ($page > $this->maxPage()) {
+            throw new RedirectException(new URL('&' . $this->arg() . '=' . $this->maxPage()));
+        }
         return $page;
     }
 
@@ -118,5 +101,27 @@ class TableOfContents extends Tag
             '<li class="table-of-contents__load-more"><a href="%s" data-target="_frame">-- load more --</a></li>',
             $url,
         );
+    }
+
+    protected function generateItems(): array
+    {
+        $parents = $this->parents;
+        $children = $this->page->children($this->edge_types, $this->ignore_sort_order);
+        $children->limit(($this->firstPage - $this->perPage) + ($this->page() * $this->perPage));
+        $output = [];
+        while ($page = $children->fetch()) {
+            // skip any pages that are in the parents list
+            if (in_array($page->uuid(), $parents)) continue;
+            // add list item
+            $output[] = sprintf(
+                '<li><a href="%s">%s</a>%s</li>',
+                $page->url(),
+                $page->name(),
+                $this->depth > 1 && $page->children($this->edge_types)->count()
+                    ? trim(new TableOfContents($page, $this->edge_types, $this->ignore_sort_order, $this->depth - 1, $parents))
+                    : ''
+            );
+        }
+        return $output;
     }
 }

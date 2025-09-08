@@ -5,12 +5,13 @@ namespace DigraphCMS\HTML\Forms;
 use DigraphCMS\Context;
 use DigraphCMS\HTML\Tag;
 use DigraphCMS\HTML\Text;
+use Exception;
 
 class TEXTAREA extends Tag implements InputInterface
 {
+    protected static $counter = 0;
     protected $tag = 'textarea';
     protected $void = false;
-
     protected $form;
     protected $default;
     protected $value;
@@ -18,8 +19,6 @@ class TEXTAREA extends Tag implements InputInterface
     protected $requiredMessage = 'This field is required';
     protected $validators = [];
     protected bool $disabled = false;
-
-    protected static $counter = 0;
 
     public function __construct(string $id = null)
     {
@@ -56,6 +55,7 @@ class TEXTAREA extends Tag implements InputInterface
      * error message if invalid, or otherwise null.
      *
      * @param callable $validator
+     *
      * @return static
      */
     public function addValidator(callable $validator)
@@ -96,6 +96,7 @@ class TEXTAREA extends Tag implements InputInterface
      * submitted in the get/post values.
      *
      * @param string $value
+     *
      * @return static
      */
     public function setDefault($value)
@@ -109,6 +110,7 @@ class TEXTAREA extends Tag implements InputInterface
      * different submitted values from this point onward.
      *
      * @param string $value
+     *
      * @return static
      */
     public function setValue($value)
@@ -151,20 +153,10 @@ class TEXTAREA extends Tag implements InputInterface
         return $this->default;
     }
 
-    protected function submittedValue(): ?string
-    {
-        if ($this->form() && $this->form()->method() == FormWrapper::METHOD_GET) {
-            return Context::arg($this->id());
-        } elseif ($this->form() && $this->form()->method() == FormWrapper::METHOD_POST) {
-            return Context::post($this->id());
-        } else {
-            return null;
-        }
-    }
-
     /**
-     * @param bool $useDefault 
-     * @return string|null 
+     * @param bool $useDefault
+     *
+     * @return string|null
      */
     public function value(bool $useDefault = false): mixed
     {
@@ -181,7 +173,7 @@ class TEXTAREA extends Tag implements InputInterface
 
     public function addChild($child)
     {
-        throw new \Exception("Can't add children to a TEXTAREA");
+        throw new Exception("Can't add children to a TEXTAREA");
     }
 
     public function children(): array
@@ -189,5 +181,16 @@ class TEXTAREA extends Tag implements InputInterface
         return [
             new Text(htmlentities($this->value(true) ?? ''))
         ];
+    }
+
+    protected function submittedValue(): ?string
+    {
+        if ($this->form() && $this->form()->method() == FormWrapper::METHOD_GET) {
+            return Context::arg_string($this->id(), true);
+        } elseif ($this->form() && $this->form()->method() == FormWrapper::METHOD_POST) {
+            return Context::post($this->id());
+        } else {
+            return null;
+        }
     }
 }

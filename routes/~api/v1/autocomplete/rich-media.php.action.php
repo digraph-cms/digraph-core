@@ -9,7 +9,7 @@ use DigraphCMS\Session\Cookies;
 use DigraphCMS\Users\Permissions;
 
 Permissions::requireMetaGroup('content__edit');
-if (Context::arg('csrf') !== Cookies::csrfToken('autocomplete')) {
+if (Context::arg_string('csrf') !== Cookies::csrfToken('autocomplete')) {
     throw new HttpError(401);
 }
 
@@ -17,7 +17,7 @@ Context::response()->private(true);
 Context::response()->filename('response.json');
 
 // if there is no query, return 10 latest medias
-if (!Context::arg('query')) {
+if (!Context::arg_string('query', true)) {
     $pages = RichMedia::select()
         ->order('updated desc')
         ->limit(10)
@@ -27,7 +27,7 @@ $pages = [];
 // exact name/id matches
 $query = RichMedia::select();
 $query->order('updated desc');
-if ($phrase = trim(Context::arg('query'))) {
+if ($phrase = trim(Context::arg_string('query', true))) {
     $query->whereOr('name = ?', $phrase);
     $query->whereOr('uuid = ?', $phrase);
 }
@@ -35,7 +35,7 @@ $pages = $pages + $query->fetchAll();
 // exact internal matches
 $query = RichMedia::select();
 $query->order('updated desc');
-if ($phrase = trim(Context::arg('query'))) {
+if ($phrase = trim(Context::arg_string('query', true))) {
     $query->like('name', $phrase, true, true, 'OR');
     $query->like('uuid', $phrase, true, true, 'OR');
     $query->like('data', $phrase, true, true, 'OR');
@@ -45,7 +45,7 @@ $pages = $pages + $query->fetchAll();
 // fuzzier matches
 $query = RichMedia::select();
 $query->order('updated desc');
-foreach (explode(' ', Context::arg('query')) as $word) {
+foreach (explode(' ', Context::arg_string('query')) as $word) {
     $word = strtolower(trim($word));
     if ($word) {
         $query->whereOr('class = ?', $word);
@@ -59,7 +59,7 @@ $pages = $pages + $query->fetchAll();
 echo json_encode(
     array_map(
         function (AbstractRichMedia $media) {
-            return Dispatcher::firstValue('onRichMediaAutocompleteCard', [$media, Context::arg('query')]);
+            return Dispatcher::firstValue('onRichMediaAutocompleteCard', [$media, Context::arg_string('query')]);
         },
         $pages
     )

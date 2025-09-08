@@ -4,6 +4,8 @@ namespace DigraphCMS\UI;
 
 use DigraphCMS\Context;
 use DigraphCMS\HTML\ConditionalContainer;
+use DigraphCMS\HTTP\HttpError;
+use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\URL\URL;
 
 class Paginator extends ConditionalContainer
@@ -24,13 +26,13 @@ class Paginator extends ConditionalContainer
 
     /**
      * Set the "fudge factor" for pagination.
-     * 
+     *
      * If there are only two pages with the set number of items per page, and
      * fewer than this many items on page two, display will collapse to one page
      * to avoid an aesthetically displeasing situation where adding paginators
      * takes up more room than just including a few more items on page one.
-     * 
-     * @return static 
+     *
+     * @return static
      */
     public function setFudgeFactor(int $factor)
     {
@@ -43,8 +45,8 @@ class Paginator extends ConditionalContainer
      * fewer than this many items on page two, display will collapse to one page
      * to avoid an aesthetically displeasing situation where adding paginators
      * takes up more room than just including a few more items on page one.
-     * 
-     * @return int 
+     *
+     * @return int
      */
     public function fudgeFactor(): int
     {
@@ -63,45 +65,19 @@ class Paginator extends ConditionalContainer
         return $children;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         $this->updateBreadcrumb();
         return parent::__toString();
     }
 
-    protected function statusDisplay()
-    {
-        $out = sprintf('%s to %s', number_format($this->startItem() + 1), number_format(min($this->endItem() + 1, $this->count)));
-        if ($this->count !== null) $out .= ' of ' . number_format($this->count);
-        return sprintf(
-            '<span class="paginator__status">%s</span>',
-            $out
-        );
-    }
-
-    protected function updateBreadcrumb()
-    {
-        if (!$this->breadcrumbUpdated && ($page = $this->page()) > 1) {
-            $this->breadcrumbUpdated = true;
-            $top = clone Breadcrumb::top();
-            $top->setName("Page " . number_format($page) . ' of ' . number_format($this->pages()));
-            Breadcrumb::pushParent(clone Breadcrumb::top());
-            foreach (Breadcrumb::parents() as $parent) {
-                if ($parent->pathString() == $top->pathString()) {
-                    $parent->unsetArg($this->arg());
-                }
-            }
-            Breadcrumb::top($top);
-        }
-    }
-
     public function page(): int
     {
-        $page = intval(Context::arg($this->arg()));
+        $page = Context::arg_int($this->arg(), true) ?? 1;
         if ($page < 1) {
-            return 1;
+            throw new HttpError(400, 'Invalid argument');
         } elseif ($page > $this->pages()) {
-            return intval($this->pages());
+            throw new RedirectException(new URL('&' . $this->arg() . '=' . $this->pages()));
         } else {
             return $page;
         }
@@ -143,38 +119,6 @@ class Paginator extends ConditionalContainer
         return ($this->page() * $this->perPage) - 1;
     }
 
-    protected function links(): array
-    {
-        $links = [];
-        // link to previous page
-        if ($this->page() > 1) {
-            $links[] = $this->link($this->page() - 1, 'previous', 'previous');
-        }
-        // link to first page
-        if ($this->group() > 0) {
-            $links[] = $this->link(1, 'first', 'firstpage');
-            // link to previous group
-            $links[] = $this->link($this->groupStartPage() - 1, null, 'previousgroup');
-        }
-        // primary page links from within group
-        for ($i = $this->groupStartPage(); $i <= $this->groupEndPage(); $i++) {
-            $links[] = $this->link($i);
-        }
-        // link to next group
-        if ($this->group() < $this->groupCount() && $this->groupEndPage() < $this->pages()) {
-            $links[] = $this->link($this->groupEndPage() + 1, null, 'nextgroup');
-        }
-        // link to last page
-        if ($this->groupCount() !== INF && $this->group() < $this->groupCount() - 1) {
-            $links[] = $this->link(intval($this->pages()), 'last', 'lastpage');
-        }
-        // link to next page
-        if ($this->page() < $this->pages()) {
-            $links[] = $this->link($this->page() + 1, 'next', 'next');
-        }
-        return $links;
-    }
-
     public function link(int $page, string $text = null, string $class = null): string
     {
         $url = $this->url($page);
@@ -189,17 +133,6 @@ class Paginator extends ConditionalContainer
             $classes[] = 'paginator__link--' . $class;
         }
         return "<a href='$url' data-page='$page' class='" . implode(' ', $classes) . "' data-target='_frame' data-navigation-frame-scroll='top' title='Page " . number_format($page) . "'>$text</a>";
-    }
-
-    protected function url(int $page): URL
-    {
-        $url = clone Context::request()->url();
-        if ($page == 1) {
-            $url->unsetArg($this->arg());
-        } else {
-            $url->arg($this->arg(), $page);
-        }
-        return $url;
     }
 
     public function perPage(int $perPage = null): int
@@ -241,5 +174,74 @@ class Paginator extends ConditionalContainer
     public function arg(): string
     {
         return '_page' . ($this->myID ? $this->myID : '');
+    }
+
+    protected function statusDisplay()
+    {
+        $out = sprintf('%s to %s', number_format($this->startItem() + 1), number_format(min($this->endItem() + 1, $this->count)));
+        if ($this->count !== null) $out .= ' of ' . number_format($this->count);
+        return sprintf(
+            '<span class="paginator__status">%s</span>',
+            $out
+        );
+    }
+
+    protected function updateBreadcrumb()
+    {
+        if (!$this->breadcrumbUpdated && ($page = $this->page()) > 1) {
+            $this->breadcrumbUpdated = true;
+            $top = clone Breadcrumb::top();
+            $top->setName("Page " . number_format($page) . ' of ' . number_format($this->pages()));
+            Breadcrumb::pushParent(clone Breadcrumb::top());
+            foreach (Breadcrumb::parents() as $parent) {
+                if ($parent->pathString() == $top->pathString()) {
+                    $parent->unsetArg($this->arg());
+                }
+            }
+            Breadcrumb::top($top);
+        }
+    }
+
+    protected function links(): array
+    {
+        $links = [];
+        // link to previous page
+        if ($this->page() > 1) {
+            $links[] = $this->link($this->page() - 1, 'previous', 'previous');
+        }
+        // link to first page
+        if ($this->group() > 0) {
+            $links[] = $this->link(1, 'first', 'firstpage');
+            // link to previous group
+            $links[] = $this->link($this->groupStartPage() - 1, null, 'previousgroup');
+        }
+        // primary page links from within group
+        for ($i = $this->groupStartPage(); $i <= $this->groupEndPage(); $i++) {
+            $links[] = $this->link($i);
+        }
+        // link to next group
+        if ($this->group() < $this->groupCount() && $this->groupEndPage() < $this->pages()) {
+            $links[] = $this->link($this->groupEndPage() + 1, null, 'nextgroup');
+        }
+        // link to last page
+        if ($this->groupCount() !== INF && $this->group() < $this->groupCount() - 1) {
+            $links[] = $this->link(intval($this->pages()), 'last', 'lastpage');
+        }
+        // link to next page
+        if ($this->page() < $this->pages()) {
+            $links[] = $this->link($this->page() + 1, 'next', 'next');
+        }
+        return $links;
+    }
+
+    protected function url(int $page): URL
+    {
+        $url = clone Context::request()->url();
+        if ($page == 1) {
+            $url->unsetArg($this->arg());
+        } else {
+            $url->arg($this->arg(), $page);
+        }
+        return $url;
     }
 }

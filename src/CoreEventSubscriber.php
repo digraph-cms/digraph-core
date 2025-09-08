@@ -2,8 +2,8 @@
 
 namespace DigraphCMS;
 
-use DigraphCMS\Content\Filestore;
 use DigraphCMS\Content\AbstractPage;
+use DigraphCMS\Content\Filestore;
 use DigraphCMS\Content\FilestoreFile;
 use DigraphCMS\Content\Pages;
 use DigraphCMS\Content\Slugs;
@@ -26,15 +26,15 @@ use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
 use DOMComment;
 use DOMElement;
-
 use function DigraphCMS\Content\require_file;
 
 abstract class CoreEventSubscriber
 {
 
     /**
-     * @param array<array{string,string,string}> &$notifications 
-     * @return void 
+     * @param array<array{string,string,string}> &$notifications
+     *
+     * @return void
      */
     public static function onPrintNotifications(array &$notifications)
     {
@@ -63,6 +63,7 @@ abstract class CoreEventSubscriber
      * Preserve/enforce "id" argument in actions across the users/profile route
      *
      * @param ActionMenu $menu
+     *
      * @return void
      */
     public static function onActionMenu_users_profile(ActionMenu $menu)
@@ -71,7 +72,7 @@ abstract class CoreEventSubscriber
             if ($item instanceof MenuItem) {
                 $url = $item->url();
                 if ($url && $url->route() == 'users/profile') {
-                    $url->arg('id', Context::arg('id') ?? Session::user());
+                    $url->arg('id', Context::arg_string('id', true) ?? Session::user());
                     $menu->removeChild($item);
                     $new = $menu->addURL($url, $item->label());
                     foreach ($item->classes() as $class) {
@@ -86,7 +87,8 @@ abstract class CoreEventSubscriber
      * Construct a card for displaying rich media in autocomplete fields
      *
      * @param AbstractRichMedia $media
-     * @param string $query
+     * @param string            $query
+     *
      * @return array<string,mixed>
      */
     public static function onRichMediaAutocompleteCard(AbstractRichMedia $media, string $query)
@@ -107,6 +109,7 @@ abstract class CoreEventSubscriber
      * When Rich Media is deleted, delete all Filestore files associated with it
      *
      * @param AbstractRichMedia $media
+     *
      * @return void
      */
     public static function onAfterRichMediaDelete(AbstractRichMedia $media)
@@ -127,6 +130,7 @@ abstract class CoreEventSubscriber
      *
      * @param string $file
      * @param string $route
+     *
      * @return string
      */
     public static function onRenderRoute_php(string $file, string $route)
@@ -140,6 +144,7 @@ abstract class CoreEventSubscriber
      *
      * @param string $file
      * @param string $route
+     *
      * @return string
      */
     public static function onRenderRoute_md(string $file, string $route)
@@ -153,6 +158,7 @@ abstract class CoreEventSubscriber
      * to dispatch events for all of its DOM elements.
      *
      * @param Response $response
+     *
      * @return void
      */
     public static function onTemplateWrapResponse(Response $response)
@@ -213,6 +219,7 @@ abstract class CoreEventSubscriber
      * Highlight code in CODE tags
      *
      * @param DOMEvent $e
+     *
      * @return void
      */
     public static function onDOMElement_code(DOMEvent $e)
@@ -224,6 +231,7 @@ abstract class CoreEventSubscriber
      * Set initial slug pattern after a page is inserted.
      *
      * @param AbstractPage $page
+     *
      * @return void
      */
     public static function onAfterPageInsert(AbstractPage $page)
@@ -235,6 +243,7 @@ abstract class CoreEventSubscriber
      * Update slug pattern after a page is updated.
      *
      * @param AbstractPage $page
+     *
      * @return void
      */
     public static function onAfterPageUpdate(AbstractPage $page)
@@ -246,7 +255,8 @@ abstract class CoreEventSubscriber
      * Build a card for a page in the results of an autocomplete field.
      *
      * @param AbstractPage $page
-     * @param string|null $query
+     * @param string|null  $query
+     *
      * @return array<string,string>
      */
     public static function onPageAutocompleteCard(AbstractPage $page, string $query = null): array
@@ -270,8 +280,9 @@ abstract class CoreEventSubscriber
     /**
      * Build a card for a page in the results of an autocomplete field.
      *
-     * @param User $user
+     * @param User        $user
      * @param string|null $query
+     *
      * @return array<string,string>
      */
     public static function onUserAutoCompleteCard(User $user, string $query = null): array
@@ -295,7 +306,8 @@ abstract class CoreEventSubscriber
      * Score how well a page matches a given query.
      *
      * @param AbstractPage $page
-     * @param string $query
+     * @param string       $query
+     *
      * @return int
      */
     public static function onScorePageResult(AbstractPage $page, string $query)
@@ -312,8 +324,9 @@ abstract class CoreEventSubscriber
     /**
      * Limits access to non-wildcard wayback routes
      *
-     * @param URL $url
+     * @param URL  $url
      * @param User $user
+     *
      * @return boolean|null
      */
     public static function onStaticUrlPermissions_wayback(URL $url, User $user): ?bool
@@ -325,8 +338,9 @@ abstract class CoreEventSubscriber
     /**
      * Limits access to ~admin routes
      *
-     * @param URL $url
+     * @param URL  $url
      * @param User $user
+     *
      * @return boolean|null
      */
     public static function onStaticUrlPermissions_admin(URL $url, User $user): ?bool
@@ -337,8 +351,9 @@ abstract class CoreEventSubscriber
     /**
      * Limits access to ~richmedia routes
      *
-     * @param URL $url
+     * @param URL  $url
      * @param User $user
+     *
      * @return boolean|null
      */
     public static function onStaticUrlPermissions_richmedia(URL $url, User $user): ?bool
@@ -347,8 +362,9 @@ abstract class CoreEventSubscriber
     }
 
     /**
-     * @param URL $url
+     * @param URL  $url
      * @param User $user
+     *
      * @return boolean|null
      */
     public static function onStaticUrlPermissions_users(URL $url, User $user): ?bool
@@ -379,6 +395,7 @@ abstract class CoreEventSubscriber
      * URL names for unsubscribe routes
      *
      * @param URL $url
+     *
      * @return string|null
      */
     public static function onStaticUrlName_unsubscribe(URL $url): ?string
@@ -393,6 +410,7 @@ abstract class CoreEventSubscriber
      * Set URL name of user profiles
      *
      * @param URL $url
+     *
      * @return string|null
      */
     public static function onStaticUrlName_users_profile(URL $url): ?string
@@ -416,6 +434,7 @@ abstract class CoreEventSubscriber
      * Set URL parent of user profile pages
      *
      * @param URL $url
+     *
      * @return URL|null
      */
     public static function onStaticUrlParent_users_profile(URL $url): ?URL
@@ -429,8 +448,9 @@ abstract class CoreEventSubscriber
     /**
      * Make the name of group URLs the group's name
      *
-     * @param URL $url
+     * @param URL     $url
      * @param boolean $inPageContext
+     *
      * @return string|null
      */
     public static function onStaticUrlName_groups(URL $url, bool $inPageContext): ?string
@@ -444,8 +464,9 @@ abstract class CoreEventSubscriber
     /**
      * Name wayback machine helper URLs
      *
-     * @param URL $url
+     * @param URL     $url
      * @param boolean $inPageContext
+     *
      * @return string|null
      */
     public static function onStaticUrlName_wayback(URL $url, bool $inPageContext): ?string
@@ -457,8 +478,9 @@ abstract class CoreEventSubscriber
     /**
      * Name color settings URL
      *
-     * @param URL $url
+     * @param URL     $url
      * @param boolean $inPageContext
+     *
      * @return string|null
      */
     public static function onStaticUrlName_color(URL $url, bool $inPageContext): ?string
@@ -469,8 +491,9 @@ abstract class CoreEventSubscriber
     /**
      * Make the name of user profile URLs the user's name
      *
-     * @param URL $url
+     * @param URL     $url
      * @param boolean $inPageContext
+     *
      * @return string|null
      */
     public static function onStaticUrlName_users(URL $url, bool $inPageContext): ?string
@@ -505,6 +528,7 @@ abstract class CoreEventSubscriber
      * Remove all static actions from signin path
      *
      * @param URL[] $urls
+     *
      * @return void
      */
     public static function onStaticActions_signin(array &$urls)
@@ -516,6 +540,7 @@ abstract class CoreEventSubscriber
      * Remove all static actions from signout path
      *
      * @param URL[] $urls
+     *
      * @return void
      */
     public static function onStaticActions_signout(array &$urls)

@@ -5,7 +5,7 @@ use DigraphCMS\Context;
 
 Context::response()->filename('response.json');
 
-$query = explode(' ', trim(strtolower(Context::arg('query'))));
+$query = explode(' ', trim(strtolower(Context::arg_string('query'))));
 $query = array_filter(
     $query,
     function ($e) {

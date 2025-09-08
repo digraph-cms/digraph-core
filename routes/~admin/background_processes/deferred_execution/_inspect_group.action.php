@@ -8,14 +8,13 @@ use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\UI\Format;
 use DigraphCMS\UI\Pagination\ColumnBooleanFilteringHeader;
 use DigraphCMS\UI\Pagination\ColumnDateFilteringHeader;
-use DigraphCMS\UI\Pagination\ColumnHeader;
 use DigraphCMS\UI\Pagination\ColumnSortingHeader;
 use DigraphCMS\UI\Pagination\ColumnStringFilteringHeader;
 use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\URL\URL;
 
-$group = Context::arg('id');
-if (!$group || !Deferred::groupCount($group)) throw new HttpError(404, 'Group not found');
+$group = Context::arg_string('id');
+if (!Deferred::groupCount($group)) throw new HttpError(404, 'Group not found');
 
 echo "<h1>Group $group</h1>";
 
@@ -35,10 +34,10 @@ if ($count = $pending->count()) {
 }
 
 echo '<div id="deferred-run-jobs" data-target="_frame" class="navigation-frame navigation-frame--stateless">';
-if (Context::arg('run_jobs')) {
+if (Context::arg_bool('run_jobs', true)) {
     echo new DeferredProgressBar($group);
 } elseif ($count) {
-    echo "<a href='" . new URL('&run_jobs=true') . "'>Run remaining jobs now</a>";
+    echo "<a href='" . new URL('&run_jobs=1') . "'>Run remaining jobs now</a>";
 }
 echo "</div>";
 

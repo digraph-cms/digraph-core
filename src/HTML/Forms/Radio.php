@@ -56,6 +56,7 @@ class Radio extends Tag implements InputInterface
      * error message if invalid, or otherwise null.
      *
      * @param callable $validator
+     *
      * @return static
      */
     public function addValidator(callable $validator)
@@ -102,6 +103,7 @@ class Radio extends Tag implements InputInterface
      * submitted in the get/post values.
      *
      * @param string|int $value
+     *
      * @return static
      */
     public function setDefault($value)
@@ -115,6 +117,7 @@ class Radio extends Tag implements InputInterface
      * different submitted values from this point onward.
      *
      * @param string|int $value
+     *
      * @return static
      */
     public function setValue($value)
@@ -161,17 +164,6 @@ class Radio extends Tag implements InputInterface
         return $this->default;
     }
 
-    protected function submittedValue(): ?bool
-    {
-        if ($this->submitted() && $this->form()->method() == FormWrapper::METHOD_GET) {
-            return Context::arg($this->id(true)) == $this->key;
-        } elseif ($this->submitted() && $this->form()->method() == FormWrapper::METHOD_POST) {
-            return Context::post($this->id(true)) == $this->key;
-        } else {
-            return null;
-        }
-    }
-
     public function value($useDefault = false): ?bool
     {
         if ($this->value !== null) {
@@ -180,6 +172,17 @@ class Radio extends Tag implements InputInterface
             return $this->submittedValue();
         } elseif ($useDefault) {
             return $this->default();
+        } else {
+            return null;
+        }
+    }
+
+    protected function submittedValue(): ?bool
+    {
+        if ($this->submitted() && $this->form()->method() == FormWrapper::METHOD_GET) {
+            return Context::arg_string($this->id(true), true) == $this->key;
+        } elseif ($this->submitted() && $this->form()->method() == FormWrapper::METHOD_POST) {
+            return Context::post($this->id(true)) == $this->key;
         } else {
             return null;
         }

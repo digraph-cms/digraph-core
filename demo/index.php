@@ -18,24 +18,28 @@ require_once __DIR__ . "/../vendor/autoload.php";
 
 // special case for running in PHP's built-in server, to pass through static files
 if (php_sapi_name() === 'cli-server') {
-    URLs::$sitePath = '';
-    $url = Digraph::actualUrl();
-    if ($url->path() == '/favicon.ico' || substr($url->path(), 0, 7) == '/files/') {
-        $filePath = __DIR__ . $url->path();
-        if (file_exists($filePath)) {
-            header(sprintf(
-                "Content-Type: %s",
-                (new MimeTypes)->getMimeType(strtolower(pathinfo($filePath, FILEINFO_EXTENSION)))
-            ));
-            header("Content-Length: " . filesize($filePath));
-            readfile($filePath);
-            exit;
-        } else {
-            http_response_code(404);
-            header("Content-Type: text/plain");
-            echo "Not found";
-            exit;
+    try {
+        URLs::$sitePath = '';
+        $url = Digraph::actualUrl();
+        if ($url->path() == '/favicon.ico' || substr($url->path(), 0, 7) == '/files/') {
+            $filePath = __DIR__ . $url->path();
+            if (file_exists($filePath)) {
+                header(sprintf(
+                    "Content-Type: %s",
+                    (new MimeTypes)->getMimeType(strtolower(pathinfo($filePath, FILEINFO_EXTENSION)))
+                ));
+                header("Content-Length: " . filesize($filePath));
+                readfile($filePath);
+                exit;
+            } else {
+                http_response_code(404);
+                header("Content-Type: text/plain");
+                echo "Not found";
+                exit;
+            }
         }
+    } catch (Throwable $th) {
+        // ignore
     }
 }
 

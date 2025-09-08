@@ -13,17 +13,17 @@ use DigraphCMS\URL\URL;
 
 class ToolbarLink extends Tag
 {
+    protected static $idCounter = 0;
     protected $tag = 'a';
     protected $text, $icon, $command, $url, $shortcut, $toolTip, $iconElement;
-    protected static $idCounter = 0;
 
     /**
      * Undocumented function
      *
-     * @param string $text
-     * @param string $icon
+     * @param string               $text
+     * @param string               $icon
      * @param null|string|callable $command
-     * @param URL|null $url
+     * @param URL|null             $url
      */
     public function __construct(string $text, string $icon, $command = null, URL $url = null, string $id = null)
     {
@@ -37,8 +37,8 @@ class ToolbarLink extends Tag
     public function toString(): string
     {
         if (is_callable($this->command())) {
-            if (Context::arg('__tblink') == $this->id()) {
-                if (Context::arg('__tblinkcsrf') == Cookies::csrfToken('links')) {
+            if (Context::arg_string('__tblink') == $this->id()) {
+                if (Context::arg_string('__tblinkcsrf') == Cookies::csrfToken('links')) {
                     // execute callback
                     call_user_func($this->command());
                     // redirect either back to original URL or to specified URL
@@ -82,11 +82,12 @@ class ToolbarLink extends Tag
 
     /**
      * Set command to either a string or a callback. Strings will be set into
-     * the HTML as data-command. If a callable is given here the link will 
+     * the HTML as data-command. If a callable is given here the link will
      * render with a token URL that will execute the callback when visited,
      * similar to a ButtonMenu.
      *
      * @param null|string|callable $command
+     *
      * @return static
      */
     public function setCommand($command)

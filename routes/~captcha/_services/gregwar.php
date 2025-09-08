@@ -9,7 +9,7 @@ use DigraphCMS\Security\Security;
 use DigraphCMS\URL\URL;
 use Gregwar\Captcha\CaptchaBuilder;
 
-if (!isset($_SESSION['gregwar_captcha_image']) || Context::arg('refresh')) {
+if (!isset($_SESSION['gregwar_captcha_image']) || Context::arg_bool('refresh', true)) {
     $builder = new CaptchaBuilder();
     $builder->build();
     $_SESSION['gregwar_captcha_image'] = '<img src="' . $builder->inline() . '" alt="CAPTCHA" />';

@@ -18,7 +18,7 @@ Security::requireSecurityCheck(false);
 Cookies::required(['system', 'auth', 'csrf']);
 
 // get bounce arg and turn it into a URL (which verifies it's in-site)
-$bounce = Context::arg('_bounce');
+$bounce = Context::arg_string('_bounce', true);
 if ($bounce) {
     try {
         $bounce = new URL($bounce);
@@ -35,8 +35,8 @@ if ($bounce) {
 }
 
 // handle single signin option by bouncing directly to it
-$urls = Users::allSigninURLs(Context::arg('_bounce'));
-if (count($urls) == 1 && !Context::arg('_noredirect')) {
+$urls = Users::allSigninURLs(Context::arg_string('_bounce', true));
+if (count($urls) == 1 && !Context::arg_bool('_noredirect')) {
     Context::response()->redirect(reset($urls));
     return;
 }

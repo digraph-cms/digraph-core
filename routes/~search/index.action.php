@@ -11,7 +11,7 @@ use DigraphCMS\UI\Pagination\PaginatedSection;
 use DigraphCMS\UI\Templates;
 use DigraphCMS\URL\URL;
 
-$query = trim(Context::arg('q') ?? '');
+$query = trim(Context::arg_string('q', true) ?? '');
 if (!$query) {
     echo '<h1>Site search</h1>';
     echo new SearchForm();
@@ -50,6 +50,6 @@ try {
     Dispatcher::dispatchEvent('onDisplaySearchResults', [$query]);
     echo $list;
     echo '</div>';
-} catch (\Throwable $th) {
+} catch (Throwable $th) {
     Notifications::printError('Error generating search results');
 }

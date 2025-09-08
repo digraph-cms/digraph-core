@@ -7,9 +7,9 @@ use DigraphCMS\HTML\Tag;
 
 class INPUT extends Tag implements InputInterface
 {
+    protected static $counter = 0;
     protected $tag = 'input';
     protected $void = true;
-
     protected $form;
     protected $default;
     protected $value;
@@ -17,8 +17,6 @@ class INPUT extends Tag implements InputInterface
     protected $requiredMessage = 'This field is required';
     protected $validators = [];
     protected bool $disabled = false;
-
-    protected static $counter = 0;
 
     public function __construct(string $id = null)
     {
@@ -55,6 +53,7 @@ class INPUT extends Tag implements InputInterface
      * error message if invalid, or otherwise null.
      *
      * @param callable $validator
+     *
      * @return static
      */
     public function addValidator(callable $validator)
@@ -96,6 +95,7 @@ class INPUT extends Tag implements InputInterface
      * submitted in the get/post values.
      *
      * @param string|null $value
+     *
      * @return static
      */
     public function setDefault($value)
@@ -109,6 +109,7 @@ class INPUT extends Tag implements InputInterface
      * different submitted values from this point onward.
      *
      * @param string|null $value
+     *
      * @return static
      */
     public function setValue($value)
@@ -151,17 +152,6 @@ class INPUT extends Tag implements InputInterface
         return $this->default;
     }
 
-    protected function submittedValue()
-    {
-        if ($this->form() && $this->form()->method() == FormWrapper::METHOD_GET) {
-            return Context::arg($this->id());
-        } elseif ($this->form() && $this->form()->method() == FormWrapper::METHOD_POST) {
-            return Context::post($this->id());
-        } else {
-            return null;
-        }
-    }
-
     public function value(bool $useDefault = false): mixed
     {
         if ($this->value) {
@@ -170,6 +160,17 @@ class INPUT extends Tag implements InputInterface
             return $value ? $value : null;
         } elseif ($useDefault) {
             return $this->default();
+        } else {
+            return null;
+        }
+    }
+
+    protected function submittedValue()
+    {
+        if ($this->form() && $this->form()->method() == FormWrapper::METHOD_GET) {
+            return Context::arg_string($this->id(), true);
+        } elseif ($this->form() && $this->form()->method() == FormWrapper::METHOD_POST) {
+            return Context::post($this->id());
         } else {
             return null;
         }

@@ -13,13 +13,15 @@ use DigraphCMS\URL\URL;
 
 Context::response()->template('chromeless.php');
 
-echo '<div id="' . Context::arg('frame') . '">';
+$frame = Context::arg_string('frame');
+if (preg_match('/[^a-z0-9\-_]/i', $frame)) ;
+echo '<div id="' . $frame . '">';
 
 // fancy autocomplete search form
 $form = (new FormWrapper())
     ->setCaptcha(false)
     ->addClass('autoform')
-    ->setID(Context::arg('frame') . '_adder');
+    ->setID($frame . '_adder');
 $form->button()->setText('Add');
 $adder = (new AutocompleteInput('rich-media-type-search', new URL('/api/v1/autocomplete/rich-media-type.php')))
     ->addClass('autocomplete-input--autopopulate')
@@ -36,15 +38,15 @@ if ($form->ready()) {
         new URL(sprintf(
             '/richmedia/editor/?add=%s&frame=%s&parent=%s',
             $adder->value(),
-            Context::arg('frame'),
-            Context::arg('uuid')
+            Context::arg_string('frame'),
+            Context::arg_string('uuid')
         )),
         Digraph::uuid()
     );
 }
 
 // display list
-$media = RichMedia::select(Context::arg('uuid'))
+$media = RichMedia::select(Context::arg_string('uuid'))
     ->order('updated DESC');
 if (!$media->count()) echo '<p><em>No existing rich media</em></p>';
 else {
@@ -62,14 +64,14 @@ else {
                     ->addClass('toolbar__button--compact-tip')
                     ->setAttribute('onclick', sprintf(
                         'Digraph.popup("%s")',
-                        new URL('/richmedia/tune/?frame=' . Context::arg('frame') . '&uuid=' . $media->uuid())
+                        new URL('/richmedia/tune/?frame=' . Context::arg_string('frame') . '&uuid=' . $media->uuid())
                     ))
                     : '',
                 (new ToolbarLink('Edit', 'edit', null, null))
                     ->addClass('toolbar__button--compact-tip')
                     ->setAttribute('onclick', sprintf(
                         'Digraph.popup("%s")',
-                        new URL('/richmedia/editor/?frame=' . Context::arg('frame') . '&uuid=' . $media->uuid())
+                        new URL('/richmedia/editor/?frame=' . Context::arg_string('frame') . '&uuid=' . $media->uuid())
                     ))
             ];
         },

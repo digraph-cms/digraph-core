@@ -8,7 +8,7 @@ use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
 
-if (Context::arg('csrf') !== Cookies::csrfToken('autocomplete')) {
+if (Context::arg_string('csrf') !== Cookies::csrfToken('autocomplete')) {
     throw new HttpError(401);
 }
 
@@ -18,11 +18,11 @@ Context::response()->private(true);
 Context::response()->filename('response.json');
 
 // get exact results
-$users = Users::get(Context::arg('query'));
+$users = Users::get(Context::arg_string('query'));
 $users = $users ? [$users] : [];
 // get stricter name matches
 $query = Users::select()->limit(100);
-foreach (preg_split('/ +/', Context::arg('query')) as $word) {
+foreach (preg_split('/ +/', Context::arg_string('query')) as $word) {
     $query->like('name', $word, true, true);
 }
 $users = array_merge(
@@ -32,7 +32,7 @@ $users = array_merge(
 // get looser name matches
 if (count($users) < 100) {
     $query = Users::select()->limit(100);
-    foreach (preg_split('/ +/', Context::arg('query')) as $word) {
+    foreach (preg_split('/ +/', Context::arg_string('query')) as $word) {
         $query->like('name', $word, true, true, 'OR');
     }
     $users = array_merge(
@@ -47,7 +47,7 @@ $users = array_unique($users, SORT_REGULAR);
 echo json_encode(
     array_map(
         function (User $user) {
-            return Dispatcher::firstValue('onUserAutoCompleteCard', [$user, Context::arg('query')]);
+            return Dispatcher::firstValue('onUserAutoCompleteCard', [$user, Context::arg_string('query')]);
         },
         array_slice($users, 0, 50)
     )

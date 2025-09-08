@@ -7,21 +7,22 @@ use DigraphCMS\HTML\Tag;
 use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\Session\Cookies;
 use DigraphCMS\URL\URL;
+use Exception;
 
 class ToggleButton extends Tag
 {
-    protected $tag = 'div';
     protected static $idCounter = 0;
-
+    protected $tag = 'div';
     /** @var callable */
     protected $toggleOn, $toggleOff;
 
     public function __construct(
         protected bool $state,
-        callable $toggleOn,
-        callable $toggleOff,
+        callable       $toggleOn,
+        callable       $toggleOff,
         protected bool $targetTop = false
-    ) {
+    )
+    {
         $this->toggleOn = $toggleOn;
         $this->toggleOff = $toggleOff;
         $this->setID('toggle-button-' . static::$idCounter++);
@@ -52,7 +53,7 @@ class ToggleButton extends Tag
 
     public function addChild($child)
     {
-        throw new \Exception("Can't add children to a ToggleButton");
+        throw new Exception("Can't add children to a ToggleButton");
     }
 
     public function url_on(): URL
@@ -69,21 +70,21 @@ class ToggleButton extends Tag
     {
         return [
             $this->state
-            ? '<span class="toggle-button__state">[ON]</span>'
-            : '<span class="toggle-button__state">[OFF]</span>',
+                ? '<span class="toggle-button__state">[ON]</span>'
+                : '<span class="toggle-button__state">[OFF]</span>',
             ' ',
             $this->state
-            ? '<a class="toggle-button__link" href="' . $this->url_off() . '">Turn OFF</a>'
-            : '<a class="toggle-button__link" href="' . $this->url_on() . '">Turn ON</a>'
+                ? '<a class="toggle-button__link" href="' . $this->url_off() . '">Turn OFF</a>'
+                : '<a class="toggle-button__link" href="' . $this->url_on() . '">Turn ON</a>'
         ];
     }
 
     public function toString(): string
     {
-        if (Context::arg('__toggle') == $this->id() && Context::arg('__csrf') == Cookies::csrfToken()) {
-            if (Context::arg('__toggle_state') == 'on') {
+        if (Context::arg_string('__toggle', true) == $this->id() && Context::arg_string('__csrf') == Cookies::csrfToken()) {
+            if (Context::arg_string('__toggle_state') == 'on') {
                 call_user_func($this->toggleOn);
-            } elseif (Context::arg('__toggle_state') == 'off') {
+            } elseif (Context::arg_string('__toggle_state') == 'off') {
                 call_user_func($this->toggleOff);
             }
             $url = Context::url();

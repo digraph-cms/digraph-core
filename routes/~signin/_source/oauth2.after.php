@@ -11,7 +11,7 @@ foreach (Context::data('oauth_resource_owner')->toArray() as $key => $value) {
         $count = count($user->emails());
         $user->addEmail(
             $value,
-            'Added from ' . Config::get("user_sources.oauth2.providers." . Context::arg('_provider') . ".name") . ' via OAuth signin',
+            'Added from ' . Config::get("user_sources.oauth2.providers." . Context::arg_string('_provider') . ".name") . ' via OAuth signin',
             true
         );
     }

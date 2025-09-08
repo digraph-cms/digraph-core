@@ -38,8 +38,7 @@ class ExceptionLog
                 'time' => time(),
                 'user' => Session::uuid(),
                 'authid' => Session::authentication() ? Session::authentication()->id() : null,
-                'url' => Context::request()->url()->__toString(),
-                'original_url' => Context::request()->originalUrl()->__toString(),
+                'url' => static::actualUrl(),
                 '_REQUEST' => $_REQUEST,
                 '_SERVER' => $_SERVER,
                 '_GET' => $_GET,
@@ -53,8 +52,7 @@ class ExceptionLog
                 'time' => time(),
                 'user' => Session::uuid(),
                 'authid' => Session::authentication() ? Session::authentication()->id() : null,
-                'url' => '[no Context::request()]',
-                'original_url' => '[no Context::request()]',
+                'url' => static::actualUrl(),
                 '_REQUEST' => $_REQUEST,
                 '_SERVER' => $_SERVER,
                 '_GET' => $_GET,
@@ -67,6 +65,7 @@ class ExceptionLog
         $data = static::transcodeArray($data);
         // send email if lock isn't exceeded
         $hash = md5(serialize([
+            static::actualUrl(),
             get_class($th),
             method_exists($th, 'getCode') ? $th->getCode() : null,
             method_exists($th, 'getFile') ? $th->getFile() : null,
@@ -88,10 +87,9 @@ class ExceptionLog
                         $count = count(glob("$path/*.json"));
                         $body = implode('<br>', [
                             sprintf(
-                                '<a href="%s">A new error</a> has been logged at <a href="%s">%s</a>',
+                                '<a href="%s">A new error</a> has been logged at <kbd>%s</kbd>',
                                 new URL("/admin/exception_log/log:$time $uuid"),
-                                Context::url(),
-                                Context::url()
+                                static::actualUrl()
                             ),
                             sprintf(
                                 'Error message: %s',
@@ -179,6 +177,7 @@ class ExceptionLog
 
     /**
      * @param Throwable|null $th
+     *
      * @return array<string,mixed>|null
      */
     protected static function throwableArray(?Throwable $th): ?array
@@ -212,5 +211,18 @@ class ExceptionLog
         } else {
             return $path;
         }
+    }
+
+    /**
+     * @return string get the actual URL of the current request, from outside the CMS, sans query string
+     */
+    protected static function actualUrl(): string
+    {
+        return sprintf(
+            '%s://%s%s',
+            isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'http',
+            $_SERVER['HTTP_HOST'],
+            $_SERVER['REQUEST_URI']
+        );
     }
 }

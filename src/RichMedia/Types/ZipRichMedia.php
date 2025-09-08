@@ -32,8 +32,10 @@ class ZipRichMedia extends AbstractRichMedia
 
     /**
      * @suppress PHP0406
+     *
      * @param FormWrapper $form
-     * @param boolean $create
+     * @param boolean     $create
+     *
      * @return void
      */
     public function prepareForm(FormWrapper $form, $create = false)
@@ -65,25 +67,25 @@ class ZipRichMedia extends AbstractRichMedia
 
         // options
         $options = (
-            new CheckboxListField(
-                'Options',
-                [
-                    'single' => 'Allow listing and downloading individual files'
-                ]
-            )
+        new CheckboxListField(
+            'Options',
+            [
+                'single' => 'Allow listing and downloading individual files'
+            ]
+        )
         )
             ->setDefault($this['options'] ?? [])
             ->addForm($form);
 
         // meta
         $meta = (
-            new CheckboxListField(
-                'Display metadata',
-                [
-                    'uploader' => 'Update user',
-                    'upload_date' => 'Update date',
-                ]
-            )
+        new CheckboxListField(
+            'Display metadata',
+            [
+                'uploader' => 'Update user',
+                'upload_date' => 'Update date',
+            ]
+        )
         )
             ->setDefault($this['meta'] ?? [])
             ->addForm($form);
@@ -184,7 +186,7 @@ class ZipRichMedia extends AbstractRichMedia
                 ->setID($id)
                 ->addClass('navigation-frame navigation-frame--stateless')
                 ->addClass('multifile-card__list');
-            if (!Context::arg($id) == 'open') {
+            if (!Context::arg_string($id, true) == 'open') {
                 // display link to show all files
                 $wrapper->addChild((new A)
                     ->setAttribute('href', new URL("&$id=open"))

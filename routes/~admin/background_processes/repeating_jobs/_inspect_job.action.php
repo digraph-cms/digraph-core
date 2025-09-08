@@ -5,7 +5,7 @@ use DigraphCMS\DB\DB;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\UI\Format;
 
-$job = DB::query()->from('cron')->where('id = ?', [Context::arg('id')])->fetch();
+$job = DB::query()->from('cron')->where('id', Context::arg_int('id'))->fetch();
 
 if (!$job) throw new HttpError(404, 'Job not found');
 

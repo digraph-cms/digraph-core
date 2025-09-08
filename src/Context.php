@@ -4,6 +4,7 @@ namespace DigraphCMS;
 
 use DigraphCMS\Cache\CacheNamespace;
 use DigraphCMS\Content\AbstractPage;
+use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\HTTP\Request;
 use DigraphCMS\HTTP\Response;
@@ -39,20 +40,20 @@ abstract class Context
     public static function ensureUUIDArg(string $checkWith = null): void
     {
         // ensure arg exists
-        if (!static::arg('uuid')) {
+        if (!static::arg_string('uuid', true)) {
             $url = Context::url();
             $url->arg('uuid', Digraph::uuid());
             throw new RedirectException($url);
         }
         // validate UUID
-        if (!Digraph::validateUUID(Context::arg('uuid') ?? '')) {
+        if (!Digraph::validateUUID(Context::arg_string('uuid'))) {
             $url = Context::url();
             $url->arg('uuid', Digraph::uuid());
             throw new RedirectException($url);
         }
         // check with passed-in class
         if ($checkWith) {
-            if ($checkWith::exists(Context::arg('uuid'))) {
+            if ($checkWith::exists(Context::arg_string('uuid'))) {
                 $url = Context::url();
                 $url->arg('uuid', Digraph::uuid());
                 throw new RedirectException($url);
@@ -64,6 +65,7 @@ abstract class Context
      * Get a cache namespace specific to the current request hash
      *
      * @param string|null $section
+     *
      * @return CacheNamespace
      */
     public static function cache(string $section = null): CacheNamespace
@@ -76,7 +78,7 @@ abstract class Context
 
     public static function url(URL $url = null): URL
     {
-        return clone (static::data('url', $url)
+        return clone(static::data('url', $url)
             ?? Digraph::actualUrl());
     }
 
@@ -84,21 +86,75 @@ abstract class Context
      * Retrieve an arg from the request URL
      *
      * @param string $key
+     *
      * @return mixed
+     *
+     * @deprecated use one of the typed arg_*() methods instead
      */
-    public static function arg(string $key)
+    public static function arg(string $key): mixed
     {
-        if (static::$request) {
-            return @static::$request->url()->arg($key);
-        } else {
-            return null;
-        }
+        return static::$request?->url()->arg($key);
+    }
+
+    /**
+     * Get an argument and verify that it is a legitimate string, optionally allowing null values if the given arg is
+     * not specified at all in the URL.
+     *
+     * @param string $key
+     * @param bool   $nullable
+     *
+     * @return ($nullable is true ? string|null : string)
+     *
+     * @throws HttpError if the argument is not a valid string or is null and $nullable is false
+     */
+    public static function arg_string(string $key, bool $nullable = false): string|null
+    {
+        $value = @static::$request?->url()->arg_string($key, $nullable);
+        if (is_null($value) && !$nullable) throw new HttpError(400, "Missing argument '$key'");
+        return $value;
+    }
+
+    /**
+     * Get an argument and verify that it is a legitimate integer, optionally allowing null values if the given arg is
+     * not specified at all in the URL.
+     *
+     * @param string $key
+     * @param bool   $nullable
+     *
+     * @return ($nullable is true ? int|null : int)
+     *
+     * @throws HttpError if the argument is not a valid integer or is null and $nullable is false
+     */
+    public static function arg_int(string $key, bool $nullable = false): int|null
+    {
+        $value = @static::$request?->url()->arg_int($key, $nullable);
+        if (is_null($value) && !$nullable) throw new HttpError(400, "Missing argument '$key'");
+        return $value;
+    }
+
+    /**
+     * Get an argument and verify that it is a legitimate float, optionally allowing null values if the given arg is
+     * not specified at all in the URL.
+     *
+     * @param string $key
+     * @param bool   $nullable
+     *
+     * @return bool|null
+     *
+     * @throws HttpError if the argument is not a valid boolean or is null and $nullable is false
+     */
+    public static function arg_bool(string $key, bool $nullable = false): bool|null
+    {
+        $value = @static::$request?->url()->arg_bool($key, $nullable);
+        if (is_null($value) && !$nullable) throw new HttpError(400, "Missing argument '$key'");
+        return $value;
     }
 
     /**
      * Retrieve an arg from the request POST
      *
      * @param string $key
+     *
      * @return mixed
      */
     public static function post(string $key)
@@ -173,12 +229,13 @@ abstract class Context
      * Begin a "context" which will be used when parsing partial URLs, such as
      * relative paths, or query-only URL strings. For example, setting the
      * context to `[site]/foo/bar?a=b` would allow tricks like:
-     * 
+     *
      *  * `..` => `[site]/`
      *  * `?z=b` => `[site]/foo/bar?z=b`
      *  * `&z=b` => `[site]/foo/bar?a=b&z=b`
      *
      * @param URL $url
+     *
      * @return void
      */
     public static function beginUrlContext(URL $url): void

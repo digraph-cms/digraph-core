@@ -4,9 +4,11 @@ namespace DigraphCMS\HTML\Forms;
 
 use DigraphCMS\Context;
 use DigraphCMS\HTML\Tag;
+use Exception;
 
 class SELECT extends Tag implements InputInterface
 {
+    protected static $counter = 0;
     protected $tag = 'select';
     protected $options = [];
     protected $required = false;
@@ -15,11 +17,8 @@ class SELECT extends Tag implements InputInterface
     protected $default;
     protected $validators = [];
     protected bool $disabled = false;
-
     /** @var FormWrapper|null */
     protected $form;
-
-    protected static $counter = 0;
 
     public function __construct(array $options = null, string $null_label = null)
     {
@@ -78,6 +77,7 @@ class SELECT extends Tag implements InputInterface
      * Set options from an array of values/labels
      *
      * @param array|null $options
+     *
      * @return static
      */
     public function setOptions(array $options = null)
@@ -95,8 +95,9 @@ class SELECT extends Tag implements InputInterface
     /**
      * Set an option using a value that will be returned and a label for users
      *
-     * @param mixed $value
+     * @param mixed  $value
      * @param string $label
+     *
      * @return static
      */
     public function setOption($value, string $label)
@@ -133,6 +134,7 @@ class SELECT extends Tag implements InputInterface
      * error message if invalid, or otherwise null.
      *
      * @param callable $validator
+     *
      * @return static
      */
     public function addValidator(callable $validator)
@@ -158,6 +160,7 @@ class SELECT extends Tag implements InputInterface
      * submitted in the get/post values.
      *
      * @param string|int|null $value
+     *
      * @return static
      */
     public function setDefault($value)
@@ -171,6 +174,7 @@ class SELECT extends Tag implements InputInterface
      * different submitted values from this point onward.
      *
      * @param string|int|null $value
+     *
      * @return static
      */
     public function setValue($value)
@@ -213,17 +217,6 @@ class SELECT extends Tag implements InputInterface
         return $this->default;
     }
 
-    protected function submittedValue()
-    {
-        if ($this->form() && $this->form()->method() == FormWrapper::METHOD_GET) {
-            return Context::arg($this->id());
-        } elseif ($this->form() && $this->form()->method() == FormWrapper::METHOD_POST) {
-            return Context::post($this->id());
-        } else {
-            return null;
-        }
-    }
-
     public function value(bool $useDefault = false): mixed
     {
         $key = $this->submittedValue();
@@ -238,6 +231,17 @@ class SELECT extends Tag implements InputInterface
 
     public function addChild($child)
     {
-        throw new \Exception("Can't add children to a SELECT");
+        throw new Exception("Can't add children to a SELECT");
+    }
+
+    protected function submittedValue()
+    {
+        if ($this->form() && $this->form()->method() == FormWrapper::METHOD_GET) {
+            return Context::arg_string($this->id(), true);
+        } elseif ($this->form() && $this->form()->method() == FormWrapper::METHOD_POST) {
+            return Context::post($this->id());
+        } else {
+            return null;
+        }
     }
 }

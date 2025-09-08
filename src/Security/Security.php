@@ -146,7 +146,7 @@ class Security
         $data[] = [
             'reason' => $reason,
             'time' => time(),
-            'url' => Context::url()->__toString()
+            'url' => static::actualUrl(),
         ];
         static::flaggedIPs()->set($ip, 'pending', $data);
     }
@@ -217,7 +217,7 @@ class Security
         $data[] = [
             'reason' => $reason,
             'time' => time(),
-            'url' => Context::url()->__toString()
+            'url' => static::actualUrl(),
         ];
         static::flaggedUsers()->set($user, 'pending', $data);
     }
@@ -249,9 +249,23 @@ class Security
         $data[] = [
             'reason' => $reason,
             'time' => time(),
-            'url' => Context::url()->__toString()
+            'url' => static::actualUrl(),
         ];
         static::flaggedAuthentications()->set($authentication_id, 'pending', $data);
+    }
+
+    /**
+     * @return string get the actual URL of the current request, from outside the CMS
+     */
+    protected static function actualUrl(): string
+    {
+        return sprintf(
+            '%s://%s%s%s',
+            isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'http',
+            $_SERVER['HTTP_HOST'],
+            $_SERVER['REQUEST_URI'],
+            $_SERVER['QUERY_STRING'] ? '?' . $_SERVER['QUERY_STRING'] : ''
+        );
     }
 
     protected static function flaggedAuthentications(): DatastoreGroup

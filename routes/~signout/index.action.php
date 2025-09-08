@@ -9,7 +9,7 @@ use DigraphCMS\Users\Users;
 
 Session::deauthenticate('Used signout link');
 
-$bounce = Context::arg('_bounce');
+$bounce = Context::arg_string('_bounce', true);
 if ($bounce) {
     $bounce = new URL($bounce);
     if (!Permissions::url($bounce, Users::guest())) {

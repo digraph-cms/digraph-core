@@ -7,8 +7,8 @@ use DigraphCMS\HTTP\HttpError;
 
 error_reporting(0);
 
-$group = Context::arg('group');
-if (!$group || !Deferred::groupCount($group)) throw new HttpError(400);
+$group = Context::arg_string('group');
+if (!Deferred::groupCount($group)) throw new HttpError(400);
 $justRan = Deferred::runJobs($group, time() + 2);
 
 Context::response()->browserTTL(2);

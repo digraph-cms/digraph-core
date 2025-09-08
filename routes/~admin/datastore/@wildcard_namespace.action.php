@@ -15,18 +15,18 @@ $query = (new DatastoreSelect)
     ->order('updated DESC')
     ->where('ns', Context::url()->actionSuffix());
 
-if (Context::arg('grp')) {
-    $query->where('grp', Context::arg('grp'));
-    echo "<h1>Group " . Context::arg('grp') . "</h1>";
+if (Context::arg_string('grp')) {
+    $query->where('grp', Context::arg_string('grp'));
+    echo "<h1>Group " . Context::arg_string('grp') . "</h1>";
     Breadcrumb::parent(new URL('namespace:' . Context::url()->actionSuffix()));
-    Breadcrumb::setTopName('Group ' . Context::arg('grp'));
+    Breadcrumb::setTopName('Group ' . Context::arg_string('grp'));
 }
 
 $table = new PaginatedTable(
     $query,
     function (DatastoreItem $item): array {
         return array_filter([
-            Context::arg('grp') ? false : sprintf('<a href="%s">%s</a>', new URL('namespace:' . $item->namespaceName() . '?grp=' . $item->groupName()), $item->groupName()),
+            Context::arg_string('grp') ? false : sprintf('<a href="%s">%s</a>', new URL('namespace:' . $item->namespaceName() . '?grp=' . $item->groupName()), $item->groupName()),
             sprintf('<a href="%s">%s</a>', new URL('item:' . $item->id()), $item->key()),
             htmlentities($item->value() ?? ' '),
             $item->data()->get() ? new Icon('code', 'contains data') : ' ',
@@ -35,7 +35,7 @@ $table = new PaginatedTable(
         ]);
     },
     array_filter([
-        Context::arg('grp') ? false : new ColumnStringFilteringHeader('Group', 'grp'),
+        Context::arg_string('grp') ? false : new ColumnStringFilteringHeader('Group', 'grp'),
         new ColumnStringFilteringHeader('Key', '`key`'),
         new ColumnStringFilteringHeader('Value', '`value`'),
         'Data',

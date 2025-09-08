@@ -11,8 +11,8 @@ use DigraphCMS\Users\Users;
 
 Security::requireSecurityCheck();
 
-$user = Users::get(Context::arg('user'));
-$token = Context::arg('token');
+$user = Users::get(Context::arg_string('user'));
+$token = Context::arg_string('token');
 
 if (!$user) throw new HttpError(404);
 

@@ -8,6 +8,7 @@ use DigraphCMS\DB\DBConnectionException;
 use DigraphCMS\Digraph;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\ExceptionLog;
+use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\HTTP\Response;
 use Throwable;
 
@@ -78,9 +79,11 @@ class Templates
         Context::begin();
         Context::thrown($th);
         try {
-            Context::response(new Response(500));
-            if ($th instanceof DBConnectionException) Digraph::buildErrorContent(500.2);
-            else Digraph::buildErrorContent(500.1);
+            $code = 500;
+            if ($th instanceof DBConnectionException) $code = 500.2;
+            if ($th instanceof HttpError) $code = $th->status();
+            Context::response(new Response($code));
+            Digraph::buildErrorContent($code);
             $out = static::render('fallback.php');
             Context::end();
             return $out;

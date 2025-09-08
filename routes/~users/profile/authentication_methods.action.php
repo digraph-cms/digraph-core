@@ -19,10 +19,8 @@ use DigraphCMS\Users\Users;
 
 Security::requireSecurityCheck();
 
-$user = Users::get(Context::arg('id') ?? Session::user());
-if (!$user) {
-    throw new HttpError(404, "User not found");
-}
+$user = Users::get(Context::arg_string('id')) ?? Users::current();
+if (!$user) throw new HttpError(404);
 
 $query = DB::query()
     ->from('user_source')

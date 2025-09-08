@@ -1,6 +1,5 @@
 <?php
 
-use DigraphCMS\Security\Security;
 use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
@@ -14,6 +13,7 @@ use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\RichContent\RichContent;
+use DigraphCMS\Security\Security;
 use DigraphCMS\Session\Cookies;
 use DigraphCMS\Session\Session;
 use DigraphCMS\UI\Notifications;
@@ -28,19 +28,14 @@ Security::requireSecurityCheck();
 // require the necessary cookies
 Cookies::required(['system', 'auth', 'csrf']);
 
-// provider and source must be specified
-if (!Context::arg('_provider') || !Context::arg('_source')) {
-    throw new HttpError(404, 'Missing provider or source');
-}
-
 // source and provider must exist
-$sourceName = Context::arg('_source');
-$source = Users::source(Context::arg('_source'));
+$sourceName = Context::arg_string('_source');
+$source = Users::source(Context::arg_string('_source'));
 if (!$source) {
     throw new HttpError(404, 'Unknown source');
 }
 /** @var string */
-$provider = Context::arg('_provider');
+$provider = Context::arg_string('_provider');
 if (!$source->providerActive($provider)) {
     throw new HttpError(404, 'Unknown provider');
 }
@@ -48,12 +43,12 @@ if (!$source->providerActive($provider)) {
 // include source handler file
 try {
     Router::include('_source/' . $source->name() . '.signin.php');
-} catch (RedirectException | RefreshException | ArbitraryRedirectException $r) {
+} catch (RedirectException|RefreshException|ArbitraryRedirectException $r) {
     throw $r;
 } catch (Throwable $th) {
     ExceptionLog::log($th);
     $url = Users::signinUrl(null);
-    $url->arg('_noredirect', 1);
+    $url->arg('_noredirect', true);
     Notifications::printError(sprintf(
         'Sign-in handler encountered an error. <a href="%s">Please try again</a>.',
         $url
@@ -140,7 +135,7 @@ if (Context::data('signin_provider_id')) {
     // as a fallback redirect to either profile page or sign in page
     $bounce = $bounce
         ?: Users::current()?->profile()
-        ?: new URL('/signin/');
+            ?: new URL('/signin/');
 
     // redirect to bounce target. Note that it uses the response->redirect()
     // method directly, because all this happens in a try/catch block and the

@@ -23,7 +23,7 @@ $name = (new Field('Page name'))
 
 $content = (new RichContentField('Body content'))
     ->setDefault('# [page_name]')
-    ->setPageUuid(Context::arg('uuid'))
+    ->setPageUuid(Context::arg_string('uuid'))
     ->setRequired(true);
 
 $url = (new Field('Set URL pattern'))
@@ -31,7 +31,7 @@ $url = (new Field('Set URL pattern'))
     ->setDefault('[name]')
     ->addTip('Add a leading slash to make pattern relative to site root, otherwise it will be relative to the page\'s parent URL (should you create a link that gives this page a parent URL).');
 
-$form = (new FormWrapper('add-' . Context::arg('uuid')))
+$form = (new FormWrapper('add-' . Context::arg_string('uuid')))
     ->addChild($name)
     ->addChild($content)
     ->addChild($url)
@@ -41,7 +41,7 @@ $form = (new FormWrapper('add-' . Context::arg('uuid')))
         $page = new Page(
             [],
             [
-                'uuid' => Context::arg('uuid')
+                'uuid' => Context::arg_string('uuid')
             ]
         );
         $page->slugPattern($url->value());

@@ -9,7 +9,7 @@ use DigraphCMS\UI\Notifications;
 use DigraphCMS\URL\URL;
 
 // display individual provider
-$provider = Context::arg('_provider');
+$provider = Context::arg_string('_provider');
 $config = Config::get("user_sources.cas.providers.$provider");
 echo "<h1>" . $config['name'] . "</h1>";
 
@@ -58,7 +58,7 @@ if (!@$config['mock_cas_user']) {
             phpCAS::forceAuthentication();
         }
         Context::data('signin_provider_id', phpCAS::getUser());
-    } catch (\Throwable $th) {
+    } catch (Throwable $th) {
         Notifications::flashError("CAS authentication failed. If this only happens for a brief period it is most likely due to timeouts or a transient network problem.");
     }
     // Context::data('cas_attributes', phpCAS::getAttributes());
@@ -68,7 +68,7 @@ if (!@$config['mock_cas_user']) {
     // exit();
 } else {
     // USE MOCK CAS USER
-    if (!Context::arg('_mockcasuser')) {
+    if (!Context::arg_string('_mockcasuser', true)) {
         $form = new FormWrapper('mock-cas-user');
         $form->setCaptcha(false);
         $username = new Field('Username');
@@ -81,6 +81,6 @@ if (!@$config['mock_cas_user']) {
         });
         echo $form;
     } else {
-        Context::data('signin_provider_id', Context::arg('_mockcasuser'));
+        Context::data('signin_provider_id', Context::arg_string('_mockcasuser'));
     }
 }

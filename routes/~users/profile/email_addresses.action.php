@@ -19,7 +19,7 @@ use DigraphCMS\Users\Users;
 
 Security::requireSecurityCheck();
 
-$user = Users::get(Context::arg('id') ?? Session::user());
+$user = Users::get(Context::arg_string('id')) ?? Users::current();
 if (!$user) throw new HttpError(404, "User not found");
 
 echo "<h1>Manage email addresses</h1>";

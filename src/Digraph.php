@@ -84,6 +84,14 @@ abstract class Digraph
             header('Content-Type: ' . static::inferMime());
             header('Content-Disposition: filename="' . static::inferFilename() . '"');
             Context::response()->renderContent();
+        } // handle HttpError exceptions somewhat gracefully
+        catch (HttpError $error) {
+            if ($error->status() >= 500) {
+                Security::flag('Server error');
+                ExceptionLog::log($error);
+            }
+            http_response_code($error->status());
+            echo Templates::fallbackError($error);
         } // last resort error message
         catch (Throwable $th) {
             Security::flag('Unhandled exception');
@@ -440,7 +448,7 @@ abstract class Digraph
         Context::response()->filename(intval(floor($status)) . '.html');
         $built =
             static::doStaticRoute('error', strval($status)) ??
-            static::doStaticRoute('error', strval(round($status))) ??
+            static::doStaticRoute('error', strval(floor($status))) ??
             static::doStaticRoute('error', floor($status / 100) . 'xx') ??
             static::doStaticRoute('error', 'xxx');
         if (!$built) {

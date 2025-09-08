@@ -3,7 +3,9 @@
 namespace DigraphCMS\UI;
 
 use DigraphCMS\Context;
+use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\URL\URL;
+use Exception;
 
 class TabInterface
 {
@@ -26,7 +28,7 @@ class TabInterface
 
     public function setTabLabel(string $id, string $label): static
     {
-        if (!isset($this->tabs[$id])) throw new \Exception("Tab ID $id not found");
+        if (!isset($this->tabs[$id])) throw new Exception("Tab ID $id not found");
         $this->tabs[$id][0] = $label;
         return $this;
     }
@@ -63,9 +65,11 @@ class TabInterface
 
     public function activeTab(): string
     {
-        if ($arg = Context::arg($this->arg())) {
+        if ($arg = Context::arg_string($this->arg())) {
             if (isset($this->tabs[$arg])) {
                 return $arg;
+            } else {
+                throw new HttpError(404);
             }
         }
         return $this->defaultTab();
@@ -99,6 +103,7 @@ class TabInterface
      * Set whether tabs should be vertical on the side instead of across the top
      *
      * @param boolean|null $vertical null indicates automatic
+     *
      * @return static
      */
     public function setVertical(?bool $vertical)
@@ -114,7 +119,6 @@ class TabInterface
             Notifications::printError('No tabs defined');
             return ob_get_clean();
         }
-        ;
         echo '<div class="tab-interface' . ($this->vertical() ? ' tab-interface--vertical' : '') . ' navigation-frame" data-target="_top" id="tab-interface-' . $this->id . '">' . PHP_EOL;
         if (count($this->tabs) > 1) {
             echo '<nav class="tab-interface-tabs">' . PHP_EOL;
