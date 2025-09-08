@@ -65,7 +65,7 @@ class TabInterface
 
     public function activeTab(): string
     {
-        if ($arg = Context::arg_string($this->arg())) {
+        if ($arg = Context::arg_string($this->arg(), true)) {
             if (isset($this->tabs[$arg])) {
                 return $arg;
             } else {
