@@ -12,7 +12,7 @@ use DigraphCMS\Security\Security;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\URL\URL;
 
-$id = Context::arg_string('frame') ?? 'captcha-interface';
+$id = Context::arg_string('frame', true) ?? 'captcha-interface';
 if (preg_match('/[^a-z0-9\-_]/i', $id)) throw new HttpError(400, 'Invalid argument');
 
 echo '<div class="captcha-interface" id="' . $id . '">';
