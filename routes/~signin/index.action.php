@@ -36,7 +36,7 @@ if ($bounce) {
 
 // handle single signin option by bouncing directly to it
 $urls = Users::allSigninURLs(Context::arg_string('_bounce', true));
-if (count($urls) == 1 && !Context::arg_bool('_noredirect')) {
+if (count($urls) == 1 && !Context::arg_bool('_noredirect', true)) {
     Context::response()->redirect(reset($urls));
     return;
 }
