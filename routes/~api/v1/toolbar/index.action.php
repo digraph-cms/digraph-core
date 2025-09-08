@@ -14,14 +14,14 @@ use DigraphCMS\Users\Permissions;
 Context::response()->template('chromeless.php');
 
 $page = Context::arg_string('uuid') ? Pages::get(Context::arg_string('uuid')) : null;
-$action = Context::arg_string('action');
-$only = Context::arg_string('only') ? explode(',', Context::arg_string('only')) : [];
+$action = Context::arg_string('action', true);
+$only = Context::arg_string('only', true) ? explode(',', Context::arg_string('only')) : [];
 
 $frame = Context::arg_string('frame');
 if (preg_match('/[^a-z0-9\-_]/i', $frame)) throw new HttpError(400, 'Invalid argument');
 echo '<div id="' . $frame . '">';
 
-if ($action && !preg_match('/[^a-z0-9\-\_]/', $action)) {
+if ($action && !preg_match('/[^a-z0-9\-_]/', $action)) {
     Router::include("$action.php");
     echo new ToolbarSpacer;
     echo (new ToolbarLink('Cancel', 'close', null, new URL('&action=')))
