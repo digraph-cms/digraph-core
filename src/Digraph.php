@@ -86,8 +86,8 @@ abstract class Digraph
             Context::response()->renderContent();
         } // handle HttpError exceptions somewhat gracefully
         catch (HttpError $error) {
-            if ($error->status() >= 500) {
-                Security::flag('Server error');
+            if ($error->status() >= 500 || $error->status() == 400) {
+                Security::flag('Suspicious error');
                 ExceptionLog::log($error);
             }
             http_response_code($error->status());
@@ -393,8 +393,8 @@ abstract class Digraph
             } catch (HttpError $error) {
                 // generate exception-handling page
                 try {
-                    if ($error->status() >= 500) {
-                        Security::flag('Server error');
+                    if ($error->status() >= 500 || $error->status() == 400) {
+                        Security::flag('Suspicious error');
                         ExceptionLog::log($error);
                     }
                     static::buildErrorContent($error->status(), $error->getMessage());
