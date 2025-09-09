@@ -7,7 +7,7 @@ use DigraphCMS\UI\TabInterface;
 use DigraphCMS\URL\URLs;
 use DigraphCMS\Users\Users;
 
-$user = Users::get(Context::arg_string('id'), true) ?? Users::current();
+$user = Users::get(Context::arg_string('id', true)) ?? Users::current();
 if (!$user) throw new HttpError(404);
 
 echo "<h1>User profile: " . $user->name() . "</h1>";

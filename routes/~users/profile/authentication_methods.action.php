@@ -19,7 +19,7 @@ use DigraphCMS\Users\Users;
 
 Security::requireSecurityCheck();
 
-$user = Users::get(Context::arg_string('id'), true) ?? Users::current();
+$user = Users::get(Context::arg_string('id', true)) ?? Users::current();
 if (!$user) throw new HttpError(404);
 
 $query = DB::query()
