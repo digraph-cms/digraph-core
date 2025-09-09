@@ -74,12 +74,10 @@ class Paginator extends ConditionalContainer
     public function page(): int
     {
         $page = Context::arg_int($this->arg(), true);
-        if ($page === 1) {
-            $url = clone Context::url();
-            $url->unsetArg($this->arg());
-            throw new RedirectException($url);
-        }
         if (is_null($page)) return 1;
+        if ($page === 1) {
+            throw new RedirectException(Context::url()->unsetArg($this->arg()));
+        }
         if ($page < 1) {
             throw new HttpError(400, 'Invalid argument');
         } elseif ($page > $this->pages()) {
