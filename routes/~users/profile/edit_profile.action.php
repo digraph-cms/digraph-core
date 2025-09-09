@@ -9,7 +9,7 @@ use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\Users\Users;
 
-$user = Users::get(Context::arg_string('id')) ?? Users::current();
+$user = Users::get(Context::arg_string('id'), true) ?? Users::current();
 if (!$user) throw new HttpError(404);
 
 echo "<h1>Edit profile: " . $user->name() . "</h1>";
