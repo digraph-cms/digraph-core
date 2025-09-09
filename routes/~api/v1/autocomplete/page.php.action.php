@@ -31,7 +31,7 @@ if (count($pages) < 100) {
     foreach (preg_split('/ +/', Context::arg_string('query', true)) as $word) {
         $query->like('name', $word);
     }
-    if ($class = Context::arg_string('class')) {
+    if ($class = Context::arg_string('class', true)) {
         $query->where('class', $class);
     }
     $pages = array_merge(
@@ -45,7 +45,7 @@ if (count($pages) < 100) {
     foreach (preg_split('/ +/', Context::arg_string('query', true)) as $word) {
         $query->like('name', $word, true, true, 'OR');
     }
-    if ($class = Context::arg_string('class')) {
+    if ($class = Context::arg_string('class', true)) {
         $query->where('class', $class);
     }
     $pages = array_merge(
