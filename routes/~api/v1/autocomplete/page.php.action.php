@@ -15,12 +15,12 @@ Context::response()->private(true);
 Context::response()->filename('response.json');
 
 // get exact results
-$pages = Pages::getAll(Context::arg_string('query'));
+$pages = Pages::getAll(Context::arg_string('query', true));
 // filter by class
-if ($class = Context::arg_string('class')) {
+if ($class = Context::arg_string('class', true)) {
     $pages = array_filter(
         $pages,
-        function (AbstractPage $page)use ($class) {
+        function (AbstractPage $page) use ($class) {
             return $page->class() == $class;
         }
     );
@@ -28,7 +28,7 @@ if ($class = Context::arg_string('class')) {
 // get stricter name matches
 if (count($pages) < 100) {
     $query = Pages::select()->limit(100);
-    foreach (preg_split('/ +/', Context::arg_string('query')) as $word) {
+    foreach (preg_split('/ +/', Context::arg_string('query', true)) as $word) {
         $query->like('name', $word);
     }
     if ($class = Context::arg_string('class')) {
@@ -42,7 +42,7 @@ if (count($pages) < 100) {
 // get looser name matches
 if (count($pages) < 100) {
     $query = Pages::select()->limit(100);
-    foreach (preg_split('/ +/', Context::arg_string('query')) as $word) {
+    foreach (preg_split('/ +/', Context::arg_string('query', true)) as $word) {
         $query->like('name', $word, true, true, 'OR');
     }
     if ($class = Context::arg_string('class')) {
@@ -59,7 +59,7 @@ $pages = array_map(
     function (AbstractPage $page) {
         return [
             $page,
-            Dispatcher::firstValue('onScorePageResult', [$page, Context::arg_string('query')])
+            Dispatcher::firstValue('onScorePageResult', [$page, Context::arg_string('query', true)])
         ];
     },
     $pages
@@ -84,7 +84,7 @@ $pages = array_unique($pages, SORT_REGULAR);
 echo json_encode(
     array_map(
         function (AbstractPage $page) {
-            return Dispatcher::firstValue('onPageAutocompleteCard', [$page, Context::arg_string('query')]);
+            return Dispatcher::firstValue('onPageAutocompleteCard', [$page, Context::arg_string('query', true)]);
         },
         array_slice($pages, 0, 50)
     )
