@@ -72,7 +72,7 @@ abstract class CoreEventSubscriber
             if ($item instanceof MenuItem) {
                 $url = $item->url();
                 if ($url && $url->route() == 'users/profile') {
-                    $url->arg('id', Context::arg_string('id', true) ?? Session::user());
+                    $url->setArg('id', Context::arg_string('id', true) ?? Session::user());
                     $menu->removeChild($item);
                     $new = $menu->addURL($url, $item->label());
                     foreach ($item->classes() as $class) {
@@ -376,14 +376,14 @@ abstract class CoreEventSubscriber
         // limit list to users__view
         if ($url->route() == 'users') return Permissions::inMetaGroup('users__view', $user);
         // if user is specified limit routes for the user being viewed/edited and admins
-        if ($url->route() == 'users/profile' && $url->arg('id')) {
+        if ($url->route() == 'users/profile' && $url->getArg('id', true)) {
             if ($url->action() == 'index') {
                 // viewing profiles set to users__view
-                return ($url->arg('id') == $user->uuid() && $user->uuid() != 'guest')
+                return ($url->arg_string('id', true) == $user->uuid() && $user->uuid() != 'guest')
                     || Permissions::inMetaGroup('users__view', $user);
             } else {
                 // everything else limited to users__admin
-                return ($url->arg('id') == $user->uuid() && $user->uuid() != 'guest')
+                return ($url->arg_string('id', true) == $user->uuid() && $user->uuid() != 'guest')
                     || Permissions::inMetaGroup('users__admin', $user);
             }
         }
@@ -417,9 +417,9 @@ abstract class CoreEventSubscriber
     {
         if ($url->action() == 'index') {
             $user = null;
-            if ($url->arg('id') && $user = Users::get($url->arg('id'))) {
+            if ($url->arg_string('id', true) && $user = Users::get($url->arg_string('id'))) {
                 // does nothing, assigned in statement above
-            } elseif (!$url->arg('id')) {
+            } elseif (!$url->arg_string('id', true)) {
                 $user = Users::current() ?? Users::guest();
             }
             if ($user) {
@@ -439,8 +439,8 @@ abstract class CoreEventSubscriber
      */
     public static function onStaticUrlParent_users_profile(URL $url): ?URL
     {
-        if ($url->action() != 'index' && $url->arg('id')) {
-            return new URL('/users/profile/?id=' . $url->arg('id'));
+        if ($url->action() != 'index' && $url->getArg('id', true)) {
+            return (new URL('/users/profile/'))->setArg('id', $url->arg_string('id'));
         }
         return null;
     }

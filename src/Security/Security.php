@@ -33,9 +33,9 @@ class Security
     public static function captchaUrl(string|null $frame = null): URL
     {
         $url = new URL('/~captcha/');
-        $url->arg('bounce', Context::url()->__toString());
+        $url->setArg('bounce', Context::url()->__toString());
         if ($frame) {
-            $url->arg('frame', $frame);
+            $url->setArg('frame', $frame);
         }
         return $url;
     }

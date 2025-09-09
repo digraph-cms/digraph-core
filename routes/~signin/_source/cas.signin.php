@@ -76,7 +76,7 @@ if (!@$config['mock_cas_user']) {
         $form->addChild($username);
         $form->addCallback(function () use ($username) {
             $url = clone Context::url();
-            $url->arg('_mockcasuser', $username->value());
+            $url->setArg('_mockcasuser', $username->value());
             throw new RedirectException($url);
         });
         echo $form;

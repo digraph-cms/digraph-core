@@ -85,9 +85,9 @@ class TabInterface
 
     public function url(string $id): URL
     {
-        $url = Context::url();
-        $url->arg($this->arg(), $id);
-        return $url;
+        if ($id == $this->activeTab()) $id = null;
+        return Context::url()
+            ->setArg($this->arg(), $id);
     }
 
     public function vertical(): bool

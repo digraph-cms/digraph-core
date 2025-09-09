@@ -89,7 +89,7 @@ class PaginatedSection extends Tag
             $finalConfig[] = [$tool, $config];
         }
         $url = Context::url();
-        if ($finalConfig) $url->arg('filter_' . $this->id(), json_encode($finalConfig));
+        if ($finalConfig) $url->setArg('filter_' . $this->id(), json_encode($finalConfig));
         else $url->unsetArg('filter_' . $this->id());
         return $url;
     }
@@ -265,7 +265,7 @@ class PaginatedSection extends Tag
             // link to initialize
             $url = clone Context::url();
             $url->unsetArg($this->paginator()->arg());
-            $url->arg($arg, true);
+            $url->setArg($arg, true);
             $out .= sprintf(
                 '<a href="%s" class="button" rel="nofollow">%s%s</a>',
                 $url,

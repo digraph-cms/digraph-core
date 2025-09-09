@@ -42,20 +42,20 @@ abstract class Context
         // ensure arg exists
         if (!static::arg_string('uuid', true)) {
             $url = Context::url();
-            $url->arg('uuid', Digraph::uuid());
+            $url->setArg('uuid', Digraph::uuid());
             throw new RedirectException($url);
         }
         // validate UUID
         if (!Digraph::validateUUID(Context::arg_string('uuid'))) {
             $url = Context::url();
-            $url->arg('uuid', Digraph::uuid());
+            $url->setArg('uuid', Digraph::uuid());
             throw new RedirectException($url);
         }
         // check with passed-in class
         if ($checkWith) {
             if ($checkWith::exists(Context::arg_string('uuid'))) {
                 $url = Context::url();
-                $url->arg('uuid', Digraph::uuid());
+                $url->setArg('uuid', Digraph::uuid());
                 throw new RedirectException($url);
             }
         }
@@ -93,7 +93,7 @@ abstract class Context
      */
     public static function arg(string $key): mixed
     {
-        return static::$request?->url()->arg($key);
+        return static::$request?->url()->getArg($key, true);
     }
 
     /**

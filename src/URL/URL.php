@@ -13,6 +13,7 @@ use DigraphCMS\SafeContent\Sanitizer;
 use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\User;
 use Exception;
+use Stringable;
 
 /**
  * A URL represents a URL within the site defined by URL::$siteHost and
@@ -108,6 +109,8 @@ class URL
      *                              effective.
      *
      * @return static
+     *
+     * @deprecated
      */
     public function utm(
         string $source,
@@ -117,11 +120,11 @@ class URL
         string $content = null,
     ): static
     {
-        $this->arg('utm_source', $source);
-        $this->arg('utm_medium', $medium);
-        $this->arg('utm_campaign', $campaign);
-        if ($term) $this->arg('utm_term', $term);
-        if ($content) $this->arg('utm_content', $content);
+        $this->setArg('utm_source', $source);
+        $this->setArg('utm_medium', $medium);
+        $this->setArg('utm_campaign', $campaign);
+        if ($term) $this->setArg('utm_term', $term);
+        if ($content) $this->setArg('utm_content', $content);
         return $this;
     }
 
@@ -157,8 +160,7 @@ class URL
      */
     public function arg_string(string $key, bool $nullable = false): string|null
     {
-        $value = $this->arg($key);
-        if (is_null($value) && !$nullable) throw new HttpError(400, "Missing argument '$key'");
+        $value = $this->getArg($key, $nullable);
         if (is_null($value)) return null;
         $typed_value = strval($value);
         if ($value != $typed_value) throw new HttpError(400, "Invalid argument '$key'");
@@ -178,8 +180,7 @@ class URL
      */
     public function arg_int(string $key, bool $nullable = false): int|null
     {
-        $value = $this->arg($key);
-        if (is_null($value) && !$nullable) throw new HttpError(400, "Missing argument '$key'");
+        $value = $this->getArg($key, $nullable);
         if (is_null($value)) return null;
         $typed_value = intval($value);
         if ($value != $typed_value) throw new HttpError(400, "Invalid argument '$key'");
@@ -198,8 +199,7 @@ class URL
      */
     public function arg_bool(string $key, bool $nullable = false): bool|null
     {
-        $value = $this->arg($key);
-        if (is_null($value) && !$nullable) throw new HttpError(400, "Missing argument '$key'");
+        $value = $this->getArg($key, $nullable);
         if ($value == '1') return true;
         elseif ($value == '0') return false;
         elseif (is_null($value)) return null;
@@ -472,10 +472,44 @@ class URL
     {
         if ($query !== null) {
             foreach ($query as $key => $value) {
-                $this->arg($key, $value);
+                $this->setArg($key, $value);
             }
         }
         return $this->query;
+    }
+
+    public function setArg(string $name, mixed $value): static
+    {
+        if (is_null($value)) return $this->unsetArg($name);
+        // make sure there's nothing untoward in the value
+        if ($value instanceof Stringable) $value = strval($value);
+        $is_string = is_string($value);
+        $is_int = is_int($value);
+        $is_float = is_float($value);
+        $is_bool = is_bool($value);
+        if (!$is_string && !$is_int && !$is_float && !$is_bool) throw new HttpError(400, "Invalid argument value");
+        if ($is_string) {
+            // if it's a string, sanitize it and see if it changed, if so it was suspicious or invalid
+            $sanitized = trim($value);
+            $sanitized = filter_var($sanitized, FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW);
+            if ($sanitized != $value) throw new HttpError(400, "Invalid argument value");
+        } elseif ($is_bool) {
+            // if it's a bool, set it to 1 or 0
+            $value = $value ? '1' : '0';
+        } else {
+            // otherwise just string it
+            $value = strval($value);
+        }
+        // set and sort the arguments
+        $this->query[$name] = strval($value);
+        ksort($this->query);
+        return $this;
+    }
+
+    public function getArg(string $name, bool $nullable = false): mixed
+    {
+        if (is_null(@$this->query[$name]) && !$nullable) throw new HttpError(400, "Missing argument '$name'");
+        return @$this->query[$name];
     }
 
     /**
@@ -488,32 +522,13 @@ class URL
      * @return string|null
      *
      * @throws HttpError on set if the value is suspicious/unsafe
+     *
+     * @deprecated use getArg/setArg and the typed arg_{type} getter methods instead
      */
     public function arg(string $name, mixed $value = null): ?string
     {
-        if ($value !== null) {
-            // make sure there's nothing untoward in the value
-            if ($value instanceof \Stringable) $value = strval($value);
-            $is_string = is_string($value);
-            $is_int = is_int($value);
-            $is_float = is_float($value);
-            $is_bool = is_bool($value);
-            if (!$is_string && !$is_int && !$is_float && !$is_bool) throw new HttpError(400, "Invalid argument value");
-            if ($is_string) {
-                // if it's a string, sanitize it and see if it changed, if so it was suspicious or invalid
-                $sanitized = trim($value);
-                $sanitized = filter_var($sanitized, FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW);
-                if ($sanitized != $value) throw new HttpError(400, "Invalid argument value");
-            } elseif ($is_bool) {
-                // if it's a bool, set it to 1 or 0
-                $value = $value ? '1' : '0';
-            } else {
-                // otherwise just string it
-                $value = strval($value);
-            }
-            // set and sort the arguments
-            $this->query[$name] = strval($value);
-            ksort($this->query);
+        if (!is_null($value)) {
+            $this->setArg($name, $value);
         }
         return @$this->query[$name];
     }

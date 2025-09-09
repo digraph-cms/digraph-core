@@ -23,6 +23,7 @@ abstract class Users
      * @param string $userUUID
      * @param string $source
      * @param string $provider
+     *
      * @return string[]
      */
     public static function providerIDs(string $userUUID, string $source, string $provider): array
@@ -45,6 +46,7 @@ abstract class Users
      * @param string $source
      * @param string $provider
      * @param string $id
+     *
      * @return User|null
      */
     public static function locateUser(string $source, string $provider, string $id): ?User
@@ -135,6 +137,7 @@ abstract class Users
      * Get all groups a user belongs to
      *
      * @param string $user_uuid
+     *
      * @return Group[]
      */
     public static function groups(string $user_uuid): array
@@ -158,7 +161,7 @@ abstract class Users
     {
         $bounce = $bounce ?? Context::url();
         $url = new URL('/signin/');
-        $url->arg('_bounce', $bounce);
+        $url->setArg('_bounce', $bounce);
         return $url;
     }
 
@@ -169,43 +172,13 @@ abstract class Users
             $bounce = null;
         }
         $url = new URL('/signout/');
-        $url->arg('_bounce', $bounce);
+        $url->setArg('_bounce', $bounce);
         return $url;
     }
 
     public static function randomName(string $seed = null): string
     {
         return Dispatcher::firstValue('onRandomName', [$seed]) ?? static::doRandomName($seed);
-    }
-
-    protected static function doRandomName(string $seed = null): string
-    {
-        static $animals;
-        static $adjectives;
-        if (!$animals) {
-            $animals = preg_split('/[\r\n]+/', trim(file_get_contents(__DIR__ . '/animals.txt')));
-        }
-        if (!$adjectives) {
-            $adjectives = preg_split('/[\r\n]+/', trim(file_get_contents(__DIR__ . '/adjectives.txt')));
-        }
-        // seed random generator if necessary
-        if ($seed) {
-            mt_srand(crc32($seed));
-        } else {
-            mt_srand(rand());
-        }
-        // generate name
-        $adjective = $adjectives[mt_rand(0, count($adjectives) - 1)];
-        $adjective_start = substr($adjective, 0, 1);
-        $animals_filtered = array_values(array_filter(
-            $animals,
-            function ($e) use ($adjective_start) {
-                return substr($e, 0, 1) == $adjective_start;
-            }
-        ));
-        $animal = $animals_filtered[mt_rand(0, count($animals_filtered) - 1)];
-        // return name
-        return ucwords("$adjective $animal");
     }
 
     public static function current(): ?User
@@ -221,6 +194,7 @@ abstract class Users
      * Get the top result for a given UUID
      *
      * @param string|null $uuid
+     *
      * @return User|null
      */
     public static function get(?string $uuid): ?User
@@ -236,6 +210,7 @@ abstract class Users
      * Return whether or not a given user UUID exists in the database
      *
      * @param string $uuid
+     *
      * @return boolean
      */
     public static function exists(string $uuid): bool
@@ -252,6 +227,7 @@ abstract class Users
      * users.
      *
      * @param string $uuid
+     *
      * @return User
      */
     public static function user(string|null $uuid): User
@@ -333,18 +309,6 @@ abstract class Users
             ->execute();
     }
 
-    protected static function doGet(string $uuid): ?User
-    {
-        $query = DB::query()->from('user')
-            ->where('uuid = ?', [$uuid]);
-        $result = $query->execute();
-        if ($result = $result->fetch()) {
-            return static::resultToUser($result);
-        } else {
-            return null;
-        }
-    }
-
     public static function resultToUser($result): ?User
     {
         if (!is_array($result)) {
@@ -385,6 +349,7 @@ abstract class Users
 
     /**
      * @param string $name
+     *
      * @return AbstractUserSource|null
      */
     public static function source(string $name): ?AbstractUserSource
@@ -397,5 +362,47 @@ abstract class Users
             }
         }
         return static::$sources[$name];
+    }
+
+    protected static function doRandomName(string $seed = null): string
+    {
+        static $animals;
+        static $adjectives;
+        if (!$animals) {
+            $animals = preg_split('/[\r\n]+/', trim(file_get_contents(__DIR__ . '/animals.txt')));
+        }
+        if (!$adjectives) {
+            $adjectives = preg_split('/[\r\n]+/', trim(file_get_contents(__DIR__ . '/adjectives.txt')));
+        }
+        // seed random generator if necessary
+        if ($seed) {
+            mt_srand(crc32($seed));
+        } else {
+            mt_srand(rand());
+        }
+        // generate name
+        $adjective = $adjectives[mt_rand(0, count($adjectives) - 1)];
+        $adjective_start = substr($adjective, 0, 1);
+        $animals_filtered = array_values(array_filter(
+            $animals,
+            function ($e) use ($adjective_start) {
+                return substr($e, 0, 1) == $adjective_start;
+            }
+        ));
+        $animal = $animals_filtered[mt_rand(0, count($animals_filtered) - 1)];
+        // return name
+        return ucwords("$adjective $animal");
+    }
+
+    protected static function doGet(string $uuid): ?User
+    {
+        $query = DB::query()->from('user')
+            ->where('uuid = ?', [$uuid]);
+        $result = $query->execute();
+        if ($result = $result->fetch()) {
+            return static::resultToUser($result);
+        } else {
+            return null;
+        }
     }
 }

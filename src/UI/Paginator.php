@@ -248,11 +248,11 @@ class Paginator extends ConditionalContainer
 
     protected function url(int $page): URL
     {
-        $url = clone Context::request()->url();
+        $url = Context::request()->url();
         if ($page == 1) {
             $url->unsetArg($this->arg());
         } else {
-            $url->arg($this->arg(), $page);
+            $url->setArg($this->arg(), $page);
         }
         return $url;
     }

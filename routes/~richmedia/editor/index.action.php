@@ -24,8 +24,8 @@ echo '<div id="rich-media-editor__buttons">';
 // delete button
 if (!Context::arg_string('add', true)) {
     $delete = new URL('../delete/');
-    $delete->arg('frame', Context::arg_string('frame'));
-    $delete->arg('uuid', Context::arg_string('uuid'));
+    $delete->setArg('frame', Context::arg_string('frame'));
+    $delete->setArg('uuid', Context::arg_string('uuid'));
     echo "<a href='$delete' id='data--delete' class='button button--danger'>Delete</a>";
 }
 // spacer

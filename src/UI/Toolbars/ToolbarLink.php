@@ -150,10 +150,9 @@ class ToolbarLink extends Tag
 
     public function executionURL(): URL
     {
-        $url = Context::url();
-        $url->arg('__tblink', $this->id());
-        $url->arg('__tblinkcsrf', Cookies::csrfToken('links'));
-        return $url;
+        return Context::url()
+            ->setArg('__tblink', $this->id())
+            ->setArg('__tblinkcsrf', Cookies::csrfToken('links'));
     }
 
     public function classes(): array

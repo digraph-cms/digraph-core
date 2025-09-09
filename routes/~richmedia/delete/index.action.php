@@ -23,8 +23,8 @@ echo '<p>This action cannot be undone.</p>';
 echo '<div style="display:flex;">';
 
 $edit = new URL('../editor/');
-$edit->arg('frame', Context::arg_string('frame'));
-$edit->arg('uuid', Context::arg_string('uuid'));
+$edit->setArg('frame', Context::arg_string('frame'));
+$edit->setArg('uuid', Context::arg_string('uuid'));
 echo '<a href="' . $edit . '" class="button button--neutral">Back to editing</a>';
 
 echo new ToolbarSpacer;

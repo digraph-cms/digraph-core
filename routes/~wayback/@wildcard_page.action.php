@@ -36,7 +36,7 @@ echo Templates::render(
 
 // add management URL
 $manageUrl = new URL('_manage.html');
-$manageUrl->arg('url', $result->data()['original_url']);
-$manageUrl->arg('context', $result->data()['context']);
+$manageUrl->setArg('url', $result->data()['original_url']);
+$manageUrl->setArg('context', $result->data()['context']);
 $manageUrl->setName('Manage this link');
 ActionMenu::addContextAction($manageUrl);

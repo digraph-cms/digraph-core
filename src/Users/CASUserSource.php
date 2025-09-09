@@ -16,7 +16,7 @@ class CASUserSource extends AbstractUserSource
         $urls = [];
         foreach ($this->providers() as $id) {
             $url = $this->signinUrl();
-            $url->arg('_provider',$id);
+            $url->setArg('_provider',$id);
             $url->setName(Config::get("user_sources.cas.providers.$id.name"));
             $urls[$this->name()."_$id"] = $url;
         }

@@ -21,7 +21,7 @@ class OAuth2UserSource extends AbstractUserSource
         $urls = [];
         foreach ($this->providers() as $id) {
             $url = $this->signinUrl();
-            $url->arg('_provider', $id);
+            $url->setArg('_provider', $id);
             $url->setName(Config::get("user_sources.oauth2.providers.$id.name"));
             $urls[$this->name() . "_$id"] = $url;
         }
@@ -49,8 +49,8 @@ class OAuth2UserSource extends AbstractUserSource
     public function redirectUrl($provider)
     {
         $url = new URL('/signin/_signin.html');
-        $url->arg('_provider', $provider);
-        $url->arg('_source', $this->name());
+        $url->setArg('_provider', $provider);
+        $url->setArg('_source', $this->name());
         $url->normalize();
         $url = $url->__toString();
         $url = preg_replace('@^//@', URLs::siteProtocol() . '://', $url);
