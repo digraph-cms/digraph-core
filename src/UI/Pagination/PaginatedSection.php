@@ -263,9 +263,12 @@ class PaginatedSection extends Tag
             $out .= sprintf('<script>document.getElementById("%s").click();</script>', $arg);
         } else {
             // link to initialize
+            $url = clone Context::url();
+            $url->unsetArg($this->paginator()->arg());
+            $url->arg($arg, true);
             $out .= sprintf(
                 '<a href="%s" class="button" rel="nofollow">%s%s</a>',
-                new URL('&' . $arg . '=1'),
+                $url,
                 $this->dl_button,
                 $this->getFilterConfig() ? ' (filtered)' : '',
             );
