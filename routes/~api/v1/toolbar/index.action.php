@@ -13,7 +13,7 @@ use DigraphCMS\Users\Permissions;
 
 Context::response()->template('chromeless.php');
 
-$page = Context::arg_string('uuid') ? Pages::get(Context::arg_string('uuid')) : null;
+$page = Pages::get(Context::arg_string('uuid', true));
 $action = Context::arg_string('action', true);
 $only = Context::arg_string('only', true) ? explode(',', Context::arg_string('only')) : [];
 
