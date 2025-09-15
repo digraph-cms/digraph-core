@@ -4,11 +4,6 @@ namespace DigraphCMS\Cron;
 
 class WeeklySchedule extends Schedule
 {
-    /** @var string[] */
-    protected $days = [];
-    /** @var int[] */
-    protected $hours = [];
-
     const MONDAY = 'Monday';
     const TUESDAY = 'Tuesday';
     const WEDNESDAY = 'Wednesday';
@@ -17,14 +12,26 @@ class WeeklySchedule extends Schedule
     const SATURDAY = 'Saturday';
     const SUNDAY = 'Sunday';
 
+    const WEEKDAYS = [self::MONDAY, self::TUESDAY, self::WEDNESDAY, self::THURSDAY, self::FRIDAY];
+    const WEEKENDS = [self::SATURDAY, self::SUNDAY];
+    const WEEKNIGHTS = [self::SUNDAY, self::MONDAY, self::TUESDAY, self::WEDNESDAY, self::THURSDAY];
+    const MWF = [self::MONDAY, self::WEDNESDAY, self::FRIDAY];
+    const TR = [self::TUESDAY, self::THURSDAY];
+
+    /** @var string[] */
+    protected $days = [];
+    /** @var int[] */
+    protected $hours = [];
+
     /**
      * @param integer|integer[] $hours 0-23
-     * @param string|string[] $days constants or valid string representations for use in strtotime()
+     * @param string|string[]   $days  constants or valid string representations for use in strtotime()
      */
     public function __construct(
-        int|array $hours,
+        int|array    $hours,
         string|array $days,
-    ) {
+    )
+    {
         // set up hours
         if (!is_array($hours)) $hours = [$hours];
         $this->hours = $hours;
