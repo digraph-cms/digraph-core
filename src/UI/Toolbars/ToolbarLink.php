@@ -37,7 +37,7 @@ class ToolbarLink extends Tag
     public function toString(): string
     {
         if (is_callable($this->command())) {
-            if (Context::arg_string('__tblink') == $this->id()) {
+            if (Context::arg_string('__tblink', true) == $this->id()) {
                 if (Context::arg_string('__tblinkcsrf') == Cookies::csrfToken('links')) {
                     // execute callback
                     call_user_func($this->command());
