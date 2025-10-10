@@ -27,6 +27,8 @@ class SafeBBCode
 
     const NUISANCE_TAGS = [
         'size',
+        'color',
+        'font',
     ];
 
     public static function loadEditorMedia()
@@ -73,6 +75,13 @@ class SafeBBCode
         $string = SafeBBCodeHtmlParser::parse($string);
         $string = "<div class='safe-bbcode-content'>$string</div>";
         return $string;
+    }
+
+    public static function tag_email(ShortcodeInterface $s): ?string
+    {
+        $email = $s->getBbCode() ?? $s->getContent();
+        $content = $s->getContent() ? $s->getContent() : $email;
+        return Format::base64obfuscate(sprintf('<a href="mailto:%s">%s</a>', $email, $content));
     }
 
     protected static function parser(): Processor
@@ -130,13 +139,6 @@ class SafeBBCode
         return null;
     }
 
-    public static function tag_email(ShortcodeInterface $s): ?string
-    {
-        $email = $s->getBbCode() ?? $s->getContent();
-        $content = $s->getContent() ? $s->getContent() : $email;
-        return Format::base64obfuscate(sprintf('<a href="mailto:%s">%s</a>', $email, $content));
-    }
-
     /**
      * Note that unlike the handlers for full-on shortcodes in rich content,
      * this class does not use the global Dispatcher. Safe BBCode is intended to
@@ -144,6 +146,7 @@ class SafeBBCode
      * less safe than the default implementation.
      *
      * @param ShortcodeInterface $s
+     *
      * @return string|null
      */
     protected static function codeHandler(ShortcodeInterface $s): ?string
