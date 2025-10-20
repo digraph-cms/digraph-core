@@ -470,8 +470,8 @@ class URL
      */
     public function query(array $query = null): array
     {
-        $this->query = [];
         if ($query !== null) {
+            $this->query = [];
             foreach ($query as $key => $value) {
                 $this->setArg($key, $value);
             }
