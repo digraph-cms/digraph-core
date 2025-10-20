@@ -24,6 +24,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Ods;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use RuntimeException;
+use Throwable;
 use function method_exists;
 
 class PaginatedSection extends Tag
@@ -249,7 +250,12 @@ class PaginatedSection extends Tag
     {
         $out = "<div class='paginated-section__download navigation-frame navigation-frame--stateless' id='" . $this->id() . "__download'>";
         $arg = 'dl_' . md5($this->id());
-        if (Context::arg_bool($arg, true)) {
+        try {
+            $arg_val = Context::arg_bool($arg, true);
+        } catch (Throwable) {
+            $arg_val = false;
+        }
+        if ($arg_val) {
             // prepare download and display link to it
             $file = $this->downloadFile();
             $out .= sprintf(
