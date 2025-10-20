@@ -2,11 +2,14 @@
 <p>
     This log holds all recently-recorded PHP thrown exceptions/errors, and responses with HTTP status codes >= 500.
     By default exceptions are retained for 30 days.
-    Exception logs contain all data submitted by the user in the request that led to the error, and may contain personally-identifiable information.
+    Exception logs contain all data submitted by the user in the request that led to the error, and may contain
+    personally-identifiable information.
 </p>
 <?php
 
 use DigraphCMS\Config;
+use DigraphCMS\Spreadsheets\CellWriters\DateTimeCell;
+use DigraphCMS\Spreadsheets\CellWriters\UserCell;
 use DigraphCMS\UI\Format;
 use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\URL\URL;
@@ -19,7 +22,7 @@ foreach ($dayDirs as $dayDir) {
     $date = DateTime::createFromFormat('Ymd', basename($dayDir));
     $files = array_reverse(glob("$dayDir/*.json"));
     echo '<h2>' . Format::date($date) . ' (' . count($files) . ')</h2>';
-    echo new PaginatedTable(
+    $table = new PaginatedTable(
         $files,
         function (string $path): array {
             $name = basename($path);
@@ -27,7 +30,7 @@ foreach ($dayDirs as $dayDir) {
             $data = json_decode(file_get_contents($path), true, 512, JSON_INVALID_UTF8_SUBSTITUTE);
             try {
                 $url = new URL($data['url']);
-            } catch (\Throwable $th) {
+            } catch (Throwable $th) {
                 $url = $data['url'];
             }
             return [
@@ -50,4 +53,32 @@ foreach ($dayDirs as $dayDir) {
             'User',
         ]
     );
+    $table->download(
+        $date->format('Y-m-d') . ' exception log',
+        function (string $path) {
+            $name = basename($path);
+            $time = intval(explode(' ', $name)[0]);
+            $data = json_decode(file_get_contents($path), true, 512, JSON_INVALID_UTF8_SUBSTITUTE);
+            try {
+                $url = new URL($data['url']);
+            } catch (Throwable $th) {
+                $url = $data['url'];
+            }
+            return [
+                @$data['_SERVER']['REMOTE_ADDR'],
+                new DateTimeCell($time),
+                $data['thrown']['message'] ?: $data['thrown']['class'],
+                $url instanceof URL ? $url->fullPathString() : "<em>$url</em>",
+                new UserCell(Users::user($data['user'])),
+            ];
+        },
+        [
+            'IP',
+            'Time',
+            'Message',
+            'URL',
+            'User',
+        ]
+    );
+    echo $table;
 }
