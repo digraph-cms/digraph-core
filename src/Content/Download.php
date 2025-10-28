@@ -4,6 +4,7 @@ namespace DigraphCMS\Content;
 
 use DigraphCMS\Cache\Cache;
 use DigraphCMS\Context;
+use DigraphCMS\DB\DBConnectionException;
 use DigraphCMS\Digraph;
 use DigraphCMS\FS;
 use DigraphCMS\HTML\A;
@@ -14,6 +15,7 @@ use DigraphCMS\UI\Format;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\User;
+use Envms\FluentPDO\Exception;
 use Stringable;
 use ZipArchive;
 
@@ -109,11 +111,19 @@ class Download extends AbstractPage
         );
     }
 
+    /**
+     * Get the file that will be downloaded by the user. Note that if there are no files uploaded, this will be an
+     * empty zip file.
+     * 
+     * @return File 
+     * @throws DBConnectionException 
+     * @throws Exception 
+     */
     public function download(): File
     {
-        $files = $this->files();
-        if (count($files) == 1) {
-            return $files->fetch();
+        $count = $this->files()->count();
+        if ($count === 1) {
+            return $this->files()->fetch();
         } else {
             return $this->zipFile();
         }
