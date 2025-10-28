@@ -264,7 +264,7 @@ class Security
             isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'http',
             $_SERVER['HTTP_HOST'],
             $_SERVER['REQUEST_URI'],
-            $_SERVER['QUERY_STRING'] ? '?' . $_SERVER['QUERY_STRING'] : ''
+            @$_SERVER['QUERY_STRING'] ? '?' . @$_SERVER['QUERY_STRING'] : ''
         );
     }
 

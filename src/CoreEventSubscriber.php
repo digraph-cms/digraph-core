@@ -24,8 +24,8 @@ use DigraphCMS\URL\WaybackMachine;
 use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
-use DOMComment;
 use DOMElement;
+
 use function DigraphCMS\Content\require_file;
 
 abstract class CoreEventSubscriber
@@ -170,7 +170,6 @@ abstract class CoreEventSubscriber
 
     public static function onDOMComment(DOMEvent $e): void
     {
-        /** @var DOMComment */
         $comment = trim($e->getNode()->textContent);
         switch ($comment) {
             case 'wayback-disable-notifications':
@@ -253,13 +252,10 @@ abstract class CoreEventSubscriber
 
     /**
      * Build a card for a page in the results of an autocomplete field.
-     *
-     * @param AbstractPage $page
-     * @param string|null  $query
-     *
+     * 
      * @return array<string,string>
      */
-    public static function onPageAutocompleteCard(AbstractPage $page, string $query = null): array
+    public static function onPageAutocompleteCard(AbstractPage $page, string|null $query = null): array
     {
         $name = $page->name();
         $url = $page->url();
@@ -280,12 +276,9 @@ abstract class CoreEventSubscriber
     /**
      * Build a card for a page in the results of an autocomplete field.
      *
-     * @param User        $user
-     * @param string|null $query
-     *
      * @return array<string,string>
      */
-    public static function onUserAutoCompleteCard(User $user, string $query = null): array
+    public static function onUserAutoCompleteCard(User $user, string|null $query = null): array
     {
         $name = $user->name();
         if ($query) {

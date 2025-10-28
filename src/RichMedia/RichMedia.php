@@ -15,12 +15,8 @@ class RichMedia
 
     /**
      * Quickly determine whether a given UUID exists.
-     *
-     * @param string $uuid
-     * @param string|null $parent
-     * @return bool
      */
-    public static function exists(string $uuid, string $parent = null): bool
+    public static function exists(string $uuid, string|null $parent = null): bool
     {
         $query = DB::query()->from('rich_media')
             ->where('uuid = ?', [$uuid]);
@@ -32,11 +28,8 @@ class RichMedia
 
     /**
      * Generate a RichMediaSelect object for building queries to the pages table
-     *
-     * @param string|null $parent
-     * @return RichMediaSelect
      */
-    public static function select(string $parent = null): RichMediaSelect
+    public static function select(string|null $parent = null): RichMediaSelect
     {
         $query = DB::query()->from('rich_media');
         if ($parent) {
@@ -47,12 +40,8 @@ class RichMedia
 
     /**
      * Get all Media that match the given UUID, and optionally page UUID
-     * 
-     * @param string $uuid
-     * @param string|null $parent
-     * @return AbstractRichMedia|null
      */
-    public static function get(string $uuid, string $parent = null): ?AbstractRichMedia
+    public static function get(string $uuid, string|null $parent = null): ?AbstractRichMedia
     {
         if (!isset(static::$cache[$uuid])) {
             $query = static::select()
@@ -180,9 +169,6 @@ class RichMedia
      */
     public static function resultToMedia(array $result): ?AbstractRichMedia
     {
-        if (!is_array($result)) {
-            return null;
-        }
         if (isset(static::$cache[$result['uuid']])) {
             return static::$cache[$result['uuid']];
         }

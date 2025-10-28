@@ -42,13 +42,8 @@ class Pages
     /**
      * Insert a link of the specified type between $start and $end. If no type
      * is specified the default type from Graph will be used
-     *
-     * @param string $start
-     * @param string $end
-     * @param string $type
-     * @return void
      */
-    public static function insertLink(string $start, string $end, string $type = null)
+    public static function insertLink(string $start, string $end, string|null $type = null)
     {
         if (!$type) {
             $start_page = Pages::get($start);
@@ -74,13 +69,8 @@ class Pages
      * Delete link(s) matching the given criteria. If a type is specified only
      * the link of that type will be removed, otherwise all links between $start
      * and $end will be deleted.
-     *
-     * @param string $start
-     * @param string $end
-     * @param string $type
-     * @return void
      */
-    public static function deleteLink(string $start, string $end, string $type = null)
+    public static function deleteLink(string $start, string $end, string|null $type = null)
     {
         $query = DB::query()->deleteFrom('page_link');
         $query->where('start_page = ? AND end_page = ?', [$start, $end]);
@@ -232,7 +222,7 @@ class Pages
         DB::commit();
     }
 
-    public static function insert(AbstractPage $page, string $parent_uuid = null, string $edge_type = null)
+    public static function insert(AbstractPage $page, string|null $parent_uuid = null, string|null $edge_type = null)
     {
         DB::beginTransaction();
         // disable foreign key checks
@@ -345,9 +335,6 @@ class Pages
      */
     public static function resultToPage(array $result): ?AbstractPage
     {
-        if (!is_array($result)) {
-            return null;
-        }
         if (isset(static::$cache[$result['uuid']])) {
             return static::$cache[$result['uuid']];
         }

@@ -14,7 +14,6 @@ class DateCell extends AbstractCellWriter
 {
     public function transformCell(Cell $cell)
     {
-        assert($this->value instanceof DateTime);
         $cell->setValue(Date::PHPToExcel($this->value));
         $cell->getStyle()
             ->getNumberFormat()

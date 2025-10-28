@@ -116,8 +116,8 @@ class URL
         string $source,
         string $medium,
         string $campaign,
-        string $term = null,
-        string $content = null,
+        string|null $term = null,
+        string|null $content = null,
     ): static
     {
         $this->setArg('utm_source', $source);
@@ -128,7 +128,7 @@ class URL
         return $this;
     }
 
-    public function permissions(User $user = null): bool
+    public function permissions(User|null $user = null): bool
     {
         return Permissions::url($this, $user);
     }
@@ -208,12 +208,8 @@ class URL
 
     /**
      * @param array<mixed,string> $class
-     * @param boolean             $inPageContext
-     * @param string|null         $target
-     *
-     * @return string
      */
-    public function html(array $class = [], bool $inPageContext = false, string $target = null): string
+    public function html(array $class = [], bool $inPageContext = false, string|null $target = null): string
     {
         $normalized = clone($this);
         $normalized->normalize();
@@ -240,7 +236,7 @@ class URL
         }
     }
 
-    public function setName(string $name = null): static
+    public function setName(string|null $name = null): static
     {
         $this->name = $name;
         return $this;
@@ -420,12 +416,8 @@ class URL
 
     /**
      * Get or set the in-site path of this URL
-     *
-     * @param string $path
-     *
-     * @return string
      */
-    public function path(string $path = null): string
+    public function path(string|null $path = null): string
     {
         if ($path !== null) {
             // make sure trailing .. has a trailing slash
@@ -462,13 +454,13 @@ class URL
     /**
      * Get or set the entire query string as an array
      *
-     * @param array<string,string> $query
+     * @param array<string,string>|null $query
      *
      * @return array<string,string>
      *
      * @throws HttpError on set if any argument values are suspicious/unsafe
      */
-    public function query(array $query = null): array
+    public function query(array|null $query = null): array
     {
         if ($query !== null) {
             $this->query = [];
@@ -509,7 +501,9 @@ class URL
 
     public function getArg(string $name, bool $nullable = false): mixed
     {
-        if (is_null(@$this->query[$name]) && !$nullable) throw new HttpError(400, "Missing argument '$name'");
+        if (!isset($this->query[$name]) && !$nullable) {
+            throw new HttpError(400, "Missing argument '$name'");
+        }
         return @$this->query[$name];
     }
 

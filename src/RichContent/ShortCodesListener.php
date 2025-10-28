@@ -3,6 +3,7 @@
 namespace DigraphCMS\RichContent;
 
 use DigraphCMS\Config;
+use DigraphCMS\Content\Download;
 use DigraphCMS\Content\Pages;
 use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
@@ -24,6 +25,7 @@ class ShortCodesListener
      * contained and automatically wired up.
      *
      * @param ShortcodeInterface $s
+     *
      * @return string|null
      */
     public static function onShortCode(ShortcodeInterface $s): ?string
@@ -34,6 +36,33 @@ class ShortCodesListener
             }
         }
         return null;
+    }
+
+    /**
+     * Produce a download card for the current/specified download page, if it exists.
+     */
+    public static function onShortCode_download_card(ShortcodeInterface $s): ?string
+    {
+        $page = Pages::get($s->getBbCode()) ?? Context::page();
+        if (!$page) return null;
+        if (!($page instanceof Download)) return null;
+        return $page->card();
+    }
+
+    /**
+     * Produce a download link for the current/specified download page, if it exists.
+     */
+    public static function onShortCode_download_link(ShortcodeInterface $s): ?string
+    {
+        $page = Pages::get($s->getBbCode()) ?? Context::page();
+        if (!$page) return null;
+        if (!($page instanceof Download)) return null;
+        $file = $page->download();
+        $link = new A($file->url());
+        $link->setAttribute('title', $page->name());
+        if ($s->getContent()) $link->addChild($s->getContent());
+        else $link->addChild($file->filename());
+        return $link;
     }
 
     public static function onShortCode_page_created_by(ShortcodeInterface $s): ?string
@@ -128,6 +157,7 @@ class ShortCodesListener
      * URL shortcodes for making links to arbitrary URLs
      *
      * @param ShortcodeInterface $s
+     *
      * @return string|null
      */
     public static function onShortCode_url(ShortcodeInterface $s): ?string
@@ -149,6 +179,7 @@ class ShortCodesListener
      * Obfuscate a link to an email address
      *
      * @param ShortcodeInterface $s
+     *
      * @return string|null
      */
     public static function onShortCode_email(ShortcodeInterface $s): ?string
@@ -164,6 +195,7 @@ class ShortCodesListener
      * Handle link shortcodes, which can be to either pages or static routes
      *
      * @param ShortcodeInterface $s
+     *
      * @return string|null
      */
     public static function onShortCode_link(ShortcodeInterface $s): ?string

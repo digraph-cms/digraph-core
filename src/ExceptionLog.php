@@ -67,10 +67,10 @@ class ExceptionLog
         $hash = md5(serialize([
             static::actualUrl(),
             get_class($th),
-            method_exists($th, 'getCode') ? $th->getCode() : null,
-            method_exists($th, 'getFile') ? $th->getFile() : null,
-            method_exists($th, 'getLine') ? $th->getLine() : null,
-            method_exists($th, 'getMessage') ? $th->getMessage() : null,
+            $th->getCode(),
+            $th->getFile(),
+            $th->getLine(),
+            $th->getMessage(),
         ]));
         if (!$no_email) {
             RateLimit::run(
@@ -81,7 +81,7 @@ class ExceptionLog
                     foreach (Config::get('exception_log.notify_emails') as $address) {
                         $subject = substr(implode(' ', [
                             'Site Error:',
-                            method_exists($th, 'getMessage') ? $th->getMessage() : get_class($th),
+                            $th->getMessage(),
                             Context::url(),
                         ]), 0, 250);
                         $count = count(glob("$path/*.json"));
@@ -93,7 +93,7 @@ class ExceptionLog
                             ),
                             sprintf(
                                 'Error message: %s',
-                                method_exists($th, 'getMessage') ? $th->getMessage() : 'No message: ' . get_class($th)
+                                $th->getMessage(),
                             ),
                             sprintf(
                                 'As of %s there %s been <a href="%s">%s other error%s logged today</a>',
@@ -119,7 +119,7 @@ class ExceptionLog
                         } catch (Throwable $th) {
                             $sent = false;
                             $body .= '<br>Additional email system error: ' . get_class($th);
-                            if (method_exists($th, 'getMessage')) $body .= '<br>Message: ' . $th->getMessage();
+                            $th->getMessage();
                         }
                         // fall back to trying to use mail() function
                         if (!$sent) {
@@ -141,9 +141,17 @@ class ExceptionLog
             $zip->open($zipFile, ZipArchive::CREATE);
             $zip->addFromString('log.json', json_encode($data, JSON_PRETTY_PRINT));
             foreach ($_FILES as $file) {
-                if (!$file['tmp_name']) continue;
-                if (!file_exists($file['tmp_name'])) continue;
-                $zip->addFile($file['tmp_name'], 'files/' . $file['name']);
+                if (is_array($file['tmp_name'])) {
+                    foreach ($file as $f) {
+                        if (!$f['tmp_name']) continue;
+                        if (!file_exists($f['tmp_name'])) continue;
+                        $zip->addFile($f['tmp_name'], 'files/' . $f['name']);
+                    }
+                } else {
+                    if (!$file['tmp_name']) continue;
+                    if (!file_exists($file['tmp_name'])) continue;
+                    $zip->addFile($file['tmp_name'], 'files/' . $file['name']);
+                }
             }
             $zip->close();
         }
@@ -185,11 +193,11 @@ class ExceptionLog
         if (!$th) return null;
         return [
             'class' => get_class($th),
-            'code' => method_exists($th, 'getCode') ? $th->getCode() : null,
+            'code' => $th->getCode(),
             'data' => $th instanceof Exception ? $th->data() : null,
-            'message' => method_exists($th, 'getMessage') ? $th->getMessage() : null,
-            'file' => method_exists($th, 'getFile') ? static::shortenPath($th->getFile()) : null,
-            'line' => method_exists($th, 'getLine') ? $th->getLine() : null,
+            'message' => $th->getMessage(),
+            'file' => $th->getFile(),
+            'line' => $th->getLine(),
             'trace' => array_map(
                 function (array $e): array {
                     if (@$e['file']) {
@@ -197,9 +205,9 @@ class ExceptionLog
                     }
                     return $e;
                 },
-                method_exists($th, 'getTrace') ? $th->getTrace() : []
+                $th->getTrace(),
             ),
-            'previous' => method_exists($th, 'getPrevious') ? static::throwableArray($th->getPrevious()) : null,
+            'previous' => $th->getPrevious(),
         ];
     }
 

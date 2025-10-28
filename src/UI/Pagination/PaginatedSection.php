@@ -25,6 +25,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xls;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use RuntimeException;
 use Throwable;
+
 use function method_exists;
 
 class PaginatedSection extends Tag
@@ -148,7 +149,6 @@ class PaginatedSection extends Tag
                 && method_exists($this->source, 'leftJoin'))
         ) {
             // clone source and do basic sorting and filtering
-            /** @var AbstractMappedSelect */
             $source = clone $this->source;
             // apply filter tools
             $join = [];

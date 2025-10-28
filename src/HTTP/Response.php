@@ -7,9 +7,8 @@ use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Context;
 use DigraphCMS\Digraph;
 use DigraphCMS\Events\Dispatcher;
-use DigraphCMS\Exception as DigraphCMSException;
+use DigraphCMS\Exception;
 use DigraphCMS\Session\Session;
-use Exception;
 
 class Response
 {
@@ -27,7 +26,7 @@ class Response
     protected $staleTTL;
     protected $searchIndex = false;
 
-    public function __construct(int $status = null)
+    public function __construct(int|null $status = null)
     {
         $this->status($status);
         $this->headers = new ResponseHeaders;
@@ -55,7 +54,7 @@ class Response
         return $this;
     }
 
-    public function mime(string $mime = null): ?string
+    public function mime(string|null $mime = null): ?string
     {
         if ($mime !== null) {
             $this->mime = $mime;
@@ -63,7 +62,7 @@ class Response
         return $this->mime;
     }
 
-    public function filename(string $filename = null): ?string
+    public function filename(string|null $filename = null): ?string
     {
         if ($filename !== null) {
             $this->filename = $filename;
@@ -71,7 +70,7 @@ class Response
         return $this->filename;
     }
 
-    public function template(string $template = null): string
+    public function template(string|null $template = null): string
     {
         if ($template !== null) {
             $this->template = $template;
@@ -99,7 +98,7 @@ class Response
         }
     }
 
-    public function private(bool $private = null): bool
+    public function private(bool|null $private = null): bool
     {
         if ($private !== null && !$this->private) {
             $this->private = $private;
@@ -113,7 +112,7 @@ class Response
         return $this;
     }
 
-    public function cacheTTL(int $ttl = null): int
+    public function cacheTTL(int|null $ttl = null): int
     {
         if ($ttl !== null) {
             $this->cacheTTL = $ttl;
@@ -125,7 +124,7 @@ class Response
             0;
     }
 
-    public function staleTTL(int $ttl = null): int
+    public function staleTTL(int|null $ttl = null): int
     {
         if ($ttl !== null) {
             $this->staleTTL = $ttl;
@@ -137,7 +136,7 @@ class Response
             10 * $this->cacheTTL();
     }
 
-    public function browserTTL(int $ttl = null): int
+    public function browserTTL(int|null $ttl = null): int
     {
         if ($ttl !== null) {
             $this->browserTTL = $ttl;
@@ -151,7 +150,7 @@ class Response
             0;
     }
 
-    public function page(AbstractPage $page = null): ?AbstractPage
+    public function page(AbstractPage|null $page = null): ?AbstractPage
     {
         if ($page) {
             $this->page = $page;
@@ -164,7 +163,7 @@ class Response
         return $this->headers;
     }
 
-    public function status(int $status = null): int
+    public function status(int|null $status = null): int
     {
         if ($status !== null) {
             $this->status = $status;
@@ -197,7 +196,7 @@ class Response
         return $this;
     }
 
-    public function content(string $content = null): string
+    public function content(string|null $content = null): string
     {
         if ($content !== null) $this->setContent($content);
         if ($this->content_file) return file_get_contents($this->content_file);
@@ -250,7 +249,7 @@ class Response
             'max-stale=' . $staleTTL,
             'stale-if-error=' . $staleTTL,
         ];
-        return implode(', ', array_filter($output));
+        return implode(', ', $output);
     }
 
     public function renderContent()
@@ -260,7 +259,7 @@ class Response
             Dispatcher::dispatchEvent('onResponseRender_html', [$this]);
         }
         if ($this->content_file) {
-            if (!file_exists($this->content_file)) throw new DigraphCMSException("Response content file not found", ['file' => $this->content_file, 'response' => $this]);
+            if (!file_exists($this->content_file)) throw new Exception("Response content file not found", ['file' => $this->content_file, 'response' => $this]);
             readfile($this->content_file);
         } else {
             echo $this->content();

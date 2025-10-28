@@ -21,7 +21,7 @@ abstract class Context
     /** @var Throwable|null */
     protected static $thrown;
     /** @var array<int,array<string|int,mixed>> */
-    protected static $data = [];
+    protected static array $data = [];
 
     public static function beginEmail(): void
     {
@@ -37,7 +37,7 @@ abstract class Context
         ];
     }
 
-    public static function ensureUUIDArg(string $checkWith = null): void
+    public static function ensureUUIDArg(string|null $checkWith = null): void
     {
         // ensure arg exists
         if (!static::arg_string('uuid', true)) {
@@ -68,7 +68,7 @@ abstract class Context
      *
      * @return CacheNamespace
      */
-    public static function cache(string $section = null): CacheNamespace
+    public static function cache(string|null $section = null): CacheNamespace
     {
         if (static::request()) $namespace = 'context/' . substr(static::request()->hash(), 0, 2) . '/' . static::request()->hash();
         else $namespace = 'context/none';
@@ -76,7 +76,7 @@ abstract class Context
         return new CacheNamespace($namespace);
     }
 
-    public static function url(URL $url = null): URL
+    public static function url(URL|null $url = null): URL
     {
         return clone(static::data('url', $url)
             ?? Digraph::actualUrl());
@@ -179,7 +179,7 @@ abstract class Context
         return static::data('fields');
     }
 
-    public static function request(Request $request = null): ?Request
+    public static function request(Request|null $request = null): ?Request
     {
         if ($request) {
             static::$request = $request;
@@ -187,7 +187,7 @@ abstract class Context
         return static::$request;
     }
 
-    public static function response(Response $response = null): ?Response
+    public static function response(Response|null $response = null): ?Response
     {
         if ($response) {
             static::$response = $response;
@@ -195,7 +195,7 @@ abstract class Context
         return static::$response;
     }
 
-    public static function page(AbstractPage $page = null): ?AbstractPage
+    public static function page(AbstractPage|null $page = null): ?AbstractPage
     {
         return static::data('page', $page);
     }
@@ -205,7 +205,7 @@ abstract class Context
         return static::page() ? static::page()->uuid() : null;
     }
 
-    public static function thrown(Throwable $thrown = null): ?Throwable
+    public static function thrown(Throwable|null $thrown = null): ?Throwable
     {
         if ($thrown) {
             static::$thrown = $thrown;
@@ -216,8 +216,8 @@ abstract class Context
     public static function data(string $name, mixed $value = null): mixed
     {
         end(static::$data);
-        /** @var int|null */
-        $endKey = intval(key(static::$data));
+        $endKey = key(static::$data);
+        if (!is_null($endKey)) $endKey = (int)$endKey;
         if ($value !== null) {
             if (!isset(static::$data[$endKey])) static::$data[$endKey] = [];
             static::$data[$endKey][$name] = $value;

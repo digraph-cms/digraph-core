@@ -126,7 +126,7 @@ class WaybackMachine
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // follow redirects
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 6.2; WOW64; rv:17.0) Gecko/20100101 Firefox/17.0'); // pretend to be a browser
-            curl_setopt($ch, CURLOPT_REFERER, Context::url()); // give current page as referer
+            curl_setopt($ch, CURLOPT_REFERER, Context::url()->__toString()); // give current page as referer
             curl_exec($ch);
             $code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
             $errno = curl_errno($ch);
@@ -249,7 +249,7 @@ class WaybackMachine
         }
     }
 
-    public static function noNotifyFlag(string $normalizedUrl, URL $context = null): bool
+    public static function noNotifyFlag(string $normalizedUrl, URL|null $context = null): bool
     {
         if (Datastore::exists('wayback', 'no_notify', md5($normalizedUrl))) return true;
         elseif ($context && Datastore::exists('wayback', 'no_notify', md5(serialize([$normalizedUrl, $context->pathString()])))) return true;

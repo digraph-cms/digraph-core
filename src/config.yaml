@@ -1,6 +1,7 @@
 page_types:
   default: \DigraphCMS\Content\Page
   page: \DigraphCMS\Content\Page
+  download: \DigraphCMS\Content\Download
 
 rich_media_types:
   aside: \DigraphCMS\RichMedia\Types\AsideRichMedia

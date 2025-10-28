@@ -40,11 +40,8 @@ class Breadcrumb
 
     /**
      * Get or set/override the topmost URL to use for generating the breadcrumb.
-     *
-     * @param URL $url
-     * @return URL
      */
-    public static function top(URL $url = null): URL
+    public static function top(URL|null $url = null): URL
     {
         if ($url) {
             static::$top = $url;
@@ -67,11 +64,8 @@ class Breadcrumb
 
     /**
      * Get or set/override the parent URL to use for generating the breadcrumb.
-     *
-     * @param URL $url
-     * @return URL|null
      */
-    public static function parent(URL $url = null): ?URL
+    public static function parent(URL|null $url = null): ?URL
     {
         if ($url) {
             static::$parents = [$url];
@@ -83,7 +77,7 @@ class Breadcrumb
         }
     }
 
-    public static function pushParent(URL $url = null)
+    public static function pushParent(URL|null $url = null)
     {
         static::$parents[] = $url;
     }
@@ -92,10 +86,10 @@ class Breadcrumb
      * Get/set the configured parents to be used above top() for generating the
      * breadcrumb, in order of furthest->closest.
      *
-     * @param URL[] $urls
+     * @param URL[]|null $urls
      * @return URL[]
      */
-    public static function parents(array $urls = null): array
+    public static function parents(array|null $urls = null): array
     {
         if ($urls !== null) {
             static::$parents = $urls;
@@ -119,9 +113,9 @@ class Breadcrumb
         $breadcrumb = static::parents();
         static::helper($breadcrumb);
         // check if [0] and [1] are home and the home page's UUID url
-        if (@$breadcrumb[0] && @$breadcrumb[1] && Pages::get('home')) {
-            if ($breadcrumb[0] . '' == new URL('/') . '') {
-                if ($breadcrumb[1] . '' == Pages::get('home')->url(null, null, true) . '') {
+        if (isset($breadcrumb[0]) && isset($breadcrumb[1]) && Pages::get('home')) {
+            if ((string)$breadcrumb[0] == (string) new URL('/')) {
+                if ((string)$breadcrumb[1] == (string)Pages::get('home')->url(null, null, true)) {
                     unset($breadcrumb[1]);
                 }
             }
