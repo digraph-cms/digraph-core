@@ -58,6 +58,10 @@ class Templates
         switch ($extension) {
             case 'php':
                 return require_file($file);
+            case 'md':
+                return file_get_contents($file);
+            case 'html':
+                return file_get_contents($file);
         }
         // try dispatching event in case something else wants to handle this extension
         if ($return = Dispatcher::firstValue("onTemplateApply_$extension", [$file])) {
