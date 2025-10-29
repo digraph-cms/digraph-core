@@ -483,9 +483,9 @@ class URL
         if (!$is_string && !$is_int && !$is_float && !$is_bool) throw new HttpError(400, "Invalid argument value");
         if ($is_string) {
             // if it's a string, sanitize it and see if it changed, if so it was suspicious or invalid
-            $sanitized = trim($value);
-            $sanitized = filter_var($sanitized, FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW);
+            $sanitized = filter_var($value, FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW);
             if ($sanitized != $value) throw new HttpError(400, "Invalid argument value");
+            $sanitized = trim($sanitized);
         } elseif ($is_bool) {
             // if it's a bool, set it to 1 or 0
             $value = $value ? '1' : '0';
