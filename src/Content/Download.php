@@ -23,6 +23,11 @@ class Download extends AbstractPage
 {
     const ACTIONS_DISABLED = ['copy'];
 
+    public function defaultSlug(): string
+    {
+        return 'dl_' . $this->uuid();
+    }
+
     public function files(): FilestoreSelect
     {
         return Filestore::select()
@@ -31,8 +36,10 @@ class Download extends AbstractPage
 
     public function setImmediateDownload(bool $immediate_download): self
     {
-        if ($immediate_download) $this['immediate_download'] = true;
-        else unset($this['immediate_download']);
+        if ($immediate_download)
+            $this['immediate_download'] = true;
+        else
+            unset($this['immediate_download']);
         return $this;
     }
 
@@ -132,7 +139,8 @@ class Download extends AbstractPage
     public static function dl_permissions(string $uuid, User $user): bool
     {
         $page = Pages::get($uuid, static::class);
-        if (!$page) return Permissions::inGroup('editors');
+        if (!$page)
+            return Permissions::inGroup('editors');
         return $page->permissions($page->url(), $user);
     }
 
