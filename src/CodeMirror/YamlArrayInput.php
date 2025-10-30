@@ -139,7 +139,7 @@ class YamlArrayInput extends CodeMirrorInput
 
     protected function stringContent(): string
     {
-        return static::yamlDump($this->value())
+        return static::yamlDump($this->value(true))
             ?: TEXTAREA::value()
             ?: '';
     }
