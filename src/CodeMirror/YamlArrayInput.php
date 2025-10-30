@@ -2,18 +2,40 @@
 
 namespace DigraphCMS\CodeMirror;
 
+use DigraphCMS\Config;
 use DigraphCMS\Exception;
 use DigraphCMS\ExceptionLog;
+use DigraphCMS\HTML\Forms\TEXTAREA;
 use DigraphCMS\UI\Notifications;
 use Flatrr\FlatArray;
+use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 
 class YamlArrayInput extends CodeMirrorInput
 {
+    protected bool $yaml_required = false;
+
     public function __construct()
     {
         parent::__construct();
         $this->mode = 'yaml';
+        $this->validators[] = function (): string|null {
+            try {
+                Yaml::parse($this->stringValue());
+                return null;
+            } catch (ParseException $th) {
+                return "Invalid YAML: " . $th->getMessage();
+            }
+        };
+    }
+
+    public function stringValue(): string
+    {
+        $value = parent::value();
+        $value = preg_replace_callback('/^(\t)+/m', function ($m) {
+            return str_repeat("  ", strlen($m[0]));
+        }, $value);
+        return $value;
     }
 
     /**
@@ -22,8 +44,10 @@ class YamlArrayInput extends CodeMirrorInput
      */
     public function setDefault($value)
     {
-        if ($value instanceof FlatArray) $value = $value->get();
-        if (is_array($value)) $value = static::yamlDump($value);
+        if ($value instanceof FlatArray)
+            $value = $value->get();
+        if (is_array($value))
+            $value = static::yamlDump($value);
         return parent::setDefault($value);
     }
 
@@ -33,8 +57,10 @@ class YamlArrayInput extends CodeMirrorInput
      */
     public function setValue($value)
     {
-        if ($value instanceof FlatArray) $value = $value->get();
-        if (is_array($value)) $value = static::yamlDump($value);
+        if ($value instanceof FlatArray)
+            $value = $value->get();
+        if (is_array($value))
+            $value = static::yamlDump($value);
         return parent::setValue($value);
     }
 
@@ -52,6 +78,31 @@ class YamlArrayInput extends CodeMirrorInput
         return static::yamlParse(parent::value($useDefault));
     }
 
+    public function setRequired(bool $required, string|null $message = null)
+    {
+        $this->yaml_required = $required;
+        $this->requiredMessage = $message;
+        return $this;
+    }
+
+    public function required(): bool
+    {
+        return $this->yaml_required;
+    }
+
+    public function validationError(): string|null
+    {
+        if ($this->required() && !parent::value(true)) {
+            return $this->requiredMessage ?? "This field is required.";
+        }
+        foreach ($this->validators as $validator) {
+            if ($message = call_user_func($validator, $this)) {
+                return $message;
+            }
+        }
+        return null;
+    }
+
     /**
      * 
      * @param string|null|array<mixed,mixed> $value 
@@ -60,7 +111,8 @@ class YamlArrayInput extends CodeMirrorInput
     protected static function yamlParse($value): array
     {
         $input = $value;
-        if (is_array($value)) return $value;
+        if (is_array($value))
+            return $value;
         elseif ($value) {
             try {
                 $value = preg_replace_callback('/^(\t)+/m', function ($m) {
@@ -68,16 +120,16 @@ class YamlArrayInput extends CodeMirrorInput
                 }, $value);
                 return Yaml::parse($value);
             } catch (\Throwable $th) {
-                Notifications::error("A YAML input field failed to parse. Submitting the form it is in may cause data loss.");
-                ExceptionLog::log(new Exception("Failed to parse YAML", $input, $th));
                 return [];
             }
-        } else return [];
+        } else
+            return [];
     }
 
     protected static function yamlDump(array $value): string
     {
-        if (!$value) return '';
+        if (!$value)
+            return '';
         $value = Yaml::dump($value, 4, 2, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK);
         $value = preg_replace_callback('/^(  )+/m', function ($m) {
             return str_repeat("\t", strlen($m[0]) / 2);
@@ -85,10 +137,10 @@ class YamlArrayInput extends CodeMirrorInput
         return $value;
     }
 
-    public function children(): array
+    protected function stringContent(): string
     {
-        return [
-            htmlentities(static::yamlDump($this->value(true)))
-        ];
+        return static::yamlDump($this->value())
+            ?: TEXTAREA::value()
+            ?: '';
     }
 }

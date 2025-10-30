@@ -176,10 +176,15 @@ class TEXTAREA extends Tag implements InputInterface
         throw new Exception("Can't add children to a TEXTAREA");
     }
 
+    protected function stringContent(): string
+    {
+        return TEXTAREA::value(true) ?? '';
+    }
+
     public function children(): array
     {
         return [
-            new Text(htmlentities($this->value(true) ?? ''))
+            new Text(htmlentities($this->stringContent()))
         ];
     }
 
