@@ -2,6 +2,9 @@
 
 namespace DigraphCMS\HTML\Forms\Fields\Autocomplete;
 
+/**
+ * @method input() PageInput
+ */
 class PageField extends AutocompleteField
 {
     public function __construct(string $label)
@@ -18,7 +21,6 @@ class PageField extends AutocompleteField
      */
     public function setPageClass(string $class): static
     {
-        /** @var PageInput $input */
         $input = $this->input();
         $input->setPageClass($class);
         return $this;
