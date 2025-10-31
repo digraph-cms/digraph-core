@@ -3,7 +3,7 @@
 namespace DigraphCMS\HTML\Forms\Fields\Autocomplete;
 
 /**
- * @method input() PageInput
+ * @method PageInput input() Get the input element for this field
  */
 class PageField extends AutocompleteField
 {
