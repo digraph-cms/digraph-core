@@ -16,7 +16,7 @@ class PageField extends AutocompleteField
     /**
      * Set the page class to limit results to. Uses the internal name, such as what is returned by AbstractPage::class()
      */
-    public function setClass(string $class): static
+    public function setPageClass(string $class): static
     {
         /** @var PageInput $input */
         $input = $this->input();
