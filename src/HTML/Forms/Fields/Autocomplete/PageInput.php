@@ -32,4 +32,13 @@ class PageInput extends AutocompleteInput
         // add CSS class
         $this->addClass('autocomplete-input--page');
     }
+
+    /**
+     * Set the page class to limit results to. Uses the internal name, such as what is returned by AbstractPage::class()
+     */
+    public function setPageClass(string $class): static
+    {
+        $this->endpoint->setArg('class', $class);
+        return $this;
+    }
 }
