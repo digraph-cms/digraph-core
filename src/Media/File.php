@@ -65,6 +65,7 @@ class File
     {
         if ($this instanceof ImageFile) return $this;
         if (!ImageFile::handles($this->extension())) return null;
+        $this->write(); // ensure file is written before creating ImageFile instance
         return new ImageFile($this->path(), $this->filename(), $this->permissions());
     }
 
