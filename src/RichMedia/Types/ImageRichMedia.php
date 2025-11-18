@@ -132,6 +132,7 @@ class ImageRichMedia extends AbstractRichMedia
                 'background-size:cover',
                 'background-position: center center',
             ]));
+            $image->removeClass('floated');
             $out = $figure;
         } else {
             $out = $image;
