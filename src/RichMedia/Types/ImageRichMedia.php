@@ -77,6 +77,8 @@ class ImageRichMedia extends AbstractRichMedia
 
     public function shortCode(ShortcodeInterface $code): ?string
     {
+        $floated = $code->getParameter('floated', 'false') !== 'false';
+        $plain = $code->getParameter('plain', 'false') !== 'false';
         // if we are in a simplified rendering context, render as a straight image
         if (Context::fields()['simplified_rendering']) {
             $file = $this->file()->image();
@@ -88,16 +90,16 @@ class ImageRichMedia extends AbstractRichMedia
             }
             // render image tag
             $image = new IMG($file->url(), $this['alt']);
-            if ($code->getParameter('floated', 'false') !== 'false') {
+            if ($floated) {
                 $image->addClass('floated');
             }
             return $image->__toString();
         }
         // if this is a plain image, just return a straight image
-        if ($code->getParameter('plain', 'false') !== 'false') {
+        if ($plain) {
             $file = $this->file()->image();
             $image = new IMG($file->url(), $this['alt']);
-            if ($code->getParameter('floated', 'false') !== 'false') {
+            if ($floated) {
                 $image->addClass('floated');
             }
             return $image->__toString();
@@ -117,13 +119,19 @@ class ImageRichMedia extends AbstractRichMedia
         }
         // wrap in a figure tag if necessary
         if ($code->getContent()) {
+            // wrap if there's content in the shortcode
             $figure = (new FIGURE)
                 ->addChild($image)
                 ->addChild('<figcaption>' . $code->getContent() . '</figcaption>');
         } elseif ($this->caption()->source()) {
+            // wrap if there's a caption set
             $figure = (new FIGURE)
                 ->addChild($image)
                 ->addChild('<figcaption>' . $this->caption() . '</figcaption>');
+        } elseif ($floated && !$plain) {
+            // wrap with no caption if floated and not plain
+            $figure = (new FIGURE)
+                ->addChild($image);
         }
         if (isset($figure)) {
             $figure->setAttribute('style', implode(';', [
