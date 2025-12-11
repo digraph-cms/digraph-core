@@ -15,23 +15,27 @@ Format::_init();
 
 class Format
 {
-    protected static $timezone, $dateFormat, $datetimeFormat, $timeFormat, $dateFormat_thisYear, $datetimeFormat_thisYear, $datetimeFormat_today, $dateFormat_today;
+    protected static $timezone, $dateFormat, $datetimeFormat, $timeFormat, $dateFormat_thisYear, $datetimeFormat_thisYear, $datetimeFormat_today, $datetimeFormat_yesterday, $datetimeFormat_tomorrow, $dateFormat_today, $dateFormat_yesterday, $dateFormat_tomorrow;
     protected static $dateFormat_day_of_week, $datetimeFormat_day_of_week, $dateFormat_thisYear_day_of_week, $datetimeFormat_thisYear_day_of_week;
 
     public static function _init()
     {
         static::$timezone = Theme::timezone();
-        static::$dateFormat = Config::get('theme.format.date') ?? 'F j, Y';
-        static::$dateFormat_day_of_week = Config::get('theme.format.date_dayofweek') ?? 'l, F j, Y';
-        static::$dateFormat_today = Config::get('theme.format.datetime_today') ?? '\t\o\d\a\y';
-        static::$datetimeFormat = Config::get('theme.format.datetime') ?? 'F j, Y, g:ia';
-        static::$datetimeFormat_day_of_week = Config::get('theme.format.datetime_dayofweek') ?? 'l, F j, Y, g:ia';
-        static::$timeFormat = Config::get('theme.format.time') ?? 'g:ia';
-        static::$dateFormat_thisYear = Config::get('theme.format.date_thisyear') ?? 'F j';
-        static::$dateFormat_thisYear_day_of_week = Config::get('theme.format.date_thisyear') ?? 'l, F j';
-        static::$datetimeFormat_thisYear = Config::get('theme.format.datetime_thisyear') ?? 'F j, g:ia';
-        static::$datetimeFormat_thisYear_day_of_week = Config::get('theme.format.datetime_thisyear_dayofweek') ?? 'l, F j, g:ia';
-        static::$datetimeFormat_today = Config::get('theme.format.datetime_today') ?? '\t\o\d\a\y \a\t g:ia';
+        static::$dateFormat = Config::get('theme.format.date') ?: 'F j, Y';
+        static::$dateFormat_day_of_week = Config::get('theme.format.date_dayofweek') ?: 'l, F j, Y';
+        static::$dateFormat_today = Config::get('theme.format.datetime_today') ?: '\t\o\d\a\y';
+        static::$dateFormat_yesterday = Config::get('theme.format.datetime_yesterday') ?: '\y\e\s\t\e\r\d\a\y';
+        static::$dateFormat_tomorrow = Config::get('theme.format.datetime_tomorrow') ?: '\t\o\m\o\r\r\o\w';
+        static::$datetimeFormat = Config::get('theme.format.datetime') ?: 'F j, Y, g:ia';
+        static::$datetimeFormat_day_of_week = Config::get('theme.format.datetime_dayofweek') ?: 'l, F j, Y, g:ia';
+        static::$timeFormat = Config::get('theme.format.time') ?: 'g:ia';
+        static::$dateFormat_thisYear = Config::get('theme.format.date_thisyear') ?: 'F j';
+        static::$dateFormat_thisYear_day_of_week = Config::get('theme.format.date_thisyear') ?: 'l, F j';
+        static::$datetimeFormat_thisYear = Config::get('theme.format.datetime_thisyear') ?: 'F j, g:ia';
+        static::$datetimeFormat_thisYear_day_of_week = Config::get('theme.format.datetime_thisyear_dayofweek') ?: 'l, F j, g:ia';
+        static::$datetimeFormat_today = Config::get('theme.format.datetime_today') ?: '\t\o\d\a\y \a\t g:ia';
+        static::$datetimeFormat_yesterday = Config::get('theme.format.datetime_yesterday') ?: '\y\e\s\t\e\r\d\a\y \a\t g:ia';
+        static::$datetimeFormat_tomorrow = Config::get('theme.format.datetime_tomorrow') ?: '\t\o\m\o\r\r\o\w \a\t g:ia';
     }
 
     /**
@@ -72,8 +76,7 @@ class Format
                 substr($phone, -7, 3),
                 substr($phone, -4)
             );
-        }
-        else return $phone;
+        } else return $phone;
     }
 
     /**
@@ -226,8 +229,13 @@ class Format
     {
         $date = static::parseDate($date);
         if (!$precise && $date->format('Y') == date('Y')) {
-            if ($date->format('Ydm') == date('Ydm')) {
+            $day = $date->format('Ydm');
+            if ($day == date('Ydm')) {
                 $text = $date->format(static::$dateFormat_today);;
+            } elseif ($day == date('Ydm', strtotime('-1 day'))) {
+                $text = $date->format(static::$dateFormat_yesterday);
+            } elseif ($day == date('Ydm', strtotime('+1 day'))) {
+                $text = $date->format(static::$dateFormat_tomorrow);
             } elseif ($day_of_week) {
                 $text = $date->format(static::$dateFormat_thisYear_day_of_week);
             } else {
@@ -254,8 +262,13 @@ class Format
         } else {
             // display a date with a time
             if (!$precise && $date->format('Y') == date('Y')) {
-                if ($date->format('Ydm') == date('Ydm')) {
+                $day = $date->format('Ydm');
+                if ($day == date('Ydm')) {
                     $text = $date->format(static::$datetimeFormat_today);
+                } elseif ($day == date('Ydm', strtotime('-1 day'))) {
+                    $text = $date->format(static::$datetimeFormat_yesterday);
+                } elseif ($day == date('Ydm', strtotime('+1 day'))) {
+                    $text = $date->format(static::$datetimeFormat_tomorrow);
                 } elseif ($day_of_week) {
                     $text = $date->format(static::$datetimeFormat_thisYear_day_of_week);
                 } else {
