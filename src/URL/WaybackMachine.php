@@ -131,8 +131,9 @@ class WaybackMachine
             $code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
             $errno = curl_errno($ch);
             curl_close($ch);
-            $success = $code >= 200 && $code < 400;
-            if ($success) {
+            if ($code >= 200 && $code < 400) {
+                return true;
+            } elseif ($code === 401) {
                 return true;
             } elseif ($errno == 28) {
                 static::$log[] = 'Timeout';
