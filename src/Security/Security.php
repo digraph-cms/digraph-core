@@ -6,17 +6,19 @@ use DigraphCMS\Cache\Cache;
 use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\Datastore\DatastoreGroup;
+use DigraphCMS\DB\DB;
 use DigraphCMS\DB\DBConnectionException;
+use DigraphCMS\Digraph;
 use DigraphCMS\HTTP\RedirectException;
+use DigraphCMS\Session\Cookies;
 use DigraphCMS\Session\Session;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\User;
 use Envms\FluentPDO\Exception;
 
-@session_start();
-
 class Security
 {
+
     /**
      * Secure this request behind a CAPTCHA if user is flagged, operates by
      * bouncing the user to a dedicated CAPTCHA page then back to this URL.
@@ -26,8 +28,18 @@ class Security
      */
     public static function requireSecurityCheck(): void
     {
-        if (!static::flagged()) return;
+        if (!static::flagged())
+            return;
         throw new RedirectException(static::captchaUrl(), targetFrame: '_top');
+    }
+
+    public static function cronJob_maintenance_heavy(): void
+    {
+        // clean up expired captcha tokens
+        DB::query()
+            ->deleteFrom('security_captcha_token')
+            ->where('expires < ?', time())
+            ->execute();
     }
 
     public static function captchaUrl(string|null $frame = null): URL
@@ -54,15 +66,16 @@ class Security
             if (static::authenticationFlagged() || static::userFlagged()) {
                 return true;
             }
-            // only respect IP flags if their session is also flagged
-            if (static::ipFlagged() && static::sessionFlagged()) {
+            // only respect IP flags if their session has not passed a captcha
+            if (static::ipFlagged() && !static::sessionPassed()) {
                 return true;
             }
             // users are unflagged by default
             return false;
-        } else {
-            // unflag only if both IP and session are unflagged
-            if (!static::ipFlagged() && !static::sessionFlagged()) {
+        }
+        else {
+            // without authentication, unflag if IP is not flagged or session has passed a captcha
+            if (!static::ipFlagged() && !static::sessionPassed()) {
                 return false;
             }
             // guests are flagged by default
@@ -71,8 +84,7 @@ class Security
     }
 
     /**
-     * Unflag the current user, removing any CAPTCHA requirements for the
-     * duration specified in Config::get('captcha.pass_ttl')
+     * Unflag the current user, removing any CAPTCHA requirements for the duration specified in Config::get('captcha.pass_ttl')
      *
      * @return void
      * @throws DBConnectionException
@@ -80,11 +92,10 @@ class Security
      */
     public static function unflag(): void
     {
-        @session_start();
         static::unflagIP();
         static::unflagAuthentication();
         static::unflagUser();
-        $_SESSION['digraph_captcha_pass'] = time();
+        static::unflagSession();
     }
 
     /**
@@ -99,27 +110,80 @@ class Security
      */
     public static function flag(string $reason): void
     {
-        @session_start();
         static::flagIP(null, $reason);
         static::flagAuthentication(null, $reason);
         static::flagUser(null, $reason);
         static::flagSession();
     }
 
-    public static function flagSession(): void
-    {
-        $_SESSION['digraph_captcha_pass'] = 0;
-    }
-
     public static function unflagSession(): void
     {
-        $_SESSION['digraph_captcha_pass'] = time();
+        // set a cookie indicating that the user has passed a captcha, with a value of the expiration time
+        // this value will be automatically salted and signed by the Cookies class
+        Cookies::set(
+            'security',
+            'captcha',
+            static::generateCaptchaToken(),
+            saveRawValue: true,
+        );
     }
 
-    public static function sessionFlagged(): bool
+    public static function flagSession(): void
     {
-        return time() >
-            intval(@$_SESSION['digraph_captcha_pass']) + Config::get('captcha.pass_ttl');
+        $cookie = Cookies::get('security', 'captcha', true);
+        if (!$cookie)
+            return;
+        // remove the captcha cookie if it exists
+        static::invalidateCaptchaToken($cookie);
+        // remove the unflag cookie if it exists
+        Cookies::unset('security', 'unflag');
+    }
+
+    public static function sessionPassed(): bool
+    {
+        $token = Cookies::get('security', 'captcha');
+        if (!$token)
+            return false;
+        if (!static::validateCaptchaToken($token)) {
+            Cookies::unset('security', 'captcha');
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    protected static function generateCaptchaToken(): string
+    {
+        $token = substr(Digraph::longUUID() . Digraph::longUUID(), 0, 64);
+        $expires = time() + (int) Config::get('captcha.pass_ttl');
+        DB::query()
+            ->insertInto(
+                'security_captcha_token',
+                [
+                    'token'   => $token,
+                    'expires' => $expires,
+                ],
+            )
+            ->execute();
+        return $token;
+    }
+
+    protected static function invalidateCaptchaToken(string $token): void
+    {
+        DB::query()
+            ->deleteFrom('security_captcha_token')
+            ->where('token', $token)
+            ->execute();
+    }
+
+    protected static function validateCaptchaToken(string $token): bool
+    {
+        return !!DB::query()
+            ->from('security_captcha_token')
+            ->where('token', $token)
+            ->where('expires > ?', time())
+            ->count();
     }
 
     public static function ipFlagged(string|null $ip = null): bool
@@ -133,8 +197,10 @@ class Security
     {
         $ip = $ip ?? $_SERVER['REMOTE_ADDR'];
         $data = static::flaggedIPs()->get($ip);
-        if (!$data) return;
-        if ($data->value() == 'passed') return;
+        if (!$data)
+            return;
+        if ($data->value() == 'passed')
+            return;
         $data->setValue('passed');
         $data->update();
     }
@@ -145,8 +211,8 @@ class Security
         $data = static::flaggedIPs()->get($ip)?->data()->get(null) ?? [];
         $data[] = [
             'reason' => $reason,
-            'time' => time(),
-            'url' => static::actualUrl(),
+            'time'   => time(),
+            'url'    => static::actualUrl(),
         ];
         static::flaggedIPs()->set($ip, 'pending', $data);
     }
@@ -155,29 +221,36 @@ class Security
     {
         // bypass bans for signed-in users
         $user = $user ?? Session::uuid();
-        if ($user instanceof User) $user = $user->uuid();
-        if ($user != 'guest') return false;
+        if ($user instanceof User)
+            $user = $user->uuid();
+        if ($user != 'guest')
+            return false;
         // check the user's IP for excessive flags
         $ip = $ip ?? $_SERVER['REMOTE_ADDR'];
         $key = 'security/ip_bans/' . md5($ip);
-        $window = (int)Config::get('security.ip_bans.window');
+        $window = (int) Config::get('security.ip_bans.window');
         return Cache::get(
             $key,
             function () use ($ip, $window): bool {
                 $data = static::flaggedIPs()->get($ip);
-                if (!$data) return false;
+                if (!$data)
+                    return false;
                 $time = $data->updated()->getTimestamp();
-                if (time() - $time > $window) return false;
+                if (time() - $time > $window)
+                    return false;
                 $flags = $data->data()->get(null) ?? [];
-                $limit = (int)Config::get('security.ip_bans.limit');
-                if (count($flags) < $limit) return false;
+                $limit = (int) Config::get('security.ip_bans.limit');
+                if (count($flags) < $limit)
+                    return false;
                 $count = 0;
                 $expiry = time() - $window;
                 while ($flag = array_pop($flags)) {
                     if ($flag['time'] > $expiry) {
                         $count++;
-                        if ($count >= $limit) return true;
-                    } else {
+                        if ($count >= $limit)
+                            return true;
+                    }
+                    else {
                         break;
                     }
                 }
@@ -189,35 +262,46 @@ class Security
 
     public static function userFlagged(string|User|null $user = null): bool
     {
-        if (is_null($user)) $user = Session::uuid();
-        if ($user instanceof User) $user = $user->uuid();
-        if ($user == 'guest') return false;
+        if (is_null($user))
+            $user = Session::uuid();
+        if ($user instanceof User)
+            $user = $user->uuid();
+        if ($user == 'guest')
+            return false;
         return static::flaggedUsers()->exists($user)
             && static::flaggedUsers()->value($user) != 'passed';
     }
 
     public static function unflagUser(string|User|null $user = null): void
     {
-        if (is_null($user)) $user = Session::uuid();
-        if ($user instanceof User) $user = $user->uuid();
-        if ($user == 'guest') return;
+        if (is_null($user))
+            $user = Session::uuid();
+        if ($user instanceof User)
+            $user = $user->uuid();
+        if ($user == 'guest')
+            return;
         $data = static::flaggedUsers()->get($user);
-        if (!$data) return;
-        if ($data->value() == 'passed') return;
+        if (!$data)
+            return;
+        if ($data->value() == 'passed')
+            return;
         $data->setValue('passed');
         $data->update();
     }
 
     public static function flagUser(string|User|null $user = null, string $reason = 'unspecified'): void
     {
-        if (is_null($user)) $user = Session::uuid();
-        if ($user instanceof User) $user = $user->uuid();
-        if ($user == 'guest') return;
+        if (is_null($user))
+            $user = Session::uuid();
+        if ($user instanceof User)
+            $user = $user->uuid();
+        if ($user == 'guest')
+            return;
         $data = static::flaggedUsers()->get($user)?->data()->get(null) ?? [];
         $data[] = [
             'reason' => $reason,
-            'time' => time(),
-            'url' => static::actualUrl(),
+            'time'   => time(),
+            'url'    => static::actualUrl(),
         ];
         static::flaggedUsers()->set($user, 'pending', $data);
     }
@@ -225,7 +309,8 @@ class Security
     public static function authenticationFlagged(string|null $authentication_id = null): bool
     {
         $authentication_id = $authentication_id ?? Session::authentication()?->id();
-        if (!$authentication_id) return false;
+        if (!$authentication_id)
+            return false;
         return static::flaggedAuthentications()->exists($authentication_id)
             && static::flaggedAuthentications()->value($authentication_id) != 'passed';
     }
@@ -233,10 +318,13 @@ class Security
     public static function unflagAuthentication(string|null $authentication_id = null): void
     {
         $authentication_id = $authentication_id ?? Session::authentication()?->id();
-        if (!$authentication_id) return;
+        if (!$authentication_id)
+            return;
         $data = static::flaggedAuthentications()->get($authentication_id);
-        if (!$data) return;
-        if ($data->value() == 'passed') return;
+        if (!$data)
+            return;
+        if ($data->value() == 'passed')
+            return;
         $data->setValue('passed');
         $data->update();
     }
@@ -244,12 +332,13 @@ class Security
     public static function flagAuthentication(string|null $authentication_id = null, string $reason = 'unspecified'): void
     {
         $authentication_id = $authentication_id ?? Session::authentication()?->id();
-        if (!$authentication_id) return;
+        if (!$authentication_id)
+            return;
         $data = static::flaggedAuthentications()->get($authentication_id)?->data()->get(null) ?? [];
         $data[] = [
             'reason' => $reason,
-            'time' => time(),
-            'url' => static::actualUrl(),
+            'time'   => time(),
+            'url'    => static::actualUrl(),
         ];
         static::flaggedAuthentications()->set($authentication_id, 'pending', $data);
     }
@@ -282,4 +371,5 @@ class Security
     {
         return new DatastoreGroup('security_flags', 'flagged_ips');
     }
+
 }

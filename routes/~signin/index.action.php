@@ -15,16 +15,17 @@ use DigraphCMS\Users\Users;
 Security::requireSecurityCheck(false);
 
 // require the necessary cookies
-Cookies::required(['system', 'auth', 'csrf']);
+Cookies::required(['system', 'ui', 'auth', 'csrf']);
 
 // get bounce arg and turn it into a URL (which verifies it's in-site)
 $bounce = Context::arg_string('_bounce', true);
 if ($bounce) {
     try {
         $bounce = new URL($bounce);
-        Cookies::set('auth', 'bounce', $bounce->__toString());
-    } catch (Throwable $th) {
-        Cookies::unset('auth', 'bounce');
+        Cookies::set('ui', 'auth_bounce', $bounce->__toString());
+    }
+    catch (Throwable $th) {
+        Cookies::unset('ui', 'auth_bounce');
         Security::flag('potentially malicious bounce URL');
         ExceptionLog::log($th);
         $bounce = null;

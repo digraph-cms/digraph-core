@@ -26,7 +26,7 @@ use DigraphCMS\Users\Users;
 Security::requireSecurityCheck();
 
 // require the necessary cookies
-Cookies::required(['system', 'auth', 'csrf']);
+Cookies::required(['system', 'ui', 'auth', 'csrf']);
 
 // source and provider must exist
 $sourceName = Context::arg_string('_source');
@@ -43,15 +43,17 @@ if (!$source->providerActive($provider)) {
 // include source handler file
 try {
     Router::include('_source/' . $source->name() . '.signin.php');
-} catch (RedirectException|RefreshException|ArbitraryRedirectException $r) {
+}
+catch (RedirectException | RefreshException | ArbitraryRedirectException $r) {
     throw $r;
-} catch (Throwable $th) {
+}
+catch (Throwable $th) {
     ExceptionLog::log($th);
     $url = Users::signinUrl(null);
     $url->setArg('_noredirect', true);
     Notifications::printError(sprintf(
         'Sign-in handler encountered an error. <a href="%s">Please try again</a>.',
-        $url
+        $url,
     ));
     return;
 }
@@ -69,14 +71,15 @@ if (Context::data('signin_provider_id')) {
                 "That %s signin is already associated with a different account on this site. To associate your current account %s with this %s signin, you need to first sign into the other account and remove it there.",
                 $fullSourceTitle,
                 Users::current(),
-                $fullSourceTitle
+                $fullSourceTitle,
             ));
             Context::response()->status(403);
             return;
         }
         // user is signed in, link this pair to their account
         Session::authenticate($user, 'Signed in with ' . $fullSourceTitle);
-    } else {
+    }
+    else {
         // this provider/id pair is not tied to a user
         // either link it to the current user or create a new user
         if ($user = Session::user()) {
@@ -91,13 +94,14 @@ if (Context::data('signin_provider_id')) {
                     Templates::render(
                         '/email/account/new-sign-in-method.php',
                         [
-                            'user' => Users::current(),
-                            'source' => $fullSourceTitle
-                        ]
-                    )
-                )
+                            'user'   => Users::current(),
+                            'source' => $fullSourceTitle,
+                        ],
+                    ),
+                ),
             ));
-        } else {
+        }
+        else {
             // user is not signed in, create a new user and link pair to it
             DB::beginTransaction();
             $user = new User();
@@ -115,17 +119,19 @@ if (Context::data('signin_provider_id')) {
     // include post-signin handler file
     try {
         Router::include('_source/' . $source->name() . '.after.php');
-    } catch (Throwable $th) {
+    }
+    catch (Throwable $th) {
         // silently log errors here so they don't interrupt signin
         ExceptionLog::log($th);
     }
 
     // if there is a bounce target, try to make it into a URL and redirect
-    $bounce = Cookies::get('auth', 'bounce');
+    $bounce = Cookies::get('ui', 'auth_bounce');
     if ($bounce) {
         try {
             $bounce = new URL($bounce);
-        } catch (Throwable $th) {
+        }
+        catch (Throwable $th) {
             Security::flag('potentially malicious bounce URL (after signin)');
             ExceptionLog::log($th);
             $bounce = null;
@@ -135,14 +141,14 @@ if (Context::data('signin_provider_id')) {
     // as a fallback redirect to either profile page or sign in page
     $bounce = $bounce
         ?: Users::current()?->profile()
-            ?: new URL('/signin/');
+        ?: new URL('/signin/');
 
     // redirect to bounce target. Note that it uses the response->redirect()
     // method directly, because all this happens in a try/catch block and the
     // RedirectException would just get logged
     if ($bounce) {
-        Context::response()->redirect((string)$bounce->__toString(), targetFrame: '_top');
-        Cookies::unset('auth', 'bounce');
+        Context::response()->redirect((string) $bounce->__toString(), targetFrame: '_top');
+        Cookies::unset('ui', 'auth_bounce');
         return;
     }
 
@@ -151,9 +157,9 @@ if (Context::data('signin_provider_id')) {
         new Exception(
             "Sign-in handler failed to redirect to bounce target",
             [
-                'bounce' => $bounce
-            ]
-        )
+                'bounce' => $bounce,
+            ],
+        ),
     );
     Notifications::printNotice(sprintf(
         "Sign-in successful, but failed to redirect to bounce target. Please <a href=\"%s\">click here</a> to continue.",

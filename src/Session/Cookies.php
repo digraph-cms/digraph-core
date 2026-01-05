@@ -33,7 +33,7 @@ class Cookies
                 foreach (static::consentPromptTypes() as $type) {
                     static::allow($type);
                 }
-                // TODO: record record of affirmative consent, should include what the form looked like
+                // TODO: save a record of affirmative consent
             }, ['button--safe']);
             $reject = new SingleButton('Reject', function () {
                 static::set('system', 'consentrejected', true);
@@ -69,9 +69,11 @@ class Cookies
         $config = Config::get('cookies.consent_prompt');
         if ($config === false) {
             return [];
-        } elseif ($config === true) {
+        }
+        elseif ($config === true) {
             return static::allTypes();
-        } else {
+        }
+        else {
             return $config;
         }
     }
@@ -87,9 +89,9 @@ class Cookies
     {
         return [
             'ui' => [
-                'color' => static::get('ui', 'color'),
-                'flashnotifications' => static::get('ui', 'flashnotifications')
-            ]
+                'color'              => static::get('ui', 'color'),
+                'flashnotifications' => static::get('ui', 'flashnotifications'),
+            ],
         ];
     }
 
@@ -108,20 +110,20 @@ class Cookies
     public static function csrfToken($name = 'default'): string
     {
         return
-            static::get('csrf', $name) ??
-            static::set('csrf', $name, bin2hex(random_bytes(16)));
+            static::get('csrf', $name)
+            ?? static::set('csrf', $name, bin2hex(random_bytes(16)));
     }
 
     public static function allTypes(): array
     {
-        $types = ['system', 'ui', 'csrf', 'auth'];
+        $types = ['system', 'auth', 'ui', 'csrf', 'security'];
         Dispatcher::dispatchEvent('onListCookieTypes', [&$types]);
         return $types;
     }
 
     public static function necessaryTypes(): array
     {
-        $types = ['system', 'ui', 'csrf', 'auth'];
+        $types = ['system', 'ui', 'csrf', 'auth', 'security'];
         Dispatcher::dispatchEvent('onListNecessaryCookieTypes', [&$types]);
         return $types;
     }
@@ -131,7 +133,7 @@ class Cookies
         return array_diff(static::allTypes(), static::necessaryTypes());
     }
 
-    public static function form(array $types = null, bool $required = false, bool $skipAllowed = false): FormWrapper
+    public static function form(?array $types = null, bool $required = false, bool $skipAllowed = false): FormWrapper
     {
         $types = $types ?? static::allTypes();
         if ($skipAllowed) {
@@ -139,7 +141,7 @@ class Cookies
                 $types,
                 function ($type) {
                     return !Cookies::isAllowed($type);
-                }
+                },
             );
         }
         $form = new FormWrapper('cookie-authorization');
@@ -164,7 +166,8 @@ class Cookies
             $checkbox->addTip(static::describe($type));
             if ($expiration = static::expiration($type)) {
                 $checkbox->addTip("These cookies automatically expire on your computer after $expiration.");
-            } else {
+            }
+            else {
                 $checkbox->addTip('These cookies automatically expire on your computer when you close your browser.');
             }
         }
@@ -172,7 +175,8 @@ class Cookies
             foreach ($checkboxes as $type => $field) {
                 if ($field->value()) {
                     static::allow($type);
-                } else {
+                }
+                else {
                     static::disallow($type);
                 }
             }
@@ -200,6 +204,8 @@ class Cookies
                 return 'User interface cookies';
             case 'analytics':
                 return 'Analytics cookies';
+            case 'security':
+                return 'Security system cookies';
         }
         return null;
     }
@@ -210,10 +216,12 @@ class Cookies
             switch ($type) {
                 case 'csrf':
                     return
-                        "These cookies are necessary for the security of some site features. " .
-                        "They store temporary tokens that are used in security checks that prevent attackers from executing actions on your behalf or tricking you into performing unintended actions, or to prevent forms from being submitted more than once.";
+                        "These cookies are necessary for the security of some site features. "
+                        . "They store temporary tokens that are used in security checks that prevent attackers from executing actions on your behalf or tricking you into performing unintended actions, or to prevent forms from being submitted more than once."
+                        . "<br>These cookies are only sent to this site when you visit it, and we do not share or retain their data.";
             }
-        } else {
+        }
+        else {
             switch ($type) {
                 case 'csrf':
                     return "CSRF cookies store temporary tokens that are used to prevent attackers from executing actions on your behalf, or tricking you into performing actions you did not intend.";
@@ -229,37 +237,42 @@ class Cookies
 
     public static function onCookieDescribe_ui()
     {
-        return "UI state cookies, used to keep track of the user interface state and your user interface preferences." .
-            "<br>These cookies are only sent to this site when you visit it, and we do not share or retain their data.";
+        return "UI state cookies, used to keep track of the user interface state and your user interface preferences."
+            . "<br>These cookies are only sent to this site when you visit it, and we do not share or retain their data.";
     }
 
     public static function onCookieDescribe_ui_color()
     {
-        return "Stores your preferences for whether the site should appear in light or dark mode, and whether it should attempt to use colorblindness-friendly colors." .
-            "<br>This cookie is only sent to this site when you visit it, and we do not share or retain its data.";
+        return "Stores your preferences for whether the site should appear in light or dark mode, and whether it should attempt to use colorblindness-friendly colors."
+            . "<br>This cookie is only sent to this site when you visit it, and we do not share or retain its data.";
+    }
+
+    public static function onCookieDescribe_security_captcha()
+    {
+        return "Stores a secret token used by the site's security system to track whether you have passed a CAPTCHA challenge. Tokens are not retained beyond their expiration time, and are not linked to your identity or shared.";
     }
 
     public static function onCookieDescribe_auth()
     {
         $logURL = new URL('/users/profile/authentication_log.html');
         return
-            "Used by this website for remembering and verifying the identity of the currently signed in user." .
-            "<br>These cookies' contents may be stored and logged for security and troubleshooting purposes. They will be associated with personally identifiable information including the date, time, your public IP address, your browser's user agent string, and your account." .
-            " Once you sign in you are able to view these records on <a href='$logURL'>your account's authorization log</a>.";
+            "Used by this website for remembering and verifying the identity of the currently signed in user."
+            . "<br>These cookies' contents may be stored and logged for security and troubleshooting purposes. They will be associated with personally identifiable information including the date, time, your public IP address, your browser's user agent string, and your account."
+            . " Once you sign in you are able to view these records on <a href='$logURL'>your account's authorization log</a>.";
     }
 
     public static function onCookieDescribe_analytics()
     {
         return
-            "Used by this website for website usage analytics, so that administrators can better understand how visitors interact with the site." .
-            "<br>These cookies' contents may be stored, logged, and shared with third party analytics services. They will not be associated with your personally identifiable information. They may be associated with your IP address and browser information, and will be associated with your site usage patterns.";
+            "Used by this website for website usage analytics, so that administrators can better understand how visitors interact with the site."
+            . "<br>These cookies' contents may be stored, logged, and shared with third party analytics services. They will not be associated with your personally identifiable information. They may be associated with your IP address and browser information, and will be associated with your site usage patterns.";
     }
 
     public static function onCookieDescribe_system()
     {
         return
-            "Used by this website only for necessary system functions such as recording consent to other cookies." .
-            "<br>These cookies are only sent to this site when you visit it, and we do not share or retain their data.";
+            "Used by this website only for necessary system functions such as recording consent to other cookies."
+            . "<br>These cookies are only sent to this site when you visit it, and we do not share or retain their data.";
     }
 
     public static function onCookieExpiration_auth()
@@ -288,12 +301,18 @@ class Cookies
         return $d;
     }
 
+    public static function onCookieDescribe_security(): string
+    {
+        return "Security system cookies, used to help protect the site and your account from malicious activity."
+            . "<br>These cookies are only sent to this site when you visit it, and we do not share or retain their data.";
+    }
+
     public static function onCookieDescribe_auth_session()
     {
         $url = new URL('/users/profile/authentication_log.html');
-        return "Stores an authorization token used to verify that you are signed in as " . Users::current() . '. ' .
-            "This cookie is logged and stored in a way that links your account to your IP address, sign-in time, and browser user agent." .
-            "To view this stored information visit <a href='$url'>your account's authentication log</a>.";
+        return "Stores an authorization token used to verify that you are signed in as " . Users::current() . '. '
+            . "<br>This cookie is logged and stored in a way that links your account to your IP address, sign-in time, and browser user agent."
+            . "<br>To view this stored information visit <a href='$url'>your account's authentication log</a>.";
     }
 
     public static function onCookieExpiration_PHPSESSID()
@@ -303,46 +322,47 @@ class Cookies
             $d2 = new DateTime();
             $d2->add(new DateInterval("PT{$ttl}S"));
             return $d2->diff($d1)->format("%d days");
-        } else {
+        }
+        else {
             return null;
         }
     }
 
     public static function onCookieDescribe_PHPSESSID()
     {
-        return 'Used by a variety of PHP features to store temporary data about your session on this site.';
+        return 'Used by the PHP programming language and some libraries implemented in it to store temporary data about your session on this site.';
     }
 
     public static function describe(string $key): string
     {
         @list($type, $name) = explode('/', $key, 2);
         return
-            Config::get('cookies.descriptions.' . $key) ??
-            Dispatcher::firstValue('onCookieDescribe_' . $key) ??
-            Dispatcher::firstValue('onCookieDescribe_' . $type) ??
-            Dispatcher::firstValue('onCookieDescribe', [$type, $name]) ??
-            "No description set";
+            Config::get('cookies.descriptions.' . $key)
+            ?? Dispatcher::firstValue('onCookieDescribe_' . $key)
+            ?? Dispatcher::firstValue('onCookieDescribe_' . $type)
+            ?? Dispatcher::firstValue('onCookieDescribe', [$type, $name])
+            ?? "No description set";
     }
 
     public static function name(string $key): string
     {
         @list($type, $name) = explode('/', $key, 2);
         return
-            Config::get('cookies.names.' . $name) ??
-            Dispatcher::firstValue('onCookieName_' . $key) ??
-            Dispatcher::firstValue('onCookieName_' . $type) ??
-            Dispatcher::firstValue('onCookieName', [$type, $name]) ??
-            $key;
+            Config::get('cookies.names.' . $name)
+            ?? Dispatcher::firstValue('onCookieName_' . $key)
+            ?? Dispatcher::firstValue('onCookieName_' . $type)
+            ?? Dispatcher::firstValue('onCookieName', [$type, $name])
+            ?? $key;
     }
 
     public static function expiration(string $key): ?string
     {
         $type = preg_replace('/\/.+$/', '', $key);
         return
-            Config::get('cookies.expirations.' . $type) ??
-            Dispatcher::firstValue('onCookieExpiration_' . $type) ??
-            Dispatcher::firstValue('onCookieExpiration', [$type]) ??
-            null;
+            Config::get('cookies.expirations.' . $type)
+            ?? Dispatcher::firstValue('onCookieExpiration_' . $type)
+            ?? Dispatcher::firstValue('onCookieExpiration', [$type])
+            ?? null;
     }
 
     public static function allow(string $type)
@@ -360,10 +380,28 @@ class Cookies
             $current,
             function ($e) use ($type) {
                 return $type != $e;
-            }
+            },
         ));
         sort($current);
         static::set('system', 'cookierules', $current, true);
+    }
+
+    /**
+     * Whether a given cookie type should be HTTP only, as is preferable for any security/auth-related cookies to make it more difficult for them to be stolen by XSS attacks. Default is true, but can be overridden by event listeners.
+     */
+    protected static function cookieHttpOnly(string $type, string $name): bool
+    {
+        return Dispatcher::firstValue('onCookieHttpOnly_' . $type, [$name])
+            ?? Dispatcher::firstValue('onCookieHttpOnly', [$type, $name])
+            ?? true;
+    }
+
+    public static function onCookieHttpOnly_csrf(string $name): bool
+    {
+        if ($name === 'autocomplete') {
+            return false;
+        }
+        return true;
     }
 
     public static function key(string $type, string $name): string
@@ -378,16 +416,18 @@ class Cookies
             if ($expiration = static::expiration($type)) {
                 $expiration = (new DateTime())->add(DateInterval::createFromDateString($expiration));
                 $expiration = $expiration->getTimestamp();
-            } else {
+            }
+            else {
                 $expiration = 0;
             }
             if ($saveRawValue) {
                 $encoded = $value;
-            } else {
+            }
+            else {
                 $salt = bin2hex(random_bytes(16));
                 $encoded = json_encode([
-                    'value' => $value,
-                    'salt' => $salt,
+                    'value'     => $value,
+                    'salt'      => $salt,
                     'signature' => hash('sha256', serialize($value) . $salt . Config::secret()),
                 ]);
             }
@@ -398,22 +438,16 @@ class Cookies
                 $expiration,
                 static::cookiePath($localScope),
                 static::cookieDomain(),
-                static::cookieSecure()
+                static::cookieSecure(),
+                static::cookieHttpOnly($type, $name),
             );
             return $value;
-        } else {
+        }
+        else {
             throw new CookieRequiredError([$type]);
         }
     }
 
-    /**
-     * Undocumented function
-     *
-     * @param string|array $types
-     * @param string       $message
-     *
-     * @return void
-     */
     public static function required($types, string $message = '')
     {
         if (!is_array($types)) {
@@ -436,7 +470,7 @@ class Cookies
             1,
             static::cookiePath($localScope),
             static::cookieDomain(),
-            static::cookieSecure()
+            static::cookieSecure(),
         );
     }
 
@@ -449,12 +483,12 @@ class Cookies
             1,
             static::cookiePath(false),
             static::cookieDomain(),
-            static::cookieSecure()
+            static::cookieSecure(),
         );
         setcookie(
             $key,
             "",
-            1
+            1,
         );
     }
 
@@ -464,19 +498,21 @@ class Cookies
         if (isset($_COOKIE[$key])) {
             if ($getRawValue) {
                 return $_COOKIE[$key];
-            } else {
+            }
+            else {
                 // attempt json decode
                 try {
                     $value = json_decode($_COOKIE[$key], true, 512, JSON_THROW_ON_ERROR);
-                } catch (Throwable $th) {
+                }
+                catch (Throwable $th) {
                     ExceptionLog::log(new Exception(
                         'Cookie JSON error: ' . $th->getMessage(),
                         [
                             'cookie' => $_COOKIE[$key],
-                            'type' => $type,
-                            'name' => $name,
+                            'type'   => $type,
+                            'name'   => $name,
                         ],
-                        $th
+                        $th,
                     ));
                     Security::flag('Invalid JSON in cookie');
                     static::unset($type, $name);
@@ -484,10 +520,10 @@ class Cookies
                 }
                 // attempt signature check
                 if (
-                    !isset($value['value']) ||
-                    !isset($value['salt']) ||
-                    !isset($value['signature']) ||
-                    !hash_equals($value['signature'], hash('sha256', serialize($value['value']) . $value['salt'] . Config::secret()))
+                    !isset($value['value'])
+                    || !isset($value['salt'])
+                    || !isset($value['signature'])
+                    || !hash_equals($value['signature'], hash('sha256', serialize($value['value']) . $value['salt'] . Config::secret()))
                 ) {
                     Security::flag('Invalid signature in cookie');
                     static::unset($type, $name);
@@ -496,7 +532,8 @@ class Cookies
                 // return value
                 return $value['value'];
             }
-        } else {
+        }
+        else {
             return null;
         }
     }
@@ -505,7 +542,8 @@ class Cookies
     {
         if ($localScope) {
             return URLs::sitePath() . Context::url()->pathString();
-        } else {
+        }
+        else {
             return URLs::sitePath() ? URLs::sitePath() : '/';
         }
     }
@@ -519,4 +557,5 @@ class Cookies
     {
         return false;
     }
+
 }

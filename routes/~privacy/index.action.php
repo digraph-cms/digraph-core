@@ -8,7 +8,11 @@ use DigraphCMS\URL\URL;
 
 <h1>Your privacy on this site</h1>
 
-<h2>Data collected by the content management system</h2>
+<h2>Cookies</h2>
+
+<p>
+    This site uses cookies as part of its normal operation. Cookies are small text files stored on your device that help the site remember your preferences and provide necessary functionality and security.
+</p>
 
 <p>
     All potentially personally-identifying cookies are opt-in, and you may view and delete your cookies on the <a href="<?php echo new URL('current_cookies.html'); ?>">current cookies page</a>.
@@ -22,13 +26,15 @@ use DigraphCMS\URL\URL;
         <th>Automatic expiration</th>
     </tr>
     <?php
+
     foreach (Cookies::allTypes() as $type) {
         echo "<tr>";
         echo "<td>" . Cookies::name($type) . "</td>";
         echo "<td>" . Cookies::describe($type) . "</td>";
         if ($expiration = Cookies::expiration($type)) {
             echo '<td>after ' . $expiration . '</td>';
-        } else {
+        }
+        else {
             echo '<td>when you close your browser</td>';
         }
         echo "</tr>";
@@ -36,12 +42,6 @@ use DigraphCMS\URL\URL;
     ?>
 </table>
 
-<h2>Third-party analytics</h2>
-
-<p>
-    Site traffic data and anonymous tracking information may be shared with third-party analytics software.
-</p>
-
 <?php
-Router::include('info_cms/*.php');
-Router::include('info_general/*.php');
+
+Router::include('info_sections/*.php');

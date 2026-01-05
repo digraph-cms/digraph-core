@@ -9,6 +9,8 @@ use DigraphCMS\Security\Security;
 use DigraphCMS\URL\URL;
 use Gregwar\Captcha\CaptchaBuilder;
 
+@session_start();
+
 if (!isset($_SESSION['gregwar_captcha_image']) || Context::arg_bool('refresh', true)) {
     $builder = new CaptchaBuilder();
     $builder->build();
@@ -29,6 +31,7 @@ $form->addChild(sprintf(
 $phrase = (new Field('Enter the text shown above'))
     ->addValidator(function (InputInterface $input) {
         if (strtolower($input->value()) != strtolower($_SESSION['gregwar_captcha_phrase'])) {
+            Security::flag('Failed gregwar captcha');
             return 'Incorrect CAPTCHA phrase';
         }
         return null;

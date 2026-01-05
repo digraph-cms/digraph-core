@@ -35,7 +35,8 @@ class ImageRichMedia extends AbstractRichMedia
                 $preview->setExpectedWidth(50);
                 $preview->setMaxHeight(30);
                 $form->addChild($preview);
-            } catch (Throwable $th) {
+            }
+            catch (Throwable $th) {
             }
         }
 
@@ -48,7 +49,8 @@ class ImageRichMedia extends AbstractRichMedia
         // upload field
         $file = (new Field($create ? 'File' : 'Replace file', $input = new UploadSingle()))
             ->addForm($form);
-        if ($create) $file->setRequired(true);
+        if ($create)
+            $file->setRequired(true);
 
         $alt = (new Field('Alt text'))
             ->setRequired(true)
@@ -64,7 +66,8 @@ class ImageRichMedia extends AbstractRichMedia
         $form->addCallback(function () use ($name, $input, $alt, $caption) {
             // upload/replace file
             if ($input->value()) {
-                if ($this->file()) $this->file()->delete();
+                if ($this->file())
+                    $this->file()->delete();
                 $this['file'] = $input->filestore($this->uuid())->uuid();
             }
             // set name
@@ -108,9 +111,10 @@ class ImageRichMedia extends AbstractRichMedia
         try {
             $image = new ResponsivePicture(
                 $this->file()->image(),
-                $this['alt']
+                $this['alt'],
             );
-        } catch (Throwable $th) {
+        }
+        catch (Throwable $th) {
             return (new DIV)
                 ->addClass('notification')
                 ->addClass('notification--error')
@@ -123,12 +127,14 @@ class ImageRichMedia extends AbstractRichMedia
             $figure = (new FIGURE)
                 ->addChild($image)
                 ->addChild('<figcaption>' . $code->getContent() . '</figcaption>');
-        } elseif ($this->caption()->source()) {
+        }
+        elseif ($this->caption()->source()) {
             // wrap if there's a caption set
             $figure = (new FIGURE)
                 ->addChild($image)
                 ->addChild('<figcaption>' . $this->caption() . '</figcaption>');
-        } elseif ($floated && !$plain) {
+        }
+        elseif ($floated && !$plain) { // @phpstan-ignore-line for clarity
             // wrap with no caption if floated and not plain
             $figure = (new FIGURE)
                 ->addChild($image);
@@ -142,7 +148,8 @@ class ImageRichMedia extends AbstractRichMedia
             ]));
             $image->removeClass('floated');
             $out = $figure;
-        } else {
+        }
+        else {
             $out = $image;
         }
         // set to float if specified
@@ -196,4 +203,5 @@ class ImageRichMedia extends AbstractRichMedia
     {
         return Filestore::get($this['file']);
     }
+
 }
