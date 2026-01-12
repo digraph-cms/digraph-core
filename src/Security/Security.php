@@ -118,12 +118,12 @@ class Security
 
     public static function unflagSession(): void
     {
-        // set a cookie indicating that the user has passed a captcha, with a value of the expiration time
-        // this value will be automatically salted and signed by the Cookies class
+        // set a cookie indicating that the user has passed a captcha
         Cookies::set(
             'security',
             'captcha',
             static::generateCaptchaToken(),
+            skipRuleChecks: true,
             saveRawValue: true,
         );
     }
