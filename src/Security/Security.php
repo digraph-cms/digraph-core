@@ -141,7 +141,7 @@ class Security
 
     public static function sessionPassed(): bool
     {
-        $token = Cookies::get('security', 'captcha');
+        $token = Cookies::get('security', 'captcha', true);
         if (!$token)
             return false;
         if (!static::validateCaptchaToken($token)) {
