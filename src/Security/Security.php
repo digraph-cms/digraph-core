@@ -61,13 +61,16 @@ class Security
      */
     public static function flagged(bool $guest_default = true): bool
     {
-        if (Session::user()) {
+        if (static::sessionPassed()) {
+            return false;
+        }
+        elseif (Session::user()) {
             // always respect flags for the authentication/user of users
             if (static::authenticationFlagged() || static::userFlagged()) {
                 return true;
             }
             // only respect IP flags if their session has not passed a captcha
-            if (static::ipFlagged() && !static::sessionPassed()) {
+            if (static::ipFlagged()) {
                 return true;
             }
             // users are unflagged by default
@@ -75,7 +78,7 @@ class Security
         }
         else {
             // without authentication, unflag if IP is not flagged or session has passed a captcha
-            if (!static::ipFlagged() && !static::sessionPassed()) {
+            if (!static::ipFlagged()) {
                 return false;
             }
             // guests are flagged by default
@@ -111,8 +114,8 @@ class Security
     public static function flag(string $reason): void
     {
         static::flagIP(null, $reason);
-        static::flagAuthentication(null, $reason);
-        static::flagUser(null, $reason);
+        static::flagAuthentication($reason);
+        static::flagUser($reason);
         static::flagSession();
     }
 
@@ -141,16 +144,23 @@ class Security
 
     public static function sessionPassed(): bool
     {
-        $token = Cookies::get('security', 'captcha', true);
-        if (!$token)
-            return false;
-        if (!static::validateCaptchaToken($token)) {
-            Cookies::unset('security', 'captcha');
-            return false;
+        static $passed = null;
+        if ($passed === null) {
+            $token = Cookies::get('security', 'captcha', true);
+            if (!$token) {
+                $passed = false;
+            }
+            else {
+                if (!static::validateCaptchaToken($token)) {
+                    Cookies::unset('security', 'captcha');
+                    $passed = false;
+                }
+                else {
+                    $passed = true;
+                }
+            }
         }
-        else {
-            return true;
-        }
+        return $passed;
     }
 
     protected static function generateCaptchaToken(): string
@@ -260,24 +270,18 @@ class Security
         );
     }
 
-    public static function userFlagged(string|User|null $user = null): bool
+    public static function userFlagged(): bool
     {
-        if (is_null($user))
-            $user = Session::uuid();
-        if ($user instanceof User)
-            $user = $user->uuid();
+        $user = Session::uuid();
         if ($user == 'guest')
             return false;
         return static::flaggedUsers()->exists($user)
             && static::flaggedUsers()->value($user) != 'passed';
     }
 
-    public static function unflagUser(string|User|null $user = null): void
+    public static function unflagUser(): void
     {
-        if (is_null($user))
-            $user = Session::uuid();
-        if ($user instanceof User)
-            $user = $user->uuid();
+        $user = Session::uuid();
         if ($user == 'guest')
             return;
         $data = static::flaggedUsers()->get($user);
@@ -289,12 +293,9 @@ class Security
         $data->update();
     }
 
-    public static function flagUser(string|User|null $user = null, string $reason = 'unspecified'): void
+    public static function flagUser(string $reason = 'unspecified'): void
     {
-        if (is_null($user))
-            $user = Session::uuid();
-        if ($user instanceof User)
-            $user = $user->uuid();
+        $user = Session::uuid();
         if ($user == 'guest')
             return;
         $data = static::flaggedUsers()->get($user)?->data()->get(null) ?? [];
@@ -306,18 +307,18 @@ class Security
         static::flaggedUsers()->set($user, 'pending', $data);
     }
 
-    public static function authenticationFlagged(string|null $authentication_id = null): bool
+    public static function authenticationFlagged(): bool
     {
-        $authentication_id = $authentication_id ?? Session::authentication()?->id();
+        $authentication_id = Session::authentication()?->id();
         if (!$authentication_id)
             return false;
         return static::flaggedAuthentications()->exists($authentication_id)
             && static::flaggedAuthentications()->value($authentication_id) != 'passed';
     }
 
-    public static function unflagAuthentication(string|null $authentication_id = null): void
+    public static function unflagAuthentication(): void
     {
-        $authentication_id = $authentication_id ?? Session::authentication()?->id();
+        $authentication_id = Session::authentication()?->id();
         if (!$authentication_id)
             return;
         $data = static::flaggedAuthentications()->get($authentication_id);
@@ -329,9 +330,9 @@ class Security
         $data->update();
     }
 
-    public static function flagAuthentication(string|null $authentication_id = null, string $reason = 'unspecified'): void
+    public static function flagAuthentication(string $reason = 'unspecified'): void
     {
-        $authentication_id = $authentication_id ?? Session::authentication()?->id();
+        $authentication_id = Session::authentication()?->id();
         if (!$authentication_id)
             return;
         $data = static::flaggedAuthentications()->get($authentication_id)?->data()->get(null) ?? [];
