@@ -52,7 +52,7 @@ echo "</tr>";
 foreach ($categories as $category) {
     $count = Emails::select()
         ->notErrored()
-        ->where('time > ?', strtotime('-1 year'))
+        ->where('time > ?', strtotime('-1 month'))
         ->where('category = ?', [$category])
         ->where(
             '('
@@ -71,7 +71,7 @@ foreach ($categories as $category) {
     echo "<td>";
     echo "<strong>" . Emails::categoryLabel($category) . "</strong>";
     echo "<p><small>" . Emails::categoryDescription($category) . "</small>";
-    echo "<br><small>" . $count . " sent to you in the last year</small></p>";
+    echo "<br><small>" . $count . " sent to you in the last month</small></p>";
     echo "</td>";
     // don't show unsubscribe options for service categories
     if (Config::get('email.service_categories.' . $category)) {
