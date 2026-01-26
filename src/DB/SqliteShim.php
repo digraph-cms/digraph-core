@@ -3,9 +3,12 @@
 namespace DigraphCMS\DB;
 
 use PDO;
+use Pdo\Sqlite;
+use RuntimeException;
 
 class SqliteShim
 {
+
     public static function createFunctions(PDO $pdo): void
     {
         static::createFunction($pdo, 'JSON_VALUE', 2);
@@ -21,7 +24,12 @@ class SqliteShim
      */
     protected static function createFunction(PDO $pdo, string $name, int $args = -1): void
     {
-        $pdo->sqliteCreateFunction($name, self::$name(...), $args);
+        if (method_exists($pdo, 'createFunction'))
+            $pdo->createFunction($name, self::$name(...), $args);
+        elseif (method_exists($pdo, 'sqliteCreateFunction'))
+            $pdo->sqliteCreateFunction($name, self::$name(...), $args);
+        else
+            throw new RuntimeException('PDO does not support user-defined functions for SQLite.');
     }
 
     /**
@@ -46,13 +54,17 @@ class SqliteShim
         while ($key = array_shift($path)) {
             if (isset($out[$key])) {
                 $out = &$out[$key];
-            } else {
+            }
+            else {
                 return null;
             }
         }
-        if ($out === true) return 'true';
-        if ($out === false) return 'false';
+        if ($out === true)
+            return 'true';
+        if ($out === false)
+            return 'false';
         $out = @"$out";
         return $out;
     }
+
 }
