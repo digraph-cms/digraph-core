@@ -10,6 +10,7 @@ use DigraphCMS\Users\Permissions;
 use Envms\FluentPDO\Query;
 use Exception;
 use PDO;
+use Pdo\Sqlite;
 use PDOException;
 
 DB::addPhinxPath(__DIR__ . '/../../phinx');
@@ -17,6 +18,7 @@ Dispatcher::addSubscriber(DB::class);
 
 class DB
 {
+
     /** @var PDO|null */
     protected static $pdo;
     /** @var string|null */
@@ -118,12 +120,21 @@ class DB
                 // set up database
                 switch (Config::get('db.adapter')) {
                     case 'sqlite':
-                        self::$pdo = new PDO(
-                            Config::get('db.dsn') ?? self::buildDSN(),
-                            null,
-                            null,
-                            Config::get('db.pdo_options')
-                        );
+                        if (class_exists(Sqlite::class))
+                            // @phpstan-ignore assign.propertyType
+                            self::$pdo = new Sqlite(
+                                Config::get('db.dsn') ?? self::buildDSN(),
+                                null,
+                                null,
+                                Config::get('db.pdo_options'),
+                            );
+                        else
+                            self::$pdo = new PDO(
+                                Config::get('db.dsn') ?? self::buildDSN(),
+                                null,
+                                null,
+                                Config::get('db.pdo_options'),
+                            );
                         if (Config::get('db.sqlite.create_functions')) {
                             SqliteShim::createFunctions(self::$pdo);
                         }
@@ -151,6 +162,7 @@ class DB
                 }
             }
             // throw exceptions on PDO errors
+            // @phpstan-ignore-next-line because cross-deprecation phpstan is hard
             self::$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             // save driver string
             self::$driver = Config::get('db.adapter');
