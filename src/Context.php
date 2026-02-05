@@ -30,7 +30,7 @@ abstract class Context
 
     public static function beginSimplifiedRendering(int $width): void
     {
-        static::begin();
+        static::copy();
         static::fields()['simplified_rendering'] = [
             'active' => true,
             'width' => $width
