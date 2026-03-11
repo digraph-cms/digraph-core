@@ -28,6 +28,7 @@ use Throwable;
 
 abstract class Digraph
 {
+
     /**
      * The characters and pattern used to generate UUIDs can be modified in config
      * under uuid.chars and uuid.pattern, respectively. They should all be URL-safe
@@ -38,7 +39,9 @@ abstract class Digraph
      * any website this system is capable of scaling up to).
      */
     const UUIDCHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+
     const UUIDPATTERN = '00000000';
+
     const LONGUUIDPATTERN = '0000000000000000';
 
     /**
@@ -108,7 +111,7 @@ abstract class Digraph
             return $response->mime();
         }
         return (new MimeTypes())->getMimeType(
-            strtolower(pathinfo(static::inferFilename($response), PATHINFO_EXTENSION))
+            strtolower(pathinfo(static::inferFilename($response), PATHINFO_EXTENSION)),
         ) ?? 'text/html';
     }
 
@@ -142,7 +145,8 @@ abstract class Digraph
         if ($seed !== null) {
             mt_srand(crc32($seed));
             $fn = 'mt_rand';
-        } else {
+        }
+        else {
             $fn = 'random_int';
         }
         return ($prefix ? $prefix . '_' : '')
@@ -151,7 +155,7 @@ abstract class Digraph
                 function () use ($fn) {
                     return substr(static::uuidChars(), $fn(0, strlen(static::uuidChars()) - 1), 1);
                 },
-                static::uuidPattern()
+                static::uuidPattern(),
             );
     }
 
@@ -176,7 +180,8 @@ abstract class Digraph
         if ($seed !== null) {
             mt_srand(crc32($seed));
             $fn = 'mt_rand';
-        } else {
+        }
+        else {
             $fn = 'random_int';
         }
         return ($prefix ? $prefix . '_' : '')
@@ -185,7 +190,7 @@ abstract class Digraph
                 function () use ($fn) {
                     return substr(static::uuidChars(), $fn(0, strlen(static::uuidChars()) - 1), 1);
                 },
-                static::longUuidPattern()
+                static::longUuidPattern(),
             );
     }
 
@@ -247,7 +252,7 @@ abstract class Digraph
             static::actualUrl(),
             $_SERVER['REQUEST_METHOD'],
             new RequestHeaders(getallheaders()),
-            $_POST
+            $_POST,
         );
     }
 
@@ -259,6 +264,12 @@ abstract class Digraph
         Context::url($request->url());
         Context::request($request);
         Context::response(new Response());
+        // check if the request URL is suspicious/dangerous
+        if (Security::dangerousUrl($request->url())) {
+            Security::flag('Dangerous URL');
+            static::buildBadRequestResponse();
+            return;
+        }
         // check security system for bans on this IP address
         // if there is a ban, build the response entirely here and return immediately to minimize code execution
         if (Security::banned()) {
@@ -299,7 +310,7 @@ abstract class Digraph
             if ($explicitly_static && $static_exists && !$pages) {
                 $url = Context::url();
                 $url->path(
-                    preg_replace('@^/~@', '/', Context::url()->path())
+                    preg_replace('@^/~@', '/', Context::url()->path()),
                 );
                 Context::url($url);
                 throw new RedirectException(Context::url());
@@ -309,7 +320,8 @@ abstract class Digraph
             if ($explicitly_static || (!$pages && $static_exists)) {
                 // explicitly static or no pages and static exists
                 static::buildResponseContent();
-            } elseif (count($pages) == 1 && !$static_exists) {
+            }
+            elseif (count($pages) == 1 && !$static_exists) {
                 // one page with no matching static route: put it in Context and build content
                 /** @var AbstractPage */
                 $page = reset($pages);
@@ -321,7 +333,8 @@ abstract class Digraph
                 // build response content
                 Context::page($page);
                 static::buildResponseContent();
-            } elseif (count($pages) > 1 || ($pages && $static_exists)) {
+            }
+            elseif (count($pages) > 1 || ($pages && $static_exists)) {
                 // create a multiple options page if multiple pages exist, or if one or more pages pages and a static route exists
                 Context::data('300_pages', $pages);
                 if (Router::staticRouteExists($route, $action)) {
@@ -342,9 +355,11 @@ abstract class Digraph
                         $content = Context::response()->content();
                         if (Context::fields()['page.name']) {
                             $name = strip_tags(Context::fields()['page.name']);
-                        } elseif (preg_match("@<h1[^>]*>(.+?)</h1>@i", $content, $matches)) {
+                        }
+                        elseif (preg_match("@<h1[^>]*>(.+?)</h1>@i", $content, $matches)) {
                             $name = trim(strip_tags($matches[1]));
-                        } else {
+                        }
+                        else {
                             $name = strip_tags(Context::url()->name());
                         }
                         $url = Context::url();
@@ -359,7 +374,8 @@ abstract class Digraph
             if (static::inferMime() == 'text/html') {
                 Templates::wrapResponse(Context::response());
             }
-        } catch (DBConnectionException $ex) {
+        }
+        catch (DBConnectionException $ex) {
             ExceptionLog::log($ex);
             // generate a fallback error page for DB connection errors, we use the fallback template because a
             // broken db connection breaks a LOT of things
@@ -367,7 +383,8 @@ abstract class Digraph
             Context::thrown($ex);
             static::buildErrorContent(500.2);
             Templates::wrapResponse(Context::response());
-        } catch (Throwable $th) {
+        }
+        catch (Throwable $th) {
             // do shared tasks, then re-throw to do things with different types
             try {
                 // discard output buffers that were open when thrown
@@ -382,7 +399,8 @@ abstract class Digraph
                 Context::thrown($th);
                 // rethrow error
                 throw $th;
-            } catch (RedirectException $r) {
+            }
+            catch (RedirectException $r) {
                 // RedirectExceptions are used to allow exception handling that becomes a redirect
                 Context::response()->redirect(
                     $r->url(),
@@ -390,7 +408,8 @@ abstract class Digraph
                     $r->preserveMethod(),
                     $r->targetFrame(),
                 );
-            } catch (HttpError $error) {
+            }
+            catch (HttpError $error) {
                 // generate exception-handling page
                 try {
                     if ($error->status() >= 500 || $error->status() == 400) {
@@ -399,7 +418,8 @@ abstract class Digraph
                     }
                     static::buildErrorContent($error->status(), $error->getMessage());
                     Templates::wrapResponse(Context::response());
-                } catch (RedirectException $r) {
+                }
+                catch (RedirectException $r) {
                     // RedirectExceptions are used to allow exception handling that becomes a redirect
                     Context::response()->redirect(
                         $r->url(),
@@ -408,7 +428,8 @@ abstract class Digraph
                         $r->targetFrame(),
                     );
                 }
-            } catch (Throwable $th) {
+            }
+            catch (Throwable $th) {
                 try {
                     // generate a fallback exception handling error page
                     if (!Dispatcher::firstValue('onException_' . substr(get_class($th), (strrpos(get_class($th), '\\') ?: -1) + 1), [$th])) {
@@ -420,7 +441,8 @@ abstract class Digraph
                     }
                     Context::response()->template('fallback.php');
                     Templates::wrapResponse(Context::response());
-                } catch (RedirectException $r) {
+                }
+                catch (RedirectException $r) {
                     // RedirectExceptions are used to allow exception handling that becomes a redirect
                     Context::response()->redirect(
                         $r->url(),
@@ -459,25 +481,28 @@ abstract class Digraph
 
     protected static function buildBannedResponse(): void
     {
-        $window = (int)Config::get('security.ip_bans.window');
+        $window = (int) Config::get('security.ip_bans.window');
         $duration = $window;
         $duration_string = '';
         if ($duration > 3600) {
             $hours = floor($duration / 3600);
             $duration_string .= $hours . ' hour';
-            if ($hours > 1) $duration_string .= 's';
+            if ($hours > 1)
+                $duration_string .= 's';
             $duration -= $hours * 3600;
         }
         if ($duration > 60) {
             $minutes = floor($duration / 60);
             $duration_string .= ($duration_string ? ', ' : '') . $minutes . ' minute';
-            if ($minutes > 1) $duration_string .= 's';
+            if ($minutes > 1)
+                $duration_string .= 's';
             $duration -= $minutes * 60;
         }
         if ($duration > 0) {
             $seconds = $duration;
             $duration_string .= ($duration_string ? ', ' : '') . $seconds . ' second';
-            if ($seconds > 1) $duration_string .= 's';
+            if ($seconds > 1)
+                $duration_string .= 's';
         }
         Context::response()->status(429);
         Context::response()->headers()->set('Retry-After', $window);
@@ -487,6 +512,13 @@ abstract class Digraph
             $_SERVER['REMOTE_ADDR'],
             $duration_string,
         ));
+    }
+
+    protected static function buildBadRequestResponse(): void
+    {
+        Context::response()->status(400);
+        Context::response()->filename('400.txt');
+        Context::response()->content('Bad request.');
     }
 
     protected static function buildResponseContent(): void
@@ -504,7 +536,7 @@ abstract class Digraph
             Context::cache()->set(
                 'content_cache',
                 Context::response(),
-                Context::response()->cacheTTL()
+                Context::response()->cacheTTL(),
             );
         }
     }
@@ -513,7 +545,8 @@ abstract class Digraph
     {
         if (Context::page()) {
             return static::doPageRoute(Context::page(), Context::url()->action());
-        } else {
+        }
+        else {
             return static::doStaticRoute(Context::url()->route(), Context::url()->action());
         }
     }
@@ -543,4 +576,5 @@ abstract class Digraph
         }
         return null;
     }
+
 }

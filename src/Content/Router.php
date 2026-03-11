@@ -4,6 +4,8 @@ namespace DigraphCMS\Content;
 
 use DigraphCMS\Context;
 use DigraphCMS\Events\Dispatcher;
+use DigraphCMS\HTTP\HttpError;
+use DigraphCMS\Security\Security;
 use DigraphCMS\URL\URL;
 
 // Always add the default system routes directory
@@ -11,6 +13,7 @@ Router::addSource(__DIR__ . '/../../routes');
 
 class Router
 {
+
     protected static $sources = [];
 
     /**
@@ -27,6 +30,12 @@ class Router
     {
         $urls = [];
         foreach ($page->routeClasses() as $c) {
+            // check for dangerous things in $route
+            if (preg_match('/[\*\?\[\]\{\}]|\.\.|\%(?:2e|2f|5c|00)|[\x00-\x1f\x7f]/i', $c)) {
+                Security::flag("Dangerous page actions route");
+                throw new HttpError(400);
+            }
+            // do search
             foreach (self::search("@$c/*.action.*") as $file) {
                 $action = basename($file);
                 $action = preg_replace('/\.action\..+$/', '', $action);
@@ -57,6 +66,12 @@ class Router
      */
     public static function staticActions(string $route, bool $menuFilter = false): array
     {
+        // check for dangerous things in $route
+        if (preg_match('/[\*\?\[\]\{\}]|\.\.|\%(?:2e|2f|5c|00)|[\x00-\x1f\x7f]/i', $route)) {
+            Security::flag("Dangerous static actions route");
+            throw new HttpError(400);
+        }
+        // do routing
         $urls = [];
         foreach (self::search("~$route/*/index.action.*") as $file) {
             $action = basename(dirname($file));
@@ -93,12 +108,14 @@ class Router
                 $urls,
                 function (URL $url) use ($menuFilter) {
                     if ($menuFilter) {
-                        if (($result = Dispatcher::firstValue('onFilterActions', [$url])) !== null) return $result;
-                        if (substr($url->action(), 0, 1) == '_') return false;
+                        if (($result = Dispatcher::firstValue('onFilterActions', [$url])) !== null)
+                            return $result;
+                        if (substr($url->action(), 0, 1) == '_')
+                            return false;
                     }
                     return $url->permissions();
                 }
-            )
+            ),
         );
     }
 
@@ -155,7 +172,8 @@ class Router
         // try specific routes first
         foreach ($page->routeClasses() as $c) {
             $output = self::tryRoute("@$c/$action");
-            if (trim($output ?? '')) return $output;
+            if (trim($output ?? ''))
+                return $output;
         }
         // check if there's a prefix
         if ($pos = strpos($action, ':')) {
@@ -163,13 +181,15 @@ class Router
             // try prefix wildcard route
             foreach ($page->routeClasses() as $c) {
                 $output = self::tryRoute("@$c/@wildcard_$prefix");
-                if (trim($output ?? '')) return $output;
+                if (trim($output ?? ''))
+                    return $output;
             }
         }
         // try wildcard routes last
         foreach ($page->routeClasses() as $c) {
             $output = self::tryRoute("@$c/@wildcard");
-            if (trim($output ?? '')) return $output;
+            if (trim($output ?? ''))
+                return $output;
         }
         return null;
     }
@@ -271,6 +291,7 @@ class Router
         }
         return null;
     }
+
 }
 
 function require_file(string $file): string
@@ -278,7 +299,8 @@ function require_file(string $file): string
     ob_start();
     try {
         require $file;
-    } catch (\Throwable $th) {
+    }
+    catch (\Throwable $th) {
         ob_end_clean();
         throw $th;
     }

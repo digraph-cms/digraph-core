@@ -22,10 +22,13 @@ use Stringable;
  */
 class URL
 {
+
     /** @var string|null */
     protected $name;
+
     /** @var string */
     protected $path = '';
+
     /** @var array<string,string> */
     protected $query = [];
 
@@ -91,7 +94,8 @@ class URL
         if (@$parsed['query']) {
             parse_str($parsed['query'], $this->query);
             ksort($this->query);
-        } else {
+        }
+        else {
             $this->query = [];
         }
     }
@@ -123,8 +127,10 @@ class URL
         $this->setArg('utm_source', $source);
         $this->setArg('utm_medium', $medium);
         $this->setArg('utm_campaign', $campaign);
-        if ($term) $this->setArg('utm_term', $term);
-        if ($content) $this->setArg('utm_content', $content);
+        if ($term)
+            $this->setArg('utm_term', $term);
+        if ($content)
+            $this->setArg('utm_content', $content);
         return $this;
     }
 
@@ -142,7 +148,8 @@ class URL
             $this->hackUrlForParent();
         if ($parent->__toString() == $this->__toString()) {
             return null;
-        } else {
+        }
+        else {
             return $parent;
         }
     }
@@ -161,9 +168,11 @@ class URL
     public function arg_string(string $key, bool $nullable = false): string|null
     {
         $value = $this->getArg($key, $nullable);
-        if (is_null($value)) return null;
+        if (is_null($value))
+            return null;
         $typed_value = strval($value);
-        if ($value != $typed_value) throw new HttpError(400, "Invalid argument '$key'");
+        if ($value != $typed_value)
+            throw new HttpError(400, "Invalid argument '$key'");
         return $typed_value;
     }
 
@@ -181,9 +190,11 @@ class URL
     public function arg_int(string $key, bool $nullable = false): int|null
     {
         $value = $this->getArg($key, $nullable);
-        if (is_null($value)) return null;
+        if (is_null($value))
+            return null;
         $typed_value = intval($value);
-        if ($value != $typed_value) throw new HttpError(400, "Invalid argument '$key'");
+        if ($value != $typed_value)
+            throw new HttpError(400, "Invalid argument '$key'");
         return $typed_value;
     }
 
@@ -200,10 +211,14 @@ class URL
     public function arg_bool(string $key, bool $nullable = false): bool|null
     {
         $value = $this->getArg($key, $nullable);
-        if ($value == '1') return true;
-        elseif ($value == '0') return false;
-        elseif (is_null($value)) return null;
-        else throw new HttpError(400, "Invalid argument '$key'");
+        if ($value == '1')
+            return true;
+        elseif ($value == '0')
+            return false;
+        elseif (is_null($value))
+            return null;
+        else
+            throw new HttpError(400, "Invalid argument '$key'");
     }
 
     /**
@@ -211,14 +226,15 @@ class URL
      */
     public function html(array $class = [], bool $inPageContext = false, string|null $target = null): string
     {
-        $normalized = clone($this);
+        $normalized = clone ($this);
         $normalized->normalize();
         if ($normalized->pathString() == Context::url()->pathString()) {
             $class[] = 'current-page';
         }
         if ($class) {
             $class = ' class="' . implode(' ', $class) . '"';
-        } else {
+        }
+        else {
             $class = '';
         }
         if ($target) {
@@ -231,7 +247,8 @@ class URL
     {
         if ($this->explicitlyStaticRoute()) {
             return null;
-        } else {
+        }
+        else {
             return Pages::get($this->route());
         }
     }
@@ -261,7 +278,8 @@ class URL
                 Dispatcher::firstValue('onPageUrlName', [$this, $inPageContext]) ??
                 $this->page()->title($this, $inPageContext) ??
                 ($this->action() == 'index' ? URLs::pathToName($this->path(), $inPageContext) : URLs::pathtoName($this->action(), $inPageContext));
-        } else {
+        }
+        else {
             // look for static route names by route-specific events, then generic, then fall back to path
             return
                 Dispatcher::firstValue('onStaticUrlName_' . $this->route(), [$this, $inPageContext]) ??
@@ -363,7 +381,8 @@ class URL
     public function setAction(string $action): static
     {
         $this->path = substr($this->path, 0, strlen($this->path) - strlen($this->file() ?? ''));
-        if (!preg_match('@(/|\.([a-z0-9]+))$@', $action) && !strpos($action, ':')) $action .= '.html';
+        if (!preg_match('@(/|\.([a-z0-9]+))$@', $action) && !strpos($action, ':'))
+            $action .= '.html';
         $this->path .= $action;
         return $this;
     }
@@ -404,7 +423,8 @@ class URL
     {
         if ($this->query) {
             return '?' . http_build_query($this->query);
-        } else {
+        }
+        else {
             return '';
         }
     }
@@ -431,7 +451,8 @@ class URL
                         if ($path[$i] !== false) {
                             $path[$i] = false;
                             break;
-                        } else {
+                        }
+                        else {
                             $i--;
                         }
                     }
@@ -473,23 +494,29 @@ class URL
 
     public function setArg(string $name, mixed $value): static
     {
-        if (is_null($value)) return $this->unsetArg($name);
+        if (is_null($value))
+            return $this->unsetArg($name);
         // make sure there's nothing untoward in the value
-        if ($value instanceof Stringable) $value = strval($value);
+        if ($value instanceof Stringable)
+            $value = strval($value);
         $is_string = is_string($value);
         $is_int = is_int($value);
         $is_float = is_float($value);
         $is_bool = is_bool($value);
-        if (!$is_string && !$is_int && !$is_float && !$is_bool) throw new HttpError(400, "Invalid argument value");
+        if (!$is_string && !$is_int && !$is_float && !$is_bool)
+            throw new HttpError(400, "Invalid argument value");
         if ($is_string) {
             // if it's a string, sanitize it and see if it changed, if so it was suspicious or invalid
             $sanitized = filter_var($value, FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW);
-            if ($sanitized != $value) throw new HttpError(400, "Invalid argument value");
+            if ($sanitized != $value)
+                throw new HttpError(400, "Invalid argument value");
             $sanitized = trim($sanitized);
-        } elseif ($is_bool) {
+        }
+        elseif ($is_bool) {
             // if it's a bool, set it to 1 or 0
             $value = $value ? '1' : '0';
-        } else {
+        }
+        else {
             // otherwise just string it
             $value = strval($value);
         }
@@ -557,4 +584,5 @@ class URL
         }
         return null;
     }
+
 }

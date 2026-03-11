@@ -33,6 +33,20 @@ class Security
         throw new RedirectException(static::captchaUrl(), targetFrame: '_top');
     }
 
+    /**
+     * Determine whether the given URL is potentially dangerous.
+     */
+    public static function dangerousUrl(URL $url): bool
+    {
+        $path = urldecode($url->path());
+        // glob/traversal characters, url-encoded variants, and control characters 
+        if (preg_match('/[\*\?\[\]\{\}]|\.\.|\%(?:2e|2f|5c|00)|[\x00-\x1f\x7f]/i', $path)) {
+            return true;
+        }
+        // url-encoded variants of glob/traversal characters
+        return false;
+    }
+
     public static function cronJob_maintenance_heavy(): void
     {
         // clean up expired captcha tokens
