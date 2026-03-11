@@ -4,6 +4,7 @@ use DigraphCMS\Context;
 use DigraphCMS\Datastore\DatastoreItem;
 use DigraphCMS\Datastore\DatastoreSelect;
 use DigraphCMS\HTML\Icon;
+use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\UI\Breadcrumb;
 use DigraphCMS\UI\Format;
 use DigraphCMS\UI\Pagination\ColumnDateFilteringHeader;
@@ -16,6 +17,8 @@ $query = (new DatastoreSelect)
     ->where('ns', Context::url()->actionSuffix());
 
 if (Context::arg_string('grp', true)) {
+    if (Context::arg_string('grp') !== htmlspecialchars(Context::arg_string('grp')))
+        throw new HttpError(400);
     $query->where('grp', Context::arg_string('grp'));
     echo "<h1>Group " . Context::arg_string('grp') . "</h1>";
     Breadcrumb::parent(new URL('namespace:' . Context::url()->actionSuffix()));
@@ -31,7 +34,7 @@ $table = new PaginatedTable(
             htmlentities($item->value() ?? ' '),
             $item->data()->get() ? new Icon('code', 'contains data') : ' ',
             Format::date($item->created()),
-            Format::date($item->updated())
+            Format::date($item->updated()),
         ]);
     },
     array_filter([
@@ -40,8 +43,8 @@ $table = new PaginatedTable(
         new ColumnStringFilteringHeader('Value', '`value`'),
         'Data',
         new ColumnDateFilteringHeader('Created', 'created'),
-        new ColumnDateFilteringHeader('Updated', 'updated')
-    ])
+        new ColumnDateFilteringHeader('Updated', 'updated'),
+    ]),
 );
 
 echo $table;

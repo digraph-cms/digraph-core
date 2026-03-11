@@ -14,7 +14,8 @@ Security::requireSecurityCheck();
 $user = Users::get(Context::arg_string('user'));
 $token = Context::arg_string('token');
 
-if (!$user) throw new HttpError(404);
+if (!$user)
+    throw new HttpError(404);
 
 // try to find token in email list
 foreach ($user['emails'] as $i => $row) {
@@ -25,12 +26,14 @@ foreach ($user['emails'] as $i => $row) {
             // signed in as this user, bounce to email address page
             Notifications::flashConfirmation('Email address verified: ' . $row['address']);
             throw new RedirectException(new URL('/users/profile/email_addresses.html'));
-        } elseif (!Session::user()) {
+        }
+        elseif (!Session::user()) {
             // user is not signed in, prompt them to sign in
             Notifications::printConfirmation('Email address verified: ' . $row['address']);
             echo Users::signinUrl(new URL('/'))->html();
             return;
-        } else {
+        }
+        else {
             // user is signed in as somebody else? Weird but we'll handle it
             Notifications::printConfirmation('Email address verified on behalf of ' . $user . ': ' . $row['address']);
             return;
