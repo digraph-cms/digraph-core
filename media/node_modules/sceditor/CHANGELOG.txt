@@ -1,3 +1,11 @@
+Version 3.2.1:
+	Fixed bug with checkWhitespace() giving error when no previous node.
+	Added Emoji toolbox plugin.
+		- Thanks to @w8tcha for creating
+	Fixed XSS when untrusted values are passed as options to sceditor.create().
+		- Thanks to Sofiane El Hor (22sh) @sofianeelhor for reporting and
+			helping test the fix.
+
 Version 3.2.0:
 	Fixed bug with pasting removing styling from fist/last block when using
 		BBCode format.
