@@ -17,6 +17,7 @@ Templates::addSource(__DIR__ . '/../../templates');
 
 class Templates
 {
+
     protected static $sources = [];
 
     /**
@@ -84,14 +85,17 @@ class Templates
         Context::thrown($th);
         try {
             $code = 500;
-            if ($th instanceof DBConnectionException) $code = 500.2;
-            if ($th instanceof HttpError) $code = $th->status();
+            if ($th instanceof DBConnectionException)
+                $code = 500.2;
+            if ($th instanceof HttpError)
+                $code = $th->status();
             Context::response(new Response($code));
             Digraph::buildErrorContent($code);
             $out = static::render('fallback.php');
             Context::end();
             return $out;
-        } catch (Throwable $th) {
+        }
+        catch (Throwable $th) {
             ExceptionLog::log($th);
             Context::end();
             return '<h1>Unhandled error</h1><p>Additionally, an error occurred when generating the fallback error page.</p>';
@@ -108,26 +112,28 @@ class Templates
             $content = $response->content();
             if (preg_match("@<h1[^>]*>(.+?)</h1>@i", $content, $matches)) {
                 $fields['page.name'] = trim(strip_tags($matches[1]));
-            } else {
+            }
+            else {
                 $fields['page.name'] = strip_tags(Context::url()->name());
             }
         }
         // change template for navigation frame responses, to avoid unnecessary building
         // template also adds javascript that will reload the page if the browser renders it, so users don't see the framed template
-        if (Context::request()->headers()->get('x-for-navigation-frame') == 'y') $response->template('x-for-navigation-frame.php');
+        if (Context::request()->headers()->get('x-for-navigation-frame') == 'y')
+            $response->template('x-for-navigation-frame.php');
         // render
         $response->content(Context::cache('wrapresponse')->get(
             md5($response->content()),
             function () use ($response) {
                 return static::render($response->template());
             },
-            $response->cacheTTL()
+            $response->cacheTTL(),
         ));
     }
 
     protected static function locateFile(string $template): ?string
     {
-        if (strpos('..', $template) !== false) {
+        if (strpos($template, '..') !== false) {
             return null;
         }
         foreach (static::$sources as $dir) {
@@ -143,6 +149,7 @@ class Templates
     {
         return !!static::locateFile($template);
     }
+
 }
 
 function require_file(string $file): string
@@ -150,7 +157,8 @@ function require_file(string $file): string
     ob_start();
     try {
         require $file;
-    } catch (Throwable $th) {
+    }
+    catch (Throwable $th) {
         ob_end_clean();
         throw $th;
     }

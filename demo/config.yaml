@@ -34,3 +34,7 @@ user_sources:
 
 cron:
   route_enabled: true
+
+# Allow insecure cookies for demo site
+cookies:
+  secure: false

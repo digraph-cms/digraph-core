@@ -6,7 +6,15 @@ use DigraphCMS\URL\URL;
 
 class SearchResult
 {
-    protected $title, $url, $body, $query;
+
+    protected $title;
+
+    protected $url;
+
+    protected $body;
+
+    protected $query;
+
     protected $snippet;
 
     public function __construct(string $title, URL $url, string $body, string $query)
@@ -56,35 +64,42 @@ class SearchResult
                         break;
                     }
                 }
-                if (strlen($bodyWord) > 25) $bodyWord = substr($bodyWord, 0, 25);
+                if (strlen($bodyWord) > 25)
+                    $bodyWord = substr($bodyWord, 0, 25);
                 $snippet[] = $matches
-                    ? "<strong>$bodyWord</strong>"
+                    ? "<strong>" . htmlspecialchars($bodyWord, ENT_QUOTES) . "</strong>"
                     : $bodyWord;
             }
             $wordStart = $wordEnd + 1;
-            if ($wordStart > $endPosition) break;
+            if ($wordStart > $endPosition)
+                break;
         }
         return implode(' ', $snippet);
     }
 
     protected function snippetStart(array $locations)
     {
-        if (!$locations) return 0;
+        if (!$locations)
+            return 0;
         $start = $locations[0];
         $count = count($locations);
         $smallestDiff = INF;
         if (count($locations) > 2) {
             for ($i = 1; $i < $count; $i++) {
-                if ($i == $count - 1) $diff = $locations[$i] - $locations[$i - 1];
-                else $diff = $locations[$i + 1] - $locations[$i];
+                if ($i == $count - 1)
+                    $diff = $locations[$i] - $locations[$i - 1];
+                else
+                    $diff = $locations[$i + 1] - $locations[$i];
                 if ($smallestDiff > $diff) {
                     $smallestDiff = $diff;
                     $start = $locations[$i];
                 }
             }
         }
-        if ($start > 50) return $start - 50;
-        else return 0;
+        if ($start > 50)
+            return $start - 50;
+        else
+            return 0;
     }
 
     protected function wordLocations(array $words, string $body)
@@ -103,4 +118,5 @@ class SearchResult
         sort($locations);
         return $locations;
     }
+
 }

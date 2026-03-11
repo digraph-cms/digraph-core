@@ -8,7 +8,6 @@ use DigraphCMS\Context;
 use DigraphCMS\Datastore\DatastoreGroup;
 use DigraphCMS\DB\DB;
 use DigraphCMS\DB\DBConnectionException;
-use DigraphCMS\Digraph;
 use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\Session\Cookies;
 use DigraphCMS\Session\Session;
@@ -179,7 +178,7 @@ class Security
 
     protected static function generateCaptchaToken(): string
     {
-        $token = substr(Digraph::longUUID() . Digraph::longUUID(), 0, 64);
+        $token = bin2hex(random_bytes(32));
         $expires = time() + (int) Config::get('captcha.pass_ttl');
         DB::query()
             ->insertInto(

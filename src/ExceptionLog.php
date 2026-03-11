@@ -14,14 +14,15 @@ use ZipArchive;
 
 class ExceptionLog
 {
+
     static function logMessage(string $message, mixed $data = null, Throwable|null $previous = null): void
     {
         static::log(
             new Exception(
                 $message,
                 $data,
-                $previous
-            )
+                $previous,
+            ),
         );
     }
 
@@ -30,37 +31,21 @@ class ExceptionLog
         // generate data that will be saved
         $path = Config::get('paths.storage') . '/exception_log/' . date('Ymd');
         $time = time();
-        $uuid = Digraph::longUUID();
+        $uuid = bin2hex(random_bytes(32));
         $file = "$path/$time $uuid.json";
-        if (Context::request()) {
-            $data = [
-                'uuid' => $uuid,
-                'time' => time(),
-                'user' => Session::uuid(),
-                'authid' => Session::authentication() ? Session::authentication()->id() : null,
-                'url' => static::actualUrl(),
-                '_REQUEST' => $_REQUEST,
-                '_SERVER' => $_SERVER,
-                '_GET' => $_GET,
-                '_POST' => $_POST,
-                '_FILES' => $_FILES,
-                'thrown' => static::throwableArray($th)
-            ];
-        } else {
-            $data = [
-                'uuid' => $uuid,
-                'time' => time(),
-                'user' => Session::uuid(),
-                'authid' => Session::authentication() ? Session::authentication()->id() : null,
-                'url' => static::actualUrl(),
-                '_REQUEST' => $_REQUEST,
-                '_SERVER' => $_SERVER,
-                '_GET' => $_GET,
-                '_POST' => $_POST,
-                '_FILES' => $_FILES,
-                'thrown' => static::throwableArray($th)
-            ];
-        }
+        $data = [
+            'uuid'     => $uuid,
+            'time'     => time(),
+            'user'     => Session::uuid(),
+            'authid'   => Session::authentication() ? Session::authentication()->id() : null,
+            'url'      => static::actualUrl(),
+            '_REQUEST' => static::scrubArray($_REQUEST),
+            '_SERVER'  => static::scrubServer($_SERVER),
+            '_GET'     => static::scrubArray($_GET),
+            '_POST'    => static::scrubArray($_POST),
+            '_FILES'   => $_FILES,
+            'thrown'   => static::throwableArray($th),
+        ];
         // transcode arrays entirely into UTF-8
         $data = static::transcodeArray($data);
         // send email if lock isn't exceeded
@@ -89,7 +74,7 @@ class ExceptionLog
                             sprintf(
                                 '<a href="%s">A new error</a> has been logged at <kbd>%s</kbd>',
                                 new URL("/admin/exception_log/log:$time $uuid"),
-                                static::actualUrl()
+                                static::actualUrl(),
                             ),
                             sprintf(
                                 'Error message: %s',
@@ -102,7 +87,7 @@ class ExceptionLog
                                 new URL('/admin/exception_log/'),
                                 number_format($count),
                                 $count == 1 ? '' : 's'
-                            )
+                            ),
                         ]);
                         $sent = false;
                         try {
@@ -113,10 +98,12 @@ class ExceptionLog
                             if ($msg->error()) {
                                 $body .= '<br>Additional email system error: ' . $msg->error();
                                 $sent = false;
-                            } else {
+                            }
+                            else {
                                 $sent = true;
                             }
-                        } catch (Throwable $th) {
+                        }
+                        catch (Throwable $th) {
                             $sent = false;
                             $body .= '<br>Additional email system error: ' . get_class($th);
                             $th->getMessage();
@@ -143,14 +130,19 @@ class ExceptionLog
             foreach ($_FILES as $file) {
                 if (is_array($file['tmp_name'])) {
                     foreach ($file as $f) {
-                        if (!$f['tmp_name']) continue;
-                        if (!file_exists($f['tmp_name'])) continue;
-                        $zip->addFile($f['tmp_name'], 'files/' . $f['name']);
+                        if (!$f['tmp_name'])
+                            continue;
+                        if (!file_exists($f['tmp_name']))
+                            continue;
+                        $zip->addFile($f['tmp_name'], 'files/' . basename($f['name']));
                     }
-                } else {
-                    if (!$file['tmp_name']) continue;
-                    if (!file_exists($file['tmp_name'])) continue;
-                    $zip->addFile($file['tmp_name'], 'files/' . $file['name']);
+                }
+                else {
+                    if (!$file['tmp_name'])
+                        continue;
+                    if (!file_exists($file['tmp_name']))
+                        continue;
+                    $zip->addFile($file['tmp_name'], 'files/' . basename($file['name']));
                 }
             }
             $zip->close();
@@ -166,7 +158,8 @@ class ExceptionLog
         foreach ($data as $key => $value) {
             if (is_array($value)) {
                 $data[$key] = static::transcodeArray($value);
-            } elseif (is_string($value)) {
+            }
+            elseif (is_string($value)) {
                 $data[$key] = static::transcodeString($value);
             }
         }
@@ -190,15 +183,16 @@ class ExceptionLog
      */
     protected static function throwableArray(?Throwable $th): ?array
     {
-        if (!$th) return null;
+        if (!$th)
+            return null;
         return [
-            'class' => get_class($th),
-            'code' => $th->getCode(),
-            'data' => $th instanceof Exception ? $th->data() : null,
-            'message' => $th->getMessage(),
-            'file' => $th->getFile(),
-            'line' => $th->getLine(),
-            'trace' => array_map(
+            'class'    => get_class($th),
+            'code'     => $th->getCode(),
+            'data'     => $th instanceof Exception ? $th->data() : null,
+            'message'  => $th->getMessage(),
+            'file'     => $th->getFile(),
+            'line'     => $th->getLine(),
+            'trace'    => array_map(
                 function (array $e): array {
                     if (@$e['file']) {
                         $e['file'] = static::shortenPath($e['file']);
@@ -211,12 +205,59 @@ class ExceptionLog
         ];
     }
 
+    /** Keys whose values should be redacted anywhere in request arrays */
+    protected static array $sensitiveKeys = [
+        'password', 'passwd', 'pass',
+        'secret', 'token', 'csrf',
+        'key', 'apikey', 'api_key',
+        'authorization', 'auth',
+        'cvv', 'ssn', 'credit_card', 'card_number',
+    ];
+
+    /** $_SERVER keys to always redact regardless of name matching */
+    protected static array $sensitiveServerKeys = [
+        'HTTP_AUTHORIZATION',
+        'HTTP_COOKIE',
+        'PHP_AUTH_USER',
+        'PHP_AUTH_PW',
+        'REDIRECT_HTTP_AUTHORIZATION',
+    ];
+
+    protected static function scrubArray(array $data): array
+    {
+        foreach ($data as $key => $value) {
+            if (is_array($value)) {
+                $data[$key] = static::scrubArray($value);
+            } elseif (is_string($key)) {
+                $lkey = strtolower($key);
+                foreach (static::$sensitiveKeys as $sensitive) {
+                    if (str_contains($lkey, $sensitive)) {
+                        $data[$key] = '[REDACTED]';
+                        break;
+                    }
+                }
+            }
+        }
+        return $data;
+    }
+
+    protected static function scrubServer(array $server): array
+    {
+        foreach (static::$sensitiveServerKeys as $key) {
+            if (isset($server[$key])) {
+                $server[$key] = '[REDACTED]';
+            }
+        }
+        return static::scrubArray($server);
+    }
+
     protected static function shortenPath(string $path): string
     {
         $base = dirname(Config::get('paths.base'));
         if (substr($path, 0, strlen($base)) == $base) {
             return substr($path, strlen($base));
-        } else {
+        }
+        else {
             return $path;
         }
     }
@@ -230,7 +271,8 @@ class ExceptionLog
             '%s://%s%s',
             isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'http',
             $_SERVER['HTTP_HOST'],
-            $_SERVER['REQUEST_URI']
+            $_SERVER['REQUEST_URI'],
         );
     }
+
 }

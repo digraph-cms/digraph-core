@@ -235,7 +235,8 @@ abstract class Digraph
      */
     public static function actualUrl(): URL
     {
-        $url = new URL('//' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+        $host = Config::get('urls.site_host') ?? $_SERVER['HTTP_HOST'];
+        $url = new URL('//' . $host . $_SERVER['REQUEST_URI']);
         $url->query($_GET);
         return $url;
     }

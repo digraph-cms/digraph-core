@@ -12,18 +12,31 @@ use DigraphCMS\Session\Session;
 
 class Response
 {
+
     protected $status = 200;
+
     protected ResponseHeaders $headers;
+
     protected $content = null;
+
     protected $content_file = null;
+
     protected $page = null;
+
     protected $browserTTL = null;
+
     protected $cacheTTL = null;
+
     protected $private = null;
+
     protected $template = null;
+
     protected $filename = null;
+
     protected $mime = null;
+
     protected $staleTTL;
+
     protected $searchIndex = false;
 
     public function __construct(int|null $status = null)
@@ -46,9 +59,11 @@ class Response
      */
     public function setSearchIndex(bool $indexResponse, bool $allowQueries = false)
     {
-        if (Context::request()->post()) $indexResponse = false;
+        if (Context::request()->post())
+            $indexResponse = false;
         if (!$allowQueries) {
-            if (Context::request()->url()->query()) $indexResponse = false;
+            if (Context::request()->url()->query())
+                $indexResponse = false;
         }
         $this->searchIndex = $indexResponse;
         return $this;
@@ -90,7 +105,8 @@ class Response
         $this->headers()->set('Location', $url);
         if ($preserveMethod) {
             $this->status($permanent ? 308 : 307);
-        } else {
+        }
+        else {
             $this->status($permanent ? 301 : 302);
         }
         if ($targetFrame) {
@@ -108,7 +124,8 @@ class Response
 
     public function enableCache()
     {
-        if (!$this->cacheTTL()) $this->cacheTTL(Config::get('cache.content_ttl'));
+        if (!$this->cacheTTL())
+            $this->cacheTTL(Config::get('cache.content_ttl'));
         return $this;
     }
 
@@ -144,7 +161,7 @@ class Response
         return
             // explicitly set value
             $this->browserTTL ??
-            // page object's ttl
+                // page object's ttl
             ($this->page() ? $this->page->browserTTL($this->page()->url()->action()) : null) ??
             // default of 0
             0;
@@ -173,12 +190,12 @@ class Response
 
     public function setContentFile(?string $file): static
     {
-        var_dump($file);
         if ($file) {
             $this->filename(basename($file));
             $this->content_file = $file;
             $this->content = null;
-        } else {
+        }
+        else {
             $this->content_file = null;
         }
         return $this;
@@ -198,9 +215,12 @@ class Response
 
     public function content(string|null $content = null): string
     {
-        if ($content !== null) $this->setContent($content);
-        if ($this->content_file) return file_get_contents($this->content_file);
-        else return $this->content ?? '';
+        if ($content !== null)
+            $this->setContent($content);
+        if ($this->content_file)
+            return file_get_contents($this->content_file);
+        else
+            return $this->content ?? '';
     }
 
     public function renderHeaders()
@@ -212,7 +232,8 @@ class Response
         header('Cache-Control: ' . $this->cacheControlHeader());
         if ($this->private()) {
             header('Pragma: no-cache');
-        } else {
+        }
+        else {
             header('Pragma: public');
         }
         http_response_code($this->status());
@@ -223,11 +244,12 @@ class Response
             if (Context::url() != Context::request()->originalUrl()) {
                 // check if original request URL matches context URL
                 $canonical = Context::url();
-            } elseif (Context::page()) {
+            }
+            elseif (Context::page()) {
                 // check if canonical URL from page matches context URL
                 $pageUrl = Context::page()->url(
                     Context::request()->originalUrl()->action(),
-                    Context::request()->originalUrl()->query()
+                    Context::request()->originalUrl()->query(),
                 );
                 if (Context::request()->originalUrl() != $pageUrl) {
                     $canonical = $pageUrl;
@@ -259,10 +281,13 @@ class Response
             Dispatcher::dispatchEvent('onResponseRender_html', [$this]);
         }
         if ($this->content_file) {
-            if (!file_exists($this->content_file)) throw new Exception("Response content file not found", ['file' => $this->content_file, 'response' => $this]);
+            if (!file_exists($this->content_file))
+                throw new Exception("Response content file not found", ['file' => $this->content_file, 'response' => $this]);
             readfile($this->content_file);
-        } else {
+        }
+        else {
             echo $this->content();
         }
     }
+
 }

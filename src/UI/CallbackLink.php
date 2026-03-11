@@ -10,7 +10,9 @@ use DigraphCMS\URL\URL;
 
 class CallbackLink extends A
 {
+
     protected static $idCounter = 0;
+
     protected $callback;
 
     /**
@@ -35,7 +37,7 @@ class CallbackLink extends A
     {
         $callback_link = @$_GET['__callback-link'];
         $csrf = @$_GET['__csrf'];
-        if ($callback_link == $this->id() && $csrf == Cookies::csrfToken()) {
+        if ($callback_link === $this->id() && $csrf === Cookies::csrfToken()) {
             call_user_func($this->callback);
             if (!($url = $this->href)) {
                 $url = Context::url();
@@ -46,4 +48,5 @@ class CallbackLink extends A
         }
         return parent::toString();
     }
+
 }

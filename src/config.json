@@ -33,7 +33,7 @@
         "max-height": 75
     },
     "cookies": {
-        "secure": false,
+        "secure": true,
         "duration": "3 months",
         "consent_prompt": false
     },
