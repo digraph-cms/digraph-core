@@ -6,7 +6,8 @@ use Closure;
 use Laravel\SerializableClosure\SerializableClosure;
 use Throwable;
 
-SerializableClosure::setSecretKey(Config::secret());
+// This wasn't actually providing meaningful security
+// SerializableClosure::setSecretKey(Config::secret());
 
 class Serializer
 {
@@ -29,24 +30,26 @@ class Serializer
             // serialization is ever supported we get it for free
             return sprintf(
                 '\\unserialize(\'%s\')',
-                str_replace('\'', '\\\'', serialize($value))
+                str_replace('\'', '\\\'', serialize($value)),
             );
-        } catch (Throwable $th) {
+        }
+        catch (Throwable $th) {
             if ($value instanceof Closure) {
                 // if the unserializable value is a closure, serialize it as a
                 // SerializableClosure with a call get the closure
                 return sprintf(
                     '\\unserialize(\'%s\')->getClosure()',
-                    str_replace('\'', '\\\'', serialize(new SerializableClosure($value)))
+                    str_replace('\'', '\\\'', serialize(new SerializableClosure($value))),
                 );
-            } else {
+            }
+            else {
                 // otherwise serialize it as a closure that returns the value,
                 // this way we're still leaning on the Symfony serializer
                 return sprintf(
                     '\\call_user_func(\\unserialize(\'%s\')->getClosure())',
                     str_replace('\'', '\\\'', serialize(new SerializableClosure(function () use ($value) {
                         return $value;
-                    })))
+                    }))),
                 );
             }
         }
@@ -62,9 +65,11 @@ class Serializer
     public static function unserialize($value)
     {
         try {
-            return eval('return ' . $value . ';');
-        } catch (Throwable $th) {
+            return eval ('return ' . $value . ';');
+        }
+        catch (Throwable $th) {
             throw new Exception("Failed to unserialize value: " . $value, $value, $th);
         }
     }
+
 }

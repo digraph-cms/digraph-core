@@ -1,5 +1,6 @@
 <?php
 
+use DigraphCMS\Cache\RateLimit;
 use DigraphCMS\Context;
 use DigraphCMS\HTML\Forms\Field;
 use DigraphCMS\HTML\Forms\FormWrapper;
@@ -12,6 +13,7 @@ use Gregwar\Captcha\CaptchaBuilder;
 @session_start();
 
 if (!isset($_SESSION['gregwar_captcha_image']) || Context::arg_bool('refresh', true)) {
+    RateLimit::limit('captcha', 'gregwar_refresh', 10);
     $builder = new CaptchaBuilder();
     $builder->build();
     $_SESSION['gregwar_captcha_image'] = '<img src="' . $builder->inline() . '" alt="CAPTCHA" />';
@@ -30,6 +32,7 @@ $form->addChild(sprintf(
 
 $phrase = (new Field('Enter the text shown above'))
     ->addValidator(function (InputInterface $input) {
+        RateLimit::limit('captcha', 'gregwar_attempt', 1);
         if (strtolower($input->value()) != strtolower($_SESSION['gregwar_captcha_phrase'])) {
             Security::flag('Failed gregwar captcha');
             return 'Incorrect CAPTCHA phrase';

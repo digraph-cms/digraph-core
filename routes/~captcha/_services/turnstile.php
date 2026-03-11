@@ -1,5 +1,6 @@
 <?php
 
+use DigraphCMS\Cache\RateLimit;
 use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\Curl\CurlHelper;
@@ -32,18 +33,20 @@ $form->addChild($token);
 $form->setStyle('display', 'none');
 
 if ($form->ready()) {
+    RateLimit::limit('captcha', 'turnstile_attempt', 10);
     $response = CurlHelper::post(
         'https://challenges.cloudflare.com/turnstile/v0/siteverify',
         [
-            'secret' => Config::get('captcha.turnstile.secret_key'),
+            'secret'   => Config::get('captcha.turnstile.secret_key'),
             'response' => $token->value(),
-        ]
+        ],
     );
     if ($response) {
         $response = json_decode($response, true);
         if ($response['success']) {
             Security::unflag();
-        } else {
+        }
+        else {
             Security::flag('Failed turnstile CAPTCHA');
         }
     }
@@ -56,11 +59,11 @@ if ($form->ready()) {
 </noscript>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=<?= $callback_id ?>" defer></script>
 <script>
-    window.<?= $callback_id ?> = function() {
+    window.<?= $callback_id ?> = function () {
         turnstile.render('#<?= $container_id ?>', {
             sitekey: '<?= Config::get('captcha.turnstile.site_key') ?>',
             // TODO: capture some sort of information in "action" key to give better analytics
-            callback: function(token) {
+            callback: function (token) {
                 document.getElementById('<?= $token->id() ?>').value = token;
                 Digraph.submitForm(document.getElementById('<?= $form->id() ?>').getElementsByTagName('form')[0]);
             },

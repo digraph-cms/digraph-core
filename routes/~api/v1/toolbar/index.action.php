@@ -11,6 +11,8 @@ use DigraphCMS\UI\Toolbars\ToolbarSpacer;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Permissions;
 
+Permissions::requireAuth();
+
 Context::response()->template('chromeless.php');
 
 $page = Pages::get(Context::arg_string('uuid', true));
@@ -18,7 +20,8 @@ $action = Context::arg_string('action', true);
 $only = Context::arg_string('only', true) ? explode(',', Context::arg_string('only')) : [];
 
 $frame = Context::arg_string('frame');
-if (preg_match('/[^a-z0-9\-_]/i', $frame)) throw new HttpError(400, 'Invalid argument');
+if (preg_match('/[^a-z0-9\-_]/i', $frame))
+    throw new HttpError(400, 'Invalid argument');
 echo '<div id="' . $frame . '">';
 
 if ($action && !preg_match('/[^a-z0-9\-_]/', $action)) {
@@ -33,38 +36,38 @@ $buttons = [];
 
 if (!$only || in_array('format', $only)) {
     $buttons['format'] = [
-        'heading' => (new ToolbarLink('Heading', 'heading', 'markdownToggleHeading'))
+        'heading'         => (new ToolbarLink('Heading', 'heading', 'markdownToggleHeading'))
             ->setShortcut('Ctrl-H'),
         'heading_reverse' => (new ToolbarLink('Heading (reversed)', 'heading', 'markdownToggleHeadingReverse'))
             ->setShortcut('Ctrl-Shift-H')
             ->setStyle('display', 'none'),
-        'bold' => (new ToolbarLink('Bold', 'bold', 'markdownToggleBold'))
+        'bold'            => (new ToolbarLink('Bold', 'bold', 'markdownToggleBold'))
             ->setShortcut('Ctrl-B'),
-        'italic' => (new ToolbarLink('Italic', 'italic', 'markdownToggleItalic'))
+        'italic'          => (new ToolbarLink('Italic', 'italic', 'markdownToggleItalic'))
             ->setShortcut('Ctrl-I'),
-        'strike' => (new ToolbarLink('Strike', 'strikethrough', 'markdownToggleStrikethrough'))
+        'strike'          => (new ToolbarLink('Strike', 'strikethrough', 'markdownToggleStrikethrough'))
             ->setShortcut('Ctrl-Shift-S'),
-        'highlight' => (new ToolbarLink('Highlight', 'highlight', 'markdownToggleHighlight'))
+        'highlight'       => (new ToolbarLink('Highlight', 'highlight', 'markdownToggleHighlight'))
             ->setShortcut('Ctrl-Shift-M'),
     ];
 }
 if (!$only || in_array('blocks', $only)) {
     $buttons['blocks'] = [
-        'bullet_list' => (new ToolbarLink('Bullet list', 'list-bullet', 'markdownToggleBulletList'))
+        'bullet_list'   => (new ToolbarLink('Bullet list', 'list-bullet', 'markdownToggleBulletList'))
             ->setShortcut('Ctrl-L'),
         'numbered_list' => (new ToolbarLink('Numbered list', 'list-numbered', 'markdownToggleNumberedList'))
             ->setShortcut('Ctrl-Shift-L'),
-        'blockquote' => (new ToolbarLink('Block quote', 'quote', 'markdownToggleQuote'))
+        'blockquote'    => (new ToolbarLink('Block quote', 'quote', 'markdownToggleQuote'))
             ->setShortcut('Ctrl-Shift-Q'),
-        'code' => (new ToolbarLink('Code', 'code', 'markdownToggleCodeBlock'))
+        'code'          => (new ToolbarLink('Code', 'code', 'markdownToggleCodeBlock'))
             ->setShortcut('Ctrl-Shift-C'),
     ];
 }
 if (!$only || in_array('insert', $only)) {
     $buttons['insert'] = [
-        'weblink' => (new ToolbarLink('Link to any URL', 'link', null, new URL('&action=weblink')))
+        'weblink'   => (new ToolbarLink('Link to any URL', 'link', null, new URL('&action=weblink')))
             ->setShortcut('Ctrl-Shift-K'),
-        'link' => (new ToolbarLink('Link to a page', 'pages', null, new URL('&action=link')))
+        'link'      => (new ToolbarLink('Link to a page', 'pages', null, new URL('&action=link')))
             ->setShortcut('Ctrl-K'),
         'richmedia' => Permissions::inMetaGroup('richmedia__edit')
             ? (new ToolbarLink('Quick media insert', 'media', null, new URL('&action=media')))->setShortcut('Ctrl-M')
@@ -79,12 +82,12 @@ if (!$only || in_array('advanced', $only)) {
 }
 if (!$only || in_array('history', $only)) {
     $buttons['history'] = [
-        'spacer' => new ToolbarSpacer,
+        'spacer'    => new ToolbarSpacer,
         'separator' => new ToolbarSeparator,
-        'undo' => (new ToolbarLink('Undo', 'undo', 'undo'))
+        'undo'      => (new ToolbarLink('Undo', 'undo', 'undo'))
             ->setShortcut('Ctrl-Z'),
-        'redo' => (new ToolbarLink('Redo', 'redo', 'redo'))
-            ->setShortcut('Ctrl-Y')
+        'redo'      => (new ToolbarLink('Redo', 'redo', 'redo'))
+            ->setShortcut('Ctrl-Y'),
     ];
 }
 Dispatcher::dispatchEvent('onRichMediaToolbar', [&$buttons]);
@@ -97,8 +100,8 @@ echo implode(
         function ($bs) {
             return implode('', array_filter($bs));
         },
-        $buttons
-    )
+        $buttons,
+    ),
 );
 
 echo '</div>';

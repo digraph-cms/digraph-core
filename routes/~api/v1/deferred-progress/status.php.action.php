@@ -4,11 +4,15 @@ use DigraphCMS\Context;
 use DigraphCMS\Cron\Deferred;
 use DigraphCMS\DB\DB;
 use DigraphCMS\HTTP\HttpError;
+use DigraphCMS\Users\Permissions;
+
+Permissions::requireAuth();
 
 error_reporting(0);
 
 $group = Context::arg_string('group');
-if (!Deferred::groupCount($group)) throw new HttpError(400);
+if (!Deferred::groupCount($group))
+    throw new HttpError(400);
 $justRan = Deferred::runJobs($group, time() + 2);
 
 Context::response()->browserTTL(2);
@@ -23,9 +27,9 @@ $completed = DB::query()->from('defex')->where('`group` = ?', [$group])
     ->count();
 
 echo json_encode([
-    'group' => $group,
-    'total' => $pending + $completed,
-    'pending' => $pending,
+    'group'     => $group,
+    'total'     => $pending + $completed,
+    'pending'   => $pending,
     'completed' => $completed,
-    'justran' => $justRan
+    'justran'   => $justRan,
 ]);

@@ -10,6 +10,7 @@ use Symfony\Component\Yaml\Yaml;
 
 abstract class Config implements InitializedClassInterface
 {
+
     /** @var SelfReferencingFlatArray|null */
     protected static $data;
 
@@ -28,7 +29,7 @@ abstract class Config implements InitializedClassInterface
             $cache = crc32(serialize([
                 $_SERVER['DOCUMENT_ROOT'],
                 $_SERVER['SERVER_PORT'],
-                $_SERVER['SERVER_NAME']
+                $_SERVER['SERVER_NAME'],
             ]));
     }
 
@@ -64,7 +65,9 @@ abstract class Config implements InitializedClassInterface
         static $cache;
         if (!$cache) {
             $file = static::get('paths.storage') . '/secret.txt';
-            if (!file_exists($file)) file_put_contents($file, bin2hex(random_bytes(32)));
+            if (!file_exists($file) || filemtime($file) < time() - (86400 * 90)) {
+                file_put_contents($file, bin2hex(random_bytes(32)));
+            }
             $cache = file_get_contents($file);
         }
         return $cache;
@@ -147,9 +150,10 @@ abstract class Config implements InitializedClassInterface
             $data,
             4,
             2,
-            Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK
+            Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK,
         );
     }
+
 }
 
 CachedInitializer::runClass(Config::class);

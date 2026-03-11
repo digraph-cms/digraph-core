@@ -1,5 +1,6 @@
 <?php
 
+use DigraphCMS\Cache\RateLimit;
 use DigraphCMS\Context;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\HTTP\RedirectException;
@@ -10,6 +11,7 @@ use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Users;
 
 Security::requireSecurityCheck();
+RateLimit::limit('verify_email', 'attempt', 60);
 
 $user = Users::get(Context::arg_string('user'));
 $token = Context::arg_string('token');

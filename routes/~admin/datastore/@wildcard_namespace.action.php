@@ -17,7 +17,7 @@ $query = (new DatastoreSelect)
     ->where('ns', Context::url()->actionSuffix());
 
 if (Context::arg_string('grp', true)) {
-    if (Context::arg_string('grp') !== htmlspecialchars(Context::arg_string('grp')))
+    if (Context::arg_string('grp') !== htmlspecialchars(Context::arg_string('grp'), ENT_QUOTES))
         throw new HttpError(400);
     $query->where('grp', Context::arg_string('grp'));
     echo "<h1>Group " . Context::arg_string('grp') . "</h1>";

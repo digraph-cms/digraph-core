@@ -3,20 +3,39 @@
 namespace DigraphCMS\Cache;
 
 use DigraphCMS\DB\DB;
+use DigraphCMS\HTTP\HttpError;
 
 class RateLimit
 {
+
     public static function run(string $namespace, string $name, int $ttl, callable $callback)
     {
         DB::beginTransaction();
         if (!static::limited($namespace, $name)) {
             $output = $callback();
             static::set($namespace, $name, $ttl);
-        } else {
+        }
+        else {
             $output = null;
         }
         DB::commit();
         return $output;
+    }
+
+    /**
+     * Enforce rate limiting of the given namespace/name, for the current request IP
+     */
+    public static function limit(string $namespace, string $name, int $ttl): void
+    {
+        DB::beginTransaction();
+        $name .= '/' . $_SERVER['REMOTE_ADDR'];
+        if (!static::limited($namespace, $name))
+            static::set($namespace, $name, $ttl);
+        else {
+            DB::commit();
+            throw new HttpError(429);
+        }
+        DB::commit();
     }
 
     public static function set(string $namespace, string $name, int $ttl): void
@@ -32,12 +51,13 @@ class RateLimit
                 ->where('namespace', $namespace)
                 ->where('name', $name)
                 ->execute();
-        } else {
+        }
+        else {
             DB::query()
                 ->insertInto('rate_limit', [
                     'namespace' => $namespace,
-                    'name' => $name,
-                    'expires' => time() + $ttl
+                    'name'      => $name,
+                    'expires'   => time() + $ttl
                 ])
                 ->execute();
         }
@@ -53,4 +73,5 @@ class RateLimit
             ->where('expires > ?', time());
         return $query->count() > 0;
     }
+
 }

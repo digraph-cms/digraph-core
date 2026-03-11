@@ -1,5 +1,6 @@
 <?php
 
+use DigraphCMS\Cache\RateLimit;
 use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
@@ -22,6 +23,9 @@ use DigraphCMS\URL\URL;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
 
+// rate limit
+RateLimit::limit('signin', '_signin', 1);
+
 // require captcha
 Security::requireSecurityCheck();
 
@@ -32,12 +36,14 @@ Cookies::required(['system', 'ui', 'auth', 'csrf']);
 $sourceName = Context::arg_string('_source');
 $source = Users::source(Context::arg_string('_source'));
 if (!$source) {
-    throw new HttpError(404, 'Unknown source');
+    Security::flag('Unknown login source');
+    throw new HttpError(400, 'Unknown source');
 }
 /** @var string */
 $provider = Context::arg_string('_provider');
 if (!$source->providerActive($provider)) {
-    throw new HttpError(404, 'Unknown provider');
+    Security::flag('Unknown login provider');
+    throw new HttpError(400, 'Unknown provider');
 }
 
 // include source handler file

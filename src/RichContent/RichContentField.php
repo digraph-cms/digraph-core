@@ -12,7 +12,8 @@ use DigraphCMS\Users\Permissions;
 
 class RichContentField extends Field
 {
-    protected $pageUuid, $wrapper, $contentEditor, $mediaEditor, $mediaEditorFrame, $toolbarFrame;
+
+    protected                                                                       $pageUuid,                                                            $wrapper,                                                  $contentEditor,                                  $mediaEditor,                    $mediaEditorFrame, $toolbarFrame;
 
     public function __construct(string $label, string $pageUuid = null, bool $hideMediaEditor = false)
     {
@@ -53,21 +54,21 @@ class RichContentField extends Field
         // add editor wrapper
         $this->contentEditor->addChild(
             (new DIV)
-                ->addClass('rich-content-editor__content-editor__editor')
+                ->addClass('rich-content-editor__content-editor__editor'),
         );
         // add basic tips
         $this->addTip(
             sprintf(
                 'Content can be formatted with <a href="%s" target="_lightbox">Markdown</a> and <a href="%s" target="_lightbox">ShortCodes</a>',
                 new URL('/manual/editing/markdown.html'),
-                new URL('/manual/editing/shortcodes.html')
-            )
+                new URL('/manual/editing/shortcodes.html'),
+            ),
         );
         $this->addTip(
             sprintf(
                 'For advanced content editor tips, see the <a href="%s" target="_lightbox">Editor keyboard shortcuts reference</a>',
-                new URL('/manual/editing/keyboard_shortcuts.html')
-            )
+                new URL('/manual/editing/keyboard_shortcuts.html'),
+            ),
         );
     }
 
@@ -122,6 +123,7 @@ class RichContentField extends Field
 
     public function toString(): string
     {
+        Permissions::requireAuth();
         $id = Digraph::uuid(null, $this->id());
         $uuid = $this->pageUuid();
         if ($this->mediaEditor) {
@@ -135,4 +137,5 @@ class RichContentField extends Field
         // return normally
         return parent::toString();
     }
+
 }

@@ -6,6 +6,9 @@ use DigraphCMS\Context;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\Session\Cookies;
+use DigraphCMS\Users\Permissions;
+
+Permissions::requireAuth();
 
 if (Context::arg_string('csrf') !== Cookies::csrfToken('autocomplete')) {
     throw new HttpError(401);
@@ -36,7 +39,7 @@ if (count($pages) < 100) {
     }
     $pages = array_merge(
         $pages,
-        $query->fetchAll()
+        $query->fetchAll(),
     );
 }
 // get looser name matches
@@ -50,7 +53,7 @@ if (count($pages) < 100) {
     }
     $pages = array_merge(
         $pages,
-        $query->fetchAll()
+        $query->fetchAll(),
     );
 }
 
@@ -59,10 +62,10 @@ $pages = array_map(
     function (AbstractPage $page) {
         return [
             $page,
-            Dispatcher::firstValue('onScorePageResult', [$page, Context::arg_string('query', true)])
+            Dispatcher::firstValue('onScorePageResult', [$page, Context::arg_string('query', true)]),
         ];
     },
-    $pages
+    $pages,
 );
 // sort by score
 usort(
@@ -76,7 +79,7 @@ $pages = array_map(
     function ($arr) {
         return $arr[0];
     },
-    $pages
+    $pages,
 );
 
 $pages = array_unique($pages, SORT_REGULAR);
@@ -86,6 +89,6 @@ echo json_encode(
         function (AbstractPage $page) {
             return Dispatcher::firstValue('onPageAutocompleteCard', [$page, Context::arg_string('query', true)]);
         },
-        array_slice($pages, 0, 50)
-    )
+        array_slice($pages, 0, 50),
+    ),
 );

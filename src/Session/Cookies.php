@@ -435,11 +435,14 @@ class Cookies
             setcookie(
                 $key,
                 $encoded,
-                $expiration,
-                static::cookiePath($localScope),
-                static::cookieDomain(),
-                static::cookieSecure(),
-                static::cookieHttpOnly($type, $name),
+                [
+                    'expires'  => $expiration,
+                    'path'     => static::cookiePath($localScope),
+                    'domain'   => static::cookieDomain(),
+                    'secure'   => static::cookieSecure(),
+                    'samesite' => 'Lax',
+                    'httponly' => static::cookieHttpOnly($type, $name),
+                ],
             );
             return $value;
         }
@@ -555,7 +558,7 @@ class Cookies
 
     protected static function cookieSecure(): bool
     {
-        return false;
+        return Config::get('cookies.secure');
     }
 
 }

@@ -16,6 +16,7 @@ use Masterminds\HTML5;
  */
 class SafeBBCodeHtmlParser
 {
+
     public static function parse(string $html): string
     {
         $html5 = new HTML5();
@@ -41,9 +42,10 @@ class SafeBBCodeHtmlParser
                     if (!filter_var($matches[0], FILTER_VALIDATE_URL)) {
                         return $matches[0];
                     }
-                    return "<a href='{$matches[0]}' target='_blank'>{$matches[0]}</a>";
+                    $url = htmlspecialchars($matches[0]);
+                    return "<a href=\"{$url}\" target='_blank'>{$url}</a>";
                 },
-                $text
+                $text,
             );
             $text = preg_replace_callback(
                 '/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/i',
@@ -51,9 +53,10 @@ class SafeBBCodeHtmlParser
                     if (!filter_var($matches[0], FILTER_VALIDATE_EMAIL)) {
                         return $matches[0];
                     }
-                    return Format::base64obfuscate("<a href=\"mailto:{$matches[0]}\">{$matches[0]}</a>");
+                    $email = htmlspecialchars($matches[0]);
+                    return Format::base64obfuscate("<a href=\"mailto:{$email}\">{$email}</a>");
                 },
-                $text
+                $text,
             );
             $fragment->appendXML($text);
             $node->parentNode->replaceChild($fragment, $node);
@@ -78,4 +81,5 @@ class SafeBBCodeHtmlParser
             }
         }
     }
+
 }

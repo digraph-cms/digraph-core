@@ -1,5 +1,6 @@
 <?php
 
+use DigraphCMS\Cache\RateLimit;
 use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\HTML\Forms\Field;
@@ -44,7 +45,7 @@ if (!@$config['mock_cas_user']) {
         $config['server'],
         intval($config['port']),
         $config['context'],
-        (new URL('/'))->__toString()
+        (new URL('/'))->__toString(),
     );
 
     //set up configured config calls
@@ -54,11 +55,13 @@ if (!@$config['mock_cas_user']) {
 
     // TRY TO SIGN IN
     try {
+        RateLimit::limit('signin', 'cas_attempt', 10);
         if (!phpCAS::isAuthenticated()) {
             phpCAS::forceAuthentication();
         }
         Context::data('signin_provider_id', phpCAS::getUser());
-    } catch (Throwable $th) {
+    }
+    catch (Throwable $th) {
         Notifications::flashError("CAS authentication failed. If this only happens for a brief period it is most likely due to timeouts or a transient network problem.");
     }
     // Context::data('cas_attributes', phpCAS::getAttributes());
@@ -66,7 +69,8 @@ if (!@$config['mock_cas_user']) {
     // var_dump(phpCAS::getUser());
     // var_dump(phpCAS::getAttributes());
     // exit();
-} else {
+}
+else {
     // USE MOCK CAS USER
     if (!Context::arg_string('_mockcasuser', true)) {
         $form = new FormWrapper('mock-cas-user');
@@ -80,7 +84,8 @@ if (!@$config['mock_cas_user']) {
             throw new RedirectException($url);
         });
         echo $form;
-    } else {
+    }
+    else {
         Context::data('signin_provider_id', Context::arg_string('_mockcasuser'));
     }
 }
