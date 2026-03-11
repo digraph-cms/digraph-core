@@ -1,6 +1,5 @@
 <?php
 
-use DigraphCMS\Cache\RateLimit;
 use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
@@ -22,9 +21,6 @@ use DigraphCMS\UI\Templates;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
-
-// rate limit
-RateLimit::limit('signin', '_signin', 1);
 
 // require captcha
 Security::requireSecurityCheck();

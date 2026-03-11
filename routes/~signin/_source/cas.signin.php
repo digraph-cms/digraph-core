@@ -1,6 +1,5 @@
 <?php
 
-use DigraphCMS\Cache\RateLimit;
 use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\HTML\Forms\Field;
@@ -55,7 +54,6 @@ if (!@$config['mock_cas_user']) {
 
     // TRY TO SIGN IN
     try {
-        RateLimit::limit('signin', 'cas_attempt', 10);
         if (!phpCAS::isAuthenticated()) {
             phpCAS::forceAuthentication();
         }
