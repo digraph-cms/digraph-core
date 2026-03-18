@@ -39,7 +39,7 @@ class Notifications
         $notifications = static::$notifications;
         Dispatcher::dispatchEvent('onPrintNotifications', [&$notifications]);
         foreach ($notifications as list($message, $type, $class)) {
-            static::print($message, $type, $class);
+            static::printHTML($message, $type, $class);
         }
         echo "</section>";
     }

@@ -37,7 +37,7 @@ foreach ($user['emails'] as $i => $row) {
         }
         else {
             // user is signed in as somebody else? Weird but we'll handle it
-            Notifications::printConfirmation('Email address verified on behalf of ' . $user . ': ' . $row['address']);
+            Notifications::printConfirmationHTML('Email address verified on behalf of ' . $user . ': ' . $row['address']);
             return;
         }
     }
