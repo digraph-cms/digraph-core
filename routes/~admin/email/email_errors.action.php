@@ -15,9 +15,9 @@ $emails = Emails::select()
     ->order('time desc');
 
 if ($emails->count()) {
-    Notifications::printNotice(sprintf(
+    Notifications::printNoticeHTML(sprintf(
         '<a href="%s">Use the requeue tool to attempt resending emails</a>',
-        new URL('_requeue_errors.html')
+        new URL('_requeue_errors.html'),
     ));
 }
 
@@ -30,9 +30,9 @@ echo new PaginatedTable(
             sprintf(
                 "<a href='%s'>%s</a>",
                 $email->url_adminInfo(),
-                $email->subject()
+                $email->subject(),
             ),
-            $email->to()
+            $email->to(),
         ];
     },
     [
@@ -40,5 +40,5 @@ echo new PaginatedTable(
         new ColumnStringFilteringHeader('Error', 'error'),
         new ColumnStringFilteringHeader('Subject', 'subject'),
         new ColumnStringFilteringHeader('To', '`to`'),
-    ]
+    ],
 );
