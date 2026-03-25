@@ -32,7 +32,6 @@ $form->addChild(sprintf(
 
 $phrase = (new Field('Enter the text shown above'))
     ->addValidator(function (InputInterface $input) {
-        RateLimit::limit('captcha', 'gregwar_attempt', 1);
         if (strtolower($input->value()) != strtolower($_SESSION['gregwar_captcha_phrase'])) {
             Security::flag('Failed gregwar captcha');
             return 'Incorrect CAPTCHA phrase';

@@ -28,6 +28,7 @@ class SpreadsheetReader
             'csv'   => new \OpenSpout\Reader\CSV\Reader(),
             default => throw new RuntimeException("Invalid spreadsheet format, only .xlsx, .ods, and .csv files are supported")
         };
+        $reader->open($file);
         // get iterator for first sheet
         $sheet = $reader->getSheetIterator()->current();
         $rows = $sheet->getRowIterator();
@@ -40,7 +41,12 @@ class SpreadsheetReader
             $headers[] = strtolower((string) $cell->getValue());
         }
         // get iterator for the rest of the rows and begin yielding non-empty rows
-        while ($row = next($rows)) {
+        $skipped = false;
+        foreach ($rows as $row) {
+            if (!$skipped) {
+                $skipped = true;
+                continue;
+            }
             $rowData = [];
             $hasData = false;
             foreach ($row->getCells() as $cell) {
@@ -69,11 +75,12 @@ class SpreadsheetReader
             'csv'   => new \OpenSpout\Reader\CSV\Reader(),
             default => throw new RuntimeException("Invalid spreadsheet format, only .xlsx, .ods, and .csv files are supported")
         };
+        $reader->open($file);
         // get iterator for first sheet
         $sheet = $reader->getSheetIterator()->current();
         $rows = $sheet->getRowIterator();
         // get iterator for the rest of the rows and begin yielding
-        while ($row = next($rows)) {
+        foreach ($rows as $row) {
             yield array_map(
                 fn(Cell $cell) => $cell->getValue(),
                 $row->getCells(),
