@@ -36,7 +36,7 @@ $form = (new FormWrapper('add-' . Context::arg_string('uuid')))
         // insert with a link to this page from the current context page
         $page->insert(Context::page()->uuid());
         // redirect
-        Notifications::flashConfirmation('Page created: ' . $page->url()->html());
+        Notifications::flashConfirmationHTML('Page created: ' . $page->url()->html());
         throw new RedirectException($page->url_edit());
     });
 $form->button()->setText('Create page');

@@ -58,7 +58,7 @@ if ($form->ready()) {
     );
     // commit all and bounce
     DB::commit();
-    Notifications::flashConfirmation('Download created: ' . $page->url()->html());
+    Notifications::flashConfirmationHTML('Download created: ' . $page->url()->html());
     throw new RedirectException($page->url_edit());
 }
 

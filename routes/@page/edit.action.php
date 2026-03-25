@@ -37,7 +37,7 @@ if ($form->ready()) {
     $page->update();
     // commit and redirect
     DB::commit();
-    Notifications::flashConfirmation('Changes saved to ' . $page->url()->html());
+    Notifications::flashConfirmationHTML('Changes saved to ' . $page->url()->html());
     throw new RefreshException();
 }
 echo $form;

@@ -20,7 +20,8 @@ use DigraphCMS\Users\Users;
 Security::requireSecurityCheck();
 
 $user = Users::get(Context::arg_string('id', true)) ?? Users::current();
-if (!$user) throw new HttpError(404);
+if (!$user)
+    throw new HttpError(404);
 
 $query = DB::query()
     ->from('user_source')
@@ -30,7 +31,7 @@ $query = DB::query()
 $headers = [
     new ColumnHeader('Provider'),
     new ColumnHeader('ID'),
-    new ColumnDateFilteringHeader('Added', 'created')
+    new ColumnDateFilteringHeader('Added', 'created'),
 ];
 $count = $query->count();
 if ($count > 1) {
@@ -44,7 +45,7 @@ $table = new PaginatedTable(
         $tr = [
             $source->providerName($row['provider']) . ' using ' . $source->title(),
             $row['provider_id'],
-            Format::date($row['created'])
+            Format::date($row['created']),
         ];
         if ($count > 1) {
             $tr[] = new SingleButton(
@@ -54,26 +55,26 @@ $table = new PaginatedTable(
                         ->deleteFrom('user_source')
                         ->where(
                             'id = ?',
-                            [$row['id']]
+                            [$row['id']],
                         )
                         ->execute();
                     Notifications::flashConfirmation("Removed authentication method: " . $source->providerName($row['provider']) . ' via ' . $source->title());
                     Context::response()->redirect(Context::url());
                 },
-                ['warning']
+                ['warning'],
             );
         }
         return $tr;
     },
-    $headers
+    $headers,
 );
 
 echo $table;
 
 if ($user->uuid() == $user->uuid()) {
     echo "<h2>Add login method</h2>";
-    Notifications::printNeutral(sprintf(
+    Notifications::printNeutralHTML(sprintf(
         'To add a new sign-in method to your account, <a href="%s">sign in here using the method you want to add to your account</a>.',
-        Users::signinUrl(Context::url())
+        Users::signinUrl(Context::url()),
     ));
 }

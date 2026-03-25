@@ -10,6 +10,7 @@ use DigraphCMS\HTML\DIV;
 
 class File
 {
+
     /**
      * Whether to add a content hash to the query string of file URLs to ensure
      * caches bust when file content changes. Should be disabled for extending
@@ -17,8 +18,22 @@ class File
      */
     const CONTENT_HASH_URL = true;
 
-    protected $filename, $extension, $content, $identifier, $written, $src, $url;
+    protected $filename;
+
+    protected $extension;
+
+    protected $content;
+
+    protected $identifier;
+
+    protected $written;
+
+    protected $url;
+
+    protected string|null $src;
+
     /** @var callable|null */
+
     protected $permissions;
 
     public function __construct(string $filename, string|callable $content, $identifier = null, callable|null $permissions = null)
@@ -63,8 +78,10 @@ class File
 
     public function image(): ?ImageFile
     {
-        if ($this instanceof ImageFile) return $this;
-        if (!ImageFile::handles($this->extension())) return null;
+        if ($this instanceof ImageFile)
+            return $this;
+        if (!ImageFile::handles($this->extension()))
+            return null;
         $this->write(); // ensure file is written before creating ImageFile instance
         return new ImageFile($this->path(), $this->filename(), $this->permissions());
     }
@@ -132,8 +149,8 @@ class File
             Cache::set(
                 'permissioned_media/info/' . $this->identifier(),
                 [
-                    'path' => $this->path(),
-                    'filename' => $this->filename(),
+                    'path'        => $this->path(),
+                    'filename'    => $this->filename(),
                     'permissions' => $this->permissions(),
                 ],
                 // cache for twice TTL just to ensure permissions stay accessible in some edge cases
@@ -149,4 +166,5 @@ class File
         }
         return $this->content;
     }
+
 }

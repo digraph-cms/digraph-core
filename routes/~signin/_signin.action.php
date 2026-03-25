@@ -53,7 +53,7 @@ catch (Throwable $th) {
     ExceptionLog::log($th);
     $url = Users::signinUrl(null);
     $url->setArg('_noredirect', true);
-    Notifications::printError(sprintf(
+    Notifications::printErrorHTML(sprintf(
         'Sign-in handler encountered an error. <a href="%s">Please try again</a>.',
         $url,
     ));
@@ -163,7 +163,7 @@ if (Context::data('signin_provider_id')) {
             ],
         ),
     );
-    Notifications::printNotice(sprintf(
+    Notifications::printNoticeHTML(sprintf(
         "Sign-in successful, but failed to redirect to bounce target. Please <a href=\"%s\">click here</a> to continue.",
         $bounce ?: new URL('/')
     ));

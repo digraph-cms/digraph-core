@@ -5,6 +5,7 @@ namespace DigraphCMS\RichMedia\Types;
 use DigraphCMS\Content\Filestore;
 use DigraphCMS\Content\FilestoreFile;
 use DigraphCMS\Context;
+use DigraphCMS\ExceptionLog;
 use DigraphCMS\HTML\DIV;
 use DigraphCMS\HTML\FIGURE;
 use DigraphCMS\HTML\Forms\Field;
@@ -115,6 +116,7 @@ class ImageRichMedia extends AbstractRichMedia
             );
         }
         catch (Throwable $th) {
+            ExceptionLog::log($th);
             return (new DIV)
                 ->addClass('notification')
                 ->addClass('notification--error')
@@ -141,7 +143,7 @@ class ImageRichMedia extends AbstractRichMedia
         }
         if (isset($figure)) {
             $figure->setAttribute('style', implode(';', [
-                'background-color:' . $this->file()->image()->color(),
+                'background-color:#ccc;',
                 'background-image:url("' . $this->file()->image()->previewBackgroundUrl() . '")',
                 'background-size:cover',
                 'background-position: center center',

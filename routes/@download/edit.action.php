@@ -58,7 +58,8 @@ if ($form->ready()) {
     $page->update();
     // delete files
     foreach ($files_deleter->value() as $uuid => $deleted) {
-        if (!$deleted) continue;
+        if (!$deleted)
+            continue;
         $file = \DigraphCMS\Content\Filestore::get($uuid);
         $file->delete();
     }
@@ -72,7 +73,7 @@ if ($form->ready()) {
     );
     // commit all and bounce
     DB::commit();
-    Notifications::flashConfirmation('Download updated: ' . $page->url()->html());
+    Notifications::flashConfirmationHTML('Download updated: ' . $page->url()->html());
     throw new RedirectException($page->url());
 }
 

@@ -41,8 +41,8 @@ $form = (new FormWrapper('add-' . Context::arg_string('uuid')))
         $page = new Page(
             [],
             [
-                'uuid' => Context::arg_string('uuid')
-            ]
+                'uuid' => Context::arg_string('uuid'),
+            ],
         );
         $page->slugPattern($url->value());
         $page->name($name->value());
@@ -50,7 +50,7 @@ $form = (new FormWrapper('add-' . Context::arg_string('uuid')))
         $page->insert();
         // commit and redirect
         DB::commit();
-        Notifications::flashConfirmation('Page created: ' . $page->url()->html());
+        Notifications::flashConfirmationHTML('Page created: ' . $page->url()->html());
         throw new RedirectException($page->url_edit());
     });
 $form->button()->setText('Create page');

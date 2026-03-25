@@ -12,7 +12,7 @@ use DigraphCMS\URL\URL;
 echo '<div id="recursive-delete-interface" class="navigation-frame navigation-frame--stateless" data-target="_frame">';
 
 $page = Context::page();
-Notifications::printError('Are you sure you would like to delete <strong>' . $page->name() . '</strong>? This action cannot be undone.');
+Notifications::printErrorHTML('Are you sure you would like to delete <strong>' . $page->name() . '</strong>? This action cannot be undone.');
 
 // has child pages, so remind user of that
 if ($count = Graph::childEdges($page->uuid())->count()) {
@@ -22,10 +22,10 @@ if ($count = Graph::childEdges($page->uuid())->count()) {
 echo (new CallbackLink(
     function () {
         throw new RedirectException(
-            new URL('_delete.html?csrf=' . Cookies::csrfToken('delete_' . Context::pageUUID()))
+            new URL('_delete.html?csrf=' . Cookies::csrfToken('delete_' . Context::pageUUID())),
         );
     },
-    ['button--danger']
+    ['button--danger'],
 ))
     ->addChild('Delete now')
     ->addClass('button button--danger');

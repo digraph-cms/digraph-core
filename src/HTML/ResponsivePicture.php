@@ -8,17 +8,29 @@ use DigraphCMS\Media\ImageFile;
 
 class ResponsivePicture extends Tag
 {
+
     protected $tag = 'picture';
+
     protected $void = false;
 
     protected $image;
+
     protected $alt;
+
     protected $expectedWidth = 90;
+
     protected $maxHeight = 80;
+
     protected $img;
+
     const BREAKPOINTS = [
-        400, 800, 1200, 1600, 2000
+        400,
+        800,
+        1200,
+        1600,
+        2000,
     ];
+
     const DEFAULT_WIDTH = 800;
 
     public function __construct(ImageFile $image, string $alt)
@@ -28,9 +40,8 @@ class ResponsivePicture extends Tag
         $this->img = new IMG(
             (clone $this->image())
                 ->width(Config::get('images.default_width') ?? static::DEFAULT_WIDTH)
-                ->optimize()
                 ->url(),
-            $this->alt()
+            $this->alt(),
         );
         $this->addClass('fancyfit');
     }
@@ -61,9 +72,9 @@ class ResponsivePicture extends Tag
                 'style' => implode(';', [
                     'padding:0',
                     'max-width:' . ($this->maxHeight * ($w / $h)) . 'vh',
-                    'background-color:' . $this->image()->color()
-                ])
-            ]
+                    'background-color:#ccc;',
+                ]),
+            ],
         );
     }
 
@@ -106,11 +117,7 @@ class ResponsivePicture extends Tag
         $ratio = $originalHeight / $originalWidth;
         $lastWidth = 0;
         $lastHeight = 0;
-        $image = (clone $this->image())
-            ->optimize();
-        if ($webP) {
-            $image->webp();
-        }
+        $image = $this->image->webp();
         foreach (Config::get('images.breakpoints') ?? static::BREAKPOINTS as $width) {
             if ($width > $originalWidth) {
                 break;
@@ -124,7 +131,7 @@ class ResponsivePicture extends Tag
                     ($lastHeight * $this->maxHeight) / 100
                 ),
                 $image->mime(),
-                $this->srcSet($image, $width)
+                $this->srcSet($image, $width),
             );
             $lastWidth = $width;
             $lastHeight = $height;
@@ -152,7 +159,7 @@ class ResponsivePicture extends Tag
         return array_merge(
             function_exists('imagewebp') ? $this->sources(true) : [],
             $this->sources(),
-            [$this->img()]
+            [$this->img()],
         );
     }
 
@@ -168,11 +175,12 @@ class ResponsivePicture extends Tag
                 $this->image()->identifier(),
                 $this->expectedWidth,
                 $this->maxHeight,
-                $this->alt
+                $this->alt,
             ])),
             function () {
                 return parent::toString();
             }
         );
     }
+
 }
