@@ -326,8 +326,7 @@ class PaginatedSection extends Tag
     /**
      * Configure the download tool for this section.
      *
-     * @param string $extension The file extension to use for the download (options: 'csv', 'xlsx', 'ods', 'html',
-     *                          'xls').
+     * @param string $extension The file extension to use for the download (options: 'csv', 'xlsx', 'ods').
      */
     public function download(
         string $filename,
@@ -446,12 +445,10 @@ class PaginatedSection extends Tag
     protected function downloadFile(): File
     {
         $filename = $this->dl_filename . ($this->getFilterConfig() ? ' (filtered)' : '');
-        $writer = new SpreadsheetWriter($this->dl_filename);
         return new DeferredFile(
-            $filename,
-            function (DeferredFile $file) use ($writer) {
-                FS::touch($file->path());
-                $writer = new SpreadsheetWriter();
+            $filename . '.' . $this->dl_extension,
+            function (DeferredFile $file) {
+                $writer = new SpreadsheetWriter($this->dl_extension);
                 // write headers
                 if ($this->dl_headers)
                     $writer->writeHeaders($this->dl_headers);
