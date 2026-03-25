@@ -40,11 +40,7 @@ class SpreadsheetWriter
         // if there are headers, try to freeze top row
         if ($this->headers) {
             if ($this->writer instanceof \OpenSpout\Writer\XLSX\Writer) {
-                // set up sheet view to freeze top row
-                $sheet_view = $this->writer->getCurrentSheet()->getSheetView()
-                    ?? new SheetView();
-                $sheet_view = $sheet_view->withFreezeRow(2);
-                $this->writer->getCurrentSheet()->setSheetView($sheet_view);
+                $this->writer->getCurrentSheet()->getSheetView()->setFreezeRow(2);
             }
         }
         // close
@@ -58,15 +54,11 @@ class SpreadsheetWriter
     {
         $this->headers = true;
         $cells = $this->prepareCells($cells);
-        $style = new Style(
-            fontBold: true,
-            backgroundColor: '#CCCCCC',
-            fontColor: '#000000',
-        );
-        $cells = array_map(
-            fn(Cell $cell): Cell => $cell->withStyle($style),
-            $cells,
-        );
+        foreach ($cells as $cell) {
+            $cell->style->fontBold = true;
+            $cell->style->backgroundColor = '#CCCCCC';
+            $cell->style->fontColor = '#000000';
+        }
         $this->writer->addRow(new Row($cells));
     }
 

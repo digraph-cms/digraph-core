@@ -14,9 +14,8 @@ class DateCell extends AbstractCellWriter
     public function cell(): \OpenSpout\Common\Entity\Cell
     {
         $cell = parent::cell();
-        $style = $cell->style
-            ->withFormat('m/d/yy');
-        return $cell->withStyle($style);
+        $cell->getStyle()->setFormat('m/d/yy');
+        return $cell;
     }
 
 }

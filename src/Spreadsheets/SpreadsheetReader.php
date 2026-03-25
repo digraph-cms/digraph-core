@@ -36,14 +36,14 @@ class SpreadsheetReader
         $header_row = $rows->current();
         if (!$header_row)
             return;
-        foreach ($header_row->cells as $cell) {
+        foreach ($header_row->getCells() as $cell) {
             $headers[] = strtolower((string) $cell->getValue());
         }
         // get iterator for the rest of the rows and begin yielding non-empty rows
         while ($row = next($rows)) {
             $rowData = [];
             $hasData = false;
-            foreach ($row->cells as $cell) {
+            foreach ($row->getCells() as $cell) {
                 $cell = $cell->getValue();
                 $hasData = $hasData || $cell !== null;
                 $rowData[] = $cell;
@@ -76,7 +76,7 @@ class SpreadsheetReader
         while ($row = next($rows)) {
             yield array_map(
                 fn(Cell $cell) => $cell->getValue(),
-                $row->cells,
+                $row->getCells(),
             );
         }
     }
