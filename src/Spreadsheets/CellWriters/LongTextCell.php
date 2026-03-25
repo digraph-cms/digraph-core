@@ -8,8 +8,9 @@ class LongTextCell extends AbstractCellWriter
     public function cell(): \OpenSpout\Common\Entity\Cell
     {
         $cell = parent::cell();
-        $cell->getStyle()->setShouldWrapText(true);
-        return $cell;
+        $style = $cell->style
+            ->withShouldWrapText(true);
+        return $cell->withStyle($style);
     }
 
 }

@@ -12,8 +12,9 @@ class DollarCell extends AbstractCellWriter
     public function cell(): \OpenSpout\Common\Entity\Cell
     {
         $cell = parent::cell();
-        $cell->getStyle()->setFormat('"$"#,##0.00');
-        return $cell;
+        $style = $cell->style
+            ->withFormat('"$"#,##0.00');
+        return $cell->withStyle($style);
     }
 
 }

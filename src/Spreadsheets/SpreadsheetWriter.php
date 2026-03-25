@@ -21,8 +21,6 @@ class SpreadsheetWriter
 
     protected $headers = false;
 
-    protected $freezeColumns = 0;
-
     public function __construct(string $extension = 'xlsx')
     {
         $this->writer = match ($extension) {
@@ -52,11 +50,15 @@ class SpreadsheetWriter
     {
         $this->headers = true;
         $cells = $this->prepareCells($cells);
-        foreach ($cells as $cell) {
-            $cell->getStyle()->setFontBold();
-            $cell->getStyle()->setBackgroundColor('FFCCCCCC');
-            $cell->getStyle()->setFontColor('FF000000');
-        }
+        $style = new Style(
+            fontBold: true,
+            backgroundColor: 'FFCCCCCC',
+            fontColor: 'FF000000',
+        );
+        $cells = array_map(
+            fn(Cell $cell): Cell => $cell->withStyle($style),
+            $cells,
+        );
         $this->writer->addRow(new Row($cells));
     }
 
