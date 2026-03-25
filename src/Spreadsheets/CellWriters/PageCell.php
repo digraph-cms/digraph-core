@@ -3,7 +3,8 @@
 namespace DigraphCMS\Spreadsheets\CellWriters;
 
 use DigraphCMS\Content\Page;
-use PhpOffice\PhpSpreadsheet\Cell\Cell;
+use OpenSpout\Common\Entity\Cell;
+use OpenSpout\Common\Entity\Cell\FormulaCell;
 
 /**
  * @method __construct(Page $page)
@@ -11,9 +12,16 @@ use PhpOffice\PhpSpreadsheet\Cell\Cell;
  */
 class PageCell extends AbstractCellWriter
 {
-    public function transformCell(Cell $cell)
+
+    public function cell(): Cell
     {
-        $cell->setValue($this->value->name());
-        static::hyperlink($cell, $this->value->url());
+        return FormulaCell::fromValue(
+            sprintf(
+                '=HYPERLINK("%s","%s")',
+                str_replace('"', '""', $this->value->url()),
+                str_replace('"', '""', $this->value->name()),
+            ),
+        );
     }
+
 }

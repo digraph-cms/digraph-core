@@ -2,20 +2,29 @@
 
 namespace DigraphCMS\Spreadsheets\CellWriters;
 
-use PhpOffice\PhpSpreadsheet\Cell\Cell;
+use OpenSpout\Common\Entity\Cell;
+use OpenSpout\Common\Entity\Cell\FormulaCell;
 
 class LinkCell extends AbstractCellWriter
 {
-    protected $url;
+
+    protected string $url;
+
     public function __construct($value, $url)
     {
         parent::__construct($value);
         $this->url = $url;
     }
 
-    public function transformCell(Cell $cell)
+    public function cell(): Cell
     {
-        $cell->setValue($this->value);
-        static::hyperlink($cell, $this->url);
+        return FormulaCell::fromValue(
+            sprintf(
+                '=HYPERLINK("%s","%s")',
+                str_replace('"', '""', $this->url),
+                str_replace('"', '""', $this->value),
+            ),
+        );
     }
+
 }

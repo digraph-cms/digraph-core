@@ -33,7 +33,6 @@
         "phpmailer/phpmailer": "^6.6",
         "tijsverkoyen/css-to-inline-styles": "^2.2",
         "caxy/php-htmldiff": "^0.1.10",
-        "phpoffice/phpspreadsheet": "^2",
         "masterminds/html5": "^2.7",
         "ezyang/htmlpurifier": "^4.16",
         "robmorgan/phinx": "^0.13.4",
@@ -46,7 +45,8 @@
         "league/html-to-markdown": "^5.1",
         "smalot/pdfparser": "^2.11",
         "phpoffice/phpword": "^1.3",
-        "joby/smol-image": "^1.2"
+        "joby/smol-image": "^1.2",
+        "openspout/openspout": "^5.6"
     },
     "conflict": {
         "jasig/phpcas": "<1.6",

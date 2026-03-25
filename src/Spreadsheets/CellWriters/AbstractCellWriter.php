@@ -2,52 +2,48 @@
 
 namespace DigraphCMS\Spreadsheets\CellWriters;
 
-use PhpOffice\PhpSpreadsheet\Cell\Cell;
-use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
-use PhpOffice\PhpSpreadsheet\Style\Color;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use OpenSpout\Common\Entity\Cell;
+use OpenSpout\Common\Entity\Style\Style;
 
 abstract class AbstractCellWriter
 {
-    protected $value;
-    protected $fill;
 
-    abstract public function transformCell(Cell $style);
+    protected $value;
+
+    protected string|null $fill;
 
     public function __construct($value)
     {
-        if (is_object($value)) $value = clone $value;
+        if (is_object($value))
+            $value = clone $value;
         $this->value = $value;
     }
 
-    public function write(Worksheet $sheet, int $column, int $row)
+    public function cell(): Cell
     {
-        $this->transformCell($sheet->getCell(Coordinate::stringFromColumnIndex($column) . $row));
+        $cell = Cell::fromValue($this->value);
+        $style = new Style();
+        if ($this->fill)
+            $style = $style->withBackgroundColor($this->fill);
+        return $cell->withStyle($style);
     }
 
-    public function fill(): ?string
+    public function fill(): string|null
     {
         return $this->fill;
     }
 
-    public function setFill(?string $fill)
+    public function setFill(string|null $fill)
     {
-        if (!$fill) $this->fill = null;
+        if (!$fill)
+            $this->fill = null;
         else {
             $fill = strtoupper($fill);
-            if (!preg_match('/[0-9A-F]{8}/', $fill)) throw new \Exception("Fill must be 8 hex digits i.e. FFCCCCCC");
+            if (!preg_match('/[0-9A-F]{6}/', $fill))
+                throw new \Exception("Fill must be 6 hex digits i.e. CCCCCC");
             $this->fill = $fill;
         }
         return $this;
     }
 
-    protected static function hyperlink(Cell $cell, $url, $style = true)
-    {
-        $cell->getHyperlink()->setUrl($url);
-        if ($style) {
-            $cell->getStyle()->getFont()
-                ->setUnderline(true)
-                ->setColor(new Color('FF000099'));
-        }
-    }
 }

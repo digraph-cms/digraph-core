@@ -12,6 +12,7 @@ use DigraphCMS\HTML\Forms\UploadSingle;
 use DigraphCMS\HTML\Icon;
 use DigraphCMS\Media\DeferredFile;
 use DigraphCMS\RichContent\RichContent;
+use DigraphCMS\Spreadsheets\SpreadsheetReader;
 use DigraphCMS\Spreadsheets\SpreadsheetWriter;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
@@ -38,8 +39,8 @@ class TableRichMedia extends AbstractRichMedia
 
         // toggle field for choosing whether to edit manually or upload spreadsheet
         $mode = (new RadioListField('How would you like to enter the table\'s content?', [
-        'edit' => 'Edit table content manually',
-        'file' => 'Upload a spreadsheet'
+            'edit' => 'Edit table content manually',
+            'file' => 'Upload a spreadsheet',
         ]))
             ->setRequired(true)
             ->setDefault('edit')
@@ -67,7 +68,7 @@ class TableRichMedia extends AbstractRichMedia
                                     return $cell['cell'];
                                 },
                                 $data['head'][0]['row'] ?? []
-                            )
+                            ),
                         );
                     }
                     // add the rest of the rows
@@ -77,22 +78,21 @@ class TableRichMedia extends AbstractRichMedia
                                 function (array $cell) {
                                     return $cell['cell'];
                                 },
-                                $row['row']
-                            )
+                                $row['row'],
+                            ),
                         );
                     }
                     // save file
-                    (new Xlsx($writer->spreadsheet()))
-                        ->save($file->path());
+                    $writer->save($file->path());
                 },
                 $this->uuid() . '/export',
-                60
+                60,
             );
             $form->addChild(
                 sprintf(
                     '<div><a href="%s">Export source to edit in Excel</a></div>',
-                    $export->url()
-                )
+                    $export->url(),
+                ),
             );
         }
 
@@ -107,7 +107,9 @@ class TableRichMedia extends AbstractRichMedia
         $file->addValidator(function () use ($file, $mode) {
             if (!$file->value() && $mode->value() == 'url') {
                 return "This field is required";
-            } else return null;
+            }
+            else
+                return null;
         });
 
         // special scripting for front end visibility
@@ -144,7 +146,8 @@ class TableRichMedia extends AbstractRichMedia
             if ($mode->value() == 'file') {
                 $f = $file->value();
                 $this->setTableFromFile($f['tmp_name'], pathinfo($f['name'], PATHINFO_EXTENSION));
-            } else {
+            }
+            else {
                 unset($this['table']);
                 $this['table'] = $table->value();
             }
@@ -168,45 +171,26 @@ class TableRichMedia extends AbstractRichMedia
 
     protected function setTableFromFile(string $path, $extension = null)
     {
-        switch ($extension) {
-            case 'csv':
-                $reader = new Csv;
-                break;
-            case 'xlsx':
-                $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx;
-                break;
-            case 'xls':
-                $reader = new Xls;
-                break;
-            case 'ods':
-                $reader = new Ods;
-                break;
-            default:
-                $reader = IOFactory::createReaderForFile($path);
-        }
-        $reader->setReadDataOnly(true);
-        $spreadsheet = $reader->load($path);
-        // loop through rows and cells in first sheet only, generating table data
-        $sdata = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
+        $rows = SpreadsheetReader::rows_raw($path, $extension);
         $data = [];
-        foreach ($sdata as $rid => $row) {
+        foreach ($rows as $rid => $row) {
             $r = [];
             foreach ($row as $cid => $cell) {
                 $r[] = [
-                    'id' => Digraph::uuid(null, md5(serialize([$rid, $cid]))),
-                    'cell' => $cell
+                    'id'   => Digraph::uuid(null, md5(serialize([$rid, $cid]))),
+                    'cell' => $cell,
                 ];
             }
             $data[] = [
-                'id' => Digraph::uuid(null, md5($rid)),
-                'row' => $r
+                'id'  => Digraph::uuid(null, md5($rid)),
+                'row' => $r,
             ];
         }
         // overwrite existing table data
         unset($this['table']);
         $this['table'] = [
             'head' => [Digraph::uuid() => array_shift($data)],
-            'body' => $data
+            'body' => $data,
         ];
     }
 
@@ -234,7 +218,7 @@ class TableRichMedia extends AbstractRichMedia
                     $cellTag,
                     $cellID,
                     new RichContent($cell),
-                    $cellTag
+                    $cellTag,
                 );
             }
             $html .= '</tr>';
@@ -242,4 +226,5 @@ class TableRichMedia extends AbstractRichMedia
         $html .= "</$wrapTag>";
         return $html;
     }
+
 }

@@ -18,31 +18,56 @@ use DigraphCMS\URL\URL;
 use Envms\FluentPDO\Queries\Select;
 use Exception;
 use Iterator;
-use PhpOffice\PhpSpreadsheet\Writer\Csv;
-use PhpOffice\PhpSpreadsheet\Writer\Html;
-use PhpOffice\PhpSpreadsheet\Writer\Ods;
-use PhpOffice\PhpSpreadsheet\Writer\Xls;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use RuntimeException;
 use Throwable;
-
 use function method_exists;
 
 class PaginatedSection extends Tag
 {
+
     protected static $counter = 0;
+
     protected Paginator|bool $paginator = false;
+
     protected $count;
+
     protected $tag = 'div';
-    protected $source, $filteredSource;
-    protected $body, $top, $bottom, $before, $after;
+
+    protected $source;
+
+    protected $filteredSource;
+
+    protected $body;
+
+    protected $top;
+
+    protected $bottom;
+
+    protected $before;
+
+    protected $after;
+
     protected $items;
+
     protected $callback;
-    protected $dl_filename, $dl_callback, $dl_headers, $dl_finalize_callback, $dl_ttl;
+
+    protected $dl_filename;
+
+    protected $dl_callback;
+
+    protected $dl_headers;
+
+    protected $dl_finalize_callback;
+
+    protected $dl_ttl;
+
     protected $dl_button = 'Download';
+
     protected $dl_permissions;
+
     protected string $dl_extension;
+
     /** @var FilterToolInterface[] */
+
     protected $filterTools = [];
 
     /**
@@ -82,7 +107,8 @@ class PaginatedSection extends Tag
     {
         $fullConfig = $this->getFilterConfig();
         unset($fullConfig[$tool]);
-        if ($config !== null) $fullConfig[$tool] = $config;
+        if ($config !== null)
+            $fullConfig[$tool] = $config;
         $finalConfig = [];
         foreach ($fullConfig as $tool => $config) {
             // I know it feels weird to store these with key/value as a tuple,
@@ -91,16 +117,20 @@ class PaginatedSection extends Tag
             $finalConfig[] = [$tool, $config];
         }
         $url = Context::url();
-        if ($finalConfig) $url->setArg('filter_' . $this->id(), json_encode($finalConfig));
-        else $url->unsetArg('filter_' . $this->id());
+        if ($finalConfig)
+            $url->setArg('filter_' . $this->id(), json_encode($finalConfig));
+        else
+            $url->unsetArg('filter_' . $this->id());
         return $url;
     }
 
     public function paginator(): Paginator
     {
         if ($this->paginator === false) {
-            if ($this->source() instanceof Countable) $this->count = $this->source()->count();
-            elseif (is_array($this->source())) $this->count = count($this->source());
+            if ($this->source() instanceof Countable)
+                $this->count = $this->source()->count();
+            elseif (is_array($this->source()))
+                $this->count = count($this->source());
             $this->paginator = new Paginator($this->count);
         }
         return $this->paginator;
@@ -129,7 +159,9 @@ class PaginatedSection extends Tag
             || $this->source instanceof AbstractMappedSelect
         ) {
             return $this->source->getFromTable();
-        } else return null;
+        }
+        else
+            return null;
     }
 
     public function rawSource()
@@ -139,7 +171,8 @@ class PaginatedSection extends Tag
 
     public function source()
     {
-        if ($this->filteredSource !== null) return $this->filteredSource;
+        if ($this->filteredSource !== null)
+            return $this->filteredSource;
         elseif (
             $this->source instanceof Select
             || $this->source instanceof AbstractMappedSelect
@@ -168,7 +201,8 @@ class PaginatedSection extends Tag
                 foreach ($like as list($column, $pattern)) {
                     $source->like($column, $pattern);
                 }
-            } else {
+            }
+            else {
                 foreach ($like as list($column, $pattern)) {
                     $source->where(AbstractMappedSelect::parseJsonRefs($column) . " LIKE ?", AbstractMappedSelect::prepareLikePattern($pattern));
                 }
@@ -176,12 +210,15 @@ class PaginatedSection extends Tag
             foreach ($where as list($clause, $args)) {
                 $source->where($clause, $args);
             }
-            if ($order) $source->order(null);
+            if ($order)
+                $source->order(null);
             foreach ($order as $clause) {
                 $source->order($clause);
             }
             return $this->filteredSource = $source;
-        } else return $this->filteredSource = $this->source;
+        }
+        else
+            return $this->filteredSource = $this->source;
     }
 
     public function before(): ConditionalContainer
@@ -236,7 +273,8 @@ class PaginatedSection extends Tag
     {
         if (!$this->body) {
             $items = $this->items();
-            if (!$items) return $this->body = (new DIV)->addClass('notification notification--notice')->addChild('Section is empty');
+            if (!$items)
+                return $this->body = (new DIV)->addClass('notification notification--notice')->addChild('Section is empty');
             $this->body = new DIV;
             $this->body->addClass('paginated-section__body');
             foreach ($items as $item) {
@@ -252,7 +290,8 @@ class PaginatedSection extends Tag
         $arg = 'dl_' . md5($this->id());
         try {
             $arg_val = Context::arg_bool($arg, true);
-        } catch (Throwable) {
+        }
+        catch (Throwable) {
             $arg_val = false;
         }
         if ($arg_val) {
@@ -263,11 +302,12 @@ class PaginatedSection extends Tag
                 $file->url(),
                 $file->filename(),
                 $arg,
-                $file->filename()
+                $file->filename(),
             );
             // auto download
             $out .= sprintf('<script>document.getElementById("%s").click();</script>', $arg);
-        } else {
+        }
+        else {
             // link to initialize
             $url = clone Context::url();
             $url->unsetArg($this->paginator()->arg());
@@ -290,14 +330,14 @@ class PaginatedSection extends Tag
      *                          'xls').
      */
     public function download(
-        string        $filename,
-        callable      $callback,
-        array         $headers = [],
+        string $filename,
+        callable $callback,
+        array $headers = [],
         callable|null $finalizeCallback = null,
-        string|null   $buttonText = null,
-        int|null      $ttl = null,
+        string|null $buttonText = null,
+        int|null $ttl = null,
         callable|null $permissions = null,
-        string        $extension = 'xlsx',
+        string $extension = 'xlsx',
     )
     {
         $this->dl_filename = preg_replace('/[^a-z0-9 _\-]+/i', '_', $filename);
@@ -313,19 +353,23 @@ class PaginatedSection extends Tag
 
     protected function getFilterConfig(): array
     {
-        if (!$this->filterTools) return [];
+        if (!$this->filterTools)
+            return [];
         if ($arg = Context::arg_string('filter_' . $this->id(), true)) {
             // get and decode arg
             $json = json_decode($arg, true);
-            if (!is_array($json)) return [];
+            if (!is_array($json))
+                return [];
             // convert into key/value array
             $output = [];
             foreach ($json as list($tool, $config)) {
-                if (isset($this->filterTools[$tool])) $output[$tool] = $config;
+                if (isset($this->filterTools[$tool]))
+                    $output[$tool] = $config;
             }
             // return output
             return $output;
-        } else {
+        }
+        else {
             return [];
         }
     }
@@ -349,7 +393,8 @@ class PaginatedSection extends Tag
             ) {
                 // turn filtered/paginated results into array for final displaying
                 $source = clone $this->source();
-                if ($this->paginator()->startItem()) $source->offset($this->paginator()->startItem());
+                if ($this->paginator()->startItem())
+                    $source->offset($this->paginator()->startItem());
                 $source->limit($this->paginator()->perPage());
                 $this->items = $source->fetchAll();
             } // Use built-in array_slice to cut out the requested section of an array
@@ -357,7 +402,7 @@ class PaginatedSection extends Tag
                 $this->items = array_slice(
                     $this->source(),
                     $this->paginator()->startItem(),
-                    $this->paginator()->perPage()
+                    $this->paginator()->perPage(),
                 );
             }
             // Straight Iterators aren't especially efficient, because you have to iterate through
@@ -366,7 +411,8 @@ class PaginatedSection extends Tag
                 $source = clone $this->source();
                 $this->source()->rewind();
                 // skip first items
-                for ($i = 1; $i < $this->paginator()->startItem(); $i++) $source->next();
+                for ($i = 1; $i < $this->paginator()->startItem(); $i++)
+                    $source->next();
                 // grab perpage items
                 $this->items = [];
                 for ($i = 0; $i < $this->paginator()->perPage(); $i++) {
@@ -385,7 +431,7 @@ class PaginatedSection extends Tag
                 function ($item) {
                     return $this->runCallback($item);
                 },
-                $this->items
+                $this->items,
             ));
         }
         // return generated items list
@@ -400,38 +446,15 @@ class PaginatedSection extends Tag
     protected function downloadFile(): File
     {
         $filename = $this->dl_filename . ($this->getFilterConfig() ? ' (filtered)' : '');
-        $writer = new SpreadsheetWriter();
-        switch ($this->dl_extension) {
-            case 'csv':
-                $filename .= '.csv';
-                $outputter_class = Csv::class;
-                break;
-            case 'xlsx':
-                $filename .= '.xlsx';
-                $outputter_class = Xlsx::class;
-                break;
-            case 'xls':
-                $filename .= '.xls';
-                $outputter_class = Xls::class;
-                break;
-            case 'ods':
-                $filename .= '.ods';
-                $outputter_class = Ods::class;
-                break;
-            case 'html':
-                $filename .= '.html';
-                $outputter_class = Html::class;
-                break;
-            default:
-                throw new RuntimeException("Unsupported download spreadsheet extension: " . $this->dl_extension);
-        }
+        $writer = new SpreadsheetWriter($this->dl_filename);
         return new DeferredFile(
             $filename,
-            function (DeferredFile $file) use ($writer, $outputter_class) {
+            function (DeferredFile $file) use ($writer) {
                 FS::touch($file->path());
                 $writer = new SpreadsheetWriter();
                 // write headers
-                if ($this->dl_headers) $writer->writeHeaders($this->dl_headers);
+                if ($this->dl_headers)
+                    $writer->writeHeaders($this->dl_headers);
                 // loop through source and run callback to get cells
                 $source = $this->source();
                 if (
@@ -444,23 +467,23 @@ class PaginatedSection extends Tag
                     while ($item = $source->fetch()) {
                         $writer->writeRow($this->runDlCallback($item));
                     }
-                } else {
+                }
+                else {
                     foreach ($source as $item) {
-                        if (!$item) continue;
+                        if (!$item)
+                            continue;
                         $writer->writeRow($this->runDlCallback($item));
                     }
                 }
                 // run finalization callback
-                if ($this->dl_finalize_callback) call_user_func($this->dl_finalize_callback, $writer);
+                if ($this->dl_finalize_callback)
+                    call_user_func($this->dl_finalize_callback, $writer);
                 // save file
-                $outputter = new $outputter_class($writer->spreadsheet());
-                $outputter->save($file->path() . '.tmp');
-                FS::copy($file->path() . '.tmp', $file->path());
-                unlink($file->path() . '.tmp');
+                $writer->save($file->path());
             },
             [get_called_class(), $this->downloadFileID()],
             $this->dl_ttl,
-            $this->dl_permissions
+            $this->dl_permissions,
         );
     }
 
@@ -474,7 +497,8 @@ class PaginatedSection extends Tag
         return md5(serialize([
             Context::url()->path(),
             $this->id(),
-            $this->getFilterConfig()
+            $this->getFilterConfig(),
         ]));
     }
+
 }

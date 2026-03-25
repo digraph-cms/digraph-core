@@ -2,21 +2,21 @@
 
 namespace DigraphCMS\Spreadsheets\CellWriters;
 
-use DateTime;
-use PhpOffice\PhpSpreadsheet\Cell\Cell;
-use PhpOffice\PhpSpreadsheet\Shared\Date;
+use DateTimeInterface;
 
 /**
- * @method __construct(DateTime $date)
- * @property DateTime $value
+ * @method __construct(DateTimeInterface $date)
+ * @property DateTimeInterface $value
  */
 class DateCell extends AbstractCellWriter
 {
-    public function transformCell(Cell $cell)
+
+    public function cell(): \OpenSpout\Common\Entity\Cell
     {
-        $cell->setValue(Date::PHPToExcel($this->value));
-        $cell->getStyle()
-            ->getNumberFormat()
-            ->setFormatCode('mmm d, yyyy');
+        $cell = parent::cell();
+        $style = $cell->style
+            ->withFormat('m/d/yy');
+        return $cell->withStyle($style);
     }
+
 }

@@ -2,102 +2,97 @@
 
 namespace DigraphCMS\Spreadsheets;
 
+use DigraphCMS\Config;
+use DigraphCMS\FS;
 use DigraphCMS\Spreadsheets\CellWriters\AbstractCellWriter;
-use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Style\Color;
-use PhpOffice\PhpSpreadsheet\Style\Fill;
+use InvalidArgumentException;
+use OpenSpout\Common\Entity\Cell;
+use OpenSpout\Common\Entity\Row;
+use OpenSpout\Common\Entity\Style\Style;
+use OpenSpout\Writer\WriterInterface;
+use OpenSpout\Writer\XLSX\Entity\SheetView;
 
 class SpreadsheetWriter
 {
-    protected $spreadsheet;
+
+    protected WriterInterface $writer;
+
+    protected string $temp_file;
+
     protected $headers = false;
+
     protected $freezeColumns = 0;
 
-    public function __construct()
+    public function __construct(string $extension = 'xlsx')
     {
-        $this->spreadsheet = new Spreadsheet;
+        $this->writer = match ($extension) {
+            'xlsx'  => new \OpenSpout\Writer\XLSX\Writer(),
+            'ods'   => new \OpenSpout\Writer\ODS\Writer(),
+            'csv'   => new \OpenSpout\Writer\CSV\Writer(),
+            default => throw new InvalidArgumentException("Invalid spreadsheet format, only .xlsx, .ods, and .csv files are supported")
+        };
+        $this->temp_file = Config::cachePath() . '/spreadsheet_writing/' . uniqid() . '.' . $extension;
+        $this->writer->openToFile($this->temp_file);
     }
 
-    public function spreadsheet(): Spreadsheet
+    public function save(string $file_path): void
     {
-        // set autosized widths by default
-        foreach ($this->spreadsheet->getActiveSheet()->getColumnIterator() as $column) {
-            $dimension = $this->spreadsheet->getActiveSheet()->getColumnDimension($column->getColumnIndex());
-            $dimension->setAutoSize(true);
+        // if there are headers, try to freeze top row
+        if ($this->headers) {
+            if ($this->writer instanceof \OpenSpout\Writer\XLSX\Writer) {
+                // set up sheet view to freeze top row
+                $sheet_view = $this->writer->getCurrentSheet()->getSheetView()
+                    ?? new SheetView();
+                $sheet_view = $sheet_view->withFreezeRow(2);
+                $this->writer->getCurrentSheet()->setSheetView($sheet_view);
+            }
         }
-        // wrap up formatting stuff
-        $this->spreadsheet->setActiveSheetIndex(0);
-        $this->spreadsheet->getActiveSheet()->setAutoFilter(
-            $this->spreadsheet->getActiveSheet()->calculateWorksheetDimension()
-        );
-        // freeze rows/columns
-        if ($this->headers) $this->spreadsheet->getActiveSheet()->freezePane(Coordinate::stringFromColumnIndex($this->freezeColumns() + 1) . '2');
-        else $this->spreadsheet->getActiveSheet()->freezePane(Coordinate::stringFromColumnIndex($this->freezeColumns() + 1) . '1');
-        // return
-        return $this->spreadsheet;
-    }
-
-    public function freezeColumns(): int
-    {
-        return $this->freezeColumns;
-    }
-
-    /**
-     * Set how many columns should be frozen
-     *
-     * @param integer $columns
-     * @return static
-     */
-    public function setFreezeColumns(int $columns)
-    {
-        $this->freezeColumns = $columns;
-        return $this;
+        // close
+        $this->writer->close();
+        // move temp file to final location
+        FS::copy($this->temp_file, $file_path);
+        FS::delete($this->temp_file);
     }
 
     public function writeHeaders(array $cells)
     {
         $this->headers = true;
-        $this->spreadsheet->setActiveSheetIndex(0);
-        $row = 1;
-        foreach (array_values($cells) as $i => $cell) {
-            $this->spreadsheet->getActiveSheet()
-                ->setCellValue(
-                    Coordinate::stringFromColumnIndex($i + 1) . $row,
-                    $cell
-                );
-            $cell = $this->spreadsheet->getActiveSheet()
-                ->getCell(Coordinate::stringFromColumnIndex($i + 1) . $row);
-            $cell->getStyle()->getFont()->setBold(true);
-            $cell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID);
-            $cell->getStyle()->getFill()->setStartColor(new Color('FFCCCCCC'));
-        }
+        $cells = $this->prepareCells($cells);
+        $style = new Style(
+            fontBold: true,
+            backgroundColor: '#CCCCCC',
+            fontColor: '#000000',
+        );
+        $cells = array_map(
+            fn(Cell $cell): Cell => $cell->withStyle($style),
+            $cells,
+        );
+        $this->writer->addRow(new Row($cells));
+    }
+
+    protected function prepareCells(array $cells): array
+    {
+        return array_map(
+            $this->prepareCell(...),
+            $cells,
+        );
+    }
+
+    protected function prepareCell(mixed $cell): Cell
+    {
+        if ($cell instanceof Cell)
+            return $cell;
+        elseif ($cell instanceof AbstractCellWriter)
+            return $cell->cell();
+        else
+            return Cell::fromValue($cell);
     }
 
     public function writeRow(array $cells)
     {
-        $this->spreadsheet->setActiveSheetIndex(0);
-        $row = $this->spreadsheet->getActiveSheet()->getHighestDataRow() + 1;
-        foreach (array_values($cells) as $i => $cell) {
-            // set value
-            if ($cell instanceof AbstractCellWriter) {
-                $cell->write($this->spreadsheet->getActiveSheet(), $i + 1, $row);
-            } else {
-                $this->spreadsheet->getActiveSheet()->setCellValue(
-                    Coordinate::stringFromColumnIndex($i + 1) . $row,
-                    $cell
-                );
-            }
-            // set fill
-            $style = $this->spreadsheet->getActiveSheet()
-                ->getCell(Coordinate::stringFromColumnIndex($i + 1) . $row)
-                ->getStyle();
-            $style->getFill()->setFillType(Fill::FILL_SOLID);
-            if ($cell instanceof AbstractCellWriter && $fill = $cell->fill()) {
-                $style->getFill()->setStartColor(new Color($fill));
-            } else {
-                $style->getFill()->setStartColor(new Color($row % 2 ? 'FFEEEEEE' : 'FFFFFFFF'));
-            }
-        }
+        $this->writer->addRow(
+            new Row($this->prepareCells($cells)),
+        );
     }
+
 }

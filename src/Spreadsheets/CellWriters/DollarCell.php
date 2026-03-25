@@ -2,22 +2,19 @@
 
 namespace DigraphCMS\Spreadsheets\CellWriters;
 
-use PhpOffice\PhpSpreadsheet\Cell\Cell;
-use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
-
 /**
  * @method __construct(float $amount)
  * @property float $value
  */
 class DollarCell extends AbstractCellWriter
 {
-    public function transformCell(Cell $cell)
+
+    public function cell(): \OpenSpout\Common\Entity\Cell
     {
-        $cell->setValue($this->value);
-        $cell->getStyle()
-            ->getNumberFormat()
-            ->setFormatCode(
-                NumberFormat::FORMAT_CURRENCY_USD
-            );
+        $cell = parent::cell();
+        $style = $cell->style
+            ->withFormat('"$"#,##0.00');
+        return $cell->withStyle($style);
     }
+
 }
