@@ -169,7 +169,7 @@ class Security
     protected static function generateCaptchaToken(): string
     {
         $token = bin2hex(random_bytes(32));
-        $expires = time() + (int) Config::get('captcha.pass_ttl');
+        $expires = time() + 3600;
         DB::query()
             ->insertInto(
                 'security_captcha_token',
@@ -195,7 +195,7 @@ class Security
         return !!DB::query()
             ->from('security_captcha_token')
             ->where('token', $token)
-            // ->where('expires > ?', time())
+            ->where('expires > ?', time())
             ->count();
     }
 
