@@ -91,7 +91,7 @@ class URL
         // pull out in-site path
         $this->path(substr($parsed['path'], strlen(URLs::sitePath())));
         // pull out query
-        if (@$parsed['query']) {
+        if (array_key_exists('query', $parsed)) {
             parse_str($parsed['query'], $this->query);
             ksort($this->query);
         }

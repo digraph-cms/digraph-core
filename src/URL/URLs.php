@@ -9,8 +9,12 @@ URLs::_init($_SERVER);
 
 class URLs
 {
-    /** @var string|null */
-    public static $siteProtocol, $siteHost, $sitePath;
+
+    public static string|null $siteProtocol;
+
+    public static string|null $siteHost;
+
+    public static string|null $sitePath;
 
     /**
      * Called automatically on first use using the environment's real $_SERVER,
@@ -142,7 +146,11 @@ class URLs
     protected static function isHTTPS(array|null $SERVER = null)
     {
         $SERVER = $SERVER ?? $_SERVER;
-        return (!empty(@$SERVER['HTTPS']) && @$SERVER['HTTPS'] !== 'off')
+        return
+            (array_key_exists('HTTPS', $SERVER)
+                && !empty(@$SERVER['HTTPS'])
+                && $SERVER['HTTPS'] !== 'off')
             || @$SERVER['SERVER_PORT'] == 443;
     }
+
 }
