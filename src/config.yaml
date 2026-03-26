@@ -17,19 +17,11 @@ security:
     window: 300
     limit: 20
 
-captcha:
-  service: gregwar
-  fallback: gregwar
-  pass_ttl: 3600
-  turnstile:
-    site_key: false
-    secret_key: false
-
 locking:
   storage: db
 
 exception_log:
-  notify_emails: [ ]
+  notify_emails: []
   notify_frequency: 3600
 
 curl:
@@ -81,7 +73,7 @@ email:
   header_width: 596
   body_width: 576
   enabled: true
-  enabled_for: [ ]
+  enabled_for: []
   from: null
   cron_time: 30 # seconds to allow sending email for during cron
   cron_count: 1000 # maximum number of queued emails to send in cron run
@@ -154,7 +146,7 @@ db:
   adapter: sqlite
   name: "${paths.storage}/database"
   charset: utf8
-  pdo_options: [ ]
+  pdo_options: []
   sqlite:
     # whether to manually insert JSON functions into SQLite, default is on
     # because most servers don't have SQLite compiled with native JSON functions,
@@ -166,7 +158,7 @@ wayback:
   # default wayback status
   active: true
   # enter a list of emails that will be notified when a broken link is found
-  notify_emails: [ ]
+  notify_emails: []
   # maximum notification frequency per context URL
   notify_frequency: 2592000 # 30 days
   # how long to cache API call results

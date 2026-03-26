@@ -59,8 +59,7 @@
         "apereo/phpcas": "Needed to support CAS sign-ins",
         "ext-imagick": "Required to handle large images without using a ton of RAM",
         "ext-sqlite3": "Required to use a SQLite database",
-        "ext-mysql": "Required to use a MySQL database",
-        "gregwar/captcha": "Required to use self-contained CAPTCHAs"
+        "ext-mysql": "Required to use a MySQL database"
     },
     "autoload": {
         "psr-4": {
@@ -75,9 +74,7 @@
     "require-dev": {
         "phpstan/phpstan": "^2.1",
         "league/oauth2-client": "^2.7",
-        "phpunit/phpunit": "^10",
-        "ext-fileinfo": "*",
-        "gregwar/captcha": "^1.2"
+        "phpunit/phpunit": "^10"
     },
     "scripts": {
         "migrate": [
