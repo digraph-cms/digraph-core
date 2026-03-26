@@ -4,11 +4,11 @@ namespace DigraphCMS\Security;
 
 use DigraphCMS\Cache\Cache;
 use DigraphCMS\Config;
-use DigraphCMS\Context;
 use DigraphCMS\Datastore\DatastoreGroup;
 use DigraphCMS\DB\DB;
 use DigraphCMS\DB\DBConnectionException;
 use DigraphCMS\HTTP\RedirectException;
+use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\Session\Cookies;
 use DigraphCMS\Session\Session;
 use DigraphCMS\URL\URL;
@@ -19,17 +19,19 @@ class Security
 {
 
     /**
-     * Secure this request behind a CAPTCHA if user is flagged, operates by
-     * bouncing the user to a dedicated CAPTCHA page then back to this URL.
+     * Challenge bots by setting a cookie which must then be returned for them to pass. This won't stop sophisticated bots or even slow down most human attackers, but will block the low-hanging fruit of most unsophisticated bots.
      *
      * @return void
      * @throws RedirectException
      */
     public static function requireSecurityCheck(): void
     {
+        // if client isn't flagged do nothing
         if (!static::flagged())
             return;
-        throw new RedirectException(static::captchaUrl(), targetFrame: '_top');
+        // otherwise set a cookie to unflag and do a redirect
+        static::unflagSession();
+        throw new RefreshException(true);
     }
 
     /**
@@ -53,16 +55,6 @@ class Security
             ->deleteFrom('security_captcha_token')
             ->where('expires < ?', time())
             ->execute();
-    }
-
-    public static function captchaUrl(string|null $frame = null): URL
-    {
-        $url = new URL('/~captcha/');
-        $url->setArg('bounce', Context::url()->__toString());
-        if ($frame) {
-            $url->setArg('frame', $frame);
-        }
-        return $url;
     }
 
     /**
@@ -115,9 +107,7 @@ class Security
     }
 
     /**
-     * Flag the current user for CAPTCHA verification. This should be done if
-     * anything strange happens with this user, such as a failed login attempt
-     * or any other sort of suspicious activity.
+     * Flag the current user for bot challenge. This should be done if anything strange happens with this user, such as a failed login attempt or any other sort of suspicious activity.
      *
      * @param string $reason
      *
@@ -152,7 +142,7 @@ class Security
         // remove the captcha cookie if it exists
         static::invalidateCaptchaToken($cookie);
         // remove the unflag cookie if it exists
-        Cookies::unset('security', 'unflag');
+        Cookies::unset('security', 'captcha');
     }
 
     public static function sessionPassed(): bool
@@ -179,7 +169,7 @@ class Security
     protected static function generateCaptchaToken(): string
     {
         $token = bin2hex(random_bytes(32));
-        $expires = time() + (int) Config::get('captcha.pass_ttl');
+        $expires = time() + 3600;
         DB::query()
             ->insertInto(
                 'security_captcha_token',
