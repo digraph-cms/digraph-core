@@ -36,7 +36,6 @@
         "masterminds/html5": "^2.7",
         "ezyang/htmlpurifier": "^4.16",
         "robmorgan/phinx": "^0.13.4",
-        "cakephp/database": "^4",
         "jbroadway/urlify": "^1.2",
         "symfony/lock": "^6.3",
         "symfony/yaml": "^6.4",
