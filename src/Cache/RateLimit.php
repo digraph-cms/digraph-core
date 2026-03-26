@@ -33,7 +33,7 @@ class RateLimit
             static::set($namespace, $name, $ttl);
         else {
             DB::commit();
-            throw new HttpError(429);
+            throw new HttpError(429, "Try again in $ttl seconds");
         }
         DB::commit();
     }

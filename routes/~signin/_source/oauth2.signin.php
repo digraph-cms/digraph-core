@@ -1,6 +1,5 @@
 <?php
 
-use DigraphCMS\Cache\RateLimit;
 use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\Exception;
@@ -11,8 +10,6 @@ use DigraphCMS\Session\Cookies;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\Users\OAuth2UserSource;
 use DigraphCMS\Users\Users;
-
-RateLimit::limit('signin', 'oauth_attempt', 1);
 
 /** @var OAuth2UserSource */
 $source = Users::source('oauth2');
