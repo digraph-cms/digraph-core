@@ -43,6 +43,7 @@ class ImageFile extends DeferredFile
             function () {
                 $clone = clone $this;
                 $clone->width(100)
+                    ->blur(80)
                     ->jpg();
                 return $clone->url();
             }
@@ -213,6 +214,17 @@ class ImageFile extends DeferredFile
     public function cover(int $width, int $height): static
     {
         $this->image = $this->image->cover($width, $height);
+        return $this;
+    }
+
+    /**
+     * Blur the image by an amount between 0-100, which may be interpreted differently by drivers.
+     * 
+     * @param int<0,100>|null $blur
+     */
+    public function blur(int|null $blur = 80): static
+    {
+        $this->image = $this->image->blur($blur);
         return $this;
     }
 
