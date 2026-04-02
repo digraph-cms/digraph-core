@@ -30,7 +30,7 @@ class Notifications
         if ($flashes = Cookies::get('ui', 'flashnotifications')) {
             Context::response()->private(true);
             foreach ($flashes as list($message, $type, $class)) {
-                static::add($message, "$type flash-notification", $class);
+                static::addHTML($message, "$type flash-notification", $class);
             }
             Cookies::unset('ui', 'flashnotifications');
         }
