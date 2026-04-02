@@ -4,6 +4,7 @@ namespace DigraphCMS\Media;
 
 use DigraphCMS\Cache\Cache;
 use DigraphCMS\Config;
+use DigraphCMS\ExceptionLog;
 use DigraphCMS\FS;
 use DigraphCMS\HTML\A;
 use DigraphCMS\HTML\DIV;
@@ -80,8 +81,14 @@ class File
     {
         if ($this instanceof ImageFile)
             return $this;
-        if (!ImageFile::handles($this->extension()))
+        if (!ImageFile::handles($this->extension())) {
+            ExceptionLog::logMessage("Unhandleable image extension: {$this->extension()}", [
+                $this->path(),
+                $this->filename(),
+                $this->extension(),
+            ]);
             return null;
+        }
         $this->write(); // ensure file is written before creating ImageFile instance
         return new ImageFile($this->path(), $this->filename(), $this->permissions());
     }

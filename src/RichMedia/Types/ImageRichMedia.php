@@ -144,7 +144,7 @@ class ImageRichMedia extends AbstractRichMedia
         if (isset($figure)) {
             $figure->setAttribute('style', implode(';', [
                 'background-color:#ccc;',
-                'background-image:url("' . $this->file()->image()->previewBackgroundUrl() . '")',
+                'background-image:url("' . $this->file()->image()?->previewBackgroundUrl() . '")',
                 'background-size:cover',
                 'background-position: center center',
             ]));
@@ -203,7 +203,11 @@ class ImageRichMedia extends AbstractRichMedia
 
     public function file(): ?FilestoreFile
     {
-        return Filestore::get($this['file']);
+        $file = Filestore::get($this['file']);
+        if ($this['file'] && !$file) {
+            ExceptionLog::logMessage("Missing Filestore File {$this['file']} for ImageRichMedia {$this->uuid()}");
+        }
+        return $file;
     }
 
 }
