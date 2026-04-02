@@ -9,13 +9,18 @@ use Exception;
 
 class TabInterface
 {
+
     protected $tabs = [];
+
     protected $defaultTab;
+
     protected $id;
+
     protected $arg;
+
     protected $vertical;
 
-    public function __construct(string $id = null)
+    public function __construct(string|null $id = null)
     {
         static $counter = 0;
         $this->id = $id ?? $counter++;
@@ -28,7 +33,8 @@ class TabInterface
 
     public function setTabLabel(string $id, string $label): static
     {
-        if (!isset($this->tabs[$id])) throw new Exception("Tab ID $id not found");
+        if (!isset($this->tabs[$id]))
+            throw new Exception("Tab ID $id not found");
         $this->tabs[$id][0] = $label;
         return $this;
     }
@@ -53,13 +59,14 @@ class TabInterface
             'tab-interface-' . $this->id,
             $activeTab,
             $currentClass,
-            $this->tabs[$id][0]
+            $this->tabs[$id][0],
         );
     }
 
-    public function arg(string $set = null): string
+    public function arg(string|null $set = null): string
     {
-        if ($set !== null) $this->arg = $set;
+        if ($set !== null)
+            $this->arg = $set;
         return $this->arg ?? '_tab_' . $this->id();
     }
 
@@ -68,14 +75,15 @@ class TabInterface
         if ($arg = Context::arg_string($this->arg(), true)) {
             if (isset($this->tabs[$arg])) {
                 return $arg;
-            } else {
+            }
+            else {
                 throw new HttpError(404);
             }
         }
         return $this->defaultTab();
     }
 
-    public function defaultTab(string $set = null): string
+    public function defaultTab(string|null $set = null): string
     {
         if ($set) {
             $this->defaultTab = $set;
@@ -85,17 +93,21 @@ class TabInterface
 
     public function url(string $id): URL
     {
-        if ($id == $this->activeTab()) $id = null;
+        if ($id == $this->activeTab())
+            $id = null;
         return Context::url()
             ->setArg($this->arg(), $id);
     }
 
     public function vertical(): bool
     {
-        if ($this->vertical !== null) return $this->vertical;
-        if (count($this->tabs) > 7) return true;
+        if ($this->vertical !== null)
+            return $this->vertical;
+        if (count($this->tabs) > 7)
+            return true;
         $words = 0;
-        foreach ($this->tabs as $tab) $words += str_word_count($tab[0]);
+        foreach ($this->tabs as $tab)
+            $words += str_word_count($tab[0]);
         return $words > 20;
     }
 
@@ -133,4 +145,5 @@ class TabInterface
         echo '</div>' . PHP_EOL;
         return ob_get_clean();
     }
+
 }

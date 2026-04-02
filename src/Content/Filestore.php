@@ -18,6 +18,7 @@ use Exception;
 
 class Filestore
 {
+
     protected static $cache = [];
 
     public static function delete(FilestoreFile $file): bool
@@ -43,7 +44,14 @@ class Filestore
         return true;
     }
 
-    public static function create(string $data, string $filename, string $parent, array $meta, string $uuid = null, null|callable $permissions = null): FilestoreFile
+    public static function create(
+        string $data,
+        string $filename,
+        string $parent,
+        array $meta,
+        string|null $uuid = null,
+        null|callable $permissions = null,
+    ): FilestoreFile
     {
         // create file
         $hash = md5($data);
@@ -59,7 +67,7 @@ class Filestore
             $meta,
             time(),
             Session::user(),
-            $permissions
+            $permissions,
         );
         $file->write();
         static::insert($file);
@@ -80,7 +88,8 @@ class Filestore
             $uuid = $r['uuid'];
             $job->spawn(function () use ($uuid) {
                 $file = Filestore::get($uuid);
-                if (!$file) return "File $uuid not found";
+                if (!$file)
+                    return "File $uuid not found";
                 Filestore::updateSearchIndex($file);
                 return "Queued index of file $uuid";
             });
@@ -91,33 +100,38 @@ class Filestore
     public static function updateSearchIndex(FilestoreFile $file): void
     {
         // don't index if file has permissions
-        if ($file->permissions()) return;
+        if ($file->permissions())
+            return;
         // queue job to index file in search index
         $uuid = $file->uuid();
         new DeferredJob(
             function () use ($uuid) {
                 $file = Filestore::get($uuid);
-                if (!$file) return "File $uuid not found";
+                if (!$file)
+                    return "File $uuid not found";
                 $parent_uuid = $file->parentUUID();
                 $parent_page = Pages::get($parent_uuid);
                 if (!$parent_page) {
                     $parent_media = RichMedia::get($parent_uuid);
-                    if (!$parent_media) return "Parent $parent_uuid is not a page or media";
+                    if (!$parent_media)
+                        return "Parent $parent_uuid is not a page or media";
                     $parent_uuid = $parent_media->parentUUID();
                     $parent_page = Pages::get($parent_uuid);
-                    if (!$parent_page) return "Parent $parent_uuid is not a page";
+                    if (!$parent_page)
+                        return "Parent $parent_uuid is not a page";
                 }
                 $text = TextExtractor::extractFilestoreFile($file);
-                if (!$text) return "No text extracted from $uuid";
+                if (!$text)
+                    return "No text extracted from $uuid";
                 Search::indexURL(
                     $parent_page->uuid(),
                     $parent_page->url('filestore:' . $file->uuid()),
                     $file->filename(),
-                    $text
+                    $text,
                 );
                 return "Indexed file $uuid";
             },
-            'search_index'
+            'search_index',
         );
     }
 
@@ -150,16 +164,16 @@ class Filestore
             ->insertInto(
                 'filestore',
                 [
-                    'uuid' => $file->uuid(),
-                    'hash' => $file->hash(),
-                    'filename' => $file->filename(),
-                    'bytes' => filesize($file->path()),
-                    'parent' => $file->mediaUUID(),
-                    'meta' => json_encode($file->meta()),
-                    'created' => $file->created()->getTimestamp(),
-                    'created_by' => $file->createdByUUID(),
+                    'uuid'        => $file->uuid(),
+                    'hash'        => $file->hash(),
+                    'filename'    => $file->filename(),
+                    'bytes'       => filesize($file->path()),
+                    'parent'      => $file->mediaUUID(),
+                    'meta'        => json_encode($file->meta()),
+                    'created'     => $file->created()->getTimestamp(),
+                    'created_by'  => $file->createdByUUID(),
                     'permissions' => $file->permissions() ? Serializer::serialize($file->permissions()) : null,
-                ]
+                ],
             )
             ->execute();
     }
@@ -186,7 +200,7 @@ class Filestore
     public static function select(): FilestoreSelect
     {
         return new FilestoreSelect(
-            DB::query()->from('filestore')
+            DB::query()->from('filestore'),
         );
     }
 
@@ -198,7 +212,8 @@ class Filestore
      */
     public static function get(?string $uuid): ?FilestoreFile
     {
-        if ($uuid === null) return null;
+        if ($uuid === null)
+            return null;
         if (!isset(static::$cache[$uuid])) {
             static::$cache[$uuid] = self::doGet($uuid);
         }
@@ -211,7 +226,8 @@ class Filestore
             ->where('uuid = ?', [$uuid]);
         if ($result = $query->execute()->fetch()) {
             return static::resultToFile($result);
-        } else {
+        }
+        else {
             return null;
         }
     }
@@ -231,7 +247,8 @@ class Filestore
                 ExceptionLog::log(new Exception('Error unserializing permissions for file ' . $result['uuid']));
                 $permissions = fn() => false;
             }
-        } else {
+        }
+        else {
             $permissions = null;
         }
         static::$cache[$result['uuid']] = new FilestoreFile(
@@ -243,8 +260,9 @@ class Filestore
             $data,
             $result['created'],
             $result['created_by'],
-            $permissions
+            $permissions,
         );
         return static::$cache[$result['uuid']];
     }
+
 }

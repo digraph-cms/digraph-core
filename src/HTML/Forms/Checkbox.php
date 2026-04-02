@@ -7,19 +7,29 @@ use DigraphCMS\HTML\Tag;
 
 class Checkbox extends Tag implements InputInterface
 {
-    protected static $counter = 0;
-    protected $tag = 'input';
-    protected $void = true;
-    /** @var FormWrapper */
-    protected $form;
-    protected $default;
-    protected $value;
-    protected $required = false;
-    protected $requiredMessage = 'This field is required';
-    protected $validators = [];
-    protected bool $disabled = false;
 
-    public function __construct(string $id = null)
+    protected static $counter = 0;
+
+    protected        $tag     = 'input';
+
+    protected        $void    = true;
+
+    /** @var FormWrapper */
+    protected      $form;
+
+    protected      $default;
+
+    protected      $value;
+
+    protected      $required        = false;
+
+    protected      $requiredMessage = 'This field is required';
+
+    protected      $validators      = [];
+
+    protected bool $disabled        = false;
+
+    public function __construct(string|null $id = null)
     {
         $this->setID($id ?? 'checkbox-' . self::$counter++);
     }
@@ -39,7 +49,8 @@ class Checkbox extends Tag implements InputInterface
     {
         if ($this->required() && !$this->value()) {
             return $this->requiredMessage;
-        } else {
+        }
+        else {
             foreach ($this->validators as $validator) {
                 if ($message = call_user_func($validator, $this)) {
                     return $message;
@@ -71,7 +82,7 @@ class Checkbox extends Tag implements InputInterface
                 'name' => $this->id(),
                 'type' => 'checkbox',
                 'form' => $this->form() ? $this->form()->formID() : null
-            ]
+            ],
         );
         if ($this->value(true)) {
             $attributes['checked'] = null;
@@ -87,7 +98,7 @@ class Checkbox extends Tag implements InputInterface
         return $this->required;
     }
 
-    public function setRequired(bool $required, string $message = null)
+    public function setRequired(bool $required, string|null $message = null)
     {
         $this->required = $required;
         $this->requiredMessage = $message ?? $this->requiredMessage;
@@ -131,7 +142,8 @@ class Checkbox extends Tag implements InputInterface
     {
         if ($this->form()) {
             return $this->form()->submitted();
-        } else {
+        }
+        else {
             return false;
         }
     }
@@ -146,7 +158,8 @@ class Checkbox extends Tag implements InputInterface
     {
         if ($this->form()) {
             return $this->form()->id() . '--' . parent::id();
-        } else {
+        }
+        else {
             return parent::id();
         }
     }
@@ -160,11 +173,14 @@ class Checkbox extends Tag implements InputInterface
     {
         if ($this->value !== null) {
             return $this->value;
-        } elseif ($this->submittedValue() !== null || $this->submitted()) {
+        }
+        elseif ($this->submittedValue() !== null || $this->submitted()) {
             return $this->submittedValue();
-        } elseif ($useDefault) {
+        }
+        elseif ($useDefault) {
             return $this->default();
-        } else {
+        }
+        else {
             return null;
         }
     }
@@ -173,10 +189,13 @@ class Checkbox extends Tag implements InputInterface
     {
         if ($this->submitted() && $this->form()->method() == FormWrapper::METHOD_GET) {
             return Context::arg_string($this->id(), true) == 'on';
-        } elseif ($this->submitted() && $this->form()->method() == FormWrapper::METHOD_POST) {
+        }
+        elseif ($this->submitted() && $this->form()->method() == FormWrapper::METHOD_POST) {
             return Context::post($this->id()) == 'on';
-        } else {
+        }
+        else {
             return null;
         }
     }
+
 }

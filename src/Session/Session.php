@@ -15,7 +15,9 @@ Session::_init();
 
 final class Session
 {
+
     private static $auth;
+
     private static $overrideUser;
 
     public static function _init()
@@ -40,16 +42,17 @@ final class Session
                     ->disableSmartJoin()
                     ->where(
                         'session.id = ? AND session.secret = ? AND session.expires > ?',
-                        [intval($cookie['id']), $cookie['secret'], time()]
+                        [intval($cookie['id']), $cookie['secret'], time()],
                     )
                     ->where(
-                        'NOT EXISTS (SELECT 1 FROM session_expiration WHERE session_expiration.session_id = session.id)'
+                        'NOT EXISTS (SELECT 1 FROM session_expiration WHERE session_expiration.session_id = session.id)',
                     )
                     ->fetch();
                 if ($row) {
                     // valid authentication, set it
                     static::setAuth(new Authentication($row));
-                } else {
+                }
+                else {
                     // otherwise clear auth cookie to avoid repetitive DB calls
                     static::clearAuthCookie();
                 }
@@ -57,7 +60,7 @@ final class Session
         }
     }
 
-    public static function overrideUser(string $userUUID = null)
+    public static function overrideUser(string|null $userUUID = null)
     {
         static::$overrideUser = $userUUID;
     }
@@ -69,9 +72,12 @@ final class Session
 
     public static function user(): ?string
     {
-        if (static::$overrideUser) return static::$overrideUser;
-        elseif (static::$auth) return static::$auth->userUUID();
-        else return null;
+        if (static::$overrideUser)
+            return static::$overrideUser;
+        elseif (static::$auth)
+            return static::$auth->userUUID();
+        else
+            return null;
     }
 
     public static function authentication(): ?Authentication
@@ -79,28 +85,28 @@ final class Session
         return static::$auth;
     }
 
-    public static function browserPlatform(string $ua = null): string
+    public static function browserPlatform(string|null $ua = null): string
     {
         $parser = new UserAgentParser();
         $ua = $parser->parse($ua);
         return $ua->browser() . ' on ' . $ua->platform();
     }
 
-    public static function browser(string $ua = null): string
+    public static function browser(string|null $ua = null): string
     {
         $parser = new UserAgentParser();
         $ua = $parser->parse($ua);
         return $ua->browser();
     }
 
-    public static function platform(string $ua = null): string
+    public static function platform(string|null $ua = null): string
     {
         $parser = new UserAgentParser();
         $ua = $parser->parse($ua);
         return $ua->platform();
     }
 
-    public static function fullBrowser(string $ua = null): string
+    public static function fullBrowser(string|null $ua = null): string
     {
         $parser = new UserAgentParser();
         $ua = $parser->parse($ua);
@@ -120,30 +126,30 @@ final class Session
         if (Config::get('php_session.enabled')) {
             return static::$auth = new PHPAuthentication([
                 'user_uuid' => $user,
-                'comment' => $comment,
-                'secret' => static::generateSecret(),
-                'created' => time(),
-                'expires' => $expires->getTimestamp(),
-                'ip' => $_SERVER['REMOTE_ADDR'],
-                'ua' => $_SERVER['HTTP_USER_AGENT']
+                'comment'   => $comment,
+                'secret'    => static::generateSecret(),
+                'created'   => time(),
+                'expires'   => $expires->getTimestamp(),
+                'ip'        => $_SERVER['REMOTE_ADDR'],
+                'ua'        => $_SERVER['HTTP_USER_AGENT'],
             ]);
         } // otherwise use manual authentication cookies and save them in database
         else {
             $row = [
                 'user_uuid' => $user,
-                'comment' => $comment,
-                'secret' => static::generateSecret(),
-                'created' => time(),
-                'expires' => $expires->getTimestamp(),
-                'ip' => $_SERVER['REMOTE_ADDR'],
-                'ua' => $_SERVER['HTTP_USER_AGENT']
+                'comment'   => $comment,
+                'secret'    => static::generateSecret(),
+                'created'   => time(),
+                'expires'   => $expires->getTimestamp(),
+                'ip'        => $_SERVER['REMOTE_ADDR'],
+                'ua'        => $_SERVER['HTTP_USER_AGENT'],
             ];
             $row['id'] = DB::query()
                 ->insertInto('session', $row)
                 ->execute();
             static::setAuthCookie(
                 $row['id'],
-                $row['secret']
+                $row['secret'],
             );
             static::$auth = new Authentication($row);
             Dispatcher::dispatchEvent('onAuthentication', [static::$auth]);
@@ -176,15 +182,17 @@ final class Session
     {
         $value = Cookies::get(
             type: 'auth',
-            name:'session',
+            name: 'session',
             getRawValue: true,
         );
-        if (!$value) return [];
+        if (!$value)
+            return [];
         $value = explode('|', $value);
-        if (count($value) != 2) return [];
+        if (count($value) != 2)
+            return [];
         return [
-            'id' => intval($value[0]),
-            'secret' => $value[1]
+            'id'     => intval($value[0]),
+            'secret' => $value[1],
         ];
     }
 
@@ -214,4 +222,5 @@ final class Session
     {
         return URLs::base64_encode(random_bytes(24));
     }
+
 }

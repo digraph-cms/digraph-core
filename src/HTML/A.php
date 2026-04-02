@@ -6,9 +6,13 @@ use DigraphCMS\URL\URL;
 
 class A extends Tag
 {
+
     protected $tag = 'a';
+
     protected $href = null;
+
     protected $target = null;
+
     protected $frameTarget = null;
 
     /**
@@ -16,7 +20,7 @@ class A extends Tag
      * @param string|null $target
      * @param string|null $frameTarget
      */
-    public function __construct($href = null, string $target = null, string $frameTarget = null)
+    public function __construct(string|URL|null $href = null, string|null $target = null, string|null $frameTarget = null)
     {
         $this->setHref($href)
             ->setTarget($target)
@@ -26,9 +30,12 @@ class A extends Tag
     public function attributes(): array
     {
         $attributes = parent::attributes();
-        if ($this->href()) $attributes['href'] = @$attributes['href'] ?? $this->href();
-        if ($this->target()) $attributes['target'] = @$attributes['target'] ?? $this->target();
-        if ($this->frameTarget()) $attributes['data-target'] = @$attributes['data-target'] ?? $this->frameTarget();
+        if ($this->href())
+            $attributes['href'] = @$attributes['href'] ?? $this->href();
+        if ($this->target())
+            $attributes['target'] = @$attributes['target'] ?? $this->target();
+        if ($this->frameTarget())
+            $attributes['data-target'] = @$attributes['data-target'] ?? $this->frameTarget();
         return $attributes;
     }
 
@@ -69,7 +76,8 @@ class A extends Tag
      * @param string|URL|null $href
      * @return static
      */
-    public function setHref($href=null) {
+    public function setHref($href = null)
+    {
         $this->href = $href;
         return $this;
     }
@@ -80,7 +88,8 @@ class A extends Tag
      * @param string|null $target
      * @return static
      */
-    public function setTarget($target=null) {
+    public function setTarget($target = null)
+    {
         $this->target = $target;
         return $this;
     }
@@ -91,8 +100,10 @@ class A extends Tag
      * @param string|null $target
      * @return static
      */
-    public function setFrameTarget($target=null) {
+    public function setFrameTarget($target = null)
+    {
         $this->frameTarget = $target;
         return $this;
     }
+
 }

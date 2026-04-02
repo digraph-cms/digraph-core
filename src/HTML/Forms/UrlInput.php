@@ -4,11 +4,13 @@ namespace DigraphCMS\HTML\Forms;
 
 class UrlInput extends INPUT
 {
-    public function __construct(string $id = null)
+
+    public function __construct(string|null $id = null)
     {
         parent::__construct($id);
         $this->addValidator(function () {
-            if (!$this->value()) return null;
+            if (!$this->value())
+                return null;
             return filter_var($this->value(), FILTER_VALIDATE_URL)
                 ? null
                 : "Please enter a valid URL (don't forget the leading <code>http://</code> or <code>http://</code>)";
@@ -20,8 +22,9 @@ class UrlInput extends INPUT
         return array_merge(
             parent::attributes(),
             [
-                'type' => 'url'
-            ]
+                'type' => 'url',
+            ],
         );
     }
+
 }

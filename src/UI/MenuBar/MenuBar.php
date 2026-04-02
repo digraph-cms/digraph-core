@@ -12,11 +12,15 @@ use DigraphCMS\URL\URL;
 
 class MenuBar extends DIV
 {
+
     protected $checkPermissions = false;
+
     /** @var callable|null */
     protected $page_filter = null;
+
     /** @var callable|null */
     protected $url_filter = null;
+
     /** @var string|string[]|null */
     protected $edge_types = null;
 
@@ -24,7 +28,8 @@ class MenuBar extends DIV
         callable|null $page_filter = null,
         callable|null $url_filter = null,
         string|array|null $edge_types = null,
-    ) {
+    )
+    {
         $this->page_filter = $page_filter;
         $this->url_filter = $url_filter;
         $this->edge_types = $edge_types;
@@ -44,25 +49,27 @@ class MenuBar extends DIV
         return $this;
     }
 
-    public function addPage(AbstractPage $page, string $label = null): MenuItem
+    public function addPage(AbstractPage $page, string|null $label = null): MenuItem
     {
         $item = new MenuItem($page->url(), $label ?? $page->name());
         $this->addChild($item);
         return $item;
     }
 
-    public function addPageDropdown(AbstractPage $page, string $label = null, bool $openContext = false, int $depth = 3): MenuItem
+    public function addPageDropdown(AbstractPage $page, string|null $label = null, bool $openContext = false, int $depth = 3): MenuItem
     {
         $item = $this->addPage($page, $label);
         if ($openContext) {
-            if ($page->url() == Context::url()) $item->addClass('menuitem--open');
-            elseif (in_array($page->url(), Breadcrumb::breadcrumb())) $item->addClass('menuitem--open');
+            if ($page->url() == Context::url())
+                $item->addClass('menuitem--open');
+            elseif (in_array($page->url(), Breadcrumb::breadcrumb()))
+                $item->addClass('menuitem--open');
         }
         $children = Graph::children($page->uuid(), $this->edge_types, true)
             ->fetchAll();
         $children = array_filter(
             $children,
-            $this->filterPage(...)
+            $this->filterPage(...),
         );
         if ($depth-- && $children) {
             $subMenu = new MenuBar($this->page_filter, $this->url_filter, $this->edge_types);
@@ -74,12 +81,14 @@ class MenuBar extends DIV
         return $item;
     }
 
-    public function addUrlDropdown(URL $url, string $label = null, bool $openContext = false, int $depth = 3): MenuItem
+    public function addUrlDropdown(URL $url, string|null $label = null, bool $openContext = false, int $depth = 3): MenuItem
     {
         $item = $this->addURL($url, $label);
         if ($openContext) {
-            if ($url == Context::url()) $item->addClass('menuitem--open');
-            elseif (in_array($url, Breadcrumb::breadcrumb())) $item->addClass('menuitem--open');
+            if ($url == Context::url())
+                $item->addClass('menuitem--open');
+            elseif (in_array($url, Breadcrumb::breadcrumb()))
+                $item->addClass('menuitem--open');
         }
         $children = Router::staticActions($url->route(), true);
         if ($page = $url->page()) {
@@ -87,7 +96,7 @@ class MenuBar extends DIV
         }
         $children = array_filter(
             $children,
-            $this->filterUrl(...)
+            $this->filterUrl(...),
         );
         if ($depth-- && $children) {
             $subMenu = new MenuBar($this->page_filter, $this->url_filter);
@@ -101,18 +110,23 @@ class MenuBar extends DIV
 
     protected function filterPage(AbstractPage $page): bool
     {
-        if ($this->page_filter) return call_user_func($this->page_filter, $page);
-        else return true;
+        if ($this->page_filter)
+            return call_user_func($this->page_filter, $page);
+        else
+            return true;
     }
 
     protected function filterUrl(URL $url): bool
     {
-        if ($this->url_filter) return call_user_func($this->url_filter, $url);
-        elseif ($url->page() && !$this->filterPage($url->page())) return false;
-        else return true;
+        if ($this->url_filter)
+            return call_user_func($this->url_filter, $url);
+        elseif ($url->page() && !$this->filterPage($url->page()))
+            return false;
+        else
+            return true;
     }
 
-    public function addURL(URL $url, string $label = null): MenuItem
+    public function addURL(URL $url, string|null $label = null): MenuItem
     {
         $item = new MenuItem($url, $label ?? $url->name());
         $this->addChild($item);
@@ -128,7 +142,8 @@ class MenuBar extends DIV
     public function children(): array
     {
         // return unfiltered list if checkPermissions is off
-        if (!$this->checkPermissions) return parent::children();
+        if (!$this->checkPermissions)
+            return parent::children();
         // otherwise filter by URL permissions
         return array_filter(
             parent::children(),
@@ -148,8 +163,9 @@ class MenuBar extends DIV
         return array_merge(
             parent::classes(),
             [
-                'menubar'
-            ]
+                'menubar',
+            ],
         );
     }
+
 }

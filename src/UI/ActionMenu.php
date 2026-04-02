@@ -11,10 +11,17 @@ use DigraphCMS\URL\URL;
 
 class ActionMenu extends MenuBar
 {
+
     protected $url;
-    protected $adderItem, $adderMenu;
+
+    protected $adderItem;
+
+    protected $adderMenu;
+
     protected static $contextActions = [];
+
     protected static $contextHide = false;
+
     protected $checkPermissions = true;
 
     public static function hide()
@@ -27,12 +34,12 @@ class ActionMenu extends MenuBar
         return static::$contextHide;
     }
 
-    public static function addContextAction(URL $url, string $name = null)
+    public static function addContextAction(URL $url, string|null $name = null)
     {
         static::$contextActions[] = [$url, $name];
     }
 
-    public function __construct(URL $url = null)
+    public function __construct(URL|null $url = null)
     {
         $this->url = $url ? clone $url : Context::url();
         // set menu label and class
@@ -93,7 +100,7 @@ class ActionMenu extends MenuBar
                 foreach ($addable as $type) {
                     $this->adderMenu->addURL(
                         $page->url_add($type),
-                        $type
+                        $type,
                     );
                 }
             }
@@ -126,8 +133,10 @@ class ActionMenu extends MenuBar
     {
         if ($this->children()) {
             return parent::toString();
-        } else {
+        }
+        else {
             return '';
         }
     }
+
 }

@@ -9,10 +9,12 @@ use DigraphCMS\Serializer;
 
 class DeferredFile extends File
 {
+
     protected $stringContent;
+
     protected $ttl;
 
-    public function __construct(string $filename, callable $content, $identifier, int $ttl = null, callable|null $permissions = null)
+    public function __construct(string $filename, callable $content, $identifier, int|null $ttl = null, callable|null $permissions = null)
     {
         // take in filename/extension/ttl
         $this->filename = $filename;
@@ -57,8 +59,8 @@ class DeferredFile extends File
             Cache::set(
                 'permissioned_media/info/' . $this->identifier(),
                 [
-                    'path' => $this->path(),
-                    'filename' => $this->filename(),
+                    'path'        => $this->path(),
+                    'filename'    => $this->filename(),
                     'permissions' => $this->permissions(),
                 ],
                 // cache for twice TTL just to ensure permissions stay accessible in some edge cases
@@ -86,4 +88,5 @@ class DeferredFile extends File
         $this->write();
         return file_get_contents($this->path());
     }
+
 }

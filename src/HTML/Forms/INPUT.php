@@ -7,18 +7,28 @@ use DigraphCMS\HTML\Tag;
 
 class INPUT extends Tag implements InputInterface
 {
+
     protected static $counter = 0;
+
     protected $tag = 'input';
+
     protected $void = true;
+
     protected $form;
+
     protected $default;
+
     protected $value;
+
     protected $required = false;
+
     protected $requiredMessage = 'This field is required';
+
     protected $validators = [];
+
     protected bool $disabled = false;
 
-    public function __construct(string $id = null)
+    public function __construct(string|null $id = null)
     {
         $this->setID($id ?? 'input-' . crc32(get_called_class() . static::$counter++));
     }
@@ -38,7 +48,8 @@ class INPUT extends Tag implements InputInterface
     {
         if ($this->required() && !$this->value()) {
             return $this->requiredMessage;
-        } else {
+        }
+        else {
             foreach ($this->validators as $validator) {
                 if ($message = call_user_func($validator, $this)) {
                     return $message;
@@ -68,9 +79,9 @@ class INPUT extends Tag implements InputInterface
             parent::attributes(),
             [
                 'value' => $this->value(true),
-                'name' => $this->id(),
-                'form' => $this->form() ? $this->form()->formID() : null
-            ]
+                'name'  => $this->id(),
+                'form'  => $this->form() ? $this->form()->formID() : null
+            ],
         );
         if ($this->disabled()) {
             $attributes['disabled'] = null;
@@ -83,7 +94,7 @@ class INPUT extends Tag implements InputInterface
         return $this->required;
     }
 
-    public function setRequired(bool $required, string $message = null)
+    public function setRequired(bool $required, string|null $message = null)
     {
         $this->required = $required;
         $this->requiredMessage = $message ?? $this->requiredMessage;
@@ -127,7 +138,8 @@ class INPUT extends Tag implements InputInterface
     {
         if ($this->form()) {
             return $this->form()->submitted();
-        } else {
+        }
+        else {
             return !!$this->submittedValue();
         }
     }
@@ -142,7 +154,8 @@ class INPUT extends Tag implements InputInterface
     {
         if ($this->form()) {
             return $this->form()->id() . '--' . parent::id();
-        } else {
+        }
+        else {
             return parent::id();
         }
     }
@@ -156,11 +169,14 @@ class INPUT extends Tag implements InputInterface
     {
         if ($this->value) {
             return $this->value;
-        } elseif (($value = trim($this->submittedValue() ?? "")) || $this->submitted()) {
+        }
+        elseif (($value = trim($this->submittedValue() ?? "")) || $this->submitted()) {
             return $value ? $value : null;
-        } elseif ($useDefault) {
+        }
+        elseif ($useDefault) {
             return $this->default();
-        } else {
+        }
+        else {
             return null;
         }
     }
@@ -169,10 +185,13 @@ class INPUT extends Tag implements InputInterface
     {
         if ($this->form() && $this->form()->method() == FormWrapper::METHOD_GET) {
             return Context::arg_string($this->id(), true);
-        } elseif ($this->form() && $this->form()->method() == FormWrapper::METHOD_POST) {
+        }
+        elseif ($this->form() && $this->form()->method() == FormWrapper::METHOD_POST) {
             return Context::post($this->id());
-        } else {
+        }
+        else {
             return null;
         }
     }
+
 }

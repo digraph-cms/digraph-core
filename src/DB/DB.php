@@ -21,12 +21,16 @@ class DB
 
     /** @var PDO|null */
     protected static $pdo;
+
     /** @var string|null */
     protected static $driver;
+
     /** @var Query|null */
     protected static $query;
+
     /** @var array<int,string> */
     protected static $phinxPaths = [];
+
     /** @var int */
     protected static $transactions = 0;
 
@@ -52,8 +56,10 @@ class DB
                 Digraph::buildErrorContent(503, 'Database is locked for writing or maintenance, please try again in a moment');
                 return true;
             default:
-                if (Permissions::inGroup('admins')) Digraph::buildErrorContent(500, 'Database error: ' . $exception->getMessage());
-                else Digraph::buildErrorContent(500, 'Database error');
+                if (Permissions::inGroup('admins'))
+                    Digraph::buildErrorContent(500, 'Database error: ' . $exception->getMessage());
+                else
+                    Digraph::buildErrorContent(500, 'Database error');
                 return true;
         }
     }
@@ -91,7 +97,7 @@ class DB
             function ($e) {
                 return realpath($e . '/migrations');
             },
-            self::$phinxPaths
+            self::$phinxPaths,
         ));
     }
 
@@ -104,7 +110,7 @@ class DB
             function ($e) {
                 return realpath($e . '/seeds');
             },
-            self::$phinxPaths
+            self::$phinxPaths,
         ));
     }
 
@@ -121,7 +127,6 @@ class DB
                 switch (Config::get('db.adapter')) {
                     case 'sqlite':
                         if (class_exists(Sqlite::class))
-                            // @phpstan-ignore assign.propertyType
                             self::$pdo = new Sqlite(
                                 Config::get('db.dsn') ?? self::buildDSN(),
                                 null,
@@ -144,7 +149,7 @@ class DB
                             Config::get('db.dsn') ?? self::buildDSN(),
                             Config::get('db.user'),
                             Config::get('db.pass'),
-                            Config::get('db.pdo_options')
+                            Config::get('db.pdo_options'),
                         );
                         self::$pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
                         self::$pdo->setAttribute(PDO::ATTR_TIMEOUT, 10);
@@ -154,15 +159,16 @@ class DB
                     default:
                         throw new Exception("Unsupported DB adapter " . Config::get('db.adapter'));
                 }
-            } catch (\Throwable $th) {
+            }
+            catch (\Throwable $th) {
                 if ($th instanceof Exception) {
                     throw new DBConnectionException("Error setting up PDO: " . $th->getMessage());
-                } else {
+                }
+                else {
                     throw new DBConnectionException("Error setting up PDO: " . get_class($th));
                 }
             }
             // throw exceptions on PDO errors
-            // @phpstan-ignore-next-line because cross-deprecation phpstan is hard
             self::$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             // save driver string
             self::$driver = Config::get('db.adapter');
@@ -200,4 +206,5 @@ class DB
         }
         return self::$query;
     }
+
 }

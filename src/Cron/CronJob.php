@@ -13,13 +13,17 @@ use Exception;
 
 class CronJob
 {
-    protected $id, $parent, $name, $interval;
-    protected $run_next, $run_last;
-    protected $error_time, $error_message;
+
+    protected                      $id,                 $parent,        $name, $interval;
+
+    protected                      $run_next,           $run_last;
+
+    protected                      $error_time,         $error_message;
+
     /** @var callable|string|null */
     protected $job = null;
 
-    public function __construct(string $parent = null, string $name = null, callable $job = null, string $interval = null)
+    public function __construct(string|null $parent = null, string|null $name = null, callable|null $job = null, string|null $interval = null)
     {
         $this->parent = $this->parent ?? $parent;
         $this->name = $this->name ?? $name;
@@ -28,10 +32,12 @@ class CronJob
             $this->job = $job ?? function () {
                 return 'Empty job';
             };
-        } elseif (is_string($this->job)) {
+        }
+        elseif (is_string($this->job)) {
             // $this->job is not empty, so we're loading an existing job from the database
             $this->job = Serializer::unserialize($this->job);
-        } else {
+        }
+        else {
             throw new Exception('Invalid job data');
         }
         $this->run_next = $this->run_next ?? time();
@@ -42,25 +48,27 @@ class CronJob
             $this->id = DB::query()->insertInto(
                 'cron',
                 [
-                    'parent' => $this->parent(),
-                    '`name`' => $this->name(),
-                    '`interval`' => $this->interval(),
-                    'run_next' => $this->runNext(),
-                    'run_last' => $this->runLast(),
-                    'error_time' => $this->errorTime(),
+                    'parent'        => $this->parent(),
+                    '`name`'        => $this->name(),
+                    '`interval`'    => $this->interval(),
+                    'run_next'      => $this->runNext(),
+                    'run_last'      => $this->runLast(),
+                    'error_time'    => $this->errorTime(),
                     'error_message' => $this->errorMessage(),
-                    'job' => $this->serializedJob()
-                ]
+                    'job'           => $this->serializedJob(),
+                ],
             )->execute();
         }
     }
 
-    public function execute(int $deadlineTime = null)
+    public function execute(int|null $deadlineTime = null)
     {
-        if ($this->id() === null) return false;
+        if ($this->id() === null)
+            return false;
         // try to get lock
         $lock_id = 'cron/' . $this->id();
-        if (!Locking::lock($lock_id, false, 450)) return false;
+        if (!Locking::lock($lock_id, false, 450))
+            return false;
         // override user
         Session::overrideUser('system');
         // only execute if ID exists, meaning this job is in the database
@@ -68,20 +76,22 @@ class CronJob
         $this->computeNextRun();
         $row = [
             'run_last' => $this->run_last,
-            'run_next' => $this->run_next
+            'run_next' => $this->run_next,
         ];
         try {
             $error = false;
             if ($this->job()) {
                 call_user_func($this->job(), $this, $deadlineTime);
             }
-        } catch (\Throwable $th) {
+        }
+        catch (\Throwable $th) {
             ExceptionLog::log($th);
             $error = true;
             $row['error_time'] = time();
             if ($th instanceof Exception) {
                 $row['error_message'] = get_class($th) . ': ' . $th->getMessage();
-            } else {
+            }
+            else {
                 $row['error_message'] = get_class($th);
             }
         }
@@ -111,7 +121,8 @@ class CronJob
                 ->where('parent = ? AND name = ?', [$this->parent, $this->name]);
             if ($r = $q->fetch()) {
                 $this->id = $r['id'];
-            } else {
+            }
+            else {
                 $this->id = false;
             }
         }
@@ -121,7 +132,8 @@ class CronJob
 
     public function delete()
     {
-        if ($this->id() === null) return;
+        if ($this->id() === null)
+            return;
         DB::query()
             ->delete('cron', $this->id())
             ->execute();
@@ -175,21 +187,24 @@ class CronJob
     {
         try {
             return serialize($this->job);
-        } catch (\Throwable $th) {
+        }
+        catch (\Throwable $th) {
             return Serializer::serialize($this->job);
         }
     }
 
     public function recordError(string $message)
     {
-        if ($this->id() === null) return;
+        if ($this->id() === null)
+            return;
         DB::query()->update(
             'cron',
             [
-                'error_time' => time(),
-                'error_message' => $message
+                'error_time'    => time(),
+                'error_message' => $message,
             ],
-            $this->id()
+            $this->id(),
         )->execute();
     }
+
 }

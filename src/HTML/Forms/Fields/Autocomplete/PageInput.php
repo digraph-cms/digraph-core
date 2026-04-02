@@ -9,7 +9,8 @@ use DigraphCMS\URL\URL;
 
 class PageInput extends AutocompleteInput
 {
-    public function __construct(string $id = null, URL $endpoint = null)
+
+    public function __construct(string|null $id = null, URL|null $endpoint = null)
     {
         // pass endpoint and set up card-generating function
         parent::__construct(
@@ -41,4 +42,5 @@ class PageInput extends AutocompleteInput
         $this->endpoint->setArg('class', $class);
         return $this;
     }
+
 }

@@ -7,10 +7,12 @@ use DigraphCMS\Content\FilestoreFile;
 
 class UploadMulti extends INPUT
 {
+
     protected $filestore;
+
     protected $value;
 
-    public function __construct(string $id = null)
+    public function __construct(string|null $id = null)
     {
         parent::__construct($id);
         $this->setAttribute('type', 'file');
@@ -21,11 +23,11 @@ class UploadMulti extends INPUT
         return array_merge(
             parent::attributes(),
             [
-                'type' => 'file',
+                'type'     => 'file',
                 'multiple' => null,
-                'name' => parent::attributes()['name'] . '[]',
-                'value' => null
-            ]
+                'name'     => parent::attributes()['name'] . '[]',
+                'value'    => null,
+            ],
         );
     }
 
@@ -76,9 +78,10 @@ class UploadMulti extends INPUT
                         $permissions,
                     );
                 },
-                $this->value()
+                $this->value(),
             );
         }
         return @$this->filestore;
     }
+
 }

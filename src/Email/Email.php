@@ -13,20 +13,35 @@ use DigraphCMS\Users\Users;
 
 class Email
 {
+
     protected string $uuid;
+
     protected bool $time_sensitive;
+
     protected int $time;
+
     protected int|null $sent;
+
     protected string $category;
+
     protected string $subject;
+
     protected string|null $to;
+
     protected string|null $to_uuid;
+
     protected string $from;
+
     protected string|null $cc;
+
     protected string|null $bcc;
+
     protected string $body_text;
+
     protected string $body_html;
+
     protected string|null $error = null;
+
     protected bool $exists = false;
 
     public static function newForEmail(
@@ -37,7 +52,8 @@ class Email
         bool $time_sensitive = false,
         User|null $user = null,
         string|null $from = null,
-    ): Email {
+    ): Email
+    {
         return new Email(
             category: $category,
             subject: $subject,
@@ -45,7 +61,7 @@ class Email
             to_uuid: $user ? $user->uuid() : null,
             from: $from,
             body_html: $body->html(),
-            time_sensitive: $time_sensitive
+            time_sensitive: $time_sensitive,
         );
     }
 
@@ -66,7 +82,8 @@ class Email
         RichContent $body,
         bool $time_sensitive = false,
         string|null $from = null,
-    ): array {
+    ): array
+    {
         return array_map(
             function ($email) use ($category, $user, $subject, $body, $time_sensitive, $from) {
                 return new Email(
@@ -76,10 +93,10 @@ class Email
                     to_uuid: $user->uuid(),
                     from: $from,
                     body_html: $body->html(),
-                    time_sensitive: $time_sensitive
+                    time_sensitive: $time_sensitive,
                 );
             },
-            $user->emails()
+            $user->emails(),
         );
     }
 
@@ -99,8 +116,10 @@ class Email
         string $subject,
         RichContent $body,
         bool $time_sensitive = false,
-    ): ?Email {
-        if (!$user->primaryEmail()) return null;
+    ): ?Email
+    {
+        if (!$user->primaryEmail())
+            return null;
         return new Email(
             category: $category,
             subject: $subject,
@@ -108,7 +127,7 @@ class Email
             to_uuid: $user->uuid(),
             from: null,
             body_html: $body->html(),
-            time_sensitive: $time_sensitive
+            time_sensitive: $time_sensitive,
         );
     }
 
@@ -116,19 +135,20 @@ class Email
         string $category,
         string $subject,
         string $to,
-        string $to_uuid = null,
-        string $from = null,
-        string $body_html,
-        string $body_text = null,
-        string $cc = null,
-        string $bcc = null,
-        string $uuid = null,
-        int $time = null,
-        int $sent = null,
-        string $error = null,
+        string|null $to_uuid = null,
+        string|null $from = null,
+        string $body_html = '',
+        string|null $body_text = null,
+        string|null $cc = null,
+        string|null $bcc = null,
+        string|null $uuid = null,
+        int|null $time = null,
+        int|null $sent = null,
+        string|null $error = null,
         bool $time_sensitive = false,
-        bool $exists = null
-    ) {
+        bool|null $exists = null,
+    )
+    {
         $this->category = $category;
         $this->subject = $subject;
         $this->to = $to;
@@ -240,8 +260,10 @@ class Email
 
     public function sent(): ?DateTime
     {
-        if ($this->sent) return (new DateTime)->setTimestamp($this->sent);
-        else return null;
+        if ($this->sent)
+            return (new DateTime)->setTimestamp($this->sent);
+        else
+            return null;
     }
 
     public function timeSensitive(): bool
@@ -273,4 +295,5 @@ class Email
     {
         return Emails::categoryDescription($this->category());
     }
+
 }

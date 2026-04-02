@@ -10,15 +10,19 @@ use Envms\FluentPDO\Queries\Select;
 
 class Graph
 {
-    public static function route(string $start, string $end, string $type = null, array $visited = []): ?array
+
+    public static function route(string $start, string $end, string|null $type = null, array $visited = []): ?array
     {
         // special case when they're the same
-        if ($start == $end) return [$start];
+        if ($start == $end)
+            return [$start];
         // start at the end and work backwards
         foreach (static::parentEdges($end, $type) as $r) {
-            if (in_array($r['start_page'], $visited)) return null;
+            if (in_array($r['start_page'], $visited))
+                return null;
             $visited[] = $r['start_page'];
-            if ($r['start_page'] == $start) return [$start, $end];
+            if ($r['start_page'] == $start)
+                return [$start, $end];
             if ($route = static::route($start, $r['start_page'])) {
                 $route[] = $end;
                 return $route;
@@ -27,7 +31,7 @@ class Graph
         return null;
     }
 
-    public static function parentEdges(string $uuid, string $type = null): Select
+    public static function parentEdges(string $uuid, string|null $type = null): Select
     {
         $query = DB::query()
             ->from('page_link')
@@ -39,7 +43,7 @@ class Graph
         return $query;
     }
 
-    public static function parents(string $uuid, string $type = null): PageSelect
+    public static function parents(string $uuid, string|null $type = null): PageSelect
     {
         $query = DB::query()
             ->from('page_link')
@@ -52,7 +56,7 @@ class Graph
         return new PageSelect($query);
     }
 
-    public static function childEdges(string $uuid, string $type = null): Select
+    public static function childEdges(string $uuid, string|null $type = null): Select
     {
         $query = DB::query()
             ->from('page_link')
@@ -64,36 +68,38 @@ class Graph
         return $query;
     }
 
-    public static function childIDs(string $uuid, string $type = null): SubValueIterator
+    public static function childIDs(string $uuid, string|null $type = null): SubValueIterator
     {
         return new SubValueIterator(static::childEdges($uuid, $type), 'end_page');
     }
 
-    public static function parentIDs(string $uuid, string $type = null): SubValueIterator
+    public static function parentIDs(string $uuid, string|null $type = null): SubValueIterator
     {
         return new SubValueIterator(static::parentEdges($uuid, $type), 'start_page');
     }
 
-    public static function randomChildID(string $uuid, string $type = null): ?string
+    public static function randomChildID(string $uuid, string|null $type = null): ?string
     {
         $query = static::childEdges($uuid, $type)
             ->limit(1);
         if (Config::get('db.adapter') == 'sqlite') {
             $query->order('RANDOM()');
-        } else {
+        }
+        else {
             $query->order('RAND()');
         }
         $result = $query->fetch();
         return $result ? $result['end_page'] : null;
     }
 
-    public static function randomParentID(string $uuid, string $type = null): ?string
+    public static function randomParentID(string $uuid, string|null $type = null): ?string
     {
         $query = static::parentEdges($uuid, $type)
             ->limit(1);
         if (Config::get('db.adapter') == 'sqlite') {
             $query->order('RANDOM()');
-        } else {
+        }
+        else {
             $query->order('RAND()');
         }
         $result = $query->fetch();
@@ -126,17 +132,17 @@ class Graph
      * @param string $type
      * @return void
      */
-    public static function insertLink(string $start, string $end, string $type = null)
+    public static function insertLink(string $start, string $end, string|null $type = null)
     {
         DB::query()->insertInto(
             'page_link',
             [
                 'start_page' => $start,
-                'end_page' => $end,
-                'type' => $type
+                'end_page'   => $end,
+                'type'       => $type
                     ?? static::defaultLinkTypeByUuid($start, $end)
                     ?? 'normal'
-            ]
+            ],
         )->execute();
     }
 
@@ -144,7 +150,8 @@ class Graph
     {
         $start = Pages::get($start);
         $end = Pages::get($end);
-        if (!$start || !$end) return null;
+        if (!$start || !$end)
+            return null;
         return static::linkType($start, $end);
     }
 
@@ -175,7 +182,7 @@ class Graph
      * @param string $type
      * @return void
      */
-    public static function deleteLink(string $start, string $end, string $type = null)
+    public static function deleteLink(string $start, string $end, string|null $type = null)
     {
         $query = DB::query()->deleteFrom('page_link');
         $query->where('start_page = ? AND end_page = ?', [$start, $end]);
@@ -184,4 +191,5 @@ class Graph
         }
         $query->execute();
     }
+
 }

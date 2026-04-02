@@ -7,12 +7,14 @@ use DigraphCMS\URL\URL;
 
 class Group
 {
-    /** @var string */
-    protected $uuid, $name;
-    /** @var URL|null */
-    protected $url;
 
-    public function __construct(string $uuid, string $name, URL $url = null)
+    protected string $uuid;
+
+    protected string $name;
+
+    protected URL|null $url;
+
+    public function __construct(string $uuid, string $name, URL|null $url = null)
     {
         $this->uuid = $uuid;
         $this->name = $name;
@@ -45,7 +47,8 @@ class Group
         if ($this->uuid() == 'guests') {
             $a->addClass('group-link--null');
             $a->addClass('group-link--guests');
-        } else {
+        }
+        else {
             $url = $this->url();
             if (Permissions::url($url)) {
                 $a
@@ -55,4 +58,5 @@ class Group
         }
         return $a->__toString();
     }
+
 }

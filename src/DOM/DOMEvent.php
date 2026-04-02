@@ -4,11 +4,17 @@ namespace DigraphCMS\DOM;
 
 class DOMEvent
 {
+
     protected $node;
+
     protected $request;
+
     protected $response;
-    protected $delete = false;
+
+    protected $delete      = false;
+
     protected $replacement;
+
     protected $source;
 
     public function __construct(\DOMNode $node)
@@ -16,7 +22,7 @@ class DOMEvent
         $this->node = $node;
     }
 
-    public function setReplacement(string $html = null)
+    public function setReplacement(string|null $html = null)
     {
         $this->replacement = $html;
     }
@@ -50,4 +56,5 @@ class DOMEvent
     {
         return $this->delete;
     }
+
 }

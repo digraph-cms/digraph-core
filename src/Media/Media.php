@@ -16,6 +16,7 @@ Dispatcher::addSubscriber(Media::class);
 
 class Media
 {
+
     protected static $sources = [];
 
     /**
@@ -53,7 +54,7 @@ class Media
         return $result;
     }
 
-    public static function get(string $path, string $override_filename = null): ?File
+    public static function get(string $path, string|null $override_filename = null): ?File
     {
         return Cache::get(
             'media/' . md5($path),
@@ -73,7 +74,7 @@ class Media
                 Context::end();
                 return $file;
             },
-            Config::get('files.ttl')
+            Config::get('files.ttl'),
         );
     }
 
@@ -85,7 +86,7 @@ class Media
             function (string $path): string {
                 return Context::url()->directory() . basename($path);
             },
-            static::search($glob)
+            static::search($glob),
         );
         $files = array_unique($files);
         asort($files);
@@ -93,7 +94,7 @@ class Media
             function (string $path): File|null {
                 return static::get($path);
             },
-            $files
+            $files,
         ));
         Context::end();
         return $files;
@@ -107,7 +108,7 @@ class Media
             function (string $path): string {
                 return Context::url()->directory() . basename($path);
             },
-            static::search($glob)
+            static::search($glob),
         );
         $files = array_unique($files);
         asort($files);
@@ -131,13 +132,13 @@ class Media
                                     function (string $path): string {
                                         return static::get($path)->content();
                                     },
-                                    static::globToPaths($path)
-                                )
-                            )
-                        )
+                                    static::globToPaths($path),
+                                ),
+                            ),
+                        ),
                     );
                 },
-                $path
+                $path,
             );
         }
         // single file handler
@@ -147,10 +148,10 @@ class Media
                 function (DeferredFile $file) use ($source, $path) {
                     file_put_contents(
                         $file->path(),
-                        JS::js(file_get_contents($source), $path)
+                        JS::js(file_get_contents($source), $path),
                     );
                 },
-                md5_file($source)
+                md5_file($source),
             );
         }
         return null;
@@ -177,13 +178,13 @@ class Media
                                     function (string $path): string {
                                         return "@import \"$path\";";
                                     },
-                                    static::globToPaths(preg_replace('/\.css$/', '.{scss,css}', $path))
-                                )
-                            )
-                        )
+                                    static::globToPaths(preg_replace('/\.css$/', '.{scss,css}', $path)),
+                                ),
+                            ),
+                        ),
                     );
                 },
-                $path
+                $path,
             );
         }
         // single file handler
@@ -195,18 +196,18 @@ class Media
                         case 'scss':
                             file_put_contents(
                                 $file->path(),
-                                CSS::scss(file_get_contents($source), $path)
+                                CSS::scss(file_get_contents($source), $path),
                             );
                             break;
                         default:
                             file_put_contents(
                                 $file->path(),
-                                CSS::css(file_get_contents($source))
+                                CSS::css(file_get_contents($source)),
                             );
                             break;
                     }
                 },
-                [$path, md5_file($source)]
+                [$path, md5_file($source)],
             );
         }
         return null;
@@ -228,7 +229,7 @@ class Media
                 function (DeferredFile $file) use ($source) {
                     copy($source, $file->path());
                 },
-                md5_file($source)
+                md5_file($source),
             );
         }
         return null;
@@ -247,12 +248,14 @@ class Media
         if ($permissioned) {
             return (new URL('/filestore/permissioned:' . $file->identifier()))
                 ->__toString();
-        } else {
+        }
+        else {
             $filename = urlencode($file->filename());
             $filename = str_replace('+', '%20', $filename);
             if (Config::get('files.external')) {
                 return Config::get('files.url') . '/' . static::idPath($file) . '/' . $filename;
-            } else {
+            }
+            else {
                 return URLs::site() . Config::get('files.url') . '/' . static::idPath($file) . '/' . $filename;
             }
         }
@@ -264,7 +267,8 @@ class Media
             Config::envPrefix(),
             substr($file->identifier(), 0, 1),
             substr($file->identifier(), 1, 2),
-            substr($file->identifier(), 3)
+            substr($file->identifier(), 3),
         ]);
     }
+
 }

@@ -9,9 +9,12 @@ use DigraphCMS\URL\URL;
 
 abstract class AbstractColumnFilteringHeader extends ColumnHeader implements FilterToolInterface
 {
+
     protected $id;
+
     /** @var PaginatedSection|null */
     protected $section;
+
     protected $column;
 
     abstract public function toolbox();
@@ -30,9 +33,12 @@ abstract class AbstractColumnFilteringHeader extends ColumnHeader implements Fil
      */
     public function column(): string
     {
-        if (strpos($this->column, '.')) return $this->column;
-        elseif ($this->section->tableName()) return $this->section->tableName() . '.' . $this->column;
-        else return $this->column;
+        if (strpos($this->column, '.'))
+            return $this->column;
+        elseif ($this->section->tableName())
+            return $this->section->tableName() . '.' . $this->column;
+        else
+            return $this->column;
     }
 
     public function __construct(string $label, string $column)
@@ -63,8 +69,7 @@ abstract class AbstractColumnFilteringHeader extends ColumnHeader implements Fil
 
     protected function headerContent(): string
     {
-        return sprintf(
-        /** @lang text */ <<<EOD
+        return sprintf(/** @lang text */ <<<EOD
             <span id="f_%s__closed"></span>
             <span class="filtering-header">
                 <span class="filtering-header__label">%s</span>
@@ -96,7 +101,7 @@ abstract class AbstractColumnFilteringHeader extends ColumnHeader implements Fil
             $this->section->url($this->getFilterID(), null),
             $this->clearIcon(),
 
-            $this->toolbox()
+            $this->toolbox(),
         );
     }
 
@@ -104,15 +109,18 @@ abstract class AbstractColumnFilteringHeader extends ColumnHeader implements Fil
     {
         return $this->section->url(
             $this->getFilterID(),
-            $config
+            $config,
         );
     }
 
-    protected function config(string $key = null)
+    protected function config(string|null $key = null)
     {
-        if (!$this->section) return null;
-        if ($key) return @$this->section->getToolConfig($this->getFilterID())[$key];
-        else return $this->section->getToolConfig($this->getFilterID());
+        if (!$this->section)
+            return null;
+        if ($key)
+            return @$this->section->getToolConfig($this->getFilterID())[$key];
+        else
+            return $this->section->getToolConfig($this->getFilterID());
     }
 
     public function setSection(PaginatedSection $section)
@@ -127,8 +135,10 @@ abstract class AbstractColumnFilteringHeader extends ColumnHeader implements Fil
 
     protected function classes(): array
     {
-        if (!$this->isActive()) return [];
-        else return ['filters-applied'];
+        if (!$this->isActive())
+            return [];
+        else
+            return ['filters-applied'];
     }
 
     public function getFilterID(): string
@@ -148,7 +158,10 @@ abstract class AbstractColumnFilteringHeader extends ColumnHeader implements Fil
 
     protected function clearIcon(): string
     {
-        if (!$this->isActive()) return '';
-        else return new Icon('cancel', 'Reset column');
+        if (!$this->isActive())
+            return '';
+        else
+            return new Icon('cancel', 'Reset column');
     }
+
 }

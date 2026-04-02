@@ -19,18 +19,26 @@ use Thunder\Shortcode\Shortcode\ShortcodeInterface;
 
 abstract class AbstractRichMedia implements ArrayAccess
 {
+
     use FlatArrayTrait {
+
         set as protected rawSet;
         unset as protected rawUnset;
+
     }
 
-    protected $uuid, $parent, $name;
-    protected $created, $created_by;
-    protected $updated, $updated_by;
+    protected                 $uuid,          $parent, $name;
+
+    protected                 $created,       $created_by;
+
+    protected                 $updated,       $updated_by;
 
     abstract public static function className(): string;
+
     abstract public static function description(): string;
+
     abstract public function shortCode(ShortcodeInterface $code): ?string;
+
     abstract protected function prepareForm(FormWrapper $form, $create = false);
 
     public function icon()
@@ -43,7 +51,7 @@ abstract class AbstractRichMedia implements ArrayAccess
         return false;
     }
 
-    public static function class (): string
+    public static function class(): string
     {
         static $classes = [];
         $class = get_called_class();
@@ -54,7 +62,8 @@ abstract class AbstractRichMedia implements ArrayAccess
     {
         $thisClass = preg_replace('/^[^\\\]/', '\\\$0', $thisClass);
         foreach (Config::get('rich_media_types') as $name => $class) {
-            if ($class == $thisClass) return $name;
+            if ($class == $thisClass)
+                return $name;
         }
         throw new \Exception("Rich Media class $thisClass is not configured");
     }
@@ -67,7 +76,8 @@ abstract class AbstractRichMedia implements ArrayAccess
             $form->addCallback(function () {
                 $this->insert();
             });
-        } else {
+        }
+        else {
             $form->addCallback(function () {
                 $this->update();
             });
@@ -90,7 +100,7 @@ abstract class AbstractRichMedia implements ArrayAccess
     public function tagOptions(): array
     {
         return [
-            '_' => $this->uuid()
+            '_' => $this->uuid(),
         ];
     }
 
@@ -132,7 +142,7 @@ abstract class AbstractRichMedia implements ArrayAccess
         return $this->class();
     }
 
-    public function name(string $set = null): string
+    public function name(string|null $set = null): string
     {
         if ($set) {
             $this->name = $set;
@@ -157,7 +167,8 @@ abstract class AbstractRichMedia implements ArrayAccess
      */
     public function parentUUID(): ?string
     {
-        if (!$this->parent()) return null;
+        if (!$this->parent())
+            return null;
         return preg_replace('/\/.*$/', '', $this->parent());
     }
 
@@ -222,4 +233,5 @@ abstract class AbstractRichMedia implements ArrayAccess
     {
         return clone $this->updated;
     }
+
 }

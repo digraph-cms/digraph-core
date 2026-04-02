@@ -53,7 +53,7 @@ class File
         $this->permissions = $permissions;
     }
 
-    public function card(string $name = null, bool $nofollow = false): DIV
+    public function card(string|null $name = null, bool $nofollow = false): DIV
     {
         $card = (new DIV())
             ->addClass('file-card')

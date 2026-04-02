@@ -6,10 +6,11 @@ use Exception;
 
 class HttpError extends Exception
 {
+
     /** @var int */
     protected $status;
 
-    public function __construct(int $status, string $message = null)
+    public function __construct(int $status, string|null $message = null)
     {
         $this->status = $status;
         parent::__construct($message ?? 'HTTP Status ' . $status);
@@ -19,4 +20,5 @@ class HttpError extends Exception
     {
         return $this->status;
     }
+
 }

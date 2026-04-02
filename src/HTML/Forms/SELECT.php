@@ -8,19 +8,29 @@ use Exception;
 
 class SELECT extends Tag implements InputInterface
 {
+
     protected static $counter = 0;
+
     protected $tag = 'select';
+
     protected $options = [];
+
     protected $required = false;
+
     protected $requiredMessage = 'This field is required';
+
     protected $value;
+
     protected $default;
+
     protected $validators = [];
+
     protected bool $disabled = false;
+
     /** @var FormWrapper|null */
     protected $form;
 
-    public function __construct(array $options = null, string $null_label = null)
+    public function __construct(array|null $options = null, string|null $null_label = null)
     {
         if ($null_label) {
             $this->setOption(null, $null_label);
@@ -39,9 +49,9 @@ class SELECT extends Tag implements InputInterface
                 '<option value="%s"%s>%s</option>',
                 $key,
                 ($this->value(true) === $opt['value'])
-                    ? ' selected="true"'
-                    : '',
-                $opt['label']
+                ? ' selected="true"'
+                : '',
+                $opt['label'],
             );
         }
         return $children;
@@ -65,7 +75,7 @@ class SELECT extends Tag implements InputInterface
             [
                 'name' => $this->id(),
                 'form' => $this->form() ? $this->form()->formID() : null
-            ]
+            ],
         );
         if ($this->disabled()) {
             $attributes['disabled'] = null;
@@ -80,7 +90,7 @@ class SELECT extends Tag implements InputInterface
      *
      * @return static
      */
-    public function setOptions(array $options = null)
+    public function setOptions(array|null $options = null)
     {
         if ($options === null) {
             $this->options = [];
@@ -102,15 +112,21 @@ class SELECT extends Tag implements InputInterface
      */
     public function setOption($value, string $label)
     {
-        if ($value === true) $key = 'true';
-        elseif ($value === false) $key = 'false';
-        elseif ($value === null) $key = 'null';
-        elseif (is_int($value)) $key = $value;
-        elseif (is_string($value) && !str_contains($value, '"')) $key = $value;
-        else $key = crc32(serialize($value));
+        if ($value === true)
+            $key = 'true';
+        elseif ($value === false)
+            $key = 'false';
+        elseif ($value === null)
+            $key = 'null';
+        elseif (is_int($value))
+            $key = $value;
+        elseif (is_string($value) && !str_contains($value, '"'))
+            $key = $value;
+        else
+            $key = crc32(serialize($value));
         $this->options[$key] = [
             'value' => $value,
-            'label' => $label
+            'label' => $label,
         ];
         return $this;
     }
@@ -119,7 +135,8 @@ class SELECT extends Tag implements InputInterface
     {
         if ($this->required() && is_null($this->value())) {
             return $this->requiredMessage;
-        } else {
+        }
+        else {
             foreach ($this->validators as $validator) {
                 if ($message = call_user_func($validator, $this)) {
                     return $message;
@@ -148,7 +165,7 @@ class SELECT extends Tag implements InputInterface
         return $this->required;
     }
 
-    public function setRequired(bool $required, string $message = null)
+    public function setRequired(bool $required, string|null $message = null)
     {
         $this->required = $required;
         $this->requiredMessage = $message ?? $this->requiredMessage;
@@ -192,7 +209,8 @@ class SELECT extends Tag implements InputInterface
     {
         if ($this->form()) {
             return $this->form()->submitted();
-        } else {
+        }
+        else {
             return !!$this->submittedValue();
         }
     }
@@ -207,7 +225,8 @@ class SELECT extends Tag implements InputInterface
     {
         if ($this->form()) {
             return $this->form()->id() . '--' . parent::id();
-        } else {
+        }
+        else {
             return parent::id();
         }
     }
@@ -222,9 +241,11 @@ class SELECT extends Tag implements InputInterface
         $key = $this->submittedValue();
         if (!is_null($key)) {
             return @$this->options[$key]['value'];
-        } elseif ($useDefault) {
+        }
+        elseif ($useDefault) {
             return $this->default();
-        } else {
+        }
+        else {
             return null;
         }
     }
@@ -238,10 +259,13 @@ class SELECT extends Tag implements InputInterface
     {
         if ($this->form() && $this->form()->method() == FormWrapper::METHOD_GET) {
             return Context::arg_string($this->id(), true);
-        } elseif ($this->form() && $this->form()->method() == FormWrapper::METHOD_POST) {
+        }
+        elseif ($this->form() && $this->form()->method() == FormWrapper::METHOD_POST) {
             return Context::post($this->id());
-        } else {
+        }
+        else {
             return null;
         }
     }
+
 }

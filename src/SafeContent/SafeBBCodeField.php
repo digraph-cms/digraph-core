@@ -8,14 +8,15 @@ use DigraphCMS\HTML\Text;
 
 class SafeBBCodeField extends Field
 {
-    public function __construct(string $label, SafeBBCodeInput $input = null)
+
+    public function __construct(string $label, SafeBBCodeInput|null $input = null)
     {
         parent::__construct($label, $input ?? new SafeBBCodeInput);
         $this->tips()->addChild(
             (new SMALL())
                 ->addChild(new Text('Formatted with BBCode. A WYSIWYG editor would appear here if Javascript were enabled.'))
                 ->addClass('form-field__tips__tip')
-                ->addClass('safe-bbcode-field__nojs-tip')
+                ->addClass('safe-bbcode-field__nojs-tip'),
         );
     }
 
@@ -25,8 +26,9 @@ class SafeBBCodeField extends Field
             parent::classes(),
             [
                 'safe-bbcode-field',
-                'safe-bbcode-field--nojs'
-            ]
+                'safe-bbcode-field--nojs',
+            ],
         );
     }
+
 }

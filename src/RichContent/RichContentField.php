@@ -13,9 +13,19 @@ use DigraphCMS\Users\Permissions;
 class RichContentField extends Field
 {
 
-    protected                                                                       $pageUuid,                                                            $wrapper,                                                  $contentEditor,                                  $mediaEditor,                    $mediaEditorFrame, $toolbarFrame;
+    protected $pageUuid;
 
-    public function __construct(string $label, string $pageUuid = null, bool $hideMediaEditor = false)
+    protected $wrapper;
+
+    protected $contentEditor;
+
+    protected $mediaEditor;
+
+    protected $mediaEditorFrame;
+
+    protected $toolbarFrame;
+
+    public function __construct(string $label, string|null $pageUuid = null, bool $hideMediaEditor = false)
     {
         parent::__construct($label, new CodeMirrorInput());
         $this->setPageUuid($pageUuid);

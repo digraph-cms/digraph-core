@@ -9,32 +9,45 @@ use DigraphCMS\URL\URL;
 
 class FormWrapper extends Tag
 {
+
     protected $tag = 'div';
+
     protected string $method = 'post';
+
     protected URL|null $action = null;
+
     protected Token|null $token = null;
+
     protected SubmitButton|null $button = null;
+
     protected FORM|null $form = null;
+
     protected bool $captcha = true;
+
     protected bool $displayChildren = true;
+
     /** @var callable[] */
     protected array $callbacks = [];
+
     /** @var callable[] */
     protected array $preValidationCallbacks = [];
+
     protected bool $display_validation_error = false;
+
     protected bool $enable_validation_error = true;
 
     const METHOD_POST = 'post';
+
     const METHOD_GET = 'get';
 
     /** @var int */
     protected static $counter = 0;
 
-    public function __construct(string $id = null)
+    public function __construct(string|null $id = null)
     {
         $this->setID(
             $id
-                ?? 'form-' . self::$counter++ . '-' . crc32(Context::url()->path())
+            ?? 'form-' . self::$counter++ . '-' . crc32(Context::url()->path())
         );
         $this->addClass('form-wrapper');
     }
@@ -246,7 +259,8 @@ class FormWrapper extends Tag
     public function toString(): string
     {
         // require security check if requested
-        if ($this->captcha()) Security::requireSecurityCheck();
+        if ($this->captcha())
+            Security::requireSecurityCheck();
         // recursively set form on children
         $this->setChildrenForms($this->children());
         // call callbacks when printed
@@ -256,7 +270,8 @@ class FormWrapper extends Tag
             }
         }
         // set up actual form tag
-        foreach ($this->attributes() as $k => $v) $this->form()->setAttribute($k, $v);
+        foreach ($this->attributes() as $k => $v)
+            $this->form()->setAttribute($k, $v);
         $this->form()
             ->setAttribute('method', $this->method())
             ->setAttribute('action', $this->action())
@@ -264,7 +279,8 @@ class FormWrapper extends Tag
         // check if we want to display a validation error
         if ($this->displayChildren() && $this->submitted() && !$this->validate()) {
             $this->display_validation_error = true;
-        } else {
+        }
+        else {
             $this->display_validation_error = false;
         }
         // return normal printing
@@ -286,4 +302,5 @@ class FormWrapper extends Tag
             }
         }
     }
+
 }

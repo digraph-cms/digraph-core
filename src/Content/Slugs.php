@@ -9,6 +9,7 @@ use URLify;
 
 class Slugs
 {
+
     const SLUG_CHARS = 'a-zA-Z0-9\\-_';
 
     public static function collisions(string $slug): bool
@@ -46,7 +47,7 @@ class Slugs
                 ->from('page_slug')
                 ->where('page_uuid = ?', [$uuid])
                 ->orderBy('updated DESC, id DESC')
-                ->fetchAll()
+                ->fetchAll(),
         );
     }
 
@@ -56,15 +57,15 @@ class Slugs
      *
      * @param string $slug
      * @param string|null $not a UUID to skip
-     * @return boolean
      */
-    public static function exists(string $slug, string $not = null): bool
+    public static function exists(string $slug, string|null $not = null): bool
     {
         if ($not) {
             return !!DB::query()->from('page_slug')
                 ->where('url = ? AND page_uuid <> ?', [$slug, $not])
                 ->count();
-        } else {
+        }
+        else {
             return !!DB::query()->from('page_slug')
                 ->where('url = ?', [$slug])
                 ->count();
@@ -105,7 +106,7 @@ class Slugs
                     $page->slugVariable($m[1]);
                 return $value;
             },
-            $pattern
+            $pattern,
         );
         // if slug doesn't have a value, return and UUID or existing slug will continue to be used
         if (!$slug) {
@@ -115,7 +116,7 @@ class Slugs
         $slug = str_replace(
             ['s\'s', '\'s', '\' '],
             ['s', 's', ' '],
-            $slug
+            $slug,
         );
         // prepend parent slug if necessary
         if (substr($slug, 0, 1) != '/' && $page->parent()) {
@@ -140,8 +141,10 @@ class Slugs
     {
         // pull unique default from page class
         $unique = $unique ?? $page::DEFAULT_UNIQUE_SLUG;
-        if (is_null($expires)) $expires = $page->slugDefaultExpiration();
-        elseif (!is_int($expires)) $expires = null;
+        if (is_null($expires))
+            $expires = $page->slugDefaultExpiration();
+        elseif (!is_int($expires))
+            $expires = null;
         // validate
         if (!static::validate($slug)) {
             throw new Exception("Slug $slug is not valid");
@@ -152,7 +155,8 @@ class Slugs
             if (static::exists($slug, $page->uuid()) || Pages::exists($slug)) {
                 $slug = static::uniqueSlug($slug, $page);
             }
-        } else {
+        }
+        else {
             // otherwise slug must still *never* collide with a UUID
             // UUIDs *must* be usable for unique/canonical URLs
             if (Pages::exists($slug)) {
@@ -169,13 +173,14 @@ class Slugs
             str_replace(
                 '/[^a-z0-9]/',
                 '',
-                (string)crc32($page->uuid() . $slug)
+                (string) crc32($page->uuid() . $slug)
             ) . strtolower($page->uuid()),
-            1
+            1,
         );
         $count = 0;
         while (static::exists($slug, $page->uuid()) || Pages::exists($slug)) {
-            if (!$count) $slug .= '_';
+            if (!$count)
+                $slug .= '_';
             $slug .= array_shift($uuid);
             $count++;
         }
@@ -197,22 +202,24 @@ class Slugs
                 ->set([
                     'expires' => $expires,
                     'updated' => time(),
-                    'archive' => $archive
+                    'archive' => $archive,
                 ])
                 ->execute();
-        } else {
+        }
+        else {
             DB::query()
                 ->insertInto(
                     'page_slug',
                     [
-                        'url' => $slug,
+                        'url'       => $slug,
                         'page_uuid' => $page_uuid,
-                        'expires' => $expires,
-                        'updated' => time(),
-                        'archive' => $archive
-                    ]
+                        'expires'   => $expires,
+                        'updated'   => time(),
+                        'archive'   => $archive,
+                    ],
                 )
                 ->execute();
         }
     }
+
 }

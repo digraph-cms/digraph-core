@@ -9,23 +9,27 @@ use Exception;
 
 class Cron
 {
+
     protected static $skip = [];
 
-    public static function runJobs(int $deadlineTime = null): int
+    public static function runJobs(int|null $deadlineTime = null): int
     {
         // count number of jobs run
         $count = 0;
         // prepare jobs from core tools and plugins
         static::registerSubscriber(CoreCronSubscriber::class);
         static::registerSubscriber(EmailCronSubscriber::class);
-        foreach (Plugins::plugins() as $plugin) static::registerSubscriber($plugin);
+        foreach (Plugins::plugins() as $plugin)
+            static::registerSubscriber($plugin);
         // proceed with jobs one at a time
         while ((!$deadlineTime || time() < $deadlineTime) && ($job = static::getNextJob())) {
             // don't make more than one attempt per job
-            if (in_array($job->id(), static::$skip)) throw new Exception('Tried to run cron job ' . $job->id() . ' again after skipping it');
+            if (in_array($job->id(), static::$skip))
+                throw new Exception('Tried to run cron job ' . $job->id() . ' again after skipping it');
             static::$skip[] = $job->id();
             // execute job
-            if ($job->execute($deadlineTime)) $count++;
+            if ($job->execute($deadlineTime))
+                $count++;
         }
         // run Deferred jobs afterwards
         $count += Deferred::runJobs(null, $deadlineTime);
@@ -35,25 +39,29 @@ class Cron
 
     public static function registerSubscriber($object_or_class)
     {
-        if (is_object($object_or_class)) $class = get_class($object_or_class);
-        elseif (class_exists($object_or_class)) $class = $object_or_class;
-        else throw new \Exception("Cron subscriber must be an object or class");
+        if (is_object($object_or_class))
+            $class = get_class($object_or_class);
+        elseif (class_exists($object_or_class))
+            $class = $object_or_class;
+        else
+            throw new \Exception("Cron subscriber must be an object or class");
         // add strings of static methods
         foreach (self::getMethods($class) as $method) {
             new CronJob(
                 'CronSubscriber',
                 "$class::$method",
-                function (CronJob $job, int $deadline = null) use ($class, $method) {
+                function (CronJob $job, int|null $deadline = null) use ($class, $method) {
                     static::runSubscriberJob($job, $deadline, $class, $method);
                 },
-                substr($method, 8)
+                substr($method, 8),
             );
         }
     }
 
     protected static function runSubscriberJob(CronJob $job, ?int $deadline, $class, $method)
     {
-        if (!method_exists($class, $method)) $job->delete();
+        if (!method_exists($class, $method))
+            $job->delete();
         call_user_func([$class, $method], $job, $deadline);
     }
 
@@ -93,4 +101,5 @@ class Cron
         }
         return null;
     }
+
 }

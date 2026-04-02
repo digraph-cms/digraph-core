@@ -10,9 +10,10 @@ use DigraphCMS\UI\Format;
 
 class ColumnDateFilteringHeader extends AbstractColumnFilteringHeader
 {
+
     protected $format;
 
-    public function __construct(string $label, string $column, string $format = null)
+    public function __construct(string $label, string $column, string|null $format = null)
     {
         parent::__construct($label, $column);
         $this->format = $format;
@@ -33,9 +34,9 @@ class ColumnDateFilteringHeader extends AbstractColumnFilteringHeader
             ->addForm($form);
 
         $sort = (new Field('Sorting', new SELECT([
-            false => 'None',
-            'ASC' => 'Oldest first',
-            'DESC' => 'Newest first'
+            false  => 'None',
+            'ASC'  => 'Oldest first',
+            'DESC' => 'Newest first',
         ])))
             ->setID('sort')
             ->setDefault(@$this->config()['sort'])
@@ -43,9 +44,12 @@ class ColumnDateFilteringHeader extends AbstractColumnFilteringHeader
 
         $form->addCallback(function () use ($start, $end, $sort) {
             $config = [];
-            if ($start->value()) $config['start'] = $start->value()->getTimestamp();
-            if ($end->value()) $config['end'] = $end->value()->setTime(23, 59, 59)->getTimestamp();
-            if ($sort->value()) $config['sort'] = $sort->value();
+            if ($start->value())
+                $config['start'] = $start->value()->getTimestamp();
+            if ($end->value())
+                $config['end'] = $end->value()->setTime(23, 59, 59)->getTimestamp();
+            if ($sort->value())
+                $config['sort'] = $sort->value();
             throw new RedirectException($this->url($config ? $config : null));
         });
 
@@ -73,8 +77,10 @@ class ColumnDateFilteringHeader extends AbstractColumnFilteringHeader
     public function getWhereClauses(): array
     {
         $clauses = [];
-        if ($this->config('start')) $clauses[] = [$this->column() . ' >= ?', [$this->format($this->config('start'))]];
-        if ($this->config('end')) $clauses[] = [$this->column() . ' <= ?', [$this->format($this->config('end'))]];
+        if ($this->config('start'))
+            $clauses[] = [$this->column() . ' >= ?', [$this->format($this->config('start'))]];
+        if ($this->config('end'))
+            $clauses[] = [$this->column() . ' <= ?', [$this->format($this->config('end'))]];
         return $clauses;
     }
 
@@ -85,12 +91,15 @@ class ColumnDateFilteringHeader extends AbstractColumnFilteringHeader
 
     public function format(int $timestamp)
     {
-        if (!$this->format) return $timestamp;
-        else return date($this->format, $timestamp);
+        if (!$this->format)
+            return $timestamp;
+        else
+            return date($this->format, $timestamp);
     }
 
     public function getJoinClauses(): array
     {
         return [];
     }
+
 }

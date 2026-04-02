@@ -34,7 +34,7 @@ class AsideRichMedia extends AbstractRichMedia
         });
     }
 
-    public function content(RichContent $set = null): RichContent
+    public function content(RichContent|null $set = null): RichContent
     {
         if ($set) {
             $this['content'] = $set->array();
@@ -63,4 +63,5 @@ class AsideRichMedia extends AbstractRichMedia
         }
         return $aside;
     }
+
 }

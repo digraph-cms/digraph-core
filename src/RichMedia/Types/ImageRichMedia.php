@@ -167,7 +167,7 @@ class ImageRichMedia extends AbstractRichMedia
         return $out->__toString();
     }
 
-    public function setCaption(RichContent $caption = null)
+    public function setCaption(RichContent|null $caption = null)
     {
         unset($this['caption']);
         if ($caption) {
@@ -193,7 +193,7 @@ class ImageRichMedia extends AbstractRichMedia
         return 'Upload a single image to embed or post as a download';
     }
 
-    public function name(string $set = null): string
+    public function name(string|null $set = null): string
     {
         if ($set) {
             $this->name = $set;

@@ -7,12 +7,19 @@ use DigraphCMS\HTML\Forms\Fields\CheckboxField;
 
 class CheckboxList extends DIV implements InputInterface
 {
+
     protected static $counter = 0;
+
     protected $fields = [];
+
     protected $form;
+
     protected $required = false;
+
     protected $requiredMessage = 'This field is required';
+
     protected $validators = [];
+
     protected bool $disabled = false;
 
     public function __construct(array $options = [])
@@ -45,19 +52,19 @@ class CheckboxList extends DIV implements InputInterface
                     $f['field']->setDisabled($this->disabled());
                     return $f['field'];
                 },
-                $this->fields
-            )
+                $this->fields,
+            ),
         );
     }
 
-    public function addOption(string $key, string $label, string $value = null)
+    public function addOption(string $key, string $label, string|null $value = null)
     {
         $value = $value ?? $key;
         $field = (new CheckboxField($label))
             ->setID($key);
         $this->fields[$key] = [
             'field' => $field,
-            'value' => $value
+            'value' => $value,
         ];
     }
 
@@ -93,7 +100,8 @@ class CheckboxList extends DIV implements InputInterface
     {
         if ($this->form()) {
             return $this->form()->id() . '--' . parent::id();
-        } else {
+        }
+        else {
             return parent::id();
         }
     }
@@ -102,7 +110,8 @@ class CheckboxList extends DIV implements InputInterface
     {
         if ($this->required() && !$this->value()) {
             return $this->requiredMessage;
-        } else {
+        }
+        else {
             foreach ($this->validators as $validator) {
                 if ($message = call_user_func($validator, $this)) {
                     return $message;
@@ -137,12 +146,13 @@ class CheckboxList extends DIV implements InputInterface
                 function ($f) {
                     if ($f['field']->default()) {
                         return $f['value'];
-                    } else {
+                    }
+                    else {
                         return false;
                     }
                 },
-                $this->fields
-            )
+                $this->fields,
+            ),
         );
     }
 
@@ -157,12 +167,13 @@ class CheckboxList extends DIV implements InputInterface
                     $f['field']->setForm($this->form());
                     if ($f['field']->value($useDefault)) {
                         return $f['value'];
-                    } else {
+                    }
+                    else {
                         return false;
                     }
                 },
-                $this->fields
-            )
+                $this->fields,
+            ),
         );
     }
 
@@ -171,7 +182,7 @@ class CheckboxList extends DIV implements InputInterface
      * @param string|null $message
      * @return static
      */
-    public function setRequired(bool $required, string $message = null)
+    public function setRequired(bool $required, string|null $message = null)
     {
         $this->required = $required;
         $this->requiredMessage = $message ?? $this->requiredMessage;
@@ -187,7 +198,8 @@ class CheckboxList extends DIV implements InputInterface
         foreach ($this->fields as $f) {
             if (in_array($f['value'], $default ?? [])) {
                 $f['field']->setDefault(true);
-            } else {
+            }
+            else {
                 $f['field']->setDefault(false);
             }
         }
@@ -203,10 +215,12 @@ class CheckboxList extends DIV implements InputInterface
         foreach ($this->fields as $f) {
             if (in_array($f['value'], $value)) {
                 $f['field']->setValue(true);
-            } else {
+            }
+            else {
                 $f['field']->setValue(false);
             }
         }
         return $this;
     }
+
 }

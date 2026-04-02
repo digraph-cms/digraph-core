@@ -11,7 +11,7 @@ use Masterminds\HTML5;
 class DOM
 {
 
-    public static function html(string $html, bool $fragment = null): string
+    public static function html(string $html, bool|null $fragment = null): string
     {
         if (!trim($html)) {
             return $html;
@@ -20,7 +20,7 @@ class DOM
         $fragment = $fragment ?? strpos($html, '<html') === false;
 
         return Cache::get(
-            'dom/html/' . md5(serialize([$html,$fragment])),
+            'dom/html/' . md5(serialize([$html, $fragment])),
             function () use ($html, $fragment) {
                 // parse fragment
                 if ($fragment) {
@@ -44,7 +44,7 @@ class DOM
                 // return processed HTML
                 return $html;
             },
-            Config::get('cache.dom_ttl')
+            Config::get('cache.dom_ttl'),
         );
     }
 
@@ -72,11 +72,13 @@ class DOM
             //onDOMElement_{tagname} event name
             $eventNames[] = 'onDOMElement_' . $node->tagName;
             $eventNames[] = 'onDOMElement_' . $node->tagName . '_' . $phase;
-        } elseif ($node instanceof \DOMComment) {
+        }
+        elseif ($node instanceof \DOMComment) {
             //onDOMComment event name
             $eventNames[] = 'onDOMComment';
             $eventNames[] = 'onDOMComment_' . $phase;
-        } elseif ($node instanceof \DOMText) {
+        }
+        elseif ($node instanceof \DOMText) {
             $eventNames[] = 'onDOMText';
             $eventNames[] = 'onDOMText_' . $phase;
         }
@@ -112,4 +114,5 @@ class DOM
             }
         }
     }
+
 }

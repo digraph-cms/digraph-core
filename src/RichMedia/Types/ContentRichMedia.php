@@ -11,6 +11,7 @@ use Thunder\Shortcode\Shortcode\ShortcodeInterface;
 
 class ContentRichMedia extends AbstractRichMedia
 {
+
     public function icon()
     {
         return new Icon('segment');
@@ -38,7 +39,7 @@ class ContentRichMedia extends AbstractRichMedia
         });
     }
 
-    public function content(RichContent $set = null): RichContent
+    public function content(RichContent|null $set = null): RichContent
     {
         if ($set) {
             $this['content'] = $set->array();
@@ -60,4 +61,5 @@ class ContentRichMedia extends AbstractRichMedia
     {
         return $this->content()->html();
     }
+
 }

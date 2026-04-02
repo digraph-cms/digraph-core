@@ -10,9 +10,23 @@ use DigraphCMS\URL\URL;
 
 class Paginator extends ConditionalContainer
 {
+
     protected static $counter = 0;
-    protected $myID, $count, $perPage, $groupPages, $breadcrumbUpdated, $pages;
+
+    protected $myID;
+
+    protected $count;
+
+    protected $perPage;
+
+    protected $groupPages;
+
+    protected $breadcrumbUpdated;
+
+    protected $pages;
+
     /** @var int */
+
     protected $fudgeFactor = 2;
 
     public function __construct(?int $itemCount, int $perPage = 10, int $groupPages = 10)
@@ -74,19 +88,23 @@ class Paginator extends ConditionalContainer
     public function page(): int
     {
         $page = Context::arg_int($this->arg(), true);
-        if (is_null($page)) return 1;
+        if (is_null($page))
+            return 1;
         if ($page === 1) {
             throw new RedirectException(Context::url()->unsetArg($this->arg()));
         }
         if ($page < 1) {
             throw new HttpError(400, 'Invalid argument');
-        } elseif ($page > $this->pages()) {
+        }
+        elseif ($page > $this->pages()) {
             if ($this->pages() > 1) {
                 throw new RedirectException(Context::url()->setArg($this->arg(), $this->pages()));
-            } else {
+            }
+            else {
                 throw new RedirectException(Context::url()->unsetArg($this->arg()));
             }
-        } else {
+        }
+        else {
             return $page;
         }
     }
@@ -112,7 +130,8 @@ class Paginator extends ConditionalContainer
         $last = $this->groupStartPage() + $this->groupPages - 1;
         if ($last > $pages) {
             return intval($pages);
-        } else {
+        }
+        else {
             return $last;
         }
     }
@@ -127,7 +146,7 @@ class Paginator extends ConditionalContainer
         return ($this->page() * $this->perPage) - 1;
     }
 
-    public function link(int $page, string $text = null, string $class = null): string
+    public function link(int $page, string|null $text = null, string|null $class = null): string
     {
         $url = $this->url($page);
         $text = $text ?? number_format($page);
@@ -143,7 +162,7 @@ class Paginator extends ConditionalContainer
         return "<a href='$url' data-page='$page' class='" . implode(' ', $classes) . "' data-target='_frame' data-navigation-frame-scroll='top' title='Page " . number_format($page) . "'>$text</a>";
     }
 
-    public function perPage(int $perPage = null): int
+    public function perPage(int|null $perPage = null): int
     {
         if ($perPage) {
             $this->perPage = $perPage;
@@ -156,7 +175,7 @@ class Paginator extends ConditionalContainer
         return $this->perPage;
     }
 
-    public function count(int $count = null): int
+    public function count(int|null $count = null): int
     {
         if ($count) {
             $this->count = $count;
@@ -164,7 +183,7 @@ class Paginator extends ConditionalContainer
         return $this->count;
     }
 
-    public function groupPages(int $groupPages = null): int
+    public function groupPages(int|null $groupPages = null): int
     {
         if ($groupPages) {
             $this->groupPages = $groupPages;
@@ -174,9 +193,12 @@ class Paginator extends ConditionalContainer
 
     public function pages(): float
     {
-        if ($this->pages !== null) return $this->pages;
-        elseif ($this->count !== null) return ceil($this->count / $this->perPage());
-        else return INF;
+        if ($this->pages !== null)
+            return $this->pages;
+        elseif ($this->count !== null)
+            return ceil($this->count / $this->perPage());
+        else
+            return INF;
     }
 
     public function arg(): string
@@ -187,10 +209,11 @@ class Paginator extends ConditionalContainer
     protected function statusDisplay()
     {
         $out = sprintf('%s to %s', number_format($this->startItem() + 1), number_format(min($this->endItem() + 1, $this->count)));
-        if ($this->count !== null) $out .= ' of ' . number_format($this->count);
+        if ($this->count !== null)
+            $out .= ' of ' . number_format($this->count);
         return sprintf(
             '<span class="paginator__status">%s</span>',
-            $out
+            $out,
         );
     }
 
@@ -247,9 +270,11 @@ class Paginator extends ConditionalContainer
         $url = Context::url();
         if ($page === 1) {
             $url->unsetArg($this->arg());
-        } else {
+        }
+        else {
             $url->setArg($this->arg(), $page);
         }
         return $url;
     }
+
 }

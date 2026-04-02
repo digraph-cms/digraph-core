@@ -9,21 +9,24 @@ use DigraphCMS\URL\URLs;
 
 class CachedInitializer
 {
+
     /** @var StatelessOpCache|null */
     protected static $cache;
 
     /** @var string|null */
     protected static $cacheDir = null;
+
     /** @var int */
     protected static $ttl = 60;
 
-    public static function configureCache(string $cacheDir = null, int $ttl = 60): void
+    public static function configureCache(string|null $cacheDir = null, int $ttl = 60): void
     {
         static::$cacheDir = $cacheDir;
         static::$ttl = $ttl;
         if ($cacheDir && $ttl) {
             static::$cache = new StatelessOpCache($cacheDir, $ttl);
-        } else {
+        }
+        else {
             static::$cache = null;
         }
     }
@@ -36,7 +39,7 @@ class CachedInitializer
      * @param integer|null $overrideTTL
      * @return void
      */
-    public static function config(callable $fn, int $overrideTTL = null)
+    public static function config(callable $fn, int|null $overrideTTL = null)
     {
         static::run('config', $fn, null, $overrideTTL);
         URLs::_init($_SERVER);
@@ -51,10 +54,10 @@ class CachedInitializer
      * @param string $key
      * @param callable $preCacheFn
      * @param callable|null $postCacheFn
-     * @param integer|null $overrideTTL
+     * @param int|null $overrideTTL
      * @return void
      */
-    public static function run(string $key, $preCacheFn, $postCacheFn = null, int $overrideTTL = null)
+    public static function run(string $key, callable $preCacheFn, callable|null $postCacheFn = null, int|null $overrideTTL = null)
     {
         static $configUpdated = false;
         if ($configUpdated || !static::$cache) {
@@ -62,7 +65,8 @@ class CachedInitializer
             // cache item has updated config prior to this one
             $state = new CacheableState();
             call_user_func($preCacheFn, $state);
-        } else {
+        }
+        else {
             // otherwise get state from a cached run of $preCacheFn and then run $postCacheFn
             $state = static::$cache->cache(
                 $key,
@@ -74,7 +78,7 @@ class CachedInitializer
                     }
                     return $state;
                 },
-                $overrideTTL
+                $overrideTTL,
             );
         }
         // apply config changes
@@ -92,10 +96,11 @@ class CachedInitializer
         $key = preg_replace('/[^a-z0-9\-\_]+/', '/', strtolower($class)) . '_' . md5($class);
         static::run(
             $key,
-            fn ($state) => $class::initialize_preCache($state),
+            fn($state) => $class::initialize_preCache($state),
             method_exists($class, 'initialize_postCache')
-                ? fn ($state) => $class::initialize_postCache($state)
-                : null
+            ? fn($state) => $class::initialize_postCache($state)
+            : null
         );
     }
+
 }

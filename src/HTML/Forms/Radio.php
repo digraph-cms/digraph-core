@@ -7,16 +7,24 @@ use DigraphCMS\HTML\Tag;
 
 class Radio extends Tag implements InputInterface
 {
-    protected $tag = 'input';
+
+    protected $tag  = 'input';
+
     protected $void = true;
 
-    protected $form;
-    protected $default;
-    protected $value;
-    protected $required = false;
-    protected $requiredMessage = 'This field is required';
-    protected $validators = [];
-    protected bool $disabled = false;
+    protected      $form;
+
+    protected      $default;
+
+    protected      $value;
+
+    protected      $required        = false;
+
+    protected      $requiredMessage = 'This field is required';
+
+    protected      $validators      = [];
+
+    protected bool $disabled        = false;
 
     protected $key;
 
@@ -41,7 +49,8 @@ class Radio extends Tag implements InputInterface
     {
         if ($this->required() && !$this->value()) {
             return $this->requiredMessage;
-        } else {
+        }
+        else {
             foreach ($this->validators as $validator) {
                 if ($message = call_user_func($validator, $this)) {
                     return $message;
@@ -70,12 +79,12 @@ class Radio extends Tag implements InputInterface
         $attributes = array_merge(
             parent::attributes(),
             [
-                'name' => $this->id(true),
-                'id' => $this->id(),
+                'name'  => $this->id(true),
+                'id'    => $this->id(),
                 'value' => $this->key,
-                'type' => 'radio',
-                'form' => $this->form() ? $this->form()->formID() : null
-            ]
+                'type'  => 'radio',
+                'form'  => $this->form() ? $this->form()->formID() : null
+            ],
         );
         if ($this->value(true)) {
             $attributes['checked'] = null;
@@ -91,7 +100,7 @@ class Radio extends Tag implements InputInterface
         return $this->required;
     }
 
-    public function setRequired(bool $required, string $message = null)
+    public function setRequired(bool $required, string|null $message = null)
     {
         $this->required = $required;
         $this->requiredMessage = $message ?? $this->requiredMessage;
@@ -135,7 +144,8 @@ class Radio extends Tag implements InputInterface
     {
         if ($this->form()) {
             return $this->form()->submitted();
-        } else {
+        }
+        else {
             return false;
         }
     }
@@ -150,7 +160,8 @@ class Radio extends Tag implements InputInterface
     {
         if ($this->form()) {
             $id = $this->form()->id() . '--' . parent::id();
-        } else {
+        }
+        else {
             $id = parent::id();
         }
         if (!$omitKey) {
@@ -168,11 +179,14 @@ class Radio extends Tag implements InputInterface
     {
         if ($this->value !== null) {
             return $this->value;
-        } elseif ($this->submittedValue() !== null || $this->submitted()) {
+        }
+        elseif ($this->submittedValue() !== null || $this->submitted()) {
             return $this->submittedValue();
-        } elseif ($useDefault) {
+        }
+        elseif ($useDefault) {
             return $this->default();
-        } else {
+        }
+        else {
             return null;
         }
     }
@@ -181,10 +195,13 @@ class Radio extends Tag implements InputInterface
     {
         if ($this->submitted() && $this->form()->method() == FormWrapper::METHOD_GET) {
             return Context::arg_string($this->id(true), true) == $this->key;
-        } elseif ($this->submitted() && $this->form()->method() == FormWrapper::METHOD_POST) {
+        }
+        elseif ($this->submitted() && $this->form()->method() == FormWrapper::METHOD_POST) {
             return Context::post($this->id(true)) == $this->key;
-        } else {
+        }
+        else {
             return null;
         }
     }
+
 }

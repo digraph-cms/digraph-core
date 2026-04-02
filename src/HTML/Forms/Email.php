@@ -4,11 +4,13 @@ namespace DigraphCMS\HTML\Forms;
 
 class Email extends INPUT
 {
-    public function __construct(string $id = null)
+
+    public function __construct(string|null $id = null)
     {
         parent::__construct($id);
         $this->addValidator(function () {
-            if (!$this->value()) return null;
+            if (!$this->value())
+                return null;
             return !filter_var($this->value(), FILTER_VALIDATE_EMAIL)
                 ? 'Please enter a valid email address'
                 : null;
@@ -27,8 +29,9 @@ class Email extends INPUT
         return array_merge(
             parent::attributes(),
             [
-                'type' => 'email'
-            ]
+                'type' => 'email',
+            ],
         );
     }
+
 }

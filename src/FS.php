@@ -6,8 +6,10 @@ FS::_init();
 
 abstract class FS
 {
-    /** @var int */
-    public static $umask_file, $umask_dir;
+
+    public static int $umask_file;
+
+    public static int $umask_dir;
 
     public static function _init(): void
     {
@@ -15,7 +17,7 @@ abstract class FS
         self::$umask_dir = Config::get('fs.umask_dir');
     }
 
-    public static function delete(string $file, string $deleteEmptyDirsUntil = null): void
+    public static function delete(string $file, string|null $deleteEmptyDirsUntil = null): void
     {
         if ($file = realpath($file)) {
             unlink($file);
@@ -50,13 +52,14 @@ abstract class FS
                     self::mirror(
                         $src . '/' . $entry,
                         $dest . '/' . $entry,
-                        $link
+                        $link,
                     );
-                } else {
+                }
+                else {
                     self::copy(
                         $src . '/' . $entry,
                         $dest . '/' . $entry,
-                        $link
+                        $link,
                     );
                 }
             }
@@ -68,9 +71,11 @@ abstract class FS
         $umask = umask(self::$umask_file);
         if ($allow_uploads && is_uploaded_file($src)) {
             move_uploaded_file($src, $dest);
-        } elseif ($link && Config::get('fs.links')) {
+        }
+        elseif ($link && Config::get('fs.links')) {
             symlink($src, $dest);
-        } else {
+        }
+        else {
             copy($src, $dest);
         }
         umask($umask);
@@ -82,6 +87,7 @@ abstract class FS
      * @param string $path
      * @return void
      */
+
     public static function mkdir(string $path)
     {
         if (!is_dir($path)) {
@@ -107,7 +113,8 @@ abstract class FS
     public static function touch(string $path)
     {
         $dir = dirname($path);
-        if (!is_dir($dir)) static::mkdir($dir);
+        if (!is_dir($dir))
+            static::mkdir($dir);
         touch($path);
     }
 
@@ -122,7 +129,9 @@ abstract class FS
     public static function dump(string $path, mixed $content)
     {
         $dir = dirname($path);
-        if (!is_dir($dir)) static::mkdir($dir);
+        if (!is_dir($dir))
+            static::mkdir($dir);
         file_put_contents($path, $content);
     }
+
 }

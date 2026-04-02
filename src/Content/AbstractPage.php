@@ -29,28 +29,43 @@ use Throwable;
 
 abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
 {
+
     use FlatArrayTrait;
 
     const DEFAULT_SLUG = '[default]';
+
     const DEFAULT_UNIQUE_SLUG = true;
+
     /** @const null|string|string[] */
     const VISIBLE_CHILD_EDGE_TYPES = null;
+
     /** @const null|string|string[] */
     const PREFERRED_PARENT_EDGE_TYPES = null;
 
     const ACTIONS_DISABLED = [];
+
     const ACTIONS_PUBLIC = ['index', 'filestore:'];
+
     const ACTIONS_USER = [];
+
     const ACTIONS_EDITOR = ['page_notes'];
+
     const ACTIONS_ADMIN = [];
 
-    protected $uuid, $name, $sortName;
+    protected               $uuid,        $name, $sortName;
+
     protected $sortWeight = 0;
-    protected $created, $created_by;
-    protected $updated, $updated_by;
+
+    protected           $created, $created_by;
+
+    protected           $updated, $updated_by;
+
     protected $updated_last;
+
     protected $slugCollisions;
+
     protected static $class;
+
     protected $slugPattern;
 
     /**
@@ -100,7 +115,7 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
         $this->slugPattern = @$metadata['slug_pattern'] ?? static::DEFAULT_SLUG;
     }
 
-    public function richContent(string $index, RichContent $content = null): ?RichContent
+    public function richContent(string $index, RichContent|null $content = null): ?RichContent
     {
         // update content only if it is different from what exists
         if ($content && !$content->compare($this["content.$index"])) {
@@ -110,7 +125,8 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
         // return RichContent object
         if ($this["content.$index"]) {
             return new RichContent($this["content.$index"]);
-        } else {
+        }
+        else {
             return null;
         }
     }
@@ -143,43 +159,48 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
     /**
      * Pages may override all other permissions for their own URLs. By default
      * they return null, which allows other permissions checks to be run.
-     *
-     * @param URL $url
-     * @param User|null $user
-     * @return boolean|null
      */
-    public function permissions(URL $url, User $user = null): ?bool
+    public function permissions(URL $url, User|null $user = null): ?bool
     {
-        if ($url->actionSuffix()) $action = $url->actionPrefix() . ':';
-        elseif (substr($url->action(), 0, 5) == '_add_') $action = '@add';
-        else $action = $url->action();
+        if ($url->actionSuffix())
+            $action = $url->actionPrefix() . ':';
+        elseif (substr($url->action(), 0, 5) == '_add_')
+            $action = '@add';
+        else
+            $action = $url->action();
         // first check for disabled verbs, as they're fast and easy
-        if (in_array($action, $this->actionsDisabled())) return false;
+        if (in_array($action, $this->actionsDisabled()))
+            return false;
         // public permissions first to avoid pulling any user data if possible
-        if (in_array($action, $this->actionsPublic())) return true;
+        if (in_array($action, $this->actionsPublic()))
+            return true;
         // now we need the user's object
         $user = $user ?? Users::current() ?? Users::guest();
         // user verbs are accessible to any logged-in users
-        if (in_array($action, $this->actionsUser())) return Permissions::inGroup('users');
+        if (in_array($action, $this->actionsUser()))
+            return Permissions::inGroup('users');
         // all editor verbs are accessible to editors
-        if (in_array($action, $this->actionsEditor())) return $this->isEditor($user);
+        if (in_array($action, $this->actionsEditor()))
+            return $this->isEditor($user);
         // all non-explicitly-admin verbs are also accessible to editors
-        if (!in_array($action, $this->actionsAdmin())) return $this->isEditor($user);
+        if (!in_array($action, $this->actionsAdmin()))
+            return $this->isEditor($user);
         // all non-disabled verbs are accessible to admins
-        if ($this->isAdmin($user)) return true;
+        if ($this->isAdmin($user))
+            return true;
         // returns null by default, which the Permissions class will treat as false
         // if it is the last/only value available
         return null;
     }
 
-    public function isEditor(User $user = null): ?bool
+    public function isEditor(User|null $user = null): ?bool
     {
         $user = $user ?? Users::current() ?? Users::guest();
         return Permissions::inMetaGroups(['content__edit', 'content_' . $this->class() . '__edit'], $user)
             || $this->isAdmin($user);
     }
 
-    public function isAdmin(User $user = null): ?bool
+    public function isAdmin(User|null $user = null): ?bool
     {
         $user = $user ?? Users::current() ?? Users::guest();
         return Permissions::inMetaGroups(['content__admin', 'content_' . $this->class() . '__admin'], $user);
@@ -224,22 +245,23 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
     public function metadata(): array
     {
         $data = [
-            'Created' => sprintf('%s by %s', Format::datetime($this->created()), $this->createdBy()),
+            'Created'       => sprintf('%s by %s', Format::datetime($this->created()), $this->createdBy()),
             'Last modified' => sprintf('%s by %s', Format::datetime($this->updated()), $this->updatedBy()),
-            'Type' => $this->class(),
-            'UUID' => '<code>' . $this->uuid() . '</code>',
-            'URLs' => array_map(
+            'Type'          => $this->class(),
+            'UUID'          => '<code>' . $this->uuid() . '</code>',
+            'URLs'          => array_map(
                 function (string $slug) {
                     $url = new URL("/$slug/");
                     return "<a href='$url'>$slug</a>";
                 },
-                Slugs::list($this->uuid())
-            )
+                Slugs::list($this->uuid()),
+            ),
         ];
         if ($this['copied_from']) {
             if ($page = Pages::get($this['copied_from'])) {
                 $data['Copied from'] = $page->url()->html();
-            } else {
+            }
+            else {
                 $data['Copied from'] = '<em>Deleted page <code>' . $this['copied_from'] . '</code></em>';
             }
         }
@@ -297,7 +319,8 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
             $preferred = Graph::parents($this->uuid(), static::PREFERRED_PARENT_EDGE_TYPES)
                 ->limit(1)
                 ->fetch();
-            if ($preferred) return $preferred;
+            if ($preferred)
+                return $preferred;
         }
         // then try to return "normal" parent
         return Graph::parents($this->uuid(), 'normal')
@@ -305,24 +328,26 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
             ->fetch()
             // then try to return any parent
             ?? Graph::parents($this->uuid())
-            ->limit(1)
-            ->fetch();
+                ->limit(1)
+                ->fetch();
     }
 
-    public function parent(URL $url = null): ?URL
+    public function parent(URL|null $url = null): ?URL
     {
         if (!$url || $url->action() == 'index') {
             if ($parent = $this->parentPage()) {
                 return $parent->url();
-            } else {
+            }
+            else {
                 return null;
             }
-        } else {
+        }
+        else {
             return $this->url();
         }
     }
 
-    public function slugPattern(string $slugPattern = null): ?string
+    public function slugPattern(string|null $slugPattern = null): ?string
     {
         if ($slugPattern && Slugs::validatePattern($this, $slugPattern)) {
             $this->slugPattern = $slugPattern;
@@ -364,8 +389,10 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
     public function slugCollisions(): bool
     {
         if ($this->slugCollisions === null) {
-            if (is_null($this->slug())) $this->slugCollisions = false;
-            else $this->slugCollisions = Slugs::collisions($this->slug());
+            if (is_null($this->slug()))
+                $this->slugCollisions = false;
+            else
+                $this->slugCollisions = Slugs::collisions($this->slug());
         }
         return $this->slugCollisions;
     }
@@ -388,7 +415,8 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
     {
         $thisClass = preg_replace('/^[^\\\]/', '\\\$0', $thisClass);
         foreach (Config::get('page_types') as $name => $class) {
-            if ($class == $thisClass) return $name;
+            if ($class == $thisClass)
+                return $name;
         }
         throw new Exception("Page class $thisClass is not configured");
     }
@@ -413,18 +441,19 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
         return Graph::children(
             $this->uuid(),
             $edge_type ?? static::VISIBLE_CHILD_EDGE_TYPES,
-            true
+            true,
         );
     }
 
-    public function name(string $name = null, bool $unfiltered = false, bool $forDB = false): string
+    public function name(string|null $name = null, bool $unfiltered = false, bool $forDB = false): string
     {
         if ($name !== null) {
             $this->name = $name;
         }
         if ($unfiltered || $forDB) {
             return $this->name;
-        } else {
+        }
+        else {
             return htmlentities($this->name);
         }
     }
@@ -463,15 +492,14 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
      * $inPageContext has been flagged to indicate that which page this URL
      * belongs to should be clear from the use's surrounding context.
      *
-     * @param URL $url
      * @param boolean $inPageContext whether page name is obvious from context and should be omitted
-     * @return ?string
      */
-    public function title(URL $url = null, bool $inPageContext = false): ?string
+    public function title(URL|null $url = null, bool $inPageContext = false): ?string
     {
         if ($url && $url->action() == 'index') {
             return $this->name();
-        } else {
+        }
+        else {
             return null;
         }
     }
@@ -501,7 +529,7 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
         return null;
     }
 
-    public function url(string $action = null, array $args = null, bool $uuid = null): URL
+    public function url(string|null $action = null, array|null $args = null, bool|null $uuid = null): URL
     {
         if ($action && !strpos($action, ':') && !preg_match('/\.[a-z0-9]+$/', $action)) {
             $action .= '.html';
@@ -511,9 +539,11 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
         }
         if ($uuid === true) {
             $slug = $this->uuid();
-        } elseif ($uuid === false) {
+        }
+        elseif ($uuid === false) {
             $slug = $this->slug();
-        } else {
+        }
+        else {
             $slug =
                 ($this->slugCollisions() || ($this->slug() && Router::staticRouteExists($this->slug(), $action ?? 'index')))
                 ? $this->uuid()
@@ -524,7 +554,8 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
         }
         try {
             $url = new URL("/$slug/$action");
-        } catch (Throwable $th) {
+        }
+        catch (Throwable $th) {
             $uuid = $this->uuid();
             $url = new URL("/$uuid/$action");
         }
@@ -543,23 +574,25 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
                 new CronJob(
                     "Page $uuid",
                     "$method",
-                    function (CronJob $job, int $deadline = null) use ($uuid, $method) {
+                    function (CronJob $job, int|null $deadline = null) use ($uuid, $method) {
                         static::runCronJob($job, $deadline, $uuid, $method);
                     },
-                    $interval
+                    $interval,
                 );
             }
         }
         return $count;
     }
 
-    protected static function runCronJob(CronJob $job, int $deadline = null, string $uuid, string $method)
+    protected static function runCronJob(CronJob $job, int|null $deadline, string $uuid, string $method)
     {
         // pull page and delete the job if page or method one no longer exists
         $page = Pages::get($uuid);
-        if (!$page || !is_callable([$page, $method])) $job->delete();
+        if (!$page || !is_callable([$page, $method]))
+            $job->delete();
         // run method
-        else call_user_func([$page, $method], $job, $deadline);
+        else
+            call_user_func([$page, $method], $job, $deadline);
     }
 
     public function beforeUpdate(): void
@@ -582,7 +615,7 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
         // does nothing, but can be extended
     }
 
-    public function insert(string $parent_uuid = null)
+    public function insert(string|null $parent_uuid = null)
     {
         Pages::insert($this, $parent_uuid);
     }
@@ -593,15 +626,16 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
     }
 
     public function copy(
-        AbstractPage $parent = null,
-        string       $slug = null,
-        string       $name = null,
-        bool         $recurse = false,
-        bool         $cloneMedia = true,
-        array        $parents = [],
-        string       $user = null,
-        string       $jobGroup = null
-    ): AbstractPage {
+        AbstractPage|null $parent = null,
+        string|null $slug = null,
+        string|null $name = null,
+        bool $recurse = false,
+        bool $cloneMedia = true,
+        array $parents = [],
+        string|null $user = null,
+        string|null $jobGroup = null,
+    ): AbstractPage
+    {
         // we do this all in a transaction
         DB::beginTransaction();
         // set up job group name
@@ -632,7 +666,8 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
                     foreach (Graph::childEdges($old_uuid) as $row) {
                         $child_uuid = $row['end_page'];
                         // check for loops here
-                        if (in_array($child_uuid, $parents)) return 'Loop averted by child_uuid';
+                        if (in_array($child_uuid, $parents))
+                            return 'Loop averted by child_uuid';
                         // spawn job if there are no loops
                         $job->spawn(function (DeferredJob $job) use ($child_uuid, $new_uuid, $cloneMedia, $parents, $user_uuid) {
                             $parent = Pages::get($new_uuid);
@@ -645,27 +680,29 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
                                 $cloneMedia,
                                 $parents,
                                 $user_uuid,
-                                $job->group()
+                                $job->group(),
                             );
                             return sprintf('Copied %s: %s', $child->uuid(), $child->name());
                         });
                     }
                     return 'Spawned child copy jobs';
                 },
-                $jobGroup
+                $jobGroup,
             );
             // save job ID into page so it can be displayed later
             $page['page_copy_log.job'] = $job->group();
         }
         // clone page media if requested
-        if ($cloneMedia) static::cloneRichMedia($page, $this);
+        if ($cloneMedia)
+            static::cloneRichMedia($page, $this);
         // insert new page
         $page->insert($parent ? $parent->uuid() : null);
         // commit transaction
         DB::commit();
         // return new page
         $page = Pages::get($page->uuid());
-        if (!$page) throw new Exception('Copied page not found in database');
+        if (!$page)
+            throw new Exception('Copied page not found in database');
         return $page;
     }
 
@@ -689,7 +726,8 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
                         foreach ($cloned as $oldUUID => $newUUID) {
                             $ar[$k] = str_replace($oldUUID, $newUUID, $v);
                         }
-                    } elseif (is_array($v)) {
+                    }
+                    elseif (is_array($v)) {
                         $fn($ar[$k]);
                     }
                 }
@@ -707,13 +745,14 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
                 foreach ($uuid_changes as $oldUUID => $newUUID) {
                     $data[$k] = str_replace($oldUUID, $newUUID, $v);
                 }
-            } elseif (is_array($v)) {
+            }
+            elseif (is_array($v)) {
                 static::cloneRichMediaHelper($data[$k], $uuid_changes);
             }
         }
     }
 
-    public function delete(string $jobGroup = null): DeferredJob
+    public function delete(string|null $jobGroup = null): DeferredJob
     {
         return new RecursivePageJob(
             $this->uuid(),
@@ -763,7 +802,8 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
                 $job->spawn(function () use ($uuid) {
                     // get page
                     $page = Pages::get($uuid);
-                    if (!$page) return "Page $uuid already deleted";
+                    if (!$page)
+                        return "Page $uuid already deleted";
                     // get notes
                     $notes = PageNotes::group($page);
                     $count = $notes->select()->count();
@@ -776,18 +816,19 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
                 // queue deletion of this page last
                 $job->spawn(
                     function () use ($uuid) {
-                        // get page
-                        $page = Pages::get($uuid);
-                        if (!$page) return "Page $uuid already deleted";
-                        // delete
-                        Pages::delete($page);
-                        return "Deleted page " . $page->name() . " ($uuid)";
-                    }
+                    // get page
+                    $page = Pages::get($uuid);
+                    if (!$page)
+                        return "Page $uuid already deleted";
+                    // delete
+                    Pages::delete($page);
+                    return "Deleted page " . $page->name() . " ($uuid)";
+                }
                 );
                 return "Queued page for deletion " . $page->name() . " ($uuid)";
             },
             true,
-            $jobGroup
+            $jobGroup,
         );
     }
 
@@ -836,4 +877,5 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
     {
         return clone $this->updated_last;
     }
+
 }

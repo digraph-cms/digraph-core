@@ -12,8 +12,11 @@ use DigraphCMS\URL\URL;
 
 abstract class Users
 {
+
     protected static $sources = [];
+
     protected static $cache = [];
+
     protected static $null = [];
 
     /**
@@ -36,7 +39,7 @@ abstract class Users
                 ->where('user_uuid = ?', [$userUUID])
                 ->where('source = ?', [$source])
                 ->where('provider = ?', [$provider])
-                ->fetchAll()
+                ->fetchAll(),
         );
     }
 
@@ -89,7 +92,7 @@ abstract class Users
     public static function select(): UserSelect
     {
         return new UserSelect(
-            DB::query()->from('user')
+            DB::query()->from('user'),
         );
     }
 
@@ -116,9 +119,12 @@ abstract class Users
         $query = DB::query()
             ->from('user_group')
             ->where('uuid = ?', [$uuid]);
-        if ($group = $query->fetch()) return new Group($group['uuid'], $group['name']);
-        elseif ($uuid == 'admins') return new Group('admins', 'Administrators');
-        else return null;
+        if ($group = $query->fetch())
+            return new Group($group['uuid'], $group['name']);
+        elseif ($uuid == 'admins')
+            return new Group('admins', 'Administrators');
+        else
+            return null;
     }
 
     public static function groupMembers(string $group_uuid): UserSelect
@@ -129,7 +135,7 @@ abstract class Users
                 ->select('user.*')
                 ->leftJoin('user on user_uuid = user.uuid')
                 ->where('group_uuid = ?', [$group_uuid])
-                ->order('user_group_membership.id DESC')
+                ->order('user_group_membership.id DESC'),
         );
     }
 
@@ -151,13 +157,13 @@ abstract class Users
                 ->leftJoin('user_group on user_group.uuid = group_uuid')
                 ->select('user_group.*')
                 ->where('user_uuid = ?', [$user_uuid])
-                ->fetchAll()
+                ->fetchAll(),
         );
         Dispatcher::dispatchEvent('onUserGroups', [$user_uuid, &$groups]);
         return $groups;
     }
 
-    public static function signinUrl(URL $bounce = null): URL
+    public static function signinUrl(URL|null $bounce = null): URL
     {
         $bounce = $bounce ?? Context::url();
         $url = new URL('/signin/');
@@ -165,7 +171,7 @@ abstract class Users
         return $url;
     }
 
-    public static function signoutUrl(URL $bounce = null): URL
+    public static function signoutUrl(URL|null $bounce = null): URL
     {
         $bounce = $bounce ?? Context::url();
         if ($bounce->path() == '~signin') {
@@ -176,7 +182,7 @@ abstract class Users
         return $url;
     }
 
-    public static function randomName(string $seed = null): string
+    public static function randomName(string|null $seed = null): string
     {
         return Dispatcher::firstValue('onRandomName', [$seed]) ?? static::doRandomName($seed);
     }
@@ -185,7 +191,8 @@ abstract class Users
     {
         if (Session::user()) {
             return static::get(Session::user());
-        } else {
+        }
+        else {
             return null;
         }
     }
@@ -199,7 +206,8 @@ abstract class Users
      */
     public static function get(?string $uuid): ?User
     {
-        if ($uuid === null) return null;
+        if ($uuid === null)
+            return null;
         if (!isset(static::$cache[$uuid])) {
             static::$cache[$uuid] = self::doGet($uuid);
         }
@@ -232,7 +240,8 @@ abstract class Users
      */
     public static function user(string|null $uuid): User
     {
-        if (is_null($uuid)) return static::guest();
+        if (is_null($uuid))
+            return static::guest();
         return static::get($uuid) ?? static::null($uuid);
     }
 
@@ -241,7 +250,7 @@ abstract class Users
         static $guest;
         $guest = $guest ?? new NullUser([], [
             'uuid' => 'guest',
-            'name' => "Guest"
+            'name' => "Guest",
         ]);
         return $guest;
     }
@@ -251,19 +260,21 @@ abstract class Users
         static $guest;
         $guest = $guest ?? new NullUser([], [
             'uuid' => 'system',
-            'name' => "System"
+            'name' => "System",
         ]);
         return $guest;
     }
 
     public static function null(string $uuid): NullUser
     {
-        if ($uuid == 'guest') return static::guest();
-        elseif ($uuid == 'system') return static::system();
+        if ($uuid == 'guest')
+            return static::guest();
+        elseif ($uuid == 'system')
+            return static::system();
         elseif (!isset(static::$null[$uuid])) {
             static::$null[$uuid] = new NullUser([], [
                 'uuid' => $uuid,
-                'name' => Users::randomName($uuid)
+                'name' => Users::randomName($uuid),
             ]);
         }
         return static::$null[$uuid];
@@ -276,14 +287,14 @@ abstract class Users
             ->insertInto(
                 'user',
                 [
-                    'uuid' => $user->uuid(),
-                    'name' => $user->name(),
-                    'data' => json_encode($user->get()),
-                    'created' => time(),
+                    'uuid'       => $user->uuid(),
+                    'name'       => $user->name(),
+                    'data'       => json_encode($user->get()),
+                    'created'    => time(),
                     'created_by' => $user->createdByUUID(),
-                    'updated' => time(),
-                    'updated_by' => $user->updatedByUUID()
-                ]
+                    'updated'    => time(),
+                    'updated_by' => $user->updatedByUUID(),
+                ],
             )
             ->execute();
     }
@@ -297,14 +308,14 @@ abstract class Users
                 'uuid = ? AND updated = ?',
                 [
                     $user->uuid(),
-                    $user->updatedLast()->getTimestamp()
-                ]
+                    $user->updatedLast()->getTimestamp(),
+                ],
             )
             ->set([
-                'name' => $user->name(),
-                'data' => json_encode($user->get()),
-                'updated' => time(),
-                'updated_by' => Session::uuid()
+                'name'       => $user->name(),
+                'data'       => json_encode($user->get()),
+                'updated'    => time(),
+                'updated_by' => Session::uuid(),
             ])
             ->execute();
     }
@@ -321,13 +332,13 @@ abstract class Users
         static::$cache[$result['uuid']] = new User(
             $data,
             [
-                'uuid' => $result['uuid'],
-                'name' => $result['name'],
-                'created' => (new DateTime)->setTimestamp($result['created']),
+                'uuid'       => $result['uuid'],
+                'name'       => $result['name'],
+                'created'    => (new DateTime)->setTimestamp($result['created']),
                 'created_by' => $result['created_by'],
-                'updated' => (new DateTime)->setTimestamp($result['updated']),
+                'updated'    => (new DateTime)->setTimestamp($result['updated']),
                 'updated_by' => $result['updated_by'],
-            ]
+            ],
         );
         return static::$cache[$result['uuid']];
     }
@@ -357,14 +368,15 @@ abstract class Users
         if (!isset(static::$sources[$name])) {
             if ($class = Config::get("users.sources.$name")) {
                 static::$sources[$name] = new $class($name);
-            } else {
+            }
+            else {
                 static::$sources[$name] = null;
             }
         }
         return static::$sources[$name];
     }
 
-    protected static function doRandomName(string $seed = null): string
+    protected static function doRandomName(string|null $seed = null): string
     {
         static $animals;
         static $adjectives;
@@ -377,7 +389,8 @@ abstract class Users
         // seed random generator if necessary
         if ($seed) {
             mt_srand(crc32($seed));
-        } else {
+        }
+        else {
             mt_srand(rand());
         }
         // generate name
@@ -401,8 +414,10 @@ abstract class Users
         $result = $query->execute();
         if ($result = $result->fetch()) {
             return static::resultToUser($result);
-        } else {
+        }
+        else {
             return null;
         }
     }
+
 }

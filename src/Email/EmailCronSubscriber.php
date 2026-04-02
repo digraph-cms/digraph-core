@@ -23,7 +23,7 @@ class EmailCronSubscriber
      * @param integer|null $deadlineTime
      * @return void
      */
-    public static function cronJob_email(CronJob $job, int $deadlineTime = null)
+    public static function cronJob_email(CronJob $job, int|null $deadlineTime = null)
     {
         $deadlineTime = $deadlineTime ?? (Config::get('email.cron_time') + time());
         $queue = Emails::select()
@@ -52,7 +52,7 @@ class EmailCronSubscriber
                 'sent < ?',
                 (new DateTime)
                     ->sub(new DateInterval(Config::get('email.expiration_interval')))
-                    ->getTimestamp()
+                    ->getTimestamp(),
             )->execute();
     }
 

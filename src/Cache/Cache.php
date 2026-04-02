@@ -24,6 +24,7 @@ Cache::_init();
  */
 class Cache
 {
+
     /** @var AbstractCacheDriver */
     protected static $driver;
 
@@ -45,7 +46,7 @@ class Cache
         return static::$driver->expired($name);
     }
 
-    public static function set(string $name, mixed $value, int $ttl = null): mixed
+    public static function set(string $name, mixed $value, int|null $ttl = null): mixed
     {
         $name = Config::envPrefix() . '/' . $name;
         return static::$driver->set($name, $value, $ttl);
@@ -57,19 +58,21 @@ class Cache
      * it does not exist or is expired.
      *
      * @param string $name
-     * @param callable $callback
-     * @param int $ttl
+     * @param callable|null $callback
+     * @param int|null $ttl
      * @return mixed
      */
-    public static function get(string $name, callable $callback = null, int $ttl = null)
+    public static function get(string $name, callable|null $callback = null, int|null $ttl = null)
     {
         $name = Config::envPrefix() . '/' . $name;
         if (static::$driver->exists($name) && !static::$driver->expired($name)) {
             return static::$driver->get($name);
-        } elseif ($callback) {
+        }
+        elseif ($callback) {
             static::$driver->set($name, $value = call_user_func($callback), $ttl);
             return $value;
-        } else {
+        }
+        else {
             return null;
         }
     }
@@ -79,4 +82,5 @@ class Cache
         $glob = Config::envPrefix() . '/' . $glob;
         static::$driver->invalidate($glob);
     }
+
 }

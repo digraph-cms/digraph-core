@@ -21,7 +21,7 @@ class CallbackLink extends A
      * @param string|null $target
      * @param string|null $frameTarget
      */
-    public function __construct(callable $callback, $href = null, string $target = null, string $frameTarget = null)
+    public function __construct(callable $callback, string|URL|null $href = null, string|null $target = null, string|null $frameTarget = null)
     {
         parent::__construct($href, $target, $frameTarget);
         $this->callback = $callback;

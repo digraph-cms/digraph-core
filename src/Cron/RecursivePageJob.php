@@ -7,7 +7,8 @@ use DigraphCMS\Content\Pages;
 
 class RecursivePageJob extends DeferredJob
 {
-    public function __construct(string $uuid, callable $function = null, $leavesFirst = false, string $group = null, array $parents = [])
+
+    public function __construct(string $uuid, callable|null $function = null, bool $leavesFirst = false, string|null $group = null, array $parents = [])
     {
         $function = function (DeferredJob $job) use ($uuid, $function, $leavesFirst, $parents) {
             return static::prepareRecursiveJob($job, $uuid, $function, $leavesFirst, $parents);
@@ -18,14 +19,18 @@ class RecursivePageJob extends DeferredJob
     public static function prepareRecursiveJob(DeferredJob $job, string $uuid, callable $function, bool $leavesFirst, array $parents)
     {
         // check if we're in a cycle
-        if (in_array($uuid, $parents)) return "Cycle detected: " . implode(' => ', $parents) . " => $uuid";
+        if (in_array($uuid, $parents))
+            return "Cycle detected: " . implode(' => ', $parents) . " => $uuid";
         // otherwise continue as normal
         $parents[] = $uuid;
         $page = Pages::get($uuid);
-        if (!$page) return "Page $page not found";
-        if ($leavesFirst) static::spawnChildJobs($job, $uuid, $function, $leavesFirst, $parents);
+        if (!$page)
+            return "Page $page not found";
+        if ($leavesFirst)
+            static::spawnChildJobs($job, $uuid, $function, $leavesFirst, $parents);
         static::spawnParentJob($job, $uuid, $function);
-        if (!$leavesFirst) static::spawnChildJobs($job, $uuid, $function, $leavesFirst, $parents);
+        if (!$leavesFirst)
+            static::spawnChildJobs($job, $uuid, $function, $leavesFirst, $parents);
         return "Prepared recursive jobs for $uuid";
     }
 
@@ -33,7 +38,8 @@ class RecursivePageJob extends DeferredJob
     {
         $job->spawn(function (DeferredJob $job) use ($uuid, $function) {
             $page = Pages::get($uuid);
-            if (!$page) return "Page $page not found";
+            if (!$page)
+                return "Page $page not found";
             return call_user_func($function, $job, $page) ?? 'No output produced';
         });
     }
@@ -46,4 +52,5 @@ class RecursivePageJob extends DeferredJob
             new RecursivePageJob($child, $function, $leavesFirst, $job->group(), $parents);
         }
     }
+
 }

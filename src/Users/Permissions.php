@@ -10,6 +10,7 @@ use DigraphCMS\URL\URL;
 
 class Permissions
 {
+
     /**
      * Predefined metagroups (also configurable in config option "metagroups")
      * Note that any requested metagroup ending in __admin will always include
@@ -18,7 +19,7 @@ class Permissions
      */
     const METAGROUPS = [];
 
-    public static function url(URL $url, User $user = null): bool
+    public static function url(URL $url, User|null $user = null): bool
     {
         $user = $user ?? Users::current() ?? Users::guest();
         // first try non-type-specific permissions
@@ -28,12 +29,13 @@ class Permissions
         // next try page/static permissions
         if ($url->page()) {
             return static::pageUrl($url, $user);
-        } else {
+        }
+        else {
             return static::staticUrl($url, $user);
         }
     }
 
-    protected  static function pageUrl(URL $url, User $user): bool
+    protected static function pageUrl(URL $url, User $user): bool
     {
         // try route class events
         foreach ($url->page()->routeClasses() as $class) {
@@ -48,7 +50,7 @@ class Permissions
             false;
     }
 
-    protected  static function staticUrl(URL $url, User $user): bool
+    protected static function staticUrl(URL $url, User $user): bool
     {
         // try route-specific events, then generic events
         $route = explode('/', $url->route());
@@ -72,7 +74,7 @@ class Permissions
      * @param User|null $user
      * @return boolean
      */
-    public static function inGroup(string $group, User $user = null): bool
+    public static function inGroup(string $group, User|null $user = null): bool
     {
         $user = $user ?? Users::current() ?? Users::guest();
         foreach ($user->groups() as $g) {
@@ -90,7 +92,7 @@ class Permissions
      * @param User|null $user
      * @return boolean
      */
-    public static function inGroups(array $groups, User $user = null): bool
+    public static function inGroups(array $groups, User|null $user = null): bool
     {
         foreach ($groups as $group) {
             if (static::inGroup($group, $user)) {
@@ -130,17 +132,20 @@ class Permissions
         if ($level === 'admin') {
             // admins are part of all admin level metagroups
             $groups[] = 'admins';
-        } elseif ($level === 'edit') {
+        }
+        elseif ($level === 'edit') {
             // editors are part of all edit level metagroups
             $groups[] = 'editors';
             // matching admin level metagroup is also part of all edit level metagroups
             $groups = array_merge($groups, static::metaGroup($activity . '__admin'));
-        } elseif ($level) {
+        }
+        elseif ($level) {
             // matching admin level metagroup is also part of all level-specified metagroups
             $groups = array_merge($groups, static::metaGroup($activity . '__admin'));
             // matching editor level metagroup is also part of all level-specified metagroups
             $groups = array_merge($groups, static::metaGroup($activity . '__edit'));
-        } else {
+        }
+        else {
             // if there is no level specified, just look for the activity as a group id
             $groups[] = $activity;
         }
@@ -152,12 +157,12 @@ class Permissions
         static::requireGroups(static::metaGroup($name));
     }
 
-    public static function inMetaGroup(string $name, User $user = null): bool
+    public static function inMetaGroup(string $name, User|null $user = null): bool
     {
         return static::inGroups(static::metaGroup($name), $user);
     }
 
-    public static function inMetaGroups(array $groups, User $user = null): bool
+    public static function inMetaGroups(array $groups, User|null $user = null): bool
     {
         foreach ($groups as $group) {
             if (static::inMetaGroup($group, $user)) {
@@ -167,10 +172,11 @@ class Permissions
         return false;
     }
 
-    public static function requireMetaGroups(array $groups, User $user = null)
+    public static function requireMetaGroups(array $groups, User|null $user = null)
     {
         if (!static::inMetaGroups($groups, $user)) {
             throw new HttpError(401);
         }
     }
+
 }

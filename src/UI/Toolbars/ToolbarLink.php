@@ -13,9 +13,24 @@ use DigraphCMS\URL\URL;
 
 class ToolbarLink extends Tag
 {
+
     protected static $idCounter = 0;
+
     protected $tag = 'a';
-    protected $text, $icon, $command, $url, $shortcut, $toolTip, $iconElement;
+
+    protected $text;
+
+    protected $icon;
+
+    protected $command;
+
+    protected $url;
+
+    protected $shortcut;
+
+    protected $toolTip;
+
+    protected $iconElement;
 
     /**
      * Undocumented function
@@ -25,7 +40,8 @@ class ToolbarLink extends Tag
      * @param null|string|callable $command
      * @param URL|null             $url
      */
-    public function __construct(string $text, string $icon, $command = null, URL $url = null, string $id = null)
+
+    public function __construct(string $text, string $icon, string|callable|null $command = null, URL|null $url = null, string|null $id = null)
     {
         $this->setText($text);
         $this->setIcon($icon);
@@ -139,7 +155,8 @@ class ToolbarLink extends Tag
             if (is_string($command)) {
                 // set command string into HTML, presumably for JS use
                 $attributes['data-command'] = $this->command();
-            } else {
+            }
+            else {
                 // set href to special token URL
                 $attributes['href'] = $this->executionURL();
                 $attributes['rel'] = 'nofollow';
@@ -160,8 +177,8 @@ class ToolbarLink extends Tag
         return array_merge(
             parent::classes(),
             [
-                'toolbar__button'
-            ]
+                'toolbar__button',
+            ],
         );
     }
 
@@ -192,9 +209,10 @@ class ToolbarLink extends Tag
         return array_merge(
             [
                 $this->iconElement(),
-                $this->toolTip()
+                $this->toolTip(),
             ],
-            parent::children()
+            parent::children(),
         );
     }
+
 }

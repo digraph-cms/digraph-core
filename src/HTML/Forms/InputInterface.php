@@ -6,23 +6,31 @@ use DigraphCMS\HTML\TagInterface;
 
 interface InputInterface extends TagInterface
 {
+
     /**
      * @param FormWrapper $form
      * @return static
      */
     public function setForm(FormWrapper $form);
+
     public function form(): ?FormWrapper;
+
     public function submitted(): bool;
+
     public function id(): ?string;
 
     public function validationError(): ?string;
+
     public function addValidator(callable $validator);
 
     public function required(): bool;
+
     public function default();
+
     public function value(bool $useDefault = false): mixed;
 
     public function disabled(): bool;
+
     public function setDisabled(bool $disabled): static;
 
     /**
@@ -30,7 +38,7 @@ interface InputInterface extends TagInterface
      * @param string|null $message
      * @return static
      */
-    public function setRequired(bool $required, string $message = null);
+    public function setRequired(bool $required, string|null $message = null);
 
     /**
      * @param mixed $default
@@ -43,4 +51,5 @@ interface InputInterface extends TagInterface
      * @return static
      */
     public function setValue($value);
+
 }

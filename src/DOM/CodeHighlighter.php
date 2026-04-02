@@ -10,6 +10,7 @@ use Highlight\Highlighter;
 
 class CodeHighlighter
 {
+
     /**
      * Handle <code> tags in DOM
      * 
@@ -36,11 +37,13 @@ class CodeHighlighter
         $lang = null;
         if (in_array('plaintext', $classes)) {
             $lang = 'plaintext';
-        } else {
+        }
+        else {
             foreach ($classes as $class) {
                 if (preg_match('/^lang?-(.+)$/', $class, $matches)) {
                     $lang = $matches[1];
-                } elseif (preg_match('/^language?-(.+)$/', $class, $matches)) {
+                }
+                elseif (preg_match('/^language?-(.+)$/', $class, $matches)) {
                     $lang = $matches[1];
                 }
             }
@@ -81,9 +84,8 @@ class CodeHighlighter
      *
      * @param string $code
      * @param string $lang
-     * @return array
      */
-    public static function highlight(string $code, string $lang = null): array
+    public static function highlight(string $code, string|null $lang = null): array
     {
         static::loadCSS();
         return Cache::get(
@@ -93,18 +95,20 @@ class CodeHighlighter
                 try {
                     if ($lang) {
                         $result = $hl->highlight($lang, $code);
-                    } else {
+                    }
+                    else {
                         $hl->setAutodetectLanguages(static::autodetectable());
                         $result = $hl->highlightAuto($code);
                     }
-                } catch (DomainException $th) {
+                }
+                catch (DomainException $th) {
                     //thrown if the specified language doesn't exist
                     $hl->setAutodetectLanguages(static::autodetectable());
                     $result = $hl->highlightAuto($code);
                 }
                 return [
                     'language' => $result->language,
-                    'value' => $result->value
+                    'value'    => $result->value,
                 ];
             }
         );
@@ -118,4 +122,5 @@ class CodeHighlighter
             $loaded = true;
         }
     }
+
 }

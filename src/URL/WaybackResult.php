@@ -8,10 +8,13 @@ use DigraphCMS\Datastore\Datastore;
 
 class WaybackResult
 {
+
     /** @var string */
     protected $originalURL;
+
     /** @var string|null */
     protected $wbURL;
+
     /** @var int|null */
     protected $wbTime;
 
@@ -22,7 +25,7 @@ class WaybackResult
         $this->wbTime = $wbTime;
     }
 
-    public function helperURL(URL $context = null): URL
+    public function helperURL(URL|null $context = null): URL
     {
         $context = $context ?? Context::url();
         $hash = md5($this->originalURL);
@@ -30,9 +33,9 @@ class WaybackResult
         if (!Datastore::exists('wayback', 'page', $hash)) {
             Datastore::set('wayback', 'page', $hash, null, [
                 'original_url' => $this->originalURL(),
-                'wb_url' => $this->wbURL(),
-                'wb_time' => $this->wbTime()->getTimestamp(),
-                'context' => $context->pathString()
+                'wb_url'       => $this->wbURL(),
+                'wb_time'      => $this->wbTime()->getTimestamp(),
+                'context'      => $context->pathString(),
             ]);
         }
         return new URL('/wayback/page:' . $hash);
@@ -55,4 +58,5 @@ class WaybackResult
         }
         return DateTime::createFromFormat('U', strval($this->wbTime));
     }
+
 }

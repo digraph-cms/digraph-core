@@ -9,13 +9,18 @@ use DigraphCMS\HTML\Text;
 
 class Field extends DIV implements InputInterface
 {
+
     protected $input;
+
     protected $label;
+
     protected $tips;
+
     protected $validationMessage;
+
     protected $validationMessageText;
 
-    public function __construct(string $label, InputInterface $input = null)
+    public function __construct(string $label, InputInterface|null $input = null)
     {
         $this->label = new LABEL($label);
         $this->setInput($input ?? new INPUT());
@@ -39,7 +44,8 @@ class Field extends DIV implements InputInterface
             $this->validationMessageText()->setContent($message);
             $this->validationMessage()->setHidden(false);
             return $message;
-        } else {
+        }
+        else {
             $this->validationMessageText()->setContent('');
             $this->validationMessage()->setHidden(true);
             return null;
@@ -73,9 +79,9 @@ class Field extends DIV implements InputInterface
         $children = array_merge(
             [
                 $this->label(),
-                $this->input()
+                $this->input(),
             ],
-            parent::children()
+            parent::children(),
         );
         if ($this->submitted()) {
             $children[] = $this->validationMessage();
@@ -145,7 +151,7 @@ class Field extends DIV implements InputInterface
         $this->tips()->addChild(
             (new SMALL())
                 ->addChild(new Text($tip))
-                ->addClass('form-field__tips__tip')
+                ->addClass('form-field__tips__tip'),
         );
         return $this;
     }
@@ -187,7 +193,7 @@ class Field extends DIV implements InputInterface
         return $this->input()->value($useDefault);
     }
 
-    public function setRequired(bool $required, string $message = null): static
+    public function setRequired(bool $required, string|null $message = null): static
     {
         $this->input()->setRequired($required, $message);
         return $this;
@@ -204,4 +210,5 @@ class Field extends DIV implements InputInterface
         $this->input()->setValue($value);
         return $this;
     }
+
 }

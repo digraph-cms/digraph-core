@@ -8,13 +8,20 @@ use DigraphCMS\Users\Users;
 
 class Request
 {
-    protected $url = null;
+
+    protected $url         = null;
+
     protected $originalUrl = null;
-    protected $method = null;
-    protected $headers = null;
-    protected $post = [];
-    protected $user = null;
-    protected $hash = null;
+
+    protected $method      = null;
+
+    protected $headers     = null;
+
+    protected $post        = [];
+
+    protected $user        = null;
+
+    protected $hash        = null;
 
     public function __construct(URL $url, string $method, RequestHeaders $headers, array $post)
     {
@@ -35,7 +42,7 @@ class Request
                 $this->headers,
                 $this->post,
                 $this->user,
-                Cookies::cacheMutators()
+                Cookies::cacheMutators(),
             ]));
         }
         return $this->hash;
@@ -56,7 +63,7 @@ class Request
         return $this->method;
     }
 
-    public function url(URL $url = null): URL
+    public function url(URL|null $url = null): URL
     {
         if ($url) {
             $this->url = clone $url;
@@ -69,4 +76,5 @@ class Request
     {
         return clone $this->originalUrl;
     }
+
 }

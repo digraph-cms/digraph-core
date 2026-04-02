@@ -17,24 +17,33 @@ use Flatrr\FlatArrayTrait;
 /** @implements ArrayAccess<string,mixed> */
 class User implements ArrayAccess
 {
+
     use FlatArrayTrait {
+
         set as protected rawSet;
         unset as protected rawUnset;
+
     }
 
-    /** @var string */
-    protected $uuid, $name;
-    /** @var DateTime */
-    protected $created, $updated;
-    /** @var string */
-    protected $created_by, $updated_by;
-    /** @var DateTime */
-    protected $updated_last;
-    /** @var array<int,Group> */
-    protected $groups;
+    protected string $uuid;
+
+    protected string $name;
+
+    protected DateTime $created;
+
+    protected DateTime $updated;
+
+    protected string $created_by;
+
+    protected string $updated_by;
+
+    protected DateTime $updated_last;
+
+    /** @var array<int,Group>|null */
+    protected array|null $groups = null;
 
     const DEFAULT_DATA = [
-        'name_explicitly_set' => false
+        'name_explicitly_set' => false,
     ];
 
     /**
@@ -98,8 +107,8 @@ class User implements ArrayAccess
         }
         $value = [
             'address' => $email,
-            'time' => time(),
-            'comment' => $comment
+            'time'    => time(),
+            'comment' => $comment,
         ];
         foreach ($this['emails'] ?? [] as $k => $existing) {
             if (@$existing['address'] == $email) {
@@ -109,8 +118,10 @@ class User implements ArrayAccess
             }
         }
         $this->push('emails', $value);
-        if ($skipVerification && count($this->emails()) == 1) $this->setPrimaryEmail($email);
-        if (!$skipVerification) $this->sendVerificationEmail($email);
+        if ($skipVerification && count($this->emails()) == 1)
+            $this->setPrimaryEmail($email);
+        if (!$skipVerification)
+            $this->sendVerificationEmail($email);
         $this->update();
         // send notification to all verified email addresses
         // only sends if we skipped verification and this is at least the second address on account
@@ -122,10 +133,10 @@ class User implements ArrayAccess
                 new RichContent(Templates::render(
                     '/email/account/email-added.php',
                     [
-                        'user' => $this,
-                        'email' => $email
-                    ]
-                ))
+                        'user'  => $this,
+                        'email' => $email,
+                    ],
+                )),
             );
             foreach ($emails as $email) {
                 Emails::queue($email);
@@ -148,10 +159,12 @@ class User implements ArrayAccess
         $email = strtolower($email);
         $updated = false;
         foreach ($this['emails'] ?? [] as $i => $row) {
-            if ($row['address'] == $email && !@$row['verification'] && !@$row['primary']) $updated = true;
+            if ($row['address'] == $email && !@$row['verification'] && !@$row['primary'])
+                $updated = true;
             $this["emails.$i.primary"] = $row['address'] == $email;
         }
-        if (!$updated) return;
+        if (!$updated)
+            return;
         $this->update();
         // send notification to all verified email addresses, if there was
         // already a different primary email address
@@ -163,10 +176,10 @@ class User implements ArrayAccess
                 new RichContent(Templates::render(
                     '/email/account/primary-email-changed.php',
                     [
-                        'user' => $this,
-                        'email' => $email
-                    ]
-                ))
+                        'user'  => $this,
+                        'email' => $email,
+                    ],
+                )),
             );
             foreach ($emails as $email) {
                 Emails::queue($email);
@@ -187,7 +200,8 @@ class User implements ArrayAccess
         foreach ($this['emails'] ?? [] as $i => $row) {
             if ($row['address'] == $email) {
                 unset($this["emails.$i.verification"]);
-                if (count($this->emails()) == 1) $this->setPrimaryEmail($email);
+                if (count($this->emails()) == 1)
+                    $this->setPrimaryEmail($email);
                 $this->update();
                 // send notification emails
                 $emails = Email::newForUser_all(
@@ -197,10 +211,10 @@ class User implements ArrayAccess
                     new RichContent(Templates::render(
                         '/email/account/email-added.php',
                         [
-                            'user' => $this,
-                            'email' => $email
-                        ]
-                    ))
+                            'user'  => $this,
+                            'email' => $email,
+                        ],
+                    )),
                 );
                 foreach ($emails as $email) {
                     Emails::queue($email);
@@ -220,11 +234,13 @@ class User implements ArrayAccess
         $email = strtolower($email);
         $i = null;
         foreach ($this['emails'] ?? [] as $i => $row) {
-            if ($row['address'] == $email) break;
+            if ($row['address'] == $email)
+                break;
         }
-        if ($i === null) return;
+        if ($i === null)
+            return;
         $this['emails.' . $i . '.verification'] = [
-            'time' => time(),
+            'time'  => time(),
             'token' => $token = Digraph::uuid()
         ];
         $email = Email::newForEmail(
@@ -234,11 +250,11 @@ class User implements ArrayAccess
             new RichContent(Templates::render(
                 '/email/account/email-verification.php',
                 [
-                    'user' => $this,
+                    'user'  => $this,
                     'email' => $email,
-                    'link' => new URL('/verify_email/?token=' . $token . '&user=' . $this->uuid())
-                ]
-            ))
+                    'link'  => new URL('/verify_email/?token=' . $token . '&user=' . $this->uuid()),
+                ],
+            )),
         );
         Emails::send($email, true);
         $this->update();
@@ -265,10 +281,10 @@ class User implements ArrayAccess
                 new RichContent(Templates::render(
                     '/email/account/email-removed.php',
                     [
-                        'user' => $this,
-                        'email' => $email
-                    ]
-                ))
+                        'user'  => $this,
+                        'email' => $email,
+                    ],
+                )),
             );
             foreach ($emails as $email) {
                 Emails::queue($email);
@@ -301,7 +317,7 @@ class User implements ArrayAccess
                 function (array $email) {
                     return !@$email['verification'];
                 }
-            )
+            ),
         );
     }
 
@@ -320,7 +336,7 @@ class User implements ArrayAccess
         return null;
     }
 
-    public function name(string $name = null): string
+    public function name(string|null $name = null): string
     {
         if ($name) {
             $this->name = $name;
@@ -382,4 +398,5 @@ class User implements ArrayAccess
     {
         return clone $this->updated;
     }
+
 }

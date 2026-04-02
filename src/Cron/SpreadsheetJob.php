@@ -11,11 +11,13 @@ use Throwable;
 
 class SpreadsheetJob extends DeferredJob
 {
-    public function __construct(string $srcFile, callable $rowFn = null, string $ext = null, string $group = null, callable $setupFn = null, callable $teardownFn = null)
+
+    public function __construct(string $srcFile, callable|null $rowFn = null, string|null $ext = null, string|null $group = null, callable|null $setupFn = null, callable|null $teardownFn = null)
     {
         $group = $group ?? parent::uuid();
         $ext = strtolower($ext ?? pathinfo($srcFile, PATHINFO_EXTENSION));
-        if (!$ext) $ext = 'xlsx';
+        if (!$ext)
+            $ext = 'xlsx';
         $cacheFile = Config::cachePath() . '/spreadsheet_jobs/' . $group . '.' . $ext;
         FS::touch($cacheFile);
         FS::copy($srcFile, $cacheFile, false, true);
@@ -55,19 +57,24 @@ class SpreadsheetJob extends DeferredJob
             // spawn final job to clean up file
             $count++;
             $job->spawn(function () use ($file) {
-                if (unlink($file)) return "Deleted temp file $file";
-                else return "Failed to delete temp file $file";
+                if (unlink($file))
+                    return "Deleted temp file $file";
+                else
+                    return "Failed to delete temp file $file";
             });
             // commit and return status
             DB::commit();
             return "Set up $count spreadsheet processing jobs";
-        } catch (Throwable $th) {
+        }
+        catch (Throwable $th) {
             DB::rollback();
             if ($th instanceof Exception) {
                 throw new Exception("Error processing spreadsheet $file: " . get_class($th) . ': ' . $th->getMessage());
-            } else {
+            }
+            else {
                 throw new Exception("Error processing spreadsheet $file: " . get_class($th));
             }
         }
     }
+
 }

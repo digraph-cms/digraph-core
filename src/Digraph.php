@@ -104,7 +104,7 @@ abstract class Digraph
         }
     }
 
-    public static function inferMime(Response $response = null): string
+    public static function inferMime(Response|null $response = null): string
     {
         $response = $response ?? Context::response();
         if ($response->mime()) {
@@ -115,7 +115,7 @@ abstract class Digraph
         ) ?? 'text/html';
     }
 
-    public static function inferFilename(Response $response = null): string
+    public static function inferFilename(Response|null $response = null): string
     {
         $response = $response ?? Context::response();
         if ($response->filename()) {
@@ -140,7 +140,7 @@ abstract class Digraph
      *
      * @return string
      */
-    public static function uuid(string $prefix = null, string $seed = null): string
+    public static function uuid(string|null $prefix = null, string|null $seed = null): string
     {
         if ($seed !== null) {
             mt_srand(crc32($seed));
@@ -175,7 +175,7 @@ abstract class Digraph
      *
      * @return string
      */
-    public static function longUUID(string $prefix = null, string $seed = null): string
+    public static function longUUID(string|null $prefix = null, string|null $seed = null): string
     {
         if ($seed !== null) {
             mt_srand(crc32($seed));
@@ -218,7 +218,7 @@ abstract class Digraph
      *
      * @return boolean
      */
-    public static function validateUUID(string $uuid, string $prefix = null): bool
+    public static function validateUUID(string $uuid, string|null $prefix = null): bool
     {
         if ($prefix) {
             if (substr($uuid, 0, strlen($prefix) + 1) != $prefix . '_')
@@ -464,7 +464,7 @@ abstract class Digraph
         Context::end();
     }
 
-    public static function buildErrorContent(float $status, string $message = null): bool
+    public static function buildErrorContent(float $status, string|null $message = null): bool
     {
         Context::data('error_message', $message);
         Context::response()->status(intval(floor($status)));

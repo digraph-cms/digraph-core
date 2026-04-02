@@ -13,13 +13,24 @@ use Exception;
 
 class DeferredJob
 {
-    protected $id, $group, $run, $error, $message;
+
+    protected $id;
+
+    protected $group;
+
+    protected $run;
+
+    protected $error;
+
+    protected $message;
+
     /** @var callable|string|null */
     protected $job = null;
+
     /** @var int|null */
     protected $scheduled = null;
 
-    public function __construct(callable $job = null, string $group = null, int|null $scheduled = null)
+    public function __construct(callable|null $job = null, string|null $group = null, int|null $scheduled = null)
     {
         $this->group = $this->group ?? $group ?? static::uuid();
         if ($this->job === null) {
@@ -27,22 +38,25 @@ class DeferredJob
             $this->job = $job ?? function () {
                 return 'Empty job';
             };
-        } elseif (is_string($this->job)) {
+        }
+        elseif (is_string($this->job)) {
             // $this->job is not empty, so we're loading an existing job from the database
             $this->job = Serializer::unserialize($this->job);
-        } else {
+        }
+        else {
             throw new Exception('Invalid job data');
         }
         $this->scheduled = $this->scheduled ?? $scheduled;
         // insert into database immediately
-        if ($this->id() !== null) return;
+        if ($this->id() !== null)
+            return;
         $this->id = DB::query()->insertInto(
             'defex',
             [
-                '`group`' => $this->group(),
+                '`group`'   => $this->group(),
                 'scheduled' => $this->scheduled(),
-                'job' => $this->serializedJob()
-            ]
+                'job'       => $this->serializedJob(),
+            ],
         )->execute();
     }
 
@@ -59,23 +73,28 @@ class DeferredJob
     public function execute(): bool
     {
         // only execute if ID exists, meaning this job is in the database
-        if ($this->id() === null) return false;
+        if ($this->id() === null)
+            return false;
         // also only execute if scheduledd time has arrived
-        if ($this->scheduled() > time()) return false;
+        if ($this->scheduled() > time())
+            return false;
         // try to get lock
         $lock_id = 'defex/' . $this->id();
-        if (!Locking::lock($lock_id, false, 300)) return false;
+        if (!Locking::lock($lock_id, false, 300))
+            return false;
         // override user
         Session::overrideUser('system');
         // execute
         try {
             $message = strval(call_user_func($this->job, $this));
             $error = false;
-        } catch (\Throwable $th) {
+        }
+        catch (\Throwable $th) {
             ExceptionLog::log($th);
             if ($th instanceof Exception) {
                 $message = get_class($th) . ': ' . $th->getMessage();
-            } else {
+            }
+            else {
                 $message = get_class($th);
             }
             $error = true;
@@ -85,11 +104,11 @@ class DeferredJob
             ->update(
                 'defex',
                 [
-                    'run' => time(),
+                    'run'     => time(),
                     'message' => $message,
-                    'error' => $error
+                    'error'   => $error,
                 ],
-                $this->id()
+                $this->id(),
             )->execute();
         // remove override user
         Session::overrideUser(null);
@@ -135,4 +154,5 @@ class DeferredJob
     {
         return $this->message;
     }
+
 }

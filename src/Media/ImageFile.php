@@ -103,7 +103,7 @@ class ImageFile extends DeferredFile
         return preg_replace('/\.[a-z0-9]+$/i', '.' . $this->extension, parent::filename());
     }
 
-    public function extension(string $extension = null): string
+    public function extension(string|null $extension = null): string
     {
         if ($extension) {
             $this->extension = $extension;

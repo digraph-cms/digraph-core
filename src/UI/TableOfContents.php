@@ -11,16 +11,24 @@ use DigraphCMS\URL\URL;
 
 class TableOfContents extends Tag
 {
+
     protected $tag = 'ul';
+
     protected $page;
+
     protected $edge_types = null;
+
     protected $ignore_sort_order = null;
+
     protected $firstPage = 20;
+
     protected $perPage = 10;
+
     protected $parents = [];
+
     protected $depth;
 
-    public function __construct(AbstractPage $page, null|string|array $edge_types = null, null|bool $ignore_sort_order = null, int $depth = null, array $parents = [])
+    public function __construct(AbstractPage $page, null|string|array $edge_types = null, null|bool $ignore_sort_order = null, int|null $depth = null, array $parents = [])
     {
         $this->page = $page;
         $this->parents = $parents;
@@ -38,7 +46,7 @@ class TableOfContents extends Tag
                 'navigation-frame',
                 'navigation-frame--stateless',
             ],
-            parent::classes()
+            parent::classes(),
         );
     }
 
@@ -48,7 +56,7 @@ class TableOfContents extends Tag
             parent::attributes(),
             [
                 'data-target' => '_top',
-            ]
+            ],
         );
     }
 
@@ -62,14 +70,15 @@ class TableOfContents extends Tag
         return array_merge(
             parent::children(),
             $this->generateItems(),
-            [$this->page() < $this->maxPage() ? $this->generateMoreLink() : '']
+            [$this->page() < $this->maxPage() ? $this->generateMoreLink() : ''],
         );
     }
 
     public function page(): int
     {
         $page = intval(Context::arg_int($this->arg(), true) ?? 1);
-        if ($page < 1) throw new HttpError(400, 'Invalid argument');
+        if ($page < 1)
+            throw new HttpError(400, 'Invalid argument');
         if ($page > $this->maxPage()) {
             throw new RedirectException(new URL('&' . $this->arg() . '=' . $this->maxPage()));
         }
@@ -89,8 +98,10 @@ class TableOfContents extends Tag
     public function maxPage(): int
     {
         $count = $this->page->children()->count();
-        if ($count <= $this->firstPage) return 1;
-        else return intval(ceil(($count - $this->firstPage) / $this->perPage) + 1);
+        if ($count <= $this->firstPage)
+            return 1;
+        else
+            return intval(ceil(($count - $this->firstPage) / $this->perPage) + 1);
     }
 
     public function generateMoreLink(): string
@@ -111,17 +122,19 @@ class TableOfContents extends Tag
         $output = [];
         while ($page = $children->fetch()) {
             // skip any pages that are in the parents list
-            if (in_array($page->uuid(), $parents)) continue;
+            if (in_array($page->uuid(), $parents))
+                continue;
             // add list item
             $output[] = sprintf(
                 '<li><a href="%s">%s</a>%s</li>',
                 $page->url(),
                 $page->name(),
                 $this->depth > 1 && $page->children($this->edge_types)->count()
-                    ? trim(new TableOfContents($page, $this->edge_types, $this->ignore_sort_order, $this->depth - 1, $parents))
-                    : ''
+                ? trim(new TableOfContents($page, $this->edge_types, $this->ignore_sort_order, $this->depth - 1, $parents))
+                : ''
             );
         }
         return $output;
     }
+
 }

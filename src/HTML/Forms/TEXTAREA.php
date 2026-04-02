@@ -9,18 +9,28 @@ use Exception;
 
 class TEXTAREA extends Tag implements InputInterface
 {
-    protected static $counter = 0;
-    protected $tag = 'textarea';
-    protected $void = false;
-    protected $form;
-    protected $default;
-    protected $value;
-    protected $required = false;
-    protected $requiredMessage = 'This field is required';
-    protected $validators = [];
-    protected bool $disabled = false;
 
-    public function __construct(string $id = null)
+    protected static $counter         = 0;
+
+    protected        $tag             = 'textarea';
+
+    protected        $void            = false;
+
+    protected        $form;
+
+    protected        $default;
+
+    protected        $value;
+
+    protected        $required        = false;
+
+    protected        $requiredMessage = 'This field is required';
+
+    protected        $validators      = [];
+
+    protected bool   $disabled        = false;
+
+    public function __construct(string|null $id = null)
     {
         $this->setID($id ?? 'textarea-' . self::$counter++);
     }
@@ -40,7 +50,8 @@ class TEXTAREA extends Tag implements InputInterface
     {
         if ($this->required() && !$this->value()) {
             return $this->requiredMessage;
-        } else {
+        }
+        else {
             foreach ($this->validators as $validator) {
                 if ($message = call_user_func($validator, $this)) {
                     return $message;
@@ -71,7 +82,7 @@ class TEXTAREA extends Tag implements InputInterface
             [
                 'name' => $this->id(),
                 'form' => $this->form() ? $this->form()->formID() : null
-            ]
+            ],
         );
         if ($this->disabled()) {
             $attributes['disabled'] = null;
@@ -84,7 +95,7 @@ class TEXTAREA extends Tag implements InputInterface
         return $this->required;
     }
 
-    public function setRequired(bool $required, string $message = null)
+    public function setRequired(bool $required, string|null $message = null)
     {
         $this->required = $required;
         $this->requiredMessage = $message ?? $this->requiredMessage;
@@ -128,7 +139,8 @@ class TEXTAREA extends Tag implements InputInterface
     {
         if ($this->form()) {
             return $this->form()->submitted();
-        } else {
+        }
+        else {
             return !!$this->submittedValue();
         }
     }
@@ -143,7 +155,8 @@ class TEXTAREA extends Tag implements InputInterface
     {
         if ($this->form()) {
             return $this->form()->id() . '--' . parent::id();
-        } else {
+        }
+        else {
             return parent::id();
         }
     }
@@ -162,11 +175,14 @@ class TEXTAREA extends Tag implements InputInterface
     {
         if ($this->value) {
             return $this->value;
-        } elseif (($value = $this->submittedValue()) || $this->submitted()) {
+        }
+        elseif (($value = $this->submittedValue()) || $this->submitted()) {
             return $value ? $value : null;
-        } elseif ($useDefault) {
+        }
+        elseif ($useDefault) {
             return $this->default();
-        } else {
+        }
+        else {
             return null;
         }
     }
@@ -184,7 +200,7 @@ class TEXTAREA extends Tag implements InputInterface
     public function children(): array
     {
         return [
-            new Text(htmlentities($this->stringContent()))
+            new Text(htmlentities($this->stringContent())),
         ];
     }
 
@@ -192,10 +208,13 @@ class TEXTAREA extends Tag implements InputInterface
     {
         if ($this->form() && $this->form()->method() == FormWrapper::METHOD_GET) {
             return Context::arg_string($this->id(), true);
-        } elseif ($this->form() && $this->form()->method() == FormWrapper::METHOD_POST) {
+        }
+        elseif ($this->form() && $this->form()->method() == FormWrapper::METHOD_POST) {
             return Context::post($this->id());
-        } else {
+        }
+        else {
             return null;
         }
     }
+
 }

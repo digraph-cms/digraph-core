@@ -7,7 +7,9 @@ namespace DigraphCMS\UI\ButtonMenus;
  */
 class SingleButton extends ButtonMenuButton
 {
+
     protected $menu;
+
     protected $toStringState = 0;
 
     public function __construct(string $label, callable $callback, array $classes = [])
@@ -16,7 +18,7 @@ class SingleButton extends ButtonMenuButton
         $this->menu = new ButtonMenu([$this]);
     }
 
-    public function csrf(bool $csrf = null): bool
+    public function csrf(bool|null $csrf = null): bool
     {
         return $this->menu->csrf($csrf);
     }
@@ -28,9 +30,11 @@ class SingleButton extends ButtonMenuButton
         if ($this->toStringState == 0) {
             $this->toStringState = 1;
             return $this->menu->__toString();
-        } else {
+        }
+        else {
             $this->toStringState = 0;
             return parent::__toString();
         }
     }
+
 }

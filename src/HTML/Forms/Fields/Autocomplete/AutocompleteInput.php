@@ -9,9 +9,10 @@ use DigraphCMS\URL\URL;
 
 class AutocompleteInput extends INPUT
 {
-    protected $endpoint, $valueCallback;
 
-    public function __construct(string $id = null, URL $endpoint, callable $valueCallback = null)
+    protected            $endpoint, $valueCallback;
+
+    public function __construct(string $id, URL $endpoint, callable|null $valueCallback = null)
     {
         parent::__construct($id);
         $this->valueCallback = $valueCallback;
@@ -57,7 +58,8 @@ class AutocompleteInput extends INPUT
     {
         return Format::base64obfuscate(
             parent::toString(),
-            'Autocomplete inputs require Javascript to function'
+            'Autocomplete inputs require Javascript to function',
         );
     }
+
 }

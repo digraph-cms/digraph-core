@@ -7,18 +7,21 @@ use Exception;
 
 class Deferred
 {
+
     protected static $skip = [];
 
-    public static function runJobs(string $group = null, int $endByTime = null): int
+    public static function runJobs(string|null $group = null, int|null $endByTime = null): int
     {
         // count number of jobs run
         $count = 0;
         // proceed with jobs one at a time
         while ((!$endByTime || time() < $endByTime) && ($job = static::getNextJob($group))) {
             // don't make more than one attempt per job
-            if (in_array($job->id(), static::$skip)) throw new Exception('Tried to run defex job ' . $job->id() . ' again after skipping it');
+            if (in_array($job->id(), static::$skip))
+                throw new Exception('Tried to run defex job ' . $job->id() . ' again after skipping it');
             // execute job
-            if ($job->execute()) $count++;
+            if ($job->execute())
+                $count++;
             // log that we at least tried this job
             static::$skip[] = $job->id();
         }
@@ -26,18 +29,20 @@ class Deferred
         return $count;
     }
 
-    public static function groupCount(string $group, bool $complete = null): int
+    public static function groupCount(string $group, bool|null $complete = null): int
     {
         $query = DB::query()->from('defex')
             ->where('`group` = ?', [$group]);
         if ($complete !== null) {
-            if ($complete) $query->where('run is not null');
-            else $query->where('run is null');
+            if ($complete)
+                $query->where('run is not null');
+            else
+                $query->where('run is null');
         }
         return $query->count();
     }
 
-    public static function getNextJob(string $group = null): ?DeferredJob
+    public static function getNextJob(string|null $group = null): ?DeferredJob
     {
         $query = DB::query()->from('defex')
             ->where('run is null')
@@ -58,4 +63,5 @@ class Deferred
         }
         return null;
     }
+
 }

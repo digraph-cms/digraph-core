@@ -27,7 +27,7 @@ class FileRichMedia extends AbstractRichMedia
         // current file info
         if ($this->file()) {
             $form->addChild(
-                $this->card(['size', 'uploader', 'upload_date', 'md5'], true)
+                $this->card(['size', 'uploader', 'upload_date', 'md5'], true),
             );
         }
 
@@ -40,17 +40,18 @@ class FileRichMedia extends AbstractRichMedia
         // upload field
         $file = (new Field($create ? 'File' : 'Replace file', $upload = new UploadSingle()))
             ->addForm($form);
-        if ($create) $file->setRequired(true);
+        if ($create)
+            $file->setRequired(true);
 
         // metadata display options
         $meta = (new CheckboxListField(
             'Display metadata',
             [
-                'size' => 'Filesize',
-                'uploader' => 'Uploading user',
+                'size'        => 'Filesize',
+                'uploader'    => 'Uploading user',
                 'upload_date' => 'Upload date',
-                'md5' => 'MD5 hash'
-            ]
+                'md5'         => 'MD5 hash',
+            ],
         ))
             ->setDefault($this['meta'] ?? [])
             ->addForm($form);
@@ -59,7 +60,8 @@ class FileRichMedia extends AbstractRichMedia
         $form->addCallback(function () use ($name, $upload, $meta) {
             // upload/replace file
             if ($upload->value()) {
-                if ($this->file()) $this->file()->delete();
+                if ($this->file())
+                    $this->file()->delete();
                 $this['file'] = $upload->filestore($this->uuid())->uuid();
             }
             // set name
@@ -77,12 +79,13 @@ class FileRichMedia extends AbstractRichMedia
                 ->setAttribute('href', $this->file()->url())
                 ->setAttribute('title', $this->file()->filename() . ' (' . Format::filesize($this->file()->bytes()) . ')')
                 ->addChild($code->getContent() ?? $this->file()->filename());
-        } else {
+        }
+        else {
             return $this->card();
         }
     }
 
-    public function card(array $overrideMeta = null, $showFilename = true): DIV
+    public function card(array|null $overrideMeta = null, bool $showFilename = true): DIV
     {
         $file = $this->file();
         $card = (new DIV())
@@ -103,7 +106,8 @@ class FileRichMedia extends AbstractRichMedia
         }
         if (in_array('uploader', $overrideMeta ?? $this['meta']) && in_array('upload_date', $this['meta'])) {
             $meta[] = 'uploaded ' . Format::date($file->created()) . ' by ' . $file->createdBy();
-        } else {
+        }
+        else {
             if (in_array('upload_date', $overrideMeta ?? $this['meta'])) {
                 $meta[] = 'uploaded ' . Format::date($file->created());
             }
@@ -114,9 +118,10 @@ class FileRichMedia extends AbstractRichMedia
         if (in_array('uploader', $overrideMeta ?? $this['meta'])) {
             $meta[] = 'MD5 ' . $file->hash();
         }
-        $card->addChild((new DIV)
+        $card->addChild(
+            (new DIV)
                 ->addClass('file-card__meta')
-                ->addChild(implode('<br>', $meta))
+                ->addChild(implode('<br>', $meta)),
         );
         return $card;
     }
@@ -131,7 +136,7 @@ class FileRichMedia extends AbstractRichMedia
         return 'Upload a single file to post as a download';
     }
 
-    public function name(string $set = null): string
+    public function name(string|null $set = null): string
     {
         if ($set) {
             $this->name = $set;
@@ -143,4 +148,5 @@ class FileRichMedia extends AbstractRichMedia
     {
         return Filestore::get($this['file']);
     }
+
 }

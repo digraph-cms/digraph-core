@@ -10,14 +10,19 @@ use DigraphCMS\Serializer;
 
 class OpCache extends AbstractCacheDriver
 {
+
     /** @var string */
     protected $dir;
+
     /** @var array<string,mixed> */
     protected $cache = [];
+
     /** @var array<string,mixed> */
     protected $lockHandles = [];
+
     /** @var int */
     protected $fuzz;
+
     /** @var int */
     protected $ttl;
 
@@ -76,7 +81,8 @@ class OpCache extends AbstractCacheDriver
         $exp = substr($content, 0, 9);
         for ($i = 9; $i <= 16; $i++) {
             $char = substr($content, $i, 1);
-            if ($char === ';') break;
+            if ($char === ';')
+                break;
             $exp .= $char;
         }
         return time() > intval($exp);
@@ -86,7 +92,8 @@ class OpCache extends AbstractCacheDriver
     {
         try {
             $this->readInternally($name);
-        } catch (\Throwable $th) {
+        }
+        catch (\Throwable $th) {
             // if we can't read the file, invalidate it
             $this->invalidate($name);
             ExceptionLog::log(
@@ -95,8 +102,8 @@ class OpCache extends AbstractCacheDriver
                     [
                         'data' => file_get_contents($this->filename($name)),
                     ],
-                    $th
-                )
+                    $th,
+                ),
             );
             return null;
         }
@@ -109,7 +116,8 @@ class OpCache extends AbstractCacheDriver
             static::checkName($name);
             if (!$this->exists($name) || $this->expired($name)) {
                 $this->cache[$name] = null;
-            } else {
+            }
+            else {
                 $filename = $this->filename($name);
                 // wait for a read lock
                 $this->lockRead($filename);
@@ -119,7 +127,8 @@ class OpCache extends AbstractCacheDriver
                     $val = null;
                     /** @psalm-suppress UnresolvableInclude */
                     include $filename;
-                } catch (\Throwable $th) {
+                }
+                catch (\Throwable $th) {
                     // unlock file before throwing errors
                     $this->cache[$name] = null;
                     $this->unlock($filename);
@@ -132,7 +141,8 @@ class OpCache extends AbstractCacheDriver
                     // expired, expire and internally cache null result
                     $this->invalidate($name);
                     $this->cache[$name] = null;
-                } else {
+                }
+                else {
                     // not expired, save into internal cache
                     $this->cache[$name] = [$exp, $val];
                 }
@@ -157,7 +167,7 @@ class OpCache extends AbstractCacheDriver
         return $this;
     }
 
-    public function set(string $name, $value, int $ttl = null): static
+    public function set(string $name, $value, int|null $ttl = null): static
     {
         static::checkName($name);
         // save into internal cache
@@ -178,9 +188,9 @@ class OpCache extends AbstractCacheDriver
                 sprintf(
                     '<?php $exp = %s; $val = %s;',
                     is_infinite($exp) ? "INF" : $exp,
-                    $value
+                    $value,
                 ),
-                LOCK_EX
+                LOCK_EX,
             );
         }
         // return
@@ -191,19 +201,25 @@ class OpCache extends AbstractCacheDriver
     {
         if ($value === null) {
             return 'null';
-        } elseif ($value === true) {
+        }
+        elseif ($value === true) {
             return 'true';
-        } elseif ($value === false) {
+        }
+        elseif ($value === false) {
             return 'false';
-        } elseif (is_numeric($value)) {
+        }
+        elseif (is_numeric($value)) {
             if (is_float($value) && is_infinite($value)) {
                 return 'INF';
-            } else {
+            }
+            else {
                 return "$value";
             }
-        } elseif (is_string($value)) {
+        }
+        elseif (is_string($value)) {
             return sprintf('\'%s\'', str_replace('\'', '\\\'', $value));
-        } else {
+        }
+        else {
             return Serializer::serialize($value);
         }
     }
@@ -227,4 +243,5 @@ class OpCache extends AbstractCacheDriver
         flock($this->handle($filename), LOCK_UN);
         $this->closeHandle($filename);
     }
+
 }

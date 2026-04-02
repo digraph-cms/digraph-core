@@ -6,6 +6,7 @@ use DigraphCMS\Config;
 
 abstract class AbstractCacheDriver
 {
+
     /** @var string */
     protected $dir;
 
@@ -24,11 +25,11 @@ abstract class AbstractCacheDriver
      *
      * @param string $name
      * @param mixed|callable $value
-     * @param integer|null $ttl
+     * @param int|null $ttl
      * @return static
      */
-    abstract public function set(string $name, mixed $value, int $ttl = null): static;
-    
+    abstract public function set(string $name, mixed $value, int|null $ttl = null): static;
+
     /**
      * Check whether a given cache item exists
      * 
@@ -98,4 +99,5 @@ abstract class AbstractCacheDriver
             throw new \Exception("Invalid cache glob. Item globs must be valid directory paths consisting of only lower-case alphanumerics, dashes, underscores, and glob characters.");
         }
     }
+
 }

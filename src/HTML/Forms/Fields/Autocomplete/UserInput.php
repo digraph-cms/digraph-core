@@ -9,7 +9,8 @@ use DigraphCMS\Users\Users;
 
 class UserInput extends AutocompleteInput
 {
-    public function __construct(string $id = null, URL $endpoint = null)
+
+    public function __construct(string|null $id = null, URL|null $endpoint = null)
     {
         // pass endpoint and set up card-generating function
         parent::__construct(
@@ -32,4 +33,5 @@ class UserInput extends AutocompleteInput
         // add CSS class
         $this->addClass('autocomplete-input--user');
     }
+
 }
