@@ -33,8 +33,10 @@ class SpreadsheetReader
         $sheet = $reader->getSheetIterator()->current();
         $rows = $sheet->getRowIterator();
         // get iterator for the rest of the rows and begin yielding non-empty rows
+        $headers = null;
         foreach ($rows as $row) {
-            if (!$headers) {
+            if ($headers === null) {
+                $headers = [];
                 foreach ($row->getCells() as $cell) {
                     $headers[] = strtolower((string) $cell->getValue());
                 }
