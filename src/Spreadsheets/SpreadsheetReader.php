@@ -32,19 +32,12 @@ class SpreadsheetReader
         // get iterator for first sheet
         $sheet = $reader->getSheetIterator()->current();
         $rows = $sheet->getRowIterator();
-        // build headers array
-        $headers = [];
-        $header_row = $rows->current();
-        if (!$header_row)
-            return;
-        foreach ($header_row->getCells() as $cell) {
-            $headers[] = strtolower((string) $cell->getValue());
-        }
         // get iterator for the rest of the rows and begin yielding non-empty rows
-        $skipped = false;
         foreach ($rows as $row) {
-            if (!$skipped) {
-                $skipped = true;
+            if (!$headers) {
+                foreach ($row->getCells() as $cell) {
+                    $headers[] = strtolower((string) $cell->getValue());
+                }
                 continue;
             }
             $rowData = [];
