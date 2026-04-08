@@ -12,7 +12,6 @@ use DigraphCMS\Exception;
 use DigraphCMS\ExceptionLog;
 use DigraphCMS\HTML\Forms\Fields\CheckboxField;
 use DigraphCMS\HTML\Forms\FormWrapper;
-use DigraphCMS\Security\Security;
 use DigraphCMS\UI\ButtonMenus\SingleButton;
 use DigraphCMS\UI\Templates;
 use DigraphCMS\URL\URL;
