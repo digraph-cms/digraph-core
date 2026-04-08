@@ -2,10 +2,10 @@
 <?php
 
 use DigraphCMS\Context;
-use DigraphCMS\Security\Security;
 use DigraphCMS\UI\ToggleButton;
 use DigraphCMS\URL\URL;
 use DigraphCMS\URL\WaybackMachine;
+use Joby\Smol\Sentry\Severity;
 
 echo '<div id="wayback_manage_interface" class="navigation-frame">';
 
@@ -13,11 +13,14 @@ $url = Context::arg_string('url');
 if (Context::arg_string('context', true)) {
     try {
         $context = new URL(Context::arg_string('context'));
-    } catch (Throwable $th) {
-        $context = null;
-        Security::flag('invalid context URL');
     }
-} else $context = null;
+    catch (Throwable $th) {
+        $context = null;
+        Context::sentry()->signal('url_manipulation', Severity::Suspicious);
+    }
+}
+else
+    $context = null;
 
 printf('<h2>Link: <code>%s</code></h2>', $url);
 
@@ -31,7 +34,7 @@ printf(
         function () use ($url) {
             WaybackMachine::setNoNotifyFlag($url, null, false);
         }
-    )
+    ),
 );
 
 if ($context) {
@@ -48,7 +51,7 @@ if ($context) {
             function () use ($url, $context) {
                 WaybackMachine::setNoNotifyFlag($url, $context, false);
             }
-        )
+        ),
     );
 }
 

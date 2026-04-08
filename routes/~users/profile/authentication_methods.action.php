@@ -7,8 +7,6 @@
 use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
 use DigraphCMS\HTTP\HttpError;
-use DigraphCMS\Security\Security;
-use DigraphCMS\Session\Session;
 use DigraphCMS\UI\ButtonMenus\SingleButton;
 use DigraphCMS\UI\Format;
 use DigraphCMS\UI\Notifications;
@@ -16,8 +14,6 @@ use DigraphCMS\UI\Pagination\ColumnDateFilteringHeader;
 use DigraphCMS\UI\Pagination\ColumnHeader;
 use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\Users\Users;
-
-Security::requireSecurityCheck();
 
 $user = Users::get(Context::arg_string('id', true)) ?? Users::current();
 if (!$user)

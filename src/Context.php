@@ -4,24 +4,47 @@ namespace DigraphCMS;
 
 use DigraphCMS\Cache\CacheNamespace;
 use DigraphCMS\Content\AbstractPage;
+use DigraphCMS\DB\DB;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\HTTP\Request;
 use DigraphCMS\HTTP\Response;
 use DigraphCMS\URL\URL;
 use Flatrr\SelfReferencingFlatArray;
+use Joby\Smol\Sentry\Inspector;
+use Joby\Smol\Sentry\Sentry;
 use Throwable;
 
 abstract class Context
 {
+
     /** @var Request|null */
     protected static $request;
+
     /** @var Response|null */
     protected static $response;
+
     /** @var Throwable|null */
     protected static $thrown;
+
     /** @var array<int,array<string|int,mixed>> */
     protected static array $data = [];
+
+    public static Sentry|null $sentry;
+
+    public static Inspector|null $inspector;
+
+    public static function sentry(): Sentry
+    {
+        return static::$sentry
+            ??= static::defaultSentry();
+    }
+
+    public static function inspector(): Inspector
+    {
+        return static::$inspector
+            ??= static::defaultInspector();
+    }
 
     public static function beginEmail(): void
     {
@@ -33,7 +56,7 @@ abstract class Context
         static::copy();
         static::fields()['simplified_rendering'] = [
             'active' => true,
-            'width' => $width
+            'width'  => $width,
         ];
     }
 
@@ -70,15 +93,18 @@ abstract class Context
      */
     public static function cache(string|null $section = null): CacheNamespace
     {
-        if (static::request()) $namespace = 'context/' . substr(static::request()->hash(), 0, 2) . '/' . static::request()->hash();
-        else $namespace = 'context/none';
-        if ($section) $namespace .= "/$section";
+        if (static::request())
+            $namespace = 'context/' . substr(static::request()->hash(), 0, 2) . '/' . static::request()->hash();
+        else
+            $namespace = 'context/none';
+        if ($section)
+            $namespace .= "/$section";
         return new CacheNamespace($namespace);
     }
 
     public static function url(URL|null $url = null): URL
     {
-        return clone(static::data('url', $url)
+        return clone (static::data('url', $url)
             ?? Digraph::actualUrl());
     }
 
@@ -110,7 +136,8 @@ abstract class Context
     public static function arg_string(string $key, bool $nullable = false): string|null
     {
         $value = @static::$request?->url()->arg_string($key, $nullable);
-        if (is_null($value) && !$nullable) throw new HttpError(400, "Missing argument '$key'");
+        if (is_null($value) && !$nullable)
+            throw new HttpError(400, "Missing argument '$key'");
         return $value;
     }
 
@@ -128,7 +155,8 @@ abstract class Context
     public static function arg_int(string $key, bool $nullable = false): int|null
     {
         $value = @static::$request?->url()->arg_int($key, $nullable);
-        if (is_null($value) && !$nullable) throw new HttpError(400, "Missing argument '$key'");
+        if (is_null($value) && !$nullable)
+            throw new HttpError(400, "Missing argument '$key'");
         return $value;
     }
 
@@ -146,7 +174,8 @@ abstract class Context
     public static function arg_bool(string $key, bool $nullable = false): bool|null
     {
         $value = @static::$request?->url()->arg_bool($key, $nullable);
-        if (is_null($value) && !$nullable) throw new HttpError(400, "Missing argument '$key'");
+        if (is_null($value) && !$nullable)
+            throw new HttpError(400, "Missing argument '$key'");
         return $value;
     }
 
@@ -161,7 +190,8 @@ abstract class Context
     {
         if (static::$request) {
             return @static::$request->post()[$key];
-        } else {
+        }
+        else {
             return null;
         }
     }
@@ -172,8 +202,8 @@ abstract class Context
             static::data(
                 'fields',
                 new SelfReferencingFlatArray(
-                    Config::get('fields')
-                )
+                    Config::get('fields'),
+                ),
             );
         }
         return static::data('fields');
@@ -217,9 +247,11 @@ abstract class Context
     {
         end(static::$data);
         $endKey = key(static::$data);
-        if (!is_null($endKey)) $endKey = (int)$endKey;
+        if (!is_null($endKey))
+            $endKey = (int) $endKey;
         if ($value !== null) {
-            if (!isset(static::$data[$endKey])) static::$data[$endKey] = [];
+            if (!isset(static::$data[$endKey]))
+                static::$data[$endKey] = [];
             static::$data[$endKey][$name] = $value;
         }
         return @static::$data[$endKey][$name];
@@ -270,4 +302,20 @@ abstract class Context
     {
         static::$data = [];
     }
+
+    protected static function defaultSentry(): Sentry
+    {
+        return Sentry::default(
+            new \Joby\Smol\Query\DB(Config::get('sentry.db_file')),
+            Config::get('sentry.abuseipdb_key'),
+            Config::get('sentry.abuseipdb_daily_refreshes'),
+        );
+    }
+
+    protected static function defaultInspector(): Inspector
+    {
+        return (new Inspector(static::sentry()))
+            ->addDefaultRules();
+    }
+
 }

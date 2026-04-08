@@ -3,13 +3,10 @@
 use DigraphCMS\Context;
 use DigraphCMS\Email\Emails;
 use DigraphCMS\HTTP\HttpError;
-use DigraphCMS\Security\Security;
 use DigraphCMS\UI\Breadcrumb;
 use DigraphCMS\UI\ButtonMenus\SingleButton;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\URL\URL;
-
-Security::requireSecurityCheck(false);
 
 Breadcrumb::setTopName('Email unsubscribe');
 
@@ -18,8 +15,10 @@ $addresses = [];
 
 // only allow access with valid email ID or by being signed in
 $email = Emails::get(Context::url()->actionSuffix());
-if (!$email) throw new HttpError(404);
-if ($email->isService()) throw new HttpError(404);
+if (!$email)
+    throw new HttpError(404);
+if ($email->isService())
+    throw new HttpError(404);
 if ($user = $email->toUser()) {
     $addresses = $user->emails();
 }
@@ -40,9 +39,9 @@ Notifications::printNotice(
             function ($email) {
                 return '<code>' . $email . '</code>';
             },
-            $addresses
-        ))
-    )
+            $addresses,
+        )),
+    ),
 );
 
 // one-click unsubscribe from this category
@@ -70,7 +69,8 @@ if ($unsubscribed) {
             }
         }
     );
-} else {
+}
+else {
     echo new SingleButton(
         'Unsubscribe',
         function () use ($addresses, $email) {

@@ -18,6 +18,7 @@ use DigraphCMS\UI\Templates;
 use DigraphCMS\URL\URL;
 use DigraphCMS\URL\URLs;
 use DigraphCMS\Users\Users;
+use Joby\Smol\Sentry\Severity;
 use Throwable;
 
 Dispatcher::addSubscriber(Cookies::class);
@@ -145,7 +146,6 @@ class Cookies
             );
         }
         $form = new FormWrapper('cookie-authorization');
-        $form->setCaptcha(false);
         // $form->addChild("<div class='notification notification--info'>In order to create a GDPR compliant record of affirmative consent, your response to this form will be recorded with the time and your IP address. The record will be associated with your account if you are signed in.</div>");
         $form->button()->setText('Accept the selected cookies');
         $form->token()->setCSRF(false);
@@ -517,8 +517,8 @@ class Cookies
                         ],
                         $th,
                     ));
-                    Security::flag('Invalid JSON in cookie');
                     static::unset($type, $name);
+                    Context::sentry()->signal('cookie_manipulation', Severity::Malicious);
                     return null;
                 }
                 // attempt signature check
@@ -528,8 +528,8 @@ class Cookies
                     || !isset($value['signature'])
                     || !hash_equals($value['signature'], hash('sha256', serialize($value['value']) . $value['salt'] . Config::secret()))
                 ) {
-                    Security::flag('Invalid signature in cookie');
                     static::unset($type, $name);
+                    Context::sentry()->signal('invalid_cookie_signature', Severity::Suspicious);
                     return null;
                 }
                 // return value

@@ -10,18 +10,20 @@ use DigraphCMS\UI\Breadcrumb;
 
 // locate file
 $file = Filestore::get(Context::url()->actionSuffix());
-if (!$file) throw new HttpError(404);
-assert($file instanceof FilestoreFile);
+if (!$file)
+    throw new HttpError(404);
 
 // check that its parent belongs at the current location
 $page = null;
 $media = null;
 if ($page = Pages::get($file->parentUUID())) {
     $media = null;
-} elseif ($media = RichMedia::get($file->parentUUID())) {
+}
+elseif ($media = RichMedia::get($file->parentUUID())) {
     $page = Pages::get($media->parentUUID());
 }
-if (!$page || $page->uuid() != Context::pageUUID()) throw new HttpError(404);
+if (!$page || $page->uuid() != Context::pageUUID())
+    throw new HttpError(404);
 
 // render file
 Breadcrumb::setTopName($file->filename());

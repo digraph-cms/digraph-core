@@ -9,7 +9,6 @@ use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\Exception;
 use DigraphCMS\ExceptionLog;
 use DigraphCMS\HTTP\ArbitraryRedirectException;
-use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\RichContent\RichContent;
@@ -21,9 +20,7 @@ use DigraphCMS\UI\Templates;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
-
-// require captcha
-Security::requireSecurityCheck();
+use Joby\Smol\Sentry\Severity;
 
 // require the necessary cookies
 Cookies::required(['system', 'ui', 'auth', 'csrf']);
@@ -32,14 +29,12 @@ Cookies::required(['system', 'ui', 'auth', 'csrf']);
 $sourceName = Context::arg_string('_source');
 $source = Users::source(Context::arg_string('_source'));
 if (!$source) {
-    Security::flag('Unknown login source');
-    throw new HttpError(400, 'Unknown source');
+    Context::sentry()->signal('login_manipulation', Severity::Malicious);
 }
 /** @var string */
 $provider = Context::arg_string('_provider');
 if (!$source->providerActive($provider)) {
-    Security::flag('Unknown login provider');
-    throw new HttpError(400, 'Unknown provider');
+    Context::sentry()->signal('login_manipulation', Severity::Malicious);
 }
 
 // include source handler file
@@ -134,8 +129,7 @@ if (Context::data('signin_provider_id')) {
             $bounce = new URL($bounce);
         }
         catch (Throwable $th) {
-            Security::flag('potentially malicious bounce URL (after signin)');
-            ExceptionLog::log($th);
+            Context::sentry()->signal('bounce_manipulation', Severity::Malicious);
             $bounce = null;
         }
     }
@@ -148,23 +142,6 @@ if (Context::data('signin_provider_id')) {
     // redirect to bounce target. Note that it uses the response->redirect()
     // method directly, because all this happens in a try/catch block and the
     // RedirectException would just get logged
-    if ($bounce) {
-        Context::response()->redirect((string) $bounce->__toString(), targetFrame: '_top');
-        Cookies::unset('ui', 'auth_bounce');
-        return;
-    }
-
-    // if we get here, something went wrong
-    ExceptionLog::log(
-        new Exception(
-            "Sign-in handler failed to redirect to bounce target",
-            [
-                'bounce' => $bounce,
-            ],
-        ),
-    );
-    Notifications::printNoticeHTML(sprintf(
-        "Sign-in successful, but failed to redirect to bounce target. Please <a href=\"%s\">click here</a> to continue.",
-        $bounce ?: new URL('/')
-    ));
+    Context::response()->redirect((string) $bounce->__toString(), targetFrame: '_top');
+    Cookies::unset('ui', 'auth_bounce');
 }

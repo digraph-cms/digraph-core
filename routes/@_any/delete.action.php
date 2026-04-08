@@ -25,7 +25,6 @@ echo (new CallbackLink(
             new URL('_delete.html?csrf=' . Cookies::csrfToken('delete_' . Context::pageUUID())),
         );
     },
-    ['button--danger'],
 ))
     ->addChild('Delete now')
     ->addClass('button button--danger');

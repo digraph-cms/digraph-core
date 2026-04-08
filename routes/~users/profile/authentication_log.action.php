@@ -4,7 +4,6 @@
 use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
 use DigraphCMS\HTTP\HttpError;
-use DigraphCMS\Security\Security;
 use DigraphCMS\Session\Session;
 use DigraphCMS\Spreadsheets\CellWriters\DateTimeCell;
 use DigraphCMS\Spreadsheets\CellWriters\LongTextCell;
@@ -15,10 +14,9 @@ use DigraphCMS\UI\Pagination\ColumnHeader;
 use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\Users\Users;
 
-Security::requireSecurityCheck();
-
 $user = Users::get(Context::arg_string('id', true)) ?? Users::current();
-if (!$user) throw new HttpError(404);
+if (!$user)
+    throw new HttpError(404);
 
 $query = DB::query()
     ->from('session')
@@ -48,7 +46,7 @@ $table = new PaginatedTable(
         new ColumnDateFilteringHeader('Expiration', 'session.expires'),
         new ColumnDateFilteringHeader('Deauthorized', 'session_expiration.date'),
         new ColumnHeader('Deauthorization reason'),
-    ]
+    ],
 );
 $table->paginator()->perPage(10);
 
@@ -75,7 +73,7 @@ $table->download(
         'Expiration',
         'Deauthorized',
         'Deauthorization reason',
-    ]
+    ],
 );
 
 echo $table;

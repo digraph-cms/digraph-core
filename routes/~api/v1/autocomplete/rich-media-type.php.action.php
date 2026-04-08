@@ -17,9 +17,9 @@ $query = array_filter(
 $cards = [];
 foreach (Config::get('rich_media_types') as $name => $class) {
     $cards[] = [
-        'html' => '<div class="title">' . (new $class)->icon() . ' ' . $class::className() . '</div><div class="meta">' . $class::description() . '</div>',
+        'html'  => '<div class="title">' . (new $class)->icon() . ' ' . $class::className() . '</div><div class="meta">' . $class::description() . '</div>',
         'value' => $name,
-        'class' => 'rich-media-type'
+        'class' => 'rich-media-type',
     ];
 }
 
@@ -59,4 +59,4 @@ else {
 }
 
 // echo results
-echo json_encode(array_values($cards));
+echo json_encode($cards);

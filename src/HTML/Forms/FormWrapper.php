@@ -22,8 +22,6 @@ class FormWrapper extends Tag
 
     protected FORM|null $form = null;
 
-    protected bool $captcha = true;
-
     protected bool $displayChildren = true;
 
     /** @var callable[] */
@@ -50,28 +48,6 @@ class FormWrapper extends Tag
             ?? 'form-' . self::$counter++ . '-' . crc32(Context::url()->path())
         );
         $this->addClass('form-wrapper');
-    }
-
-    /**
-     * Set whether CAPTCHA verification is required for this form. Note that
-     * this will not necessarily show a CAPTCHA if the user is signed in or has
-     * already completed a CAPTCHA in this session.
-     * @param bool $captcha 
-     * @return static 
-     */
-    public function setCaptcha(bool $captcha): static
-    {
-        $this->captcha = $captcha;
-        return $this;
-    }
-
-    /**
-     * Whether or not CAPTCHA verifiation is required for this form.
-     * @return bool 
-     */
-    public function captcha(): bool
-    {
-        return $this->captcha;
     }
 
     /**
@@ -108,9 +84,6 @@ class FormWrapper extends Tag
 
     public function submitted(): bool
     {
-        if ($this->captcha() && Security::flagged()) {
-            return false;
-        }
         return $this->token()->submitted();
     }
 
@@ -258,9 +231,6 @@ class FormWrapper extends Tag
 
     public function toString(): string
     {
-        // require security check if requested
-        if ($this->captcha())
-            Security::requireSecurityCheck();
         // recursively set form on children
         $this->setChildrenForms($this->children());
         // call callbacks when printed

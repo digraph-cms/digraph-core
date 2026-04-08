@@ -8,7 +8,8 @@ use DigraphCMS\URL\URLs;
 use DigraphCMS\Users\Users;
 
 $user = Users::get(Context::arg_string('id', true)) ?? Users::current();
-if (!$user) throw new HttpError(404);
+if (!$user)
+    throw new HttpError(404);
 
 echo "<h1>User profile: " . $user->name() . "</h1>";
 
@@ -25,10 +26,10 @@ foreach ($tabs as $file) {
             URLs::pathToName(basename($file)),
             removeWords: true,
             strToLower: true,
-            separator: '_'
+            separator: '_',
         ),
         URLs::pathToName(basename($file)),
-        function () use ($file, $user) {
+        function () use ($file) {
             include $file;
         }
     );

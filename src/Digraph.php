@@ -16,14 +16,17 @@ use DigraphCMS\HTTP\Request;
 use DigraphCMS\HTTP\RequestHeaders;
 use DigraphCMS\HTTP\Response;
 use DigraphCMS\Search\Search;
-use DigraphCMS\Security\Security;
 use DigraphCMS\Session\Session;
 use DigraphCMS\UI\Templates;
 use DigraphCMS\UI\Theme;
 use DigraphCMS\URL\Redirects;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Permissions;
+use Joby\Smol\Sentry\BannedException;
+use Joby\Smol\Sentry\ChallengedException;
+use Joby\Smol\Sentry\Severity;
 use Mimey\MimeTypes;
+use RuntimeException;
 use Throwable;
 
 abstract class Digraph
@@ -45,34 +48,6 @@ abstract class Digraph
     const LONGUUIDPATTERN = '0000000000000000';
 
     /**
-     * Broadly-useful serialization function that can serialize many objects and
-     * closures, unlike PHP's built-in serialization.
-     *
-     * @param mixed $value
-     *
-     * @return string
-     * @deprecated Use Serializer::serialize() instead
-     */
-    public static function serialize(mixed $value): string
-    {
-        return Serializer::serialize($value);
-    }
-
-    /**
-     * DANGER ZONE. Can evaluate arbitrary code. Should only be passed things
-     * that were definitely created using Digraph::serialize();
-     *
-     * @param string $value
-     *
-     * @return mixed
-     * @deprecated Use Serializer::unserialize() instead
-     */
-    public static function unserialize(string $value): mixed
-    {
-        return Serializer::unserialize($value);
-    }
-
-    /**
      * Generate a response from an automatically-loaded request and render it.
      * In many cases once your config and database are configured calling this
      * is all that's necessary.
@@ -87,17 +62,34 @@ abstract class Digraph
             header('Content-Type: ' . static::inferMime());
             header('Content-Disposition: filename="' . static::inferFilename() . '"');
             Context::response()->renderContent();
-        } // handle HttpError exceptions somewhat gracefully
+        }
+        catch (BannedException $e) {
+            static::buildBannedResponse();
+            header('Content-Type: ' . static::inferMime());
+            header('Content-Disposition: filename="' . static::inferFilename() . '"');
+            Context::response()->renderContent();
+        }
+        catch (ChallengedException $e) {
+            static::buildChallengedResponse();
+            header('Content-Type: ' . static::inferMime());
+            header('Content-Disposition: filename="' . static::inferFilename() . '"');
+            Context::response()->renderContent();
+        }
+        // handle HttpError exceptions somewhat gracefully
         catch (HttpError $error) {
-            if ($error->status() >= 500 || $error->status() == 400) {
-                Security::flag('Suspicious error');
+            if ($error->status() >= 500) {
+                Context::sentry()->signal('server_error', Severity::Suspicious);
+                ExceptionLog::log($error);
+            }
+            if ($error->status() == 400) {
+                Context::sentry()->signal('access_denied', Severity::Suspicious);
                 ExceptionLog::log($error);
             }
             http_response_code($error->status());
             echo Templates::fallbackError($error);
         } // last resort error message
         catch (Throwable $th) {
-            Security::flag('Unhandled exception');
+            Context::sentry()->signal('server_error', Severity::Suspicious);
             ExceptionLog::log($th);
             http_response_code(500);
             echo Templates::fallbackError($th);
@@ -244,10 +236,8 @@ abstract class Digraph
     /**
      * Get the current actual request as a Request object, which will contain
      * the URL, method, and request headers.
-     *
-     * @return Request
      */
-    public static function actualRequest(): Request
+    protected static function actualRequest(): Request
     {
         return new Request(
             static::actualUrl(),
@@ -257,26 +247,35 @@ abstract class Digraph
         );
     }
 
-    public static function makeResponse(Request $request): void
+    protected static function makeResponse(Request $request): void
     {
+        // check if the request URL is suspicious/dangerous
+        // short-circuit immediately if Inspector/Sentry throws
+        try {
+            Context::inspector()->inspect();
+            Context::sentry()->resolve();
+        }
+        catch (BannedException $e) {
+            static::buildBannedResponse();
+            return;
+        }
+        catch (ChallengedException $e) {
+            static::buildChallengedResponse();
+            return;
+        }
+        catch (Throwable $e) {
+            Context::sentry()->signal('server_error', Severity::Suspicious);
+            static::buildErrorContent(500, "Unhandled error")
+                ?: throw new RuntimeException('Error building error content', 0, $e);
+            return;
+        }
+        // normal processing begins
         ob_start();
         $request->url()->normalize();
         Context::begin();
         Context::url($request->url());
         Context::request($request);
         Context::response(new Response());
-        // check if the request URL is suspicious/dangerous
-        if (Security::dangerousUrl($request->url())) {
-            Security::flag('Dangerous URL');
-            static::buildBadRequestResponse();
-            return;
-        }
-        // check security system for bans on this IP address
-        // if there is a ban, build the response entirely here and return immediately to minimize code execution
-        if (Security::banned()) {
-            static::buildBannedResponse();
-            return;
-        }
         // check if there are any redirects for the request URL and bounce if necessary
         if ($destination = Redirects::destination($request->url())) {
             Context::response()->redirect($destination, true, true);
@@ -376,6 +375,14 @@ abstract class Digraph
                 Templates::wrapResponse(Context::response());
             }
         }
+        catch (BannedException $e) {
+            static::buildBannedResponse();
+            return;
+        }
+        catch (ChallengedException $e) {
+            static::buildChallengedResponse();
+            return;
+        }
         catch (DBConnectionException $ex) {
             ExceptionLog::log($ex);
             // generate a fallback error page for DB connection errors, we use the fallback template because a
@@ -401,6 +408,14 @@ abstract class Digraph
                 // rethrow error
                 throw $th;
             }
+            catch (BannedException $e) {
+                static::buildBannedResponse();
+                return;
+            }
+            catch (ChallengedException $e) {
+                static::buildChallengedResponse();
+                return;
+            }
             catch (RedirectException $r) {
                 // RedirectExceptions are used to allow exception handling that becomes a redirect
                 Context::response()->redirect(
@@ -413,8 +428,12 @@ abstract class Digraph
             catch (HttpError $error) {
                 // generate exception-handling page
                 try {
-                    if ($error->status() >= 500 || $error->status() == 400) {
-                        Security::flag('Suspicious error');
+                    if ($error->status() >= 500) {
+                        Context::sentry()->signal('server_error', Severity::Suspicious);
+                        ExceptionLog::log($error);
+                    }
+                    if ($error->status() == 400) {
+                        Context::sentry()->signal('access_denied', Severity::Suspicious);
                         ExceptionLog::log($error);
                     }
                     static::buildErrorContent($error->status(), $error->getMessage());
@@ -435,7 +454,7 @@ abstract class Digraph
                     // generate a fallback exception handling error page
                     if (!Dispatcher::firstValue('onException_' . substr(get_class($th), (strrpos(get_class($th), '\\') ?: -1) + 1), [$th])) {
                         if (!Dispatcher::firstValue('onException', [$th])) {
-                            Security::flag('Unhandled exception');
+                            Context::sentry()->signal('server_error', Severity::Suspicious);
                             ExceptionLog::log($th);
                             static::buildErrorContent(500.1);
                         }
@@ -482,37 +501,17 @@ abstract class Digraph
 
     protected static function buildBannedResponse(): void
     {
-        $window = (int) Config::get('security.ip_bans.window');
-        $duration = $window;
-        $duration_string = '';
-        if ($duration > 3600) {
-            $hours = floor($duration / 3600);
-            $duration_string .= $hours . ' hour';
-            if ($hours > 1)
-                $duration_string .= 's';
-            $duration -= $hours * 3600;
-        }
-        if ($duration > 60) {
-            $minutes = floor($duration / 60);
-            $duration_string .= ($duration_string ? ', ' : '') . $minutes . ' minute';
-            if ($minutes > 1)
-                $duration_string .= 's';
-            $duration -= $minutes * 60;
-        }
-        if ($duration > 0) {
-            $seconds = $duration;
-            $duration_string .= ($duration_string ? ', ' : '') . $seconds . ' second';
-            if ($seconds > 1)
-                $duration_string .= 's';
-        }
-        Context::response()->status(429);
-        Context::response()->headers()->set('Retry-After', $window);
+        Context::response()->status(403);
         Context::response()->filename('banned.txt');
-        Context::response()->content(sprintf(
-            'Your IP address %s has been temporarily banned. Please try again in %s.',
-            $_SERVER['REMOTE_ADDR'],
-            $duration_string,
-        ));
+        Context::response()->content('Your IP address has been temporarily banned. Please try again later.');
+    }
+
+    protected static function buildChallengedResponse(): void
+    {
+        // TODO: make this do the cookie round trip thing
+        Context::response()->status(403);
+        Context::response()->filename('challenged.txt');
+        Context::response()->content('Your IP address has been flagged for a bot challenge. Please try again later.');
     }
 
     protected static function buildBadRequestResponse(): void

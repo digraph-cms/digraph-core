@@ -10,6 +10,8 @@ use DigraphCMS\Session\Cookies;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\Users\OAuth2UserSource;
 use DigraphCMS\Users\Users;
+use Joby\Smol\Sentry\Severity;
+use League\OAuth2\Client\Token\AccessToken;
 
 /** @var OAuth2UserSource */
 $source = Users::source('oauth2');
@@ -35,7 +37,7 @@ elseif (!Context::arg_string('code', true)) {
 }
 elseif (!Context::arg_string('state', true) || Context::arg_string('state', true) !== Cookies::get('csrf', 'oauth2state')) {
     // State is invalid, possible CSRF attack
-    Security::flag('Invalid OAuth state');
+    Context::sentry()->signal('login_error', Severity::Suspicious);
     ExceptionLog::log(
         new Exception('Invalid OAuth state', [
             'state' => Context::arg_string('state', true),
@@ -60,6 +62,10 @@ $accessToken = $provider->getAccessToken('authorization_code', [
     'code' => Context::arg_string('code'),
 ]);
 Cookies::unset('csrf', 'oauth2state');
+
+// ensure type of access token
+if (!($accessToken instanceof AccessToken))
+    throw new RuntimeException("Access token is wrong type");
 
 // get user from provider and save ID into Context
 $resourceOwner = $provider->getResourceOwner($accessToken);

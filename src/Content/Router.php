@@ -5,8 +5,8 @@ namespace DigraphCMS\Content;
 use DigraphCMS\Context;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTTP\HttpError;
-use DigraphCMS\Security\Security;
 use DigraphCMS\URL\URL;
+use Joby\Smol\Sentry\Severity;
 
 // Always add the default system routes directory
 Router::addSource(__DIR__ . '/../../routes');
@@ -32,7 +32,7 @@ class Router
         foreach ($page->routeClasses() as $c) {
             // check for dangerous things in $route
             if (preg_match('/[\*\?\[\]\{\}]|\.\.|\%(?:2e|2f|5c|00)|[\x00-\x1f\x7f]/i', $c)) {
-                Security::flag("Dangerous page actions route");
+                Context::sentry()->signal('path_manipulation', Severity::Malicious);
                 throw new HttpError(400);
             }
             // do search
@@ -68,7 +68,7 @@ class Router
     {
         // check for dangerous things in $route
         if (preg_match('/[\*\?\[\]\{\}]|\.\.|\%(?:2e|2f|5c|00)|[\x00-\x1f\x7f]/i', $route)) {
-            Security::flag("Dangerous static actions route");
+            Context::sentry()->signal('path_manipulation', Severity::Malicious);
             throw new HttpError(400);
         }
         // do routing

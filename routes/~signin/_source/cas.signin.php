@@ -72,7 +72,6 @@ else {
     // USE MOCK CAS USER
     if (!Context::arg_string('_mockcasuser', true)) {
         $form = new FormWrapper('mock-cas-user');
-        $form->setCaptcha(false);
         $username = new Field('Username');
         $username->setRequired(true);
         $form->addChild($username);

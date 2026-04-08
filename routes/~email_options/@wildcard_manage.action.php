@@ -3,13 +3,10 @@
 use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\Email\Emails;
-use DigraphCMS\Security\Security;
 use DigraphCMS\UI\Breadcrumb;
 use DigraphCMS\UI\ToggleButton;
 use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\Users;
-
-Security::requireSecurityCheck();
 
 Breadcrumb::setTopName('Manage email preferences');
 
@@ -23,11 +20,12 @@ if ($email = Emails::get(Context::url()->actionSuffix())) {
     }
     $addresses[] = $email->to();
     $usr = $email->toUser();
-} 
+}
 // or if they're signed in, use their account email(s)
 elseif ($user = Users::current()) {
     $addresses = $user->emails();
-} else {
+}
+else {
     Permissions::requireAuth();
 }
 
@@ -46,7 +44,7 @@ echo implode('', array_map(
     function ($email) {
         return "<th><code>$email</code></th>";
     },
-    $addresses
+    $addresses,
 ));
 echo "</tr>";
 foreach ($categories as $category) {
@@ -56,16 +54,17 @@ foreach ($categories as $category) {
         ->where('category = ?', [$category])
         ->where(
             '('
-                . implode(' OR ', array_map(
-                    function ($address) {
-                        return "`to` = ?";
-                    },
-                    $addresses
-                ))
-                . ')',
-            $addresses
+            . implode(' OR ', array_map(
+                function ($address) {
+                    return "`to` = ?";
+                },
+                $addresses,
+            ))
+            . ')',
+            $addresses,
         )->count();
-    if (!$count) continue;
+    if (!$count)
+        continue;
     echo "<tr>";
     // email type information
     echo "<td>";

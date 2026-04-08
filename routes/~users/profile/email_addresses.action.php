@@ -6,8 +6,6 @@ use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTML\Forms\INPUT;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\HTTP\RefreshException;
-use DigraphCMS\Security\Security;
-use DigraphCMS\Session\Session;
 use DigraphCMS\UI\CallbackLink;
 use DigraphCMS\UI\Format;
 use DigraphCMS\UI\Notifications;
@@ -17,10 +15,9 @@ use DigraphCMS\UI\Toolbars\ToolbarLink;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
 
-Security::requireSecurityCheck();
-
 $user = Users::get(Context::arg_string('id', true)) ?? Users::current();
-if (!$user) throw new HttpError(404, "User not found");
+if (!$user)
+    throw new HttpError(404, "User not found");
 
 echo "<h1>Manage email addresses</h1>";
 
@@ -36,19 +33,20 @@ echo new PaginatedTable(
                 break;
             }
         }
-        if ($i === null) return [];
+        if ($i === null)
+            return [];
         return [
             $row['address']
-                . ($row['comment'] ? '<div><small>' . $row['comment'] . '</small></div>' : ''),
+            . ($row['comment'] ? '<div><small>' . $row['comment'] . '</small></div>' : ''),
             statusCell($user, $i, $row),
-            controlsCell($user, $i, $row)
+            controlsCell($user, $i, $row),
         ];
     },
     [
         new ColumnHeader('Email'),
         new ColumnHeader('Status'),
-        new ColumnHeader('')
-    ]
+        new ColumnHeader(''),
+    ],
 );
 
 $address = (new Field('Add email', (new INPUT)->setAttribute('type', 'email')))
@@ -101,9 +99,11 @@ function statusCell(User $user, int $i, array $row): string
                 ->addChild('Resend verification email');
             $out .= '</small></div>';
         }
-    } elseif (@$row['primary']) {
+    }
+    elseif (@$row['primary']) {
         $out .= "<div class='text-cue--safe'>Primary, Verified</div>";
-    } else {
+    }
+    else {
         $out .= "<div class='text-cue--safe'>Verified</div>";
     }
     return $out;

@@ -14,12 +14,12 @@ use DigraphCMS\URL\URL;
 Context::response()->template('chromeless.php');
 
 $frame = Context::arg_string('frame');
-if (preg_match('/[^a-z0-9\-_]/i', $frame)) ;
+if (preg_match('/[^a-z0-9\-_]/i', $frame))
+    ;
 echo '<div id="' . $frame . '">';
 
 // fancy autocomplete search form
 $form = (new FormWrapper())
-    ->setCaptcha(false)
     ->addClass('autoform')
     ->setID($frame . '_adder');
 $form->button()->setText('Add');
@@ -39,16 +39,17 @@ if ($form->ready()) {
             '/richmedia/editor/?add=%s&frame=%s&parent=%s',
             $adder->value(),
             Context::arg_string('frame'),
-            Context::arg_string('uuid')
+            Context::arg_string('uuid'),
         )),
-        Digraph::uuid()
+        Digraph::uuid(),
     );
 }
 
 // display list
 $media = RichMedia::select(Context::arg_string('uuid'))
     ->order('updated DESC');
-if (!$media->count()) echo '<p><em>No existing rich media</em></p>';
+if (!$media->count())
+    echo '<p><em>No existing rich media</em></p>';
 else {
     $table = new PaginatedTable(
         $media,
@@ -60,19 +61,19 @@ else {
             return [
                 $main,
                 $media->hasTuner()
-                    ? (new ToolbarLink('Tune embed', 'tune', null, null))
+                ? (new ToolbarLink('Tune embed', 'tune', null, null))
                     ->addClass('toolbar__button--compact-tip')
                     ->setAttribute('onclick', sprintf(
                         'Digraph.popup("%s")',
-                        new URL('/richmedia/tune/?frame=' . Context::arg_string('frame') . '&uuid=' . $media->uuid())
+                        new URL('/richmedia/tune/?frame=' . Context::arg_string('frame') . '&uuid=' . $media->uuid()),
                     ))
-                    : '',
+                : '',
                 (new ToolbarLink('Edit', 'edit', null, null))
                     ->addClass('toolbar__button--compact-tip')
                     ->setAttribute('onclick', sprintf(
                         'Digraph.popup("%s")',
-                        new URL('/richmedia/editor/?frame=' . Context::arg_string('frame') . '&uuid=' . $media->uuid())
-                    ))
+                        new URL('/richmedia/editor/?frame=' . Context::arg_string('frame') . '&uuid=' . $media->uuid()),
+                    )),
             ];
         },
     );

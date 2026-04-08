@@ -2,17 +2,13 @@
 <?php
 
 use DigraphCMS\Context;
-use DigraphCMS\ExceptionLog;
 use DigraphCMS\HTTP\RedirectException;
-use DigraphCMS\Security\Security;
 use DigraphCMS\Session\Cookies;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\Templates;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Users;
-
-// require captcha
-Security::requireSecurityCheck(false);
+use Joby\Smol\Sentry\Severity;
 
 // require the necessary cookies
 Cookies::required(['system', 'ui', 'auth', 'csrf']);
@@ -26,8 +22,7 @@ if ($bounce) {
     }
     catch (Throwable $th) {
         Cookies::unset('ui', 'auth_bounce');
-        Security::flag('potentially malicious bounce URL');
-        ExceptionLog::log($th);
+        Context::sentry()->signal('bounce_manipulation', Severity::Malicious);
         $bounce = null;
     }
     $url = Context::url();
@@ -36,7 +31,7 @@ if ($bounce) {
 }
 
 // handle single signin option by bouncing directly to it
-$urls = Users::allSigninURLs(Context::arg_string('_bounce', true));
+$urls = Users::allSigninURLs();
 if (count($urls) == 1 && !Context::arg_bool('_noredirect', true)) {
     Context::response()->redirect(reset($urls));
     return;

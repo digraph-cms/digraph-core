@@ -35,6 +35,11 @@ search:
 sidebar:
   default_state: true
 
+sentry:
+  db_file: ${paths.storage}/sentry.sqlite
+  abuseipdb_key: null
+  abuseipdb_daily_refreshes: 500
+
 cron:
   route_enabled: false
   time_limit: 1

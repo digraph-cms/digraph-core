@@ -8,10 +8,13 @@ use DigraphCMS\HTTP\RedirectException;
 
 class StringSearchFilter extends FormWrapper implements FilterToolInterface
 {
+
     /** @var PaginatedSection */
     protected $section;
+
     /** @var string */
     protected $column;
+
     /** @var INPUT */
     protected $input;
 
@@ -20,13 +23,12 @@ class StringSearchFilter extends FormWrapper implements FilterToolInterface
         parent::__construct();
         $this->column = $column;
         $this->input = new INPUT('Search');
-        $this->setCaptcha(false);
         $this->addChild($this->input);
         $this->button()->setText('Search');
         $this->addClass('inline-form');
         $this->addCallback(function () {
             throw new RedirectException(
-                $this->section->url($this->getFilterID(), ['q' => $this->input->value()])
+                $this->section->url($this->getFilterID(), ['q' => $this->input->value()]),
             );
         });
     }
@@ -37,7 +39,7 @@ class StringSearchFilter extends FormWrapper implements FilterToolInterface
         if ($this->input->default()) {
             $children[] = sprintf(
                 '<a href="%s" class="button button--warning button--inverted" data-target="_frame">Clear</a>',
-                $this->section->url($this->getFilterID(), null)
+                $this->section->url($this->getFilterID(), null),
             );
         }
         return $children;
@@ -54,10 +56,10 @@ class StringSearchFilter extends FormWrapper implements FilterToolInterface
             function (string $word): array {
                 return [
                     $this->column,
-                    $word
+                    $word,
                 ];
             },
-            $this->getQueryTerms()
+            $this->getQueryTerms(),
         );
         return $out;
     }
@@ -99,4 +101,5 @@ class StringSearchFilter extends FormWrapper implements FilterToolInterface
     {
         return 's' . crc32($this->id());
     }
+
 }

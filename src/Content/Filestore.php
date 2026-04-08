@@ -242,7 +242,7 @@ class Filestore
         }
         $data = json_decode($result['meta'], true, 512, JSON_THROW_ON_ERROR);
         if ($result['permissions']) {
-            $permissions = Digraph::unserialize($result['permissions']);
+            $permissions = Serializer::unserialize($result['permissions']);
             if (!is_callable($permissions)) {
                 ExceptionLog::log(new Exception('Error unserializing permissions for file ' . $result['uuid']));
                 $permissions = fn() => false;
