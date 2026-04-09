@@ -13,12 +13,13 @@ use DigraphCMS\URL\WaybackMachine;
 
 class CoreCronSubscriber
 {
+
     public static function cronJob_biweekly()
     {
         // run filestore indexing
         new DeferredJob(
             [Filestore::class, 'runSearchIndexing'],
-            'core_biweekly'
+            'core_biweekly',
         );
     }
 
@@ -34,7 +35,7 @@ class CoreCronSubscriber
                     ->execute();
                 return "Expired $count deferred execution jobs";
             },
-            'core_maintenance'
+            'core_maintenance',
         );
         // expire cron errors
         new DeferredJob(
@@ -42,7 +43,7 @@ class CoreCronSubscriber
                 /** @var int */
                 $count = DB::query()
                     ->update('cron', [
-                        'error_time' => null,
+                        'error_time'    => null,
                         'error_message' => null,
                     ])
                     ->where('error_time is not null')
@@ -50,7 +51,7 @@ class CoreCronSubscriber
                     ->execute();
                 return "Expired $count cron error messages";
             },
-            'core_maintenance'
+            'core_maintenance',
         );
         // expire search index records
         new DeferredJob(
@@ -61,7 +62,7 @@ class CoreCronSubscriber
                     ->execute();
                 return "Expired $count search index records";
             },
-            'core_maintenance'
+            'core_maintenance',
         );
     }
 
@@ -78,7 +79,7 @@ class CoreCronSubscriber
                             time() - Config::get('wayback.check_ttl'),
                             'down',
                             time() - Config::get('wayback.check_notfound_ttl')
-                        ]
+                        ],
                     )
                     ->order('updated ASC');
                 while ($statusData = $records->fetch()) {
@@ -91,7 +92,8 @@ class CoreCronSubscriber
                             $statusData->setValue('ok');
                             $statusData->update();
                             return $statusData->data()['url'] . ' is up';
-                        } else {
+                        }
+                        else {
                             $statusData->setValue('down');
                             $statusData->update();
                             return $statusData->data()['url'] . ' is down';
@@ -100,7 +102,7 @@ class CoreCronSubscriber
                 }
                 return 'Prepared jobs to check ' . $records->count() . ' URLs';
             },
-            'wayback_status'
+            'wayback_status',
         );
         // refresh wayback machine API call data
         new DeferredJob(
@@ -116,7 +118,7 @@ class CoreCronSubscriber
                             time() - Config::get('wayback.api_error_ttl'),
                             'notfound',
                             time() - Config::get('wayback.api_notfound_ttl')
-                        ]
+                        ],
                     )
                     ->order('updated ASC');
                 while ($apiData = $records->fetch()) {
@@ -148,22 +150,22 @@ class CoreCronSubscriber
                 }
                 return 'Prepared jobs to update ' . $records->count() . ' API calls';
             },
-            'wayback_api'
+            'wayback_api',
         );
     }
 
     public static function cronJob_maintenance_heavy()
     {
-        // expire old security flags
+        // expire old bot challenges
         new DeferredJob(
             function () {
-                Datastore::expire(
-                    'security_flags',
-                    null,
-                    strtotime('-6 months')
-                );
+                $count = DB::query()
+                    ->delete('security_captcha_token')
+                    ->where('expires <= ?', time() - 600)
+                    ->execute();
+                return "Deleted $count old security captcha tokens";
             },
-            'core_maintenance_heavy'
+            'core_maintenance_heavy',
         );
         // expire old scheduled job hashes after a month
         new DeferredJob(
@@ -171,11 +173,11 @@ class CoreCronSubscriber
                 Datastore::expire(
                     'system',
                     'scheduled_jobs',
-                    strtotime('-1 month')
+                    strtotime('-1 month'),
                 );
                 return "Expired old scheduled job hashes";
             },
-            'core_maintenance_heavy'
+            'core_maintenance_heavy',
         );
         // expire old exception logs after a month
         new DeferredJob(
@@ -195,14 +197,14 @@ class CoreCronSubscriber
                 }
                 return "Expired $count old exception logs";
             },
-            'core_maintenance_heavy'
+            'core_maintenance_heavy',
         );
         // expire old wayback data
         new DeferredJob(
             function () {
                 WaybackMachine::cleanup();
             },
-            'core_maintenance_heavy'
+            'core_maintenance_heavy',
         );
         // do periodic maintenance on all pages
         new DeferredJob(
@@ -217,27 +219,29 @@ class CoreCronSubscriber
                     new RecursivePageJob(
                         $uuid,
                         function (DeferredJob $job, AbstractPage $page) {
-                            $count = $page->prepareCronJobs();
-                            return sprintf("Prepared %s cron jobs for %s (%s)", $count, $page->name(), $page->uuid());
-                        },
+                        $count = $page->prepareCronJobs();
+                        return sprintf("Prepared %s cron jobs for %s (%s)", $count, $page->name(), $page->uuid());
+                    },
                         false,
-                        $job->group()
+                        $job->group(),
                     );
                     // recursive job to refresh all slugs
                     new RecursivePageJob(
                         $uuid,
                         function (DeferredJob $job, AbstractPage $page) {
-                            if (!$page->slugPattern()) return $page->uuid() . ": No slug pattern";
-                            Slugs::setFromPattern($page, $page->slugPattern(), $page::DEFAULT_UNIQUE_SLUG);
-                            return $page->uuid() . " slug set to " . $page->slug();
-                        },
+                        if (!$page->slugPattern())
+                            return $page->uuid() . ": No slug pattern";
+                        Slugs::setFromPattern($page, $page->slugPattern(), $page::DEFAULT_UNIQUE_SLUG);
+                        return $page->uuid() . " slug set to " . $page->slug();
+                    },
                         false,
-                        $job->group()
+                        $job->group(),
                     );
                 }
                 return "Spawned page heavy maintenance jobs";
             },
-            'core_maintenance_heavy'
+            'core_maintenance_heavy',
         );
     }
+
 }

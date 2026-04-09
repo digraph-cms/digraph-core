@@ -7,6 +7,7 @@ use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Content\Pages;
 use DigraphCMS\Content\Router;
 use DigraphCMS\Cron\DeferredJob;
+use DigraphCMS\DB\DB;
 use DigraphCMS\DB\DBConnectionException;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTTP\AccessDeniedError;
@@ -501,17 +502,76 @@ abstract class Digraph
 
     protected static function buildBannedResponse(): void
     {
-        Context::response()->status(403);
+        Context::response(new Response(403));
         Context::response()->filename('banned.txt');
         Context::response()->content('Your IP address has been temporarily banned. Please try again later.');
     }
 
     protected static function buildChallengedResponse(): void
     {
-        // TODO: make this do the cookie round trip thing
-        Context::response()->status(403);
+        // response content is always the same
+        Context::response(new Response());
         Context::response()->filename('challenged.txt');
-        Context::response()->content('Your IP address has been flagged for a bot challenge. Please try again later.');
+        Context::response()->content('Your IP address has been flagged for a bot challenge.');
+        Context::response()->redirect(static::actualUrl(), false, false);
+        // if there is no cookie, set one
+        // tokens expire very quickly, one minute
+        if (!isset($_COOKIE['dgcbt'])) {
+            $new_token = bin2hex(random_bytes(32));
+            DB::query()->insertInto(
+                'security_captcha_token',
+                [
+                    'token'   => $new_token,
+                    'expires' => time() + 60,
+                ],
+            )->execute();
+            setcookie(
+                'dgcbt',
+                $new_token,
+                [
+                    'expires'  => time() + 60,
+                    'httponly' => true,
+                    'samesite' => 'Lax',
+                ],
+            );
+        }
+        // otherwise try to verify token
+        else {
+            $query = DB::query()
+                ->from('security_captcha_token')
+                ->where('token', $_COOKIE['dgcbt'])
+                ->where('expires >= ?', time());
+            if ($query->count() > 0) {
+                // we passed the challenge, so unset the cookie and refresh without flagging
+                unset($_COOKIE['dgcbt']);
+                Context::sentry()->release();
+                return;
+            }
+            else {
+                // there was a cookie but it was invalid, unset it
+                unset($_COOKIE['dgcbt']);
+                setcookie(
+                    'dgcbt',
+                    "",
+                    [
+                        'expires'  => 1,
+                        'httponly' => true,
+                        'samesite' => 'Lax',
+                    ],
+                );
+            }
+        }
+        // if we got here we need to refresh, and count it as a suspicious challenge fail
+        try {
+            Context::sentry()->signal('challenge_fail', Severity::Suspicious);
+        }
+        catch (ChallengedException $e) {
+            // do nothing, we're already in the middle of a challenge
+        }
+        catch (BannedException $th) {
+            // switch to banned response
+            static::buildBannedResponse();
+        }
     }
 
     protected static function buildBadRequestResponse(): void
