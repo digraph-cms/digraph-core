@@ -28,8 +28,8 @@ abstract class Config implements InitializedClassInterface
         return $cache ??
             $cache = crc32(serialize([
                 $_SERVER['DOCUMENT_ROOT'],
-                $_SERVER['SERVER_PORT'],
                 $_SERVER['SERVER_NAME'],
+                array_key_exists('SERVER_PORT', $_SERVER) ? $_SERVER['SERVER_PORT'] : null,
             ]));
     }
 
