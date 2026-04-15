@@ -16,13 +16,13 @@ class Router
 
     protected static $sources = [];
 
+    /**
+     * Check for potentially dangerous things in the route
+     */
     protected static function securityCheck(string $route): void
     {
-        // check for dangerous things in $route
-        if (preg_match('/[\*\?\[\]\{\}]|\.\.|\%(?:2e|2f|5c|00)|[\x00-\x1f\x7f]/i', $route)) {
+        if (preg_match('/[\*\?\[\]\{\}]|\.\.|\%(?:2e|2f|5c|00)|[\x00-\x1f\x7f]/i', $route))
             Context::sentry()->signal('path_manipulation', Severity::Malicious);
-            throw new HttpError(400);
-        }
     }
 
     /**

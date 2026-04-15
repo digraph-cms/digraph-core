@@ -314,6 +314,7 @@ class Context
     protected static function defaultInspector(): Inspector
     {
         return (new Inspector(static::sentry()))
+            ->addRule('digraph', new SecurityInspector)
             ->addDefaultRules();
     }
 

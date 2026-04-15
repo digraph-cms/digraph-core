@@ -270,27 +270,28 @@ abstract class Digraph
                 ?: throw new RuntimeException('Error building error content', 0, $e);
             return;
         }
-        // normal processing begins
-        ob_start();
-        $request->url()->normalize();
-        Context::begin();
-        Context::url($request->url());
-        Context::request($request);
-        Context::response(new Response());
-        // check if there are any redirects for the request URL and bounce if necessary
-        if ($destination = Redirects::destination($request->url())) {
-            Context::response()->redirect($destination, true, true);
-            return;
-        }
-        // allow URL normalization hooks
-        Context::url(Dispatcher::chainEvents('onNormalizeUrl', $request->url()));
-        // redirect if normalizing changed URL
-        if (Context::url()->__toString() != $request->originalUrl()->__toString()) {
-            Context::response()->redirect($request->url(), true, true);
-            return;
-        }
         // begin full response building process
         try {
+            // normal processing begins
+            ob_start();
+            $request->url()->normalize();
+            Context::begin();
+            Context::url($request->url());
+            Context::request($request);
+            Context::response(new Response());
+            // check if there are any redirects for the request URL and bounce if necessary
+            if ($destination = Redirects::destination($request->url())) {
+                Context::response()->redirect($destination, true, true);
+                return;
+            }
+            // allow URL normalization hooks
+            Context::url(Dispatcher::chainEvents('onNormalizeUrl', $request->url()));
+            // redirect if normalizing changed URL
+            if (Context::url()->__toString() != $request->originalUrl()->__toString()) {
+                Context::response()->redirect($request->url(), true, true);
+                return;
+            }
+            // check permissions
             if (Permissions::url(Context::url()) === false) {
                 throw new AccessDeniedError('');
             }
