@@ -253,8 +253,8 @@ abstract class Digraph
         // check if the request URL is suspicious/dangerous
         // short-circuit immediately if Inspector/Sentry throws
         try {
-            Context::inspector()->inspect();
             Context::sentry()->resolve();
+            Context::inspector()->inspect();
         }
         catch (BannedException $e) {
             static::buildBannedResponse();
