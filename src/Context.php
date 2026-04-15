@@ -4,7 +4,6 @@ namespace DigraphCMS;
 
 use DigraphCMS\Cache\CacheNamespace;
 use DigraphCMS\Content\AbstractPage;
-use DigraphCMS\DB\DB;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\HTTP\Request;
@@ -15,7 +14,7 @@ use Joby\Smol\Sentry\Inspector;
 use Joby\Smol\Sentry\Sentry;
 use Throwable;
 
-abstract class Context
+class Context
 {
 
     /** @var Request|null */
