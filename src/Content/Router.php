@@ -16,6 +16,15 @@ class Router
 
     protected static $sources = [];
 
+    protected static function securityCheck(string $route): void
+    {
+        // check for dangerous things in $route
+        if (preg_match('/[\*\?\[\]\{\}]|\.\.|\%(?:2e|2f|5c|00)|[\x00-\x1f\x7f]/i', $route)) {
+            Context::sentry()->signal('path_manipulation', Severity::Malicious);
+            throw new HttpError(400);
+        }
+    }
+
     /**
      * Get a list of all the actions available for the given page, optionally filtering non-menu
      * actions, which are by default those that begin with an underscore.
@@ -30,11 +39,7 @@ class Router
     {
         $urls = [];
         foreach ($page->routeClasses() as $c) {
-            // check for dangerous things in $route
-            if (preg_match('/[\*\?\[\]\{\}]|\.\.|\%(?:2e|2f|5c|00)|[\x00-\x1f\x7f]/i', $c)) {
-                Context::sentry()->signal('path_manipulation', Severity::Malicious);
-                throw new HttpError(400);
-            }
+            static::securityCheck($c);
             // do search
             foreach (self::search("@$c/*.action.*") as $file) {
                 $action = basename($file);
@@ -66,11 +71,7 @@ class Router
      */
     public static function staticActions(string $route, bool $menuFilter = false): array
     {
-        // check for dangerous things in $route
-        if (preg_match('/[\*\?\[\]\{\}]|\.\.|\%(?:2e|2f|5c|00)|[\x00-\x1f\x7f]/i', $route)) {
-            Context::sentry()->signal('path_manipulation', Severity::Malicious);
-            throw new HttpError(400);
-        }
+        static::securityCheck($route);
         // do routing
         $urls = [];
         foreach (self::search("~$route/*/index.action.*") as $file) {
@@ -204,6 +205,7 @@ class Router
      */
     public static function pageRouteExists(AbstractPage $page, string $action): bool
     {
+        static::securityCheck($action);
         // check if there's an action prefix
         if ($pos = strpos($action, ':')) {
             $action = '@wildcard_' . substr($action, 0, $pos);
@@ -226,6 +228,7 @@ class Router
     public static function staticRoute(string $route, string $action)
     {
         $route = preg_replace('/^~/', '', $route);
+        static::securityCheck($route);
         // try specific route
         $output = self::tryRoute("~$route/$action");
         if (trim($output ?? '')) {
@@ -259,6 +262,7 @@ class Router
     public static function staticRouteExists(string $route, string $action): bool
     {
         $route = preg_replace('/^~/', '', $route);
+        static::securityCheck($route);
         // check if there's an action prefix
         if ($pos = strpos($action, ':')) {
             $action = '@wildcard_' . substr($action, 0, $pos);
@@ -278,6 +282,7 @@ class Router
 
     protected static function tryRoute(string $route)
     {
+        static::securityCheck($route);
         foreach (self::$sources as $source) {
             $paths = glob("$source/$route.action.*");
             foreach ($paths as $path) {
