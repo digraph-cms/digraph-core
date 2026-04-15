@@ -12,7 +12,7 @@ class AutocompleteInput extends INPUT
 
     protected            $endpoint, $valueCallback;
 
-    public function __construct(string $id, URL $endpoint, callable|null $valueCallback = null)
+    public function __construct(string|null $id, URL $endpoint, callable|null $valueCallback = null)
     {
         parent::__construct($id);
         $this->valueCallback = $valueCallback;
