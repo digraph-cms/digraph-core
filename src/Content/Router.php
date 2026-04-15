@@ -4,7 +4,6 @@ namespace DigraphCMS\Content;
 
 use DigraphCMS\Context;
 use DigraphCMS\Events\Dispatcher;
-use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\URL\URL;
 use Joby\Smol\Sentry\Severity;
 
