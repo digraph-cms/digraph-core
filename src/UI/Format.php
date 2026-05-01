@@ -15,8 +15,10 @@ Format::_init();
 
 class Format
 {
-    protected static $timezone, $dateFormat, $datetimeFormat, $timeFormat, $dateFormat_thisYear, $datetimeFormat_thisYear, $datetimeFormat_today, $datetimeFormat_yesterday, $datetimeFormat_tomorrow, $dateFormat_today, $dateFormat_yesterday, $dateFormat_tomorrow;
-    protected static $dateFormat_day_of_week, $datetimeFormat_day_of_week, $dateFormat_thisYear_day_of_week, $datetimeFormat_thisYear_day_of_week;
+
+    protected static                                                                                                                                                                                                                             $timezone,                                                                                                                                                                                                                  $dateFormat,                                                                                                                                                                                                     $datetimeFormat,                                                                                                                                                                                    $timeFormat,                                                                                                                                                                       $dateFormat_thisYear,                                                                                                                                                 $datetimeFormat_thisYear,                                                                                                                       $datetimeFormat_today,                                                                                                $datetimeFormat_yesterday,                                                                     $datetimeFormat_tomorrow,                                           $dateFormat_today,                        $dateFormat_yesterday, $dateFormat_tomorrow;
+
+    protected static                                                                                         $dateFormat_day_of_week,                                                                $datetimeFormat_day_of_week,                                   $dateFormat_thisYear_day_of_week, $datetimeFormat_thisYear_day_of_week;
 
     public static function _init()
     {
@@ -49,7 +51,8 @@ class Format
     public function list(iterable $source): string
     {
         $items = [];
-        foreach ($source as $item) $items[] = $item;
+        foreach ($source as $item)
+            $items[] = $item;
         switch (count($items)) {
             case 0:
                 return '{empty list}';
@@ -66,17 +69,21 @@ class Format
     public static function phone(string $phone): string
     {
         $phone = preg_replace('/[^0-9]/', '', $phone);
-        if (strlen($phone) == 7) return sprintf('%s-%s', substr($phone, 0, 3), substr($phone, 3, 4));
-        elseif (strlen($phone) == 10) return sprintf('(%s) %s-%s', substr($phone, 0, 3), substr($phone, 3, 3), substr($phone, 6, 4));
+        if (strlen($phone) == 7)
+            return sprintf('%s-%s', substr($phone, 0, 3), substr($phone, 3, 4));
+        elseif (strlen($phone) == 10)
+            return sprintf('(%s) %s-%s', substr($phone, 0, 3), substr($phone, 3, 3), substr($phone, 6, 4));
         elseif (strlen($phone) >= 11) {
             return sprintf(
                 '+%s (%s) %s-%s',
                 substr($phone, 0, strlen($phone) - 10),
                 substr($phone, -10, 3),
                 substr($phone, -7, 3),
-                substr($phone, -4)
+                substr($phone, -4),
             );
-        } else return $phone;
+        }
+        else
+            return $phone;
     }
 
     /**
@@ -91,15 +98,20 @@ class Format
     {
         if ($items instanceof AbstractMappedSelect || $items instanceof Select) {
             $count = $items->count();
-        } elseif (is_array($items) || is_countable($items)) {
+        }
+        elseif (is_array($items) || is_countable($items)) {
             $count = count($items);
-        } elseif (is_string($items)) {
+        }
+        elseif (is_string($items)) {
             $count = strlen($items);
-        } elseif (is_numeric($items)) {
+        }
+        elseif (is_numeric($items)) {
             $count = $items;
         }
-        if ($count == 1) return '';
-        else return 's';
+        if ($count == 1)
+            return '';
+        else
+            return 's';
     }
 
     /**
@@ -118,8 +130,9 @@ class Format
         $text,
         $length = 100,
         $ending = '...',
-        $exact = false
-    ) {
+        $exact = false,
+    )
+    {
         // if the plain text is shorter than the maximum length, return the whole text
         if (strlen(preg_replace('/<.*?>/', '', $text)) <= $length) {
             return $text;
@@ -135,14 +148,16 @@ class Format
             if (preg_match('/^<(\s*.+?\/\s*|\s*(img|br|input|hr|area|base|basefont|col|frame|isindex|link|meta|param)(\s.+?)?)>$/is', $line_matchings[1])) {
                 // do nothing
                 // if tag is a closing tag
-            } else if (preg_match('/^<\s*\/([^\s]+?)\s*>$/s', $line_matchings[1], $tag_matchings)) {
+            }
+            else if (preg_match('/^<\s*\/([^\s]+?)\s*>$/s', $line_matchings[1], $tag_matchings)) {
                 // delete tag from $open_tags list
                 $pos = array_search($tag_matchings[1], $open_tags);
                 if ($pos !== false) {
                     unset($open_tags[$pos]);
                 }
                 // if tag is an opening tag
-            } else if (preg_match('/^<\s*([^\s>!]+).*?>$/s', $line_matchings[1], $tag_matchings)) {
+            }
+            else if (preg_match('/^<\s*([^\s>!]+).*?>$/s', $line_matchings[1], $tag_matchings)) {
                 // add tag to the beginning of $open_tags list
                 array_unshift($open_tags, strtolower($tag_matchings[1]));
             }
@@ -161,7 +176,8 @@ class Format
                         if ($entity[1] + 1 - $entities_length <= $left) {
                             $left--;
                             $entities_length += strlen($entity[0]);
-                        } else {
+                        }
+                        else {
                             // no more characters left
                             break;
                         }
@@ -170,7 +186,8 @@ class Format
                 $truncate .= substr($line_matchings[2], 0, $left + $entities_length);
                 // maximum lenght is reached, so get off the loop
                 break;
-            } else {
+            }
+            else {
                 $truncate .= $line_matchings[2];
                 $total_length += $content_length;
             }
@@ -208,19 +225,27 @@ class Format
         );
     }
 
-    public static function base64obfuscate(string $string, string $message = 'javascript required to view')
+    public static function base64obfuscate(string $string, string|null $message = 'javascript required to view')
     {
-        return sprintf(
-            '<span class="obfuscated obfuscated--base64"><span class="obfuscated__data">%s</span><span class="obfuscated__message">%s</span></span>',
-            base64_encode($string),
-            $message
-        );
+        if ($message === null)
+            return sprintf(
+                '<span class="obfuscated obfuscated--base64"><span class="obfuscated__data">%s</span></span>',
+                base64_encode($string),
+                $message,
+            );
+        else
+            return sprintf(
+                '<span class="obfuscated obfuscated--base64"><span class="obfuscated__data">%s</span><span class="obfuscated__message">%s</span></span>',
+                base64_encode($string),
+                $message,
+            );
     }
 
     public static function filesize(int $bytes, int $decimals = 1): string
     {
         static $size = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-        if ($bytes == 0) return '0B';
+        if ($bytes == 0)
+            return '0B';
         $factor = floor(log($bytes, 1024));
         return preg_replace("/\.([0-9]*)0+$/", "$1", sprintf("%.{$decimals}f", $bytes / pow(1024, $factor))) . @$size[$factor];
     }
@@ -231,19 +256,26 @@ class Format
         if (!$precise && $date->format('Y') == date('Y')) {
             $day = $date->format('Ydm');
             if ($day == date('Ydm')) {
-                $text = $date->format(static::$dateFormat_today);;
-            } elseif ($day == date('Ydm', strtotime('-1 day'))) {
+                $text = $date->format(static::$dateFormat_today);
+                ;
+            }
+            elseif ($day == date('Ydm', strtotime('-1 day'))) {
                 $text = $date->format(static::$dateFormat_yesterday);
-            } elseif ($day == date('Ydm', strtotime('+1 day'))) {
+            }
+            elseif ($day == date('Ydm', strtotime('+1 day'))) {
                 $text = $date->format(static::$dateFormat_tomorrow);
-            } elseif ($day_of_week) {
+            }
+            elseif ($day_of_week) {
                 $text = $date->format(static::$dateFormat_thisYear_day_of_week);
-            } else {
+            }
+            else {
                 $text = $date->format(static::$dateFormat_thisYear);
             }
-        } elseif ($day_of_week) {
+        }
+        elseif ($day_of_week) {
             $text = $date->format(static::$dateFormat_day_of_week);
-        } else {
+        }
+        else {
             $text = $date->format(static::$dateFormat);
         }
         if (!$textOnly) {
@@ -259,24 +291,31 @@ class Format
             // display noon as the current day, followed by "at noon"
             $text = static::date($date, true, $precise, $day_of_week);
             $text .= ' at noon';
-        } else {
+        }
+        else {
             // display a date with a time
             if (!$precise && $date->format('Y') == date('Y')) {
                 $day = $date->format('Ydm');
                 if ($day == date('Ydm')) {
                     $text = $date->format(static::$datetimeFormat_today);
-                } elseif ($day == date('Ydm', strtotime('-1 day'))) {
+                }
+                elseif ($day == date('Ydm', strtotime('-1 day'))) {
                     $text = $date->format(static::$datetimeFormat_yesterday);
-                } elseif ($day == date('Ydm', strtotime('+1 day'))) {
+                }
+                elseif ($day == date('Ydm', strtotime('+1 day'))) {
                     $text = $date->format(static::$datetimeFormat_tomorrow);
-                } elseif ($day_of_week) {
+                }
+                elseif ($day_of_week) {
                     $text = $date->format(static::$datetimeFormat_thisYear_day_of_week);
-                } else {
+                }
+                else {
                     $text = $date->format(static::$datetimeFormat_thisYear);
                 }
-            } elseif ($day_of_week) {
+            }
+            elseif ($day_of_week) {
                 $text = $date->format(static::$datetimeFormat_day_of_week);
-            } else {
+            }
+            else {
                 $text = $date->format(static::$datetimeFormat);
             }
         }
@@ -291,7 +330,8 @@ class Format
         $date = static::parseDate($date);
         if ($date->format('his') == '120000') {
             $text = 'noon';
-        } else {
+        }
+        else {
             $text = $date->format(static::$timeFormat);
         }
         if (!$textOnly) {
@@ -310,13 +350,16 @@ class Format
         if ($date instanceof DateTime) {
             $date->setTimezone(static::timezone());
             return $date;
-        } elseif (is_int($date) || preg_match('/^[0-9]+$/', $date)) {
+        }
+        elseif (is_int($date) || preg_match('/^[0-9]+$/', $date)) {
             $dt = new DateTime('now', static::timezone());
             $dt->setTimestamp(intval($date));
             return $dt;
-        } elseif (is_string($date)) {
+        }
+        elseif (is_string($date)) {
             return new DateTime($date, static::timezone());
-        } else {
+        }
+        else {
             throw new \Exception("Error parsing date");
         }
     }
@@ -335,23 +378,31 @@ class Format
                 $arr[] = "$k:$v";
             }
             return "{" . implode(',', $arr) . "}";
-        } elseif (is_string($input)) {
+        }
+        elseif (is_string($input)) {
             $input = preg_replace("/[\\\"]/", "\\$0", $input);
             return "\"$input\"";
-        } elseif (is_numeric($input)) {
+        }
+        elseif (is_numeric($input)) {
             return strval($input);
-        } elseif (is_object($input)) {
+        }
+        elseif (is_object($input)) {
             if (method_exists($input, '__toString')) {
                 return static::js_encode_object($input->__toString());
-            } else {
+            }
+            else {
                 throw new \Exception("Can only object encode objects with __toString method");
             }
-        } elseif (is_null($input)) {
+        }
+        elseif (is_null($input)) {
             return 'null';
-        } elseif (!$input) {
+        }
+        elseif (!$input) {
             return 'false';
-        } else {
+        }
+        else {
             return 'true';
         }
     }
+
 }
