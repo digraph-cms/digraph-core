@@ -231,7 +231,6 @@ class Format
             return sprintf(
                 '<span class="obfuscated obfuscated--base64"><span class="obfuscated__data">%s</span></span>',
                 base64_encode($string),
-                $message,
             );
         else
             return sprintf(
