@@ -15,4 +15,11 @@
   >* {
     white-space: normal;
   }
+
+  ul,
+  ol {
+    >br {
+      display: none;
+    }
+  }
 }
