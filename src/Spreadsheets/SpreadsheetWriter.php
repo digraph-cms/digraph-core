@@ -25,16 +25,23 @@ class SpreadsheetWriter
     {
         $tempdir = Config::cachePath() . '/openspout';
         FS::mkdir($tempdir);
-        $this->writer = match ($extension) {
-            'xlsx'  => new \OpenSpout\Writer\XLSX\Writer(
-                new \OpenSpout\Writer\XLSX\Options(tempFolder: $tempdir),
-            ),
-            'ods'   => new \OpenSpout\Writer\ODS\Writer(
-                new \OpenSpout\Writer\ODS\Options(tempFolder: $tempdir),
-            ),
-            'csv'   => new \OpenSpout\Writer\CSV\Writer(),
-            default => throw new InvalidArgumentException("Invalid spreadsheet format, only .xlsx, .ods, and .csv files are supported")
-        };
+        switch ($extension) {
+            case 'xlsx':
+                $options = new \OpenSpout\Writer\XLSX\Options();
+                $options->setTempFolder($tempdir);
+                $this->writer = new \OpenSpout\Writer\XLSX\Writer($options);
+                break;
+            case 'ods':
+                $options = new \OpenSpout\Writer\ODS\Options();
+                $options->setTempFolder($tempdir);
+                $this->writer = new \OpenSpout\Writer\ODS\Writer($options);
+                break;
+            case 'csv':
+                $this->writer = new \OpenSpout\Writer\CSV\Writer();
+                break;
+            default:
+                throw new InvalidArgumentException("Invalid spreadsheet format, only .xlsx, .ods, and .csv files are supported");
+        }
         $this->temp_file = Config::cachePath() . '/spreadsheet_writing/' . uniqid() . '.' . $extension;
         FS::touch($this->temp_file);
         $this->writer->openToFile($this->temp_file);
