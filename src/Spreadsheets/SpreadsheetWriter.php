@@ -8,9 +8,7 @@ use DigraphCMS\Spreadsheets\CellWriters\AbstractCellWriter;
 use InvalidArgumentException;
 use OpenSpout\Common\Entity\Cell;
 use OpenSpout\Common\Entity\Row;
-use OpenSpout\Common\Entity\Style\Style;
 use OpenSpout\Writer\WriterInterface;
-use OpenSpout\Writer\XLSX\Entity\SheetView;
 
 class SpreadsheetWriter
 {
@@ -25,9 +23,15 @@ class SpreadsheetWriter
 
     public function __construct(string $extension = 'xlsx')
     {
+        $tempdir = Config::cachePath() . '/openspout';
+        FS::mkdir($tempdir);
         $this->writer = match ($extension) {
-            'xlsx'  => new \OpenSpout\Writer\XLSX\Writer(),
-            'ods'   => new \OpenSpout\Writer\ODS\Writer(),
+            'xlsx'  => new \OpenSpout\Writer\XLSX\Writer(
+                new \OpenSpout\Writer\XLSX\Options(tempFolder: $tempdir),
+            ),
+            'ods'   => new \OpenSpout\Writer\ODS\Writer(
+                new \OpenSpout\Writer\ODS\Options(tempFolder: $tempdir),
+            ),
             'csv'   => new \OpenSpout\Writer\CSV\Writer(),
             default => throw new InvalidArgumentException("Invalid spreadsheet format, only .xlsx, .ods, and .csv files are supported")
         };
