@@ -430,7 +430,7 @@ class PaginatedSection extends Tag
                 function ($item) {
                     return $this->runCallback($item);
                 },
-                $this->items,
+                iterator_to_array($this->items),
             ));
         }
         // return generated items list
