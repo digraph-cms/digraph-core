@@ -336,7 +336,8 @@ abstract class Digraph
                 Context::page($page);
                 static::buildResponseContent();
             }
-            elseif (count($pages) > 1 || ($pages && $static_exists)) {
+            // note that we know count of pages is at least 1 here
+            elseif (count($pages) > 1 || $static_exists) {
                 // create a multiple options page if multiple pages exist, or if one or more pages pages and a static route exists
                 Context::data('300_pages', $pages);
                 if (Router::staticRouteExists($route, $action)) {
