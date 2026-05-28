@@ -29,7 +29,8 @@ foreach ($tabs as $file) {
             separator: '_',
         ),
         URLs::pathToName(basename($file)),
-        function () use ($file) {
+        // @phpstan-ignore-next-line it does need to be used by the include
+        function () use ($file, $user) {
             include $file;
         }
     );
