@@ -19,7 +19,10 @@ abstract class AbstractCellWriter
 
     public function cell(): Cell
     {
-        return Cell::fromValue($this->value);
+        $cell = Cell::fromValue($this->value);
+        if (!$cell->style)
+            $cell = $cell->withStyle(new Style());
+        return $cell;
     }
 
 }
