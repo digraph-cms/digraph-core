@@ -5,6 +5,7 @@ namespace DigraphCMS\UI;
 use Caxy\HtmlDiff\HtmlDiff;
 use Countable;
 use DateTime;
+use DateTimeInterface;
 use DateTimeZone;
 use DigraphCMS\Cache\Cache;
 use DigraphCMS\Config;
@@ -346,7 +347,8 @@ class Format
 
     public static function parseDate($date): DateTime
     {
-        if ($date instanceof DateTime) {
+        if ($date instanceof DateTimeInterface) {
+            $date = DateTime::createFromInterface($date);
             $date->setTimezone(static::timezone());
             return $date;
         }
