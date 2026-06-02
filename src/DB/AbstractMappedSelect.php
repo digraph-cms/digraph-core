@@ -23,7 +23,7 @@ abstract class AbstractMappedSelect implements Iterator, Countable
     /** @var Select */
     protected $query;
 
-    /** @var \ArrayIterator<int,array<string,mixed>|object>|\PDOStatement */
+    /** @var ArrayIterator<int,array<string,mixed>|object>|PDOStatement */
     protected $iterator;
 
     /** @var bool */
@@ -34,9 +34,9 @@ abstract class AbstractMappedSelect implements Iterator, Countable
 
     /**
      * @param array<string,mixed> $row
-     * @return object|null
+     * @return T|null
      */
-    protected function doRowToObject(array $row): ?object
+    protected function doRowToObject(array $row): mixed
     {
         return null;
     }
@@ -71,9 +71,9 @@ abstract class AbstractMappedSelect implements Iterator, Countable
 
     /**
      * @param mixed $row
-     * @return object|null
+     * @return T|null
      */
-    protected function rowToObject($row): ?object
+    protected function rowToObject($row): mixed
     {
         return is_array($row) ? $this->doRowToObject($row) : null;
     }
@@ -107,10 +107,8 @@ abstract class AbstractMappedSelect implements Iterator, Countable
 
     /**
      * Get the name of the table this query is selecting from.
-     *
-     * @return string|null
      */
-    public function getFromTable()
+    public function getFromTable(): string
     {
         return $this->query->getFromTable();
     }
@@ -348,9 +346,9 @@ abstract class AbstractMappedSelect implements Iterator, Countable
     /**
      * Fetch first DataObject, or raw row if returnDataObjects
      *
-     * @return object|array|null
+     * @return T|null
      */
-    public function fetch()
+    public function fetch(): mixed
     {
         if ($this->returnDataObjects) {
             return static::rowToObject($this->query->fetch());
@@ -367,9 +365,9 @@ abstract class AbstractMappedSelect implements Iterator, Countable
      *
      * @param string $index
      * @param string $selectOnly
-     * @return array<int,array<string,mixed>>|array<int,object>
+     * @return array<int,T>|false
      */
-    public function fetchAll($index = '', $selectOnly = '')
+    public function fetchAll($index = '', $selectOnly = ''): array|bool
     {
         if ($this->returnDataObjects) {
             $out = [];
@@ -389,7 +387,7 @@ abstract class AbstractMappedSelect implements Iterator, Countable
      * @param string $key
      * @param string $value
      * @param bool $object
-     * @return array<string,mixed>|\PDOStatement
+     * @return array<string,mixed>|PDOStatement
      */
     public function fetchPairs(string $key, string $value, bool $object = false)
     {
@@ -400,7 +398,7 @@ abstract class AbstractMappedSelect implements Iterator, Countable
      * Build an iterator to use for passing through calls to \Iterable
      * interface methods
      *
-     * @return \ArrayIterator<int,array<string,mixed>|object>|\PDOStatement
+     * @return ArrayIterator<int,array<string,mixed>|object>|PDOStatement
      */
     protected function getIterator()
     {
