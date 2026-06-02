@@ -19,12 +19,16 @@ use PDOStatement;
  */
 abstract class AbstractMappedSelect implements Iterator, Countable
 {
+
     /** @var Select */
     protected $query;
+
     /** @var \ArrayIterator<int,array<string,mixed>|object>|\PDOStatement */
     protected $iterator;
+
     /** @var bool */
     protected $returnDataObjects = true;
+
     /** @var string|null */
     protected $returnObjectClass = null;
 
@@ -58,10 +62,10 @@ abstract class AbstractMappedSelect implements Iterator, Countable
                     $row['v'],
                     /** @psalm-suppress UnsafeInstantiation */
                     (new $class(clone $this->query()))
-                        ->where($column, $row['v'])
+                        ->where($column, $row['v']),
                 );
             },
-            $q->fetchAll()
+            $q->fetchAll(),
         );
     }
 
@@ -141,7 +145,8 @@ abstract class AbstractMappedSelect implements Iterator, Countable
 
     public static function parseJsonRefs(?string $string): ?string
     {
-        if ($string === null) return null;
+        if ($string === null)
+            return null;
         return preg_replace_callback(
             '/\$\{((.+?):)?([^\.\}\\\]+?)\.([^\}\\\]+?)\}/',
             function ($matches) {
@@ -150,12 +155,12 @@ abstract class AbstractMappedSelect implements Iterator, Countable
                     function () use ($matches) {
                         return Dispatcher::firstValue(
                             'onDbExpandJsonPath_' . DB::driver(),
-                            [$matches[4], $matches[3], $matches[2]]
+                            [$matches[4], $matches[3], $matches[2]],
                         );
                     }
                 );
             },
-            $string
+            $string,
         );
     }
 
@@ -194,7 +199,7 @@ abstract class AbstractMappedSelect implements Iterator, Countable
         return $this->where(
             "$parsedColumn LIKE ?",
             [static::prepareLikePattern($pattern, $wildCardBefore, $wildCardAfter)],
-            $separator
+            $separator,
         );
     }
 
@@ -218,7 +223,7 @@ abstract class AbstractMappedSelect implements Iterator, Countable
         return $this->where(
             "$parsedColumn NOT LIKE ?",
             [static::prepareLikePattern($pattern, $wildCardBefore, $wildCardAfter)],
-            $separator
+            $separator,
         );
     }
 
@@ -343,15 +348,17 @@ abstract class AbstractMappedSelect implements Iterator, Countable
     /**
      * Fetch first DataObject, or raw row if returnDataObjects
      *
-     * @return mixed
+     * @return object|array|null
      */
     public function fetch()
     {
         if ($this->returnDataObjects) {
             return static::rowToObject($this->query->fetch());
-        } else {
+        }
+        else {
             return ($out = $this->query->fetch())
-                ? $out : null;
+                ? $out
+                : null;
         }
     }
 
@@ -370,7 +377,8 @@ abstract class AbstractMappedSelect implements Iterator, Countable
                 $out[] = static::rowToObject($result) ?? false;
             }
             return array_filter($out);
-        } else {
+        }
+        else {
             return $this->query->fetchAll();
         }
     }
@@ -417,7 +425,8 @@ abstract class AbstractMappedSelect implements Iterator, Countable
     {
         if ($this->returnDataObjects) {
             return static::rowToObject($this->getIterator()->current());
-        } else {
+        }
+        else {
             return $this->getIterator()->current();
         }
     }
@@ -446,7 +455,8 @@ abstract class AbstractMappedSelect implements Iterator, Countable
     {
         if (method_exists($this->getIterator(), 'rewind')) {
             $this->getIterator()->rewind();
-        } else {
+        }
+        else {
             $this->iterator = new ArrayIterator($this->getIterator()->fetchAll());
         }
     }
@@ -455,4 +465,5 @@ abstract class AbstractMappedSelect implements Iterator, Countable
     {
         return $this->getIterator()->valid();
     }
+
 }

@@ -8,14 +8,25 @@
 <?php
 
 use DigraphCMS\Config;
+use DigraphCMS\Context;
 use DigraphCMS\Spreadsheets\CellWriters\DateTimeCell;
 use DigraphCMS\Spreadsheets\CellWriters\UserCell;
+use DigraphCMS\UI\Breadcrumb;
 use DigraphCMS\UI\Format;
+use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Users;
 
 $path = Config::get('paths.storage') . '/exception_log';
+
+$ip = Context::arg_string('ip', true);
+
+if ($ip) {
+    Notifications::printNotice("Limiting display to IP address $ip");
+    Breadcrumb::setTopName("IP: " . htmlentities($ip, ENT_QUOTES));
+    Breadcrumb::parent(new URL('./'));
+}
 
 $dayDirs = array_reverse(glob("$path/" . str_repeat('[0123456789]', 8), GLOB_ONLYDIR));
 foreach ($dayDirs as $dayDir) {
@@ -24,15 +35,21 @@ foreach ($dayDirs as $dayDir) {
     echo '<h2>' . Format::date($date) . ' (' . count($files) . ')</h2>';
     $table = new PaginatedTable(
         $files,
-        function (string $path): array {
+        function (string $path) use ($ip): array|null {
             $name = basename($path);
             $time = intval(explode(' ', $name)[0]);
             $data = json_decode(file_get_contents($path), true, 512, JSON_INVALID_UTF8_SUBSTITUTE);
+            // filter to given ip if specified
+            if ($ip && $data['_SERVER']['REMOTE_ADDR'] !== $ip)
+                return null;
+            // parse URL
             try {
                 $url = new URL($data['url']);
-            } catch (Throwable $th) {
+            }
+            catch (Throwable $th) {
                 $url = $data['url'];
             }
+            // return row
             return [
                 Format::time($time),
                 sprintf(
@@ -41,7 +58,9 @@ foreach ($dayDirs as $dayDir) {
                     $data['thrown']['message'] ?: $data['thrown']['class']
                 ),
                 $url instanceof URL ? $url->fullPathString() : "<em>$url</em>",
-                @$data['_SERVER']['REMOTE_ADDR'],
+                @$data['_SERVER']['REMOTE_ADDR']
+                ? sprintf('<a href="%s">%s</a>', new URL('?ip=' . @$data['_SERVER']['REMOTE_ADDR']), @$data['_SERVER']['REMOTE_ADDR'])
+                : '',
                 Users::user($data['user']),
             ];
         },
@@ -51,7 +70,7 @@ foreach ($dayDirs as $dayDir) {
             'URL',
             'IP',
             'User',
-        ]
+        ],
     );
     $table->download(
         $date->format('Y-m-d') . ' exception log',
@@ -61,7 +80,8 @@ foreach ($dayDirs as $dayDir) {
             $data = json_decode(file_get_contents($path), true, 512, JSON_INVALID_UTF8_SUBSTITUTE);
             try {
                 $url = new URL($data['url']);
-            } catch (Throwable $th) {
+            }
+            catch (Throwable $th) {
                 $url = $data['url'];
             }
             return [
@@ -78,7 +98,7 @@ foreach ($dayDirs as $dayDir) {
             'Message',
             'URL',
             'User',
-        ]
+        ],
     );
     echo $table;
 }
