@@ -9,7 +9,6 @@ use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTTP\HttpError;
-use DigraphCMS\SafeContent\Sanitizer;
 use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\User;
 use Exception;
@@ -240,7 +239,7 @@ class URL
         if ($target) {
             $target = ' data-target="' . $target . '"';
         }
-        return "<a href=\"$normalized\"$class$target>" . Sanitizer::full($normalized->name($inPageContext)) . "</a>";
+        return "<a href=\"$normalized\"$class$target>" . strip_tags($normalized->name($inPageContext)) . "</a>";
     }
 
     public function page(): ?AbstractPage
