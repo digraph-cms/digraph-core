@@ -46,7 +46,7 @@
         "phpoffice/phpword": "^1.3",
         "joby/smol-image": "^1.3",
         "openspout/openspout": "^5",
-        "joby/smol-sentry": "^2"
+        "joby/smol-sentry": "^3"
     },
     "conflict": {
         "jasig/phpcas": "<1.6",
