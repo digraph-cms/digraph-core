@@ -20,8 +20,8 @@ class Router
      */
     protected static function securityCheck(string $route): void
     {
-        if (preg_match('/[\*\?\[\]\{\}]|\.\.|\%(?:2e|2f|5c|00)|[\x00-\x1f\x7f]/i', $route))
-            Context::sentry()->signal('path_manipulation', Severity::Malicious);
+        if (preg_match('/[\*\?\[\]\{\}]/i', $route))
+            Context::sentry()->signal('path_manipulation_digraph', Severity::Malicious);
     }
 
     /**
