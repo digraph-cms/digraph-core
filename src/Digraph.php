@@ -318,7 +318,6 @@ abstract class Digraph
                 throw new RedirectException(Context::url());
             }
             // process request
-            // @phpstan-ignore-next-line while not necessarily a false positive I think the order of this next block of if/elifs is important for clarity
             if ($explicitly_static || (!$pages && $static_exists)) {
                 // explicitly static or no pages and static exists
                 static::buildResponseContent();

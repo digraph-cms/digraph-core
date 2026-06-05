@@ -14,14 +14,15 @@ use Thunder\Shortcode\Shortcode\ShortcodeInterface;
 
 class SafeBBCode
 {
+
     const TAG_TO_TAGS = [
-        'b' => 'strong',
-        'i' => 'em',
-        'u' => 'ins',
-        's' => 'del',
-        'ul' => 'ul',
-        'ol' => 'ol',
-        'li' => 'li',
+        'b'     => 'strong',
+        'i'     => 'em',
+        'u'     => 'ins',
+        's'     => 'del',
+        'ul'    => 'ul',
+        'ol'    => 'ol',
+        'li'    => 'li',
         'quote' => 'blockquote',
     ];
 
@@ -34,7 +35,8 @@ class SafeBBCode
     public static function loadEditorMedia()
     {
         static $loaded = false;
-        if ($loaded) return;
+        if ($loaded)
+            return;
         $loaded = true;
         Theme::addBlockingPageCss('/safe_bbcode_editor/*.css');
         Theme::addBlockingPageJs('/node_modules/sceditor/minified/sceditor.min.js');
@@ -50,7 +52,8 @@ class SafeBBCode
      */
     public static function stripNuisanceTags(string|null $string): string|null
     {
-        if (is_null($string)) return null;
+        if (is_null($string))
+            return null;
         // create a special parser just for this
         static $parser;
         if (!$parser) {
@@ -68,7 +71,8 @@ class SafeBBCode
 
     public static function parse(string $string): string
     {
-        $string = Sanitizer::full($string);
+        $string = strip_tags($string);
+        $string = htmlentities($string, ENT_SUBSTITUTE);
         $string = static::parser()->process($string);
         $string = str_replace("\r\n", "<br>", $string);
         $string = str_replace("\n", "<br>", $string);
@@ -153,7 +157,10 @@ class SafeBBCode
     {
         // handle more advanced tags
         $fn = 'tag_' . $s->getName();
-        if (method_exists(static::class, $fn)) return call_user_func([static::class, $fn], $s);
-        else return null;
+        if (method_exists(static::class, $fn))
+            return call_user_func([static::class, $fn], $s);
+        else
+            return null;
     }
+
 }

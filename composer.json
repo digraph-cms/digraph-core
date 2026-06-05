@@ -34,7 +34,6 @@
         "tijsverkoyen/css-to-inline-styles": "^2.2",
         "caxy/php-htmldiff": "^0.1.10",
         "masterminds/html5": "^2.7",
-        "ezyang/htmlpurifier": "^4.16",
         "robmorgan/phinx": "^0.13.4",
         "jbroadway/urlify": "^1.2",
         "symfony/lock": "^6.3",
