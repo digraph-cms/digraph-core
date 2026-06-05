@@ -307,7 +307,9 @@ class Context
         return Sentry::default(
             new \Joby\Smol\Query\DB(Config::get('sentry.db_file')),
             Config::get('sentry.abuseipdb_key'),
-            Config::get('sentry.abuseipdb_daily_refreshes'),
+            Config::get('sentry.abuseipdb_daily_ip_refreshes'),
+            Config::get('sentry.absuseipdb_daily_range_refreshes'),
+            abuseipdb_reactive_window: true,
         );
     }
 

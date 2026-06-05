@@ -38,7 +38,9 @@ sidebar:
 sentry:
   db_file: ${paths.storage}/sentry.sqlite
   abuseipdb_key: null
-  abuseipdb_daily_refreshes: 500
+  abuseipdb_daily_ip_refreshes: 1000
+  abuseipdb_daily_range_refreshes: 500
+  abuseipdb_reactive_window: true
 
 cron:
   route_enabled: false
