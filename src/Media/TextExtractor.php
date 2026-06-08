@@ -16,6 +16,7 @@ use Smalot\PdfParser\Parser;
 
 class TextExtractor
 {
+
     public static function extractFilestoreFile(FilestoreFile $file): string|null
     {
         return static::extract($file->path(), $file->hash(), $file->filename());
@@ -31,10 +32,14 @@ class TextExtractor
                 try {
                     $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
                     if (method_exists(static::class, 'extract_' . $extension)) {
-                        return base64_encode(call_user_func([static::class, 'extract_' . $extension], $path));
+                        $output = call_user_func([static::class, 'extract_' . $extension], $path);
+                        if (!$output)
+                            return null;
+                        return base64_encode($output);
                     }
                     return null;
-                } catch (\Throwable $th) {
+                }
+                catch (\Throwable $th) {
                     return null;
                 }
             },
@@ -42,7 +47,8 @@ class TextExtractor
         );
         if (is_null($output)) {
             return null;
-        } else {
+        }
+        else {
             return base64_decode($output);
         }
     }
@@ -107,7 +113,8 @@ class TextExtractor
             foreach ($element->getElements() as $child) {
                 static::phpWordExtractText($child);
             }
-        } elseif ($element instanceof Text) {
+        }
+        elseif ($element instanceof Text) {
             $element_text = trim($element->getText());
             if ($element_text) {
                 $text .= $element_text . PHP_EOL;
@@ -127,4 +134,5 @@ class TextExtractor
         $text = mb_trim($text);
         return $text ?: null;
     }
+
 }
