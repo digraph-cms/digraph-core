@@ -1,7 +1,7 @@
 .menubar.menubar--actionmenu {
-    background-color: var(--cue-interactive-a10);
+    background-color: var(--theme-accent-a10);
     color: inherit;
-    border-top: $border solid var(--cue-interactive);
+    border-top: $border solid var(--theme-accent);
     font-size: smaller;
     justify-content: center;
 
@@ -11,14 +11,14 @@
 
         &.menuitem--current {
             opacity: 1;
-            background-color: var(--cue-interactive);
-            color: var(--cue-interactive-inv);
+            background-color: var(--theme-accent);
+            color: var(--theme-accent-inv);
         }
 
         &.menuitem--current-parent {
             opacity: 1;
-            background-color: var(--cue-interactive-a50);
-            color: var(--cue-interactive-inv);
+            background-color: var(--theme-accent-a50);
+            color: var(--theme-accent-inv);
         }
 
         &:hover,
@@ -26,8 +26,8 @@
         &:focus-within,
         &.menuitem--focus {
             >a.menuitem__link {
-                background-color: var(--cue-interactive-bright);
-                color: var(--cue-interactive-inv);
+                background-color: var(--theme-accent-bright);
+                color: var(--theme-accent-inv);
 
                 &:link {
                     text-decoration: underline;
