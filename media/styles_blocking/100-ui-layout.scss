@@ -182,6 +182,7 @@ span.notification {
     font-size: smaller;
     padding: 3 * $grid $grid;
     background: var(--background-dark);
+    text-align: center;
 
     &.footer--fixed {
         position: fixed;
