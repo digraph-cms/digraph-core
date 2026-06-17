@@ -15,6 +15,7 @@
 #main-nav {
     background-color: var(--theme-highlight);
     color: var(--theme-highlight-inv);
+    justify-content: center;
 }
 
 .menuitem {
@@ -321,7 +322,7 @@
     position: relative;
 
     >.menuitem__link {
-        padding-left: $grid*2  !important;
+        padding-left: $grid*2 !important;
 
         &:after {
             display: none !important;
