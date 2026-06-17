@@ -157,7 +157,6 @@ span.notification {
     @include clearfix;
     margin: 0 auto;
     box-sizing: border-box;
-    width: $line-length;
 
     .action-menu+h1 {
         margin-top: 0;
