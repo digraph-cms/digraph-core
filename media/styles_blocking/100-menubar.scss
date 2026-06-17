@@ -6,6 +6,7 @@
     display: flex;
     line-height: 1;
     box-sizing: border-box;
+    flex-wrap: wrap;
 
     >* {
         padding: $grid/2;
