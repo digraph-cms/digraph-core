@@ -64,6 +64,10 @@
     }
   }
 
+  .menubar.menubar--actionmenu {
+    justify-content: flex-start;
+  }
+
   #article {
     width: unset;
   }
