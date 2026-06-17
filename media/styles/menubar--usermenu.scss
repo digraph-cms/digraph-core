@@ -1,6 +1,7 @@
-.menubar--usermenu {
+.menubar.menubar--usermenu {
     justify-content: flex-end;
     font-size: smaller;
+    flex-wrap: nowrap;
 
     &.menubar--checking-overflow {
         justify-content: flex-start;
