@@ -1,5 +1,4 @@
 .menubar {
-    @include uncolored-links;
     background-color: var(--theme-neutral);
     color: var(--theme-neutral-inv);
     font-family: $font-ui;
@@ -10,6 +9,19 @@
 
     >* {
         padding: $grid/2;
+    }
+
+    a {
+        color: inherit;
+    }
+
+    a:link,
+    a:active,
+    a:link:hover,
+    a:focus,
+    a:visited {
+        color: inherit;
+        text-decoration: underline;
     }
 }
 
