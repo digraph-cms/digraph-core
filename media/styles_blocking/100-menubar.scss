@@ -46,14 +46,8 @@
         }
     }
 
-    &.menuitem--current {
-        opacity: 0.5;
-    }
-
-    &.menuitem--current-parent {
-        opacity: 0.5;
-    }
-
+    &.menuitem--current,
+    &.menuitem--current-parent,
     &:hover,
     &:focus,
     &:focus-within,
