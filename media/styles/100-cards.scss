@@ -120,6 +120,7 @@ extra file card styling for multifile cards
 */
 .multifile-card {
     width: $line-length;
+    max-width: 100%;
 
     .multifile-card__list {
         margin-top: $grid/2;
