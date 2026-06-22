@@ -22,6 +22,13 @@
         order: 1000;
         font-weight: bold;
 
+        >.menuitem__link {
+            &:after {
+                display: inline-block;
+                content: "logout";
+            }
+        }
+
         .menuitem__link {
             background: var(--cue-warning);
             color: var(--cue-warning-inv);
@@ -41,6 +48,13 @@
         order: 1000;
         font-weight: bold;
 
+        >.menuitem__link {
+            &:after {
+                display: inline-block;
+                content: "login";
+            }
+        }
+
         .menuitem__link {
             background: var(--cue-interactive);
             color: var(--cue-interactive-inv);
@@ -59,19 +73,11 @@
     .menuitem--user {
         order: 0;
         font-weight: bold;
-    }
 
-    .menuitem--inbox {
-        order: 998;
-
-        &.menuitem--inbox--notify {
-            >.menuitem__link {
-                background: var(--cue-interactive);
-                color: var(--cue-interactive-inv);
-
-                &:after {
-                    content: "notifications";
-                }
+        >.menuitem__link {
+            &:before {
+                display: inline-block;
+                content: "account_circle";
             }
         }
     }

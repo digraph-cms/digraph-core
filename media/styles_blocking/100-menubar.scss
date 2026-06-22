@@ -51,10 +51,17 @@
             @include material-icon;
             display: none;
             text-decoration: none !important;
-            margin-left: 0.25em;
             font-weight: bold;
             vertical-align: middle;
             transform: translateY(-0.125em);
+        }
+
+        &:before {
+            margin-right: 0.25em;
+        }
+
+        &:after {
+            margin-left: 0.25em;
         }
     }
 
