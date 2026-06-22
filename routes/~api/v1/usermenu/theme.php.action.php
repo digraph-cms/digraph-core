@@ -18,7 +18,7 @@ $darkmode = new ToggleButton(
 );
 
 $colorblind = new ToggleButton(
-    Theme::colorblindMode(),
+    !!Theme::colorblindMode(),
     fn() => Theme::setcolorblindMode(true),
     fn() => Theme::setcolorblindMode(false),
     true,
