@@ -21,6 +21,7 @@ use ZipArchive;
 
 class Download extends AbstractPage
 {
+
     const ACTIONS_DISABLED = ['copy'];
 
     public function defaultSlug(): string
@@ -34,12 +35,12 @@ class Download extends AbstractPage
             ->where('parent', $this->uuid() . '_dl');
     }
 
-    public function setImmediateDownload(bool $immediate_download): self
+    public function setImmediateDownload(bool $immediate_download): static
     {
         if ($immediate_download)
-            $this['immediate_download'] = true;
+            $this->set('immediate_download', true);
         else
-            unset($this['immediate_download']);
+            $this->unset('immediate_download');
         return $this;
     }
 
@@ -53,7 +54,8 @@ class Download extends AbstractPage
         $files = $this->files();
         if ($files->count() === 0) {
             return '<div class="file-card file-card--extension-unknown">No files found</div>';
-        } elseif ($files->count() === 1) {
+        }
+        elseif ($files->count() === 1) {
             return $files->fetch()->card();
         }
         $file = $this->zipFile();
@@ -81,7 +83,8 @@ class Download extends AbstractPage
                 ->setAttribute('href', new URL("&$id=open"))
                 ->setAttribute('rel', 'nofollow')
                 ->addChild('-- show files --'));
-        } else {
+        }
+        else {
             // list all files
             $list = "<ul>";
             foreach ($this->files() as $f) {
@@ -90,7 +93,7 @@ class Download extends AbstractPage
                     $f->url(),
                     $f->filename(),
                     Format::filesize($f->bytes()),
-                    $f->filename()
+                    $f->filename(),
                 );
             }
             $list .= "</ul>";
@@ -110,7 +113,7 @@ class Download extends AbstractPage
                     function (FilestoreFile $f): string {
                         return $f->filename() . ',' . $f->hash();
                     },
-                    $files->fetchAll()
+                    $files->fetchAll(),
                 );
                 return md5(implode(',', $hashes));
             },
@@ -131,7 +134,8 @@ class Download extends AbstractPage
         $count = $this->files()->count();
         if ($count === 1) {
             return $this->files()->fetch();
-        } else {
+        }
+        else {
             return $this->zipFile();
         }
     }
@@ -168,4 +172,5 @@ class Download extends AbstractPage
             }
         );
     }
+
 }
