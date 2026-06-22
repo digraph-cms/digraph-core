@@ -1,40 +1,66 @@
 <?php
 
+use DigraphCMS\UI\CallbackLink;
 use DigraphCMS\UI\Theme;
-use DigraphCMS\UI\ToggleButton;
 
-$auto = new ToggleButton(
-    Theme::colorMode() === null,
-    fn() => Theme::setColorMode(null),
-    fn() => Theme::setColorMode('light'),
-    true,
-);
+if (Theme::colorMode() === null) {
+    $auto = "<strong>automatic</strong>";
+}
+else {
+    $auto = new CallbackLink(
+        fn() => Theme::setColorMode(null),
+        target: '_top',
+    )->setID('theme-auto')
+        ->addChild('automatic');
+}
 
-$darkmode = new ToggleButton(
-    Theme::colorMode() === 'dark',
-    fn() => Theme::setColorMode('dark'),
-    fn() => Theme::setColorMode('light'),
-    true,
-);
+if (Theme::colorMode() === 'light') {
+    $light = '<strong>light</strong>';
+}
+else {
+    $light = new CallbackLink(
+        fn() => Theme::setColorMode('light'),
+        target: '_top',
+    )->setID('theme-light')
+        ->addChild('light');
+}
 
-$colorblind = new ToggleButton(
-    !!Theme::colorblindMode(),
-    fn() => Theme::setcolorblindMode(true),
-    fn() => Theme::setcolorblindMode(false),
-    true,
-);
+if (Theme::colorMode() === 'dark') {
+    $dark = '<strong>dark</strong>';
+}
+else {
+    $dark = new CallbackLink(
+        fn() => Theme::setColorMode('dark'),
+        target: '_top',
+    )->setID('theme-dark')
+        ->addChild('dark');
+}
+
+if (Theme::colorblindMode()) {
+    $colorblind_on = '<strong>on</strong>';
+    $colorblind_off = new CallbackLink(
+        fn() => Theme::setColorblindMode(false),
+        target: '_top',
+    )->setID('colorblind-off')
+        ->addChild('off');
+}
+else {
+    $colorblind_off = '<strong>off</strong>';
+    $colorblind_on = new CallbackLink(
+        fn() => Theme::setColorblindMode(true),
+        target: '_top',
+    )->setID('colorblind-on')
+        ->addChild('on');
+}
 
 echo "<div class='theme-menu navigation-frame navigation-frame--stateless' id='theme-menu'>";
 
-echo "<h1 style='white-space:nowrap;'>Color settings</h1>";
-echo "<h2 style='white-space:nowrap;'>Automatic dark mode</h2>";
-echo $auto;
-if (Theme::colorMode() !== null) {
-    echo "<h3 style='white-space:nowrap;'>Force dark mode</h3>";
-    echo $darkmode;
-}
-echo "<h2 style='white-space:nowrap;'>Color blindness mode</h2>";
-echo $colorblind;
+echo "<div style='white-space:nowrap;'>";
+echo "<h1>Color settings</h1>";
+echo "<h2>Theme brightness</h2>";
+echo implode('&nbsp;|&nbsp;', [$auto, $light, $dark]);
+echo "<h2>Color blind mode</h2>";
+echo implode('&nbsp;|&nbsp;', [$colorblind_off, $colorblind_on]);
 
 // also generate a script that sets the appropriate body classes on load
 echo "<script>";
@@ -58,4 +84,5 @@ else {
 }
 echo "</script>";
 
+echo '</div>';
 echo "</div>";
