@@ -27,10 +27,10 @@ $colorblind = new ToggleButton(
 echo "<div class='theme-menu navigation-frame navigation-frame--stateless' id='theme-menu'>";
 
 echo "<h1 style='white-space:nowrap;'>Color settings</h1>";
-echo "<h2 style='white-space:nowrap;'>Automatic dark/light mode</h2>";
+echo "<h2 style='white-space:nowrap;'>Automatic dark mode</h2>";
 echo $auto;
 if (Theme::colorMode() !== null) {
-    echo "<h3 style='white-space:nowrap;'>Dark mode</h3>";
+    echo "<h3 style='white-space:nowrap;'>Force dark mode</h3>";
     echo $darkmode;
 }
 echo "<h2 style='white-space:nowrap;'>Color blindness mode</h2>";
