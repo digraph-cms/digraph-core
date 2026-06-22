@@ -9,8 +9,8 @@ if (Theme::colorMode() === null) {
 else {
     $auto = new CallbackLink(
         fn() => Theme::setColorMode(null),
-        target: '_top',
-    )->setID('theme-auto')
+    )
+        ->setAttribute('data-target', '_frame')->setID('theme-auto')
         ->addChild('automatic');
 }
 
@@ -20,8 +20,8 @@ if (Theme::colorMode() === 'light') {
 else {
     $light = new CallbackLink(
         fn() => Theme::setColorMode('light'),
-        target: '_top',
-    )->setID('theme-light')
+    )
+        ->setAttribute('data-target', '_frame')->setID('theme-light')
         ->addChild('light');
 }
 
@@ -31,8 +31,8 @@ if (Theme::colorMode() === 'dark') {
 else {
     $dark = new CallbackLink(
         fn() => Theme::setColorMode('dark'),
-        target: '_top',
-    )->setID('theme-dark')
+    )
+        ->setAttribute('data-target', '_frame')->setID('theme-dark')
         ->addChild('dark');
 }
 
@@ -40,16 +40,16 @@ if (Theme::colorblindMode()) {
     $colorblind_on = '<strong>on</strong>';
     $colorblind_off = new CallbackLink(
         fn() => Theme::setColorblindMode(false),
-        target: '_top',
-    )->setID('colorblind-off')
+    )
+        ->setAttribute('data-target', '_frame')->setID('colorblind-off')
         ->addChild('off');
 }
 else {
     $colorblind_off = '<strong>off</strong>';
     $colorblind_on = new CallbackLink(
         fn() => Theme::setColorblindMode(true),
-        target: '_top',
-    )->setID('colorblind-on')
+    )
+        ->setAttribute('data-target', '_frame')->setID('colorblind-on')
         ->addChild('on');
 }
 
