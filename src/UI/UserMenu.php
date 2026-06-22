@@ -63,7 +63,7 @@ class UserMenu extends MenuBar
             $this->themeItem =
             (new MenuItemFrame(
                 null,
-                'Theme',
+                'Colors',
                 new URL('/api/v1/usermenu/theme.php'),
             ))
                 ->addClass('menuitem--theme')
