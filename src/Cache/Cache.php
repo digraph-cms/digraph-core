@@ -3,8 +3,6 @@
 namespace DigraphCMS\Cache;
 
 use DigraphCMS\Config;
-use DigraphCMS\Cron\DeferredJob;
-use DigraphCMS\URL\URL;
 
 Cache::_init();
 

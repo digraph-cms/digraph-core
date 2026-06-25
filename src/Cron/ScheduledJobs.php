@@ -2,6 +2,7 @@
 
 namespace DigraphCMS\Cron;
 
+use DigraphCMS\Config;
 use DigraphCMS\Datastore\Datastore;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Serializer;
@@ -9,6 +10,7 @@ use DigraphCMS\UI\Format;
 
 class ScheduledJobs
 {
+
     /**
      * @param callable $job
      * @param Schedule|Schedule[] $schedules
@@ -18,21 +20,27 @@ class ScheduledJobs
      */
     public static function schedule(callable $job, Schedule|array $schedules, string $job_name, mixed $hash = null): string
     {
-        if (!is_array($schedules)) $schedules = [$schedules];
+        if (!is_array($schedules))
+            $schedules = [$schedules];
         /** internal group name to use for this job group */
         $group_name = static::groupName($job_name);
         /** hash of settings so we can clear and rebuild jobs only if it is different from what was last entered */
         // NOTE: can be overridden if a job includes things that don't hash consistently (which is likely)
-        if (is_null($hash)) $hash = md5(Serializer::serialize([
+        if (is_null($hash))
+            $hash = md5(Serializer::serialize([
                 $job,
                 $schedules,
             ]));
-        else $hash = md5(Serializer::serialize($hash));
+        else
+            $hash = md5(Serializer::serialize($hash));
+        // also mutate hash with environment prefix
+        $hash .= Config::envPrefix();
         // check if last build of this job was the same
         if (static::storedHash($job_name) == $hash) {
             // stored hash matches new hash, so there's nothing to update
             return $group_name;
-        } else {
+        }
+        else {
             // this call is different from the last build of this job, we need to rebuild it
             // first clear all non-executed jobs with this group
             DB::query()->delete('defex')
@@ -58,7 +66,7 @@ class ScheduledJobs
             'system',
             'scheduled_jobs',
             $job_name,
-            $hash
+            $hash,
         );
     }
 
@@ -114,12 +122,13 @@ class ScheduledJobs
     {
         $next = static::nextRun($schedules);
         // there is no next run
-        if (is_null($next)) return "No next run";
+        if (is_null($next))
+            return "No next run";
         // schedule for next time
         new DeferredJob(
             static::buildCallback($job, $schedules, $group),
             $group,
-            $next
+            $next,
         );
         return sprintf('Next run %s', Format::datetime($next, true));
     }
@@ -153,7 +162,7 @@ class ScheduledJobs
         // return status
         return sprintf(
             'Spawned runner (%s)',
-            $next
+            $next,
         );
     }
 
@@ -170,9 +179,13 @@ class ScheduledJobs
         $next = [];
         foreach ($schedules as $schedule) {
             $schedule_next = $schedule->nextRun();
-            if (!is_null($schedule_next)) $next[] = $schedule_next;
+            if (!is_null($schedule_next))
+                $next[] = $schedule_next;
         }
-        if (!$next) return null;
-        else return min($next);
+        if (!$next)
+            return null;
+        else
+            return min($next);
     }
+
 }
