@@ -353,6 +353,7 @@ class WaybackMachine
             $normal .= ':' . $url['port'];
         }
         $normal .= @$url['path'] ? $url['path'] : '/';
+        $normal = strtolower($normal);
         if (@$url['query']) {
             $normal .= '?' . $url['query'];
         }
