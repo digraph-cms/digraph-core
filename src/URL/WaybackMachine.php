@@ -12,16 +12,20 @@ use DigraphCMS\Datastore\Datastore;
 use DigraphCMS\Datastore\DatastoreGroup;
 use DigraphCMS\Email\Email;
 use DigraphCMS\Email\Emails;
+use DigraphCMS\ExceptionLog;
 use DigraphCMS\RichContent\RichContent;
 use DigraphCMS\UI\Templates;
 use Envms\FluentPDO\Exception;
 
 class WaybackMachine
 {
+
     /** @var bool|null */
     protected static $active = null;
+
     /** @var bool */
     protected static $notifications = true;
+
     /** @var string[] */
     public static array $log = [];
 
@@ -42,12 +46,14 @@ class WaybackMachine
 
     public static function activate(): void
     {
-        if (static::active() === false) static::$active = true;
+        if (static::active() === false)
+            static::$active = true;
     }
 
     public static function deactivate(): void
     {
-        if (static::active() === true) static::$active = false;
+        if (static::active() === true)
+            static::$active = false;
     }
 
     public static function active(): bool
@@ -85,15 +91,19 @@ class WaybackMachine
     public static function check(string $url, bool $skipNotification = false): bool
     {
         // active check
-        if (!static::active()) return true;
+        if (!static::active())
+            return true;
         // normalize URL
         $url = static::normalizeURL($url);
-        if (!$url) return true;
+        if (!$url)
+            return true;
         // call other method to actually check status
         if (static::isLinkBroken($url)) {
-            if (!$skipNotification) static::sendNotificationEmail(Context::url(), $url);
+            if (!$skipNotification)
+                static::sendNotificationEmail(Context::url(), $url);
             return false;
-        } else {
+        }
+        else {
             return true;
         }
     }
@@ -106,15 +116,19 @@ class WaybackMachine
         // queue and optimistically return a null value to show it's not known
         // to be broken
         if ($status === false) {
-            static::statusStorage()->set($hash, 'pending', ['url' => $normalizedUrl]);;
+            static::statusStorage()->set($hash, 'pending', ['url' => $normalizedUrl]);
+            ;
             return null;
         }
         // if it's "pending" then it's still pending a check, and we should optimistically return null (falsey, not broken) until then
-        elseif ($status == 'pending') return null;
+        elseif ($status == 'pending')
+            return null;
         // if it's "ok" then it's ok
-        elseif ($status == 'ok') return false;
+        elseif ($status == 'ok')
+            return false;
         // otherwise it's an error, return true because this link is broken
-        else return true;
+        else
+            return true;
     }
 
     public static function actualUrlStatus(string $url): bool
@@ -133,24 +147,29 @@ class WaybackMachine
             curl_close($ch);
             if ($code >= 200 && $code < 400) {
                 return true;
-            } elseif ($code === 401) {
+            }
+            elseif ($code === 401) {
                 return true;
-            } elseif ($errno == 28) {
+            }
+            elseif ($errno == 28) {
                 static::$log[] = 'Timeout';
                 return true;
-            } elseif ($code == 403) {
+            }
+            elseif ($code == 403) {
                 static::$log[] = 'HTTP code: ' . $code;
                 static::$log[] = 'Curl error number: ' . $errno;
                 static::$log[] = 'Curl error: ' . curl_error($ch);
                 static::$log[] = 'Optimistically calling 403 success';
                 return true;
-            } else {
+            }
+            else {
                 static::$log[] = 'HTTP code: ' . $code;
                 static::$log[] = 'Curl error number: ' . $errno;
                 static::$log[] = 'Curl error: ' . curl_error($ch);
                 return false;
             }
-        } catch (\Throwable $th) {
+        }
+        catch (\Throwable $th) {
             static::$log[] = get_class($th);
             static::$log[] = $th->getMessage();
             return true;
@@ -160,9 +179,12 @@ class WaybackMachine
     public static function getByHash(string $hash): ?WaybackResult
     {
         $data = static::statusStorage()->get($hash);
-        if (!$data) return null;
-        if ($data->value() == 'pending') return null;
-        if ($data->value() == 'ok') return null;
+        if (!$data)
+            return null;
+        if ($data->value() == 'pending')
+            return null;
+        if ($data->value() == 'ok')
+            return null;
         $apiResult = static::apiStorage()->get($hash);
         // there is no API result, add it as pending so it will be made later
         if (!$apiResult) {
@@ -176,17 +198,19 @@ class WaybackMachine
             return null;
         }
         // there is an API result, return that
-        else return new WaybackResult(
-            $data->data()['url'],
-            $apiResult->data()['url'],
-            $apiResult->data()['time']
-        );
+        else
+            return new WaybackResult(
+                $data->data()['url'],
+                $apiResult->data()['url'],
+                $apiResult->data()['time'],
+            );
     }
 
     public static function get(string $url): ?WaybackResult
     {
         $url = static::normalizeURL($url);
-        if (!$url) return null;
+        if (!$url)
+            return null;
         $hash = md5($url);
         return static::getByHash($hash);
     }
@@ -206,7 +230,7 @@ class WaybackMachine
         // build API request URL
         $wb = sprintf(
             'http://archive.org/wayback/available?url=%s',
-            urlencode($url)
+            urlencode($url),
         );
         // make API request with curl
         $ch = curl_init($wb);
@@ -215,7 +239,7 @@ class WaybackMachine
         curl_setopt(
             $ch,
             CURLOPT_USERAGENT,
-            'Mozilla/5.0 (Windows NT 6.2; WOW64; rv:17.0) Gecko/20100101 Firefox/17.0'
+            'Mozilla/5.0 (Windows NT 6.2; WOW64; rv:17.0) Gecko/20100101 Firefox/17.0',
         );
         $response = curl_exec($ch);
         $code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
@@ -224,43 +248,71 @@ class WaybackMachine
             $json = json_decode($response, true, 512, JSON_THROW_ON_ERROR);
             if ($json['archived_snapshots']) {
                 return [
-                    'url' => $json['archived_snapshots']['closest']['url'],
+                    'url'  => $json['archived_snapshots']['closest']['url'],
                     'time' => DateTime::createFromFormat(
                         'YmdHis',
                         $json['archived_snapshots']['closest']['timestamp'],
-                        new DateTimeZone('UTC')
-                    )->getTimestamp()
+                        new DateTimeZone('UTC'),
+                    )->getTimestamp(),
                 ];
-            } else {
+            }
+            else {
+                ExceptionLog::logMessage(
+                    "Possibly malformed wayback response",
+                    [
+                        'url'      => $url,
+                        'response' => $response,
+                        'code'     => $code,
+                        'json'     => $json,
+                    ],
+                );
                 return null;
             }
         }
         // no valid result returned
+        ExceptionLog::logMessage(
+            "Wayback error response",
+            [
+                'url'      => $url,
+                'response' => $response,
+                'code'     => $code,
+            ],
+        );
         return false;
     }
 
     public static function setNoNotifyFlag(string $url, ?URL $context, bool $flag): void
     {
         if ($flag) {
-            if ($context) Datastore::set('wayback', 'no_notify', md5(serialize([$url, $context->pathString()])), 'blocked', ['url' => $url, 'context' => $context->pathString()]);
-            else Datastore::set('wayback', 'no_notify', md5($url), 'blocked', ['url' => $url]);
-        } else {
-            if ($context) Datastore::delete('wayback', 'no_notify', md5(serialize([$url, $context->pathString()])));
-            else Datastore::delete('wayback', 'no_notify', md5($url));
+            if ($context)
+                Datastore::set('wayback', 'no_notify', md5(serialize([$url, $context->pathString()])), 'blocked', ['url' => $url, 'context' => $context->pathString()]);
+            else
+                Datastore::set('wayback', 'no_notify', md5($url), 'blocked', ['url' => $url]);
+        }
+        else {
+            if ($context)
+                Datastore::delete('wayback', 'no_notify', md5(serialize([$url, $context->pathString()])));
+            else
+                Datastore::delete('wayback', 'no_notify', md5($url));
         }
     }
 
     public static function noNotifyFlag(string $normalizedUrl, URL|null $context = null): bool
     {
-        if (Datastore::exists('wayback', 'no_notify', md5($normalizedUrl))) return true;
-        elseif ($context && Datastore::exists('wayback', 'no_notify', md5(serialize([$normalizedUrl, $context->pathString()])))) return true;
-        else return false;
+        if (Datastore::exists('wayback', 'no_notify', md5($normalizedUrl)))
+            return true;
+        elseif ($context && Datastore::exists('wayback', 'no_notify', md5(serialize([$normalizedUrl, $context->pathString()]))))
+            return true;
+        else
+            return false;
     }
 
     protected static function sendNotificationEmail(URL $context, string $url): void
     {
-        if (!static::notifications()) return;
-        if (static::noNotifyFlag($url, $context)) return;
+        if (!static::notifications())
+            return;
+        if (static::noNotifyFlag($url, $context))
+            return;
         foreach (Config::get('wayback.notify_emails') as $addr) {
             $id = md5(serialize([$context->pathString(), $url, $addr]));
             RateLimit::run(
@@ -277,11 +329,11 @@ class WaybackMachine
                             Templates::render(
                                 'email/wayback/broken-link.php',
                                 [
-                                    'broken_url' => $url,
+                                    'broken_url'  => $url,
                                     'context_url' => $context,
-                                ]
-                            )
-                        )
+                                ],
+                            ),
+                        ),
                     );
                     Emails::queue($email);
                 }
@@ -292,7 +344,8 @@ class WaybackMachine
     protected static function normalizeURL(string $url): ?string
     {
         $url = parse_url($url);
-        if (!$url || !@$url['host']) return null;
+        if (!$url || !@$url['host'])
+            return null;
         $normal = $url['host'];
         if (@$url['port']) {
             $normal .= ':' . $url['port'];
@@ -316,4 +369,5 @@ class WaybackMachine
         static $group;
         return $group ?? $group = new DatastoreGroup('wayback', 'api');
     }
+
 }

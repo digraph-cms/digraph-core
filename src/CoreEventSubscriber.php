@@ -25,7 +25,6 @@ use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
 use DOMElement;
-
 use function DigraphCMS\Content\require_file;
 
 abstract class CoreEventSubscriber
@@ -38,7 +37,8 @@ abstract class CoreEventSubscriber
      */
     public static function onPrintNotifications(array &$notifications)
     {
-        if (!Permissions::inGroup('admins')) return;
+        if (!Permissions::inGroup('admins'))
+            return;
         // display message about email errors
         $errors = Emails::select()
             ->where('error is not null')
@@ -54,7 +54,7 @@ abstract class CoreEventSubscriber
                     $errors == 1 ? '' : 's'
                 ),
                 'error',
-                'email-error'
+                'email-error',
             ];
         }
     }
@@ -95,13 +95,13 @@ abstract class CoreEventSubscriber
     {
         $page = $media->parent() ? Pages::get($media->parent()) : null;
         return [
-            'html' => '<div class="title">' . $media->icon() . ' ' . $media->name() . '</div><div class="meta">' . ($page ? $page->name() : '') . '</div><div class="meta">' . Format::datetime($media->updated()) . '</div>',
+            'html'  => '<div class="title">' . $media->icon() . ' ' . $media->name() . '</div><div class="meta">' . ($page ? $page->name() : '') . '</div><div class="meta">' . Format::datetime($media->updated()) . '</div>',
             'value' => $media->uuid(),
             'class' => 'rich-media',
             'extra' => [
-                'tag' => $media->defaultTag(),
-                'wrappingTag' => $media->defaultWrappingTag()
-            ]
+                'tag'         => $media->defaultTag(),
+                'wrappingTag' => $media->defaultWrappingTag(),
+            ],
         ];
     }
 
@@ -116,7 +116,7 @@ abstract class CoreEventSubscriber
     {
         $files = Filestore::select()->where(
             'parent = ?',
-            [$media->uuid()]
+            [$media->uuid()],
         );
         /** @var FilestoreFile $file */
         foreach ($files as $file) {
@@ -164,7 +164,7 @@ abstract class CoreEventSubscriber
     public static function onTemplateWrapResponse(Response $response)
     {
         $response->content(
-            DOM::html($response->content())
+            DOM::html($response->content()),
         );
     }
 
@@ -194,9 +194,14 @@ abstract class CoreEventSubscriber
         /** @var DOMElement */
         $node = $e->getNode();
         $href = $node->getAttribute('href');
-        if (!$href) return;
-        if ($node->getAttribute('data-wayback-ignore')) return;
-        if (!preg_match('/^https?:\/\//', $href)) return;
+        if (!$href)
+            return;
+        if ($node->getAttribute('data-wayback-ignore'))
+            return;
+        if (!preg_match('/^https?:\/\//', $href))
+            return;
+        if (str_starts_with($href, 'http://web.archive.org/'))
+            return;
         $normalizedURL = preg_replace('@^(https?:)?//@', '//', $href);
         if (substr($normalizedURL, 0, strlen($site)) != $site) {
             if (!WaybackMachine::check($href)) {
@@ -205,7 +210,8 @@ abstract class CoreEventSubscriber
                     $node->setAttribute('href', $wb->helperURL());
                     $node->setAttribute('data-link-wayback', 'true');
                     $node->setAttribute('title', 'Wayback Machine: ' . $href);
-                } else {
+                }
+                else {
                     // broken URL but no archived copy found
                     $node->setAttribute('data-link-broken', 'true');
                     $node->setAttribute('title', 'This link may be broken');
@@ -267,9 +273,9 @@ abstract class CoreEventSubscriber
             }
         }
         return [
-            'html' => '<div class="title">' . $name . '</div><div class="url">' . $url . '</div>',
+            'html'  => '<div class="title">' . $name . '</div><div class="url">' . $url . '</div>',
             'value' => $page->uuid(),
-            'class' => 'page'
+            'class' => 'page',
         ];
     }
 
@@ -289,9 +295,9 @@ abstract class CoreEventSubscriber
             }
         }
         return [
-            'html' => '<div class="title">' . $name . '</div><small class="date">' . Format::date($user->created()) . '</small>',
+            'html'  => '<div class="title">' . $name . '</div><small class="date">' . Format::date($user->created()) . '</small>',
             'value' => $user->uuid(),
-            'class' => 'user'
+            'class' => 'user',
         ];
     }
 
@@ -324,8 +330,10 @@ abstract class CoreEventSubscriber
      */
     public static function onStaticUrlPermissions_wayback(URL $url, User $user): ?bool
     {
-        if ($url->actionPrefix() == 'page') return true;
-        else return Permissions::inMetaGroup('wayback__edit', $user);
+        if ($url->actionPrefix() == 'page')
+            return true;
+        else
+            return Permissions::inMetaGroup('wayback__edit', $user);
     }
 
     /**
@@ -367,14 +375,16 @@ abstract class CoreEventSubscriber
             return false;
         }
         // limit list to users__view
-        if ($url->route() == 'users') return Permissions::inMetaGroup('users__view', $user);
+        if ($url->route() == 'users')
+            return Permissions::inMetaGroup('users__view', $user);
         // if user is specified limit routes for the user being viewed/edited and admins
         if ($url->route() == 'users/profile' && $url->getArg('id', true)) {
             if ($url->action() == 'index') {
                 // viewing profiles set to users__view
                 return ($url->arg_string('id', true) == $user->uuid() && $user->uuid() != 'guest')
                     || Permissions::inMetaGroup('users__view', $user);
-            } else {
+            }
+            else {
                 // everything else limited to users__admin
                 return ($url->arg_string('id', true) == $user->uuid() && $user->uuid() != 'guest')
                     || Permissions::inMetaGroup('users__admin', $user);
@@ -412,12 +422,15 @@ abstract class CoreEventSubscriber
             $user = null;
             if ($url->arg_string('id', true) && $user = Users::get($url->arg_string('id'))) {
                 // does nothing, assigned in statement above
-            } elseif (!$url->arg_string('id', true)) {
+            }
+            elseif (!$url->arg_string('id', true)) {
                 $user = Users::current() ?? Users::guest();
             }
             if ($user) {
-                if ($user == Users::current()) return "My profile";
-                else return $user->name();
+                if ($user == Users::current())
+                    return "My profile";
+                else
+                    return $user->name();
             }
         }
         return null;
@@ -464,8 +477,10 @@ abstract class CoreEventSubscriber
      */
     public static function onStaticUrlName_wayback(URL $url, bool $inPageContext): ?string
     {
-        if ($url->actionPrefix() == 'page') return 'Wayback link';
-        else return null;
+        if ($url->actionPrefix() == 'page')
+            return 'Wayback link';
+        else
+            return null;
     }
 
     /**
@@ -540,4 +555,5 @@ abstract class CoreEventSubscriber
     {
         $urls = [];
     }
+
 }
