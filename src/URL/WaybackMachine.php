@@ -346,7 +346,9 @@ class WaybackMachine
         $url = parse_url($url);
         if (!$url || !@$url['host'])
             return null;
-        $normal = $url['host'];
+        $normal = $url['scheme'] ?: 'https';
+        $normal .= '://';
+        $normal .= $url['host'];
         if (@$url['port']) {
             $normal .= ':' . $url['port'];
         }

@@ -189,21 +189,20 @@ abstract class CoreEventSubscriber
 
     public static function onDOMElement_a(DOMEvent $e): void
     {
-        static $site;
-        $site = $site ?? preg_replace('@^(https?:)?//@', '//', URLs::site());
         /** @var DOMElement */
         $node = $e->getNode();
+        if ($node->getAttribute('data-wayback-ignore'))
+            return;
         $href = $node->getAttribute('href');
         if (!$href)
-            return;
-        if ($node->getAttribute('data-wayback-ignore'))
             return;
         if (!preg_match('/^https?:\/\//', $href))
             return;
         if (str_starts_with($href, 'http://web.archive.org/'))
             return;
-        $normalizedURL = preg_replace('@^(https?:)?//@', '//', $href);
-        if (substr($normalizedURL, 0, strlen($site)) != $site) {
+        if (str_starts_with($href, 'https://web.archive.org/'))
+            return;
+        if (str_starts_with($href, URLs::site())) {
             if (!WaybackMachine::check($href)) {
                 if ($wb = WaybackMachine::get($href)) {
                     // Wayback Machine says URL is broken and found an archived copy
