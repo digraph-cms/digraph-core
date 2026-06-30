@@ -97,6 +97,9 @@ class WaybackMachine
         $url = static::normalizeURL($url);
         if (!$url)
             return true;
+        // skip if URL is internal
+        if (str_starts_with($url, URLs::site()))
+            return true;
         // call other method to actually check status
         if (static::isLinkBroken($url)) {
             if (!$skipNotification)
