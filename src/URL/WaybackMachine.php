@@ -10,6 +10,7 @@ use DigraphCMS\Context;
 use DigraphCMS\Curl\CurlHelper;
 use DigraphCMS\Datastore\Datastore;
 use DigraphCMS\Datastore\DatastoreGroup;
+use DigraphCMS\DB\DB;
 use DigraphCMS\Email\Email;
 use DigraphCMS\Email\Emails;
 use DigraphCMS\ExceptionLog;
@@ -39,9 +40,11 @@ class WaybackMachine
      */
     public static function cleanup(): void
     {
-        // TODO: maybe get expiration times from config?
+        // only keep status and API data for 90 days
         static::statusStorage()->expire(time() - (86400 * 90));
         static::apiStorage()->expire(time() - (86400 * 90));
+        // keep everything else for a year, which means pages and no_notify flags do expire yearly
+        Datastore::expire('wayback', null, time() - 86400 * 365);
     }
 
     public static function activate(): void
