@@ -93,12 +93,18 @@ class WaybackMachine
         // active check
         if (!static::active())
             return true;
+        $url_lower = strtolower($url);
+        // skip check if url is in this site
+        if (str_starts_with(strtolower($url_lower), URLs::site()))
+            return true;
+        // skip check if url is already a wayback URL
+        if (str_starts_with(strtolower($url_lower), 'http://web.archive.org/web/'))
+            return true;
+        if (str_starts_with(strtolower($url_lower), 'https://web.archive.org/web/'))
+            return true;
         // normalize URL
         $url = static::normalizeURL($url);
         if (!$url)
-            return true;
-        // skip if URL is internal
-        if (str_starts_with($url, URLs::site()))
             return true;
         // call other method to actually check status
         if (static::isLinkBroken($url)) {
@@ -113,13 +119,12 @@ class WaybackMachine
 
     protected static function isLinkBroken(string $normalizedUrl): ?bool
     {
-        $hash = md5($normalizedUrl);
-        $status = static::statusStorage()->value($hash);
+        $status = static::statusStorage()->value($normalizedUrl);
         // if status is false, this URL has never been checked, add it to the
         // queue and optimistically return a null value to show it's not known
         // to be broken
         if ($status === false) {
-            static::statusStorage()->set($hash, 'pending', ['url' => $normalizedUrl]);
+            static::statusStorage()->set($normalizedUrl, 'pending', ['url' => $normalizedUrl]);
             ;
             return null;
         }
@@ -179,20 +184,23 @@ class WaybackMachine
         }
     }
 
-    public static function getByHash(string $hash): ?WaybackResult
+    public static function get(string $url): ?WaybackResult
     {
-        $data = static::statusStorage()->get($hash);
+        $url = static::normalizeURL($url);
+        if (!$url)
+            return null;
+        $data = static::statusStorage()->get($url);
         if (!$data)
             return null;
         if ($data->value() == 'pending')
             return null;
         if ($data->value() == 'ok')
             return null;
-        $apiResult = static::apiStorage()->get($hash);
+        $apiResult = static::apiStorage()->get($url);
         // there is no API result, add it as pending so it will be made later
         if (!$apiResult) {
             // add result as pending
-            static::apiStorage()->set($hash, 'pending', ['url' => $data->data()['url']]);
+            static::apiStorage()->set($url, 'pending', ['url' => $data->data()['url']]);
             // return no result
             return null;
         }
@@ -207,15 +215,6 @@ class WaybackMachine
                 $apiResult->data()['url'],
                 $apiResult->data()['time'],
             );
-    }
-
-    public static function get(string $url): ?WaybackResult
-    {
-        $url = static::normalizeURL($url);
-        if (!$url)
-            return null;
-        $hash = md5($url);
-        return static::getByHash($hash);
     }
 
     /**
@@ -344,19 +343,23 @@ class WaybackMachine
         }
     }
 
-    protected static function normalizeURL(string $url): ?string
+    /**
+     * Strip URL to lowercase host/path/query only, ignoring all other parts. Returns null on error.
+     */
+    protected static function normalizeURL(string $url_string): ?string
     {
-        $url = parse_url($url);
+        $url = parse_url($url_string);
         if (!$url || !@$url['host'])
             return null;
-        $normal = $url['scheme'] ?: 'https';
-        $normal .= '://';
-        $normal .= $url['host'];
+        // get host/port to start normalized URL
+        $normal = $url['host'];
         if (@$url['port']) {
             $normal .= ':' . $url['port'];
         }
+        // add path to normalized URL
         $normal .= @$url['path'] ? $url['path'] : '/';
         $normal = strtolower($normal);
+        // add query to normalized URL
         if (@$url['query']) {
             $normal .= '?' . $url['query'];
         }

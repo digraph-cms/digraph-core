@@ -31,118 +31,133 @@ Theme::resetPage();
  */
 class Theme
 {
+
     protected static $core = [
         'blocking_css' => [
-            '/styles_blocking/*.css'
+            '/styles_blocking/*.css',
         ],
         'external_css' => [],
         'internal_css' => [
-            '/styles/*.css'
+            '/styles/*.css',
         ],
-        'blocking_js' => [
-            '/scripts_blocking/*.js'
+        'blocking_js'  => [
+            '/scripts_blocking/*.js',
         ],
-        'async_js' => [
-            '/scripts/*.js'
+        'async_js'     => [
+            '/scripts/*.js',
         ],
-        'variables' => [
-            'light' => [
-                'background' => '#eeeeee',
-                'color' => '#333333',
-                'grid' => '1rem',
-                'line-length' => '35rem',
-                'line-height' => '1.4',
+        'variables'    => [
+            'light'           => [
+                'background'        => '#eeeeee',
+                'color'             => '#333333',
+                'grid'              => '1rem',
+                'line-length'       => '35rem',
+                'line-height'       => '1.4',
                 'line-height-tight' => '1.2',
-                'shadow' => 'calc(var(--grid)/8) calc(var(--grid)/4) var(--grid) rgba(0,0,0,0.15)',
-                'shadow-inset' => 'inset calc(var(--grid)/8) calc(var(--grid)/4) var(--grid) rgba(0,0,0,0.15)',
-                'border' => '2px',
-                'border-radius' => '4px',
-                'sidebar' => [
-                    'small-width' => '15em',
-                    'small-activate' => '50em',
-                    'medium-width' => '20em',
+                'shadow'            => 'calc(var(--grid)/8) calc(var(--grid)/4) var(--grid) rgba(0,0,0,0.15)',
+                'shadow-inset'      => 'inset calc(var(--grid)/8) calc(var(--grid)/4) var(--grid) rgba(0,0,0,0.15)',
+                'border'            => '2px',
+                'border-radius'     => '4px',
+                'sidebar'           => [
+                    'small-width'     => '15em',
+                    'small-activate'  => '50em',
+                    'medium-width'    => '20em',
                     'medium-activate' => '60em',
-                    'large-width' => '25em',
-                    'large-activate' => '70em',
+                    'large-width'     => '25em',
+                    'large-activate'  => '70em',
                 ],
-                'font' => [
+                'font'              => [
                     'content' => 'serif',
-                    'header' => 'sans-serif',
-                    'ui' => 'sans-serif',
-                    'code' => 'monospace',
+                    'header'  => 'sans-serif',
+                    'ui'      => 'sans-serif',
+                    'code'    => 'monospace',
                 ],
-                'link' => [
-                    'normal' => '#1976d2',
+                'link'              => [
+                    'normal'  => '#1976d2',
                     'visited' => '#512da8',
-                    'focus' => '#f57c00',
-                    'active' => '#d32f2f'
+                    'focus'   => '#f57c00',
+                    'active'  => '#d32f2f',
                 ],
-                'cue' => [
+                'cue'               => [
                     'interactive' => '#039BE5',
                     'information' => '#0097A7',
-                    'safe' => '#00C853',
-                    'warning' => '#FFAB00',
-                    'danger' => '#DD2C00'
+                    'safe'        => '#00C853',
+                    'warning'     => '#FFAB00',
+                    'danger'      => '#DD2C00',
                 ],
-                'theme' => [
-                    'neutral' => '#9e9e9e',
-                    'accent' => '#006064',
-                    'highlight' => '#00b8d4'
+                'theme'             => [
+                    'neutral'   => '#9e9e9e',
+                    'accent'    => '#006064',
+                    'highlight' => '#00b8d4',
                 ],
-                'display' => [
+                'display'           => [
                     'light' => 'initial',
-                    'dark' => 'none'
-                ]
-            ],
-            'dark' => [
-                'background' => '#222222',
-                'color' => '#fff',
-                'shadow' => 'calc(var(--grid)/8) calc(var(--grid)/4) var(--grid) rgba(0,0,0,0.4)',
-                'shadow-inset' => 'inset calc(var(--grid)/8) calc(var(--grid)/4) var(--grid) rgba(0,0,0,0.4)',
-                'link' => [
-                    'normal' => '#64b5f6',
-                    'visited' => '#ba68c8',
-                    'focus' => '#ffb74d',
-                    'active' => '#e57373'
+                    'dark'  => 'none',
                 ],
-                'display' => [
-                    'light' => 'none',
-                    'dark' => 'initial'
-                ]
             ],
-            'colorblind' => [
+            'dark'            => [
+                'background'   => '#222222',
+                'color'        => '#fff',
+                'shadow'       => 'calc(var(--grid)/8) calc(var(--grid)/4) var(--grid) rgba(0,0,0,0.4)',
+                'shadow-inset' => 'inset calc(var(--grid)/8) calc(var(--grid)/4) var(--grid) rgba(0,0,0,0.4)',
+                'link'         => [
+                    'normal'  => '#64b5f6',
+                    'visited' => '#ba68c8',
+                    'focus'   => '#ffb74d',
+                    'active'  => '#e57373',
+                ],
+                'display'      => [
+                    'light' => 'none',
+                    'dark'  => 'initial',
+                ],
+            ],
+            'colorblind'      => [
                 'cue' => [
                     'interactive' => '#0091EA',
                     'information' => '#006064',
-                    'safe' => '#2196f3',
-                    'warning' => '#ff5722',
-                    'danger' => '#ff5722'
-                ]
+                    'safe'        => '#2196f3',
+                    'warning'     => '#ff5722',
+                    'danger'      => '#ff5722',
+                ],
             ],
             'colorblind_dark' => [
                 'cue' => [
                     'interactive' => '#0091EA',
                     'information' => '#006064',
-                    'safe' => '#2196f3',
-                    'warning' => '#ff5722',
-                    'danger' => '#ff5722'
-                ]
-            ]
-        ]
+                    'safe'        => '#2196f3',
+                    'warning'     => '#ff5722',
+                    'danger'      => '#ff5722',
+                ],
+            ],
+        ],
     ];
+
     protected static $variables = [];
+
     protected static $variables_cache;
+
     protected static $blockingThemeCss = [];
+
     protected static $blockingPageCss = [];
+
     protected static $externalThemeCss = [];
+
     protected static $externalPageCss = [];
+
     protected static $internalThemeCss = [];
+
     protected static $internalPageCss = [];
+
     protected static $blockingThemeJs = [];
+
     protected static $blockingPageJs = [];
+
     protected static $asyncThemeJs = [];
+
     protected static $asyncPageJs = [];
+
     protected static $inlinePageJs = [];
+
     protected static $bodyClasses = [];
 
     public static function addBodyClass(string $class)
@@ -160,7 +175,8 @@ class Theme
         if ($user = Users::current()) {
             $user['ui.colormode'] = $mode;
             $user->update();
-        } else {
+        }
+        else {
             $cookie = Cookies::get('ui', 'color') ?? ['colormode' => 'auto', 'colorblind' => false];
             $cookie['colormode'] = $mode;
             Cookies::set('ui', 'color', $cookie);
@@ -172,7 +188,8 @@ class Theme
         if ($user = Users::current()) {
             $user['ui.colorblind'] = $mode;
             $user->update();
-        } else {
+        }
+        else {
             $cookie = Cookies::get('ui', 'color') ?? ['colormode' => 'auto', 'colorblind' => false];
             $cookie['colorblind'] = $mode;
             Cookies::set('ui', 'color', $cookie);
@@ -241,20 +258,20 @@ class Theme
                         }
                         return implode(PHP_EOL, $lines);
                     },
-                    $css
+                    $css,
                 );
                 $css = CSS::css($css);
                 file_put_contents($file->path(), $css);
             },
             [
                 filemtime($template),
-                static::$variables
-            ]
+                static::$variables,
+            ],
         );
         $file->write();
         printf(
             '<link rel="stylesheet" href="%s" />' . PHP_EOL,
-            $file->url()
+            $file->url(),
         );
     }
 
@@ -300,20 +317,21 @@ class Theme
         if (!$invert) {
             // normal meaning of light/dark
             $colors = [
-                'light' => (new Hex($color))->lighten(2),
-                'dark' => (new Hex($color))->darken(5),
+                'light'   => (new Hex($color))->lighten(2),
+                'dark'    => (new Hex($color))->darken(5),
                 'lighter' => (new Hex($color))->lighten(5),
-                'darker' => (new Hex($color))->darken(10),
-                'bright' => (new Hex($color))->brighten(15),
+                'darker'  => (new Hex($color))->darken(10),
+                'bright'  => (new Hex($color))->brighten(15),
             ];
-        } else {
+        }
+        else {
             // inverted for dark mode
             $colors = [
-                'dark' => (new Hex($color))->lighten(2),
-                'light' => (new Hex($color))->darken(5),
-                'darker' => (new Hex($color))->lighten(5),
+                'dark'    => (new Hex($color))->lighten(2),
+                'light'   => (new Hex($color))->darken(5),
+                'darker'  => (new Hex($color))->lighten(5),
                 'lighter' => (new Hex($color))->darken(10),
-                'bright' => (new Hex($color))->brighten(15),
+                'bright'  => (new Hex($color))->brighten(15),
             ];
         }
         // add alpha colors
@@ -336,7 +354,8 @@ class Theme
     {
         if ($color->isLight()) {
             return new Rgba('rgba(0,0,0,0.95)');
-        } else {
+        }
+        else {
             return new Rgba('rgba(255,255,255,0.95)');
         }
     }
@@ -391,67 +410,78 @@ class Theme
 
     public static function addBlockingThemeCss($url)
     {
-        if (in_array($url, static::$blockingThemeCss)) return;
+        if (in_array($url, static::$blockingThemeCss))
+            return;
         static::$blockingThemeCss[] = $url;
     }
 
     public static function addBlockingPageCss($url)
     {
-        if (in_array($url, static::$blockingPageCss)) return;
+        if (in_array($url, static::$blockingPageCss))
+            return;
         static::$blockingPageCss[] = $url;
     }
 
     public static function addExternalThemeCss($url)
     {
-        if (in_array($url, static::$externalThemeCss)) return;
+        if (in_array($url, static::$externalThemeCss))
+            return;
         static::$externalThemeCss[] = $url;
     }
 
     public static function addExternalPageCss($url)
     {
-        if (in_array($url, static::$externalPageCss)) return;
+        if (in_array($url, static::$externalPageCss))
+            return;
         static::$externalPageCss[] = $url;
     }
 
     public static function addInternalThemeCss($url)
     {
-        if (in_array($url, static::$internalThemeCss)) return;
+        if (in_array($url, static::$internalThemeCss))
+            return;
         static::$internalThemeCss[] = $url;
     }
 
     public static function addInternalPageCss($url)
     {
-        if (in_array($url, static::$internalPageCss)) return;
+        if (in_array($url, static::$internalPageCss))
+            return;
         static::$internalPageCss[] = $url;
     }
 
     public static function addBlockingThemeJs($url_or_file)
     {
-        if (in_array($url_or_file, static::$blockingThemeJs)) return;
+        if (in_array($url_or_file, static::$blockingThemeJs))
+            return;
         static::$blockingThemeJs[] = $url_or_file;
     }
 
     public static function addBlockingPageJs($url_or_file)
     {
-        if (in_array($url_or_file, static::$blockingPageJs)) return;
+        if (in_array($url_or_file, static::$blockingPageJs))
+            return;
         static::$blockingPageJs[] = $url_or_file;
     }
 
     public static function addThemeJs($url_or_file)
     {
-        if (in_array($url_or_file, static::$asyncThemeJs)) return;
+        if (in_array($url_or_file, static::$asyncThemeJs))
+            return;
         static::$asyncThemeJs[] = $url_or_file;
     }
 
     public static function addPageJs($url_or_file)
     {
-        if (in_array($url_or_file, static::$asyncPageJs)) return;
+        if (in_array($url_or_file, static::$asyncPageJs))
+            return;
         static::$asyncPageJs[] = $url_or_file;
     }
 
     public static function addInlinePageJs($string_or_file)
     {
-        if (in_array($string_or_file, static::$inlinePageJs)) return;
+        if (in_array($string_or_file, static::$inlinePageJs))
+            return;
         static::$inlinePageJs[] = $string_or_file;
     }
 
@@ -468,24 +498,27 @@ class Theme
         foreach ($urls_or_files as $url_or_file) {
             if ($url_or_file instanceof File) {
                 $files[] = $url_or_file;
-            } elseif (is_string($url_or_file)) {
-                if (preg_match('@^(https?)?//@', $url_or_file)) {
+            }
+            elseif (is_string($url_or_file)) {
+                if (str_starts_with($url_or_file, 'http://') || str_starts_with($url_or_file, 'https://')) {
                     // embed external stuff immediately
                     printf(
                         '<script src="%s"%s></script>' . PHP_EOL,
                         $url_or_file,
                         $async ? ' async' : ''
                     );
-                } elseif (basename($url_or_file) == '*.js') {
+                }
+                elseif (basename($url_or_file) == '*.js') {
                     // search and recurse if the filename is *.js
                     $files = array_merge(
                         $files,
                         array_map(
                             Media::class . '::get',
-                            Media::globToPaths($url_or_file)
-                        )
+                            Media::globToPaths($url_or_file),
+                        ),
                     );
-                } else {
+                }
+                else {
                     // get media files for internal stuff so it can be bundled or embedded
                     $r = $url_or_file;
                     $url_or_file = Media::get($url_or_file);
@@ -510,7 +543,8 @@ class Theme
                     $async ? ' async' : ''
                 );
             }
-        } else {
+        }
+        else {
             // bundle scripts
             $file = new DeferredFile(
                 "$name.js",
@@ -525,8 +559,8 @@ class Theme
                     function (File $f) {
                         return $f->identifier();
                     },
-                    $files
-                )
+                    $files,
+                ),
             );
             $file->write();
             printf(
@@ -548,7 +582,8 @@ class Theme
                 echo "<script>";
                 echo $string_or_file->content();
                 echo "</script>" . PHP_EOL;
-            } elseif (basename($string_or_file) == '*.js') {
+            }
+            elseif (basename($string_or_file) == '*.js') {
                 // recurse if filename is *.js
                 static::renderInlineJs(Media::globToPaths($string_or_file));
             }
@@ -563,12 +598,14 @@ class Theme
         foreach (array_merge(static::$blockingThemeCss, static::$blockingPageCss) as $url) {
             if ($url instanceof File) {
                 $files[] = $url;
-            } elseif (preg_match('/\/\*\.css$/', $url)) {
+            }
+            elseif (preg_match('/\/\*\.css$/', $url)) {
                 //wildcard search
                 foreach (Media::glob(preg_replace('/\.css$/', '.{scss,css}', $url)) as $file) {
                     $files[] = $file;
                 }
-            } else {
+            }
+            else {
                 //normal single file
                 $url = new URL($url);
                 $files[] = Media::get($url->path());
@@ -597,14 +634,16 @@ class Theme
         if (!Config::get('theme.bundle_css')) {
             $files = [];
             foreach ($urls as $url) {
-                if ($url instanceof File) $url = $url->url();
+                if ($url instanceof File)
+                    $url = $url->url();
                 if (preg_match('/\/\*\.css$/', $url)) {
                     //wildcard search
                     $url = new URL($url);
                     foreach (Media::search(preg_replace('/\.s?css$/', '.{scss,css}', $url->path())) as $file) {
                         $files[] = $url->directory() . basename($file);
                     }
-                } else {
+                }
+                else {
                     //normal single file
                     $files[] = $url;
                 }
@@ -615,20 +654,23 @@ class Theme
                     echo "<link rel='stylesheet' href='" . $file->url() . "'>" . PHP_EOL;
                 }
             }
-        } else {
+        }
+        else {
             $files = [];
             foreach ($urls as $url) {
                 if ($url instanceof File) {
                     // can't bundle files passed directly in because they might not have a path 
                     // that Media can find them at
                     echo "<link rel='stylesheet' href='" . $url->url() . "'>" . PHP_EOL;
-                } elseif (preg_match('/\/\*\.css$/', $url)) {
+                }
+                elseif (preg_match('/\/\*\.css$/', $url)) {
                     // wildcard search
                     $url = new URL($url);
                     foreach (Media::search(preg_replace('/\.s?css$/', '.{scss,css}', $url->path())) as $file) {
                         $files[] = $url->directory() . basename($file);
                     }
-                } else {
+                }
+                else {
                     // normal single file
                     $files[] = $url;
                 }
@@ -644,10 +686,10 @@ class Theme
                                 function (string $path): string {
                                     return "@import \"$path\";";
                                 },
-                                $files
-                            )
-                        )
-                    )
+                                $files,
+                            ),
+                        ),
+                    ),
                 );
             }, [$urls]);
             $file->write();
@@ -665,10 +707,10 @@ class Theme
             @$origin['port'] ? ':' . $origin['port'] : ''
         ]);
         $config = [
-            'url' => URLs::site(),
-            'origin' => $origin,
-            'uuidChars' => Digraph::uuidChars(),
-            'uuidPattern' => Digraph::uuidPattern(),
+            'url'           => URLs::site(),
+            'origin'        => $origin,
+            'uuidChars'     => Digraph::uuidChars(),
+            'uuidPattern'   => Digraph::uuidPattern(),
             'SCEditorStyle' => Media::get('/sceditor_editor_styles.css')->url(),
         ];
         return $config;
@@ -685,8 +727,8 @@ class Theme
             },
             [
                 static::coreConfig(),
-                $script
-            ]
+                $script,
+            ],
         );
         $file->write();
         echo "<script src=\"" . $file->url() . "\"></script>" . PHP_EOL;
@@ -699,6 +741,11 @@ class Theme
      */
     public static function head(): string
     {
+        // set up poor man's cron if necessary
+        // TODO: this could probably happen in a web worker or something, but it's honestly a kludge for local development more than anything
+        if (Config::get('cron.poor_mans_cron'))
+            static::addBlockingThemeJs(URLs::site() . '/~cron/');
+        // set up cache key
         $key = md5(Serializer::serialize([
             static::$variables,
             static::$blockingThemeCss,
@@ -734,7 +781,8 @@ class Theme
                 Dispatcher::dispatchEvent('onRenderHeadHtml');
                 return ob_get_clean();
             },
-            Config::get('theme.head_cache_ttl')
+            Config::get('theme.head_cache_ttl'),
         );
     }
+
 }

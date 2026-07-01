@@ -24,7 +24,8 @@ class Datastore
             ->delete('datastore')
             ->where('created < ?', $time)
             ->where('`ns`', $namespace);
-        if ($group) $query->where('`grp`', $group);
+        if ($group)
+            $query->where('`grp`', $group);
         $query->execute();
     }
 
@@ -59,8 +60,10 @@ class Datastore
             ->where('`grp`', $group)
             ->where('`key`', $key)
             ->fetch();
-        if (!$value) return false;
-        else return $value['value'];
+        if (!$value)
+            return false;
+        else
+            return $value['value'];
     }
 
     /**
@@ -125,8 +128,10 @@ class Datastore
     public static function sanitize(string $input): string
     {
         $sanitized = htmlspecialchars($input);
-        if ($sanitized == $input) return $input;
-        else return md5($input);
+        if ($sanitized == $input)
+            return $input;
+        else
+            return md5($input);
     }
 
     /**
@@ -142,41 +147,46 @@ class Datastore
         $namespace = static::sanitize($namespace);
         $group = static::sanitize($group);
         $key = static::sanitize($key);
-        if ($value === '') $value = null;
-        if ($data instanceof FlatArray) $data = $data->get();
-        if ($data === null) $data = [];
+        if ($value === '')
+            $value = null;
+        if ($data instanceof FlatArray)
+            $data = $data->get();
+        if ($data === null)
+            $data = [];
         if (static::exists($namespace, $group, $key)) {
             // update existing value
             DB::query()->update(
                 'datastore',
                 [
-                    '`value`' => $value,
-                    '`data`' => json_encode($data),
-                    '`updated`' => time(),
+                    '`value`'      => $value,
+                    '`data`'       => json_encode($data),
+                    '`updated`'    => time(),
                     '`updated_by`' => Session::uuid(),
-                ]
+                ],
             )
                 ->where('`ns`', $namespace)
                 ->where('`grp`', $group)
                 ->where('`key`', $key)
                 ->execute();
-        } else {
+        }
+        else {
             // insert new value
             DB::query()->insertInto(
                 'datastore',
                 [
-                    '`ns`' => $namespace,
-                    '`grp`' => $group,
-                    '`key`' => $key,
-                    '`value`' => $value,
-                    '`data`' => json_encode($data),
-                    '`updated`' => time(),
+                    '`ns`'         => $namespace,
+                    '`grp`'        => $group,
+                    '`key`'        => $key,
+                    '`value`'      => $value,
+                    '`data`'       => json_encode($data),
+                    '`updated`'    => time(),
                     '`updated_by`' => Session::uuid(),
-                    '`created`' => time(),
+                    '`created`'    => time(),
                     '`created_by`' => Session::uuid(),
-                ]
+                ],
             )->execute();
         }
         return static::get($namespace, $group, $key);
     }
+
 }

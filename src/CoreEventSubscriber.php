@@ -198,11 +198,7 @@ abstract class CoreEventSubscriber
             return;
         if (!preg_match('/^https?:\/\//', $href))
             return;
-        if (str_starts_with($href, 'http://web.archive.org/'))
-            return;
-        if (str_starts_with($href, 'https://web.archive.org/'))
-            return;
-        if (str_starts_with($href, URLs::site())) {
+        if (!str_starts_with($href, URLs::site())) {
             if (!WaybackMachine::check($href)) {
                 if ($wb = WaybackMachine::get($href)) {
                     // Wayback Machine says URL is broken and found an archived copy

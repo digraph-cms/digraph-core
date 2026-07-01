@@ -3,7 +3,9 @@
 use DigraphCMS\Cache\CacheableState;
 use DigraphCMS\Cache\CachedInitializer;
 use DigraphCMS\Config;
+use DigraphCMS\Context;
 use DigraphCMS\Digraph;
+use DigraphCMS\UI\Theme;
 use DigraphCMS\URL\URLs;
 use Mimey\MimeTypes;
 
@@ -54,6 +56,10 @@ CachedInitializer::config(
         $state->config('paths.web', __DIR__);
     }
 );
+
+// make sure sentry is migrated
+// generally this should happen somewhere else
+Context::sentry()->migrateDB();
 
 // build and render response
 Digraph::renderActualRequest();
