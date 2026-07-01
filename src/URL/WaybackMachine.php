@@ -251,7 +251,7 @@ class WaybackMachine
         curl_close($ch);
         if ($code == 200) {
             $json = json_decode($response, true, 512, JSON_THROW_ON_ERROR);
-            if ($json['archived_snapshots']) {
+            if (is_array($json['archived_snapshots'])) {
                 return [
                     'url'  => $json['archived_snapshots']['closest']['url'],
                     'time' => DateTime::createFromFormat(
