@@ -230,7 +230,7 @@ class WaybackMachine
      * @param string $url normalized URL
      * @return array<string,mixed>|false|null
      */
-    public static function actualApiCall(string $url)
+    public static function actualApiCall(string $url): array|bool|null
     {
         // build API request URL
         $wb = sprintf(
@@ -255,8 +255,9 @@ class WaybackMachine
                 is_array($json)
                 && array_key_exists('archived_snapshots', $json)
                 && is_array($json['archived_snapshots'])
-                && array_key_exists('closest', $json['archived_snapshots'])
             ) {
+                if (!$json['archived_snapshots'] || !array_key_exists('closest', $json['archived_snapshots']))
+                    return null;
                 return [
                     'url'  => $json['archived_snapshots']['closest']['url'],
                     'time' => DateTime::createFromFormat(
