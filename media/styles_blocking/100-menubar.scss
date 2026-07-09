@@ -225,6 +225,7 @@
     flex-direction: column;
     height: auto !important;
     gap: 0 !important;
+    align-items: center;
 
     .menuitem__dropdown {
         position: relative !important;
@@ -236,6 +237,8 @@
     .menuitem {
         height: 0;
         overflow: hidden;
+        width: 100%;
+        text-align: center;
     }
 
     .menubar--overflowed__toggle {
