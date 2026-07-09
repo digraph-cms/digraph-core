@@ -29,7 +29,9 @@
     background-color: var(--theme-highlight);
     color: var(--theme-highlight-inv);
     justify-content: center;
+    align-items: end;
     flex-wrap: nowrap;
+    gap: $grid/4;
 }
 
 .menuitem {
@@ -222,6 +224,7 @@
 .menubar.menubar--overflowed {
     flex-direction: column;
     height: auto !important;
+    gap: 0 !important;
 
     .menuitem__dropdown {
         position: relative !important;
