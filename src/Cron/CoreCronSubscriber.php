@@ -6,6 +6,7 @@ use DigraphCMS\Config;
 use DigraphCMS\Content\AbstractPage;
 use DigraphCMS\Content\Filestore;
 use DigraphCMS\Content\Slugs;
+use DigraphCMS\Context;
 use DigraphCMS\Datastore\Datastore;
 use DigraphCMS\Datastore\DatastoreGroup;
 use DigraphCMS\DB\DB;
@@ -156,6 +157,14 @@ class CoreCronSubscriber
 
     public static function cronJob_maintenance_heavy()
     {
+        // run sentry cleanup
+        new DeferredJob(
+            function () {
+                Context::sentry()->cleanupDB();
+                return 'Ran smolSentry cleanup';
+            },
+            'core_maintenance_heavy',
+        );
         // expire old bot challenges
         new DeferredJob(
             function () {
