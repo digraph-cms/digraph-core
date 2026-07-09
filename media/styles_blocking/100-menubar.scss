@@ -227,12 +227,16 @@
     gap: 0 !important;
     align-items: center;
 
+    .menuitem--dropdown {
+        .menuitem__link {
+            &:after {
+                display: none;
+            }
+        }
+    }
+
     .menuitem__dropdown {
-        position: relative !important;
-        margin-left: $grid;
-        margin-right: $grid;
-        min-width: auto;
-        box-shadow: none;
+        display: none;
     }
 
     .menuitem {
