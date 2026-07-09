@@ -87,13 +87,9 @@
 
         >.menuitem__link {
             &:after {
-                content: "settings_brightness";
-            }
-        }
-
-        .theme-menu {
-            >*:last-child {
-                margin-bottom: 0;
+                @include material-icon;
+                display: inline-block;
+                content: "invert_colors";
             }
         }
     }

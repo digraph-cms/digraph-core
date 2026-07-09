@@ -59,15 +59,8 @@ class UserMenu extends MenuBar
         $this->adminItem = $this->addURL(new URL('/admin/'), 'Admin')
             ->addClass('menuitem--admin');
         // add theme settings
-        $this->addChild(
-            $this->themeItem =
-            (new MenuItemFrame(
-                null,
-                'Color',
-                new URL('/api/v1/usermenu/theme.php'),
-            ))
-                ->addClass('menuitem--theme')
-        );
+        $this->themeItem = $this->addURL(new URL('/color_settings/'), 'Brightness/Color');
+        $this->themeItem->addClass('menuitem--theme')->addClass('menuitem--theme');
         // global events for adding to menu
         Dispatcher::dispatchEvent('onUserMenu', [$this]);
     }
