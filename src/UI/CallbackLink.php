@@ -26,6 +26,7 @@ class CallbackLink extends A
         parent::__construct($href, $target, $frameTarget);
         $this->callback = $callback;
         $this->setID('callback-link-' . static::$idCounter++);
+        $this->setAttribute('rel', 'nofollow');
     }
 
     public function href()
