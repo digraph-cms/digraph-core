@@ -9,6 +9,7 @@ use DigraphCMS\UI\Notifications;
 use DigraphCMS\URL\URL;
 
 Breadcrumb::setTopName('Email unsubscribe');
+Context::response()->setNoIndex();
 
 /** @var array<int,string> email addresses to be managed with this form */
 $addresses = [];

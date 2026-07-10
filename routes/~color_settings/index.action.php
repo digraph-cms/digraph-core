@@ -1,10 +1,13 @@
 <h1>Brightness/Color settings</h1>
 <?php
 
+use DigraphCMS\Context;
 use DigraphCMS\UI\CallbackLink;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\Theme;
 use DigraphCMS\Users\Users;
+
+Context::response()->setNoIndex();
 
 if ($user = Users::current())
     Notifications::printConfirmation('You are signed in, so these settings will be saved to your account and persist across all browsers you sign in on.');

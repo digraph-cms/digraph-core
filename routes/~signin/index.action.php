@@ -10,8 +10,9 @@ use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Users;
 use Joby\Smol\Sentry\Severity;
 
-// require the necessary cookies
+// require the necessary cookies and disable indexing
 Cookies::required(['system', 'ui', 'auth', 'csrf']);
+Context::response()->setNoIndex();
 
 // get bounce arg and turn it into a URL (which verifies it's in-site)
 $bounce = Context::arg_string('_bounce', true);

@@ -12,7 +12,7 @@ if ($message = Context::data('error_message')) {
 
 $user = Users::current();
 $signinUrl = Users::signinUrl(Context::request()->originalUrl());
-$signoutUrl = Users::signoutUrl($signinUrl);
-echo "<p>You are currently signed in as $user. If this is not you, please <a href='$signoutUrl'>sign out</a> and try again.<p>";
+$signoutLink = Users::signoutLink('sign out', $signinUrl);
+echo "<p>You are currently signed in as $user. If this is not you, please $signoutLink and try again.<p>";
 
 Router::include('/~error/trace.php');

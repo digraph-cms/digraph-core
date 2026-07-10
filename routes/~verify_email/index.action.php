@@ -10,6 +10,7 @@ use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Users;
 
 RateLimit::limit('verify_email', 'attempt', 60);
+Context::response()->setNoIndex();
 
 $user = Users::get(Context::arg_string('user'));
 $token = Context::arg_string('token');
@@ -30,7 +31,7 @@ foreach ($user['emails'] as $i => $row) {
         elseif (!Session::user()) {
             // user is not signed in, prompt them to sign in
             Notifications::printConfirmation('Email address verified: ' . $row['address']);
-            echo Users::signinUrl(new URL('/'))->html();
+            echo Users::signinLink(new URL('/'));
             return;
         }
         else {

@@ -7,6 +7,7 @@ use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Events\Dispatcher;
+use DigraphCMS\HTML\A;
 use DigraphCMS\Session\Session;
 use DigraphCMS\URL\URL;
 
@@ -171,6 +172,13 @@ abstract class Users
         return $url;
     }
 
+    public static function signinLink(string $text = 'sign in', URL|null $bounce = null): A
+    {
+        return new A(static::signinUrl($bounce))
+            ->setAttribute('rel', 'nofollow')
+            ->addChild($text);
+    }
+
     public static function signoutUrl(URL|null $bounce = null): URL
     {
         $bounce = $bounce ?? Context::url();
@@ -180,6 +188,13 @@ abstract class Users
         $url = new URL('/signout/');
         $url->setArg('_bounce', $bounce);
         return $url;
+    }
+
+    public static function signoutLink(string $text = 'sign out', URL|null $bounce = null): A
+    {
+        return new A(static::signoutUrl($bounce))
+            ->setAttribute('rel', 'nofollow')
+            ->addChild($text);
     }
 
     public static function randomName(string|null $seed = null): string

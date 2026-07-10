@@ -11,6 +11,8 @@ use DigraphCMS\UI\Pagination\PaginatedSection;
 use DigraphCMS\UI\Templates;
 use DigraphCMS\URL\URL;
 
+Context::response()->setNoIndex();
+
 $query = trim(Context::arg_string('q', true) ?? '');
 if (!$query) {
     echo '<h1>Site search</h1>';
@@ -50,6 +52,7 @@ try {
     Dispatcher::dispatchEvent('onDisplaySearchResults', [$query]);
     echo $list;
     echo '</div>';
-} catch (Throwable $th) {
+}
+catch (Throwable $th) {
     Notifications::printError('Error generating search results');
 }

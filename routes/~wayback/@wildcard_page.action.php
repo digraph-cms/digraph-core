@@ -11,12 +11,13 @@ use DigraphCMS\URL\URL;
 use DigraphCMS\URL\WaybackMachine;
 
 Context::response()->enableCache();
-Context::response()->headers()->set('X-Robots-Tag', 'noindex');
+Context::response()->setNoIndex();
 
 $storage = new DatastoreGroup('wayback', 'page');
 $result = $storage->get(Context::url()->actionSuffix());
 
-if (!$result) throw new HttpError(404);
+if (!$result)
+    throw new HttpError(404);
 
 // bounce straight to URL if it's actually up now
 if (WaybackMachine::check('http://' . $result->data()['original_url'], true)) {
@@ -31,7 +32,7 @@ if ($result->data()['context']) {
 // render tempalte
 echo Templates::render(
     'content/wayback.php',
-    ['wb_data' => $result->data()]
+    ['wb_data' => $result->data()],
 );
 
 // add management URL

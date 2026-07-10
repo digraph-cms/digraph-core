@@ -6,13 +6,11 @@ use DigraphCMS\DB\DB;
 use DigraphCMS\Email\Email;
 use DigraphCMS\Email\Emails;
 use DigraphCMS\Events\Dispatcher;
-use DigraphCMS\Exception;
 use DigraphCMS\ExceptionLog;
 use DigraphCMS\HTTP\ArbitraryRedirectException;
 use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\RichContent\RichContent;
-use DigraphCMS\Security\Security;
 use DigraphCMS\Session\Cookies;
 use DigraphCMS\Session\Session;
 use DigraphCMS\UI\Notifications;
@@ -22,8 +20,9 @@ use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
 use Joby\Smol\Sentry\Severity;
 
-// require the necessary cookies
+// require the necessary cookies and disable indexing
 Cookies::required(['system', 'ui', 'auth', 'csrf']);
+Context::response()->setNoIndex();
 
 // source and provider must exist
 $sourceName = Context::arg_string('_source');

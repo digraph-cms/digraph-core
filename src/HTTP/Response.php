@@ -45,6 +45,12 @@ class Response
         $this->headers = new ResponseHeaders;
     }
 
+    public function setNoIndex(): static
+    {
+        $this->headers()->set('X-Robots-Tag', 'noindex');
+        return $this;
+    }
+
     public function searchIndex(): bool
     {
         return $this->searchIndex;

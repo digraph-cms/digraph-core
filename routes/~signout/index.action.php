@@ -8,6 +8,7 @@ use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\Users;
 
 Session::deauthenticate('Used signout link');
+Context::response()->setNoIndex();
 
 $bounce = Context::arg_string('_bounce', true);
 if ($bounce) {
@@ -15,7 +16,8 @@ if ($bounce) {
     if (!Permissions::url($bounce, Users::guest())) {
         $bounce = new URL('/');
     }
-} else {
+}
+else {
     $bounce = new URL('/');
 }
 

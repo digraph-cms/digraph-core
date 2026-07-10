@@ -318,7 +318,7 @@ abstract class Digraph
                 throw new RedirectException(Context::url());
             }
             // process request
-            if ($explicitly_static || (!$pages && $static_exists)) {
+            if ($explicitly_static || (!$pages && $static_exists)) { // @phpstan-ignore-line I like the parentheses
                 // explicitly static or no pages and static exists
                 static::buildResponseContent();
             }
@@ -512,6 +512,7 @@ abstract class Digraph
     {
         // response content is always the same
         Context::response(new Response());
+        Context::response()->setNoIndex();
         Context::response()->filename('challenged.txt');
         Context::response()->content('Your IP address has been flagged for a bot challenge.');
         Context::response()->redirect(static::actualUrl(), false, false);

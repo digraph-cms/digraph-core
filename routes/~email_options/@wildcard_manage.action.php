@@ -9,6 +9,7 @@ use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\Users;
 
 Breadcrumb::setTopName('Manage email preferences');
+Context::response()->setNoIndex();
 
 /** @var array<int,string> email addresses to be managed with this form */
 $addresses = [];

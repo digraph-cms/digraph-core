@@ -1,11 +1,14 @@
 <h1>Wayback dashboard</h1>
 <?php
 
+use DigraphCMS\Context;
 use DigraphCMS\Datastore\DatastoreItem;
 use DigraphCMS\Datastore\DatastoreNamespace;
 use DigraphCMS\UI\Format;
 use DigraphCMS\UI\Pagination\PaginatedTable;
 use DigraphCMS\URL\URL;
+
+Context::response()->setNoIndex();
 
 echo new PaginatedTable(
     (new DatastoreNamespace('wayback'))->select()->order('updated DESC'),
@@ -18,7 +21,7 @@ echo new PaginatedTable(
                 $action = 'Link status: ' . $item->value();
                 $action = sprintf(
                     '<a href="%s">%s</a>',
-                    new URL('/admin/datastore/item:'.$item->id()),
+                    new URL('/admin/datastore/item:' . $item->id()),
                     $action,
                 );
                 $url = $data['url'];
@@ -27,7 +30,7 @@ echo new PaginatedTable(
                 $action = 'API call: ' . $item->value();
                 $action = sprintf(
                     '<a href="%s">%s</a>',
-                    new URL('/admin/datastore/item:'.$item->id()),
+                    new URL('/admin/datastore/item:' . $item->id()),
                     $action,
                 );
                 $url = $data['url'];
@@ -39,8 +42,8 @@ echo new PaginatedTable(
         return [
             Format::date($item->updated()),
             $action,
-            htmlspecialchars($url)
+            htmlspecialchars($url),
         ];
     },
-    []
+    [],
 );
