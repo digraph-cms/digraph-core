@@ -11,7 +11,7 @@ use DigraphCMS\HTML\A;
 use DigraphCMS\Session\Session;
 use DigraphCMS\URL\URL;
 
-abstract class Users
+class Users
 {
 
     protected static $sources = [];
