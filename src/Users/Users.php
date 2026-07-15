@@ -174,7 +174,7 @@ class Users
 
     public static function signinLink(string $text = 'sign in', URL|null $bounce = null): A
     {
-        return new A(static::signinUrl($bounce))
+        return (new A(static::signinUrl($bounce)))
             ->setAttribute('rel', 'nofollow')
             ->addChild($text);
     }
@@ -192,7 +192,7 @@ class Users
 
     public static function signoutLink(string $text = 'sign out', URL|null $bounce = null): A
     {
-        return new A(static::signoutUrl($bounce))
+        return (new A(static::signoutUrl($bounce)))
             ->setAttribute('rel', 'nofollow')
             ->addChild($text);
     }
