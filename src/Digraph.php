@@ -42,11 +42,11 @@ abstract class Digraph
      * more characters, and yields less entropy (but still more than enough for
      * any website this system is capable of scaling up to).
      */
-    const UUIDCHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const UUIDCHARS = 'abcdefghijklmnopqrstuvwxyz0123456789';
 
-    const UUIDPATTERN = '00000000';
+    const UUIDPATTERN = '0000000000';
 
-    const LONGUUIDPATTERN = '0000000000000000';
+    const LONGUUIDPATTERN = '00000000000000000000';
 
     /**
      * Generate a response from an automatically-loaded request and render it.
