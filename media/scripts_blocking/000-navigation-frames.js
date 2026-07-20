@@ -70,10 +70,20 @@ document.addEventListener('click', (e) => {
     if (event_target.getAttribute('href').substring(0, 1) == '#') {
         return;
     }
+    // if target is _popover then insert popover if necessary and activate it
+    if (event_target.getAttribute('target') == '_popover') {
+        Digraph.showPopover();
+        event_target.setAttribute('data-target', '_popover_content');
+    }
+    // determine parent and target
     var parent, target;
     [parent, target] = Digraph.state.navigationParentAndTarget(event_target);
+    console.log(parent);
+    console.log(event_target);
+    console.log(event_target.attributes.target);
+    console.log(target);
     // parent and target found
-    if (parent && event_target && !event_target.attributes.target && target != '_top') {
+    if (parent && event_target && target != '_top') {
         // scroll to parent if requested
         if (scroll) {
             switch (scroll) {
@@ -197,7 +207,7 @@ Digraph.state = {
                 // check for X-Target-Frame header and change target frame if specified
                 if (e.target.getResponseHeader('X-Target-Frame')) {
                     target_frame = document.getElementById(e.target.getResponseHeader('X-Target-Frame'));
-                }else {
+                } else {
                     target_frame = frame;
                 }
                 // parse response and put it into the target frame

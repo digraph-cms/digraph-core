@@ -17,25 +17,24 @@ CachedInitializer::run(
     }
 );
 
-return
-    [
-        'paths' => [
-            'migrations' => array_merge(
-                // note that for this project migrations have an extra demo path
-                // this is where some extra migrations go that set up things
-                // like the demo administrator account
-                [__DIR__ . '/demo/migrations'],
-                DB::migrationPaths()
-            ),
-            'seeds' => DB::seedPaths(),
+return [
+    'paths'         => [
+        'migrations' => array_merge(
+            // note that for this project migrations have an extra demo path
+            // this is where some extra migrations go that set up things
+            // like the demo administrator account
+            [__DIR__ . '/demo/migrations'],
+            DB::migrationPaths(),
+        ),
+        'seeds'      => DB::seedPaths(),
+    ],
+    'environments'  => [
+        'default_migration_table' => 'phinxlog',
+        'default_environment'     => 'current',
+        'current'                 => [
+            'name'       => 'Current environment',
+            'connection' => DB::pdo(),
         ],
-        'environments' => [
-            'default_migration_table' => 'phinxlog',
-            'default_environment' => 'current',
-            'current' => [
-                'name' => 'Current environment',
-                'connection' => DB::pdo()
-            ]
-        ],
-        'version_order' => 'creation',
-    ];
+    ],
+    'version_order' => 'creation',
+];

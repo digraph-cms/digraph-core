@@ -28,7 +28,39 @@ const Digraph = {
         var txt = document.createElement('textarea');
         txt.innerHTML = html;
         return txt.value;
-    }
+    },
+    popover: () => {
+        var popover = document.getElementById('_popover');
+        if (!popover) {
+            popover = document.createElement('div');
+            popover.setAttribute('id', '_popover');
+            var popover_content = document.createElement('div');
+            popover_content.setAttribute('id', '_popover_content');
+            popover_content.classList.add('navigation-frame');
+            popover_content.classList.add('navigation-frame--stateless');
+            popover_content.setAttribute('data-target', '_top');
+            popover.appendChild(popover_content);
+            var popover_closer = document.createElement('a');
+            popover_closer.classList.add('_popover__closer');
+            popover_closer.addEventListener('click', Digraph.hidePopover);
+            popover.appendChild(popover_closer);
+            document.body.appendChild(popover);
+        }
+        return popover;
+    },
+    showPopover: () => {
+        var popover = Digraph.popover();
+        popover.classList.add('_popover--visible');
+        Digraph.popover.escape_listener = document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                Digraph.hidePopover();
+            }
+        });
+    },
+    hidePopover: () => {
+        Digraph.popover().classList.remove('_popover--visible');
+        document.removeEventListener(Digraph.popover.escape_listener);
+    },
 };
 
 document.addEventListener('DOMContentLoaded', (e) => {
