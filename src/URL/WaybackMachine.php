@@ -360,8 +360,7 @@ class WaybackMachine
         if (@$url['query']) {
             $normal .= '?' . $url['query'];
         }
-        $normal = preg_replace('/\/$/', '', $normal);
-        return $normal ? $normal : null;
+        return $normal;
     }
 
     protected static function statusStorage(): DatastoreGroup
