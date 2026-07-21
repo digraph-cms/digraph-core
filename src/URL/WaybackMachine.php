@@ -356,7 +356,6 @@ class WaybackMachine
         }
         // add path to normalized URL
         $normal .= @$url['path'] ? $url['path'] : '/';
-        $normal = strtolower($normal);
         // add query to normalized URL
         if (@$url['query']) {
             $normal .= '?' . $url['query'];
