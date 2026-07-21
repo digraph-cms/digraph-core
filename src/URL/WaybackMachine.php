@@ -10,7 +10,6 @@ use DigraphCMS\Context;
 use DigraphCMS\Curl\CurlHelper;
 use DigraphCMS\Datastore\Datastore;
 use DigraphCMS\Datastore\DatastoreGroup;
-use DigraphCMS\DB\DB;
 use DigraphCMS\Email\Email;
 use DigraphCMS\Email\Emails;
 use DigraphCMS\ExceptionLog;
@@ -96,14 +95,13 @@ class WaybackMachine
         // active check
         if (!static::active())
             return true;
-        $url_lower = strtolower($url);
         // skip check if url is in this site
-        if (str_starts_with(strtolower($url_lower), URLs::site()))
+        if (str_starts_with(strtolower($url), URLs::site()))
             return true;
         // skip check if url is already a wayback URL
-        if (str_starts_with(strtolower($url_lower), 'http://web.archive.org/web/'))
+        if (str_starts_with(strtolower($url), 'http://web.archive.org/web/'))
             return true;
-        if (str_starts_with(strtolower($url_lower), 'https://web.archive.org/web/'))
+        if (str_starts_with(strtolower($url), 'https://web.archive.org/web/'))
             return true;
         // normalize URL
         $url = static::normalizeURL($url);
@@ -114,8 +112,7 @@ class WaybackMachine
             if (!$skipNotification)
                 static::sendNotificationEmail(Context::url(), $url);
             return false;
-        }
-        else {
+        } else {
             return true;
         }
     }
@@ -127,8 +124,7 @@ class WaybackMachine
         // queue and optimistically return a null value to show it's not known
         // to be broken
         if ($status === false) {
-            static::statusStorage()->set($normalizedUrl, 'pending', ['url' => $normalizedUrl]);
-            ;
+            static::statusStorage()->set($normalizedUrl, 'pending', ['url' => $normalizedUrl]);;
             return null;
         }
         // if it's "pending" then it's still pending a check, and we should optimistically return null (falsey, not broken) until then
@@ -158,29 +154,24 @@ class WaybackMachine
             curl_close($ch);
             if ($code >= 200 && $code < 400) {
                 return true;
-            }
-            elseif ($code === 401) {
+            } elseif ($code === 401) {
                 return true;
-            }
-            elseif ($errno == 28) {
+            } elseif ($errno == 28) {
                 static::$log[] = 'Timeout';
                 return true;
-            }
-            elseif ($code == 403) {
+            } elseif ($code == 403) {
                 static::$log[] = 'HTTP code: ' . $code;
                 static::$log[] = 'Curl error number: ' . $errno;
                 static::$log[] = 'Curl error: ' . curl_error($ch);
                 static::$log[] = 'Optimistically calling 403 success';
                 return true;
-            }
-            else {
+            } else {
                 static::$log[] = 'HTTP code: ' . $code;
                 static::$log[] = 'Curl error number: ' . $errno;
                 static::$log[] = 'Curl error: ' . curl_error($ch);
                 return false;
             }
-        }
-        catch (\Throwable $th) {
+        } catch (\Throwable $th) {
             static::$log[] = get_class($th);
             static::$log[] = $th->getMessage();
             return true;
@@ -266,8 +257,7 @@ class WaybackMachine
                         new DateTimeZone('UTC'),
                     )->getTimestamp(),
                 ];
-            }
-            else {
+            } else {
                 ExceptionLog::logMessage(
                     "Possibly malformed wayback response",
                     [
@@ -299,8 +289,7 @@ class WaybackMachine
                 Datastore::set('wayback', 'no_notify', md5(serialize([$url, $context->pathString()])), 'blocked', ['url' => $url, 'context' => $context->pathString()]);
             else
                 Datastore::set('wayback', 'no_notify', md5($url), 'blocked', ['url' => $url]);
-        }
-        else {
+        } else {
             if ($context)
                 Datastore::delete('wayback', 'no_notify', md5(serialize([$url, $context->pathString()])));
             else
@@ -387,5 +376,4 @@ class WaybackMachine
         static $group;
         return $group ?? $group = new DatastoreGroup('wayback', 'api');
     }
-
 }
