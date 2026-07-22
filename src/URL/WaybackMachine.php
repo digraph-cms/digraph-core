@@ -119,7 +119,7 @@ class WaybackMachine
 
     protected static function isLinkBroken(string $normalizedUrl): ?bool
     {
-        $identifier = md5($normalizedUrl);
+        $identifier = static::identifierForUrl($normalizedUrl);
         $status = static::statusStorage()->value($identifier);
         // if status is false, this URL has never been checked, add it to the
         // queue and optimistically return a null value to show it's not known
