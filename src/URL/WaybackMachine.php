@@ -121,9 +121,7 @@ class WaybackMachine
     {
         $identifier = static::identifierForUrl($normalizedUrl);
         $status = static::statusStorage()->value($identifier);
-        // if status is false, this URL has never been checked, add it to the
-        // queue and optimistically return a null value to show it's not known
-        // to be broken
+        // if status is false, this URL has never been checked, add it to the queue and optimistically return a null value to show it's not known to be broken
         if ($status === false) {
             static::statusStorage()->set($identifier, 'pending', [
                 'url' => $normalizedUrl,
@@ -131,7 +129,7 @@ class WaybackMachine
             ]);
             return null;
         }
-        // if it's "pending" then it's still pending a check, and we should optimistically return null (falsey, not broken) until then
+        // if it's "pending" then it's still pending a check, and we should optimistically return null (falsey, not broken) to indicate that it's not known to be broken
         elseif ($status == 'pending')
             return null;
         // if it's "ok" then it's ok
