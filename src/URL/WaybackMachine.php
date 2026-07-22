@@ -125,7 +125,10 @@ class WaybackMachine
         // queue and optimistically return a null value to show it's not known
         // to be broken
         if ($status === false) {
-            static::statusStorage()->set($identifier, 'pending', ['url' => $normalizedUrl]);;
+            static::statusStorage()->set($identifier, 'pending', [
+                'url' => $normalizedUrl,
+                'context' => Context::url()->__toString()
+            ]);
             return null;
         }
         // if it's "pending" then it's still pending a check, and we should optimistically return null (falsey, not broken) until then
