@@ -119,12 +119,13 @@ class WaybackMachine
 
     protected static function isLinkBroken(string $normalizedUrl): ?bool
     {
-        $status = static::statusStorage()->value($normalizedUrl);
+        $identifier = md5($normalizedUrl);
+        $status = static::statusStorage()->value($identifier);
         // if status is false, this URL has never been checked, add it to the
         // queue and optimistically return a null value to show it's not known
         // to be broken
         if ($status === false) {
-            static::statusStorage()->set($normalizedUrl, 'pending', ['url' => $normalizedUrl]);;
+            static::statusStorage()->set($identifier, 'pending', ['url' => $normalizedUrl]);;
             return null;
         }
         // if it's "pending" then it's still pending a check, and we should optimistically return null (falsey, not broken) until then
@@ -178,23 +179,29 @@ class WaybackMachine
         }
     }
 
+    protected static function identifierForUrl(string $url): string
+    {
+        return crc32($url) . ':' . $url;
+    }
+
     public static function get(string $url): ?WaybackResult
     {
         $url = static::normalizeURL($url);
+        $identifier = static::identifierForUrl($url);
         if (!$url)
             return null;
-        $data = static::statusStorage()->get($url);
+        $data = static::statusStorage()->get($identifier);
         if (!$data)
             return null;
         if ($data->value() == 'pending')
             return null;
         if ($data->value() == 'ok')
             return null;
-        $apiResult = static::apiStorage()->get($url);
+        $apiResult = static::apiStorage()->get($identifier);
         // there is no API result, add it as pending so it will be made later
         if (!$apiResult) {
             // add result as pending
-            static::apiStorage()->set($url, 'pending', ['url' => $data->data()['url']]);
+            static::apiStorage()->set($identifier, 'pending', ['url' => $data->data()['url']]);
             // return no result
             return null;
         }
