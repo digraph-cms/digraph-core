@@ -52,12 +52,12 @@
     &:focus,
     &:active {
       &:after {
-        background: var(--cue-interactive);
-        color: var(--cue-interactive-inv);
+        background: var(--cue-warning);
+        color: var(--cue-warning-inv);
       }
 
       &:before {
-        background-color: var(--cue-interactive-a10);
+        background-color: var(--cue-warning-a10);
       }
     }
 
