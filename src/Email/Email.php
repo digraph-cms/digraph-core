@@ -52,8 +52,7 @@ class Email
         bool $time_sensitive = false,
         User|null $user = null,
         string|null $from = null,
-    ): Email
-    {
+    ): Email {
         return new Email(
             category: $category,
             subject: $subject,
@@ -82,8 +81,7 @@ class Email
         RichContent $body,
         bool $time_sensitive = false,
         string|null $from = null,
-    ): array
-    {
+    ): array {
         return array_map(
             function ($email) use ($category, $user, $subject, $body, $time_sensitive, $from) {
                 return new Email(
@@ -116,8 +114,7 @@ class Email
         string $subject,
         RichContent $body,
         bool $time_sensitive = false,
-    ): ?Email
-    {
+    ): ?Email {
         if (!$user->primaryEmail())
             return null;
         return new Email(
@@ -147,8 +144,7 @@ class Email
         string|null $error = null,
         bool $time_sensitive = false,
         bool|null $exists = null,
-    )
-    {
+    ) {
         $this->category = $category;
         $this->subject = $subject;
         $this->to = $to;
@@ -295,5 +291,4 @@ class Email
     {
         return Emails::categoryDescription($this->category());
     }
-
 }

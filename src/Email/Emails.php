@@ -176,6 +176,9 @@ class Emails
                 if ($email->bcc()) {
                     $mailer->addBCC($email->bcc());
                 }
+                $mailer->addCustomHeader('Precedence', 'bulk');
+                $mailer->addCustomHeader('Auto-Submitted', 'auto-generated');
+                $mailer->addCustomHeader('X-Auto-Response-Suppress', 'OOF, DR, NDR, RN, NRN');
                 $mailer->Subject = $email->subject();
                 $mailer->msgHTML(static::prepareBody_html($email));
                 $mailer->AltBody = static::prepareBody_text($email);
