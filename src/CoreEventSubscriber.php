@@ -205,8 +205,7 @@ abstract class CoreEventSubscriber
                     $node->setAttribute('href', $wb->helperURL());
                     $node->setAttribute('data-link-wayback', 'true');
                     $node->setAttribute('title', 'Wayback Machine: ' . $href);
-                }
-                else {
+                } else {
                     // broken URL but no archived copy found
                     $node->setAttribute('data-link-broken', 'true');
                     $node->setAttribute('title', 'This link may be broken');
@@ -378,8 +377,7 @@ abstract class CoreEventSubscriber
                 // viewing profiles set to users__view
                 return ($url->arg_string('id', true) == $user->uuid() && $user->uuid() != 'guest')
                     || Permissions::inMetaGroup('users__view', $user);
-            }
-            else {
+            } else {
                 // everything else limited to users__admin
                 return ($url->arg_string('id', true) == $user->uuid() && $user->uuid() != 'guest')
                     || Permissions::inMetaGroup('users__admin', $user);
@@ -417,8 +415,7 @@ abstract class CoreEventSubscriber
             $user = null;
             if ($url->arg_string('id', true) && $user = Users::get($url->arg_string('id'))) {
                 // does nothing, assigned in statement above
-            }
-            elseif (!$url->arg_string('id', true)) {
+            } elseif (!$url->arg_string('id', true)) {
                 $user = Users::current() ?? Users::guest();
             }
             if ($user) {
@@ -512,7 +509,7 @@ abstract class CoreEventSubscriber
      *
      * @return string|null
      */
-    public static function onStaticUrlName_signin(): ?string
+    public static function onStaticUrlName_login(): ?string
     {
         return "Log in";
     }
@@ -534,7 +531,7 @@ abstract class CoreEventSubscriber
      *
      * @return void
      */
-    public static function onStaticActions_signin(array &$urls)
+    public static function onStaticActions_login(array &$urls)
     {
         $urls = [];
     }
@@ -550,5 +547,4 @@ abstract class CoreEventSubscriber
     {
         $urls = [];
     }
-
 }

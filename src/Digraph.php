@@ -618,21 +618,20 @@ abstract class Digraph
     public static function doCookieBotChallenge(): void
     {
         // if there is no cookie, set one and refresh
-        // tokens expire very quickly, one minute
-        if (!isset($_COOKIE['dgcbt'])) {
+        if (!isset($_COOKIE['dgcbt_p'])) {
             $new_token = bin2hex(random_bytes(32));
             DB::query()->insertInto(
                 'security_captcha_token',
                 [
                     'token'   => $new_token,
-                    'expires' => time() + 60,
+                    'expires' => time() + 3600,
                 ],
             )->execute();
             setcookie(
-                'dgcbt',
+                'dgcbt_p',
                 $new_token,
                 [
-                    'expires'  => time() + 60,
+                    'expires'  => time() + 3600,
                     'httponly' => true,
                     'samesite' => 'Lax',
                 ],
@@ -643,16 +642,16 @@ abstract class Digraph
         else {
             $query = DB::query()
                 ->from('security_captcha_token')
-                ->where('token', $_COOKIE['dgcbt'])
+                ->where('token', $_COOKIE['dgcbt_p'])
                 ->where('expires >= ?', time());
             if ($query->count() > 0) {
                 // we passed the challenge, so do nothing and continue
                 return;
             } else {
                 // there was a cookie but it was invalid, unset it and refresh
-                unset($_COOKIE['dgcbt']);
+                unset($_COOKIE['dgcbt_p']);
                 setcookie(
-                    'dgcbt',
+                    'dgcbt_p',
                     "",
                     [
                         'expires'  => 1,
