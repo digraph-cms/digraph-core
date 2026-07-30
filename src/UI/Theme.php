@@ -13,9 +13,9 @@ use DigraphCMS\Media\DeferredFile;
 use DigraphCMS\Media\File;
 use DigraphCMS\Media\Media;
 use DigraphCMS\Serializer;
-use DigraphCMS\Session\Cookies;
 use DigraphCMS\URL\URL;
 use DigraphCMS\URL\URLs;
+use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
 use OzdemirBurak\Iris\Color\Hex;
 use OzdemirBurak\Iris\Color\Rgba;
@@ -167,53 +167,35 @@ class Theme
         }
     }
 
-    public static function setColorMode(?string $mode)
+    public static function setColorMode(?string $mode, User|null $user = null)
     {
         if ($mode !== 'dark' && $mode != 'light') {
             $mode = 'auto';
         }
-        if ($user = Users::current()) {
-            $user['ui.colormode'] = $mode;
-            $user->update();
-        }
-        else {
-            $cookie = Cookies::get('ui', 'color') ?? ['colormode' => 'auto', 'colorblind' => false];
-            $cookie['colormode'] = $mode;
-            Cookies::set('ui', 'color', $cookie);
-        }
+        $user = $user ?? Users::current();
+        $user['ui.colormode'] = $mode;
+        $user->update();
     }
 
-    public static function setcolorblindMode(bool $mode)
+    public static function setcolorblindMode(bool $mode, User|null $user = null)
     {
-        if ($user = Users::current()) {
-            $user['ui.colorblind'] = $mode;
-            $user->update();
-        }
-        else {
-            $cookie = Cookies::get('ui', 'color') ?? ['colormode' => 'auto', 'colorblind' => false];
-            $cookie['colorblind'] = $mode;
-            Cookies::set('ui', 'color', $cookie);
-        }
+        $user = $user ?? Users::current();
+        $user['ui.colorblind'] = $mode;
+        $user->update();
     }
 
-    public static function colorMode(): ?string
+    public static function colorMode(User|null $user = null): ?string
     {
-        if ($user = Users::current()) {
-            return $user['ui.colormode'] == 'auto'
-                ? null
-                : $user['ui.colormode'];
-        }
-        return @Cookies::get('ui', 'color')['colormode'] == 'auto'
+        $user = $user ?? Users::current();
+        return $user['ui.colormode'] == 'auto'
             ? null
-            : @Cookies::get('ui', 'color')['colormode'];
+            : $user['ui.colormode'];
     }
 
-    public static function colorblindMode(): ?bool
+    public static function colorblindMode(User|null $user = null): ?bool
     {
-        if ($user = Users::current()) {
-            return !!$user['ui.colorblind'];
-        }
-        return @Cookies::get('ui', 'color')['colorblind'];
+        $user = $user ?? Users::current();
+        return !!$user['ui.colorblind'];
     }
 
     public static function bodyClasses(): array
@@ -323,8 +305,7 @@ class Theme
                 'darker'  => (new Hex($color))->darken(10),
                 'bright'  => (new Hex($color))->brighten(15),
             ];
-        }
-        else {
+        } else {
             // inverted for dark mode
             $colors = [
                 'dark'    => (new Hex($color))->lighten(2),
@@ -354,8 +335,7 @@ class Theme
     {
         if ($color->isLight()) {
             return new Rgba('rgba(0,0,0,0.95)');
-        }
-        else {
+        } else {
             return new Rgba('rgba(255,255,255,0.95)');
         }
     }
@@ -498,8 +478,7 @@ class Theme
         foreach ($urls_or_files as $url_or_file) {
             if ($url_or_file instanceof File) {
                 $files[] = $url_or_file;
-            }
-            elseif (is_string($url_or_file)) {
+            } elseif (is_string($url_or_file)) {
                 if (str_starts_with($url_or_file, 'http://') || str_starts_with($url_or_file, 'https://')) {
                     // embed external stuff immediately
                     printf(
@@ -507,8 +486,7 @@ class Theme
                         $url_or_file,
                         $async ? ' async' : ''
                     );
-                }
-                elseif (basename($url_or_file) == '*.js') {
+                } elseif (basename($url_or_file) == '*.js') {
                     // search and recurse if the filename is *.js
                     $files = array_merge(
                         $files,
@@ -517,8 +495,7 @@ class Theme
                             Media::globToPaths($url_or_file),
                         ),
                     );
-                }
-                else {
+                } else {
                     // get media files for internal stuff so it can be bundled or embedded
                     $r = $url_or_file;
                     $url_or_file = Media::get($url_or_file);
@@ -543,8 +520,7 @@ class Theme
                     $async ? ' async' : ''
                 );
             }
-        }
-        else {
+        } else {
             // bundle scripts
             $file = new DeferredFile(
                 "$name.js",
@@ -582,8 +558,7 @@ class Theme
                 echo "<script>";
                 echo $string_or_file->content();
                 echo "</script>" . PHP_EOL;
-            }
-            elseif (basename($string_or_file) == '*.js') {
+            } elseif (basename($string_or_file) == '*.js') {
                 // recurse if filename is *.js
                 static::renderInlineJs(Media::globToPaths($string_or_file));
             }
@@ -598,14 +573,12 @@ class Theme
         foreach (array_merge(static::$blockingThemeCss, static::$blockingPageCss) as $url) {
             if ($url instanceof File) {
                 $files[] = $url;
-            }
-            elseif (preg_match('/\/\*\.css$/', $url)) {
+            } elseif (preg_match('/\/\*\.css$/', $url)) {
                 //wildcard search
                 foreach (Media::glob(preg_replace('/\.css$/', '.{scss,css}', $url)) as $file) {
                     $files[] = $file;
                 }
-            }
-            else {
+            } else {
                 //normal single file
                 $url = new URL($url);
                 $files[] = Media::get($url->path());
@@ -642,8 +615,7 @@ class Theme
                     foreach (Media::search(preg_replace('/\.s?css$/', '.{scss,css}', $url->path())) as $file) {
                         $files[] = $url->directory() . basename($file);
                     }
-                }
-                else {
+                } else {
                     //normal single file
                     $files[] = $url;
                 }
@@ -654,23 +626,20 @@ class Theme
                     echo "<link rel='stylesheet' href='" . $file->url() . "'>" . PHP_EOL;
                 }
             }
-        }
-        else {
+        } else {
             $files = [];
             foreach ($urls as $url) {
                 if ($url instanceof File) {
                     // can't bundle files passed directly in because they might not have a path 
                     // that Media can find them at
                     echo "<link rel='stylesheet' href='" . $url->url() . "'>" . PHP_EOL;
-                }
-                elseif (preg_match('/\/\*\.css$/', $url)) {
+                } elseif (preg_match('/\/\*\.css$/', $url)) {
                     // wildcard search
                     $url = new URL($url);
                     foreach (Media::search(preg_replace('/\.s?css$/', '.{scss,css}', $url->path())) as $file) {
                         $files[] = $url->directory() . basename($file);
                     }
-                }
-                else {
+                } else {
                     // normal single file
                     $files[] = $url;
                 }
@@ -784,5 +753,4 @@ class Theme
             Config::get('theme.head_cache_ttl'),
         );
     }
-
 }

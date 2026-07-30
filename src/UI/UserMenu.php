@@ -44,8 +44,7 @@ class UserMenu extends MenuBar
             $this->setAttribute('aria-label', 'User menu');
             // dispatch user event
             Dispatcher::dispatchEvent('onUserMenu_user', [$this]);
-        }
-        else {
+        } else {
             // actions for non-authenticated user
             if (Config::get('usermenu.guest_signin')) {
                 $this->loginItem = $this->addURL(Users::signinUrl(Context::url()))
@@ -60,10 +59,6 @@ class UserMenu extends MenuBar
         // add admin settings
         $this->adminItem = $this->addURL(new URL('/admin/'), 'Admin')
             ->addClass('menuitem--admin');
-        // add theme settings
-        $this->themeItem = $this->addURL(new URL('/color_settings/'), 'Brightness/Color')
-            ->setAttribute('rel', 'nofollow')
-            ->addClass('menuitem--theme');
         // global events for adding to menu
         Dispatcher::dispatchEvent('onUserMenu', [$this]);
     }
@@ -103,5 +98,4 @@ class UserMenu extends MenuBar
             ],
         );
     }
-
 }

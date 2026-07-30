@@ -1,64 +1,52 @@
-<h1>Brightness/Color settings</h1>
 <?php
 
-use DigraphCMS\Context;
 use DigraphCMS\UI\CallbackLink;
-use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\Theme;
-use DigraphCMS\Users\Users;
+use DigraphCMS\Users\User;
 
-Context::response()->setNoIndex();
+/** @var User $user */
 
-if ($user = Users::current())
-    Notifications::printConfirmation('You are signed in, so these settings will be saved to your account and persist across all browsers you sign in on.');
-else
-    Notifications::printNotice('You are not signed in, so these settings will be saved to a cookie specific to this web browser.');
-
-if (Theme::colorMode() === null) {
+if (Theme::colorMode($user) === null) {
     $auto = "<strong>automatic</strong>";
-}
-else {
+} else {
     $auto = new CallbackLink(
-        fn() => Theme::setColorMode(null),
+        fn() => Theme::setColorMode(null, $user),
     )
         ->setAttribute('data-target', '_frame')->setID('theme-auto')
         ->addChild('automatic');
 }
 
-if (Theme::colorMode() === 'light') {
+if (Theme::colorMode($user) === 'light') {
     $light = '<strong>light</strong>';
-}
-else {
+} else {
     $light = new CallbackLink(
-        fn() => Theme::setColorMode('light'),
+        fn() => Theme::setColorMode('light', $user),
     )
         ->setAttribute('data-target', '_frame')->setID('theme-light')
         ->addChild('light');
 }
 
-if (Theme::colorMode() === 'dark') {
+if (Theme::colorMode($user) === 'dark') {
     $dark = '<strong>dark</strong>';
-}
-else {
+} else {
     $dark = new CallbackLink(
-        fn() => Theme::setColorMode('dark'),
+        fn() => Theme::setColorMode('dark', $user),
     )
         ->setAttribute('data-target', '_frame')->setID('theme-dark')
         ->addChild('dark');
 }
 
-if (Theme::colorblindMode()) {
+if (Theme::colorblindMode($user)) {
     $colorblind_on = '<strong>on</strong>';
     $colorblind_off = new CallbackLink(
-        fn() => Theme::setColorblindMode(false),
+        fn() => Theme::setColorblindMode(false, $user),
     )
         ->setAttribute('data-target', '_frame')->setID('colorblind-off')
         ->addChild('off');
-}
-else {
+} else {
     $colorblind_off = '<strong>off</strong>';
     $colorblind_on = new CallbackLink(
-        fn() => Theme::setColorblindMode(true),
+        fn() => Theme::setColorblindMode(true, $user),
     )
         ->setAttribute('data-target', '_frame')->setID('colorblind-on')
         ->addChild('on');
@@ -74,22 +62,19 @@ echo implode('&nbsp;|&nbsp;', [$colorblind_off, $colorblind_on]);
 
 // also generate a script that sets the appropriate body classes on load
 echo "<script>";
-if (Theme::colorMode() == 'dark') {
+if (Theme::colorMode($user) == 'dark') {
     echo "document.body.classList.remove('colors--light');";
     echo "document.body.classList.add('colors--dark');";
-}
-elseif (Theme::colorMode() == 'light') {
+} elseif (Theme::colorMode($user) == 'light') {
     echo "document.body.classList.add('colors--light');";
     echo "document.body.classList.remove('colors--dark');";
-}
-else {
+} else {
     echo "document.body.classList.remove('colors--light');";
     echo "document.body.classList.remove('colors--dark');";
 }
-if (Theme::colorblindMode()) {
+if (Theme::colorblindMode($user)) {
     echo "document.body.classList.add('colors--colorblind');";
-}
-else {
+} else {
     echo "document.body.classList.remove('colors--colorblind');";
 }
 echo "</script>";
