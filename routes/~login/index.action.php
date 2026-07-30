@@ -47,4 +47,4 @@ if (count($urls) == 0) {
 }
 
 // list signin options
-echo Templates::render('signin/options.php');
+echo Templates::render('login/options.php');

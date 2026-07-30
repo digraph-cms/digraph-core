@@ -52,7 +52,7 @@ abstract class AbstractUserSource
 
     protected function signinUrl(): URL
     {
-        return new URL('/signin/_signin.html?_source=' . $this->name());
+        return new URL('/login/_signin.html?_source=' . $this->name());
     }
 
     public function authorizeUser(string $user_uuid, string $provider, string $provider_id): void

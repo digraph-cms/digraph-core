@@ -167,7 +167,7 @@ class Users
     public static function signinUrl(URL|null $bounce = null): URL
     {
         $bounce = $bounce ?? Context::url();
-        $url = new URL('/signin/');
+        $url = new URL('/login/');
         $url->setArg('_bounce', $bounce);
         return $url;
     }
@@ -182,7 +182,7 @@ class Users
     public static function signoutUrl(URL|null $bounce = null): URL
     {
         $bounce = $bounce ?? Context::url();
-        if ($bounce->path() == '~signin') {
+        if ($bounce->path() == '~login') {
             $bounce = null;
         }
         $url = new URL('/signout/');
@@ -206,8 +206,7 @@ class Users
     {
         if (Session::user()) {
             return static::get(Session::user());
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -383,8 +382,7 @@ class Users
         if (!isset(static::$sources[$name])) {
             if ($class = Config::get("users.sources.$name")) {
                 static::$sources[$name] = new $class($name);
-            }
-            else {
+            } else {
                 static::$sources[$name] = null;
             }
         }
@@ -404,8 +402,7 @@ class Users
         // seed random generator if necessary
         if ($seed) {
             mt_srand(crc32($seed));
-        }
-        else {
+        } else {
             mt_srand(rand());
         }
         // generate name
@@ -429,10 +426,8 @@ class Users
         $result = $query->execute();
         if ($result = $result->fetch()) {
             return static::resultToUser($result);
-        }
-        else {
+        } else {
             return null;
         }
     }
-
 }

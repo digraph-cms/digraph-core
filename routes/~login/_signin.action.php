@@ -133,7 +133,7 @@ if (Context::data('signin_provider_id')) {
     // as a fallback redirect to either profile page or sign in page
     $bounce = $bounce
         ?: Users::current()?->profile()
-        ?: new URL('/signin/');
+        ?: new URL('/login/');
 
     // redirect to bounce target. Note that it uses the response->redirect()
     // method directly, because all this happens in a try/catch block and the

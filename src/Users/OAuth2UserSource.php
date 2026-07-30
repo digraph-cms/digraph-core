@@ -48,7 +48,7 @@ class OAuth2UserSource extends AbstractUserSource
 
     public function redirectUrl($provider)
     {
-        $url = new URL('/signin/_signin.html');
+        $url = new URL('/login/_signin.html');
         $url->setArg('_provider', $provider);
         $url->setArg('_source', $this->name());
         $url->normalize();
