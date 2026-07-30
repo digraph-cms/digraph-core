@@ -2,6 +2,7 @@
 <?php
 
 use DigraphCMS\Context;
+use DigraphCMS\Digraph;
 use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\Session\Cookies;
 use DigraphCMS\UI\Notifications;
@@ -9,6 +10,8 @@ use DigraphCMS\UI\Templates;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Users;
 use Joby\Smol\Sentry\Severity;
+
+Digraph::doCookieBotChallenge();
 
 // require the necessary cookies and disable indexing
 Cookies::required(['system', 'ui', 'auth', 'csrf']);
@@ -20,8 +23,7 @@ if ($bounce) {
     try {
         $bounce = new URL($bounce);
         Cookies::set('ui', 'auth_bounce', $bounce->__toString());
-    }
-    catch (Throwable $th) {
+    } catch (Throwable $th) {
         Cookies::unset('ui', 'auth_bounce');
         Context::sentry()->signal('bounce_manipulation', Severity::Malicious);
         $bounce = null;

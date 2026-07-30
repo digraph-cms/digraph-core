@@ -3,6 +3,7 @@
 use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
+use DigraphCMS\Digraph;
 use DigraphCMS\Email\Email;
 use DigraphCMS\Email\Emails;
 use DigraphCMS\Events\Dispatcher;
@@ -19,6 +20,8 @@ use DigraphCMS\URL\URL;
 use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
 use Joby\Smol\Sentry\Severity;
+
+Digraph::doCookieBotChallenge();
 
 // require the necessary cookies and disable indexing
 Cookies::required(['system', 'ui', 'auth', 'csrf']);
@@ -39,11 +42,9 @@ if (!$source->providerActive($provider)) {
 // include source handler file
 try {
     Router::include('_source/' . $source->name() . '.signin.php');
-}
-catch (RedirectException | RefreshException | ArbitraryRedirectException $r) {
+} catch (RedirectException | RefreshException | ArbitraryRedirectException $r) {
     throw $r;
-}
-catch (Throwable $th) {
+} catch (Throwable $th) {
     ExceptionLog::log($th);
     $url = Users::signinUrl(null);
     $url->setArg('_noredirect', true);
@@ -74,8 +75,7 @@ if (Context::data('signin_provider_id')) {
         }
         // user is signed in, link this pair to their account
         Session::authenticate($user, 'Signed in with ' . $fullSourceTitle);
-    }
-    else {
+    } else {
         // this provider/id pair is not tied to a user
         // either link it to the current user or create a new user
         if ($user = Session::user()) {
@@ -96,8 +96,7 @@ if (Context::data('signin_provider_id')) {
                     ),
                 ),
             ));
-        }
-        else {
+        } else {
             // user is not signed in, create a new user and link pair to it
             DB::beginTransaction();
             $user = new User();
@@ -115,8 +114,7 @@ if (Context::data('signin_provider_id')) {
     // include post-signin handler file
     try {
         Router::include('_source/' . $source->name() . '.after.php');
-    }
-    catch (Throwable $th) {
+    } catch (Throwable $th) {
         // silently log errors here so they don't interrupt signin
         ExceptionLog::log($th);
     }
@@ -126,8 +124,7 @@ if (Context::data('signin_provider_id')) {
     if ($bounce) {
         try {
             $bounce = new URL($bounce);
-        }
-        catch (Throwable $th) {
+        } catch (Throwable $th) {
             Context::sentry()->signal('bounce_manipulation', Severity::Malicious);
             $bounce = null;
         }

@@ -13,6 +13,7 @@ use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTTP\AccessDeniedError;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\HTTP\RedirectException;
+use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\HTTP\Request;
 use DigraphCMS\HTTP\RequestHeaders;
 use DigraphCMS\HTTP\Response;
@@ -63,14 +64,12 @@ abstract class Digraph
             header('Content-Type: ' . static::inferMime());
             header('Content-Disposition: filename="' . static::inferFilename() . '"');
             Context::response()->renderContent();
-        }
-        catch (BannedException $e) {
+        } catch (BannedException $e) {
             static::buildBannedResponse();
             header('Content-Type: ' . static::inferMime());
             header('Content-Disposition: filename="' . static::inferFilename() . '"');
             Context::response()->renderContent();
-        }
-        catch (ChallengedException $e) {
+        } catch (ChallengedException $e) {
             static::buildChallengedResponse();
             header('Content-Type: ' . static::inferMime());
             header('Content-Disposition: filename="' . static::inferFilename() . '"');
@@ -138,8 +137,7 @@ abstract class Digraph
         if ($seed !== null) {
             mt_srand(crc32($seed));
             $fn = 'mt_rand';
-        }
-        else {
+        } else {
             $fn = 'random_int';
         }
         return ($prefix ? $prefix . '_' : '')
@@ -173,8 +171,7 @@ abstract class Digraph
         if ($seed !== null) {
             mt_srand(crc32($seed));
             $fn = 'mt_rand';
-        }
-        else {
+        } else {
             $fn = 'random_int';
         }
         return ($prefix ? $prefix . '_' : '')
@@ -255,16 +252,13 @@ abstract class Digraph
         try {
             Context::sentry()->resolve();
             Context::inspector()->inspect();
-        }
-        catch (BannedException $e) {
+        } catch (BannedException $e) {
             static::buildBannedResponse();
             return;
-        }
-        catch (ChallengedException $e) {
+        } catch (ChallengedException $e) {
             static::buildChallengedResponse();
             return;
-        }
-        catch (Throwable $e) {
+        } catch (Throwable $e) {
             Context::sentry()->signal('server_error', Severity::Suspicious);
             static::buildErrorContent(500, "Unhandled error")
                 ?: throw new RuntimeException('Error building error content', 0, $e);
@@ -321,8 +315,7 @@ abstract class Digraph
             if ($explicitly_static || (!$pages && $static_exists)) { // @phpstan-ignore-line I like the parentheses
                 // explicitly static or no pages and static exists
                 static::buildResponseContent();
-            }
-            elseif (count($pages) == 1 && !$static_exists) {
+            } elseif (count($pages) == 1 && !$static_exists) {
                 // one page with no matching static route: put it in Context and build content
                 /** @var AbstractPage */
                 $page = reset($pages);
@@ -357,11 +350,9 @@ abstract class Digraph
                         $content = Context::response()->content();
                         if (Context::fields()['page.name']) {
                             $name = strip_tags(Context::fields()['page.name']);
-                        }
-                        elseif (preg_match("@<h1[^>]*>(.+?)</h1>@i", $content, $matches)) {
+                        } elseif (preg_match("@<h1[^>]*>(.+?)</h1>@i", $content, $matches)) {
                             $name = trim(strip_tags($matches[1]));
-                        }
-                        else {
+                        } else {
                             $name = strip_tags(Context::url()->name());
                         }
                         $url = Context::url();
@@ -376,16 +367,13 @@ abstract class Digraph
             if (static::inferMime() == 'text/html') {
                 Templates::wrapResponse(Context::response());
             }
-        }
-        catch (BannedException $e) {
+        } catch (BannedException $e) {
             static::buildBannedResponse();
             return;
-        }
-        catch (ChallengedException $e) {
+        } catch (ChallengedException $e) {
             static::buildChallengedResponse();
             return;
-        }
-        catch (DBConnectionException $ex) {
+        } catch (DBConnectionException $ex) {
             ExceptionLog::log($ex);
             // generate a fallback error page for DB connection errors, we use the fallback template because a
             // broken db connection breaks a LOT of things
@@ -393,8 +381,7 @@ abstract class Digraph
             Context::thrown($ex);
             static::buildErrorContent(500.2);
             Templates::wrapResponse(Context::response());
-        }
-        catch (Throwable $th) {
+        } catch (Throwable $th) {
             // do shared tasks, then re-throw to do things with different types
             try {
                 // discard output buffers that were open when thrown
@@ -409,16 +396,13 @@ abstract class Digraph
                 Context::thrown($th);
                 // rethrow error
                 throw $th;
-            }
-            catch (BannedException $e) {
+            } catch (BannedException $e) {
                 static::buildBannedResponse();
                 return;
-            }
-            catch (ChallengedException $e) {
+            } catch (ChallengedException $e) {
                 static::buildChallengedResponse();
                 return;
-            }
-            catch (RedirectException $r) {
+            } catch (RedirectException $r) {
                 // RedirectExceptions are used to allow exception handling that becomes a redirect
                 Context::response()->redirect(
                     $r->url(),
@@ -426,8 +410,7 @@ abstract class Digraph
                     $r->preserveMethod(),
                     $r->targetFrame(),
                 );
-            }
-            catch (HttpError $error) {
+            } catch (HttpError $error) {
                 // generate exception-handling page
                 try {
                     if ($error->status() >= 500) {
@@ -440,8 +423,7 @@ abstract class Digraph
                     }
                     static::buildErrorContent($error->status(), $error->getMessage());
                     Templates::wrapResponse(Context::response());
-                }
-                catch (RedirectException $r) {
+                } catch (RedirectException $r) {
                     // RedirectExceptions are used to allow exception handling that becomes a redirect
                     Context::response()->redirect(
                         $r->url(),
@@ -450,8 +432,7 @@ abstract class Digraph
                         $r->targetFrame(),
                     );
                 }
-            }
-            catch (Throwable $th) {
+            } catch (Throwable $th) {
                 try {
                     // generate a fallback exception handling error page
                     if (!Dispatcher::firstValue('onException_' . substr(get_class($th), (strrpos(get_class($th), '\\') ?: -1) + 1), [$th])) {
@@ -463,8 +444,7 @@ abstract class Digraph
                     }
                     Context::response()->template('fallback.php');
                     Templates::wrapResponse(Context::response());
-                }
-                catch (RedirectException $r) {
+                } catch (RedirectException $r) {
                     // RedirectExceptions are used to allow exception handling that becomes a redirect
                     Context::response()->redirect(
                         $r->url(),
@@ -548,8 +528,7 @@ abstract class Digraph
                 unset($_COOKIE['dgcbt']);
                 Context::sentry()->release();
                 return;
-            }
-            else {
+            } else {
                 // there was a cookie but it was invalid, unset it
                 unset($_COOKIE['dgcbt']);
                 setcookie(
@@ -566,11 +545,9 @@ abstract class Digraph
         // if we got here we need to refresh, and count it as a suspicious challenge fail
         try {
             Context::sentry()->signal('challenge_fail', Severity::Suspicious);
-        }
-        catch (ChallengedException $e) {
+        } catch (ChallengedException $e) {
             // do nothing, we're already in the middle of a challenge
-        }
-        catch (BannedException $th) {
+        } catch (BannedException $th) {
             // switch to banned response
             static::buildBannedResponse();
         }
@@ -607,8 +584,7 @@ abstract class Digraph
     {
         if (Context::page()) {
             return static::doPageRoute(Context::page(), Context::url()->action());
-        }
-        else {
+        } else {
             return static::doStaticRoute(Context::url()->route(), Context::url()->action());
         }
     }
@@ -639,4 +615,54 @@ abstract class Digraph
         return null;
     }
 
+    public static function doCookieBotChallenge(): void
+    {
+        // if there is no cookie, set one and refresh
+        // tokens expire very quickly, one minute
+        if (!isset($_COOKIE['dgcbt'])) {
+            $new_token = bin2hex(random_bytes(32));
+            DB::query()->insertInto(
+                'security_captcha_token',
+                [
+                    'token'   => $new_token,
+                    'expires' => time() + 60,
+                ],
+            )->execute();
+            setcookie(
+                'dgcbt',
+                $new_token,
+                [
+                    'expires'  => time() + 60,
+                    'httponly' => true,
+                    'samesite' => 'Lax',
+                ],
+            );
+            throw new RefreshException(true);
+        }
+        // otherwise try to verify token
+        else {
+            $query = DB::query()
+                ->from('security_captcha_token')
+                ->where('token', $_COOKIE['dgcbt'])
+                ->where('expires >= ?', time());
+            if ($query->count() > 0) {
+                // we passed the challenge, so do nothing and continue
+                return;
+            } else {
+                // there was a cookie but it was invalid, unset it and refresh
+                unset($_COOKIE['dgcbt']);
+                setcookie(
+                    'dgcbt',
+                    "",
+                    [
+                        'expires'  => 1,
+                        'httponly' => true,
+                        'samesite' => 'Lax',
+                    ],
+                );
+                Context::sentry()->signal('challenge_fail', Severity::Suspicious);
+            }
+            throw new RefreshException(true);
+        }
+    }
 }
