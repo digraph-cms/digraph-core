@@ -27,6 +27,8 @@ class PowChallenge
 
     public static function checkCookie(): bool|null
     {
+        if (!isset($_COOKIE['smolpow']))
+            return null;
         return static::pow()->validateCookieValue($_COOKIE['smolpow']);
     }
 
