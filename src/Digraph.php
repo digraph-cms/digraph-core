@@ -483,6 +483,7 @@ abstract class Digraph
     protected static function buildBannedResponse(): void
     {
         Context::response(new Response(403));
+        Context::response()->setNoIndex();
         Context::response()->filename('banned.txt');
         Context::response()->content('Your IP address has been temporarily banned. Please try again later.');
     }
@@ -498,13 +499,13 @@ abstract class Digraph
         if ($cookie_status === true) {
             Context::sentry()->release();
             Context::response()->redirect(static::actualUrl(), false, false);
+            return;
         }
-        // if cookie is invalid or missing redirect to challenge page
-        else {
-            Context::response()->redirect(PowChallenge::challengeUrl(static::actualUrl()), false, false);
-            if ($cookie_status === false)
-                Context::sentry()->signal('pow_challenge_fail', Severity::Suspicious);
-        }
+        // if cookie is outright invalid then log signal
+        if ($cookie_status === false)
+            Context::sentry()->signal('pow_challenge_fail', Severity::Suspicious, silent: true);
+        // always redirect to challenge if cookie is invalid
+        Context::response()->redirect(PowChallenge::challengeUrl(static::actualUrl()), false, false);
     }
 
     protected static function buildBadRequestResponse(): void
