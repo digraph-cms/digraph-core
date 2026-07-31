@@ -3,7 +3,6 @@
 namespace DigraphCMS;
 
 use DigraphCMS\HTTP\ArbitraryRedirectException;
-use DigraphCMS\Media\DeferredFile;
 use DigraphCMS\Media\File;
 use DigraphCMS\UI\Templates;
 use DigraphCMS\URL\URL;
