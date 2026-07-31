@@ -2,6 +2,7 @@
 
 namespace DigraphCMS;
 
+use DigraphCMS\Cache\Cache;
 use DigraphCMS\HTTP\ArbitraryRedirectException;
 use DigraphCMS\Media\File;
 use DigraphCMS\UI\Templates;
@@ -22,11 +23,13 @@ class PowChallenge
         // if cookie is expired, log and bounce
         if ($status === false)
             Context::sentry()->signal('pow_challenge_fail', Severity::Suspicious);
+        Context::response()->private(true);
         throw new ArbitraryRedirectException(static::challengeUrl(Context::url()));
     }
 
     public static function checkCookie(): bool|null
     {
+        Context::response()->private(true);
         if (!isset($_COOKIE['smolpow']))
             return null;
         return static::pow()->validateCookieValue($_COOKIE['smolpow']);
@@ -34,10 +37,14 @@ class PowChallenge
 
     public static function challengePage(): string
     {
-        return (new File(
-            'smolpow.html',
-            Templates::render('smolpow.php'),
-        ))->url();
+        return Cache::get(
+            'pow_challenge_page',
+            fn() => (new File(
+                'smolpow.html',
+                Templates::render('smolpow.php'),
+            ))->url(),
+            86400
+        );
     }
 
     public static function challengeUrl(URL $bounce_after): string
