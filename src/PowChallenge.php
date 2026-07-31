@@ -57,7 +57,7 @@ class PowChallenge
         return new SmolPoW(
             Config::secret(),
             'sha256',
-            Config::get('proofofwork.difficulty') ?? 5,
+            Config::get('proofofwork.difficulty') ?? 4,
             Config::get('proofofwork.expiration') ?? (3600 * 8),
             ['sha256'],
         );
