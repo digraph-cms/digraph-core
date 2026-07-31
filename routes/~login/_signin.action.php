@@ -3,7 +3,6 @@
 use DigraphCMS\Content\Router;
 use DigraphCMS\Context;
 use DigraphCMS\DB\DB;
-use DigraphCMS\Digraph;
 use DigraphCMS\Email\Email;
 use DigraphCMS\Email\Emails;
 use DigraphCMS\Events\Dispatcher;
@@ -11,6 +10,7 @@ use DigraphCMS\ExceptionLog;
 use DigraphCMS\HTTP\ArbitraryRedirectException;
 use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\HTTP\RefreshException;
+use DigraphCMS\PowChallenge;
 use DigraphCMS\RichContent\RichContent;
 use DigraphCMS\Session\Cookies;
 use DigraphCMS\Session\Session;
@@ -21,7 +21,7 @@ use DigraphCMS\Users\User;
 use DigraphCMS\Users\Users;
 use Joby\Smol\Sentry\Severity;
 
-Digraph::doCookieBotChallenge();
+PowChallenge::require();
 
 // require the necessary cookies and disable indexing
 Cookies::required(['system', 'ui', 'auth', 'csrf']);

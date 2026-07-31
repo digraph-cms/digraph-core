@@ -2,6 +2,7 @@
 
 use DigraphCMS\Context;
 use DigraphCMS\Events\Dispatcher;
+use DigraphCMS\PowChallenge;
 use DigraphCMS\Search\Search;
 use DigraphCMS\Search\SearchForm;
 use DigraphCMS\Search\SearchResult;
@@ -11,6 +12,7 @@ use DigraphCMS\UI\Pagination\PaginatedSection;
 use DigraphCMS\UI\Templates;
 use DigraphCMS\URL\URL;
 
+PowChallenge::require();
 Context::response()->setNoIndex();
 
 $query = trim(Context::arg_string('q', true) ?? '');
@@ -52,7 +54,6 @@ try {
     Dispatcher::dispatchEvent('onDisplaySearchResults', [$query]);
     echo $list;
     echo '</div>';
-}
-catch (Throwable $th) {
+} catch (Throwable $th) {
     Notifications::printError('Error generating search results');
 }

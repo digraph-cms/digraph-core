@@ -3,11 +3,13 @@
 use DigraphCMS\Config;
 use DigraphCMS\Context;
 use DigraphCMS\Email\Emails;
+use DigraphCMS\PowChallenge;
 use DigraphCMS\UI\Breadcrumb;
 use DigraphCMS\UI\ToggleButton;
 use DigraphCMS\Users\Permissions;
 use DigraphCMS\Users\Users;
 
+PowChallenge::require();
 Breadcrumb::setTopName('Manage email preferences');
 Context::response()->setNoIndex();
 
@@ -25,8 +27,7 @@ if ($email = Emails::get(Context::url()->actionSuffix())) {
 // or if they're signed in, use their account email(s)
 elseif ($user = Users::current()) {
     $addresses = $user->emails();
-}
-else {
+} else {
     Permissions::requireAuth();
 }
 
@@ -55,13 +56,13 @@ foreach ($categories as $category) {
         ->where('category = ?', [$category])
         ->where(
             '('
-            . implode(' OR ', array_map(
-                function ($address) {
-                    return "`to` = ?";
-                },
-                $addresses,
-            ))
-            . ')',
+                . implode(' OR ', array_map(
+                    function ($address) {
+                        return "`to` = ?";
+                    },
+                    $addresses,
+                ))
+                . ')',
             $addresses,
         )->count();
     if (!$count)

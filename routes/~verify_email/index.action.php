@@ -4,11 +4,13 @@ use DigraphCMS\Cache\RateLimit;
 use DigraphCMS\Context;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\HTTP\RedirectException;
+use DigraphCMS\PowChallenge;
 use DigraphCMS\Session\Session;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Users;
 
+PowChallenge::require();
 RateLimit::limit('verify_email', 'attempt', 60);
 Context::response()->setNoIndex();
 
@@ -27,14 +29,12 @@ foreach ($user['emails'] as $i => $row) {
             // signed in as this user, bounce to email address page
             Notifications::flashConfirmation('Email address verified: ' . $row['address']);
             throw new RedirectException(new URL('/users/profile/email_addresses.html'));
-        }
-        elseif (!Session::user()) {
+        } elseif (!Session::user()) {
             // user is not signed in, prompt them to sign in
             Notifications::printConfirmation('Email address verified: ' . $row['address']);
             echo Users::signinLink(new URL('/'));
             return;
-        }
-        else {
+        } else {
             // user is signed in as somebody else? Weird but we'll handle it
             Notifications::printConfirmationHTML('Email address verified on behalf of ' . $user . ': ' . $row['address']);
             return;

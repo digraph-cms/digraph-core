@@ -13,7 +13,6 @@ use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTTP\AccessDeniedError;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\HTTP\RedirectException;
-use DigraphCMS\HTTP\RefreshException;
 use DigraphCMS\HTTP\Request;
 use DigraphCMS\HTTP\RequestHeaders;
 use DigraphCMS\HTTP\Response;
@@ -490,66 +489,21 @@ abstract class Digraph
 
     protected static function buildChallengedResponse(): void
     {
-        // response content is always the same
         Context::response(new Response());
         Context::response()->setNoIndex();
-        Context::response()->filename('challenged.txt');
+        Context::response()->filename('challenge.txt');
         Context::response()->content('Your IP address has been flagged for a bot challenge.');
-        Context::response()->redirect(static::actualUrl(), false, false);
-        // if there is no cookie, set one
-        // tokens expire very quickly, one minute
-        if (!isset($_COOKIE['dgcbt'])) {
-            $new_token = bin2hex(random_bytes(32));
-            DB::query()->insertInto(
-                'security_captcha_token',
-                [
-                    'token'   => $new_token,
-                    'expires' => time() + 60,
-                ],
-            )->execute();
-            setcookie(
-                'dgcbt',
-                $new_token,
-                [
-                    'expires'  => time() + 60,
-                    'httponly' => true,
-                    'samesite' => 'Lax',
-                ],
-            );
+        // if cookie is valid, release and redirect back to actual URL
+        $cookie_status = PowChallenge::checkCookie();
+        if ($cookie_status === true) {
+            Context::sentry()->release();
+            Context::response()->redirect(static::actualUrl(), false, false);
         }
-        // otherwise try to verify token
+        // if cookie is invalid or missing redirect to challenge page
         else {
-            $query = DB::query()
-                ->from('security_captcha_token')
-                ->where('token', $_COOKIE['dgcbt'])
-                ->where('expires >= ?', time());
-            if ($query->count() > 0) {
-                // we passed the challenge, so unset the cookie and refresh without flagging
-                unset($_COOKIE['dgcbt']);
-                Context::sentry()->release();
-                return;
-            } else {
-                // there was a cookie but it was invalid, unset it
-                unset($_COOKIE['dgcbt']);
-                setcookie(
-                    'dgcbt',
-                    "",
-                    [
-                        'expires'  => 1,
-                        'httponly' => true,
-                        'samesite' => 'Lax',
-                    ],
-                );
-            }
-        }
-        // if we got here we need to refresh, and count it as a suspicious challenge fail
-        try {
-            Context::sentry()->signal('challenge_fail', Severity::Suspicious);
-        } catch (ChallengedException $e) {
-            // do nothing, we're already in the middle of a challenge
-        } catch (BannedException $th) {
-            // switch to banned response
-            static::buildBannedResponse();
+            Context::response()->redirect(PowChallenge::challengeUrl(static::actualUrl()), false, false);
+            if ($cookie_status === false)
+                Context::sentry()->signal('pow_challenge_fail', Severity::Suspicious);
         }
     }
 
@@ -613,55 +567,5 @@ abstract class Digraph
             return true;
         }
         return null;
-    }
-
-    public static function doCookieBotChallenge(): void
-    {
-        // if there is no cookie, set one and refresh
-        if (!isset($_COOKIE['dgcbt_p'])) {
-            $new_token = bin2hex(random_bytes(32));
-            DB::query()->insertInto(
-                'security_captcha_token',
-                [
-                    'token'   => $new_token,
-                    'expires' => time() + 3600,
-                ],
-            )->execute();
-            setcookie(
-                'dgcbt_p',
-                $new_token,
-                [
-                    'expires'  => time() + 3600,
-                    'httponly' => true,
-                    'samesite' => 'Lax',
-                ],
-            );
-            throw new RefreshException(true);
-        }
-        // otherwise try to verify token
-        else {
-            $query = DB::query()
-                ->from('security_captcha_token')
-                ->where('token', $_COOKIE['dgcbt_p'])
-                ->where('expires >= ?', time());
-            if ($query->count() > 0) {
-                // we passed the challenge, so do nothing and continue
-                return;
-            } else {
-                // there was a cookie but it was invalid, unset it and refresh
-                unset($_COOKIE['dgcbt_p']);
-                setcookie(
-                    'dgcbt_p',
-                    "",
-                    [
-                        'expires'  => 1,
-                        'httponly' => true,
-                        'samesite' => 'Lax',
-                    ],
-                );
-                Context::sentry()->signal('challenge_fail', Severity::Suspicious);
-            }
-            throw new RefreshException(true);
-        }
     }
 }

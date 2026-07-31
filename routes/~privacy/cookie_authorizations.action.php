@@ -2,10 +2,12 @@
 
 use DigraphCMS\Context;
 use DigraphCMS\HTTP\RefreshException;
+use DigraphCMS\PowChallenge;
 use DigraphCMS\Session\Cookies;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\URL\URL;
 
+PowChallenge::require();
 Context::response()->private(true);
 
 ?>
@@ -17,8 +19,7 @@ Context::response()->private(true);
     if (Cookies::get('system', 'cookierules')) {
         if ($expiration = Cookies::expiration('system')) {
             echo "These selections will automatically expire after $expiration, but any already-set cookies may persist longer than that.";
-        }
-        else {
+        } else {
             echo "These selections will automatically expire when you close your  browser, but any already-set cookies may persist longer than that.";
         }
     }
@@ -35,8 +36,7 @@ Context::response()->private(true);
 
 if (!Cookies::optionalTypes()) {
     Notifications::printConfirmation('This site does not currently use any personally-identifying cookies that are not necessary for its basic functionality. If this changes in the future you will be prompted for consent before any optional personally-identifying cookies are created.');
-}
-else {
+} else {
     echo $form = Cookies::form();
     if ($form->ready()) {
         throw new RefreshException();

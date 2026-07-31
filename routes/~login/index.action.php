@@ -2,8 +2,8 @@
 <?php
 
 use DigraphCMS\Context;
-use DigraphCMS\Digraph;
 use DigraphCMS\HTTP\RedirectException;
+use DigraphCMS\PowChallenge;
 use DigraphCMS\Session\Cookies;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\Templates;
@@ -11,7 +11,7 @@ use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Users;
 use Joby\Smol\Sentry\Severity;
 
-Digraph::doCookieBotChallenge();
+PowChallenge::require();
 
 // require the necessary cookies and disable indexing
 Cookies::required(['system', 'ui', 'auth', 'csrf']);

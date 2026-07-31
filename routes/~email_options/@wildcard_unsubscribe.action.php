@@ -3,11 +3,13 @@
 use DigraphCMS\Context;
 use DigraphCMS\Email\Emails;
 use DigraphCMS\HTTP\HttpError;
+use DigraphCMS\PowChallenge;
 use DigraphCMS\UI\Breadcrumb;
 use DigraphCMS\UI\ButtonMenus\SingleButton;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\URL\URL;
 
+PowChallenge::require();
 Breadcrumb::setTopName('Email unsubscribe');
 Context::response()->setNoIndex();
 
@@ -70,8 +72,7 @@ if ($unsubscribed) {
             }
         }
     );
-}
-else {
+} else {
     echo new SingleButton(
         'Unsubscribe',
         function () use ($addresses, $email) {
