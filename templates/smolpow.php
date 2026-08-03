@@ -86,6 +86,12 @@ use Joby\Smol\PoW\SmolPoW;
             margin: 1rem 0;
         }
 
+        .error {
+            margin-top: 1rem;
+            color: #c73b29;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
         .progress {
             width: 200px;
             height: 4px;
@@ -134,6 +140,9 @@ use Joby\Smol\PoW\SmolPoW;
         <div class="emoji">🛡️</div>
         <h1>Bot protection</h1>
         <p>Please wait while your browser solves a cryptographic challenge to prove you are not an automated bot or web scraper. This should take less than a minute.</p>
+        <noscript>
+            <p class="error"><strong>Javascript required to continue.</strong> You must enable Javascript in your browser to complete this test. This is a one-time requirement that will set a cookie valid for 24 hours and you will not need Javascript after that cookie is set.</p>
+        </noscript>
         <div class="progress"></div>
         <div id="smolpow-output"></div>
     </main>
