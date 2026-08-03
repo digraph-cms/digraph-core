@@ -46,7 +46,7 @@
         "openspout/openspout": "^5",
         "joby/smol-sentry": "^3.1",
         "caxy/php-htmldiff": "^0.1.17",
-        "joby/smol-pow": "dev-main"
+        "joby/smol-pow": "^1.0"
     },
     "conflict": {
         "jasig/phpcas": "<1.6",
