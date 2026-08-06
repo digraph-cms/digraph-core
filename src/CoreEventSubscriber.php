@@ -31,35 +31,6 @@ abstract class CoreEventSubscriber
 {
 
     /**
-     * @param array<array{string,string,string}> &$notifications
-     *
-     * @return void
-     */
-    public static function onPrintNotifications(array &$notifications)
-    {
-        if (!Permissions::inGroup('admins'))
-            return;
-        // display message about email errors
-        $errors = Emails::select()
-            ->where('error is not null')
-            ->where('time > ?', [time() - 86400])
-            ->count();
-        if ($errors) {
-            $notifications[] = [
-                sprintf(
-                    '<a href="%s">There %s been %s email sending error%s in the last 24 hours</a>',
-                    new URL('/~admin/email/email_errors.html'),
-                    $errors == 1 ? 'has' : 'have',
-                    number_format($errors),
-                    $errors == 1 ? '' : 's'
-                ),
-                'error',
-                'email-error',
-            ];
-        }
-    }
-
-    /**
      * Preserve/enforce "id" argument in actions across the users/profile route
      *
      * @param ActionMenu $menu
@@ -205,7 +176,8 @@ abstract class CoreEventSubscriber
                     $node->setAttribute('href', $wb->helperURL());
                     $node->setAttribute('data-link-wayback', 'true');
                     $node->setAttribute('title', 'Wayback Machine: ' . $href);
-                } else {
+                }
+                else {
                     // broken URL but no archived copy found
                     $node->setAttribute('data-link-broken', 'true');
                     $node->setAttribute('title', 'This link may be broken');
@@ -377,7 +349,8 @@ abstract class CoreEventSubscriber
                 // viewing profiles set to users__view
                 return ($url->arg_string('id', true) == $user->uuid() && $user->uuid() != 'guest')
                     || Permissions::inMetaGroup('users__view', $user);
-            } else {
+            }
+            else {
                 // everything else limited to users__admin
                 return ($url->arg_string('id', true) == $user->uuid() && $user->uuid() != 'guest')
                     || Permissions::inMetaGroup('users__admin', $user);
@@ -415,7 +388,8 @@ abstract class CoreEventSubscriber
             $user = null;
             if ($url->arg_string('id', true) && $user = Users::get($url->arg_string('id'))) {
                 // does nothing, assigned in statement above
-            } elseif (!$url->arg_string('id', true)) {
+            }
+            elseif (!$url->arg_string('id', true)) {
                 $user = Users::current() ?? Users::guest();
             }
             if ($user) {
@@ -547,4 +521,5 @@ abstract class CoreEventSubscriber
     {
         $urls = [];
     }
+
 }

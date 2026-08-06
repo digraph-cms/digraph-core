@@ -10,6 +10,8 @@ use DigraphCMS\Context;
 use DigraphCMS\Datastore\Datastore;
 use DigraphCMS\Datastore\DatastoreGroup;
 use DigraphCMS\DB\DB;
+use DigraphCMS\Email\Emails;
+use DigraphCMS\ExceptionLog;
 use DigraphCMS\URL\WaybackMachine;
 
 class CoreCronSubscriber
@@ -21,6 +23,31 @@ class CoreCronSubscriber
         new DeferredJob(
             [Filestore::class, 'runSearchIndexing'],
             'core_biweekly',
+        );
+    }
+
+    public static function cronJob_hourly(): void
+    {
+        // check for email errors
+        new DeferredJob(
+            function () {
+                // display message about email errors
+                $errors = Emails::select()
+                    ->where('error is not null')
+                    ->where('time > ?', time() - 3600)
+                    ->count();
+                if ($errors) {
+                    $message = sprintf(
+                        'There %s been %s email sending error%s in the last hour',
+                        $errors == 1 ? 'has' : 'have',
+                        number_format($errors),
+                        $errors == 1 ? '' : 's'
+                    );
+                    ExceptionLog::logMessage($message);
+                    return $message;
+                }
+                return 'Checked for email errors';
+            }
         );
     }
 
