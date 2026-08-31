@@ -10,6 +10,7 @@ use DigraphCMS\DB\DB;
 use DigraphCMS\ExceptionLog;
 use DigraphCMS\Media\Media;
 use DigraphCMS\UI\Templates;
+use DigraphCMS\URL\URLs;
 use Exception;
 use Html2Text\Html2Text;
 use PHPMailer\PHPMailer\PHPMailer;
@@ -17,16 +18,18 @@ use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 
 class Emails
 {
+
     public static function unsubscribe(string $email, string $category)
     {
-        if (static::isUnsubscribed($email, $category)) return;
+        if (static::isUnsubscribed($email, $category))
+            return;
         DB::query()->insertInto(
             'email_unsubscribe',
             [
-                'email' => $email,
+                'email'    => $email,
                 'category' => $category,
-                'time' => time()
-            ]
+                'time'     => time(),
+            ],
         )->execute();
     }
 
@@ -72,8 +75,8 @@ class Emails
                 DB::query()->from('email')
                     ->select('DISTINCT category', true)
                     // @phpstan-ignore-next-line
-                    ->fetchAll(0)
-            )
+                    ->fetchAll(0),
+            ),
         ));
     }
 
@@ -87,35 +90,38 @@ class Emails
     {
         // recurse into arrays
         if (is_array($email)) {
-            foreach ($email as $msg) static::queue($msg);
+            foreach ($email as $msg)
+                static::queue($msg);
             return;
         }
         // do nothing if email is blocked
-        if (Emails::shouldBlock($email)) return;
+        if (Emails::shouldBlock($email))
+            return;
         // save into database
         DB::query()->insertInto(
             'email',
             [
-                'uuid' => $email->uuid(),
-                'time' => time(),
-                'sent' => null,
-                'category' => $email->category(),
-                'subject' => $email->subject(),
-                '`to`' => $email->to(),
-                'to_uuid' => $email->toUUID(),
-                '`from`' => $email->from(),
-                'cc' => $email->cc(),
-                'bcc' => $email->bcc(),
+                'uuid'      => $email->uuid(),
+                'time'      => time(),
+                'sent'      => null,
+                'category'  => $email->category(),
+                'subject'   => $email->subject(),
+                '`to`'      => $email->to(),
+                'to_uuid'   => $email->toUUID(),
+                '`from`'    => $email->from(),
+                'cc'        => $email->cc(),
+                'bcc'       => $email->bcc(),
                 'body_text' => $email->body_text(),
                 'body_html' => $email->body_html(),
-                'error' => $email->error()
-            ]
+                'error'     => $email->error(),
+            ],
         )->execute();
     }
 
     public static function quotaReached(): bool
     {
-        if (!Config::get('email.quota')) return false;
+        if (!Config::get('email.quota'))
+            return false;
         if (Config::get('email.quota.mode') == 'rolling') {
             $interval = DateInterval::createFromDateString(Config::get('email.quota.interval'));
             $start = (new DateTime)->sub($interval)->getTimestamp();
@@ -132,9 +138,9 @@ class Emails
         DB::query()->update(
             'email',
             [
-                'sent' => null,
-                'error' => null
-            ]
+                'sent'  => null,
+                'error' => null,
+            ],
         )
             ->where('uuid', $email->uuid())
             ->execute();
@@ -152,17 +158,20 @@ class Emails
     {
         // recurse into arrays
         if (is_array($email)) {
-            foreach ($email as $msg) static::send($msg, $ignoreQuota);
+            foreach ($email as $msg)
+                static::send($msg, $ignoreQuota);
             return;
         }
         // do nothing if email is blocked
-        if (Emails::shouldBlock($email)) return;
+        if (Emails::shouldBlock($email))
+            return;
         // send email if enabled, otherwise it gets an error so that we can test
         // what emails would have been sent
         if (Config::get('email.enabled') || in_array($email->to(), Config::get('email.enabled_for'))) {
             // check if we should enqueue instead
             if (!$ignoreQuota && static::quotaReached()) {
-                if (!$email->exists()) static::queue($email);
+                if (!$email->exists())
+                    static::queue($email);
                 return;
             }
             // sending emails is enabled
@@ -180,18 +189,24 @@ class Emails
                 $mailer->addCustomHeader('Auto-Submitted', 'auto-generated');
                 $mailer->addCustomHeader('X-Auto-Response-Suppress', 'OOF, DR, NDR, RN, NRN');
                 $mailer->Subject = $email->subject();
-                $mailer->msgHTML(static::prepareBody_html($email));
+                $mailer->msgHTML(static::prepareBody_html_image_embed(
+                    static::prepareBody_html($email),
+                    $mailer,
+                ));
                 $mailer->AltBody = static::prepareBody_text($email);
                 $mailer->send();
-            } catch (\Throwable $th) {
+            }
+            catch (\Throwable $th) {
                 ExceptionLog::log($th, true);
                 if ($th instanceof Exception) {
                     $email->setError($th->getMessage() . ' (' . get_class($th) . ')');
-                } else {
+                }
+                else {
                     $email->setError(get_class($th));
                 }
             }
-        } else {
+        }
+        else {
             // sending emails is disabled, record error in log
             $email->setError("Sending emails is disabled by config email.enabled");
         }
@@ -201,39 +216,41 @@ class Emails
             DB::query()->update(
                 'email',
                 [
-                    'sent' => time(),
+                    'sent'  => time(),
                     'error' => $email->error(),
-                ]
+                ],
             )
                 ->where('uuid', $email->uuid())
                 ->execute();
-        } else {
+        }
+        else {
             // otherwise insert message
             DB::query()->insertInto(
                 'email',
                 [
-                    'uuid' => $email->uuid(),
+                    'uuid'           => $email->uuid(),
                     'time_sensitive' => $email->timeSensitive(),
-                    'time' => time(),
-                    'sent' => time(),
-                    'category' => $email->category(),
-                    'subject' => $email->subject(),
-                    '`to`' => $email->to(),
-                    'to_uuid' => $email->toUUID(),
-                    '`from`' => $email->from(),
-                    'cc' => $email->cc(),
-                    'bcc' => $email->bcc(),
-                    'body_text' => $email->body_text(),
-                    'body_html' => $email->body_html(),
-                    'error' => $email->error()
-                ]
+                    'time'           => time(),
+                    'sent'           => time(),
+                    'category'       => $email->category(),
+                    'subject'        => $email->subject(),
+                    '`to`'           => $email->to(),
+                    'to_uuid'        => $email->toUUID(),
+                    '`from`'         => $email->from(),
+                    'cc'             => $email->cc(),
+                    'bcc'            => $email->bcc(),
+                    'body_text'      => $email->body_text(),
+                    'body_html'      => $email->body_html(),
+                    'error'          => $email->error(),
+                ],
             )->execute();
         }
     }
 
     public static function get(?string $uuid): ?Email
     {
-        if (!$uuid) return null;
+        if (!$uuid)
+            return null;
         return static::select()
             ->where('uuid = ?', [$uuid])
             ->fetch();
@@ -241,7 +258,8 @@ class Emails
 
     public static function exists(?string $uuid): bool
     {
-        if (!$uuid) return false;
+        if (!$uuid)
+            return false;
         return !!DB::query()->from('email')
             ->where('uuid = ?', [$uuid])
             ->count();
@@ -250,7 +268,7 @@ class Emails
     public static function select(): EmailSelect
     {
         return new EmailSelect(
-            DB::query()->from('email')
+            DB::query()->from('email'),
         );
     }
 
@@ -271,23 +289,63 @@ class Emails
             $row['sent'],
             $row['error'],
             !!$row['time_sensitive'],
-            true
+            true,
         );
+    }
+
+    protected static function prepareBody_html_image_embed(string $html, PHPMailer $mailer): string
+    {
+        $seen = [];
+        $doc_root = Config::get('paths.web');
+        return preg_replace_callback(
+            '/src=(["\'])(https?:\/\/[^"\']+)\1/i',
+            function ($m) use (&$seen, $mailer, $doc_root) {
+                $url = $m[2];
+                $parts = parse_url($url);
+                // url must parse properly
+                if (!$parts)
+                    return $m[0];
+                // url must be in this site
+                if (!str_starts_with($url, URLs::site()))
+                    return $m[0];
+                // file extension must indicate an image
+                $extension = strtolower(pathinfo($parts['path'], PATHINFO_EXTENSION));
+                if (!in_array($extension, ['gif', 'jpeg', 'jpg', 'png', 'webp']))
+                    return $m[0];
+                // an actual file at this location in the web directory must exist
+                $path = realpath($doc_root . urldecode($parts['path'] ?? ''));
+                if ($path === false || !str_starts_with($path, $doc_root . DIRECTORY_SEPARATOR) || !is_file($path))
+                    return $m[0];
+                // if this is our first time seeing this image, set it up as an attachment and save its CID in $seen
+                if (!isset($seen[$path])) {
+                    $cid = 'img' . crc32($path);
+                    $type = mime_content_type($path);
+                    if (!$mailer->addEmbeddedImage($path, $cid, basename($path), 'base64', $type)) {
+                        return $m[0];
+                    }
+                    $seen[$path] = $cid;
+                }
+                // return a src value with the CID of this path
+                return 'src="cid:' . $seen[$path] . '"';
+            },
+            $html,
+        )
+            ?? $html;
     }
 
     public static function prepareBody_html(Email $email): string
     {
-
         Context::beginEmail();
         if (Templates::exists('/email/html/body_' . $email->category() . '.php')) {
             $html = Templates::render('/email/html/body_' . $email->category() . '.php', ['email' => $email]);
-        } else {
+        }
+        else {
             $html = Templates::render('/email/html/body_default.php', ['email' => $email]);
         }
         $output = (new CssToInlineStyles)
             ->convert(
                 $html,
-                static::css()
+                static::css(),
             );
         Context::end();
         return $output;
@@ -309,20 +367,23 @@ class Emails
     {
         if (Templates::exists('/email/text/body_' . $email->category() . '.php')) {
             return Templates::render('/email/text/body_' . $email->category() . '.php', ['email' => $email]);
-        } else {
+        }
+        else {
             return Templates::render('/email/text/body_default.php', ['email' => $email]);
         }
     }
 
     public static function beginBatch()
     {
-        if (!static::useSMTP()) return;
+        if (!static::useSMTP())
+            return;
         static::mailer()->SMTPKeepAlive = true;
     }
 
     public static function endBatch()
     {
-        if (!static::useSMTP()) return;
+        if (!static::useSMTP())
+            return;
         static::mailer()->smtpClose();
         static::mailer()->SMTPKeepAlive = false;
     }
@@ -350,10 +411,12 @@ class Emails
                     if ($smtp['security'] == 'TLS') {
                         $mailer->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
                         $mailer->Port = $smtp['port'] ?? 465;
-                    } elseif ($smtp['security'] == 'STARTTLS') {
+                    }
+                    elseif ($smtp['security'] == 'STARTTLS') {
                         $mailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
                         $mailer->Port = $smtp['port'] ?? 587;
-                    } else {
+                    }
+                    else {
                         $mailer->Port = $smtp['port'] ?? 25;
                     }
                 }
@@ -409,4 +472,5 @@ class Emails
             ->where('email = ? AND category = ?', [$email->to(), $email->category()])
             ->count();
     }
+
 }
