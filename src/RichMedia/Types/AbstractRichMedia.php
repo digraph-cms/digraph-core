@@ -27,11 +27,19 @@ abstract class AbstractRichMedia implements ArrayAccess
 
     }
 
-    protected                 $uuid,          $parent, $name;
+    protected $uuid;
 
-    protected                 $created,       $created_by;
+    protected $parent;
 
-    protected                 $updated,       $updated_by;
+    protected $name;
+
+    protected $created;
+
+    protected $created_by;
+
+    protected $updated;
+
+    protected $updated_by;
 
     abstract public static function className(): string;
 
@@ -95,6 +103,32 @@ abstract class AbstractRichMedia implements ArrayAccess
         $this->updated_by = @$metadata['updated_by'] ?? Session::uuid();
         $this->name = @$metadata['name'] ?? '';
         $this->rawSet(null, $data);
+    }
+
+    /**
+     * Create a clone of this media object, including all sub-data if applicable, and insert it. Returns the completed object.
+     */
+    public function insertCopy(string|null $parent_uuid = null, string|null $new_uuid = null): static
+    {
+        $parent_uuid = $parent_uuid ?? $this->parent();
+        $new_uuid = $new_uuid ?? Digraph::uuid();
+        $clone = clone $this;
+        $clone->setParent($parent_uuid);
+        $clone->setUUID($new_uuid);
+        $clone = $this->insertCopyPreInsert($clone);
+        $clone->insert();
+        return $clone;
+    }
+
+    /**
+     * Optionally override this method if a child class needs to do any additional processing before actually calling insert during an insertCopy() call.
+     * 
+     * @param static $clone
+     * @return static
+     */
+    protected function insertCopyPreInsert(AbstractRichMedia $clone): static
+    {
+        return $clone;
     }
 
     public function tagOptions(): array

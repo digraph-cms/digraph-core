@@ -712,11 +712,8 @@ abstract class AbstractPage implements ArrayAccess, FlatArrayInterface
         $parentMedia = RichMedia::select($old->uuid());
         $cloned = [];
         while ($media = $parentMedia->fetch()) {
-            $clone = clone ($media);
-            $clone->setUUID(Digraph::uuid());
-            $clone->setParent($new->uuid());
-            $clone->insert();
-            $cloned[$media->uuid()] = $clone->uuid();
+            $copy = $media->insertCopy($new->uuid());
+            $cloned[$media->uuid()] = $copy->uuid();
         }
         // update all page data with new UUIDs
         if ($cloned) {

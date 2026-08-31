@@ -17,6 +17,30 @@ use Thunder\Shortcode\Shortcode\ShortcodeInterface;
 class FileRichMedia extends AbstractRichMedia
 {
 
+    /**
+     * @inheritDoc
+     * 
+     * Copy this media's filestore file so that edits to it don't break old versions.
+     */
+    protected function insertCopyPreInsert(AbstractRichMedia $clone): static
+    {
+        // short-circuit if there is no file
+        if (!$this->file())
+            return $clone;
+        // create new file
+        $old_file = $this->file();
+        $new_file = Filestore::create(
+            $old_file->content(),
+            $old_file->filename(),
+            $clone->uuid(),
+            $old_file->meta(),
+            null,
+            $old_file->permissions(),
+        );
+        $clone['file'] = $new_file->uuid();
+        return $clone;
+    }
+
     function icon()
     {
         return new Icon('download');

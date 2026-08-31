@@ -23,7 +23,36 @@ use ZipArchive;
 
 class ZipRichMedia extends AbstractRichMedia
 {
+
     protected $zipFile;
+
+    /**
+     * @inheritDoc
+     * 
+     * Copy this media's filestore files so that edits to it don't break old versions.
+     */
+    protected function insertCopyPreInsert(AbstractRichMedia $clone): static
+    {
+        // short-circuit if there is no file
+        if (!$this->files())
+            return $clone;
+        // create new files
+        $new_files = [];
+        foreach ($this->files() as $old_file) {
+            $new_file = Filestore::create(
+                $old_file->content(),
+                $old_file->filename(),
+                $clone->uuid(),
+                $old_file->meta(),
+                null,
+                $old_file->permissions(),
+            );
+            $new_files[] = $new_file->uuid();
+        }
+        $clone->unset('files');
+        $clone->set('files', $new_files);
+        return $clone;
+    }
 
     public function icon()
     {
@@ -56,7 +85,8 @@ class ZipRichMedia extends AbstractRichMedia
             }
             $order->setDefault($this['files']);
             $order_input->setAllowDeletion(true);
-        } else
+        }
+        else
             $order = null;
 
         // upload field
@@ -67,25 +97,25 @@ class ZipRichMedia extends AbstractRichMedia
 
         // options
         $options = (
-        new CheckboxListField(
-            'Options',
-            [
-                'single' => 'Allow listing and downloading individual files'
-            ]
-        )
+            new CheckboxListField(
+                'Options',
+                [
+                    'single' => 'Allow listing and downloading individual files',
+                ],
+            )
         )
             ->setDefault($this['options'] ?? [])
             ->addForm($form);
 
         // meta
         $meta = (
-        new CheckboxListField(
-            'Display metadata',
-            [
-                'uploader' => 'Update user',
-                'upload_date' => 'Update date',
-            ]
-        )
+            new CheckboxListField(
+                'Display metadata',
+                [
+                    'uploader'    => 'Update user',
+                    'upload_date' => 'Update date',
+                ],
+            )
         )
             ->setDefault($this['meta'] ?? [])
             ->addForm($form);
@@ -117,8 +147,8 @@ class ZipRichMedia extends AbstractRichMedia
                     function (FilestoreFile $file): string {
                         return $file->uuid();
                     },
-                    $files_input->filestore($this->uuid())
-                )
+                    $files_input->filestore($this->uuid()),
+                ),
             );
         });
     }
@@ -130,7 +160,8 @@ class ZipRichMedia extends AbstractRichMedia
                 ->setAttribute('href', $this->zipFile()->url())
                 ->setAttribute('title', $this->zipFile()->filename())
                 ->addChild($code->getContent() ?? $this->zipFile()->filename());
-        } else {
+        }
+        else {
             return $this->card();
         }
     }
@@ -164,7 +195,8 @@ class ZipRichMedia extends AbstractRichMedia
         $meta = [];
         if (in_array('uploader', $this['meta']) && in_array('upload_date', $this['meta'])) {
             $meta[] = 'updated ' . Format::date($this->updated()) . ' by ' . $this->updatedBy();
-        } else {
+        }
+        else {
             if (in_array('upload_date', $this['meta'])) {
                 $meta[] = 'updated ' . Format::date($this->updated());
             }
@@ -176,7 +208,7 @@ class ZipRichMedia extends AbstractRichMedia
             $card->addChild(
                 (new DIV)
                     ->addClass('file-card__meta')
-                    ->addChild(implode('; ', $meta))
+                    ->addChild(implode('; ', $meta)),
             );
         }
         // add list of individual files if required and requested
@@ -192,7 +224,8 @@ class ZipRichMedia extends AbstractRichMedia
                     ->setAttribute('href', new URL("&$id=open"))
                     ->setAttribute('rel', 'nofollow')
                     ->addChild('-- show files --'));
-            } else {
+            }
+            else {
                 // list all files
                 $list = "<ul>";
                 foreach ($this->files() as $f) {
@@ -201,7 +234,7 @@ class ZipRichMedia extends AbstractRichMedia
                         $f->url(),
                         $f->filename(),
                         Format::filesize($f->bytes()),
-                        $f->filename()
+                        $f->filename(),
                     );
                 }
                 $list .= "</ul>";
@@ -238,8 +271,8 @@ class ZipRichMedia extends AbstractRichMedia
                     function (FilestoreFile $file) {
                         return [$file->filename(), $file->hash()];
                     },
-                    $this->files()
-                )
+                    $this->files(),
+                ),
             );
             $this->zipFile->write();
         }
@@ -258,4 +291,5 @@ class ZipRichMedia extends AbstractRichMedia
             $this['files'] ?? []
         );
     }
+
 }
