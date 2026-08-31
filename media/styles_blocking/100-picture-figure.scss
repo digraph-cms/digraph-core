@@ -2,7 +2,6 @@ picture.fancyfit {
     display: block;
     background: #999;
     box-shadow: var(--shadow);
-    border: $border solid var(--theme-neutral-a50);
     width: fit-content;
 
     img {
@@ -18,10 +17,6 @@ figure {
     font-family: $font-ui;
     box-shadow: var(--shadow);
     max-width: $line-length*1.5;
-
-    >* {
-        border: $border solid var(--theme-neutral);
-    }
 
     >picture {
         box-shadow: none;
