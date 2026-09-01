@@ -29,7 +29,7 @@ class ImageFile extends DeferredFile
         $this->src = $src;
         $this->filename = $filename;
         $this->image = SmolImage::load($this->src());
-        $this->extension = 'webp';
+        $this->extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
         $this->content = [$this, 'contentCallback'];
         $this->filename = $filename;
         $this->cache = new CacheNamespace('image-file', $this->ttl());
