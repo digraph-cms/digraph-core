@@ -110,9 +110,13 @@ class ImageRichMedia extends AbstractRichMedia
         // if we are in a simplified rendering context, render as a straight image
         // also converts webp files into png when in simplified rendering        
         if (Context::fields()['simplified_rendering']) {
-            $file = $this->file()->image();
-            if ($file->extension() === 'webp')
-                $file->png();
+            $file = match ($this->file()->extension()) {
+                'jpg'   => $this->file()->image()->jpg(),
+                'jpeg'  => $this->file()->image()->jpg(),
+                'png'   => $this->file()->image()->png(),
+                'webp'  => $this->file()->image()->png(),
+                default => $this->file()->image()->jpg()
+            };
             // if a simplified rendering width is set, fit image to it
             if ($width = intval(Context::fields()['simplified_rendering.width'])) {
                 if ($file->originalWidth() > $width) {
