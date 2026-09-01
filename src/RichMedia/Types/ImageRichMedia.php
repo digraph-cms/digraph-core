@@ -112,7 +112,7 @@ class ImageRichMedia extends AbstractRichMedia
         if (Context::fields()['simplified_rendering']) {
             $file = $this->file()->image();
             if ($file->extension() === 'webp')
-                $file->extension('png');
+                $file->png();
             // if a simplified rendering width is set, fit image to it
             if ($width = intval(Context::fields()['simplified_rendering.width'])) {
                 if ($file->originalWidth() > $width) {
@@ -136,10 +136,10 @@ class ImageRichMedia extends AbstractRichMedia
             return $image->__toString();
         }
         // try to render responsive picture
-        // always convert full fancy rendering to webp for optimal filesizes
+        // note that ResponsivePicture always converts to webp for optimal filesizes
         try {
             $image = new ResponsivePicture(
-                $this->file()->image()->webp(),
+                $this->file()->image(),
                 $this['alt'],
             );
         }
