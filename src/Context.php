@@ -103,8 +103,11 @@ class Context
 
     public static function url(URL|null $url = null): URL
     {
-        return clone(static::data('url', $url)
-            ?? Digraph::actualUrl());
+        $url = static::data('url', $url);
+        if ($url)
+            return clone $url;
+        else
+            return Digraph::actualUrl();
     }
 
     /**
@@ -189,7 +192,8 @@ class Context
     {
         if (static::$request) {
             return @static::$request->post()[$key];
-        } else {
+        }
+        else {
             return null;
         }
     }
@@ -318,4 +322,5 @@ class Context
             ->addRule('digraph', new SecurityInspector)
             ->addDefaultRules();
     }
+
 }
