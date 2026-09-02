@@ -35,12 +35,12 @@ echo "<h1>Email unsubscribe</h1>";
 
 // print list of addresses being managed
 $addresses = array_unique($addresses);
-Notifications::printNotice(
+Notifications::printNoticeHTML(
     sprintf(
         'Email unsubscribe form for: %s',
         implode(', ', array_map(
             function ($email) {
-                return '<code>' . $email . '</code>';
+                return '<kbd>' . $email . '</kbd>';
             },
             $addresses,
         )),
@@ -72,7 +72,8 @@ if ($unsubscribed) {
             }
         }
     );
-} else {
+}
+else {
     echo new SingleButton(
         'Unsubscribe',
         function () use ($addresses, $email) {
