@@ -7,36 +7,32 @@ use Phinx\Migration\AbstractMigration;
 final class ConvertToUtf8Mb4 extends AbstractMigration
 {
 
-    private const TABLES = [
-        'cron',
-        'datastore',
-        'defex',
-        'email',
-        'filestore',
-        'page',
-        'rich_media',
-        'search_index',
-        'user',
-    ];
-
     public function up(): void
     {
         if ($this->getAdapter()->getAdapterType() !== 'mysql')
             return;
-        $db = $this->getAdapter()->getOption('name');
-        $this->execute("ALTER DATABASE `{$db}` CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci");
-        foreach (self::TABLES as $t) {
-            $this->execute("ALTER TABLE `{$t}` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci");
+        $this->execute('SET FOREIGN_KEY_CHECKS = 0');
+        $rows = $this->fetchAll(
+            "SELECT TABLE_NAME FROM information_schema.TABLES
+                    WHERE TABLE_SCHEMA = DATABASE()
+                    AND TABLE_TYPE = 'BASE TABLE'",
+        );
+        try {
+            foreach ($rows as $row) {
+                $t = $row[0];
+                $this->execute("ALTER TABLE `{$t}` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci");
+            }
         }
+        finally {
+        }
+        $this->execute('SET FOREIGN_KEY_CHECKS = 1');
     }
 
     public function down(): void
     {
         if ($this->getAdapter()->getAdapterType() !== 'mysql')
             return;
-        foreach (self::TABLES as $t) {
-            $this->execute("ALTER TABLE `{$t}` CONVERT TO CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci");
-        }
+        throw new \RuntimeException('Irreversible: reverting to utf8mb3 would truncate 4-byte characters.');
     }
 
 }
