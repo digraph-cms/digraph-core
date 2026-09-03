@@ -72,7 +72,7 @@ file cards include an icon
 */
 .file-card {
   display: grid;
-  grid-template-columns: auto;
+  grid-template-columns: 3.5em auto;
   grid-template-rows: auto auto;
   padding: $grid/2;
   border: $grid/4 solid $cue-interactive;
@@ -80,7 +80,18 @@ file cards include an icon
   width: auto;
 
   &:before {
-    display: none;
+    color: var(--cue-interactive);
+    display: block;
+    content: "\eb12";
+    grid-row-start: 1;
+    grid-row-end: -1;
+    font-size: 3em;
+    text-align: left;
+    line-height: 1.2;
+  }
+
+  * {
+    grid-column-start: 2;
   }
 }
 
