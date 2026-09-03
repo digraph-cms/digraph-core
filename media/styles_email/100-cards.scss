@@ -75,8 +75,7 @@ file cards include an icon
   background: var(--background-bright);
   color: var(--color);
   padding: $grid/2;
-  border-left: $grid/2 solid var(--cue-interactive);
-  box-shadow: var(--shadow);
+  border: $grid/2 solid var(--cue-interactive);
   width: auto;
 
   .file-card__icon {
