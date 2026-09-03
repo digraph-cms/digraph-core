@@ -146,11 +146,12 @@ class FileRichMedia extends AbstractRichMedia
         if (in_array('uploader', $overrideMeta ?? $this['meta'])) {
             $meta[] = 'MD5 ' . $file->hash();
         }
-        $card->addChild(
-            (new DIV)
-                ->addClass('file-card__meta')
-                ->addChild(implode('<br>', $meta)),
-        );
+        if ($meta)
+            $card->addChild(
+                (new DIV)
+                    ->addClass('file-card__meta')
+                    ->addChild(implode('<br>', $meta)),
+            );
         return $card;
     }
 

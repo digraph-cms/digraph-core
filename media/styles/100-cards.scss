@@ -62,6 +62,10 @@
     font-weight: bold;
     font-size: larger;
     margin-bottom: $grid/2;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
 }
 
 .file-card,
@@ -93,13 +97,14 @@ file cards include an icon
     .file-card__icon {
         display: inline-block;
         text-align: left;
-        line-height: 1;
+        line-height: 1em;
         white-space: nowrap;
         overflow: hidden;
         width: 1.5em;
         text-indent: 2em;
         position: relative;
         vertical-align: middle;
+        text-decoration: none;
 
         &:before {
             @include icofont;
@@ -110,6 +115,18 @@ file cards include an icon
             top: 0;
             left: 0;
             text-indent: 0;
+        }
+    }
+
+    .card__title {
+        a {
+            text-decoration: none;
+
+            &:hover,
+            &:focus,
+            &:active {
+                text-decoration: underline;
+            }
         }
     }
 }

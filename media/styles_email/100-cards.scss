@@ -82,13 +82,14 @@ file cards include an icon
   .file-card__icon {
     display: inline-block;
     text-align: left;
-    line-height: 1;
+    line-height: 1em;
     white-space: nowrap;
     overflow: hidden;
     width: 1.5em;
     text-indent: 0;
     position: relative;
     vertical-align: middle;
+    text-decoration: none;
 
     &:before {
       display: none;
