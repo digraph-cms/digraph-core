@@ -72,10 +72,10 @@ file cards include an icon
 */
 .file-card {
   box-sizing: border-box;
-  background: var(--background-bright);
-  color: var(--color);
+  background: $background-bright;
+  color: $color;
   padding: $grid/2;
-  border: $grid/2 solid var(--cue-interactive);
+  border: $grid/2 solid $cue-interactive;
   width: auto;
 
   .file-card__icon {
