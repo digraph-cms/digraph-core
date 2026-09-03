@@ -63,46 +63,21 @@
   margin-bottom: $grid/2;
 }
 
-.file-card,
-.multifile-card,
-.card--accent,
-.card--light,
-.card--dark,
-.card--neutral,
-.card--info,
-.card--confirmation,
-.card--warning,
-.card--error {
-  @include uncolored-links;
-}
-
 /*
 file cards include an icon
 */
 .file-card {
-  background: $cue-interactive;
-  color: $cue-interactive-inv;
+  background: $background;
+  border-color: $cue-interactive;
   display: grid;
   grid-template-columns: 3.5em auto;
   grid-template-rows: auto auto;
-  padding: $grid/2;
-  border: $border;
-  box-shadow: $shadow;
+  padding: $grid;
+  border: $grid/4;
   width: auto;
 
   &:before {
-    @include icofont;
-    display: block;
-    content: "\eb12";
-    grid-row-start: 1;
-    grid-row-end: -1;
-    font-size: 3em;
-    text-align: left;
-    line-height: 1.2;
-  }
-
-  * {
-    grid-column-start: 2;
+    display: none;
   }
 }
 
@@ -167,12 +142,7 @@ File card icons for extensions
 .file-card--extension-ogw,
 .file-card--extension-ess,
 .file-card--extension-xlhtml {
-  background: #49a94d;
-  color: white;
-
-  &:before {
-    content: "\eb27";
-  }
+  border-color: #49a94d;
 }
 
 /* word processing */
@@ -187,12 +157,7 @@ File card icons for extensions
 .file-card--extension-rtf,
 .file-card--extension-wpd,
 .file-card--extension-wps {
-  background: #2a5699;
-  color: white;
-
-  &:before {
-    content: "\eb0e";
-  }
+  border-color: #2a5699;
 }
 
 /* presentations */
@@ -206,12 +171,7 @@ File card icons for extensions
 .file-card--extension-pot,
 .file-card--extension-pps,
 .file-card--extension-ppa {
-  background: #d24726;
-  color: white;
-
-  &:before {
-    content: "\eb22";
-  }
+  border-color: #d24726;
 }
 
 /* images */
@@ -234,43 +194,25 @@ File card icons for extensions
 .file-card--extension-k25,
 .file-card--extension-kdc,
 .file-card--extension-dng {
-  background: #666;
-  color: white;
-
-  &:before {
-    content: "\eb16";
-  }
+  border-color: #666;
 }
 
 /* pdf */
 .file-card--extension-pdf {
-  background: #e03c31;
-  color: white;
-
-  &:before {
-    content: "\eb1e";
-  }
+  border-color: #e03c31;
 }
 
 /* avi/mp4 only */
 .file-card--extension-avi,
 .file-card--extension-mp4 {
-  background: #3e93ac;
-
-  &:before {
-    content: "\eb0a";
-  }
+  border-color: #3e93ac;
 }
 
 /* bitmaps */
 .file-card--extension-bmp,
 .file-card--extension-dib,
 .file-card--extension-wbmp {
-  background: #649fab;
-
-  &:before {
-    content: "\eb0b";
-  }
+  border-color: #649fab;
 }
 
 /* zip/archives */
@@ -331,11 +273,7 @@ File card icons for extensions
 .file-card--extension-gzi,
 .file-card--extension-lzh,
 .file-card--extension-zz {
-  background: #efab01;
-
-  &:before {
-    content: "\eb30";
-  }
+  border-color: #efab01;
 }
 
 /* audio files */
@@ -352,9 +290,5 @@ File card icons for extensions
 .file-card--extension-aac,
 .file-card--extension-mid,
 .file-card--extension-alac {
-  background: #3938a8;
-
-  &:before {
-    content: "\eb09";
-  }
+  border-color: #3938a8;
 }
