@@ -15,6 +15,7 @@ use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTML\Forms\OrderingInput;
 use DigraphCMS\HTML\Forms\UploadMulti;
 use DigraphCMS\HTML\Icon;
+use DigraphCMS\HTML\SPAN;
 use DigraphCMS\Media\DeferredFile;
 use DigraphCMS\UI\Format;
 use DigraphCMS\URL\URL;
@@ -155,7 +156,7 @@ class ZipRichMedia extends AbstractRichMedia
 
     public function shortCode(ShortcodeInterface $code): ?string
     {
-        if ($code->getParameter('inline', 'false') ?? $code->getContent()) {
+        if ($code->getParameter('inline', 'false') !== 'false' || $code->getContent()) {
             return (new A)
                 ->setAttribute('href', $this->zipFile()->url())
                 ->setAttribute('title', $this->zipFile()->filename())
@@ -188,6 +189,9 @@ class ZipRichMedia extends AbstractRichMedia
         $card->addChild((new DIV)
             ->addClass('card__title')
             ->addChild((new A)
+                ->addChild((new SPAN())
+                    ->addClass('file-card__icon')
+                    ->addChild('📥'))
                 ->addChild($this->name())
                 ->setAttribute('title', $file->filename())
                 ->setAttribute('href', $file->url())));
@@ -212,7 +216,8 @@ class ZipRichMedia extends AbstractRichMedia
             );
         }
         // add list of individual files if required and requested
-        if ($this['options.single']) {
+        // only allowed outside simplified rendering
+        if ($this['options.single'] && !Context::fields()['simplified_rendering']) {
             $id = 'multifile__list-' . $this->uuid();
             $wrapper = (new DIV)
                 ->setID($id)

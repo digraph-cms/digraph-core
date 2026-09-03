@@ -152,7 +152,7 @@ fs:
 db:
   adapter: sqlite
   name: "${paths.storage}/database"
-  charset: utf8
+  charset: utf8mb4
   pdo_options: []
   sqlite:
     # whether to manually insert JSON functions into SQLite, default is on

@@ -123,7 +123,7 @@ class FileRichMedia extends AbstractRichMedia
             ->addChild((new A)
                 ->addChild((new SPAN())
                     ->addClass('file-card__icon')
-                    ->addChild('&#128229;'))
+                    ->addChild('📥'))
                 ->addChild($showFilename ? $this->file()->filename() : $this->name())
                 ->setAttribute('title', $file->filename() . ' (' . Format::filesize($file->bytes()) . ')')
                 ->setAttribute('href', $file->url())));
