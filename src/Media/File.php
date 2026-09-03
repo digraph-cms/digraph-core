@@ -8,6 +8,7 @@ use DigraphCMS\ExceptionLog;
 use DigraphCMS\FS;
 use DigraphCMS\HTML\A;
 use DigraphCMS\HTML\DIV;
+use DigraphCMS\HTML\SPAN;
 
 class File
 {
@@ -63,6 +64,9 @@ class File
         $card->addChild((new DIV)
             ->addClass('card__title')
             ->addChild($a = (new A())
+                ->addChild((new SPAN())
+                    ->addClass('file-card__icon')
+                    ->addChild('📥'))
                 ->addChild($name ?? $this->filename())
                 ->setAttribute('title', $this->filename())
                 ->setAttribute('href', $this->url())));
