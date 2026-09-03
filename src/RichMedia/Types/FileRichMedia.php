@@ -11,6 +11,7 @@ use DigraphCMS\HTML\Forms\Fields\CheckboxListField;
 use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTML\Forms\UploadSingle;
 use DigraphCMS\HTML\Icon;
+use DigraphCMS\HTML\SPAN;
 use DigraphCMS\UI\Format;
 use Thunder\Shortcode\Shortcode\ShortcodeInterface;
 
@@ -120,6 +121,9 @@ class FileRichMedia extends AbstractRichMedia
         $card->addChild((new DIV)
             ->addClass('card__title')
             ->addChild((new A)
+                ->addChild((new SPAN())
+                    ->addClass('file-card__icon')
+                    ->addChild('📥'))
                 ->addChild($showFilename ? $this->file()->filename() : $this->name())
                 ->setAttribute('title', $file->filename() . ' (' . Format::filesize($file->bytes()) . ')')
                 ->setAttribute('href', $file->url())));

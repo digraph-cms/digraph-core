@@ -79,19 +79,20 @@ file cards include an icon
   background-color: $background-bright;
   width: auto;
 
-  &:before {
-    color: var(--cue-interactive);
-    display: block;
-    content: "\eb12";
-    grid-row-start: 1;
-    grid-row-end: -1;
-    font-size: 3em;
+  .file-card__icon {
+    display: inline-block;
     text-align: left;
-    line-height: 1.2;
-  }
+    line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 1.5em;
+    text-indent: 0;
+    position: relative;
+    vertical-align: middle;
 
-  * {
-    grid-column-start: 2;
+    &:before {
+      display: none;
+    }
   }
 }
 
