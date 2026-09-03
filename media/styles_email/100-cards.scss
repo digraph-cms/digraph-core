@@ -68,12 +68,11 @@ file cards include an icon
 */
 .file-card {
   background: $background;
-  border-color: $cue-interactive;
   display: grid;
-  grid-template-columns: 3.5em auto;
+  grid-template-columns: auto;
   grid-template-rows: auto auto;
   padding: $grid;
-  border: $grid/4;
+  border: $grid/4 solid $cue-interactive;
   width: auto;
 
   &:before {
