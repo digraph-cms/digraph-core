@@ -42,6 +42,10 @@
       }
     }
   }
+
+  .menubar.menubar--overflowed .menuitem {
+    text-align: left;
+  }
 }
 
 @media (min-width: $sidebar-small-activate) {
