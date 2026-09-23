@@ -1,3 +1,7 @@
+// manually reset some rem-based variables to use pixels for better client support
+$grid: 16px;
+$line-length: 512px;
+
 body {
   font-family: $font-content;
   line-height: $line-height;
@@ -165,7 +169,7 @@ code {
     }
   }
 
-  tr:nth-child(odd) > td {
+  tr:nth-child(odd)>td {
     background: $theme-neutral-a20;
   }
 

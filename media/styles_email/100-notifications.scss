@@ -1,3 +1,7 @@
+// manually reset some rem-based variables to use pixels for better client support
+$grid: 16px;
+$line-length: 512px;
+
 .notification {
   @include uncolored-links;
 
