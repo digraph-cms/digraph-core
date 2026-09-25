@@ -197,6 +197,8 @@ class Theme
     public static function colorblindMode(User|null $user = null): ?bool
     {
         $user = $user ?? Users::current();
+        if (!$user)
+            return null;
         return !!$user['ui.colorblind'];
     }
 
