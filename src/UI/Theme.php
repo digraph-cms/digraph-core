@@ -187,6 +187,8 @@ class Theme
     public static function colorMode(User|null $user = null): ?string
     {
         $user = $user ?? Users::current();
+        if (!$user)
+            return null;
         return $user['ui.colormode'] == 'auto'
             ? null
             : $user['ui.colormode'];
