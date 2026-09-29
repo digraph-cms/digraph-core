@@ -13,7 +13,7 @@ use Joby\Smol\PoW\SmolPoW;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>joby.lol | getting there</title>
+    <title>Bot challenge</title>
     <!-- Standard favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
