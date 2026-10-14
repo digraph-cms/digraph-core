@@ -2,11 +2,13 @@
 
 namespace DigraphCMS\HTML\Forms;
 
-use DateTime;
+use DateTimeImmutable;
+use DateTimeInterface;
 use DigraphCMS\UI\Theme;
 
 class DateTimeInput extends INPUT
 {
+
     protected $step = 900;
 
     public function attributes(): array
@@ -14,12 +16,12 @@ class DateTimeInput extends INPUT
         return array_merge(
             parent::attributes(),
             [
-                'type' => 'datetime-local',
-                'step' => $this->step,
+                'type'  => 'datetime-local',
+                'step'  => $this->step,
                 'value' => $this->value(true)
-                ? $this->value(true)->format('Y-m-d\TH:i')
-                : null
-            ]
+                    ? $this->value(true)->format('Y-m-d\TH:i')
+                    : null
+            ],
         );
     }
 
@@ -29,15 +31,17 @@ class DateTimeInput extends INPUT
         return $this;
     }
 
-    public function value($useDefault = false): DateTime|null
+    public function value($useDefault = false): DateTimeInterface|null
     {
         if ($value = parent::value($useDefault)) {
             if (is_string($value)) {
-                return DateTime::createFromFormat('Y-m-d\TH:i', $value, Theme::timezone());
-            } else {
+                return DateTimeImmutable::createFromFormat('Y-m-d\TH:i', $value, Theme::timezone());
+            }
+            else {
                 return $value;
             }
         }
         return null;
     }
+
 }
