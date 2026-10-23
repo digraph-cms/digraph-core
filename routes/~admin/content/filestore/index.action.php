@@ -11,6 +11,7 @@ use DigraphCMS\UI\Pagination\ColumnSortingHeader;
 use DigraphCMS\UI\Pagination\ColumnStringFilteringHeader;
 use DigraphCMS\UI\Pagination\ColumnUserFilteringHeader;
 use DigraphCMS\UI\Pagination\PaginatedTable;
+use DigraphCMS\URL\URL;
 
 $files = Filestore::select()
     ->order('created desc');
@@ -22,21 +23,27 @@ $table = new PaginatedTable(
         $media = null;
         if ($page = Pages::get($file->parentUUID())) {
             $media = null;
-        } elseif ($media = RichMedia::get($file->parentUUID())) {
+        }
+        elseif ($media = RichMedia::get($file->parentUUID())) {
             $page = Pages::get($media->parentUUID());
         }
+        $controls = [
+            sprintf('<small><a href="%s">delete</a></small>', new URL('delete:' . $file->uuid())),
+            // sprintf('<small><a href="%s">replace</a></small>', new URL('replace:' . $file->uuid())),
+        ];
         return [
             sprintf(
                 '<a href="%s">%s</a>',
                 $file->url(),
-                $file->filename()
+                $file->filename(),
             ),
             $file->parent(),
             $page ? $page->url()->html() : '',
             $media ? $media->name() : '',
             Format::filesize($file->bytes()),
             Format::date($file->created()),
-            $file->createdBy()
+            $file->createdBy(),
+            implode('<br>', $controls),
         ];
     },
     [
@@ -47,7 +54,7 @@ $table = new PaginatedTable(
         new ColumnSortingHeader('Size', 'bytes'),
         new ColumnDateFilteringHeader('Created', 'created'),
         new ColumnUserFilteringHeader('Created by', 'created_by'),
-    ]
+    ],
 );
 
 echo $table;
