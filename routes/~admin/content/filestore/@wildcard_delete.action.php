@@ -23,7 +23,8 @@ $form->button()->setText("Delete filestore file");
 $form->addChild($file->card());
 
 $confirm = (new CheckboxField("Yes, confirm deletion of the filestore file shown above. This action cannot be undone."))
-    ->setRequired(true);
+    ->setRequired(true)
+    ->addForm($form);
 
 if ($form->ready()) {
     if ($file->delete()) {
