@@ -54,6 +54,7 @@ $table = new PaginatedTable(
         new ColumnSortingHeader('Size', 'bytes'),
         new ColumnDateFilteringHeader('Created', 'created'),
         new ColumnUserFilteringHeader('Created by', 'created_by'),
+        '',
     ],
 );
 
