@@ -1,0 +1,74 @@
+tr {
+    &.highlight {
+
+        td,
+        th {
+            @include uncolored-links;
+            background-color: var(--cue-information);
+            color: var(--cue-information-inv);
+        }
+
+        &.highlight--safe {
+
+            td,
+            th {
+                background-color: var(--cue-safe);
+                color: var(--cue-safe-inv);
+            }
+        }
+
+        &.highlight--warning {
+
+            td,
+            th {
+                background-color: var(--cue-warning);
+                color: var(--cue-warning-inv);
+            }
+        }
+
+        &.highlight--danger {
+
+            td,
+            th {
+                background-color: var(--cue-danger);
+                color: var(--cue-danger-inv);
+            }
+        }
+
+        &.highlight--neutral {
+
+            td,
+            th {
+                background-color: var(--cue-neutral);
+                color: var(--cue-neutral-inv);
+            }
+        }
+    }
+}
+
+td.highlight,
+th.highlight {
+    @include uncolored-links;
+    background-color: var(--cue-information);
+    color: var(--cue-information-inv);
+
+    &.highlight--safe {
+        background-color: var(--cue-safe);
+        color: var(--cue-safe-inv);
+    }
+
+    &.highlight--warning {
+        background-color: var(--cue-warning);
+        color: var(--cue-warning-inv);
+    }
+
+    &.highlight--danger {
+        background-color: var(--cue-danger);
+        color: var(--cue-danger-inv);
+    }
+
+    &.highlight--neutral {
+        background-color: var(--cue-neutral);
+        color: var(--cue-neutral-inv);
+    }
+}
