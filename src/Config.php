@@ -73,15 +73,24 @@ abstract class Config implements InitializedClassInterface
         return $cache;
     }
 
-    public static function cachePath(): string
+    /**
+     * Get the system cache directory, optionally supplying a sub-path directory name that will be created if necessary.
+     * @param string|null $sub_path with no leading or trailing slashes
+     * @return string the full path with no trailing slash
+     */
+    public static function cachePath(string|null $sub_path = null): string
     {
-        static $cache;
-        return $cache
-            ?? $cache = (
-                static::get('cache.path')
+        static $cache_root = null;
+        $cache_root = $cache_root
+            ?? (static::get('cache.path')
                 ? static::get('cache.path')
-                : static::generatedCachePath()
-            );
+                : static::generatedCachePath());
+        $path = $cache_root;
+        if ($sub_path)
+            $path .= '/' . $sub_path;
+        if (!is_dir($path))
+            mkdir($path, recursive: true);
+        return $path;
     }
 
     protected static function generatedCachePath(): string
