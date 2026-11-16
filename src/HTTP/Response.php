@@ -108,6 +108,17 @@ class Response
 
     public function redirect(string $url, bool $permanent = false, bool $preserveMethod = false, string|null $targetFrame = null)
     {
+        // special case for _top target frame
+        // needs to return redirect info in a small 204 response so that navigation frames can work right
+        if ($targetFrame === '_top' && Context::request()->headers()->get('x-for-navigation-frame') === 'y') {
+            $this->status(204);
+            $this->headers()->set('X-Target-Frame', $targetFrame);
+            $this->headers()->set('X-Redirect-Location', $url);
+            $this->content("");
+            $this->filename('redirect.txt');
+            return;
+        }
+        // normal redirect behavior
         $this->headers()->set('Location', $url);
         if ($preserveMethod) {
             $this->status($permanent ? 308 : 307);

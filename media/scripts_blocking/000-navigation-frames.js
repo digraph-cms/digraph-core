@@ -203,6 +203,15 @@ Digraph.state = {
         }
         frame.stateUpdateRequest = new XMLHttpRequest();
         frame.stateUpdateRequest.addEventListener('load', (e) => {
+            // special case for 204 responses that redirect the whole window
+            if (
+                e.target.status === 204
+                && e.target.getResponseHeader('X-Target-Frame') === '_top'
+            ) {
+                window.location.assign(e.target.getResponseHeader('X-Redirect-Location'));
+                return;
+            }
+            // normal 200 responses
             if (e.target.status == 200) {
                 // check for X-Target-Frame header and change target frame if specified
                 if (e.target.getResponseHeader('X-Target-Frame')) {
